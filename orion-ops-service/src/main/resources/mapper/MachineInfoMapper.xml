@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.MachineInfoDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineInfoDO">
+        <id column="id" property="id"/>
+        <result column="room_id" property="roomId"/>
+        <result column="proxy_id" property="proxyId"/>
+        <result column="extranet_host" property="extranetHost"/>
+        <result column="Intranet_host" property="intranetHost"/>
+        <result column="machine_name" property="machineName"/>
+        <result column="machine_tag" property="machineTag"/>
+        <result column="description" property="description"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="key_id" property="keyId"/>
+        <result column="auth_type" property="authType"/>
+        <result column="system_type" property="systemType"/>
+        <result column="system_version" property="systemVersion"/>
+        <result column="machine_status" property="machineStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, room_id, proxy_id, extranet_host, Intranet_host, machine_name, machine_tag, description, username, password, key_id, auth_type, system_type, system_version, machine_status, create_time, update_time
+    </sql>
+
+    <update id="setId">
+        UPDATE machine_info
+        SET id = #{newId}
+        WHERE id = #{oldId}
+    </update>
+
+</mapper>

@@ -7,12 +7,17 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.orion.constant.Const;
 
 /**
  * @author ljh15
  */
-public class MPGenerator {
+public class CodeGenerator {
 
     public static void main(String[] args) {
         runGenerator();
@@ -25,9 +30,9 @@ public class MPGenerator {
         // 全局配置
         GlobalConfig gbConfig = new GlobalConfig()
                 // 是否支持AR模式
-                .setActiveRecord(true)
+                .setActiveRecord(false)
                 // 设置作者
-                .setAuthor("lijiahang")
+                .setAuthor(Const.ORION_AUTHOR)
                 // 生成路径
                 .setOutputDir("D:/MP/")
                 // 文件是否覆盖
@@ -41,7 +46,7 @@ public class MPGenerator {
                 // 实体对象名名称
                 .setEntityName("%sDO")
                 // 映射接口名称
-                .setMapperName("%sMapper")
+                .setMapperName("%sDAO")
                 // 映射文件名称
                 .setXmlName("%sMapper")
                 // web名称
@@ -54,6 +59,8 @@ public class MPGenerator {
                 .setBaseResultMap(true)
                 // 是否生成二级缓存
                 .setEnableCache(false)
+                // date类型
+                .setDateType(DateType.ONLY_DATE)
                 // 是否生成SQL片段
                 .setBaseColumnList(true);
 
@@ -64,11 +71,21 @@ public class MPGenerator {
                 // 配置驱动
                 .setDriverName("com.mysql.cj.jdbc.Driver")
                 // 配置路径
-                .setUrl("jdbc:mysql://localhost:3306/test?characterEncoding=utf8")
+                .setUrl("jdbc:mysql://localhost:3306/orion-ops?characterEncoding=utf8")
                 // 配置账号
                 .setUsername("root")
                 // 配置密码
-                .setPassword("admin123");
+                .setPassword("admin123")
+                // 转换器
+                .setTypeConvert(new MySqlTypeConvert() {
+                    @Override
+                    public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
+                        if (fieldType.toLowerCase().contains("tinyint")) {
+                            return DbColumnType.INTEGER;
+                        }
+                        return super.processTypeConvert(globalConfig, fieldType);
+                    }
+                });
 
         // 策略配置
         StrategyConfig stConfig = new StrategyConfig()
@@ -87,13 +104,15 @@ public class MPGenerator {
                 // 下滑线转驼峰命名策略
                 .setNaming(NamingStrategy.underline_to_camel)
                 // 是否生成字段常量
-                .setEntityColumnConstant(true)
+                .setEntityColumnConstant(false)
+                // 是否链式结构
+                .setChainModel(false)
                 // 配置表前缀
                 .setTablePrefix("")
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("cut");
+                .setInclude("machine_terminal");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()

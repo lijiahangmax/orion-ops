@@ -13,7 +13,7 @@
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%level] [%logger{40}:%line] - %msg%n"/>
         </Console>
 
-        <RollingFile name="debug_appender" fileName="${baseDir}/debug.log" filePattern="${baseDir}/debug_%i.log.%d{yyyy-MM-dd}">
+        <RollingFile name="debugAppender" fileName="${baseDir}/debug.log" filePattern="${baseDir}/debug_%i.log.%d{yyyy-MM-dd}">
             <Filters>
                 <ThresholdFilter level="debug"/>
                 <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -29,7 +29,7 @@
             <DefaultRolloverStrategy max="15"/>
         </RollingFile>
 
-        <RollingFile name="info_appender" fileName="${baseDir}/info.log" filePattern="${baseDir}/info_%i.log.%d{yyyy-MM-dd}">
+        <RollingFile name="infoAppender" fileName="${baseDir}/info.log" filePattern="${baseDir}/info_%i.log.%d{yyyy-MM-dd}">
             <Filters>
                 <ThresholdFilter level="info"/>
                 <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -42,7 +42,7 @@
             <DefaultRolloverStrategy max="15"/>
         </RollingFile>
 
-        <RollingFile name="error_appender" fileName="${baseDir}/error.log" filePattern="${baseDir}/error_%i.log.%d{yyyy-MM-dd}">
+        <RollingFile name="errorAppender" fileName="${baseDir}/error.log" filePattern="${baseDir}/error_%i.log.%d{yyyy-MM-dd}">
             <Filters>
                 <ThresholdFilter level="error"/>
             </Filters>
@@ -66,9 +66,9 @@
 
         <Root level="debug">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="debug_appender"/>
-            <AppenderRef ref="info_appender"/>
-            <AppenderRef ref="error_appender"/>
+            <AppenderRef ref="debugAppender"/>
+            <AppenderRef ref="infoAppender"/>
+            <AppenderRef ref="errorAppender"/>
         </Root>
     </Loggers>
 
