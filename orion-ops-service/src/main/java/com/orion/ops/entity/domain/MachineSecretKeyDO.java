@@ -38,12 +38,6 @@ public class MachineSecretKeyDO implements Serializable {
     private String keyName;
 
     /**
-     * 秘钥内容
-     */
-    @TableField("secret_key")
-    private String secretKey;
-
-    /**
      * 秘钥文件本地路径
      */
     @TableField("secret_key_path")
