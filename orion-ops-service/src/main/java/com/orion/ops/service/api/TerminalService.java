@@ -34,5 +34,4 @@ public interface TerminalService {
      */
     MachineTerminalDO getConfig(Long machineId);
 
-
 }

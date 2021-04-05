@@ -1,6 +1,8 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.UserHolder;
+import com.orion.ops.entity.dto.UserDTO;
 import com.orion.servlet.web.CookiesExt;
 import com.orion.utils.Strings;
 
@@ -27,16 +29,6 @@ public class Currents {
     }
 
     /**
-     * 获取终端访问token
-     *
-     * @param request request
-     * @return token
-     */
-    public static String getTerminalAccess(HttpServletRequest request) {
-        return getToken(request, Const.TERMINAL_ACCESS_TOKEN);
-    }
-
-    /**
      * 获取token
      *
      * @param request request
@@ -52,6 +44,24 @@ public class Currents {
             t = "1u";
         }
         return t;
+    }
+
+    /**
+     * 获取当前登录用户
+     *
+     * @return 用户
+     */
+    public static UserDTO getUser() {
+        return UserHolder.get();
+    }
+
+    /**
+     * 获取当前登录用户id
+     *
+     * @return id
+     */
+    public static Long getUserId() {
+        return UserHolder.get().getId();
     }
 
 }

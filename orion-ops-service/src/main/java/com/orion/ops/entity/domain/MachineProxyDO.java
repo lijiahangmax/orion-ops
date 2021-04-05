@@ -56,6 +56,12 @@ public class MachineProxyDO implements Serializable {
     private String proxyPassword;
 
     /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

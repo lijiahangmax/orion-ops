@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * spring mvc 配置
@@ -42,6 +43,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = InvalidArgumentException.class)
     public HttpWrapper<?> invalidArgumentExceptionHandler(Exception ex) {
         return HttpWrapper.error().msg(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = IOException.class)
+    public HttpWrapper<?> ioExceptionHandler(Exception ex) {
+        return HttpWrapper.error().msg("网络异常").data(ex.getMessage());
     }
 
 }

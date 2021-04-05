@@ -50,13 +50,14 @@ public class HostMachineInitialize implements CommandLineRunner {
      * 初始化宿主机
      */
     private void initMachine() {
+        log.info("初始化宿主机配置-开始");
         LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
                 .eq(MachineInfoDO::getId, 1);
         MachineInfoDO machineInfo = machineInfoDAO.selectOne(wrapper);
         if (machineInfo == null) {
             MachineInfoDO insert = new MachineInfoDO();
-            insert.setExtranetHost(IPs.IP);
-            insert.setIntranetHost(IPs.IP);
+            insert.setMachineHost(IPs.IP);
+            insert.setSshPort(22);
             insert.setMachineName(Systems.HOST_NAME);
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
@@ -66,12 +67,14 @@ public class HostMachineInitialize implements CommandLineRunner {
             machineInfoDAO.insert(insert);
             machineInfoDAO.setId(insert.getId(), 1L);
         }
+        log.info("初始化宿主机配置-结束");
     }
 
     /**
      * 初始化环境
      */
     private void initEnv() {
+        log.info("初始化宿主机环境-开始");
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, 1L);
         List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
@@ -91,6 +94,7 @@ public class HostMachineInitialize implements CommandLineRunner {
                 machineEnvDAO.insert(insert);
             }
         }
+        log.info("初始化宿主机环境-结束");
     }
 
     /**

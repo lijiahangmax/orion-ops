@@ -1,5 +1,7 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.domain.MachineProxyDO;
+
 /**
  * 机器管理service
  *
@@ -8,6 +10,11 @@ package com.orion.ops.service.api;
  */
 public interface MachineService {
 
+
+
+    // Long addKey();
+    //
+    // Long addMachine();
 
 
 }

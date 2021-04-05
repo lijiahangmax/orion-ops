@@ -11,8 +11,6 @@ public class Const extends com.orion.constant.Const {
 
     public static final String LOGIN_TOKEN = "O-Login-Token";
 
-    public static final String TERMINAL_ACCESS_TOKEN = "OT-Access-Token";
-
     public static final String ORION_OPS = "orion_ops";
 
     public static final String WHERE_IS = "whereis";
@@ -36,5 +34,7 @@ public class Const extends com.orion.constant.Const {
     public static final String KEYS_PATH = ".keys";
 
     public static final String DIST_PATH = "dist";
+
+    public static final String INVALID_PARAM = "参数不合法";
 
 }

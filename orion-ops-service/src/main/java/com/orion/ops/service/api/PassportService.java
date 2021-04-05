@@ -7,7 +7,6 @@ package com.orion.ops.service.api;
  * @version 1.0.0
  * @since 2021/4/1 16:58
  */
-
-public class PassportService {
+public interface PassportService {
 
 }

@@ -11,8 +11,22 @@ import lombok.EqualsAndHashCode;
  * @since 2021/4/1 16:40
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 public class TerminalAccessVO {
+
+    /**
+     * 主机
+     */
+    private String host;
+
+    /**
+     * 端口
+     */
+    private Integer port;
+
+    /**
+     * 机器名称
+     */
+    private String machineName;
 
     /**
      * id

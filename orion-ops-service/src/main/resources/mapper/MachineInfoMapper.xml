@@ -7,8 +7,8 @@
         <id column="id" property="id"/>
         <result column="room_id" property="roomId"/>
         <result column="proxy_id" property="proxyId"/>
-        <result column="extranet_host" property="extranetHost"/>
-        <result column="Intranet_host" property="intranetHost"/>
+        <result column="machine_host" property="machineHost"/>
+        <result column="ssh_port" property="sshPort"/>
         <result column="machine_name" property="machineName"/>
         <result column="machine_tag" property="machineTag"/>
         <result column="description" property="description"/>
@@ -25,13 +25,25 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, room_id, proxy_id, extranet_host, Intranet_host, machine_name, machine_tag, description, username, password, key_id, auth_type, system_type, system_version, machine_status, create_time, update_time
+        id, room_id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, key_id, auth_type, system_type, system_version, machine_status, create_time, update_time
     </sql>
 
     <update id="setId">
         UPDATE machine_info
         SET id = #{newId}
         WHERE id = #{oldId}
+    </update>
+
+    <update id="setProxyIdWithNull">
+        UPDATE machine_info
+        SET proxy_id = null
+        WHERE proxy_id = #{proxyId}
+    </update>
+
+    <update id="setKeyIdWithNull">
+        UPDATE machine_info
+        SET key_id = null
+        WHERE key_id = #{keyId}
     </update>
 
 </mapper>

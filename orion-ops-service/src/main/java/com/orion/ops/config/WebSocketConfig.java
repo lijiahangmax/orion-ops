@@ -25,8 +25,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(webSocketMessageHandler, "/ssh")
+        webSocketHandlerRegistry.addHandler(webSocketMessageHandler, "/machine/terminal/{id}")
                 .addInterceptors(new WebSocketInterceptor())
                 .setAllowedOrigins("*");
     }
+
 }

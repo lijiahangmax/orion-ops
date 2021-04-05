@@ -44,16 +44,16 @@ public class MachineInfoDO implements Serializable {
     private Long proxyId;
 
     /**
-     * 主机外网ip
+     * 主机ip
      */
-    @TableField("extranet_host")
-    private String extranetHost;
+    @TableField("machine_host")
+    private String machineHost;
 
     /**
-     * 主机内网ip
+     * ssh端口
      */
-    @TableField("Intranet_host")
-    private String intranetHost;
+    @TableField("ssh_port")
+    private Integer sshPort;
 
     /**
      * 机器名称

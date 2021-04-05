@@ -9,13 +9,14 @@
         <result column="proxy_port" property="proxyPort"/>
         <result column="proxy_username" property="proxyUsername"/>
         <result column="proxy_password" property="proxyPassword"/>
+        <result column="description" property="description"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, proxy_host, proxy_port, proxy_username, proxy_password, create_time, update_time
+        id, proxy_host, proxy_port, proxy_username, proxy_password, description, create_time, update_time
     </sql>
 
 </mapper>

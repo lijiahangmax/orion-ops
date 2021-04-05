@@ -1,6 +1,7 @@
 package com.orion.ops.consts;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,11 +78,6 @@ public enum MachineEnvAttr {
      */
     TOMCAT_HOME(false, true, "tomcat 根目录"),
 
-    /**
-     * ssh port
-     */
-    SSH_PORT(false, true, "ssh 端口"),
-
     ;
 
     /**
@@ -98,6 +94,9 @@ public enum MachineEnvAttr {
      * 描述
      */
     String description;
+
+    @Setter
+    String value;
 
     MachineEnvAttr(boolean host, boolean target, String description) {
         this.host = host;
