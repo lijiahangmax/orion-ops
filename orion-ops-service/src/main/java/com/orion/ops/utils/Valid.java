@@ -16,7 +16,11 @@ public class Valid extends com.orion.utils.Valid {
     }
 
     public static String notBlank(String s) {
-        return notBlank(s, "参数不合法");
+        return notBlank(s, Const.INVALID_PARAM);
+    }
+
+    public static void eq(Object o1, Object o2) {
+        eq(o1, o2, Const.INVALID_PARAM);
     }
 
     public static void allNotNull(Object... objects) {
