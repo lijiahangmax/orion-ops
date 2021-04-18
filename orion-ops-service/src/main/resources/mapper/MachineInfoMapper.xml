@@ -46,4 +46,10 @@
         WHERE key_id = #{keyId}
     </update>
 
+    <update id="setRoomIdWithNull">
+        UPDATE machine_info
+        SET room_id = null
+        WHERE room_id = #{roomId}
+    </update>
+
 </mapper>
