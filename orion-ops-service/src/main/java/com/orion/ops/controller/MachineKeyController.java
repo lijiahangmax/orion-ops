@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.orion.id.ObjectIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.lang.wrapper.PageRequest;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
@@ -41,7 +40,7 @@ public class MachineKeyController {
     private MachineKeyService machineKeyService;
 
     /**
-     * 添加秘钥k
+     * 添加秘钥
      */
     @RequestMapping("/add")
     public HttpWrapper<Long> addKey(@RequestParam("file") MultipartFile file,
@@ -51,7 +50,7 @@ public class MachineKeyController {
         key.setKeyName(name);
         key.setPassword(password);
         key.setDescription(description);
-        String path = Files1.getPath(MachineEnvAttr.KEY_PATH.getValue() + "/" + ObjectIds.next() + "_id_rsa");
+        String path = Files1.getPath(EnvAttr.KEY_PATH.getValue() + "/" + ObjectIds.next() + "_id_rsa");
         Files1.touch(path);
         file.transferTo(new File(path));
         key.setSecretKeyPath(path);
@@ -61,6 +60,30 @@ public class MachineKeyController {
         } catch (Exception e) {
             log.error("添加秘钥失败 {} {}", JSON.toJSONString(key), e);
             return HttpWrapper.error("添加秘钥失败");
+        }
+    }
+
+    /**
+     * 添加秘钥
+     */
+    @RequestMapping("/update")
+    public HttpWrapper<Integer> updateKey(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id,
+                                          @RequestParam("name") String name, @RequestParam(value = "password", required = false) String password,
+                                          @RequestParam(value = "description", required = false) String description) throws IOException {
+        MachineSecretKeyDO key = new MachineSecretKeyDO();
+        key.setId(id);
+        key.setKeyName(name);
+        key.setPassword(password);
+        key.setDescription(description);
+        String path = Files1.getPath(EnvAttr.KEY_PATH.getValue() + "/" + ObjectIds.next() + "_id_rsa");
+        file.transferTo(new File(path));
+        key.setSecretKeyPath(path);
+        try {
+            Integer effect = machineKeyService.updateSecretKey(key);
+            return HttpWrapper.ok(effect);
+        } catch (Exception e) {
+            log.error("修改秘钥失败 {} {}", JSON.toJSONString(key), e);
+            return HttpWrapper.error("修改秘钥失败");
         }
     }
 
@@ -80,36 +103,17 @@ public class MachineKeyController {
     }
 
     /**
-     * 添加秘钥
-     */
-    @RequestMapping("/update")
-    public HttpWrapper<Integer> updateKey(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id,
-                                          @RequestParam("name") String name, @RequestParam(value = "password", required = false) String password,
-                                          @RequestParam(value = "description", required = false) String description) throws IOException {
-        MachineSecretKeyDO key = new MachineSecretKeyDO();
-        key.setId(id);
-        key.setKeyName(name);
-        key.setPassword(password);
-        key.setDescription(description);
-        String path = Files1.getPath(MachineEnvAttr.KEY_PATH.getValue() + "/" + ObjectIds.next() + "_id_rsa");
-        file.transferTo(new File(path));
-        key.setSecretKeyPath(path);
-        try {
-            Integer effect = machineKeyService.updateSecretKey(key);
-            return HttpWrapper.ok(effect);
-        } catch (Exception e) {
-            log.error("修改秘钥失败 {} {}", JSON.toJSONString(key), e);
-            return HttpWrapper.error("修改秘钥失败");
-        }
-    }
-
-    /**
      * 列表
      */
     @RequestMapping("/list")
-    public DataGrid<MachineSecretKeyVO> listKeys(@RequestBody PageRequest page) {
-        return machineKeyService.listKeys(page);
+    public DataGrid<MachineSecretKeyVO> listKeys(@RequestBody MachineKeyRequest request) {
+        return machineKeyService.listKeys(request);
     }
+
+    // 是否挂载
+    // 下载
+    // 重新挂载
+    // 挂载
 
     // @RequestMapping("/use/machine")
 

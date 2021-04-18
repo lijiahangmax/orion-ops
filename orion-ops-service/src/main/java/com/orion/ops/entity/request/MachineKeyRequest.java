@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
+import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 机器秘钥请求
@@ -10,12 +12,22 @@ import lombok.Data;
  * @since 2021/4/5 12:33
  */
 @Data
-public class MachineKeyRequest {
+@EqualsAndHashCode(callSuper = true)
+public class MachineKeyRequest extends PageRequest {
 
     /**
      * id
      */
     private Long id;
 
+    /**
+     * 名称
+     */
+    private String name;
+
+    /**
+     * 描述
+     */
+    private String description;
 
 }

@@ -1,8 +1,8 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.PageRequest;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
+import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 
 /**
@@ -23,14 +23,6 @@ public interface MachineKeyService {
     Long addSecretKey(MachineSecretKeyDO key);
 
     /**
-     * 删除key
-     *
-     * @param id id
-     * @return effect
-     */
-    Integer removeSecretKey(Long id);
-
-    /**
      * 修改key
      *
      * @param key key
@@ -39,11 +31,19 @@ public interface MachineKeyService {
     Integer updateSecretKey(MachineSecretKeyDO key);
 
     /**
+     * 删除key
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer removeSecretKey(Long id);
+
+    /**
      * 查询keys
      *
-     * @param page page
+     * @param request request
      * @return dataGrid
      */
-    DataGrid<MachineSecretKeyVO> listKeys(PageRequest page);
+    DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request);
 
 }
