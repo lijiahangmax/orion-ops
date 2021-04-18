@@ -40,9 +40,8 @@ public class Currents {
         if (Strings.isEmpty(t)) {
             t = CookiesExt.get(request, token);
         }
-        if (Strings.isEmpty(t)) {
-            t = "1u";
-        }
+        // test flag
+        t = "1u";
         return t;
     }
 
