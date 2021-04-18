@@ -1,5 +1,9 @@
 package com.orion.ops.config;
 
+import com.orion.exception.AuthenticationException;
+import com.orion.exception.ConnectionRuntimeException;
+import com.orion.exception.IORuntimeException;
+import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.InvalidArgumentException;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
@@ -40,14 +44,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return HttpWrapper.error().msg("系统繁忙").data(ex.getMessage());
     }
 
-    @ExceptionHandler(value = InvalidArgumentException.class)
+    @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
     public HttpWrapper<?> invalidArgumentExceptionHandler(Exception ex) {
         return HttpWrapper.error().msg(ex.getMessage());
     }
 
-    @ExceptionHandler(value = IOException.class)
+    @ExceptionHandler(value = CodeArgumentException.class)
+    public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
+        return HttpWrapper.error().code(ex.getCode()).msg(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
     public HttpWrapper<?> ioExceptionHandler(Exception ex) {
         return HttpWrapper.error().msg("网络异常").data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {ConnectionRuntimeException.class})
+    public HttpWrapper<?> connectionExceptionHandler(Exception ex) {
+        return HttpWrapper.error().msg("连接失败").data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    public HttpWrapper<?> authExceptionHandler(Exception ex) {
+        return HttpWrapper.error().msg("认证失败").data(ex.getMessage());
     }
 
 }
