@@ -1,8 +1,9 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.AuthType;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * 宿主机初始化
  *
- * @author ljh15
+ * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/3/29 18:54
  */
@@ -61,9 +62,10 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setMachineName(Systems.HOST_NAME);
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
+            insert.setAuthType(AuthType.PASSWORD.getType());
             insert.setSystemType(Systems.BE_UNIX ? 1 : 2);
             insert.setSystemVersion(Systems.OS_NAME + Strings.SPACE + Systems.OS_VERSION);
-            insert.setMachineStatus(1);
+            insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);
             machineInfoDAO.setId(insert.getId(), 1L);
         }
@@ -78,19 +80,19 @@ public class HostMachineInitialize implements CommandLineRunner {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, 1L);
         List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
-        for (String key : MachineEnvAttr.getHostKeys()) {
+        for (String key : EnvAttr.getHostKeys()) {
             MachineEnvDO env = envs.stream()
                     .filter(s -> s.getAttrKey().equals(key))
                     .findFirst()
                     .orElse(null);
             if (env == null) {
-                MachineEnvAttr attr = MachineEnvAttr.of(key);
+                EnvAttr attr = EnvAttr.of(key);
                 MachineEnvDO insert = new MachineEnvDO();
                 insert.setMachineId(1L);
                 insert.setAttrKey(key);
                 insert.setAttrValue(this.getAttrValue(attr));
                 insert.setDescription(attr.getDescription());
-                insert.setForbidDelete(2);
+                insert.setForbidDelete(Const.FORBID_DELETE_NOT);
                 machineEnvDAO.insert(insert);
             }
         }
@@ -103,7 +105,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      * @param attr attr
      * @return value
      */
-    private String getAttrValue(MachineEnvAttr attr) {
+    private String getAttrValue(EnvAttr attr) {
         switch (attr) {
             case JAVA_BIN_PATH:
                 return whereIs(attr, Const.JAVA);
@@ -135,7 +137,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      * @param command command
      * @return path
      */
-    public static String whereIs(MachineEnvAttr attr, String command) {
+    public static String whereIs(EnvAttr attr, String command) {
         try {
             String s = Processes.getOutputResultWithDirString(Const.USR_BIN, Const.WHERE_IS, command);
             String[] split = s.split(Strings.SPACE);
