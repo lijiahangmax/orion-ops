@@ -1,18 +1,16 @@
 package com.orion.ops.interceptor;
 
-import com.alibaba.fastjson.JSON;
 import com.orion.constant.StandardContentType;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.IgnoreAuth;
-import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
+import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.Currents;
 import com.orion.servlet.web.Servlets;
 import com.orion.utils.Strings;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,7 +32,7 @@ import java.io.IOException;
 public class AuthenticateInterceptor implements HandlerInterceptor {
 
     @Resource
-    private RedisTemplate<String, String> redisTemplate;
+    private PassportService passportService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -45,10 +43,10 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         boolean pass = false;
         String loginToken = Currents.getLoginToken(request);
         if (!Strings.isEmpty(loginToken)) {
-            String cache = redisTemplate.opsForValue().get(Strings.format(KeyConst.LOGIN_TOKEN_KEY, loginToken));
-            if (!Strings.isEmpty(cache)) {
+            UserDTO user = passportService.getUserByToken(loginToken);
+            if (user != null) {
                 pass = true;
-                UserHolder.set(JSON.parseObject(cache, UserDTO.class));
+                UserHolder.set(user);
             }
         }
         if (!ignore && !pass) {
