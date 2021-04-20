@@ -36,4 +36,11 @@ public interface MachineInfoDAO extends BaseMapper<MachineInfoDO> {
      */
     void setKeyIdWithNull(@Param("keyId") Long keyId);
 
+    /**
+     * 设置roomId为null
+     *
+     * @param roomId roomId
+     */
+    void setRoomIdWithNull(@Param("roomId") Long roomId);
+
 }

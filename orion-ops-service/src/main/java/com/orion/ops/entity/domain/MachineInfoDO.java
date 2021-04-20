@@ -104,7 +104,7 @@ public class MachineInfoDO implements Serializable {
     private Integer systemType;
 
     /**
-     * 机器版本 如: contos7.0
+     * 机器版本 如: centOS7.0
      */
     @TableField("system_version")
     private String systemVersion;
