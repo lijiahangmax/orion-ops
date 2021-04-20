@@ -1,7 +1,7 @@
 package com.orion.ops.config;
 
-import com.orion.ops.handler.WebSocketMessageHandler;
-import com.orion.ops.interceptor.WebSocketInterceptor;
+import com.orion.ops.handler.terminal.TerminalMessageHandler;
+import com.orion.ops.interceptor.TerminalAccessInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 /**
  * webSocket 配置
  *
- * @author ljh15
+ * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/3/24 17:52
  */
@@ -21,12 +21,15 @@ import javax.annotation.Resource;
 public class WebSocketConfig implements WebSocketConfigurer {
 
     @Resource
-    private WebSocketMessageHandler webSocketMessageHandler;
+    private TerminalMessageHandler terminalMessageHandler;
+
+    @Resource
+    private TerminalAccessInterceptor terminalAccessInterceptor;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
-        webSocketHandlerRegistry.addHandler(webSocketMessageHandler, "/machine/terminal/{id}")
-                .addInterceptors(new WebSocketInterceptor())
+        webSocketHandlerRegistry.addHandler(terminalMessageHandler, "/machine/terminal/{accessToken}")
+                .addInterceptors(terminalAccessInterceptor)
                 .setAllowedOrigins("*");
     }
 

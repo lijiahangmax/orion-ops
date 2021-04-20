@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 /**
  * 机器环境变量key
  *
- * @author ljh15
+ * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/3/29 15:42
  */
 @Getter
-public enum MachineEnvAttr {
+public enum EnvAttr {
 
     /**
      * JAVA_BIN_PATH
@@ -98,7 +98,7 @@ public enum MachineEnvAttr {
     @Setter
     String value;
 
-    MachineEnvAttr(boolean host, boolean target, String description) {
+    EnvAttr(boolean host, boolean target, String description) {
         this.host = host;
         this.target = target;
         this.description = description;
@@ -106,19 +106,19 @@ public enum MachineEnvAttr {
 
     public static List<String> getHostKeys() {
         return Arrays.stream(values())
-                .filter(MachineEnvAttr::isHost)
-                .map(MachineEnvAttr::name)
+                .filter(EnvAttr::isHost)
+                .map(EnvAttr::name)
                 .collect(Collectors.toList());
     }
 
     public static List<String> getTargetKeys() {
         return Arrays.stream(values())
-                .filter(MachineEnvAttr::isTarget)
-                .map(MachineEnvAttr::name)
+                .filter(EnvAttr::isTarget)
+                .map(EnvAttr::name)
                 .collect(Collectors.toList());
     }
 
-    public static MachineEnvAttr of(String key) {
+    public static EnvAttr of(String key) {
         return Arrays.stream(values())
                 .filter(a -> a.name().equals(key)).findFirst()
                 .orElse(null);

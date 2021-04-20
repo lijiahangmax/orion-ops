@@ -3,6 +3,8 @@ package com.orion.ops.consts;
 import com.orion.lang.wrapper.CodeInfo;
 
 /**
+ * 返回code
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/2 9:48
