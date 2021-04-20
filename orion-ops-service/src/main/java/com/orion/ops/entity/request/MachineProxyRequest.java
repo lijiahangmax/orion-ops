@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
+import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 添加/修改 代理请求
@@ -10,7 +12,8 @@ import lombok.Data;
  * @since 2021/4/3 21:38
  */
 @Data
-public class MachineProxyRequest {
+@EqualsAndHashCode(callSuper = true)
+public class MachineProxyRequest extends PageRequest {
 
     /**
      * id

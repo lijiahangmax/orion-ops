@@ -1,10 +1,8 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.PageRequest;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
@@ -38,22 +36,9 @@ public class MachineProxyController {
      */
     @RequestMapping("/add")
     public Long addProxy(@RequestBody MachineProxyRequest request) {
+        request.setId(null);
         this.check(request);
-        MachineProxyDO proxy = new MachineProxyDO();
-        proxy.setProxyHost(request.getHost());
-        proxy.setProxyPort(request.getPort());
-        proxy.setProxyUsername(request.getUsername());
-        proxy.setProxyPassword(request.getPassword());
-        proxy.setDescription(request.getDescription());
-        return machineProxyService.addProxy(proxy);
-    }
-
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
-    public DataGrid<MachineProxyVO> list(@RequestBody PageRequest request) {
-        return machineProxyService.listProxy(request);
+        return machineProxyService.addUpdateProxy(request);
     }
 
     /**
@@ -61,16 +46,17 @@ public class MachineProxyController {
      */
     @RequestMapping("/update")
     public Integer update(@RequestBody MachineProxyRequest request) {
-        this.check(request);
         Valid.notNull(request.getId());
-        MachineProxyDO proxy = new MachineProxyDO();
-        proxy.setId(request.getId());
-        proxy.setProxyHost(request.getHost());
-        proxy.setProxyPort(request.getPort());
-        proxy.setProxyUsername(request.getUsername());
-        proxy.setProxyPassword(request.getPassword());
-        proxy.setDescription(request.getDescription());
-        return machineProxyService.updateProxy(proxy);
+        this.check(request);
+        return machineProxyService.addUpdateProxy(request).intValue();
+    }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/list")
+    public DataGrid<MachineProxyVO> list(@RequestBody MachineProxyRequest request) {
+        return machineProxyService.listProxy(request);
     }
 
     /**
@@ -83,7 +69,7 @@ public class MachineProxyController {
     }
 
     /**
-     * 检查
+     * 合法校验
      */
     private void check(MachineProxyRequest request) {
         String host = Valid.notBlank(request.getHost());
@@ -95,5 +81,7 @@ public class MachineProxyController {
             throw Exceptions.invalidArgument(Const.INVALID_PARAM);
         }
     }
+
+    // @RequestMapping("/use/machine")
 
 }

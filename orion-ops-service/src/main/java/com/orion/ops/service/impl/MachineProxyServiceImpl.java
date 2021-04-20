@@ -2,17 +2,21 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.PageRequest;
 import com.orion.lang.wrapper.Pager;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
 import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
+import com.orion.ops.utils.ValueMix;
+import com.orion.utils.Strings;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -32,15 +36,34 @@ public class MachineProxyServiceImpl implements MachineProxyService {
     private MachineInfoDAO machineInfoDAO;
 
     @Override
-    public Long addProxy(MachineProxyDO proxy) {
-        machineProxyDAO.insert(proxy);
-        return proxy.getId();
+    public Long addUpdateProxy(MachineProxyRequest request) {
+        Long id = request.getId();
+        MachineProxyDO proxy = new MachineProxyDO();
+        proxy.setId(id);
+        proxy.setProxyHost(request.getHost());
+        proxy.setProxyPort(request.getPort());
+        proxy.setProxyUsername(request.getUsername());
+        String password = request.getPassword();
+        if (!Strings.isBlank(password)) {
+            proxy.setProxyPassword(ValueMix.encrypt(password));
+        }
+        proxy.setDescription(request.getDescription());
+        if (id == null) {
+            machineProxyDAO.insert(proxy);
+            return proxy.getId();
+        } else {
+            return (long) machineProxyDAO.updateById(proxy);
+        }
     }
 
     @Override
-    public DataGrid<MachineProxyVO> listProxy(PageRequest request) {
+    public DataGrid<MachineProxyVO> listProxy(MachineProxyRequest request) {
         Pager<MachineProxyVO> pager = Pager.of(request);
         LambdaQueryWrapper<MachineProxyDO> wrapper = new LambdaQueryWrapper<MachineProxyDO>()
+                .like(Objects.nonNull(request.getHost()), MachineProxyDO::getProxyHost, request.getHost())
+                .like(Objects.nonNull(request.getUsername()), MachineProxyDO::getProxyUsername, request.getUsername())
+                .like(Objects.nonNull(request.getDescription()), MachineProxyDO::getDescription, request.getDescription())
+                .eq(Objects.nonNull(request.getPort()), MachineProxyDO::getProxyPort, request.getPort())
                 .orderByDesc(MachineProxyDO::getCreateTime);
         Integer count = machineProxyDAO.selectCount(wrapper);
         pager.setTotal(count);
@@ -64,11 +87,7 @@ public class MachineProxyServiceImpl implements MachineProxyService {
     }
 
     @Override
-    public Integer updateProxy(MachineProxyDO proxy) {
-        return machineProxyDAO.updateById(proxy);
-    }
-
-    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer deleteProxy(Long id) {
         machineInfoDAO.setProxyIdWithNull(id);
         return machineProxyDAO.deleteById(id);

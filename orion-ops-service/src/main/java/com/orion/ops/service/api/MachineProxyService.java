@@ -1,8 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.PageRequest;
-import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 
 /**
@@ -15,12 +14,12 @@ import com.orion.ops.entity.vo.MachineProxyVO;
 public interface MachineProxyService {
 
     /**
-     * 添加代理
+     * 添加/修改 代理
      *
-     * @param proxy proxy
-     * @return id
+     * @param request request
+     * @return id/effect
      */
-    Long addProxy(MachineProxyDO proxy);
+    Long addUpdateProxy(MachineProxyRequest request);
 
     /**
      * 分页查询
@@ -28,15 +27,7 @@ public interface MachineProxyService {
      * @param request request
      * @return rows
      */
-    DataGrid<MachineProxyVO> listProxy(PageRequest request);
-
-    /**
-     * 修改代理
-     *
-     * @param proxy proxy
-     * @return effect
-     */
-    Integer updateProxy(MachineProxyDO proxy);
+    DataGrid<MachineProxyVO> listProxy(MachineProxyRequest request);
 
     /**
      * 删除代理
