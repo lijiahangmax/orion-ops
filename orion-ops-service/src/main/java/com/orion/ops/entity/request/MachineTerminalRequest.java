@@ -1,41 +1,26 @@
-package com.orion.ops.entity.vo;
+package com.orion.ops.entity.request;
 
 import lombok.Data;
 
 /**
- * 访问终端 VO
+ * 终端
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/4/1 16:40
+ * @since 2021/4/15 22:14
  */
 @Data
-public class TerminalAccessVO {
+public class MachineTerminalRequest {
 
     /**
-     * 主机
+     * id
      */
-    private String host;
-
-    /**
-     * 端口
-     */
-    private Integer port;
-
-    /**
-     * 机器名称
-     */
-    private String machineName;
+    private Long id;
 
     /**
      * 机器id
      */
     private Long machineId;
-
-    /**
-     * username
-     */
-    private String username;
 
     /**
      * 终端类型
@@ -56,10 +41,5 @@ public class TerminalAccessVO {
      * 字体大小
      */
     private Integer fontSize;
-
-    /**
-     * 访问token
-     */
-    private String accessToken;
 
 }
