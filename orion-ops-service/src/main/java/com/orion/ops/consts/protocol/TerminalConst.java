@@ -43,7 +43,7 @@ public class TerminalConst {
     /**
      * 判断终端心跳断开的阀值
      */
-    public static final int TERMINAL_CONNECT_DOWN = Const.MS_S_30 * 3;
+    public static final int TERMINAL_CONNECT_DOWN = Const.MS_S_60 + Const.MS_S_15;
 
     /**
      * 默认背景色
