@@ -13,13 +13,18 @@ public class KeyConst {
     }
 
     /**
-     * auth:login:token
+     * auth:login:{id}
      */
-    public static final String LOGIN_TOKEN_KEY = "auth:login:{}";
+    public static final String LOGIN_TOKEN_KEY = "auth:info:{}";
 
     /**
-     * terminal:access:uid:tid:token
+     * terminal:access:{token}
      */
-    public static final String TERMINAL_ACCESS_TOKEN = "terminal:access:{}:{}:{}";
+    public static final String TERMINAL_ACCESS_TOKEN = "terminal:access:{}";
+
+    /**
+     * terminal:id:{id}
+     */
+    public static final String TERMINAL_ID = "terminal:id:{}";
 
 }
