@@ -125,6 +125,8 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.KEYS_PATH);
             case DIST_PATH:
                 return createOrionOpsPath(Const.DIST_PATH);
+            case PIC_PATH:
+                return createOrionOpsPath(Const.PIC_PATH);
             default:
                 return null;
         }
@@ -158,7 +160,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      * @return path
      */
     public static String createOrionOpsPath(String name) {
-        String dir = Systems.HOME_DIR + "/" + Const.ORION_OPS + "/" + name + "/";
+        String dir = Systems.HOME_DIR + "/" + Const.ORION_OPS + "/" + name;
         dir = Files1.getPath(dir);
         Files1.mkdirs(dir);
         return dir;

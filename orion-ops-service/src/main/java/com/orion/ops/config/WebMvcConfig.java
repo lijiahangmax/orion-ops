@@ -7,6 +7,7 @@ import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.InvalidArgumentException;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
+import com.orion.ops.interceptor.RoleInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,12 +31,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private AuthenticateInterceptor authenticateInterceptor;
 
+    @Resource
+    private RoleInterceptor roleInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 认证拦截器
         registry.addInterceptor(authenticateInterceptor)
-                .addPathPatterns("/orion/api/**")
-                .excludePathPatterns("/orion/auth/**");
+                .addPathPatterns("/orion/api/**");
+        registry.addInterceptor(roleInterceptor)
+                .addPathPatterns("/orion/api/**");
     }
 
 
