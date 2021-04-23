@@ -69,6 +69,11 @@ public enum EnvAttr {
     DIST_PATH(true, true, "产物目录"),
 
     /**
+     * 存放图片目录
+     */
+    PIC_PATH(true, false, "存放图片目录"),
+
+    /**
      * nginx静态文件映射目录
      */
     NGINX_WWW_HOME(false, true, "nginx 静态文件映射目录"),
