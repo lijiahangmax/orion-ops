@@ -27,9 +27,9 @@ public enum ResultCode implements CodeInfo {
     },
 
     /**
-     * 不能访问终端
+     * 无权限
      */
-    TERMINAL_UN_ACCESS() {
+    NO_PERMISSION() {
         @Override
         public int code() {
             return 710;
@@ -37,7 +37,22 @@ public enum ResultCode implements CodeInfo {
 
         @Override
         public String message() {
-            return "无权连接终端";
+            return "无权限";
+        }
+    },
+
+    /**
+     * 登录失败
+     */
+    LOGIN_FAILURE() {
+        @Override
+        public int code() {
+            return 500;
+        }
+
+        @Override
+        public String message() {
+            return "登录失败";
         }
     },
 

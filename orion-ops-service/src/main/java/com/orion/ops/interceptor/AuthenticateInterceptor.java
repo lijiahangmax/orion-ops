@@ -37,7 +37,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         if (!(handler instanceof HandlerMethod)) {
-            return false;
+            return true;
         }
         boolean ignore = ((HandlerMethod) handler).hasMethodAnnotation(IgnoreAuth.class);
         boolean pass = false;

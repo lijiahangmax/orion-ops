@@ -1,6 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.RoleType;
 import com.orion.ops.consts.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.servlet.web.CookiesExt;
@@ -40,8 +41,6 @@ public class Currents {
         if (Strings.isEmpty(t)) {
             t = CookiesExt.get(request, token);
         }
-        // test flag
-        t = "1u";
         return t;
     }
 
@@ -61,6 +60,15 @@ public class Currents {
      */
     public static Long getUserId() {
         return UserHolder.get().getId();
+    }
+
+    /**
+     * 是否为管理员
+     *
+     * @return true管理员
+     */
+    public static boolean isAdministrator() {
+        return RoleType.ADMINISTRATOR.getType().equals(UserHolder.get().getRoleType());
     }
 
 }

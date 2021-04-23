@@ -22,10 +22,25 @@ public class UserDTO implements Serializable {
     private Long id;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
      * 角色类型
      * <p>
      * {@link com.orion.ops.consts.RoleType}
      */
     private Integer roleType;
+
+    /**
+     * 登录时间戳
+     */
+    private Long timestamp;
 
 }
