@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.orion.constant.Const;
 
 /**
- * @author ljh15
+ * @author Jiahang Li
  */
 public class CodeGenerator {
 
@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("machine_terminal");
+                .setInclude("user_info","user_event_log");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()
