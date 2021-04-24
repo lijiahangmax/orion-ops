@@ -6,6 +6,7 @@ import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Pager;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.ProxyType;
 import com.orion.ops.consts.SyncMachineProperties;
 import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.dao.*;
@@ -244,14 +245,24 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             if (machine.getPassword() != null) {
                 session.setPassword(ValueMix.decrypt(machine.getPassword(), machine.getId() + Const.ORION_OPS));
             }
+            MachineProxyDO proxy = null;
             if (proxyId != null) {
-                MachineProxyDO proxy = machineProxyDAO.selectById(proxyId);
-                if (Strings.isBlank(proxy.getProxyUsername())) {
-                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort());
-                } else {
-                    String password = ValueMix.decrypt(proxy.getProxyPassword());
-                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                proxy = machineProxyDAO.selectById(proxyId);
+            }
+            if (proxy != null) {
+                ProxyType proxyType = ProxyType.of(proxy.getProxyType());
+                String password = proxy.getProxyPassword();
+                if (!Strings.isBlank(password)) {
+                    password = ValueMix.decrypt(password);
                 }
+                if (ProxyType.HTTP.equals(proxyType)) {
+                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                } else if (ProxyType.SOCKET4.equals(proxyType)) {
+                    session.setSocket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                } else if (ProxyType.SOCKET5.equals(proxyType)) {
+                    session.setSocket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                }
+                session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
             }
             session.connect(TerminalConst.TERMINAL_CONNECT_TIMEOUT);
             log.info("远程机器建立连接-成功 {}@{}/{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
