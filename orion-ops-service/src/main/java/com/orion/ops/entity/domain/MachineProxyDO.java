@@ -56,6 +56,12 @@ public class MachineProxyDO implements Serializable {
     private String proxyPassword;
 
     /**
+     * 代理类型 1http代理 2socket4代理 3socket5代理
+     */
+    @TableField("proxy_type")
+    private Integer proxyType;
+
+    /**
      * 描述
      */
     @TableField("description")
