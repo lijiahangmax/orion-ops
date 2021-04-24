@@ -10,6 +10,8 @@ import com.orion.utils.Strings;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 环境工具类
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/2 9:52
@@ -63,12 +65,31 @@ public class Currents {
     }
 
     /**
-     * 是否为管理员
+     * 是否为 超级管理员
      *
-     * @return true管理员
+     * @return true 超级管理员
+     */
+    public static boolean isSuperAdministrator() {
+        UserDTO user = UserHolder.get();
+        if (user == null) {
+            return false;
+        }
+        Integer roleType = user.getRoleType();
+        return RoleType.isSuperAdministrator(roleType);
+    }
+
+    /**
+     * 是否为 超级管理员/管理员
+     *
+     * @return true 超级管理员/管理员
      */
     public static boolean isAdministrator() {
-        return RoleType.ADMINISTRATOR.getType().equals(UserHolder.get().getRoleType());
+        UserDTO user = UserHolder.get();
+        if (user == null) {
+            return false;
+        }
+        Integer roleType = user.getRoleType();
+        return RoleType.isAdministrator(roleType);
     }
 
 }

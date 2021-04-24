@@ -56,7 +56,9 @@ public class UserInfoDO implements Serializable {
     private String salt;
 
     /**
-     * 角色类型 1管理员 2开发 3运维
+     * 角色类型 10超级管理员 20管理员 30开发 40运维
+     *
+     * @see com.orion.ops.consts.RoleType
      */
     @TableField("role_type")
     private Integer roleType;
