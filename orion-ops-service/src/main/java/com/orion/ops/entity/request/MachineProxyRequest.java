@@ -41,6 +41,11 @@ public class MachineProxyRequest extends PageRequest {
     private String password;
 
     /**
+     * 代理类型
+     */
+    private Integer type;
+
+    /**
      * 描述
      */
     private String description;

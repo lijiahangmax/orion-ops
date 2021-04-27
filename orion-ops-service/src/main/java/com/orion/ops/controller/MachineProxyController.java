@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.ProxyType;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
@@ -74,6 +75,7 @@ public class MachineProxyController {
     private void check(MachineProxyRequest request) {
         String host = Valid.notBlank(request.getHost());
         Valid.notNull(request.getPort());
+        Valid.notNull(ProxyType.of(request.getType()));
         if (!Strings.isBlank(request.getUsername())) {
             Valid.notNull(request.getPassword());
         }

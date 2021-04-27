@@ -30,6 +30,11 @@ public class MachineProxyVO {
     private Integer port;
 
     /**
+     * 代理类型
+     */
+    private Integer type;
+
+    /**
      * 用户名
      */
     private String username;

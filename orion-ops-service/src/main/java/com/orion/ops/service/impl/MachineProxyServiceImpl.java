@@ -43,6 +43,7 @@ public class MachineProxyServiceImpl implements MachineProxyService {
         proxy.setProxyHost(request.getHost());
         proxy.setProxyPort(request.getPort());
         proxy.setProxyUsername(request.getUsername());
+        proxy.setProxyType(request.getType());
         String password = request.getPassword();
         if (!Strings.isBlank(password)) {
             proxy.setProxyPassword(ValueMix.encrypt(password));
@@ -64,6 +65,7 @@ public class MachineProxyServiceImpl implements MachineProxyService {
                 .like(Objects.nonNull(request.getUsername()), MachineProxyDO::getProxyUsername, request.getUsername())
                 .like(Objects.nonNull(request.getDescription()), MachineProxyDO::getDescription, request.getDescription())
                 .eq(Objects.nonNull(request.getPort()), MachineProxyDO::getProxyPort, request.getPort())
+                .eq(Objects.nonNull(request.getType()), MachineProxyDO::getProxyType, request.getType())
                 .orderByDesc(MachineProxyDO::getCreateTime);
         Integer count = machineProxyDAO.selectCount(wrapper);
         pager.setTotal(count);
@@ -77,6 +79,7 @@ public class MachineProxyServiceImpl implements MachineProxyService {
                         vo.setHost(p.getProxyHost());
                         vo.setPort(p.getProxyPort());
                         vo.setUsername(p.getProxyUsername());
+                        vo.setType(p.getProxyType());
                         vo.setDescription(p.getDescription());
                         vo.setCreateTime(p.getCreateTime());
                         return vo;
