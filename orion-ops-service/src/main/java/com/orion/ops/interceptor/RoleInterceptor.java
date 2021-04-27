@@ -2,7 +2,7 @@ package com.orion.ops.interceptor;
 
 import com.orion.constant.StandardContentType;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.annotation.HasRole;
+import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.consts.UserHolder;
@@ -33,7 +33,7 @@ public class RoleInterceptor implements HandlerInterceptor {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        HasRole role = ((HandlerMethod) handler).getMethodAnnotation(HasRole.class);
+        RequireRole role = ((HandlerMethod) handler).getMethodAnnotation(RequireRole.class);
         if (role == null) {
             return true;
         }

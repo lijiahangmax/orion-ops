@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface HasRole {
+public @interface RequireRole {
 
     /**
      * 所需权限
