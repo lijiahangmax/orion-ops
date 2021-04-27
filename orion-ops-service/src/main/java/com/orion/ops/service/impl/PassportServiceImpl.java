@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.RpcWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.ResultCode;
+import com.orion.ops.consts.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -105,13 +107,15 @@ public class PassportServiceImpl implements PassportService {
         UserDTO current = Currents.getUser();
         if (!updateCurrent && current.getUsername().equals(username.trim())) {
             updateCurrent = true;
-        } else {
-            // 检查权限
         }
         if (updateCurrent) {
             username = current.getUsername();
         } else {
             username = username.trim();
+            // 检查权限
+            if (!Currents.isAdministrator()) {
+                return RpcWrapper.of(ResultCode.NO_PERMISSION);
+            }
         }
         // 查询用户
         LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
@@ -120,6 +124,16 @@ public class PassportServiceImpl implements PassportService {
         if (userInfo == null) {
             return RpcWrapper.error("未查询到用户信息");
         }
+        RoleType updateRoleType = RoleType.of(userInfo.getRoleType());
+        // 检查是否更新的是超级管理员的密码
+        if (RoleType.SUPER_ADMINISTRATOR.equals(updateRoleType) && !updateCurrent) {
+            return RpcWrapper.of(ResultCode.NO_PERMISSION);
+        }
+        // 检查是否更新的是管理员的密码
+        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && (!updateCurrent || !Currents.isSuperAdministrator())) {
+            return RpcWrapper.of(ResultCode.NO_PERMISSION);
+        }
+
         // 修改密码
         String newPassword = ValueMix.encPassword(request.getPassword(), userInfo.getSalt());
         UserInfoDO updateUser = new UserInfoDO();
