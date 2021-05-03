@@ -41,21 +41,6 @@ public enum ResultCode implements CodeInfo {
         }
     },
 
-    /**
-     * 登录失败
-     */
-    LOGIN_FAILURE() {
-        @Override
-        public int code() {
-            return 500;
-        }
-
-        @Override
-        public String message() {
-            return "登录失败";
-        }
-    },
-
     ;
 
 }

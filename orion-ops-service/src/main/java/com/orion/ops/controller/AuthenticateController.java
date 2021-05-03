@@ -6,7 +6,6 @@ import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ResultCode;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
@@ -48,7 +47,7 @@ public class AuthenticateController {
         RpcWrapper<UserLoginVO> res = passportService.login(request);
         // 登录失败
         if (!res.isSuccess()) {
-            return HttpWrapper.of(ResultCode.LOGIN_FAILURE);
+            return HttpWrapper.error(res.getMsg());
         }
         // 登录成功
         UserLoginVO data = res.getData();
