@@ -64,6 +64,8 @@ public class MachineRoomController {
         return machineRoomService.deleteMachineRoom(request);
     }
 
+    // 批量删除
+    // 批量停用
     // @RequestMapping("/use/machine")
 
 }
