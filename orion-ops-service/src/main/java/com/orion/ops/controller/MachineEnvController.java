@@ -72,6 +72,7 @@ public class MachineEnvController {
         Valid.notNull(request.getMachineId());
     }
 
+    // 批量删除
     // diff
     // merge
 

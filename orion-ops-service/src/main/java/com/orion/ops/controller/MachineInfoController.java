@@ -94,6 +94,8 @@ public class MachineInfoController {
         return machineInfoService.testConnect(id);
     }
 
+    // 批量删除
+    // 批量停用
     // run tpl
     // 配置模板
 
