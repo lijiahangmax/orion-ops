@@ -15,7 +15,7 @@ import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.HeadPicGenerator;
+import com.orion.ops.utils.HeadPicHolder;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,10 +36,10 @@ import java.util.concurrent.TimeUnit;
 public class PassportServiceImpl implements PassportService {
 
     @Resource
-    private RedisTemplate<String, String> redisTemplate;
+    private UserInfoDAO userInfoDAO;
 
     @Resource
-    private UserInfoDAO userInfoDAO;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public RpcWrapper<UserLoginVO> login(UserLoginRequest request) {
@@ -48,20 +48,23 @@ public class PassportServiceImpl implements PassportService {
         UserInfoDO userInfo = userInfoDAO.selectOne(query);
         // 未找到用户
         if (userInfo == null) {
-            return RpcWrapper.error();
+            return RpcWrapper.error("用户名或密码错误");
         }
         // 检查密码
         boolean validPassword = ValueMix.validPassword(request.getPassword(), userInfo.getSalt(), userInfo.getPassword());
         // 密码错误
         if (!validPassword) {
-            return RpcWrapper.error();
+            return RpcWrapper.error("用户名或密码错误");
+        }
+        if (Const.DISABLE.equals(userInfo.getUserStatus())) {
+            return RpcWrapper.error("用户已被禁用");
         }
         Long userId = userInfo.getId();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
         // 检查头像
         if (Strings.isBlank(userInfo.getHeadPic())) {
-            String url = HeadPicGenerator.generatorUserHeadPic(userId, userInfo.getNickname());
+            String url = HeadPicHolder.generatorUserHeadPic(userId, userInfo.getNickname());
             userInfo.setHeadPic(url);
             updateUser.setHeadPic(url);
         }
@@ -87,7 +90,7 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
         // 头像
-        loginInfo.setHeadPic(HeadPicGenerator.getBase64(userInfo.getHeadPic()));
+        loginInfo.setHeadPic(HeadPicHolder.getBase64(userInfo.getHeadPic()));
         return RpcWrapper.success(loginInfo);
     }
 
