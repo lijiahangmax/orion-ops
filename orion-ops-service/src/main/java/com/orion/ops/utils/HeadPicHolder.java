@@ -16,16 +16,16 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * 头像生成器
+ * 头像处理器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/21 21:43
  */
 @Slf4j
-public class HeadPicGenerator {
+public class HeadPicHolder {
 
-    private HeadPicGenerator() {
+    private HeadPicHolder() {
     }
 
     /**
@@ -36,6 +36,30 @@ public class HeadPicGenerator {
     private static final String HEAD_PIC_DIR = "/head_pic/";
 
     private static final String HEAD_PIC_SUFFIX = Const.SUFFIX_PNG;
+
+    /**
+     * 获取头像路径
+     *
+     * @param uid    uid
+     * @param suffix 后缀
+     * @return path
+     */
+    public static String getPicPath(Long uid, String suffix) {
+        return HEAD_PIC_DIR + uid + "." + suffix;
+    }
+
+    /**
+     * 创建并获取头像全路径
+     *
+     * @param uid    uid
+     * @param suffix 后缀
+     * @return path
+     */
+    public static String touchPicFile(Long uid, String suffix) {
+        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + HEAD_PIC_DIR + uid + "." + suffix);
+        Files1.touch(path);
+        return path;
+    }
 
     /**
      * 生成用户头像
@@ -71,6 +95,16 @@ public class HeadPicGenerator {
     public static String getBase64(String url) {
         String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
         return Base64s.img64Encode(FileReaders.readFast(path), Files1.getSuffix(path));
+    }
+
+    /**
+     * 删除图片
+     *
+     * @param url url
+     */
+    public static void deletePic(String url) {
+        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
+        Files1.delete(path);
     }
 
 }
