@@ -1,8 +1,10 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.id.ObjectIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Pager;
+import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
@@ -12,6 +14,8 @@ import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.codec.Base64s;
+import com.orion.utils.io.FileWriters;
 import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,35 +41,38 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long addSecretKey(MachineSecretKeyDO key) {
-        // 新增key
-        String password = key.getPassword();
-        if (!Strings.isBlank(password)) {
-            key.setPassword(ValueMix.encrypt(password));
-        }
-        machineSecretKeyDAO.insert(key);
-        // 加载key
-        SessionHolder.addIdentity(key.getSecretKeyPath(), password);
-        return key.getId();
-    }
+    public Long addUpdateSecretKey(MachineKeyRequest request) {
+        MachineSecretKeyDO key = new MachineSecretKeyDO();
+        key.setId(request.getId());
+        key.setKeyName(request.getName());
+        key.setPassword(request.getPassword());
+        key.setDescription(request.getDescription());
+        String path = Files1.getPath(EnvAttr.KEY_PATH.getValue() + "/" + ObjectIds.next() + "_id_rsa");
+        key.setSecretKeyPath(path);
+        Files1.touch(path);
+        byte[] keyFileData = Base64s.decode(Strings.bytes(request.getFile()));
+        FileWriters.writeFast(path, keyFileData);
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Integer updateSecretKey(MachineSecretKeyDO key) {
-        MachineSecretKeyDO beforeKey = machineSecretKeyDAO.selectById(key.getId());
-        // 移除key
-        SessionHolder.removeIdentity(beforeKey.getSecretKeyPath());
-        // 删除key
-        Files1.delete(beforeKey.getSecretKeyPath());
+        Long id = key.getId();
+        if (id != null) {
+            MachineSecretKeyDO beforeKey = machineSecretKeyDAO.selectById(id);
+            // 移除key
+            SessionHolder.removeIdentity(beforeKey.getSecretKeyPath());
+            // 删除key
+            Files1.delete(beforeKey.getSecretKeyPath());
+        }
         String password = key.getPassword();
         if (!Strings.isBlank(password)) {
             key.setPassword(ValueMix.encrypt(password));
         }
-        // 修改key
-        int effect = machineSecretKeyDAO.updateById(key);
         // 加载key
         SessionHolder.addIdentity(key.getSecretKeyPath(), password);
-        return effect;
+        if (id == null) {
+            machineSecretKeyDAO.insert(key);
+            return key.getId();
+        } else {
+            return (long) machineSecretKeyDAO.updateById(key);
+        }
     }
 
     @Override

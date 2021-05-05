@@ -1,7 +1,6 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 
@@ -15,20 +14,12 @@ import com.orion.ops.entity.vo.MachineSecretKeyVO;
 public interface MachineKeyService {
 
     /**
-     * 添加key
+     * 添加/修改 key
      *
-     * @param key key
-     * @return id
+     * @param request request
+     * @return id/effect
      */
-    Long addSecretKey(MachineSecretKeyDO key);
-
-    /**
-     * 修改key
-     *
-     * @param key key
-     * @return effect
-     */
-    Integer updateSecretKey(MachineSecretKeyDO key);
+    Long addUpdateSecretKey(MachineKeyRequest request);
 
     /**
      * 删除key

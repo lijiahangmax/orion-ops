@@ -26,8 +26,18 @@ public class MachineKeyRequest extends PageRequest {
     private String name;
 
     /**
+     * 密码
+     */
+    private String password;
+
+    /**
      * 描述
      */
     private String description;
+
+    /**
+     * 文件base64
+     */
+    private String file;
 
 }
