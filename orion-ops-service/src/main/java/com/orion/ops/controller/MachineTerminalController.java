@@ -4,7 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.lang.wrapper.RpcWrapper;
 import com.orion.lang.wrapper.Wrapper;
-import com.orion.ops.annotation.HasRole;
+import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.RoleType;
@@ -108,7 +108,7 @@ public class MachineTerminalController {
      * 强制下线 (管理员)
      */
     @RequestMapping("/manager/offline")
-    @HasRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {
         String token = Valid.notBlank(request.getToken());
         RpcWrapper<?> wrapper = terminalSessionManager.forceOffline(token);
@@ -123,7 +123,7 @@ public class MachineTerminalController {
      * session列表 (管理员)
      */
     @RequestMapping("/manager/session/list")
-    @HasRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public DataGrid<MachineTerminalManagerVO> sessionList(@RequestBody MachineTerminalManagerRequest request) {
         return terminalSessionManager.getOnlineTerminal(request);
     }
