@@ -140,6 +140,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             handler.handleMessage(data, operate);
         } catch (Exception e) {
             log.error("terminal 处理操作异常 token: {}, data: {}, e: {}", token, data, e);
+            e.printStackTrace();
             if (valid) {
                 session.close(TerminalCloseCode.RUNTIME_VALID_EXCEPTION.close());
             } else {
@@ -150,6 +151,9 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
+        String token = this.getToken(session);
+        log.error("terminal 操作异常拦截 token: {}, e: {}", token, exception);
+        exception.printStackTrace();
     }
 
     @Override
