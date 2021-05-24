@@ -9,6 +9,9 @@ package com.orion.ops.consts;
  */
 public class Const extends com.orion.constant.Const {
 
+    private Const() {
+    }
+
     public static final String ORION_OPS = "orion_ops";
 
     public static final String WHERE_IS = "whereis";

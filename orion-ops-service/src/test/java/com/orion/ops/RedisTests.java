@@ -1,6 +1,6 @@
 package com.orion.ops;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class RedisTests {
+public class RedisTests {
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
