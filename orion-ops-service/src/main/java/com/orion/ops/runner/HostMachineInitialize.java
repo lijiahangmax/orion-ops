@@ -2,6 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.AuthType;
+import com.orion.ops.consts.CommandConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
@@ -108,17 +109,17 @@ public class HostMachineInitialize implements CommandLineRunner {
     private String getAttrValue(EnvAttr attr) {
         switch (attr) {
             case JAVA_BIN_PATH:
-                return whereIs(attr, Const.JAVA);
+                return whereIs(attr, CommandConst.JAVA);
             case MAVEN_BIN_PATH:
-                return whereIs(attr, Const.MVN);
+                return whereIs(attr, CommandConst.MVN);
             case NPM_BIN_PATH:
-                return whereIs(attr, Const.NPM);
+                return whereIs(attr, CommandConst.NPM);
             case YARN_BIN_PATH:
-                return whereIs(attr, Const.YARN);
+                return whereIs(attr, CommandConst.YARN);
             case SVN_BIN_PATH:
-                return whereIs(attr, Const.SVN);
+                return whereIs(attr, CommandConst.SVN);
             case GIT_BIN_PATH:
-                return whereIs(attr, Const.GIT);
+                return whereIs(attr, CommandConst.GIT);
             case LOG_PATH:
                 return createOrionOpsPath(Const.OPERATION_LOGS_PATH);
             case KEY_PATH:
@@ -141,7 +142,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      */
     public static String whereIs(EnvAttr attr, String command) {
         try {
-            String s = Processes.getOutputResultWithDirString(Const.USR_BIN, Const.WHERE_IS, command);
+            String s = Processes.getOutputResultWithDirString(CommandConst.USR_BIN, CommandConst.WHERE_IS, command);
             String[] split = s.split(Strings.SPACE);
             if (split.length == 1) {
                 return null;

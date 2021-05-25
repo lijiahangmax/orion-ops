@@ -4,8 +4,11 @@ import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
 import com.orion.exception.IORuntimeException;
 import com.orion.exception.argument.CodeArgumentException;
+import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
+import com.orion.exception.argument.RpcWrapperException;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -43,10 +46,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/orion/api/**");
     }
 
-
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> exceptionHandler(Exception ex) {
-        return HttpWrapper.error().msg("系统繁忙").data(ex.getMessage());
+        return HttpWrapper.error().msg(Const.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
@@ -59,19 +61,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return HttpWrapper.error().code(ex.getCode()).msg(ex.getMessage());
     }
 
+    @ExceptionHandler(value = HttpWrapperException.class)
+    public HttpWrapper<?> httpWrapperExceptionHandler(HttpWrapperException ex) {
+        return ex.getWrapper();
+    }
+
+    @ExceptionHandler(value = RpcWrapperException.class)
+    public HttpWrapper<?> rpcWrapperExceptionHandler(RpcWrapperException ex) {
+        return ex.getWrapper().toHttpWrapper();
+    }
+
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
     public HttpWrapper<?> ioExceptionHandler(Exception ex) {
-        return HttpWrapper.error().msg("网络异常").data(ex.getMessage());
+        return HttpWrapper.error().msg(Const.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {ConnectionRuntimeException.class})
     public HttpWrapper<?> connectionExceptionHandler(Exception ex) {
-        return HttpWrapper.error().msg("连接失败").data(ex.getMessage());
+        return HttpWrapper.error().msg(Const.CONN_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {AuthenticationException.class})
     public HttpWrapper<?> authExceptionHandler(Exception ex) {
-        return HttpWrapper.error().msg("认证失败").data(ex.getMessage());
+        return HttpWrapper.error().msg(Const.AUTH_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
 }

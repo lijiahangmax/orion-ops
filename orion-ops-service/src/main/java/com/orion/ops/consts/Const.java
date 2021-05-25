@@ -14,22 +14,6 @@ public class Const extends com.orion.constant.Const {
 
     public static final String ORION_OPS = "orion_ops";
 
-    public static final String WHERE_IS = "whereis";
-
-    public static final String USR_BIN = "/usr/bin";
-
-    public static final String JAVA = "java";
-
-    public static final String MVN = "mvn";
-
-    public static final String NPM = "npm";
-
-    public static final String YARN = "yarn";
-
-    public static final String GIT = "git";
-
-    public static final String SVN = "svn";
-
     public static final String OPERATION_LOGS_PATH = "operation_logs";
 
     public static final String KEYS_PATH = ".keys";
@@ -53,5 +37,13 @@ public class Const extends com.orion.constant.Const {
     public static final String LOGIN_TOKEN_ENC_KEY = "LoginToken";
 
     public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24;
+
+    public static final String EXCEPTION_MESSAGE = "系统繁忙";
+
+    public static final String AUTH_EXCEPTION_MESSAGE = "认证失败";
+
+    public static final String IO_EXCEPTION_MESSAGE = "网络异常";
+
+    public static final String CONN_EXCEPTION_MESSAGE = "连接失败";
 
 }
