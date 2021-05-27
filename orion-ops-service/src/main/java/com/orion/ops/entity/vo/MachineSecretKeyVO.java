@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineSecretKeyDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -38,5 +40,17 @@ public class MachineSecretKeyVO {
      * 创建时间
      */
     private Date createTime;
+
+    static {
+        TypeStore.STORE.register(MachineSecretKeyDO.class, MachineSecretKeyVO.class, p -> {
+            MachineSecretKeyVO vo = new MachineSecretKeyVO();
+            vo.setId(p.getId());
+            vo.setName(p.getKeyName());
+            vo.setPath(p.getSecretKeyPath());
+            vo.setDescription(p.getDescription());
+            vo.setCreateTime(p.getCreateTime());
+            return vo;
+        });
+    }
 
 }

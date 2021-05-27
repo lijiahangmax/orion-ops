@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -108,5 +110,27 @@ public class MachineInfoVO {
      * 修改时间
      */
     private Date updateTime;
+
+    static {
+        TypeStore.STORE.register(MachineInfoDO.class, MachineInfoVO.class, p -> {
+            MachineInfoVO vo = new MachineInfoVO();
+            vo.setId(p.getId());
+            vo.setRoomId(p.getRoomId());
+            vo.setProxyId(p.getProxyId());
+            vo.setHost(p.getMachineHost());
+            vo.setSshPort(p.getSshPort());
+            vo.setName(p.getUsername());
+            vo.setTag(p.getMachineTag());
+            vo.setDescription(p.getDescription());
+            vo.setUsername(p.getUsername());
+            vo.setKeyId(p.getKeyId());
+            vo.setAuthType(p.getAuthType());
+            vo.setSystemType(p.getSystemType());
+            vo.setSystemVersion(p.getSystemVersion());
+            vo.setStatus(p.getMachineStatus());
+            vo.setCreateTime(p.getCreateTime());
+            return vo;
+        });
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -48,5 +50,19 @@ public class MachineProxyVO {
      * 创建时间
      */
     private Date createTime;
+
+    static {
+        TypeStore.STORE.register(MachineProxyDO.class, MachineProxyVO.class, p -> {
+            MachineProxyVO vo = new MachineProxyVO();
+            vo.setId(p.getId());
+            vo.setHost(p.getProxyHost());
+            vo.setPort(p.getProxyPort());
+            vo.setUsername(p.getProxyUsername());
+            vo.setType(p.getProxyType());
+            vo.setDescription(p.getDescription());
+            vo.setCreateTime(p.getCreateTime());
+            return vo;
+        });
+    }
 
 }

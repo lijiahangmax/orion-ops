@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineRoomDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -53,5 +55,20 @@ public class MachineRoomVO {
      * 修改时间
      */
     private Date updateTime;
+
+    static {
+        TypeStore.STORE.register(MachineRoomDO.class, MachineRoomVO.class, p -> {
+            MachineRoomVO vo = new MachineRoomVO();
+            vo.setId(p.getId());
+            vo.setName(p.getRoomName());
+            vo.setTag(p.getRoomTag());
+            vo.setDescription(p.getDescription());
+            vo.setStatus(p.getRoomStatus());
+            vo.setManagerId(p.getManagerId());
+            vo.setCreateTime(p.getCreateTime());
+            vo.setUpdateTime(p.getUpdateTime());
+            return vo;
+        });
+    }
 
 }

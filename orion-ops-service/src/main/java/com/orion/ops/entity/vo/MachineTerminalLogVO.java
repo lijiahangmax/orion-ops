@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineTerminalLogDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -63,5 +65,22 @@ public class MachineTerminalLogVO {
      * 创建时间
      */
     private Date createTime;
+
+    static {
+        TypeStore.STORE.register(MachineTerminalLogDO.class, MachineTerminalLogVO.class, p -> {
+            MachineTerminalLogVO vo = new MachineTerminalLogVO();
+            vo.setId(p.getId());
+            vo.setUserId(p.getUserId());
+            vo.setUsername(p.getUsername());
+            vo.setMachineId(p.getMachineId());
+            vo.setMachineHost(p.getMachineHost());
+            vo.setAccessToken(p.getAccessToken());
+            vo.setConnectedTime(p.getConnectedTime());
+            vo.setDisconnectedTime(p.getDisconnectedTime());
+            vo.setCloseCode(p.getCloseCode());
+            vo.setCreateTime(p.getCreateTime());
+            return vo;
+        });
+    }
 
 }

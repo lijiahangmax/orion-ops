@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.MachineEnvDO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.Date;
@@ -46,5 +48,19 @@ public class MachineEnvVO {
      * 修改时间
      */
     private Date updateTime;
+
+    static {
+        TypeStore.STORE.register(MachineEnvDO.class, MachineEnvVO.class, p -> {
+            MachineEnvVO vo = new MachineEnvVO();
+            vo.setId(p.getId());
+            vo.setMachineId(p.getMachineId());
+            vo.setKey(p.getAttrKey());
+            vo.setValue(p.getAttrValue());
+            vo.setDescription(p.getDescription());
+            vo.setCreateTime(p.getCreateTime());
+            vo.setUpdateTime(p.getUpdateTime());
+            return vo;
+        });
+    }
 
 }
