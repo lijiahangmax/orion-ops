@@ -3,7 +3,6 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Pager;
 import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
@@ -11,6 +10,7 @@ import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author Jiahang Li
@@ -93,29 +91,14 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     public DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request) {
-        Pager<MachineSecretKeyVO> pager = Pager.of(request);
         LambdaQueryWrapper<MachineSecretKeyDO> wrapper = new LambdaQueryWrapper<MachineSecretKeyDO>()
                 .like(Objects.nonNull(request.getName()), MachineSecretKeyDO::getKeyName, request.getName())
                 .like(Objects.nonNull(request.getDescription()), MachineSecretKeyDO::getDescription, request.getDescription())
                 .orderByDesc(MachineSecretKeyDO::getCreateTime);
-        Integer count = machineSecretKeyDAO.selectCount(wrapper);
-        pager.setTotal(count);
-        boolean next = pager.hasMoreData();
-        if (next) {
-            wrapper.last(pager.getSql());
-            List<MachineSecretKeyVO> rows = machineSecretKeyDAO.selectList(wrapper).stream()
-                    .map(p -> {
-                        MachineSecretKeyVO vo = new MachineSecretKeyVO();
-                        vo.setId(p.getId());
-                        vo.setName(p.getKeyName());
-                        vo.setPath(p.getSecretKeyPath());
-                        vo.setDescription(p.getDescription());
-                        vo.setCreateTime(p.getCreateTime());
-                        return vo;
-                    }).collect(Collectors.toList());
-            pager.setRows(rows);
-        }
-        return DataGrid.of(pager);
+        return DataQuery.of(machineSecretKeyDAO)
+                .wrapper(wrapper)
+                .page(request)
+                .dataGrid(MachineSecretKeyVO.class);
     }
 
 }

@@ -48,6 +48,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> exceptionHandler(Exception ex) {
+        ex.printStackTrace();
         return HttpWrapper.error().msg(Const.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
@@ -73,11 +74,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
     public HttpWrapper<?> ioExceptionHandler(Exception ex) {
+        ex.printStackTrace();
         return HttpWrapper.error().msg(Const.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {ConnectionRuntimeException.class})
     public HttpWrapper<?> connectionExceptionHandler(Exception ex) {
+        ex.printStackTrace();
         return HttpWrapper.error().msg(Const.CONN_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 

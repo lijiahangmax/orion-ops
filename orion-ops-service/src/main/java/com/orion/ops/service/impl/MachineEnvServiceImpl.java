@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Pager;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
@@ -12,13 +11,13 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 import com.orion.ops.service.api.MachineEnvService;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * 环境变量服务
@@ -64,33 +63,16 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public DataGrid<MachineEnvVO> listEnv(MachineEnvRequest request) {
-        Pager<MachineEnvVO> pager = Pager.of(request);
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .like(Objects.nonNull(request.getKey()), MachineEnvDO::getAttrKey, request.getKey())
                 .like(Objects.nonNull(request.getValue()), MachineEnvDO::getAttrValue, request.getValue())
                 .like(Objects.nonNull(request.getDescription()), MachineEnvDO::getDescription, request.getDescription())
                 .eq(Objects.nonNull(request.getMachineId()), MachineEnvDO::getMachineId, request.getMachineId())
                 .orderByAsc(MachineEnvDO::getId);
-        Integer count = machineEnvDAO.selectCount(wrapper);
-        pager.setTotal(count);
-        boolean next = pager.hasMoreData();
-        if (next) {
-            wrapper.last(pager.getSql());
-            List<MachineEnvVO> rows = machineEnvDAO.selectList(wrapper).stream()
-                    .map(p -> {
-                        MachineEnvVO vo = new MachineEnvVO();
-                        vo.setId(p.getId());
-                        vo.setMachineId(p.getMachineId());
-                        vo.setKey(p.getAttrKey());
-                        vo.setValue(p.getAttrValue());
-                        vo.setDescription(p.getDescription());
-                        vo.setCreateTime(p.getCreateTime());
-                        vo.setUpdateTime(p.getUpdateTime());
-                        return vo;
-                    }).collect(Collectors.toList());
-            pager.setRows(rows);
-        }
-        return DataGrid.of(pager);
+        return DataQuery.of(machineEnvDAO)
+                .page(request)
+                .wrapper(wrapper)
+                .dataGrid(MachineEnvVO.class);
     }
 
     @Override

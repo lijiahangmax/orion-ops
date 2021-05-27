@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Pager;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.ProxyType;
 import com.orion.ops.consts.SyncMachineProperties;
@@ -15,6 +14,7 @@ import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.ValueMix;
 import com.orion.process.Processes;
 import com.orion.remote.channel.SessionHolder;
@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +111,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Override
     public DataGrid<MachineInfoVO> listMachine(MachineInfoRequest request) {
-        Pager<MachineInfoVO> pager = Pager.of(request);
         LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
                 .like(Objects.nonNull(request.getHost()), MachineInfoDO::getMachineHost, request.getHost())
                 .like(Objects.nonNull(request.getName()), MachineInfoDO::getMachineName, request.getName())
@@ -124,58 +124,37 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
                 .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, 1)
                 .orderByAsc(MachineInfoDO::getId);
-        Integer count = machineInfoDAO.selectCount(wrapper);
-        pager.setTotal(count);
-        boolean next = pager.hasMoreData();
-        if (next) {
-            wrapper.last(pager.getSql());
-            List<MachineInfoVO> rows = machineInfoDAO.selectList(wrapper).stream()
-                    .map(p -> {
-                        MachineInfoVO vo = new MachineInfoVO();
-                        vo.setId(p.getId());
-                        vo.setRoomId(p.getRoomId());
-                        vo.setProxyId(p.getProxyId());
-                        vo.setHost(p.getMachineHost());
-                        vo.setSshPort(p.getSshPort());
-                        vo.setName(p.getUsername());
-                        vo.setTag(p.getMachineTag());
-                        vo.setDescription(p.getDescription());
-                        vo.setUsername(p.getUsername());
-                        vo.setKeyId(p.getKeyId());
-                        vo.setAuthType(p.getAuthType());
-                        vo.setSystemType(p.getSystemType());
-                        vo.setSystemVersion(p.getSystemVersion());
-                        vo.setStatus(p.getMachineStatus());
-                        vo.setCreateTime(p.getCreateTime());
-                        return vo;
-                    }).collect(Collectors.toList());
-            // 查询roomId
-            rows.stream().filter(s -> s.getRoomId() != null)
-                    .collect(Collectors.groupingBy(MachineInfoVO::getRoomId))
-                    .forEach((k, v) -> {
-                        Optional.ofNullable(machineRoomDAO.selectById(k))
-                                .map(MachineRoomDO::getRoomName)
-                                .ifPresent(rn -> v.forEach(i -> i.setRoomName(rn)));
-                    });
-            // 查询proxyId
-            rows.stream().filter(s -> s.getProxyId() != null)
-                    .collect(Collectors.groupingBy(MachineInfoVO::getProxyId))
-                    .forEach((k, v) -> {
-                        Optional.ofNullable(machineProxyDAO.selectById(k))
-                                .map(MachineProxyDO::getProxyHost)
-                                .ifPresent(ph -> v.forEach(i -> i.setProxyHost(ph)));
-                    });
-            // 查询keyId
-            rows.stream().filter(s -> s.getKeyId() != null)
-                    .collect(Collectors.groupingBy(MachineInfoVO::getKeyId))
-                    .forEach((k, v) -> {
-                        Optional.ofNullable(machineSecretKeyDAO.selectById(k))
-                                .map(MachineSecretKeyDO::getKeyName)
-                                .ifPresent(kn -> v.forEach(i -> i.setKeyName(kn)));
-                    });
-            pager.setRows(rows);
-        }
-        return DataGrid.of(pager);
+
+        DataGrid<MachineInfoVO> dataGrid = DataQuery.of(machineInfoDAO)
+                .wrapper(wrapper)
+                .page(request)
+                .dataGrid(MachineInfoVO.class);
+        List<MachineInfoVO> rows = dataGrid.getRows();
+        // 查询roomId
+        rows.stream().filter(s -> s.getRoomId() != null)
+                .collect(Collectors.groupingBy(MachineInfoVO::getRoomId))
+                .forEach((k, v) -> {
+                    Optional.ofNullable(machineRoomDAO.selectById(k))
+                            .map(MachineRoomDO::getRoomName)
+                            .ifPresent(rn -> v.forEach(i -> i.setRoomName(rn)));
+                });
+        // 查询proxyId
+        rows.stream().filter(s -> s.getProxyId() != null)
+                .collect(Collectors.groupingBy(MachineInfoVO::getProxyId))
+                .forEach((k, v) -> {
+                    Optional.ofNullable(machineProxyDAO.selectById(k))
+                            .map(MachineProxyDO::getProxyHost)
+                            .ifPresent(ph -> v.forEach(i -> i.setProxyHost(ph)));
+                });
+        // 查询keyId
+        rows.stream().filter(s -> s.getKeyId() != null)
+                .collect(Collectors.groupingBy(MachineInfoVO::getKeyId))
+                .forEach((k, v) -> {
+                    Optional.ofNullable(machineSecretKeyDAO.selectById(k))
+                            .map(MachineSecretKeyDO::getKeyName)
+                            .ifPresent(kn -> v.forEach(i -> i.setKeyName(kn)));
+                });
+        return dataGrid;
     }
 
     @Override

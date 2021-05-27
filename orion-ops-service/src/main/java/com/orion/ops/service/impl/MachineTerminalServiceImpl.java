@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Pager;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.protocol.TerminalConst;
@@ -18,6 +17,7 @@ import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.TerminalType;
@@ -28,11 +28,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * 终端service
@@ -128,7 +126,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
 
     @Override
     public DataGrid<MachineTerminalLogVO> listAccessLog(MachineTerminalLogRequest request) {
-        Pager<MachineTerminalLogVO> pager = Pager.of(request);
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
                 .like(Objects.nonNull(request.getAccessToken()), MachineTerminalLogDO::getAccessToken, request.getAccessToken())
                 .like(Objects.nonNull(request.getMachineHost()), MachineTerminalLogDO::getMachineHost, request.getMachineHost())
@@ -140,29 +137,10 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                 .between(Objects.nonNull(request.getDisconnectedTimeStart()) && Objects.nonNull(request.getDisconnectedTimeEnd()),
                         MachineTerminalLogDO::getDisconnectedTime, request.getDisconnectedTimeStart(), request.getDisconnectedTimeEnd())
                 .orderByDesc(MachineTerminalLogDO::getCreateTime);
-        Integer count = machineTerminalLogDAO.selectCount(wrapper);
-        pager.setTotal(count);
-        boolean next = pager.hasMoreData();
-        if (next) {
-            wrapper.last(pager.getSql());
-            List<MachineTerminalLogVO> rows = machineTerminalLogDAO.selectList(wrapper).stream()
-                    .map(p -> {
-                        MachineTerminalLogVO vo = new MachineTerminalLogVO();
-                        vo.setId(p.getId());
-                        vo.setUserId(p.getUserId());
-                        vo.setUsername(p.getUsername());
-                        vo.setMachineId(p.getMachineId());
-                        vo.setMachineHost(p.getMachineHost());
-                        vo.setAccessToken(p.getAccessToken());
-                        vo.setConnectedTime(p.getConnectedTime());
-                        vo.setDisconnectedTime(p.getDisconnectedTime());
-                        vo.setCloseCode(p.getCloseCode());
-                        vo.setCreateTime(p.getCreateTime());
-                        return vo;
-                    }).collect(Collectors.toList());
-            pager.setRows(rows);
-        }
-        return DataGrid.of(pager);
+        return DataQuery.of(machineTerminalLogDAO)
+                .wrapper(wrapper)
+                .page(request)
+                .dataGrid(MachineTerminalLogVO.class);
     }
 
     @Override
