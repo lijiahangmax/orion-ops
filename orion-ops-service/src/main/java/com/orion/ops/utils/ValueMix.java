@@ -2,12 +2,14 @@ package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
 import com.orion.utils.Arrays1;
+import com.orion.utils.Strings;
 import com.orion.utils.codec.Base62s;
 import com.orion.utils.crypto.Signatures;
 import com.orion.utils.crypto.enums.CipherAlgorithm;
 import com.orion.utils.crypto.enums.PaddingMode;
 import com.orion.utils.crypto.symmetric.EcbSymmetric;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -160,6 +162,7 @@ public class ValueMix {
         return Optional.ofNullable(ValueMix.base62ecbDec(token, Const.LOGIN_TOKEN_ENC_KEY))
                 .map(s -> s.split("_"))
                 .map(s -> s[0])
+                .filter(Strings::isInteger)
                 .map(Long::valueOf)
                 .orElse(null);
     }
@@ -173,6 +176,7 @@ public class ValueMix {
     public static Long[] getLoginTokenInfo(String token) {
         return Optional.ofNullable(ValueMix.base62ecbDec(token, Const.LOGIN_TOKEN_ENC_KEY))
                 .map(s -> s.split("_"))
+                .filter(s -> Arrays.stream(s).allMatch(Strings::isInteger))
                 .map(s -> Arrays1.mapper(s, Long[]::new, Long::valueOf))
                 .orElse(null);
     }

@@ -94,6 +94,9 @@ public class HeadPicHolder {
      */
     public static String getBase64(String url) {
         String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
+        if (!Files1.isFile(path)) {
+            return null;
+        }
         return Base64s.img64Encode(FileReaders.readFast(path), Files1.getSuffix(path));
     }
 
@@ -105,6 +108,16 @@ public class HeadPicHolder {
     public static void deletePic(String url) {
         String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
         Files1.delete(path);
+    }
+
+    /**
+     * 判断是否存在
+     *
+     * @param path path
+     * @return 是否存在
+     */
+    public static boolean isExist(String path) {
+        return Strings.isNotBlank(path) && Files1.isFile(Files1.getPath(EnvAttr.PIC_PATH.getValue() + path));
     }
 
 }

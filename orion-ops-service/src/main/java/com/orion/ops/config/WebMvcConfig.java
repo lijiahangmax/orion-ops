@@ -54,6 +54,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
     public HttpWrapper<?> invalidArgumentExceptionHandler(Exception ex) {
+        ex.printStackTrace();
         return HttpWrapper.error().msg(ex.getMessage());
     }
 

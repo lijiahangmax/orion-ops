@@ -1,5 +1,6 @@
 package com.orion.ops.runner;
 
+import com.orion.ops.OrionOpsServiceApplication;
 import com.orion.support.Attempt;
 import com.orion.utils.reflect.PackageScanner;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,16 @@ public class TypeStoreRegisterRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        new PackageScanner("com.orion.ops.entity.vo").scan()
+        log.info("注册vo转换器开始");
+        new PackageScanner("com.orion.ops.entity.vo")
+                .with(OrionOpsServiceApplication.class)
+                .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {
+                    log.info("register runner init class: {}", s);
                     Class.forName(s.getName());
                 }));
+        log.info("注册vo转换器结束");
     }
 
 }

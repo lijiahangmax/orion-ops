@@ -63,7 +63,7 @@ public class PassportServiceImpl implements PassportService {
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
         // 检查头像
-        if (Strings.isBlank(userInfo.getHeadPic())) {
+        if (!HeadPicHolder.isExist(userInfo.getHeadPic())) {
             String url = HeadPicHolder.generatorUserHeadPic(userId, userInfo.getNickname());
             userInfo.setHeadPic(url);
             updateUser.setHeadPic(url);
