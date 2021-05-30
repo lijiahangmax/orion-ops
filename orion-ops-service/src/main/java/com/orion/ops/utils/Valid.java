@@ -2,6 +2,8 @@ package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
 
+import java.util.Collection;
+
 /**
  * 参数合法化判断
  *
@@ -17,6 +19,10 @@ public class Valid extends com.orion.utils.Valid {
 
     public static String notBlank(String s) {
         return notBlank(s, Const.INVALID_PARAM);
+    }
+
+    public static <T extends Collection<?>> T notEmpty(T object) {
+        return notEmpty(object, Const.INVALID_PARAM);
     }
 
     public static void eq(Object o1, Object o2) {

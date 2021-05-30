@@ -2,7 +2,7 @@ package com.orion.ops.handler;
 
 import com.orion.constant.StandardContentType;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.lang.wrapper.Wrapper;
+import com.orion.lang.wrapper.RpcWrapper;
 import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.servlet.web.Servlets;
@@ -40,9 +40,11 @@ public class WrapperResultHandler implements HandlerMethodReturnValueHandler {
         if (response == null) {
             return;
         }
-        Wrapper<?> wrapper;
-        if (o instanceof Wrapper) {
-            wrapper = (Wrapper<?>) o;
+        HttpWrapper<?> wrapper;
+        if (o instanceof HttpWrapper) {
+            wrapper = (HttpWrapper<?>) o;
+        } else if (o instanceof RpcWrapper) {
+            wrapper = ((RpcWrapper<?>) o).toHttpWrapper();
         } else {
             wrapper = new HttpWrapper<>().data(o);
         }
