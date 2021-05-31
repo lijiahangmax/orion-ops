@@ -2,7 +2,7 @@ package com.orion.ops.handler.terminal;
 
 import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.utils.Strings;
@@ -82,16 +82,16 @@ public class TerminalSessionManager {
      *
      * @param token token
      */
-    public RpcWrapper<?> forceOffline(String token) {
+    public HttpWrapper<?> forceOffline(String token) {
         TerminalHandler handler = sessionStore.get(token);
         if (handler == null) {
-            return RpcWrapper.error("未查询到连接信息");
+            return HttpWrapper.error("未查询到连接信息");
         }
         try {
             handler.forcedOffline();
-            return RpcWrapper.success();
+            return HttpWrapper.ok();
         } catch (Exception e) {
-            return RpcWrapper.error("下线失败");
+            return HttpWrapper.error("下线失败");
         }
     }
 
