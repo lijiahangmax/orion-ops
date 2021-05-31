@@ -1,11 +1,14 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.UserInfoRequest;
+import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,38 +33,43 @@ public class UserController {
     private UserService userService;
 
     /**
+     * 用户列表
+     */
+    @RequestMapping("/list")
+    public DataGrid<UserInfoVO> list(@RequestBody UserInfoRequest request) {
+        return userService.userList(request);
+    }
+
+    /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public UserInfoVO detail(@RequestBody UserInfoRequest request) {
+        return userService.userDetail(request);
+    }
+
+    /**
      * 添加用户
      */
     @RequestMapping("/add")
     @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
-    public HttpWrapper<Long> addUser(@RequestBody UserInfoRequest request) {
+    public Wrapper<Long> addUser(@RequestBody UserInfoRequest request) {
         this.check(request);
         Valid.notBlank(request.getPassword());
         request.setId(null);
-        RpcWrapper<Long> res = userService.addUser(request);
-        if (res.isSuccess()) {
-            return HttpWrapper.ok(res.getData());
-        } else {
-            return HttpWrapper.error(res.getMsg());
-        }
+        return userService.addUser(request);
     }
 
     /**
      * 修改信息
      */
     @RequestMapping("/update")
-    public HttpWrapper<Integer> update(@RequestBody UserInfoRequest request) {
-        Integer roleType = request.getRoleType();
+    public Wrapper<Integer> update(@RequestBody UserInfoRequest request) {
+        Integer roleType = request.getRole();
         if (roleType != null) {
             Valid.notNull(RoleType.of(roleType));
         }
-
-        RpcWrapper<Integer> res = userService.updateUser(request);
-        if (res.isSuccess()) {
-            return HttpWrapper.ok(res.getData());
-        } else {
-            return HttpWrapper.error(res.getMsg());
-        }
+        return userService.updateUser(request);
     }
 
     /**
@@ -73,11 +81,29 @@ public class UserController {
         return userService.updateHeadPic(headPic);
     }
 
-    // 详情
-    // 列表
-    // 删除
-    // 批量删除
-    // 批量停用
+    /**
+     * 删除
+     */
+    @RequestMapping("/delete")
+    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    public Wrapper<Integer> delete(@RequestBody UserInfoRequest request) {
+        Valid.notEmpty(request.getIds());
+        return userService.deleteUser(request);
+    }
+
+    /**
+     * 停用/启用
+     */
+    @RequestMapping("/status")
+    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
+        Valid.notEmpty(request.getIds());
+        Integer status = Valid.notNull(request.getStatus());
+        if (!Const.ENABLE.equals(status) && !Const.DISABLE.equals(status)) {
+            return HttpWrapper.error(Const.INVALID_PARAM);
+        }
+        return userService.updateStatus(request);
+    }
 
     /**
      * 检查参数
@@ -85,8 +111,8 @@ public class UserController {
     private void check(UserInfoRequest request) {
         Valid.notBlank(request.getUsername());
         Valid.notBlank(request.getNickname());
-        Valid.notNull(RoleType.of(request.getRoleType()));
-        Valid.notBlank(request.getContactPhone());
+        Valid.notNull(RoleType.of(request.getRole()));
+        Valid.notBlank(request.getPhone());
     }
 
 }

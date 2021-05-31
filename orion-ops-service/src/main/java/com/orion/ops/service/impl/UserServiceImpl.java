@@ -3,25 +3,32 @@ package com.orion.ops.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserInfoRequest;
+import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.service.api.UserService;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.HeadPicHolder;
-import com.orion.ops.utils.ValueMix;
+import com.orion.ops.utils.*;
+import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
+import com.orion.utils.convert.Converts;
 import com.orion.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -42,21 +49,50 @@ public class UserServiceImpl implements UserService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public RpcWrapper<Long> addUser(UserInfoRequest request) {
+    public DataGrid<UserInfoVO> userList(UserInfoRequest request) {
+        LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
+                .eq(Objects.nonNull(request.getId()), UserInfoDO::getId, request.getId())
+                .eq(Objects.nonNull(request.getRole()), UserInfoDO::getRoleType, request.getRole())
+                .ne(!Currents.isSuperAdministrator(), UserInfoDO::getRoleType, RoleType.SUPER_ADMINISTRATOR.getType())
+                .eq(Objects.nonNull(request.getStatus()), UserInfoDO::getUserStatus, request.getStatus())
+                .like(Objects.nonNull(request.getUsername()), UserInfoDO::getUsername, request.getUsername())
+                .like(Objects.nonNull(request.getNickname()), UserInfoDO::getNickname, request.getNickname())
+                .like(Objects.nonNull(request.getPhone()), UserInfoDO::getContactPhone, request.getPhone())
+                .like(Objects.nonNull(request.getEmail()), UserInfoDO::getContactEmail, request.getEmail());
+        return DataQuery.of(userInfoDAO)
+                .page(request)
+                .wrapper(wrapper)
+                .dataGrid(UserInfoVO.class);
+    }
+
+    @Override
+    public UserInfoVO userDetail(UserInfoRequest request) {
+        Long id = Objects1.def(request.getId(), Currents::getUserId);
+        UserInfoDO user = userInfoDAO.selectById(id);
+        Valid.notNull(user, "未查询到用户信息");
+        UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
+        if (HeadPicHolder.isExist(user.getHeadPic())) {
+            userVo.setHeadPic(HeadPicHolder.getBase64(user.getHeadPic()));
+        }
+        return userVo;
+    }
+
+    @Override
+    public HttpWrapper<Long> addUser(UserInfoRequest request) {
         // 用户名重复检查
         LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
                 .eq(UserInfoDO::getUsername, request.getUsername());
         UserInfoDO query = userInfoDAO.selectOne(wrapper);
         if (query != null) {
-            return RpcWrapper.error("用户名已存在");
+            return HttpWrapper.error("用户名已存在");
         }
         // 角色判断
-        RoleType role = RoleType.of(request.getRoleType());
+        RoleType role = RoleType.of(request.getRole());
         if (RoleType.SUPER_ADMINISTRATOR.equals(role)) {
-            return RpcWrapper.error("不支持创建该角色");
+            return HttpWrapper.error("不支持创建该角色");
         }
         if (RoleType.ADMINISTRATOR.equals(role) && !Currents.isSuperAdministrator()) {
-            return RpcWrapper.error("不支持创建该角色");
+            return HttpWrapper.error("不支持创建该角色");
         }
         // 密码
         String salt = UUIds.random19();
@@ -67,10 +103,10 @@ public class UserServiceImpl implements UserService {
         insert.setNickname(request.getNickname());
         insert.setPassword(password);
         insert.setSalt(salt);
-        insert.setRoleType(request.getRoleType());
+        insert.setRoleType(request.getRole());
         insert.setUserStatus(Const.ENABLE);
-        insert.setContactPhone(request.getContactPhone());
-        insert.setContactEmail(request.getContactEmail());
+        insert.setContactPhone(request.getPhone());
+        insert.setContactEmail(request.getEmail());
         userInfoDAO.insert(insert);
         Long userId = insert.getId();
         // 生成头像
@@ -79,52 +115,65 @@ public class UserServiceImpl implements UserService {
         update.setId(userId);
         update.setHeadPic(headPic);
         userInfoDAO.updateById(update);
-        return RpcWrapper.success(userId);
+        return HttpWrapper.ok(userId);
     }
 
     @Override
-    public RpcWrapper<Integer> updateUser(UserInfoRequest request) {
+    public HttpWrapper<Integer> updateUser(UserInfoRequest request) {
+        Long userId = Currents.getUserId();
         Long updateId;
         boolean updateCurrent = true;
         if (request.getId() != null) {
             updateId = request.getId();
-            updateCurrent = false;
+            updateCurrent = updateId.equals(userId);
         } else {
-            updateId = Currents.getUserId();
+            updateId = userId;
         }
         // 查询用户信息
         UserInfoDO userInfo = userInfoDAO.selectById(updateId);
         if (userInfo == null) {
-            return RpcWrapper.error("未查询到用户信息");
+            return HttpWrapper.error("未查询到用户信息");
         }
         UserInfoDO update = new UserInfoDO();
         update.setId(updateId);
         Optional.ofNullable(request.getNickname())
                 .filter(Strings::isNotBlank)
                 .ifPresent(update::setNickname);
-        Optional.ofNullable(request.getContactPhone())
+        Optional.ofNullable(request.getPhone())
                 .filter(Strings::isNotBlank)
                 .ifPresent(update::setContactPhone);
-        Optional.ofNullable(request.getContactEmail())
+        Optional.ofNullable(request.getEmail())
                 .filter(Strings::isNotBlank)
                 .ifPresent(update::setContactEmail);
-        Optional.ofNullable(request.getUserStatus()).ifPresent(update::setUserStatus);
-        RoleType roleType = RoleType.of(request.getRoleType());
-        if (roleType != null && !updateCurrent && Currents.isAdministrator()) {
-            if (RoleType.SUPER_ADMINISTRATOR.equals(roleType)) {
-                return RpcWrapper.error("不支持修改该角色");
+        Optional.ofNullable(request.getStatus()).ifPresent(update::setUserStatus);
+        RoleType roleType = RoleType.of(request.getRole());
+        if (!updateCurrent) {
+            if (!Currents.isAdministrator()) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
-            if (RoleType.ADMINISTRATOR.equals(roleType) && !Currents.isSuperAdministrator()) {
-                return RpcWrapper.error("不支持修改该角色");
+            if (RoleType.SUPER_ADMINISTRATOR.getType().equals(userInfo.getRoleType())) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
-            update.setRoleType(roleType.getType());
+            boolean superAdministrator = Currents.isSuperAdministrator();
+            if (RoleType.ADMINISTRATOR.getType().equals(userInfo.getRoleType()) && !superAdministrator) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
+            }
+            if (roleType != null) {
+                if (RoleType.SUPER_ADMINISTRATOR.equals(roleType)) {
+                    return HttpWrapper.of(ResultCode.NO_PERMISSION);
+                }
+                if (RoleType.ADMINISTRATOR.equals(roleType) && !superAdministrator) {
+                    return HttpWrapper.of(ResultCode.NO_PERMISSION);
+                }
+                update.setRoleType(roleType.getType());
+            }
         }
         int effect = userInfoDAO.updateById(update);
         // 更新token
         String cacheKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, updateId);
         String tokenValue = redisTemplate.opsForValue().get(cacheKey);
         if (Strings.isEmpty(tokenValue)) {
-            return RpcWrapper.success(effect);
+            return HttpWrapper.ok(effect);
         }
         UserDTO userDTO = JSON.parseObject(tokenValue, UserDTO.class);
         Optional.ofNullable(roleType)
@@ -134,7 +183,37 @@ public class UserServiceImpl implements UserService {
                 .filter(Strings::isNotBlank)
                 .ifPresent(userDTO::setNickname);
         redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), Const.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
-        return RpcWrapper.success(effect);
+        return HttpWrapper.ok(effect);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public HttpWrapper<Integer> deleteUser(UserInfoRequest request) {
+        List<Long> ids = new ArrayList<>();
+        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, ids);
+        if (!check.isOk()) {
+            return check;
+        }
+        int effect = ids.stream().mapToInt(userInfoDAO::deleteById).sum();
+        return HttpWrapper.ok(effect);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public HttpWrapper<Integer> updateStatus(UserInfoRequest request) {
+        List<Long> ids = new ArrayList<>();
+        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, ids);
+        if (!check.isOk()) {
+            return check;
+        }
+        int effect = 0;
+        for (Long id : ids) {
+            UserInfoDO update = new UserInfoDO();
+            update.setId(id);
+            update.setUserStatus(request.getStatus());
+            effect += userInfoDAO.updateById(update);
+        }
+        return HttpWrapper.ok(effect);
     }
 
     @Override
@@ -156,6 +235,35 @@ public class UserServiceImpl implements UserService {
         update.setId(userId);
         update.setHeadPic(url);
         return userInfoDAO.updateById(update);
+    }
+
+    /**
+     * 修改或删除前检查
+     */
+    private HttpWrapper<Integer> updateOrDeleteCheck(UserInfoRequest request, List<Long> ids) {
+        Long userId = Currents.getUserId();
+        boolean isSuperAdministrator = Currents.isSuperAdministrator();
+        for (Long id : request.getIds()) {
+            if (id == null) {
+                return HttpWrapper.error(Const.INVALID_PARAM);
+            }
+            if (userId.equals(id)) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
+            }
+            UserInfoDO user = userInfoDAO.selectById(id);
+            if (user == null) {
+                return HttpWrapper.error("未查询到用户信息");
+            }
+            RoleType role = RoleType.of(user.getRoleType());
+            if (RoleType.SUPER_ADMINISTRATOR.equals(role)) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
+            }
+            if (RoleType.ADMINISTRATOR.equals(role) && !isSuperAdministrator) {
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
+            }
+            ids.add(id);
+        }
+        return HttpWrapper.ok();
     }
 
 }

@@ -1,7 +1,9 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.UserInfoRequest;
+import com.orion.ops.entity.vo.UserInfoVO;
 
 /**
  * 用户服务
@@ -13,12 +15,28 @@ import com.orion.ops.entity.request.UserInfoRequest;
 public interface UserService {
 
     /**
+     * 查询用户列表
+     *
+     * @param request request
+     * @return rows
+     */
+    DataGrid<UserInfoVO> userList(UserInfoRequest request);
+
+    /**
+     * 查询用户详情
+     *
+     * @param request request
+     * @return row
+     */
+    UserInfoVO userDetail(UserInfoRequest request);
+
+    /**
      * 添加用户
      *
      * @param request request
      * @return userId
      */
-    RpcWrapper<Long> addUser(UserInfoRequest request);
+    HttpWrapper<Long> addUser(UserInfoRequest request);
 
     /**
      * 更新用户
@@ -26,7 +44,23 @@ public interface UserService {
      * @param request request
      * @return effect
      */
-    RpcWrapper<Integer> updateUser(UserInfoRequest request);
+    HttpWrapper<Integer> updateUser(UserInfoRequest request);
+
+    /**
+     * 删除用户
+     *
+     * @param request request
+     * @return effect
+     */
+    HttpWrapper<Integer> deleteUser(UserInfoRequest request);
+
+    /**
+     * 更新用户状态
+     *
+     * @param request request
+     * @return effect
+     */
+    HttpWrapper<Integer> updateStatus(UserInfoRequest request);
 
     /**
      * 更新头像
