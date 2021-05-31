@@ -2,7 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
@@ -42,22 +42,22 @@ public class PassportServiceImpl implements PassportService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public RpcWrapper<UserLoginVO> login(UserLoginRequest request) {
+    public HttpWrapper<UserLoginVO> login(UserLoginRequest request) {
         LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
                 .eq(UserInfoDO::getUsername, request.getUsername());
         UserInfoDO userInfo = userInfoDAO.selectOne(query);
         // 未找到用户
         if (userInfo == null) {
-            return RpcWrapper.error("用户名或密码错误");
+            return HttpWrapper.error("用户名或密码错误");
         }
         // 检查密码
         boolean validPassword = ValueMix.validPassword(request.getPassword(), userInfo.getSalt(), userInfo.getPassword());
         // 密码错误
         if (!validPassword) {
-            return RpcWrapper.error("用户名或密码错误");
+            return HttpWrapper.error("用户名或密码错误");
         }
         if (Const.DISABLE.equals(userInfo.getUserStatus())) {
-            return RpcWrapper.error("用户已被禁用");
+            return HttpWrapper.error("用户已被禁用");
         }
         Long userId = userInfo.getId();
         UserInfoDO updateUser = new UserInfoDO();
@@ -91,7 +91,7 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setRoleType(userInfo.getRoleType());
         // 头像
         loginInfo.setHeadPic(HeadPicHolder.getBase64(userInfo.getHeadPic()));
-        return RpcWrapper.success(loginInfo);
+        return HttpWrapper.ok(loginInfo);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class PassportServiceImpl implements PassportService {
     }
 
     @Override
-    public RpcWrapper<Boolean> resetPassword(UserResetRequest request) {
+    public HttpWrapper<Boolean> resetPassword(UserResetRequest request) {
         String username = request.getUsername();
         boolean updateCurrent = Strings.isBlank(username);
         UserDTO current = Currents.getUser();
@@ -117,7 +117,7 @@ public class PassportServiceImpl implements PassportService {
             username = username.trim();
             // 检查权限
             if (!Currents.isAdministrator()) {
-                return RpcWrapper.of(ResultCode.NO_PERMISSION);
+                return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
         }
         // 查询用户
@@ -125,16 +125,16 @@ public class PassportServiceImpl implements PassportService {
                 .eq(UserInfoDO::getUsername, username);
         UserInfoDO userInfo = userInfoDAO.selectOne(query);
         if (userInfo == null) {
-            return RpcWrapper.error("未查询到用户信息");
+            return HttpWrapper.error("未查询到用户信息");
         }
         RoleType updateRoleType = RoleType.of(userInfo.getRoleType());
         // 检查是否更新的是超级管理员的密码
         if (RoleType.SUPER_ADMINISTRATOR.equals(updateRoleType) && !updateCurrent) {
-            return RpcWrapper.of(ResultCode.NO_PERMISSION);
+            return HttpWrapper.of(ResultCode.NO_PERMISSION);
         }
         // 检查是否更新的是管理员的密码
-        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && (!updateCurrent || !Currents.isSuperAdministrator())) {
-            return RpcWrapper.of(ResultCode.NO_PERMISSION);
+        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && (!updateCurrent && !Currents.isSuperAdministrator())) {
+            return HttpWrapper.of(ResultCode.NO_PERMISSION);
         }
 
         // 修改密码
@@ -146,7 +146,7 @@ public class PassportServiceImpl implements PassportService {
         userInfoDAO.updateById(updateUser);
         // 删除token
         redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
-        return RpcWrapper.success(!updateCurrent);
+        return HttpWrapper.ok(updateCurrent);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 用户请求
  *
@@ -19,6 +21,11 @@ public class UserInfoRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id集合
+     */
+    private List<Long> ids;
 
     /**
      * 用户名
@@ -40,22 +47,22 @@ public class UserInfoRequest extends PageRequest {
      *
      * @see com.orion.ops.consts.RoleType
      */
-    private Integer roleType;
+    private Integer role;
 
     /**
      * 用户状态 1启用 2禁用
      */
-    private Integer userStatus;
+    private Integer status;
 
     /**
      * 联系手机
      */
-    private String contactPhone;
+    private String phone;
 
     /**
      * 联系邮箱
      */
-    private String contactEmail;
+    private String email;
 
     /**
      * 头像base64

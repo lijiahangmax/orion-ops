@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.RpcWrapper;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
@@ -21,7 +21,7 @@ public interface PassportService {
      * @param request request
      * @return wrapper
      */
-    RpcWrapper<UserLoginVO> login(UserLoginRequest request);
+    HttpWrapper<UserLoginVO> login(UserLoginRequest request);
 
     /**
      * 登出
@@ -34,7 +34,7 @@ public interface PassportService {
      * @param request request
      * @return 是否需要删除cookie
      */
-    RpcWrapper<Boolean> resetPassword(UserResetRequest request);
+    HttpWrapper<Boolean> resetPassword(UserResetRequest request);
 
     /**
      * 通过token获取用户 所有通过token查用户都要用此方法
