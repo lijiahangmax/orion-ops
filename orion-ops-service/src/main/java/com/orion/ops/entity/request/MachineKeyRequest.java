@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 机器秘钥请求
  *
@@ -19,6 +21,11 @@ public class MachineKeyRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id
+     */
+    private List<Long> ids;
 
     /**
      * 名称

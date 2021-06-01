@@ -41,6 +41,16 @@ public class MachineSecretKeyVO {
      */
     private Date createTime;
 
+    /**
+     * 挂载状态
+     * 1 未找到
+     * 2 已挂载
+     * 3 未挂载
+     *
+     * @see com.orion.ops.consts.MountKeyStatus
+     */
+    private Integer mountStatus;
+
     static {
         TypeStore.STORE.register(MachineSecretKeyDO.class, MachineSecretKeyVO.class, p -> {
             MachineSecretKeyVO vo = new MachineSecretKeyVO();

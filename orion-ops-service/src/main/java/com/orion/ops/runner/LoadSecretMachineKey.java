@@ -2,6 +2,7 @@ package com.orion.ops.runner;
 
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
+import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class LoadSecretMachineKey implements CommandLineRunner {
         log.info("集群登陆秘钥加载-开始");
         List<MachineSecretKeyDO> keys = machineSecretKeyDAO.selectList(null);
         for (MachineSecretKeyDO key : keys) {
-            String secretKeyPath = key.getSecretKeyPath();
+            String secretKeyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
             File secretKey = new File(secretKeyPath);
             if (!secretKey.exists() || !secretKey.isFile()) {
                 log.info("加载ssh私钥失败 未找到文件 {} {}", key.getKeyName(), secretKeyPath);
@@ -47,6 +48,10 @@ public class LoadSecretMachineKey implements CommandLineRunner {
             } else {
                 SessionHolder.addIdentity(secretKeyPath);
             }
+        }
+        log.info("集群登陆秘钥加载-完成");
+        for (String loadKey : SessionHolder.getLoadKeys()) {
+            log.info("集群登陆秘钥已加载-{}", loadKey);
         }
         log.info("集群登陆秘钥加载-结束");
     }
