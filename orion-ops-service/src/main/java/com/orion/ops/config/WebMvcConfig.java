@@ -14,6 +14,7 @@ import com.orion.ops.interceptor.RoleInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -46,6 +47,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/orion/api/**");
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowCredentials(true)
+                .allowedOriginPatterns("*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .maxAge(3600);
+    }
+
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> exceptionHandler(Exception ex) {
         ex.printStackTrace();
@@ -60,7 +71,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = CodeArgumentException.class)
     public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
-        return HttpWrapper.error().code(ex.getCode()).msg(ex.getMessage());
+        return HttpWrapper.error().code(ex.getCode()).msg(Const.INVALID_PARAM).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = HttpWrapperException.class)
