@@ -1,7 +1,6 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -99,9 +98,7 @@ public class UserController {
     public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIds());
         Integer status = Valid.notNull(request.getStatus());
-        if (!Const.ENABLE.equals(status) && !Const.DISABLE.equals(status)) {
-            return HttpWrapper.error(Const.INVALID_PARAM);
-        }
+        Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
         return userService.updateStatus(request);
     }
 
