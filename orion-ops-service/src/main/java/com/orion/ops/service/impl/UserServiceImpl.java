@@ -189,29 +189,38 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public HttpWrapper<Integer> deleteUser(UserInfoRequest request) {
-        List<Long> ids = new ArrayList<>();
-        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, ids);
+        List<Long> idList = new ArrayList<>();
+        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
         if (!check.isOk()) {
             return check;
         }
-        int effect = ids.stream().mapToInt(userInfoDAO::deleteById).sum();
+        int effect = 0;
+        for (Long id : idList) {
+            effect += userInfoDAO.deleteById(id);
+            redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+        }
         return HttpWrapper.ok(effect);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public HttpWrapper<Integer> updateStatus(UserInfoRequest request) {
-        List<Long> ids = new ArrayList<>();
-        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, ids);
+        List<Long> idList = new ArrayList<>();
+        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
         if (!check.isOk()) {
             return check;
         }
+        Integer status = request.getStatus();
+        boolean disable = Const.DISABLE.equals(status);
         int effect = 0;
-        for (Long id : ids) {
+        for (Long id : idList) {
             UserInfoDO update = new UserInfoDO();
             update.setId(id);
-            update.setUserStatus(request.getStatus());
+            update.setUserStatus(status);
             effect += userInfoDAO.updateById(update);
+            if (disable) {
+                redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+            }
         }
         return HttpWrapper.ok(effect);
     }
@@ -240,10 +249,10 @@ public class UserServiceImpl implements UserService {
     /**
      * 修改或删除前检查
      */
-    private HttpWrapper<Integer> updateOrDeleteCheck(UserInfoRequest request, List<Long> ids) {
+    private HttpWrapper<Integer> updateOrDeleteCheck(UserInfoRequest request, List<Long> idList) {
         Long userId = Currents.getUserId();
         boolean isSuperAdministrator = Currents.isSuperAdministrator();
-        for (Long id : request.getIds()) {
+        for (Long id : request.getIdList()) {
             if (id == null) {
                 return HttpWrapper.error(Const.INVALID_PARAM);
             }
@@ -261,7 +270,7 @@ public class UserServiceImpl implements UserService {
             if (RoleType.ADMINISTRATOR.equals(role) && !isSuperAdministrator) {
                 return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
-            ids.add(id);
+            idList.add(id);
         }
         return HttpWrapper.ok();
     }

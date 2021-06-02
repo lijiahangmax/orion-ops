@@ -86,7 +86,7 @@ public class UserController {
     @RequestMapping("/delete")
     @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<Integer> delete(@RequestBody UserInfoRequest request) {
-        Valid.notEmpty(request.getIds());
+        Valid.notEmpty(request.getIdList());
         return userService.deleteUser(request);
     }
 
@@ -96,7 +96,7 @@ public class UserController {
     @RequestMapping("/status")
     @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
-        Valid.notEmpty(request.getIds());
+        Valid.notEmpty(request.getIdList());
         Integer status = Valid.notNull(request.getStatus());
         Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
         return userService.updateStatus(request);

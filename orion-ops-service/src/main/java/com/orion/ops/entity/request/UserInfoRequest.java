@@ -25,7 +25,7 @@ public class UserInfoRequest extends PageRequest {
     /**
      * id集合
      */
-    private List<Long> ids;
+    private List<Long> idList;
 
     /**
      * 用户名
