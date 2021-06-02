@@ -3,7 +3,7 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnvAttr;
+import com.orion.ops.consts.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -14,10 +14,12 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 环境变量服务
@@ -42,7 +44,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         entity.setId(request.getId());
         entity.setMachineId(request.getId());
         entity.setAttrKey(request.getKey());
-        entity.setAttrValue(request.getDescription());
+        entity.setAttrValue(request.getValue());
         entity.setDescription(request.getDescription());
         if (id == null) {
             entity.setForbidDelete(Const.FORBID_DELETE_CAN);
@@ -54,11 +56,50 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
-    public Integer deleteById(MachineEnvRequest request) {
-        Long id = request.getId();
-        MachineEnvDO env = machineEnvDAO.selectById(id);
-        Valid.eq(Const.FORBID_DELETE_CAN, env.getForbidDelete(), "禁止删除");
-        return machineEnvDAO.deleteById(id);
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteEnv(List<Long> ids) {
+        int effect = 0;
+        for (Long id : ids) {
+            MachineEnvDO env = machineEnvDAO.selectById(id);
+            Valid.eq(Const.FORBID_DELETE_CAN, env.getForbidDelete(), "{} 禁止删除", env.getAttrKey());
+            effect += machineEnvDAO.deleteById(id);
+        }
+        return effect;
+    }
+
+    @Override
+    public Integer mergeEnv(Long sourceMachineId, Long targetMachineId) {
+        LambdaQueryWrapper<MachineEnvDO> sourceWrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, sourceMachineId);
+        LambdaQueryWrapper<MachineEnvDO> targetWrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, targetMachineId);
+        List<MachineEnvDO> sourceEnvList = machineEnvDAO.selectList(sourceWrapper);
+        List<MachineEnvDO> targetEnvList = machineEnvDAO.selectList(targetWrapper);
+        Valid.notEmpty(sourceEnvList);
+        Valid.notEmpty(targetEnvList);
+        int effect = 0;
+        for (MachineEnvDO sourceEnv : sourceEnvList) {
+            Optional<MachineEnvDO> targetOption = targetEnvList.stream()
+                    .filter(t -> t.getAttrKey().equals(sourceEnv.getAttrKey()))
+                    .findFirst();
+            if (targetOption.isPresent()) {
+                // 更新
+                MachineEnvDO targetEnv = targetOption.get();
+                targetEnv.setAttrValue(sourceEnv.getAttrValue());
+                targetEnv.setDescription(sourceEnv.getDescription());
+                effect += machineEnvDAO.updateById(targetEnv);
+            } else {
+                // 插入
+                MachineEnvDO insertEnv = new MachineEnvDO();
+                insertEnv.setMachineId(targetMachineId);
+                insertEnv.setAttrKey(sourceEnv.getAttrKey());
+                insertEnv.setAttrValue(sourceEnv.getAttrValue());
+                insertEnv.setDescription(sourceEnv.getDescription());
+                insertEnv.setForbidDelete(Const.FORBID_DELETE_CAN);
+                effect += machineEnvDAO.insert(insertEnv);
+            }
+        }
+        return effect;
     }
 
     @Override
@@ -78,7 +119,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     @Override
     public void initEnv(Long machineId) {
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-        List<String> keys = EnvAttr.getTargetKeys();
+        List<String> keys = MachineEnvAttr.getTargetKeys();
         String home;
         String username = machine.getUsername();
         if (Const.ROOT.equals(username)) {
@@ -88,7 +129,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         }
         for (String key : keys) {
             MachineEnvDO env = new MachineEnvDO();
-            EnvAttr attr = EnvAttr.of(key);
+            MachineEnvAttr attr = MachineEnvAttr.of(key);
             env.setMachineId(machineId);
             env.setDescription(attr.getDescription());
             env.setAttrKey(attr.name());

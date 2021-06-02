@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 环境变量
  *
@@ -19,6 +21,21 @@ public class MachineEnvRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id
+     */
+    private List<Long> ids;
+
+    /**
+     * 合并选择的目标id
+     */
+    private Long sourceMachineId;
+
+    /**
+     * 合并选择的目标机器id
+     */
+    private Long targetMachineId;
 
     /**
      * 机器id
