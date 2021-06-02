@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 环境变量
@@ -52,8 +53,18 @@ public class MachineEnvController {
      */
     @RequestMapping("/delete")
     public Integer delete(@RequestBody MachineEnvRequest request) {
-        Valid.notNull(request.getId());
-        return machineEnvService.deleteById(request);
+        List<Long> ids = Valid.notEmpty(request.getIds());
+        return machineEnvService.deleteEnv(ids);
+    }
+
+    /**
+     * 合并且替换
+     */
+    @RequestMapping("/merge")
+    public Integer merge(@RequestBody MachineEnvRequest request) {
+        Long sourceMachineId = Valid.notNull(request.getSourceMachineId());
+        Long targetMachineId = Valid.notNull(request.getTargetMachineId());
+        return machineEnvService.mergeEnv(sourceMachineId, targetMachineId);
     }
 
     /**
@@ -71,9 +82,5 @@ public class MachineEnvController {
         Valid.notNull(request.getValue());
         Valid.notNull(request.getMachineId());
     }
-
-    // 批量删除
-    // diff
-    // merge
 
 }

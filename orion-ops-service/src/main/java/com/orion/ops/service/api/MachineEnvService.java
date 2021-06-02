@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 
+import java.util.List;
+
 /**
  * 环境变量服务
  *
@@ -24,10 +26,19 @@ public interface MachineEnvService {
     /**
      * 通过id删除
      *
-     * @param request request
+     * @param ids ids
      * @return effect
      */
-    Integer deleteById(MachineEnvRequest request);
+    Integer deleteEnv(List<Long> ids);
+
+    /**
+     * 合并属性
+     *
+     * @param sourceMachineId 原始机器id
+     * @param targetMachineId 目标机器id
+     * @return effect
+     */
+    Integer mergeEnv(Long sourceMachineId, Long targetMachineId);
 
     /**
      * 列表

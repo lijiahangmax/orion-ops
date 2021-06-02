@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.MachineRoomRequest;
 import com.orion.ops.entity.vo.MachineRoomVO;
 
+import java.util.List;
+
 /**
  * 机房
  *
@@ -32,9 +34,18 @@ public interface MachineRoomService {
     /**
      * 删除机房信息
      *
-     * @param request request
+     * @param ids ids
      * @return effect
      */
-    Integer deleteMachineRoom(MachineRoomRequest request);
+    Integer deleteMachineRoom(List<Long> ids);
+
+    /**
+     * 更新状态
+     *
+     * @param ids    ids
+     * @param status status
+     * @return effect
+     */
+    Integer updateStatus(List<Long> ids, Integer status);
 
 }

@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 添加/修改 代理请求
  *
@@ -19,6 +21,11 @@ public class MachineProxyRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id
+     */
+    private List<Long> ids;
 
     /**
      * 主机

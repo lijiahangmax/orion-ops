@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.entity.request.MachineRoomRequest;
 import com.orion.ops.entity.vo.MachineRoomVO;
 import com.orion.ops.service.api.MachineRoomService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 机房
@@ -60,12 +62,19 @@ public class MachineRoomController {
      */
     @RequestMapping("/delete")
     public Integer delete(@RequestBody MachineRoomRequest request) {
-        Valid.notNull(request.getId());
-        return machineRoomService.deleteMachineRoom(request);
+        List<Long> ids = Valid.notEmpty(request.getIds());
+        return machineRoomService.deleteMachineRoom(ids);
     }
 
-    // 批量删除
-    // 批量停用
-    // @RequestMapping("/use/machine")
+    /**
+     * 启用/停用
+     */
+    @RequestMapping("/status")
+    public Integer updateStatus(@RequestBody MachineRoomRequest request) {
+        List<Long> ids = Valid.notEmpty(request.getIds());
+        Integer status = Valid.notNull(request.getStatus());
+        Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
+        return machineRoomService.updateStatus(ids, status);
+    }
 
 }

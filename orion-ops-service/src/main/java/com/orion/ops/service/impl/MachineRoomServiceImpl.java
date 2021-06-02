@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -70,10 +71,25 @@ public class MachineRoomServiceImpl implements MachineRoomService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer deleteMachineRoom(MachineRoomRequest request) {
-        Long id = request.getId();
-        machineInfoDAO.setRoomIdWithNull(id);
-        return machineInfoDAO.deleteById(id);
+    public Integer deleteMachineRoom(List<Long> ids) {
+        int effect = 0;
+        for (Long id : ids) {
+            machineInfoDAO.setRoomIdWithNull(id);
+            effect += machineRoomDAO.deleteById(id);
+        }
+        return effect;
+    }
+
+    @Override
+    public Integer updateStatus(List<Long> ids, Integer status) {
+        int effect = 0;
+        for (Long id : ids) {
+            MachineRoomDO entity = new MachineRoomDO();
+            entity.setId(id);
+            entity.setRoomStatus(status);
+            effect += machineRoomDAO.updateById(entity);
+        }
+        return effect;
     }
 
 }
