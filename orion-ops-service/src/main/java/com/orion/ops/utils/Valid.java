@@ -45,4 +45,8 @@ public class Valid extends com.orion.utils.Valid {
         }
     }
 
+    public static boolean isTrue(boolean s) {
+        return isTrue(s, Const.INVALID_PARAM);
+    }
+
 }

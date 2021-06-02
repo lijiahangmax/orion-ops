@@ -1,7 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnvAttr;
+import com.orion.ops.consts.MachineEnvAttr;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
@@ -56,7 +56,7 @@ public class HeadPicHolder {
      * @return path
      */
     public static String touchPicFile(Long uid, String suffix) {
-        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + HEAD_PIC_DIR + uid + "." + suffix);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + HEAD_PIC_DIR + uid + "." + suffix);
         Files1.touch(path);
         return path;
     }
@@ -75,7 +75,7 @@ public class HeadPicHolder {
         String url = HEAD_PIC_DIR + uid + "." + HEAD_PIC_SUFFIX;
         char name = Arrays1.last(nickname.toCharArray(), 'O');
         BufferedImage img = ICONS_GEN.execute(name);
-        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);
         File file = new File(path);
         Files1.touch(file);
         try {
@@ -93,7 +93,7 @@ public class HeadPicHolder {
      * @return base64
      */
     public static String getBase64(String url) {
-        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);
         if (!Files1.isFile(path)) {
             return null;
         }
@@ -106,7 +106,7 @@ public class HeadPicHolder {
      * @param url url
      */
     public static void deletePic(String url) {
-        String path = Files1.getPath(EnvAttr.PIC_PATH.getValue() + url);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);
         Files1.delete(path);
     }
 
@@ -117,7 +117,7 @@ public class HeadPicHolder {
      * @return 是否存在
      */
     public static boolean isExist(String path) {
-        return Strings.isNotBlank(path) && Files1.isFile(Files1.getPath(EnvAttr.PIC_PATH.getValue() + path));
+        return Strings.isNotBlank(path) && Files1.isFile(Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + path));
     }
 
 }

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.AuthType;
 import com.orion.ops.consts.CommandConst;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnvAttr;
+import com.orion.ops.consts.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -81,13 +81,13 @@ public class HostMachineInitialize implements CommandLineRunner {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, 1L);
         List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
-        for (String key : EnvAttr.getHostKeys()) {
+        for (String key : MachineEnvAttr.getHostKeys()) {
             MachineEnvDO env = envs.stream()
                     .filter(s -> s.getAttrKey().equals(key))
                     .findFirst()
                     .orElse(null);
             if (env == null) {
-                EnvAttr attr = EnvAttr.of(key);
+                MachineEnvAttr attr = MachineEnvAttr.of(key);
                 MachineEnvDO insert = new MachineEnvDO();
                 insert.setMachineId(1L);
                 insert.setAttrKey(key);
@@ -106,7 +106,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      * @param attr attr
      * @return value
      */
-    private String getAttrValue(EnvAttr attr) {
+    private String getAttrValue(MachineEnvAttr attr) {
         switch (attr) {
             case JAVA_BIN_PATH:
                 return whereIs(attr, CommandConst.JAVA);
@@ -121,13 +121,15 @@ public class HostMachineInitialize implements CommandLineRunner {
             case GIT_BIN_PATH:
                 return whereIs(attr, CommandConst.GIT);
             case LOG_PATH:
-                return createOrionOpsPath(Const.OPERATION_LOGS_PATH);
+                return createOrionOpsPath(Const.LOG_PATH);
             case KEY_PATH:
                 return createOrionOpsPath(Const.KEYS_PATH);
             case DIST_PATH:
                 return createOrionOpsPath(Const.DIST_PATH);
             case PIC_PATH:
                 return createOrionOpsPath(Const.PIC_PATH);
+            case TEMP_PATH:
+                return createOrionOpsPath(Const.TEMP_PATH);
             default:
                 return null;
         }
@@ -140,7 +142,7 @@ public class HostMachineInitialize implements CommandLineRunner {
      * @param command command
      * @return path
      */
-    public static String whereIs(EnvAttr attr, String command) {
+    public static String whereIs(MachineEnvAttr attr, String command) {
         try {
             String s = Processes.getOutputResultWithDirString(CommandConst.USR_BIN, CommandConst.WHERE_IS, command);
             String[] split = s.split(Strings.SPACE);

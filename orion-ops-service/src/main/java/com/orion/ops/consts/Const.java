@@ -14,13 +14,15 @@ public class Const extends com.orion.constant.Const {
 
     public static final String ORION_OPS = "orion_ops";
 
-    public static final String OPERATION_LOGS_PATH = "operation_logs";
+    public static final String LOG_PATH = "logs";
 
     public static final String KEYS_PATH = ".keys";
 
     public static final String DIST_PATH = "dist";
 
     public static final String PIC_PATH = "pic";
+
+    public static final String TEMP_PATH = "temp";
 
     public static final String INVALID_PARAM = "参数不合法";
 

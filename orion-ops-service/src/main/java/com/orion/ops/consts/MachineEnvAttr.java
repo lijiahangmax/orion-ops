@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @since 2021/3/29 15:42
  */
 @Getter
-public enum EnvAttr {
+public enum MachineEnvAttr {
 
     /**
      * JAVA_BIN_PATH
@@ -48,19 +48,19 @@ public enum EnvAttr {
     GIT_BIN_PATH(true, false, "git 命令路径"),
 
     /**
-     * 代码目录
+     * 日志目录
      */
-    CHECK_PATH(true, true, "代码目录"),
+    LOG_PATH(true, true, "日志目录"),
 
     /**
-     * 操作日志目录
+     * 临时文件目录
      */
-    LOG_PATH(true, true, "操作日志目录"),
+    TEMP_PATH(true, true, "临时目录"),
 
     /**
      * 存放秘钥文件目录
      */
-    KEY_PATH(true, false, "存放秘钥文件目录"),
+    KEY_PATH(true, false, "秘钥目录"),
 
     /**
      * 宿主机存放部署产物目录
@@ -71,17 +71,12 @@ public enum EnvAttr {
     /**
      * 存放图片目录
      */
-    PIC_PATH(true, false, "存放图片目录"),
+    PIC_PATH(true, false, "图片目录"),
 
     /**
      * nginx静态文件映射目录
      */
-    NGINX_WWW_HOME(false, true, "nginx 静态文件映射目录"),
-
-    /**
-     * tomcat 根目录
-     */
-    TOMCAT_HOME(false, true, "tomcat 根目录"),
+    NGINX_WWW_PATH(false, true, "nginx 静态文件映射目录"),
 
     ;
 
@@ -103,7 +98,7 @@ public enum EnvAttr {
     @Setter
     String value;
 
-    EnvAttr(boolean host, boolean target, String description) {
+    MachineEnvAttr(boolean host, boolean target, String description) {
         this.host = host;
         this.target = target;
         this.description = description;
@@ -111,19 +106,19 @@ public enum EnvAttr {
 
     public static List<String> getHostKeys() {
         return Arrays.stream(values())
-                .filter(EnvAttr::isHost)
-                .map(EnvAttr::name)
+                .filter(MachineEnvAttr::isHost)
+                .map(MachineEnvAttr::name)
                 .collect(Collectors.toList());
     }
 
     public static List<String> getTargetKeys() {
         return Arrays.stream(values())
-                .filter(EnvAttr::isTarget)
-                .map(EnvAttr::name)
+                .filter(MachineEnvAttr::isTarget)
+                .map(MachineEnvAttr::name)
                 .collect(Collectors.toList());
     }
 
-    public static EnvAttr of(String key) {
+    public static MachineEnvAttr of(String key) {
         return Arrays.stream(values())
                 .filter(a -> a.name().equals(key)).findFirst()
                 .orElse(null);
