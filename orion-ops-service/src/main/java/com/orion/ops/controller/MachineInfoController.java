@@ -89,6 +89,15 @@ public class MachineInfoController {
     }
 
     /**
+     * 复制
+     */
+    @RequestMapping("/copy")
+    public Long copy(@RequestBody MachineInfoRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return machineInfoService.copyMachine(id);
+    }
+
+    /**
      * 同步属性
      */
     @RequestMapping("/syncProp")

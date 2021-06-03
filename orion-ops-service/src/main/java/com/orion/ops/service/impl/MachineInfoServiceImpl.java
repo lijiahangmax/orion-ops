@@ -154,6 +154,27 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     @Override
+    public Long copyMachine(Long id) {
+        MachineInfoDO machine = machineInfoDAO.selectById(id);
+        Valid.notNull(machine, "未查询到机器");
+        machine.setId(null);
+        machine.setCreateTime(null);
+        machine.setUpdateTime(null);
+        machine.setMachineName(machine.getMachineName() + " Copy");
+        machineInfoDAO.insert(machine);
+        Long insertId = machine.getId();
+        // 复制环境变量
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>().eq(MachineEnvDO::getMachineId, id);
+        machineEnvDAO.selectList(wrapper).forEach(e -> {
+            e.setMachineId(insertId);
+            e.setCreateTime(null);
+            e.setUpdateTime(null);
+            machineEnvDAO.insert(e);
+        });
+        return insertId;
+    }
+
+    @Override
     public String syncProperties(MachineInfoRequest request) {
         Long id = request.getId();
         String syncProp = request.getSyncProp();

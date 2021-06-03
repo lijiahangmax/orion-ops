@@ -58,6 +58,14 @@ public interface MachineInfoService {
     MachineInfoVO machineDetail(Long id);
 
     /**
+     * 复制机器机器
+     *
+     * @param id id
+     * @return id
+     */
+    Long copyMachine(Long id);
+
+    /**
      * 同步属性
      *
      * @param request request
