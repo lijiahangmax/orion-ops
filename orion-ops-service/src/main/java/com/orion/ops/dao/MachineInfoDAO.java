@@ -29,18 +29,4 @@ public interface MachineInfoDAO extends BaseMapper<MachineInfoDO> {
      */
     void setProxyIdWithNull(@Param("proxyId") Long proxyId);
 
-    /**
-     * 设置keyId为null
-     *
-     * @param keyId keyId
-     */
-    void setKeyIdWithNull(@Param("keyId") Long keyId);
-
-    /**
-     * 设置roomId为null
-     *
-     * @param roomId roomId
-     */
-    void setRoomIdWithNull(@Param("roomId") Long roomId);
-
 }

@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 机器信息
  *
@@ -21,9 +23,14 @@ public class MachineInfoRequest extends PageRequest {
     private Long id;
 
     /**
-     * 机房id
+     * 排除的id
      */
-    private Long roomId;
+    private Long excludeId;
+
+    /**
+     * idList
+     */
+    private List<Long> idList;
 
     /**
      * 代理id
@@ -64,11 +71,6 @@ public class MachineInfoRequest extends PageRequest {
      * 机器密码
      */
     private String password;
-
-    /**
-     * 机器key
-     */
-    private Long keyId;
 
     /**
      * 机器认证方式 1: 账号认证 2: key认证

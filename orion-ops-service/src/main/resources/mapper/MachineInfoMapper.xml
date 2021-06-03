@@ -5,7 +5,6 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineInfoDO">
         <id column="id" property="id"/>
-        <result column="room_id" property="roomId"/>
         <result column="proxy_id" property="proxyId"/>
         <result column="machine_host" property="machineHost"/>
         <result column="ssh_port" property="sshPort"/>
@@ -14,7 +13,6 @@
         <result column="description" property="description"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
-        <result column="key_id" property="keyId"/>
         <result column="auth_type" property="authType"/>
         <result column="system_type" property="systemType"/>
         <result column="system_version" property="systemVersion"/>
@@ -25,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, room_id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, key_id, auth_type, system_type, system_version, machine_status, create_time, update_time
+        id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, auth_type, system_type, system_version, machine_status, create_time, update_time
     </sql>
 
     <update id="setId">
@@ -38,18 +36,6 @@
         UPDATE machine_info
         SET proxy_id = null
         WHERE proxy_id = #{proxyId}
-    </update>
-
-    <update id="setKeyIdWithNull">
-        UPDATE machine_info
-        SET key_id = null
-        WHERE key_id = #{keyId}
-    </update>
-
-    <update id="setRoomIdWithNull">
-        UPDATE machine_info
-        SET room_id = null
-        WHERE room_id = #{roomId}
     </update>
 
 </mapper>

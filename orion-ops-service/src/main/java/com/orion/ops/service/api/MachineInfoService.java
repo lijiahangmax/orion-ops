@@ -6,6 +6,8 @@ import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
 import com.orion.remote.channel.SessionStore;
 
+import java.util.List;
+
 /**
  * 机器管理service
  *
@@ -25,10 +27,19 @@ public interface MachineInfoService {
     /**
      * 删除机器
      *
-     * @param request request
+     * @param idList idList
      * @return effect
      */
-    Integer deleteMachine(MachineInfoRequest request);
+    Integer deleteMachine(List<Long> idList);
+
+    /**
+     * 更新机器状态
+     *
+     * @param idList idList
+     * @param status status
+     * @return effect
+     */
+    Integer updateStatus(List<Long> idList, Integer status);
 
     /**
      * 机器列表
@@ -37,6 +48,14 @@ public interface MachineInfoService {
      * @return dataGrid
      */
     DataGrid<MachineInfoVO> listMachine(MachineInfoRequest request);
+
+    /**
+     * 机器详情
+     *
+     * @param id id
+     * @return dataGrid
+     */
+    MachineInfoVO machineDetail(Long id);
 
     /**
      * 同步属性
@@ -76,7 +95,7 @@ public interface MachineInfoService {
      * @param id id
      * @return session
      */
-    SessionStore getSessionStore(Long id);
+    SessionStore openSessionStore(Long id);
 
     /**
      * 执行命令获取输出结果

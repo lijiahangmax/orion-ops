@@ -22,16 +22,6 @@ public class MachineInfoVO {
     private Long id;
 
     /**
-     * 机房id
-     */
-    private Long roomId;
-
-    /**
-     * 机房名称
-     */
-    private String roomName;
-
-    /**
      * 代理id
      */
     private Long proxyId;
@@ -40,6 +30,16 @@ public class MachineInfoVO {
      * 代理主机
      */
     private String proxyHost;
+
+    /**
+     * 代理端口
+     */
+    private Integer proxyPort;
+
+    /**
+     * 代理类型
+     */
+    private Integer proxyType;
 
     /**
      * 主机ip
@@ -70,11 +70,6 @@ public class MachineInfoVO {
      * 机器账号
      */
     private String username;
-
-    /**
-     * 机器key
-     */
-    private Long keyId;
 
     /**
      * key名称
@@ -115,7 +110,6 @@ public class MachineInfoVO {
         TypeStore.STORE.register(MachineInfoDO.class, MachineInfoVO.class, p -> {
             MachineInfoVO vo = new MachineInfoVO();
             vo.setId(p.getId());
-            vo.setRoomId(p.getRoomId());
             vo.setProxyId(p.getProxyId());
             vo.setHost(p.getMachineHost());
             vo.setSshPort(p.getSshPort());
@@ -123,7 +117,6 @@ public class MachineInfoVO {
             vo.setTag(p.getMachineTag());
             vo.setDescription(p.getDescription());
             vo.setUsername(p.getUsername());
-            vo.setKeyId(p.getKeyId());
             vo.setAuthType(p.getAuthType());
             vo.setSystemType(p.getSystemType());
             vo.setSystemVersion(p.getSystemVersion());

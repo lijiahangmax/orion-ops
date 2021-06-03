@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuthType;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SystemType;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 机器
@@ -54,8 +56,19 @@ public class MachineInfoController {
      */
     @RequestMapping("/delete")
     public Integer delete(@RequestBody MachineInfoRequest request) {
-        Valid.notNull(request.getId());
-        return machineInfoService.deleteMachine(request);
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return machineInfoService.deleteMachine(idList);
+    }
+
+    /**
+     * 停用/启用
+     */
+    @RequestMapping("/status")
+    public Integer status(@RequestBody MachineInfoRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        Integer status = Valid.notNull(request.getStatus());
+        Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
+        return machineInfoService.updateStatus(idList, status);
     }
 
     /**
@@ -64,6 +77,15 @@ public class MachineInfoController {
     @RequestMapping("/list")
     public DataGrid<MachineInfoVO> list(@RequestBody MachineInfoRequest request) {
         return machineInfoService.listMachine(request);
+    }
+
+    /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public MachineInfoVO detail(@RequestBody MachineInfoRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return machineInfoService.machineDetail(id);
     }
 
     /**
@@ -113,8 +135,6 @@ public class MachineInfoController {
         AuthType authTypeEnum = Valid.notNull(AuthType.of(authType));
         if (AuthType.PASSWORD.equals(authTypeEnum)) {
             Valid.notBlank(request.getPassword());
-        } else if (AuthType.KEY.equals(authTypeEnum)) {
-            Valid.notNull(request.getKeyId());
         }
         Integer systemType = Valid.notNull(request.getSystemType());
         Valid.notNull(SystemType.of(systemType));

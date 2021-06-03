@@ -32,12 +32,6 @@ public class MachineInfoDO implements Serializable {
     private Long id;
 
     /**
-     * 机房id
-     */
-    @TableField("room_id")
-    private Long roomId;
-
-    /**
      * 代理id
      */
     @TableField("proxy_id")
@@ -84,12 +78,6 @@ public class MachineInfoDO implements Serializable {
      */
     @TableField("password")
     private String password;
-
-    /**
-     * 机器key
-     */
-    @TableField("key_id")
-    private Long keyId;
 
     /**
      * 机器认证方式 1: 账号认证 2: key认证
