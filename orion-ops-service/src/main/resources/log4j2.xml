@@ -2,7 +2,7 @@
 <Configuration status="fatal">
 
     <Properties>
-        <Property name="baseDir" value="./.log"/>
+        <Property name="baseDir" value="../.log"/>
         <!-- <Property name="baseDir" value="${logging.root.path}/${spring.application.name}"/> -->
         <!-- <Property name="baseDir" value="${sys:user.home}/log/orion-ops"/> -->
     </Properties>
@@ -18,7 +18,7 @@
                 <ThresholdFilter level="debug"/>
                 <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
             </Filters>
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{40}:%line] - %msg%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%level] [%logger{40}:%line] - %msg%n"/>
             <Policies>
                 <!-- 每隔一天转存 -->
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
@@ -34,7 +34,7 @@
                 <ThresholdFilter level="info"/>
                 <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
             </Filters>
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{40}:%line] - %msg%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%level] [%logger{40}:%line] - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="100 MB"/>
@@ -46,7 +46,7 @@
             <Filters>
                 <ThresholdFilter level="error"/>
             </Filters>
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger{40}:%line] - %msg%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%level] [%logger{40}:%line] - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="100 MB"/>
@@ -66,7 +66,7 @@
 
         <Root level="debug">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="debugAppender"/>
+            <!-- <AppenderRef ref="debugAppender"/> -->
             <AppenderRef ref="infoAppender"/>
             <AppenderRef ref="errorAppender"/>
         </Root>

@@ -24,7 +24,9 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TEMP_PATH = "temp";
 
-    public static final String INVALID_PARAM = "参数不合法";
+    public static final String MISSING_PARAM = "参数缺失";
+
+    public static final String INVALID_PARAM = "非法参数";
 
     public static final String INVALID_MACHINE = "未查询到机器信息";
 

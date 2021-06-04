@@ -12,8 +12,10 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -57,6 +59,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    public HttpWrapper<?> httpRequestExceptionHandler(Exception ex) {
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(Const.INVALID_PARAM);
+    }
+
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> exceptionHandler(Exception ex) {
         ex.printStackTrace();
@@ -67,21 +75,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> invalidArgumentExceptionHandler(Exception ex) {
         ex.printStackTrace();
         return HttpWrapper.error().msg(ex.getMessage());
-    }
-
-    @ExceptionHandler(value = CodeArgumentException.class)
-    public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
-        return HttpWrapper.error().code(ex.getCode()).msg(Const.INVALID_PARAM).data(ex.getMessage());
-    }
-
-    @ExceptionHandler(value = HttpWrapperException.class)
-    public HttpWrapper<?> httpWrapperExceptionHandler(HttpWrapperException ex) {
-        return ex.getWrapper();
-    }
-
-    @ExceptionHandler(value = RpcWrapperException.class)
-    public HttpWrapper<?> rpcWrapperExceptionHandler(RpcWrapperException ex) {
-        return ex.getWrapper().toHttpWrapper();
     }
 
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
@@ -98,7 +91,23 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = {AuthenticationException.class})
     public HttpWrapper<?> authExceptionHandler(Exception ex) {
+        ex.printStackTrace();
         return HttpWrapper.error().msg(Const.AUTH_EXCEPTION_MESSAGE).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = CodeArgumentException.class)
+    public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
+        return HttpWrapper.error().code(ex.getCode()).msg(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = HttpWrapperException.class)
+    public HttpWrapper<?> httpWrapperExceptionHandler(HttpWrapperException ex) {
+        return ex.getWrapper();
+    }
+
+    @ExceptionHandler(value = RpcWrapperException.class)
+    public HttpWrapper<?> rpcWrapperExceptionHandler(RpcWrapperException ex) {
+        return ex.getWrapper().toHttpWrapper();
     }
 
 }

@@ -14,25 +14,25 @@ import java.util.Collection;
 public class Valid extends com.orion.utils.Valid {
 
     public static <T> T notNull(T object) {
-        return notNull(object, Const.INVALID_PARAM);
+        return notNull(object, Const.MISSING_PARAM);
     }
 
     public static String notBlank(String s) {
-        return notBlank(s, Const.INVALID_PARAM);
+        return notBlank(s, Const.MISSING_PARAM);
     }
 
     public static <T extends Collection<?>> T notEmpty(T object) {
-        return notEmpty(object, Const.INVALID_PARAM);
+        return notEmpty(object, Const.MISSING_PARAM);
     }
 
     public static void eq(Object o1, Object o2) {
-        eq(o1, o2, Const.INVALID_PARAM);
+        eq(o1, o2, Const.MISSING_PARAM);
     }
 
     public static void allNotNull(Object... objects) {
         if (objects != null) {
             for (Object t : objects) {
-                notNull(t, Const.INVALID_PARAM);
+                notNull(t, Const.MISSING_PARAM);
             }
         }
     }
@@ -40,13 +40,13 @@ public class Valid extends com.orion.utils.Valid {
     public static void allNotBlank(String... ss) {
         if (ss != null) {
             for (String s : ss) {
-                notBlank(s, Const.INVALID_PARAM);
+                notBlank(s, Const.MISSING_PARAM);
             }
         }
     }
 
     public static boolean isTrue(boolean s) {
-        return isTrue(s, Const.INVALID_PARAM);
+        return isTrue(s, Const.MISSING_PARAM);
     }
 
 }
