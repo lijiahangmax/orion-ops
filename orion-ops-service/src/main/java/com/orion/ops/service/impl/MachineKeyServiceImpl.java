@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.MountKeyStatus;
-import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
@@ -33,9 +32,6 @@ import java.util.Objects;
  */
 @Service("machineKeyService")
 public class MachineKeyServiceImpl implements MachineKeyService {
-
-    @Resource
-    private MachineInfoDAO machineInfoDAO;
 
     @Resource
     private MachineSecretKeyDAO machineSecretKeyDAO;
@@ -106,9 +102,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer removeSecretKey(List<Long> ids) {
+    public Integer removeSecretKey(List<Long> idList) {
         int effect = 0;
-        for (Long id : ids) {
+        for (Long id : idList) {
             MachineSecretKeyDO key = machineSecretKeyDAO.selectById(id);
             if (key == null) {
                 continue;
@@ -118,8 +114,6 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             SessionHolder.removeIdentity(secretKeyPath);
             // 删除key
             Files1.delete(secretKeyPath);
-            // 移除机器key
-            machineInfoDAO.setKeyIdWithNull(id);
             effect += machineSecretKeyDAO.deleteById(id);
         }
         return effect;
@@ -164,13 +158,26 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Override
     public Integer mountKey(Long id) {
         MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return mountOrUnmount(key, true);
+        return this.mountOrUnmount(key, true);
     }
 
     @Override
     public Integer unmountKey(Long id) {
         MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return mountOrUnmount(key, false);
+        return this.mountOrUnmount(key, false);
+    }
+
+    @Override
+    public Integer tempMountKey(String fileData, String password) {
+        String path = "/temp_" + ObjectIds.next() + "_id_rsa";
+        path = MachineKeyService.getKeyPath(path);
+        Files1.touchOnDelete(path);
+        byte[] keyFileData = Base64s.decode(Strings.bytes(fileData));
+        FileWriters.writeFast(path, keyFileData);
+        // 加载key
+        SessionHolder.addIdentity(path, password);
+        // 检查状态
+        return this.getMountStatus(path);
     }
 
     /**
@@ -200,6 +207,16 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             SessionHolder.removeIdentity(keyPath);
         }
         // 检查状态
+        return this.getMountStatus(path);
+    }
+
+    /**
+     * 获取加载状态
+     *
+     * @param path path
+     * @return status
+     */
+    private Integer getMountStatus(String path) {
         List<String> loadKeys = SessionHolder.getLoadKeys();
         boolean match = loadKeys.stream().anyMatch(k -> k.endsWith(path));
         if (match) {

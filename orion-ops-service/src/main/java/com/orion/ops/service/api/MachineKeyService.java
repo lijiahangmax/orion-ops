@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.EnvAttr;
+import com.orion.ops.consts.MachineEnvAttr;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
@@ -37,10 +37,10 @@ public interface MachineKeyService {
     /**
      * 删除key
      *
-     * @param ids ids
+     * @param idList idList
      * @return effect
      */
-    Integer removeSecretKey(List<Long> ids);
+    Integer removeSecretKey(List<Long> idList);
 
     /**
      * 通过id查询key
@@ -77,13 +77,23 @@ public interface MachineKeyService {
     Integer unmountKey(Long id);
 
     /**
+     * 挂载秘钥
+     *
+     * @param fileData fileData
+     * @param password password
+     * @return status
+     * @see com.orion.ops.consts.MountKeyStatus
+     */
+    Integer tempMountKey(String fileData, String password);
+
+    /**
      * 获取key的实际路径
      *
      * @param path path
      * @return 实际路径
      */
     static String getKeyPath(String path) {
-        return Files1.getPath(EnvAttr.KEY_PATH.getValue() + path);
+        return Files1.getPath(MachineEnvAttr.KEY_PATH.getValue() + path);
     }
 
 }

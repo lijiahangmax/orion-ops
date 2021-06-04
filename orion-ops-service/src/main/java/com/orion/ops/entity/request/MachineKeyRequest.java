@@ -25,7 +25,7 @@ public class MachineKeyRequest extends PageRequest {
     /**
      * id
      */
-    private List<Long> ids;
+    private List<Long> idList;
 
     /**
      * 名称

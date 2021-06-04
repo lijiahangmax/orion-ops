@@ -80,12 +80,12 @@ public class MachineKeyController {
      */
     @RequestMapping("/remove")
     public HttpWrapper<Integer> removeKey(@RequestBody MachineKeyRequest request) {
-        List<Long> ids = Valid.notEmpty(request.getIds());
+        List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
-            Integer effect = machineKeyService.removeSecretKey(ids);
+            Integer effect = machineKeyService.removeSecretKey(idList);
             return HttpWrapper.ok(effect);
         } catch (Exception e) {
-            log.error("删除秘钥失败 {} {}", ids, e);
+            log.error("删除秘钥失败 {} {}", idList, e);
             return HttpWrapper.error("删除秘钥失败");
         }
     }
@@ -102,18 +102,30 @@ public class MachineKeyController {
      * 挂载秘钥
      */
     @RequestMapping("/mount")
-    public Integer mountKey(@RequestBody MachineKeyRequest request) {
+    public HttpWrapper<Integer> mountKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
-        return machineKeyService.mountKey(id);
+        try {
+            Integer status = machineKeyService.mountKey(id);
+            return HttpWrapper.ok(status);
+        } catch (Exception e) {
+            log.error("挂载秘钥失败 {} {}", id, e);
+            return HttpWrapper.error("挂载秘钥失败");
+        }
     }
 
     /**
      * 卸载秘钥
      */
     @RequestMapping("/unmount")
-    public Integer unmountKey(@RequestBody MachineKeyRequest request) {
+    public HttpWrapper<Integer> unmountKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
-        return machineKeyService.unmountKey(id);
+        try {
+            Integer status = machineKeyService.unmountKey(id);
+            return HttpWrapper.ok(status);
+        } catch (Exception e) {
+            log.error("挂载秘钥失败 {} {}", id, e);
+            return HttpWrapper.error("卸载秘钥失败");
+        }
     }
 
     /**
@@ -121,7 +133,7 @@ public class MachineKeyController {
      */
     @RequestMapping("/download/{id}")
     @IgnoreWrapper
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR, RoleType.OPERATION})
+    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public void download(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
         Valid.notNull(id);
         MachineSecretKeyDO key = machineKeyService.getKeyById(id);
@@ -137,6 +149,21 @@ public class MachineKeyController {
             return;
         }
         Servlets.transfer(response, FileReaders.readFast(file), Files1.getFileName(file));
+    }
+
+    /**
+     * 临时挂载秘钥
+     */
+    @RequestMapping("/temp-mount")
+    public HttpWrapper<Integer> tempMount(@RequestBody MachineKeyRequest request) {
+        String file = Valid.notBlank(request.getFile());
+        try {
+            Integer status = machineKeyService.tempMountKey(file, request.getPassword());
+            return HttpWrapper.ok(status);
+        } catch (Exception e) {
+            log.error("临时挂载秘钥失败", e);
+            return HttpWrapper.error("临时挂载秘钥失败");
+        }
     }
 
 }
