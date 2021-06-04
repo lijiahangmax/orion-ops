@@ -22,6 +22,7 @@ import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.TerminalType;
 import com.orion.utils.Strings;
+import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -149,7 +150,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                 .map(MachineTerminalLogDO::getOperateLogFile)
                 .filter(Strings::isNotBlank)
                 .map(File::new)
-                .map(f -> f.exists() && f.isFile())
+                .map(Files1::isFile)
                 .map(s -> s ? 1 : 2)
                 .orElse(2);
     }

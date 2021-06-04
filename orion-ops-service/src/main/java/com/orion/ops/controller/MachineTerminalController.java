@@ -18,7 +18,9 @@ import com.orion.ops.utils.Valid;
 import com.orion.remote.TerminalType;
 import com.orion.servlet.web.Servlets;
 import com.orion.utils.Strings;
+import com.orion.utils.io.FileReaders;
 import com.orion.utils.io.Files1;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,21 +87,29 @@ public class MachineTerminalController {
         return machineTerminalService.checkLogExist(id);
     }
 
+    // 只能自己看
+    // 前缀
+    // 重连
     /**
      * 下载日志文件
      */
-    @RequestMapping("/log/download")
+    @RequestMapping("/log/download/{id}")
     @IgnoreWrapper
-    public void downloadLogFile(@RequestBody MachineTerminalLogRequest request, HttpServletResponse response) throws IOException {
-        Long id = Valid.notNull(request.getId());
+    public void downloadLogFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Valid.notNull(id);
         String filePath = machineTerminalService.getLogFilePath(id);
         if (filePath == null) {
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=notfound.log");
             return;
         }
         File file = new File(filePath);
-        if (file.exists() && file.isFile()) {
-            Servlets.transfer(response, Files1.openInputStreamFastSafe(file), Files1.getFileName(file));
+        if (!Files1.isFile(file)) {
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=notfound.log");
+            return;
         }
+        Servlets.transfer(response, FileReaders.readFast(file), Files1.getFileName(file));
     }
 
     /**

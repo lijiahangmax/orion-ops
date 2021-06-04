@@ -2,7 +2,6 @@ package com.orion.ops.handler.terminal;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.constant.Const;
-import com.orion.ops.consts.MachineEnvAttr;
 import com.orion.ops.consts.protocol.TerminalCloseCode;
 import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.consts.protocol.TerminalOperate;
@@ -94,7 +93,7 @@ public abstract class TerminalHandler implements OperateHandler, ManagementHandl
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(config.getTerminalType());
         executor.size(config.getCols(), config.getRows(), config.getWidth(), config.getHeight());
-        String logPath = MachineEnvAttr.LOG_PATH.getValue() + "/" + TerminalConst.TERMINAL + "/"
+        String logPath = "/" + TerminalConst.TERMINAL + "/"
                 + Dates.current(Dates.YMDHMS2) + "_" + MachineTerminalService.getTokenUserId(token) + ".log";
         this.logStream = Files1.openOutputStreamSafe(Files1.getPath(logPath));
         log.info("terminal 开始记录用户操作日志: {} {}", token, logPath);
@@ -102,6 +101,7 @@ public abstract class TerminalHandler implements OperateHandler, ManagementHandl
         MachineTerminalLogDO logEntity = new MachineTerminalLogDO();
         logEntity.setAccessToken(token);
         logEntity.setUserId(config.getUserId());
+        logEntity.setUsername(config.getUsername());
         logEntity.setMachineId(config.getMachineId());
         logEntity.setMachineHost(config.getMachineHost());
         logEntity.setConnectedTime(config.getConnectedTime());

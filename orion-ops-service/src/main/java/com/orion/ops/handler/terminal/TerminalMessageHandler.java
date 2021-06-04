@@ -172,7 +172,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
             }
             handler.disconnect();
         }
-        boolean released = TerminalCloseCode.HEART_DOWN.equals(type) ||
+        boolean released = type == null ||
+                TerminalCloseCode.HEART_DOWN.equals(type) ||
                 TerminalCloseCode.FORCED_OFFLINE.equals(type) ||
                 TerminalCloseCode.DISCONNECT.equals(type) ||
                 TerminalCloseCode.EOF_CALLBACK.equals(type);
@@ -317,7 +318,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         for (int i = 0, t = TerminalConst.TERMINAL_CONNECT_RETRY_TIMES; i < t; i++) {
             log.info("terminal 建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}", (i + 1), machineId);
             try {
-                return machineInfoService.getSessionStore(machineId);
+                return machineInfoService.openSessionStore(machineId);
             } catch (Exception e) {
                 if (e instanceof ConnectionRuntimeException) {
                     // retry
