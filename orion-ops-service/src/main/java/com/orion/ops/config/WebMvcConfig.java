@@ -1,14 +1,12 @@
 package com.orion.ops.config;
 
-import com.orion.exception.AuthenticationException;
-import com.orion.exception.ConnectionRuntimeException;
 import com.orion.exception.IORuntimeException;
 import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
 import com.orion.exception.argument.RpcWrapperException;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -62,13 +60,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
     public HttpWrapper<?> httpRequestExceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return HttpWrapper.error().msg(Const.INVALID_PARAM);
+        return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
     }
 
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> exceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return HttpWrapper.error().msg(Const.EXCEPTION_MESSAGE).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
@@ -80,19 +78,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
     public HttpWrapper<?> ioExceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return HttpWrapper.error().msg(Const.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
-    }
-
-    @ExceptionHandler(value = {ConnectionRuntimeException.class})
-    public HttpWrapper<?> connectionExceptionHandler(Exception ex) {
-        ex.printStackTrace();
-        return HttpWrapper.error().msg(Const.CONN_EXCEPTION_MESSAGE).data(ex.getMessage());
-    }
-
-    @ExceptionHandler(value = {AuthenticationException.class})
-    public HttpWrapper<?> authExceptionHandler(Exception ex) {
-        ex.printStackTrace();
-        return HttpWrapper.error().msg(Const.AUTH_EXCEPTION_MESSAGE).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = CodeArgumentException.class)

@@ -1,4 +1,4 @@
-package com.orion.ops.handler.terminal;
+package com.orion.ops.handler.terminal.manager;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,11 +18,11 @@ import javax.annotation.Resource;
 public class TerminalDownChecker {
 
     @Resource
-    private TerminalSessionManager terminalSessionManager;
+    private TerminalSessionHolder terminalSessionHolder;
 
     @Scheduled(cron = "0 */1 * * * ?")
     private void configureTasks() {
-        terminalSessionManager.sessionStore.forEach((k, v) -> {
+        terminalSessionHolder.getSessionStore().forEach((k, v) -> {
             if (!v.isDown()) {
                 return;
             }

@@ -10,7 +10,7 @@ import com.orion.ops.entity.dto.TerminalDataTransferDTO;
  * @version 1.0.0
  * @since 2021/4/17 22:56
  */
-public interface OperateHandler {
+public interface IOperateHandler {
 
     /**
      * 处理消息

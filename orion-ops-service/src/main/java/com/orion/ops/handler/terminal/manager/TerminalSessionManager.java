@@ -1,18 +1,19 @@
-package com.orion.ops.handler.terminal;
+package com.orion.ops.handler.terminal.manager;
 
 import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
+import com.orion.ops.handler.terminal.AbstractTerminalHandler;
+import com.orion.ops.handler.terminal.manager.TerminalSessionHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.time.DateRanges;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -25,12 +26,8 @@ import java.util.stream.Collectors;
 @Component
 public class TerminalSessionManager {
 
-    /**
-     * 已连接的 session
-     * key: token
-     * value: id
-     */
-    protected Map<String, TerminalHandler> sessionStore = new ConcurrentHashMap<>();
+    @Resource
+    private TerminalSessionHolder terminalSessionHolder;
 
     /**
      * session 列表
@@ -39,7 +36,7 @@ public class TerminalSessionManager {
      * @return dataGrid
      */
     public DataGrid<MachineTerminalManagerVO> getOnlineTerminal(MachineTerminalManagerRequest request) {
-        List<MachineTerminalManagerVO> sessionList = sessionStore.values()
+        List<MachineTerminalManagerVO> sessionList = terminalSessionHolder.getSessionStore().values()
                 .stream()
                 .filter(s -> Optional.ofNullable(request.getToken())
                         .filter(Strings::isNotBlank)
@@ -83,7 +80,7 @@ public class TerminalSessionManager {
      * @param token token
      */
     public HttpWrapper<?> forceOffline(String token) {
-        TerminalHandler handler = sessionStore.get(token);
+        AbstractTerminalHandler handler = terminalSessionHolder.getSessionStore().get(token);
         if (handler == null) {
             return HttpWrapper.error("未查询到连接信息");
         }

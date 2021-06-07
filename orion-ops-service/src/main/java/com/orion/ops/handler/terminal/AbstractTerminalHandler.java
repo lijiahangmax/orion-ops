@@ -1,7 +1,9 @@
 package com.orion.ops.handler.terminal;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.constant.Const;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.SchedulerPolls;
+import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.protocol.TerminalCloseCode;
 import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.consts.protocol.TerminalOperate;
@@ -9,6 +11,7 @@ import com.orion.ops.consts.protocol.TerminalProtocol;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
+import com.orion.ops.handler.terminal.manager.TerminalManagementHandler;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.ShellExecutor;
@@ -34,7 +37,7 @@ import java.io.OutputStream;
  * @since 2021/4/17 22:46
  */
 @Slf4j
-public abstract class TerminalHandler implements OperateHandler, ManagementHandler {
+public abstract class AbstractTerminalHandler implements IOperateHandler, TerminalManagementHandler {
 
     private static final MachineTerminalService machineTerminalService = SpringHolder.getBean("machineTerminalService");
 
@@ -76,7 +79,7 @@ public abstract class TerminalHandler implements OperateHandler, ManagementHandl
 
     protected volatile boolean callback;
 
-    public TerminalHandler(String token, TerminalConnectConfig config, WebSocketSession session, SessionStore sessionStore) {
+    public AbstractTerminalHandler(String token, TerminalConnectConfig config, WebSocketSession session, SessionStore sessionStore) {
         this.token = token;
         this.config = config;
         this.session = session;
@@ -115,8 +118,8 @@ public abstract class TerminalHandler implements OperateHandler, ManagementHandl
      * 建立连接
      */
     public void connect() {
-        executor.connect(TerminalConst.TERMINAL_CONNECT_TIMEOUT);
-        executor.scheduler(TerminalConst.TERMINAL_SCHEDULER)
+        executor.connect(MachineConst.CONNECT_TIMEOUT);
+        executor.scheduler(SchedulerPolls.TERMINAL_SCHEDULER)
                 .callback(d -> {
                     if (!this.callback) {
                         return;

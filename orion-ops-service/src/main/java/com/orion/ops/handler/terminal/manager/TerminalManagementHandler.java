@@ -1,4 +1,4 @@
-package com.orion.ops.handler.terminal;
+package com.orion.ops.handler.terminal.manager;
 
 /**
  * 管理handler
@@ -7,7 +7,7 @@ package com.orion.ops.handler.terminal;
  * @version 1.0.0
  * @since 2021/4/19 23:21
  */
-public interface ManagementHandler {
+public interface TerminalManagementHandler {
 
     /**
      * 管理员强制下线

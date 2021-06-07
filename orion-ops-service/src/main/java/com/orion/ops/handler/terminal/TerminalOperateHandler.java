@@ -17,7 +17,7 @@ import org.springframework.web.socket.WebSocketSession;
  * @since 2021/4/15 22:54
  */
 @Slf4j
-public class TerminalOperateHandler extends TerminalHandler {
+public class TerminalOperateHandler extends AbstractTerminalHandler {
 
     public TerminalOperateHandler(String token, TerminalConnectConfig config, WebSocketSession session, SessionStore sessionStore) {
         super(token, config, session, sessionStore);
