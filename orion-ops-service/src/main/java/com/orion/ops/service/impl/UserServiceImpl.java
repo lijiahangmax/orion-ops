@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.*;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -53,7 +50,7 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
                 .eq(Objects.nonNull(request.getId()), UserInfoDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getRole()), UserInfoDO::getRoleType, request.getRole())
-                .ne(!Currents.isSuperAdministrator(), UserInfoDO::getRoleType, RoleType.SUPER_ADMINISTRATOR.getType())
+                .ne(!Currents.isAdministrator(), UserInfoDO::getRoleType, RoleType.ADMINISTRATOR.getType())
                 .eq(Objects.nonNull(request.getStatus()), UserInfoDO::getUserStatus, request.getStatus())
                 .like(Objects.nonNull(request.getUsername()), UserInfoDO::getUsername, request.getUsername())
                 .like(Objects.nonNull(request.getNickname()), UserInfoDO::getNickname, request.getNickname())
@@ -88,10 +85,7 @@ public class UserServiceImpl implements UserService {
         }
         // 角色判断
         RoleType role = RoleType.of(request.getRole());
-        if (RoleType.SUPER_ADMINISTRATOR.equals(role)) {
-            return HttpWrapper.error("不支持创建该角色");
-        }
-        if (RoleType.ADMINISTRATOR.equals(role) && !Currents.isSuperAdministrator()) {
+        if (RoleType.ADMINISTRATOR.equals(role)) {
             return HttpWrapper.error("不支持创建该角色");
         }
         // 密码
@@ -151,18 +145,8 @@ public class UserServiceImpl implements UserService {
             if (!Currents.isAdministrator()) {
                 return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
-            if (RoleType.SUPER_ADMINISTRATOR.getType().equals(userInfo.getRoleType())) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
-            boolean superAdministrator = Currents.isSuperAdministrator();
-            if (RoleType.ADMINISTRATOR.getType().equals(userInfo.getRoleType()) && !superAdministrator) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
             if (roleType != null) {
-                if (RoleType.SUPER_ADMINISTRATOR.equals(roleType)) {
-                    return HttpWrapper.of(ResultCode.NO_PERMISSION);
-                }
-                if (RoleType.ADMINISTRATOR.equals(roleType) && !superAdministrator) {
+                if (RoleType.ADMINISTRATOR.equals(roleType)) {
                     return HttpWrapper.of(ResultCode.NO_PERMISSION);
                 }
                 update.setRoleType(roleType.getType());
@@ -251,10 +235,9 @@ public class UserServiceImpl implements UserService {
      */
     private HttpWrapper<Integer> updateOrDeleteCheck(UserInfoRequest request, List<Long> idList) {
         Long userId = Currents.getUserId();
-        boolean isSuperAdministrator = Currents.isSuperAdministrator();
         for (Long id : request.getIdList()) {
             if (id == null) {
-                return HttpWrapper.error(Const.INVALID_PARAM);
+                return HttpWrapper.error(MessageConst.MISSING_PARAM);
             }
             if (userId.equals(id)) {
                 return HttpWrapper.of(ResultCode.NO_PERMISSION);
@@ -264,10 +247,7 @@ public class UserServiceImpl implements UserService {
                 return HttpWrapper.error("未查询到用户信息");
             }
             RoleType role = RoleType.of(user.getRoleType());
-            if (RoleType.SUPER_ADMINISTRATOR.equals(role)) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
-            if (RoleType.ADMINISTRATOR.equals(role) && !isSuperAdministrator) {
+            if (RoleType.ADMINISTRATOR.equals(role)) {
                 return HttpWrapper.of(ResultCode.NO_PERMISSION);
             }
             idList.add(id);

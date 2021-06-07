@@ -128,12 +128,12 @@ public class PassportServiceImpl implements PassportService {
             return HttpWrapper.error("未查询到用户信息");
         }
         RoleType updateRoleType = RoleType.of(userInfo.getRoleType());
-        // 检查是否更新的是超级管理员的密码
-        if (RoleType.SUPER_ADMINISTRATOR.equals(updateRoleType) && !updateCurrent) {
+        // 检查是否是管理员更新密码
+        if (!updateCurrent && !Currents.isAdministrator()) {
             return HttpWrapper.of(ResultCode.NO_PERMISSION);
         }
         // 检查是否更新的是管理员的密码
-        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && (!updateCurrent && !Currents.isSuperAdministrator())) {
+        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && !updateCurrent) {
             return HttpWrapper.of(ResultCode.NO_PERMISSION);
         }
 

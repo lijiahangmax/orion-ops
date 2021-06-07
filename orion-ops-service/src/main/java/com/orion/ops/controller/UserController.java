@@ -51,7 +51,7 @@ public class UserController {
      * 添加用户
      */
     @RequestMapping("/add")
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<Long> addUser(@RequestBody UserInfoRequest request) {
         this.check(request);
         Valid.notBlank(request.getPassword());
@@ -84,7 +84,7 @@ public class UserController {
      * 删除
      */
     @RequestMapping("/delete")
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<Integer> delete(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIdList());
         return userService.deleteUser(request);
@@ -94,7 +94,7 @@ public class UserController {
      * 停用/启用
      */
     @RequestMapping("/status")
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIdList());
         Integer status = Valid.notNull(request.getStatus());

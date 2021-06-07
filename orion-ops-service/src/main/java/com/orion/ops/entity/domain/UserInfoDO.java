@@ -56,7 +56,7 @@ public class UserInfoDO implements Serializable {
     private String salt;
 
     /**
-     * 角色类型 10超级管理员 20管理员 30开发 40运维
+     * 角色类型 10管理员 20开发 30运维
      *
      * @see com.orion.ops.consts.RoleType
      */
