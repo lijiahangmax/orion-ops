@@ -1,4 +1,4 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.machine;
 
 import lombok.Getter;
 import lombok.Setter;

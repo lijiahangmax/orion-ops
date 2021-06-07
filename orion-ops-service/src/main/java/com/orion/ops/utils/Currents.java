@@ -65,23 +65,18 @@ public class Currents {
     }
 
     /**
-     * 是否为 超级管理员
+     * 获取当前登录用户username
      *
-     * @return true 超级管理员
+     * @return username
      */
-    public static boolean isSuperAdministrator() {
-        UserDTO user = UserHolder.get();
-        if (user == null) {
-            return false;
-        }
-        Integer roleType = user.getRoleType();
-        return RoleType.isSuperAdministrator(roleType);
+    public static String getUserName() {
+        return UserHolder.get().getUsername();
     }
 
     /**
-     * 是否为 超级管理员/管理员
+     * 是否为 管理员
      *
-     * @return true 超级管理员/管理员
+     * @return true 管理员
      */
     public static boolean isAdministrator() {
         UserDTO user = UserHolder.get();

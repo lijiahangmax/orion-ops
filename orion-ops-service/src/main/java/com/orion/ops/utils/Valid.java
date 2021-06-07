@@ -1,6 +1,6 @@
 package com.orion.ops.utils;
 
-import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 
 import java.util.Collection;
 
@@ -14,25 +14,25 @@ import java.util.Collection;
 public class Valid extends com.orion.utils.Valid {
 
     public static <T> T notNull(T object) {
-        return notNull(object, Const.MISSING_PARAM);
+        return notNull(object, MessageConst.MISSING_PARAM);
     }
 
     public static String notBlank(String s) {
-        return notBlank(s, Const.MISSING_PARAM);
+        return notBlank(s, MessageConst.MISSING_PARAM);
     }
 
     public static <T extends Collection<?>> T notEmpty(T object) {
-        return notEmpty(object, Const.MISSING_PARAM);
+        return notEmpty(object, MessageConst.MISSING_PARAM);
     }
 
     public static void eq(Object o1, Object o2) {
-        eq(o1, o2, Const.MISSING_PARAM);
+        eq(o1, o2, MessageConst.MISSING_PARAM);
     }
 
     public static void allNotNull(Object... objects) {
         if (objects != null) {
             for (Object t : objects) {
-                notNull(t, Const.MISSING_PARAM);
+                notNull(t, MessageConst.MISSING_PARAM);
             }
         }
     }
@@ -40,13 +40,13 @@ public class Valid extends com.orion.utils.Valid {
     public static void allNotBlank(String... ss) {
         if (ss != null) {
             for (String s : ss) {
-                notBlank(s, Const.MISSING_PARAM);
+                notBlank(s, MessageConst.MISSING_PARAM);
             }
         }
     }
 
     public static boolean isTrue(boolean s) {
-        return isTrue(s, Const.MISSING_PARAM);
+        return isTrue(s, MessageConst.MISSING_PARAM);
     }
 
 }

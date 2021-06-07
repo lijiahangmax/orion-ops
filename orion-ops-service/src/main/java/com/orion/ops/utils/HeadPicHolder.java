@@ -1,7 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;

@@ -15,24 +15,19 @@ import lombok.Getter;
 public enum RoleType {
 
     /**
-     * 超级管理员
-     */
-    SUPER_ADMINISTRATOR(10),
-
-    /**
      * 管理员
      */
-    ADMINISTRATOR(20),
+    ADMINISTRATOR(10),
 
     /**
      * 开发
      */
-    DEVELOPER(30),
+    DEVELOPER(20),
 
     /**
      * 运维
      */
-    OPERATION(40),
+    OPERATION(30),
 
     ;
 
@@ -51,29 +46,16 @@ public enum RoleType {
     }
 
     /**
-     * 是否为 超级管理员
+     * 是否为 管理员
      *
-     * @return true 超级管理员
-     */
-    public static boolean isSuperAdministrator(Integer type) {
-        RoleType role = of(type);
-        if (role == null) {
-            return false;
-        }
-        return SUPER_ADMINISTRATOR.equals(role);
-    }
-
-    /**
-     * 是否为 超级管理员/管理员
-     *
-     * @return true 超级管理员/管理员
+     * @return true 管理员
      */
     public static boolean isAdministrator(Integer type) {
         RoleType role = of(type);
         if (role == null) {
             return false;
         }
-        return SUPER_ADMINISTRATOR.equals(role) || ADMINISTRATOR.equals(role);
+        return ADMINISTRATOR.equals(role);
     }
 
 }

@@ -1,43 +1,36 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.machine;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 代理类型
+ * 认证类型
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/4/23 15:40
+ * @since 2021/4/14 22:29
  */
-@AllArgsConstructor
 @Getter
-public enum ProxyType {
+@AllArgsConstructor
+public enum MachineAuthType {
 
     /**
-     * HTTP 代理
+     * 1 密码
      */
-    HTTP(1),
+    PASSWORD(1),
 
     /**
-     * SOCKET4 代理
+     * 2 秘钥
      */
-    SOCKET4(2),
-
-    /**
-     * SOCKET5 代理
-     */
-    SOCKET5(3),
-
-    ;
+    KEY(2);
 
     Integer type;
 
-    public static ProxyType of(Integer type) {
+    public static MachineAuthType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (ProxyType value : values()) {
+        for (MachineAuthType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
