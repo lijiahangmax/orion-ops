@@ -1,7 +1,7 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import lombok.extern.slf4j.Slf4j;

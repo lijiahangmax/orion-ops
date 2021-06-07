@@ -1,10 +1,10 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.AuthType;
-import com.orion.ops.consts.CommandConst;
+import com.orion.ops.consts.machine.MachineAuthType;
+import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -63,7 +63,7 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setMachineName(Systems.HOST_NAME);
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
-            insert.setAuthType(AuthType.PASSWORD.getType());
+            insert.setAuthType(MachineAuthType.PASSWORD.getType());
             insert.setSystemType(Systems.BE_UNIX ? 1 : 2);
             insert.setSystemVersion(Systems.OS_NAME + Strings.SPACE + Systems.OS_VERSION);
             insert.setMachineStatus(Const.ENABLE);

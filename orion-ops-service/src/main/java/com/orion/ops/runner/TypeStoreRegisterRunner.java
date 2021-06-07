@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
  * @since 2021/5/27 18:55
  */
 @Component
-@Order(120)
+@Order(200)
 @Slf4j
 public class TypeStoreRegisterRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("注册vo转换器开始");
+        log.info("注册vo转换器-开始");
         new PackageScanner("com.orion.ops.entity.vo")
                 .with(OrionOpsServiceApplication.class)
                 .scan()
@@ -31,7 +31,7 @@ public class TypeStoreRegisterRunner implements CommandLineRunner {
                     log.info("register runner init class: {}", s);
                     Class.forName(s.getName());
                 }));
-        log.info("注册vo转换器结束");
+        log.info("注册vo转换器-结束");
     }
 
 }
