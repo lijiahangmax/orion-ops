@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ProxyType;
-import com.orion.ops.consts.SyncMachineProperties;
-import com.orion.ops.consts.protocol.TerminalConst;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.machine.MachineConst;
+import com.orion.ops.consts.machine.ProxyType;
+import com.orion.ops.consts.machine.SyncMachineProperties;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
@@ -187,11 +189,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         String res;
         switch (func) {
             case MACHINE_NAME:
-                res = this.getCommandResult(id, func.getCommand());
+                res = this.getCommandResultSync(id, func.getCommand());
                 machine.setMachineName(res);
                 break;
             case SYSTEM_VERSION:
-                res = this.getCommandResult(id, func.getCommand());
+                res = this.getCommandResultSync(id, func.getCommand());
                 machine.setSystemVersion(res);
                 break;
             default:
@@ -212,7 +214,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public Integer testPing(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
-        Valid.notNull(machine, Const.INVALID_MACHINE);
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         boolean ping = IPs.ping(machine.getMachineHost(), Const.MS_S_3);
         return ping ? Const.ENABLE : Const.DISABLE;
     }
@@ -232,8 +234,38 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Override
     public SessionStore openSessionStore(Long id) {
-        MachineInfoDO machine = machineInfoDAO.selectById(id);
-        Valid.notNull(machine, Const.INVALID_MACHINE);
+        MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+        Exception ex = null;
+        String msg = MessageConst.CONN_EXCEPTION_MESSAGE;
+        for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {
+            log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}", (i + 1), id);
+            try {
+                return this.openSessionStore(machine);
+            } catch (Exception e) {
+                ex = e;
+                if (e instanceof ConnectionRuntimeException) {
+                    // retry
+                } else if (e instanceof AuthenticationException) {
+                    msg = MessageConst.AUTH_EXCEPTION_MESSAGE;
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+        ex.printStackTrace();
+        HttpWrapper<?> error = HttpWrapper.error("机器 " + machine.getMachineHost() + " " + msg);
+        throw Exceptions.httpWrapper(error, ex);
+    }
+
+    /**
+     * 打开sessionStore
+     *
+     * @param machine machine
+     * @return SessionStore
+     */
+    private SessionStore openSessionStore(MachineInfoDO machine) {
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         Long proxyId = machine.getProxyId();
         SessionStore session;
         try {
@@ -260,7 +292,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 }
                 session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
             }
-            session.connect(TerminalConst.TERMINAL_CONNECT_TIMEOUT);
+            session.connect(MachineConst.CONNECT_TIMEOUT);
             log.info("远程机器建立连接-成功 {}@{}/{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
             return session;
         } catch (Exception e) {
@@ -269,8 +301,14 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         }
     }
 
-    @Override
-    public String getCommandResult(Long id, String command) {
+    /**
+     * 同步执行命令获取输出结果
+     *
+     * @param id      机器id
+     * @param command 命令
+     * @return result
+     */
+    private String getCommandResultSync(Long id, String command) {
         String res;
         if (id.equals(1L)) {
             // 本机

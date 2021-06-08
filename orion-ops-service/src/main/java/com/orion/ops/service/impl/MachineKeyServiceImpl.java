@@ -3,7 +3,7 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.MountKeyStatus;
+import com.orion.ops.consts.machine.MountKeyStatus;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;

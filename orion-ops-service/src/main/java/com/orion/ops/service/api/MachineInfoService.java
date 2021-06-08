@@ -105,13 +105,4 @@ public interface MachineInfoService {
      */
     SessionStore openSessionStore(Long id);
 
-    /**
-     * 执行命令获取输出结果
-     *
-     * @param id      机器id
-     * @param command 命令
-     * @return result
-     */
-    String getCommandResult(Long id, String command);
-
 }

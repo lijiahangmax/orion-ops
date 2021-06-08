@@ -1,7 +1,8 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.machine.MountKeyStatus;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
@@ -63,7 +64,7 @@ public interface MachineKeyService {
      *
      * @param id id
      * @return status
-     * @see com.orion.ops.consts.MountKeyStatus
+     * @see MountKeyStatus
      */
     Integer mountKey(Long id);
 
@@ -72,7 +73,7 @@ public interface MachineKeyService {
      *
      * @param id id
      * @return status
-     * @see com.orion.ops.consts.MountKeyStatus
+     * @see MountKeyStatus
      */
     Integer unmountKey(Long id);
 
@@ -82,7 +83,7 @@ public interface MachineKeyService {
      * @param fileData fileData
      * @param password password
      * @return status
-     * @see com.orion.ops.consts.MountKeyStatus
+     * @see MountKeyStatus
      */
     Integer tempMountKey(String fileData, String password);
 
