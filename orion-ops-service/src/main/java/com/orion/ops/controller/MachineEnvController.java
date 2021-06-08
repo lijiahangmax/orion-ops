@@ -53,8 +53,8 @@ public class MachineEnvController {
      */
     @RequestMapping("/delete")
     public Integer delete(@RequestBody MachineEnvRequest request) {
-        List<Long> ids = Valid.notEmpty(request.getIds());
-        return machineEnvService.deleteEnv(ids);
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return machineEnvService.deleteEnv(idList);
     }
 
     /**

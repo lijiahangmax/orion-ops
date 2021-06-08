@@ -25,7 +25,7 @@ public class MachineEnvRequest extends PageRequest {
     /**
      * id
      */
-    private List<Long> ids;
+    private List<Long> idList;
 
     /**
      * 合并选择的目标id
@@ -40,7 +40,7 @@ public class MachineEnvRequest extends PageRequest {
     /**
      * 机器id
      */
-    private String machineId;
+    private Long machineId;
 
     /**
      * key

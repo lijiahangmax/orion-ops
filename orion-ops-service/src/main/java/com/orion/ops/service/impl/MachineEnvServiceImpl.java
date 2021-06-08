@@ -1,9 +1,10 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -57,9 +58,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer deleteEnv(List<Long> ids) {
+    public Integer deleteEnv(List<Long> idList) {
         int effect = 0;
-        for (Long id : ids) {
+        for (Long id : idList) {
             MachineEnvDO env = machineEnvDAO.selectById(id);
             Valid.eq(Const.FORBID_DELETE_CAN, env.getForbidDelete(), "{} 禁止删除", env.getAttrKey());
             effect += machineEnvDAO.deleteById(id);
@@ -117,16 +118,22 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
+    public MutableLinkedHashMap<String, String> getMachineEnv(Long machineId) {
+        MutableLinkedHashMap<String, String> env = new MutableLinkedHashMap<>();
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, machineId)
+                .orderByAsc(MachineEnvDO::getId);
+        machineEnvDAO.selectList(wrapper).forEach(e -> {
+            env.put(e.getAttrKey(), e.getAttrValue());
+        });
+        return env;
+    }
+
+    @Override
     public void initEnv(Long machineId) {
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         List<String> keys = MachineEnvAttr.getTargetKeys();
-        String home;
-        String username = machine.getUsername();
-        if (Const.ROOT.equals(username)) {
-            home = "/" + Const.ROOT + "/ops/";
-        } else {
-            home = "/home/" + username + "/ops/";
-        }
+        String home = this.getHomePath(machine.getUsername());
         for (String key : keys) {
             MachineEnvDO env = new MachineEnvDO();
             MachineEnvAttr attr = MachineEnvAttr.of(key);
@@ -141,10 +148,27 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 case DIST_PATH:
                     env.setAttrValue(home + "dist/");
                     break;
+                case TEMP_PATH:
+                    env.setAttrValue(home + "temp/");
+                    break;
                 default:
                     break;
             }
             machineEnvDAO.insert(env);
+        }
+    }
+
+    /**
+     * 获取环境根目录
+     *
+     * @param username 用户名
+     * @return 目录
+     */
+    private String getHomePath(String username) {
+        if (Const.ROOT.equals(username)) {
+            return "/" + Const.ROOT + "/" + Const.ORION_OPS + "/";
+        } else {
+            return "/home/" + username + "/" + Const.ORION_OPS + "/";
         }
     }
 
