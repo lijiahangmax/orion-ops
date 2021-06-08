@@ -133,7 +133,7 @@ public class MachineKeyController {
      */
     @RequestMapping("/download/{id}")
     @IgnoreWrapper
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public void download(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
         Valid.notNull(id);
         MachineSecretKeyDO key = machineKeyService.getKeyById(id);

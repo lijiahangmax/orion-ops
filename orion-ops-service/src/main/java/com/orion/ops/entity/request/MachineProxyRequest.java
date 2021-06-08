@@ -25,7 +25,7 @@ public class MachineProxyRequest extends PageRequest {
     /**
      * id
      */
-    private List<Long> ids;
+    private List<Long> idList;
 
     /**
      * 主机
