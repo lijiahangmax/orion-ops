@@ -12,7 +12,7 @@ import com.orion.ops.entity.request.MachineTerminalRequest;
 import com.orion.ops.entity.vo.MachineTerminalLogVO;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
-import com.orion.ops.handler.terminal.TerminalSessionManager;
+import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.TerminalType;
@@ -116,7 +116,7 @@ public class MachineTerminalController {
      * 强制下线 (管理员)
      */
     @RequestMapping("/manager/offline")
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {
         String token = Valid.notBlank(request.getToken());
         return terminalSessionManager.forceOffline(token);
@@ -126,7 +126,7 @@ public class MachineTerminalController {
      * session列表 (管理员)
      */
     @RequestMapping("/manager/session/list")
-    @RequireRole(value = {RoleType.SUPER_ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
     public DataGrid<MachineTerminalManagerVO> sessionList(@RequestBody MachineTerminalManagerRequest request) {
         return terminalSessionManager.getOnlineTerminal(request);
     }

@@ -2,8 +2,8 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ProxyType;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.machine.ProxyType;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 机器代理
@@ -65,8 +66,8 @@ public class MachineProxyController {
      */
     @RequestMapping("/delete")
     public Integer delete(@RequestBody MachineProxyRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return machineProxyService.deleteProxy(id);
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return machineProxyService.deleteProxy(idList);
     }
 
     /**
@@ -80,10 +81,8 @@ public class MachineProxyController {
             Valid.notNull(request.getPassword());
         }
         if (!Matches.isIpv4(host)) {
-            throw Exceptions.invalidArgument(Const.INVALID_PARAM);
+            throw Exceptions.invalidArgument(MessageConst.MISSING_PARAM);
         }
     }
-
-    // @RequestMapping("/use/machine")
 
 }

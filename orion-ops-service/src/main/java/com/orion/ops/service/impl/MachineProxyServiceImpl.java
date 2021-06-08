@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Pager;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
 import com.orion.ops.entity.domain.MachineProxyDO;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -73,9 +73,13 @@ public class MachineProxyServiceImpl implements MachineProxyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer deleteProxy(Long id) {
-        machineInfoDAO.setProxyIdWithNull(id);
-        return machineProxyDAO.deleteById(id);
+    public Integer deleteProxy(List<Long> idList) {
+        int effect = 0;
+        for (Long id : idList) {
+            machineInfoDAO.setProxyIdWithNull(id);
+            effect += machineProxyDAO.deleteById(id);
+        }
+        return effect;
     }
 
 }

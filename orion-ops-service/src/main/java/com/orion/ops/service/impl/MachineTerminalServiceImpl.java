@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.dao.MachineTerminalDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
@@ -76,7 +77,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
     public TerminalAccessVO getAccessConfig(Long machineId) {
         // 获取机器信息
         MachineInfoDO machine = machineInfoService.selectById(machineId);
-        Valid.notNull(machine, Const.INVALID_MACHINE);
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 设置accessToken
         Long userId = Currents.getUserId();
         String token = ValueMix.base62ecbEnc(userId + "_" + System.currentTimeMillis(), TerminalConst.TERMINAL);

@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 
+import java.util.List;
+
 /**
  * 代理服务
  *
@@ -32,9 +34,9 @@ public interface MachineProxyService {
     /**
      * 删除代理
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteProxy(Long id);
+    Integer deleteProxy(List<Long> idList);
 
 }
