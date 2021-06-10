@@ -1,15 +1,13 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.machine.MachineAuthType;
-import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.process.Processes;
 import com.orion.utils.Strings;
 import com.orion.utils.Systems;
 import com.orion.utils.io.Files1;
@@ -108,18 +106,6 @@ public class HostMachineInitialize implements CommandLineRunner {
      */
     private String getAttrValue(MachineEnvAttr attr) {
         switch (attr) {
-            case JAVA_BIN_PATH:
-                return whereIs(attr, CommandConst.JAVA);
-            case MAVEN_BIN_PATH:
-                return whereIs(attr, CommandConst.MVN);
-            case NPM_BIN_PATH:
-                return whereIs(attr, CommandConst.NPM);
-            case YARN_BIN_PATH:
-                return whereIs(attr, CommandConst.YARN);
-            case SVN_BIN_PATH:
-                return whereIs(attr, CommandConst.SVN);
-            case GIT_BIN_PATH:
-                return whereIs(attr, CommandConst.GIT);
             case LOG_PATH:
                 return createOrionOpsPath(Const.LOG_PATH);
             case KEY_PATH:
@@ -132,27 +118,6 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.TEMP_PATH);
             default:
                 return null;
-        }
-    }
-
-    /**
-     * whereis 命令
-     *
-     * @param attr    attr
-     * @param command command
-     * @return path
-     */
-    public static String whereIs(MachineEnvAttr attr, String command) {
-        try {
-            String s = Processes.getOutputResultWithDirString(CommandConst.USR_BIN, CommandConst.WHERE_IS, command);
-            String[] split = s.split(Strings.SPACE);
-            if (split.length == 1) {
-                return null;
-            }
-            return Strings.ifBlank(split[1], (String) null);
-        } catch (Exception e) {
-            log.error("获取系统参数: {} 失败, command: whereis {}, e: {}", attr.name(), command, e);
-            return null;
         }
     }
 

@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("command_exec", "command_template");
+                .setInclude("history_value_snapshot");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()

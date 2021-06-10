@@ -18,34 +18,14 @@ import java.util.stream.Collectors;
 public enum MachineEnvAttr {
 
     /**
-     * JAVA_BIN_PATH
+     * 存放秘钥文件目录
      */
-    JAVA_BIN_PATH(true, true, "java 命令路径"),
+    KEY_PATH(true, false, "秘钥目录"),
 
     /**
-     * MAVEN_BIN_PATH
+     * 存放图片目录
      */
-    MAVEN_BIN_PATH(true, false, "maven 命令路径"),
-
-    /**
-     * NPM_BIN_PATH
-     */
-    NPM_BIN_PATH(true, false, "npm 命令路径"),
-
-    /**
-     * YARN_BIN_PATH
-     */
-    YARN_BIN_PATH(true, false, "yarn 命令路径"),
-
-    /**
-     * SVN_BIN_PATH
-     */
-    SVN_BIN_PATH(true, false, "svn 命令路径"),
-
-    /**
-     * GIT_BIN_PATH
-     */
-    GIT_BIN_PATH(true, false, "git 命令路径"),
+    PIC_PATH(true, false, "图片目录"),
 
     /**
      * 日志目录
@@ -58,25 +38,10 @@ public enum MachineEnvAttr {
     TEMP_PATH(true, true, "临时目录"),
 
     /**
-     * 存放秘钥文件目录
-     */
-    KEY_PATH(true, false, "秘钥目录"),
-
-    /**
      * 宿主机存放部署产物目录
      * 目标集群产物分发的目录
      */
     DIST_PATH(true, true, "产物目录"),
-
-    /**
-     * 存放图片目录
-     */
-    PIC_PATH(true, false, "图片目录"),
-
-    /**
-     * nginx静态文件映射目录
-     */
-    NGINX_WWW_PATH(false, true, "nginx 静态文件映射目录"),
 
     ;
 
