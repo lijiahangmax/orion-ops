@@ -19,8 +19,25 @@ public enum HistoryValueType {
      */
     MACHINE_ENV(10),
 
+    /**
+     * 命令模板
+     */
+    COMMAND_TEMPLATE(20),
+
     ;
 
     Integer type;
+
+    public static HistoryValueType of(Integer type) {
+        if (type == null) {
+            return null;
+        }
+        for (HistoryValueType value : values()) {
+            if (type.equals(value.type)) {
+                return value;
+            }
+        }
+        return null;
+    }
 
 }
