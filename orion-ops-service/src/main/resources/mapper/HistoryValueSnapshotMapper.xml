@@ -7,7 +7,7 @@
         <id column="id" property="id"/>
         <result column="value_id" property="valueId"/>
         <result column="value_type" property="valueType"/>
-        <result column="after_value" property="afterValue"/>
+        <result column="before_value" property="beforeValue"/>
         <result column="update_user_id" property="updateUserId"/>
         <result column="update_user_name" property="updateUserName"/>
         <result column="create_time" property="createTime"/>
@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, value_id, value_type, after_value, update_user_id, update_user_name, create_time, update_time
+        id, value_id, value_type, before_value, update_user_id, update_user_name, create_time, update_time
     </sql>
 
 </mapper>

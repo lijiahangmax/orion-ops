@@ -23,9 +23,9 @@ public class HistoryValueVO {
     private Long id;
 
     /**
-     * 新值
+     * 原始值
      */
-    private String afterValue;
+    private String beforeValue;
 
     /**
      * 修改人id
@@ -51,7 +51,7 @@ public class HistoryValueVO {
         TypeStore.STORE.register(HistoryValueSnapshotDO.class, HistoryValueVO.class, p -> {
             HistoryValueVO vo = new HistoryValueVO();
             vo.setId(p.getId());
-            vo.setAfterValue(p.getAfterValue());
+            vo.setBeforeValue(p.getBeforeValue());
             vo.setUpdateUserId(p.getUpdateUserId());
             vo.setUpdateUserName(p.getUpdateUserName());
             vo.setCreateTime(p.getCreateTime());

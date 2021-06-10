@@ -44,10 +44,10 @@ public class HistoryValueSnapshotDO implements Serializable {
     private Integer valueType;
 
     /**
-     * 新值
+     * 原始值
      */
-    @TableField("after_value")
-    private String afterValue;
+    @TableField("before_value")
+    private String beforeValue;
 
     /**
      * 修改人id
