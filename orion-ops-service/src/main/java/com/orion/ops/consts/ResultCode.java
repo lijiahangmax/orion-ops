@@ -22,7 +22,7 @@ public enum ResultCode implements CodeInfo {
 
         @Override
         public String message() {
-            return "未认证";
+            return MessageConst.UNAUTHORIZED;
         }
     },
 
@@ -37,7 +37,22 @@ public enum ResultCode implements CodeInfo {
 
         @Override
         public String message() {
-            return "无权限";
+            return MessageConst.NO_PERMISSION;
+        }
+    },
+
+    /**
+     * 文件未找到
+     */
+    FILE_MISSING() {
+        @Override
+        public int code() {
+            return 720;
+        }
+
+        @Override
+        public String message() {
+            return MessageConst.FILE_MISSING;
         }
     },
 

@@ -2,6 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.file.FileTailMode;
 import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
@@ -66,7 +67,7 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setSystemVersion(Systems.OS_NAME + Strings.SPACE + Systems.OS_VERSION);
             insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);
-            machineInfoDAO.setId(insert.getId(), 1L);
+            machineInfoDAO.setId(insert.getId(), Const.HOST_MACHINE_ID);
         }
         log.info("初始化宿主机配置-结束");
     }
@@ -77,7 +78,7 @@ public class HostMachineInitialize implements CommandLineRunner {
     private void initEnv() {
         log.info("初始化宿主机环境-开始");
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                .eq(MachineEnvDO::getMachineId, 1L);
+                .eq(MachineEnvDO::getMachineId, Const.HOST_MACHINE_ID);
         List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
         for (String key : MachineEnvAttr.getHostKeys()) {
             MachineEnvDO env = envs.stream()
@@ -87,7 +88,7 @@ public class HostMachineInitialize implements CommandLineRunner {
             if (env == null) {
                 MachineEnvAttr attr = MachineEnvAttr.of(key);
                 MachineEnvDO insert = new MachineEnvDO();
-                insert.setMachineId(1L);
+                insert.setMachineId(Const.HOST_MACHINE_ID);
                 insert.setAttrKey(key);
                 insert.setAttrValue(this.getAttrValue(attr));
                 insert.setDescription(attr.getDescription());
@@ -116,6 +117,10 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.PIC_PATH);
             case TEMP_PATH:
                 return createOrionOpsPath(Const.TEMP_PATH);
+            case TAIL_MODE:
+                return FileTailMode.TRACKER.getMode();
+            case TAIL_OFFSET:
+                return Const.TAIL_OFFSET_BYTES + Strings.EMPTY;
             default:
                 return null;
         }

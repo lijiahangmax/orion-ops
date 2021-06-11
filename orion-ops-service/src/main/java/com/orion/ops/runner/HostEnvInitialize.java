@@ -1,6 +1,7 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -31,7 +32,7 @@ public class HostEnvInitialize implements CommandLineRunner {
     public void run(String... args) {
         log.info("宿主机基础环境初始化-开始");
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                .eq(MachineEnvDO::getMachineId, 1L);
+                .eq(MachineEnvDO::getMachineId, Const.HOST_MACHINE_ID);
         List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
         for (MachineEnvDO env : envs) {
             MachineEnvAttr attr = MachineEnvAttr.of(env.getAttrKey());

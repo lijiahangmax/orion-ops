@@ -34,6 +34,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final String LOGIN_TOKEN_ENC_KEY = "LoginToken";
 
-    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24;
+    public static final int TAIL_OFFSET_BYTES = BUFFER_KB_8;
+
+    public static final Long HOST_MACHINE_ID = 1L;
+
+    public static final String EXEC_LOG_PATH = "/exec";
 
 }
