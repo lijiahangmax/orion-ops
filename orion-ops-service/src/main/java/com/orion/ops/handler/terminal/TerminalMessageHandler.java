@@ -7,7 +7,6 @@ import com.orion.id.UUIds;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.protocol.TerminalCloseCode;
-import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.consts.protocol.TerminalOperate;
 import com.orion.ops.consts.protocol.TerminalProtocol;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
@@ -15,12 +14,12 @@ import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.handler.terminal.manager.TerminalSessionHolder;
-import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.service.api.PassportService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.utils.Strings;
+import com.orion.utils.Urls;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -76,11 +75,11 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         // 刷新token 过期时间
-        redisTemplate.expire(tokenKey, TerminalConst.TERMINAL_TOKEN_EXPIRE_S, TimeUnit.SECONDS);
+        redisTemplate.expire(tokenKey, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         // 握手设置id
         String id = UUIds.random19();
         String idKey = Strings.format(KeyConst.TERMINAL_ID, id);
-        redisTemplate.opsForValue().set(idKey, token, TerminalConst.TERMINAL_ID_EXPIRE_S, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(idKey, token, KeyConst.TERMINAL_ID_EXPIRE, TimeUnit.SECONDS);
         session.sendMessage(new TextMessage(TerminalProtocol.ACK.msg(id)));
         log.info("terminal 建立ws连接 token: {}", token);
     }
@@ -205,8 +204,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
      * @return token
      */
     private String getToken(WebSocketSession session) {
-        String[] uri = Objects.requireNonNull(session.getUri()).toString().split("/");
-        return uri[uri.length - 1];
+        return Urls.getUrlSource(Objects.requireNonNull(session.getUri()).toString());
     }
 
     /**
@@ -267,7 +265,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return null;
         }
         // 刷新token 过期时间
-        redisTemplate.expire(tokenKey, TerminalConst.TERMINAL_TOKEN_EXPIRE_S, TimeUnit.SECONDS);
+        redisTemplate.expire(tokenKey, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         // 建立连接
         Long machineId = Long.valueOf(tokenValue);
         SessionStore sessionStore;
@@ -287,7 +285,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         }
         // 配置
         String host = sessionStore.getHost();
-        TerminalConnectConfig config = new TerminalConnectConfig();
+        TerminalConnectHint config = new TerminalConnectHint();
         String terminalType = machineTerminalService.getMachineConfig(machineId).getTerminalType();
         config.setUserId(tokenUserId);
         config.setUsername(userDTO.getUsername());

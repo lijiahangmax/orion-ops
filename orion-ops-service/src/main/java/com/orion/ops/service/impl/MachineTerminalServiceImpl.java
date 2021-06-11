@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.protocol.TerminalConst;
@@ -23,15 +22,12 @@ import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.TerminalType;
 import com.orion.utils.Strings;
-import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -97,7 +93,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setFontColor(config.getFontColor());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        redisTemplate.opsForValue().set(cacheKey, machineId + "", TerminalConst.TERMINAL_TOKEN_EXPIRE_S, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(cacheKey, machineId + "", KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         log.info("用户获取terminal accessToken uid: {} machineId: {} token: {}", userId, machineId, token);
         return access;
     }
@@ -128,10 +124,13 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
 
     @Override
     public DataGrid<MachineTerminalLogVO> listAccessLog(MachineTerminalLogRequest request) {
+        if (!Currents.isAdministrator()) {
+            request.setUserId(Currents.getUserId());
+        }
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
-                .like(Objects.nonNull(request.getAccessToken()), MachineTerminalLogDO::getAccessToken, request.getAccessToken())
-                .like(Objects.nonNull(request.getMachineHost()), MachineTerminalLogDO::getMachineHost, request.getMachineHost())
-                .like(Objects.nonNull(request.getUsername()), MachineTerminalLogDO::getUsername, request.getUsername())
+                .like(Strings.isNotBlank(request.getAccessToken()), MachineTerminalLogDO::getAccessToken, request.getAccessToken())
+                .like(Strings.isNotBlank(request.getMachineHost()), MachineTerminalLogDO::getMachineHost, request.getMachineHost())
+                .like(Objects.nonNull(request.getUserId()), MachineTerminalLogDO::getUserId, request.getUserId())
                 .eq(Objects.nonNull(request.getMachineId()), MachineTerminalLogDO::getMachineId, request.getMachineId())
                 .eq(Objects.nonNull(request.getCloseCode()), MachineTerminalLogDO::getCloseCode, request.getCloseCode())
                 .between(Objects.nonNull(request.getConnectedTimeStart()) && Objects.nonNull(request.getConnectedTimeEnd()),
@@ -143,24 +142,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                 .wrapper(wrapper)
                 .page(request)
                 .dataGrid(MachineTerminalLogVO.class);
-    }
-
-    @Override
-    public Integer checkLogExist(Long id) {
-        return Optional.ofNullable(machineTerminalLogDAO.selectById(id))
-                .map(MachineTerminalLogDO::getOperateLogFile)
-                .filter(Strings::isNotBlank)
-                .map(File::new)
-                .map(Files1::isFile)
-                .map(s -> s ? 1 : 2)
-                .orElse(2);
-    }
-
-    @Override
-    public String getLogFilePath(Long id) {
-        return Optional.ofNullable(machineTerminalLogDAO.selectById(id))
-                .map(MachineTerminalLogDO::getOperateLogFile)
-                .orElse(null);
     }
 
 }

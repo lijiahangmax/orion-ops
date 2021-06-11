@@ -17,12 +17,20 @@ import java.util.List;
 public interface MachineEnvService {
 
     /**
-     * 添加/修改 变量
+     * 添加 变量
      *
      * @param request request
-     * @return id/effect
+     * @return id
      */
-    Long addUpdateEnv(MachineEnvRequest request);
+    Long addEnv(MachineEnvRequest request);
+
+    /**
+     * 修改 变量
+     *
+     * @param request request
+     * @return effect
+     */
+    Integer updateEnv(MachineEnvRequest request);
 
     /**
      * 通过id删除

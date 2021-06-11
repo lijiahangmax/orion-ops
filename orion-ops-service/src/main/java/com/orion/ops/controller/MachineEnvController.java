@@ -33,9 +33,10 @@ public class MachineEnvController {
      */
     @RequestMapping("/add")
     public Long add(@RequestBody MachineEnvRequest request) {
-        request.setId(null);
-        this.check(request);
-        return machineEnvService.addUpdateEnv(request);
+        Valid.notBlank(request.getKey());
+        Valid.notNull(request.getValue());
+        Valid.notNull(request.getMachineId());
+        return machineEnvService.addEnv(request);
     }
 
     /**
@@ -44,8 +45,8 @@ public class MachineEnvController {
     @RequestMapping("/update")
     public Integer update(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getId());
-        this.check(request);
-        return machineEnvService.addUpdateEnv(request).intValue();
+        Valid.notNull(request.getValue());
+        return machineEnvService.updateEnv(request);
     }
 
     /**
@@ -70,17 +71,10 @@ public class MachineEnvController {
     /**
      * 列表
      */
+    @RequestMapping("/list")
     public DataGrid<MachineEnvVO> list(@RequestBody MachineEnvRequest request) {
-        return machineEnvService.listEnv(request);
-    }
-
-    /**
-     * 合法校验
-     */
-    private void check(MachineEnvRequest request) {
-        Valid.notBlank(request.getKey());
-        Valid.notNull(request.getValue());
         Valid.notNull(request.getMachineId());
+        return machineEnvService.listEnv(request);
     }
 
 }

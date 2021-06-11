@@ -5,6 +5,7 @@ import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.KeyConst;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
@@ -51,7 +52,7 @@ public class AuthenticateController {
         }
         // 登录成功
         UserLoginVO data = res.getData();
-        CookiesExt.set(response, Const.LOGIN_TOKEN, data.getToken(), Const.LOGIN_TOKEN_EXPIRE);
+        CookiesExt.set(response, Const.LOGIN_TOKEN, data.getToken(), KeyConst.LOGIN_TOKEN_EXPIRE);
         return HttpWrapper.ok(data);
     }
 

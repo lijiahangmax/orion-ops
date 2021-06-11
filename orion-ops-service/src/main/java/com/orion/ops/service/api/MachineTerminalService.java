@@ -71,22 +71,6 @@ public interface MachineTerminalService {
     DataGrid<MachineTerminalLogVO> listAccessLog(MachineTerminalLogRequest request);
 
     /**
-     * 检查日志是否存在
-     *
-     * @param id id
-     * @return 1存在 2不存在
-     */
-    Integer checkLogExist(Long id);
-
-    /**
-     * 获取日志路径
-     *
-     * @param id id
-     * @return path
-     */
-    String getLogFilePath(Long id);
-
-    /**
      * 获取 token 中的 userId
      *
      * @param token token

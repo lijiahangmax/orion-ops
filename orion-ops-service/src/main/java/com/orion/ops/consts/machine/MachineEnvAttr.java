@@ -28,6 +28,16 @@ public enum MachineEnvAttr {
     PIC_PATH(true, false, "图片目录"),
 
     /**
+     * 文件追踪模式 tracker或tail 默认tracker
+     */
+    TAIL_MODE(true, false, "文件追踪模式 tracker或tail"),
+
+    /**
+     * 文件追踪偏移量
+     */
+    TAIL_OFFSET(true, true, "文件追踪偏移量(byte)"),
+
+    /**
      * 日志目录
      */
     LOG_PATH(true, true, "日志目录"),
