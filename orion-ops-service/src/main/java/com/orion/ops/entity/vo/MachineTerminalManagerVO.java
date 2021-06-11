@@ -30,6 +30,11 @@ public class MachineTerminalManagerVO {
     private Date connectedTime;
 
     /**
+     * 连接时间
+     */
+    private String connectedTimeAgo;
+
+    /**
      * 机器id
      */
     private Long machineId;

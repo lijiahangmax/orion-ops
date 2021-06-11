@@ -82,9 +82,7 @@ public class UserInfoVO {
             vo.setEmail(d.getContactEmail());
             Date lastLoginTime = d.getLastLoginTime();
             vo.setLastLoginTime(lastLoginTime);
-            Optional.ofNullable(lastLoginTime)
-                    .map(Dates::ago)
-                    .ifPresent(vo::setLastLoginAgo);
+            Optional.ofNullable(lastLoginTime).map(Dates::ago).ifPresent(vo::setLastLoginAgo);
             return vo;
         });
     }

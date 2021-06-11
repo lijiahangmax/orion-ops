@@ -47,7 +47,7 @@ public class MachineSecretKeyVO {
      * 2 已挂载
      * 3 未挂载
      *
-     * @see com.orion.ops.consts.MountKeyStatus
+     * @see com.orion.ops.consts.machine.MountKeyStatus
      */
     private Integer mountStatus;
 

@@ -2,9 +2,11 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 终端日志
@@ -57,6 +59,16 @@ public class MachineTerminalLogVO {
     private Date disconnectedTime;
 
     /**
+     * 建立连接时间
+     */
+    private String connectedTimeAgo;
+
+    /**
+     * 断开连接时间
+     */
+    private String disconnectedTimeAgo;
+
+    /**
      * close code
      */
     private Integer closeCode;
@@ -77,6 +89,8 @@ public class MachineTerminalLogVO {
             vo.setAccessToken(p.getAccessToken());
             vo.setConnectedTime(p.getConnectedTime());
             vo.setDisconnectedTime(p.getDisconnectedTime());
+            Optional.ofNullable(p.getConnectedTime()).map(Dates::ago).ifPresent(vo::setConnectedTimeAgo);
+            Optional.ofNullable(p.getDisconnectedTime()).map(Dates::ago).ifPresent(vo::setDisconnectedTimeAgo);
             vo.setCloseCode(p.getCloseCode());
             vo.setCreateTime(p.getCreateTime());
             return vo;
