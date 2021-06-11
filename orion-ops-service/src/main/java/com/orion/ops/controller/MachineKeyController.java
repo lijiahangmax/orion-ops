@@ -3,28 +3,17 @@ package com.orion.ops.controller;
 import com.alibaba.fastjson.JSON;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.annotation.IgnoreWrapper;
-import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.RoleType;
-import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.Valid;
-import com.orion.servlet.web.Servlets;
-import com.orion.utils.io.FileReaders;
-import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -126,29 +115,6 @@ public class MachineKeyController {
             log.error("挂载秘钥失败 {} {}", id, e);
             return HttpWrapper.error("卸载秘钥失败");
         }
-    }
-
-    /**
-     * 下载
-     */
-    @RequestMapping("/download/{id}")
-    @IgnoreWrapper
-    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
-    public void download(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
-        Valid.notNull(id);
-        MachineSecretKeyDO key = machineKeyService.getKeyById(id);
-        if (key == null) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=notfound_id_rsa");
-            return;
-        }
-        File file = new File(MachineKeyService.getKeyPath(key.getSecretKeyPath()));
-        if (!Files1.isFile(file)) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=notfound_id_rsa");
-            return;
-        }
-        Servlets.transfer(response, FileReaders.readFast(file), Files1.getFileName(file));
     }
 
     /**

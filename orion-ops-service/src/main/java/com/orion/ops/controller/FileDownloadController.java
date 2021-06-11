@@ -4,7 +4,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.DownloadType;
+import com.orion.ops.consts.file.FileDownloadType;
 import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.service.api.FileDownloadService;
 import com.orion.ops.utils.Valid;
@@ -44,7 +44,7 @@ public class FileDownloadController {
     @IgnoreWrapper
     public HttpWrapper<String> check(@RequestBody FileDownloadRequest request) {
         Long id = Valid.notNull(request.getId());
-        DownloadType type = Valid.notNull(DownloadType.of(request.getType()));
+        FileDownloadType type = Valid.notNull(FileDownloadType.of(request.getType()));
         return fileDownloadService.checkFile(id, type);
     }
 

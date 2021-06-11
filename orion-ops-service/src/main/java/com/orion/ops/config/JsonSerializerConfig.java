@@ -3,6 +3,7 @@ package com.orion.ops.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.orion.utils.collect.Lists;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,7 @@ public class JsonSerializerConfig {
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter fastJsonHttpMessageConverter = new FastJsonHttpMessageConverter();
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        List<MediaType> mediaTypes = new ArrayList<>();
+        List<MediaType> mediaTypes = Lists.newList();
         mediaTypes.add(MediaType.APPLICATION_JSON);
         fastJsonHttpMessageConverter.setSupportedMediaTypes(mediaTypes);
         fastJsonConfig.setSerializerFeatures(

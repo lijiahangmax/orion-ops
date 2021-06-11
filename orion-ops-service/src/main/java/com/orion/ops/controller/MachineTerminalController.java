@@ -2,7 +2,6 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Wrapper;
-import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.RoleType;
@@ -16,19 +15,12 @@ import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.TerminalType;
-import com.orion.servlet.web.Servlets;
 import com.orion.utils.Strings;
-import com.orion.utils.io.FileReaders;
-import com.orion.utils.io.Files1;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * 终端
@@ -76,40 +68,6 @@ public class MachineTerminalController {
     @RequestMapping("/log/list")
     public DataGrid<MachineTerminalLogVO> accessLogList(@RequestBody MachineTerminalLogRequest request) {
         return machineTerminalService.listAccessLog(request);
-    }
-
-    /**
-     * 检查日志是否存在
-     */
-    @RequestMapping("/log/check")
-    public Integer checkLogExist(@RequestBody MachineTerminalLogRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return machineTerminalService.checkLogExist(id);
-    }
-
-    // 只能自己看
-    // 前缀
-    // 重连
-    /**
-     * 下载日志文件
-     */
-    @RequestMapping("/log/download/{id}")
-    @IgnoreWrapper
-    public void downloadLogFile(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        Valid.notNull(id);
-        String filePath = machineTerminalService.getLogFilePath(id);
-        if (filePath == null) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=notfound.log");
-            return;
-        }
-        File file = new File(filePath);
-        if (!Files1.isFile(file)) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment;filename=notfound.log");
-            return;
-        }
-        Servlets.transfer(response, FileReaders.readFast(file), Files1.getFileName(file));
     }
 
     /**

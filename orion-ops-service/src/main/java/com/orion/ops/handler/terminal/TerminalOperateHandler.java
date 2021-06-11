@@ -19,7 +19,7 @@ import org.springframework.web.socket.WebSocketSession;
 @Slf4j
 public class TerminalOperateHandler extends AbstractTerminalHandler {
 
-    public TerminalOperateHandler(String token, TerminalConnectConfig config, WebSocketSession session, SessionStore sessionStore) {
+    public TerminalOperateHandler(String token, TerminalConnectHint config, WebSocketSession session, SessionStore sessionStore) {
         super(token, config, session, sessionStore);
     }
 

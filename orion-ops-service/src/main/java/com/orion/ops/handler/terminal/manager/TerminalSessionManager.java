@@ -6,9 +6,10 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.ops.handler.terminal.AbstractTerminalHandler;
-import com.orion.ops.handler.terminal.manager.TerminalSessionHolder;
+import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.Strings;
 import com.orion.utils.time.DateRanges;
+import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -44,28 +45,30 @@ public class TerminalSessionManager {
                         .orElse(true))
                 .filter(s -> Optional.ofNullable(request.getHost())
                         .filter(Strings::isNotBlank)
-                        .map(t -> s.getConfig().getMachineHost().contains(t))
+                        .map(t -> s.getHint().getMachineHost().contains(t))
                         .orElse(true))
                 .filter(s -> Optional.ofNullable(request.getUserId())
-                        .map(t -> s.getConfig().getUserId().equals(t))
+                        .map(t -> s.getHint().getUserId().equals(t))
                         .orElse(true))
                 .filter(s -> Optional.ofNullable(request.getMachineId())
-                        .map(t -> s.getConfig().getMachineId().equals(t))
+                        .map(t -> s.getHint().getMachineId().equals(t))
                         .orElse(true))
                 .filter(s -> {
                     if (request.getConnectedTimeStart() == null || request.getConnectedTimeEnd() == null) {
                         return true;
                     }
-                    return DateRanges.inRange(request.getConnectedTimeStart(), request.getConnectedTimeEnd(), s.getConfig().getConnectedTime());
+                    return DateRanges.inRange(request.getConnectedTimeStart(), request.getConnectedTimeEnd(), s.getHint().getConnectedTime());
                 })
                 .map(s -> {
                     MachineTerminalManagerVO session = new MachineTerminalManagerVO();
+                    TerminalConnectHint hint = s.getHint();
                     session.setToken(s.getToken());
-                    session.setUserId(s.getConfig().getUserId());
-                    session.setConnectedTime(s.getConfig().getConnectedTime());
-                    session.setMachineId(s.getConfig().getMachineId());
-                    session.setHost(s.getConfig().getMachineHost());
-                    session.setLogId(s.getConfig().getLogId());
+                    session.setUserId(hint.getUserId());
+                    session.setConnectedTime(hint.getConnectedTime());
+                    Optional.ofNullable(hint.getConnectedTime()).map(Dates::ago).ifPresent(session::setConnectedTimeAgo);
+                    session.setMachineId(hint.getMachineId());
+                    session.setHost(hint.getMachineHost());
+                    session.setLogId(hint.getLogId());
                     return session;
                 }).collect(Collectors.toList());
         List<MachineTerminalManagerVO> page = new LimitList<>(sessionList)

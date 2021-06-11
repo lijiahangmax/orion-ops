@@ -1,4 +1,4 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum DownloadType {
+public enum FileDownloadType {
 
     /**
      * 秘钥
@@ -36,11 +36,11 @@ public enum DownloadType {
      */
     Integer type;
 
-    public static DownloadType of(Integer type) {
+    public static FileDownloadType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (DownloadType value : values()) {
+        for (FileDownloadType value : values()) {
             if (type.equals(value.type)) {
                 return value;
             }

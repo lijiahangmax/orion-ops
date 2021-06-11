@@ -1,6 +1,7 @@
 package com.orion.ops.config;
 
 import com.orion.ops.handler.WrapperResultHandler;
+import com.orion.utils.collect.Lists;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
@@ -27,7 +28,7 @@ public class WrapperResultConfig {
     @PostConstruct
     public void compare() {
         List<HandlerMethodReturnValueHandler> handlers = requestMappingHandlerAdapter.getReturnValueHandlers();
-        List<HandlerMethodReturnValueHandler> list = new ArrayList<>();
+        List<HandlerMethodReturnValueHandler> list = Lists.newList();
         list.add(wrapperResultHandler);
         if (handlers != null) {
             list.addAll(handlers);
