@@ -72,7 +72,7 @@ public class CommandExecServiceImpl implements CommandExecService {
             }
         }
         // 建立连接
-        Map<Long, SessionStore> sessionStore = new LinkedHashMap<>();
+        Map<Long, SessionStore> sessionStore = Maps.newLinkedMap();
         for (Long mid : machineIdList) {
             try {
                 SessionStore session = machineInfoService.openSessionStore(mid);

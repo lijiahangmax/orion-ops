@@ -12,7 +12,7 @@ import java.util.Date;
  * @since 2021/4/19 22:06
  */
 @Data
-public class TerminalConnectConfig {
+public class TerminalConnectHint {
 
     private String sessionId;
 
@@ -71,7 +71,7 @@ public class TerminalConnectConfig {
      */
     private Long logId;
 
-    public TerminalConnectConfig() {
+    public TerminalConnectHint() {
         this.connectedTime = new Date();
     }
 

@@ -122,17 +122,17 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public DataGrid<MachineInfoVO> listMachine(MachineInfoRequest request) {
         LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
-                .like(Objects.nonNull(request.getHost()), MachineInfoDO::getMachineHost, request.getHost())
-                .like(Objects.nonNull(request.getName()), MachineInfoDO::getMachineName, request.getName())
-                .like(Objects.nonNull(request.getTag()), MachineInfoDO::getMachineTag, request.getTag())
-                .like(Objects.nonNull(request.getDescription()), MachineInfoDO::getDescription, request.getDescription())
-                .like(Objects.nonNull(request.getUsername()), MachineInfoDO::getUsername, request.getUsername())
+                .like(Strings.isNotBlank(request.getHost()), MachineInfoDO::getMachineHost, request.getHost())
+                .like(Strings.isNotBlank(request.getName()), MachineInfoDO::getMachineName, request.getName())
+                .like(Strings.isNotBlank(request.getTag()), MachineInfoDO::getMachineTag, request.getTag())
+                .like(Strings.isNotBlank(request.getDescription()), MachineInfoDO::getDescription, request.getDescription())
+                .like(Strings.isNotBlank(request.getUsername()), MachineInfoDO::getUsername, request.getUsername())
                 .eq(Objects.nonNull(request.getProxyId()), MachineInfoDO::getProxyId, request.getProxyId())
                 .eq(Objects.nonNull(request.getSystemType()), MachineInfoDO::getSystemType, request.getSystemType())
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
                 .ne(Objects.nonNull(request.getExcludeId()), MachineInfoDO::getId, request.getExcludeId())
-                .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, 1)
+                .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, Const.ENABLE)
                 .orderByAsc(MachineInfoDO::getId);
         return DataQuery.of(machineInfoDAO)
                 .wrapper(wrapper)
@@ -143,7 +143,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public MachineInfoVO machineDetail(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
-        Valid.notNull(machine, "未查询到机器");
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         MachineInfoVO vo = Converts.to(machine, MachineInfoVO.class);
         Optional.ofNullable(machine.getProxyId())
                 .map(machineProxyDAO::selectById)
@@ -158,7 +158,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public Long copyMachine(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
-        Valid.notNull(machine, "未查询到机器");
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
@@ -181,13 +181,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Long id = request.getId();
         String syncProp = request.getSyncProp();
         SyncMachineProperties func = SyncMachineProperties.of(syncProp);
-        if (func == null) {
-            throw Exceptions.invalidArgument("无法同步属性");
-        }
+        Valid.notNull(MessageConst.UNABLE_SYNC_PROP);
         MachineInfoDO machine = new MachineInfoDO();
         machine.setId(id);
         String res;
-        switch (func) {
+        switch (Objects.requireNonNull(func)) {
             case MACHINE_NAME:
                 res = this.getCommandResultSync(id, func.getCommand());
                 machine.setMachineName(res);
@@ -310,7 +308,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
      */
     private String getCommandResultSync(Long id, String command) {
         String res;
-        if (id.equals(1L)) {
+        if (id.equals(Const.HOST_MACHINE_ID)) {
             // 本机
             res = this.runHostCommand(command);
         } else {

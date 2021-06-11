@@ -2,8 +2,9 @@ package com.orion.ops.handler.terminal;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.SchedulerPolls;
+import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.machine.MachineConst;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.protocol.TerminalCloseCode;
 import com.orion.ops.consts.protocol.TerminalConst;
 import com.orion.ops.consts.protocol.TerminalOperate;
@@ -48,7 +49,7 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
      * 终端配置
      */
     @Getter
-    protected TerminalConnectConfig config;
+    protected TerminalConnectHint hint;
 
     /**
      * ws
@@ -79,9 +80,9 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
 
     protected volatile boolean callback;
 
-    public AbstractTerminalHandler(String token, TerminalConnectConfig config, WebSocketSession session, SessionStore sessionStore) {
+    public AbstractTerminalHandler(String token, TerminalConnectHint hint, WebSocketSession session, SessionStore sessionStore) {
         this.token = token;
-        this.config = config;
+        this.hint = hint;
         this.session = session;
         this.sessionStore = sessionStore;
         this.lastPing = System.currentTimeMillis();
@@ -94,23 +95,24 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
      */
     private void open() {
         this.executor = sessionStore.getShellExecutor();
-        executor.terminalType(config.getTerminalType());
-        executor.size(config.getCols(), config.getRows(), config.getWidth(), config.getHeight());
+        executor.terminalType(hint.getTerminalType());
+        executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
         String logPath = "/" + TerminalConst.TERMINAL + "/"
                 + Dates.current(Dates.YMDHMS2) + "_" + MachineTerminalService.getTokenUserId(token) + ".log";
-        this.logStream = Files1.openOutputStreamSafe(Files1.getPath(logPath));
+        String realLogPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
+        this.logStream = Files1.openOutputStreamSafe(realLogPath);
         log.info("terminal 开始记录用户操作日志: {} {}", token, logPath);
         // 记录日志
         MachineTerminalLogDO logEntity = new MachineTerminalLogDO();
         logEntity.setAccessToken(token);
-        logEntity.setUserId(config.getUserId());
-        logEntity.setUsername(config.getUsername());
-        logEntity.setMachineId(config.getMachineId());
-        logEntity.setMachineHost(config.getMachineHost());
-        logEntity.setConnectedTime(config.getConnectedTime());
+        logEntity.setUserId(hint.getUserId());
+        logEntity.setUsername(hint.getUsername());
+        logEntity.setMachineId(hint.getMachineId());
+        logEntity.setMachineHost(hint.getMachineHost());
+        logEntity.setConnectedTime(hint.getConnectedTime());
         logEntity.setOperateLogFile(logPath);
         Long logId = machineTerminalService.addAccessLog(logEntity);
-        config.setLogId(logId);
+        hint.setLogId(logId);
         log.info("terminal 用户操作日志入库: {} logId: {}", token, logId);
     }
 
@@ -119,7 +121,7 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
      */
     public void connect() {
         executor.connect(MachineConst.CONNECT_TIMEOUT);
-        executor.scheduler(SchedulerPolls.TERMINAL_SCHEDULER)
+        executor.scheduler(SchedulerPools.TERMINAL_SCHEDULER)
                 .callback(d -> {
                     if (!this.callback) {
                         return;
@@ -201,10 +203,10 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
             }
             return;
         }
-        config.setCols(window.getCols());
-        config.setRows(window.getRows());
-        config.setWidth(window.getWidth());
-        config.setHeight(window.getHeight());
+        hint.setCols(window.getCols());
+        hint.setRows(window.getRows());
+        hint.setWidth(window.getWidth());
+        hint.setHeight(window.getHeight());
         executor.size(window.getCols(), window.getRows(), window.getWidth(), window.getHeight());
     }
 
@@ -244,7 +246,7 @@ public abstract class AbstractTerminalHandler implements IOperateHandler, Termin
      * @return 是否认证成功
      */
     public boolean valid(String id) {
-        return config.getSessionId().equals(id);
+        return hint.getSessionId().equals(id);
     }
 
     /**

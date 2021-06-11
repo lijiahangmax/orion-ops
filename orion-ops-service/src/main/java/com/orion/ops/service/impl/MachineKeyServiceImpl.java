@@ -127,8 +127,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Override
     public DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request) {
         LambdaQueryWrapper<MachineSecretKeyDO> wrapper = new LambdaQueryWrapper<MachineSecretKeyDO>()
-                .like(Objects.nonNull(request.getName()), MachineSecretKeyDO::getKeyName, request.getName())
-                .like(Objects.nonNull(request.getDescription()), MachineSecretKeyDO::getDescription, request.getDescription())
+                .like(Strings.isNotBlank(request.getName()), MachineSecretKeyDO::getKeyName, request.getName())
+                .like(Strings.isNotBlank(request.getDescription()), MachineSecretKeyDO::getDescription, request.getDescription())
                 .orderByDesc(MachineSecretKeyDO::getCreateTime);
         DataGrid<MachineSecretKeyVO> dataGrid = DataQuery.of(machineSecretKeyDAO)
                 .wrapper(wrapper)
