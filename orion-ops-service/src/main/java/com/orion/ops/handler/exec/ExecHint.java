@@ -4,6 +4,8 @@ import com.orion.ops.consts.command.ExecType;
 import com.orion.remote.channel.SessionStore;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author Jiahang Li
  * @version 1.0.0
@@ -16,6 +18,11 @@ public class ExecHint {
      * 命令 (替换前)
      */
     private String command;
+
+    /**
+     * 引用id
+     */
+    private Long relId;
 
     /**
      * 描述
@@ -51,5 +58,15 @@ public class ExecHint {
      * 执行用户名 无需设置
      */
     private String username;
+
+    /**
+     * exitCode 无需设置
+     */
+    private Integer exitCode;
+
+    /**
+     * 开始时间 无需设置
+     */
+    private Date startDate;
 
 }

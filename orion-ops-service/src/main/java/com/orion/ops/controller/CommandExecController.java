@@ -33,7 +33,10 @@ public class CommandExecController {
      */
     @RequestMapping("/submit")
     public HttpWrapper<?> submitTask(@RequestBody CommandExecRequest request) {
-        return commandExecService.submit(request);
+        Valid.notBlank(request.getCommand());
+        Valid.notEmpty(request.getMachineIdList());
+        request.setRelId(null);
+        return commandExecService.batchSubmitTask(request);
     }
 
     /**

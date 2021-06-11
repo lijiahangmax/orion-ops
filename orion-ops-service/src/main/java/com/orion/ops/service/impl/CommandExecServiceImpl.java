@@ -53,9 +53,9 @@ public class CommandExecServiceImpl implements CommandExecService {
     private ExecSessionHolder execSessionHolder;
 
     @Override
-    public HttpWrapper<Map<Long, Long>> submit(CommandExecRequest request) {
-        String command = Valid.notBlank(request.getCommand());
-        List<Long> machineIdList = Valid.notEmpty(request.getMachineIdList());
+    public HttpWrapper<Map<Long, Long>> batchSubmitTask(CommandExecRequest request) {
+        Valid.notBlank(request.getCommand());
+        List<Long> machineIdList = request.getMachineIdList();
         // 检查是否有运行中的任务
         Long userId = Currents.getUserId();
         for (Long mid : machineIdList) {
@@ -102,13 +102,15 @@ public class CommandExecServiceImpl implements CommandExecService {
         }
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                 .eq(Objects.nonNull(request.getId()), CommandExecDO::getId, request.getId())
+                .eq(Objects.nonNull(request.getRelId()), CommandExecDO::getRelId, request.getRelId())
                 .eq(Objects.nonNull(request.getUserId()), CommandExecDO::getUserId, request.getUserId())
                 .eq(Objects.nonNull(request.getStatus()), CommandExecDO::getExecStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getType()), CommandExecDO::getExecType, request.getType())
                 .eq(Objects.nonNull(request.getExitCode()), CommandExecDO::getExitCode, request.getExitCode())
                 .eq(Objects.nonNull(request.getMachineId()), CommandExecDO::getMachineId, request.getMachineId())
                 .like(Strings.isNotBlank(request.getDescription()), CommandExecDO::getDescription, request.getDescription())
-                .in(Lists.isNotEmpty(request.getMachineIdList()), CommandExecDO::getMachineId, request.getMachineIdList());
+                .in(Lists.isNotEmpty(request.getMachineIdList()), CommandExecDO::getMachineId, request.getMachineIdList())
+                .orderByDesc(CommandExecDO::getId);
         DataGrid<CommandExecVO> dataGrid = DataQuery.of(commandExecDAO)
                 .wrapper(wrapper)
                 .page(request)
@@ -184,10 +186,11 @@ public class CommandExecServiceImpl implements CommandExecService {
      * @return key: mid, value: execId
      */
     private Map<Long, Long> executeBatchCommand(CommandExecRequest request, Map<Long, SessionStore> sessionStore) {
-        Map<Long, Long> execResult = new LinkedHashMap<>();
+        Map<Long, Long> execResult = Maps.newLinkedMap();
         sessionStore.forEach((k, v) -> {
             ExecHint hint = new ExecHint();
             hint.setExecType(ExecType.BATCH_EXEC);
+            hint.setRelId(request.getRelId());
             hint.setMachineId(k);
             hint.setSession(v);
             hint.setCommand(request.getCommand());

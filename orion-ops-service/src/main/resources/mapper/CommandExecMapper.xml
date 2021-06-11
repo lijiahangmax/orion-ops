@@ -7,6 +7,7 @@
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="user_name" property="userName"/>
+        <result column="rel_id" property="relId"/>
         <result column="exec_type" property="execType"/>
         <result column="machine_id" property="machineId"/>
         <result column="exec_status" property="execStatus"/>
@@ -22,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, user_name, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, create_time, update_time
+        id, user_id, user_name, rel_id, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, create_time, update_time
     </sql>
 
 </mapper>

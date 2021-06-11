@@ -6,6 +6,7 @@ import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -32,6 +33,11 @@ public class CommandExecVO {
      * 执行用户名称
      */
     private String username;
+
+    /**
+     * 引用id
+     */
+    private Long relId;
 
     /**
      * 类型
@@ -97,12 +103,20 @@ public class CommandExecVO {
      */
     private String endDateAgo;
 
+    /**
+     * 使用时间
+     */
+    private Long used;
+
     static {
         TypeStore.STORE.register(CommandExecDO.class, CommandExecVO.class, p -> {
             CommandExecVO vo = new CommandExecVO();
+            Date startDate = p.getStartDate();
+            Date endDate = p.getEndDate();
             vo.setId(p.getId());
             vo.setUserId(p.getUserId());
             vo.setUsername(p.getUserName());
+            vo.setRelId(p.getRelId());
             vo.setType(p.getExecType());
             vo.setStatus(p.getExecStatus());
             vo.setMachineId(p.getMachineId());
@@ -110,10 +124,13 @@ public class CommandExecVO {
             vo.setCommand(p.getExecCommand());
             vo.setDescription(p.getDescription());
             vo.setLogPath(p.getLogPath());
-            vo.setStartDate(p.getStartDate());
-            vo.setEndDate(p.getEndDate());
-            Optional.ofNullable(p.getStartDate()).map(Dates::ago).ifPresent(vo::setStartDateAgo);
-            Optional.ofNullable(p.getEndDate()).map(Dates::ago).ifPresent(vo::setEndDateAgo);
+            vo.setStartDate(startDate);
+            vo.setEndDate(endDate);
+            Optional.ofNullable(startDate).map(Dates::ago).ifPresent(vo::setStartDateAgo);
+            Optional.ofNullable(endDate).map(Dates::ago).ifPresent(vo::setEndDateAgo);
+            Optional.ofNullable(endDate).map(Date::getTime)
+                    .map(e -> e - Objects.requireNonNull(startDate).getTime())
+                    .ifPresent(vo::setUsed);
             return vo;
         });
     }

@@ -17,12 +17,12 @@ public enum ExecType {
     /**
      * 批量执行
      */
-    BATCH_EXEC(10, "/exec/command"),
+    BATCH_EXEC(10),
 
     /**
      * tail
      */
-    TAIL(20, null),
+    TAIL(20),
 
     ;
 
@@ -30,11 +30,6 @@ public enum ExecType {
      * 类型
      */
     Integer type;
-
-    /**
-     * 日志目录
-     */
-    String logPath;
 
     public static ExecType of(Integer type) {
         for (ExecType value : values()) {

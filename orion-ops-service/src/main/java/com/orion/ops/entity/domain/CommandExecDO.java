@@ -44,6 +44,12 @@ public class CommandExecDO implements Serializable {
     private String userName;
 
     /**
+     * 引用id
+     */
+    @TableField("rel_id")
+    private Long relId;
+
+    /**
      * 执行类型 10批量执行
      */
     @TableField("exec_type")

@@ -24,7 +24,7 @@ public interface CommandExecService {
      * @param request request
      * @return key: machineId taskId
      */
-    HttpWrapper<Map<Long, Long>> submit(CommandExecRequest request);
+    HttpWrapper<Map<Long, Long>> batchSubmitTask(CommandExecRequest request);
 
     /**
      * 命令执行列表
