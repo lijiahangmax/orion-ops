@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.CommandExecDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.CommandExecDO">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="exec_type" property="execType"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="exec_status" property="execStatus"/>
+        <result column="exit_code" property="exitCode"/>
+        <result column="exec_command" property="execCommand"/>
+        <result column="description" property="description"/>
+        <result column="log_path" property="logPath"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, user_name, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, create_time, update_time
+    </sql>
+
+</mapper>
