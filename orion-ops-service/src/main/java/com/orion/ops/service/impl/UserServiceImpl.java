@@ -16,6 +16,7 @@ import com.orion.ops.utils.*;
 import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -52,10 +53,10 @@ public class UserServiceImpl implements UserService {
                 .eq(Objects.nonNull(request.getRole()), UserInfoDO::getRoleType, request.getRole())
                 .ne(!Currents.isAdministrator(), UserInfoDO::getRoleType, RoleType.ADMINISTRATOR.getType())
                 .eq(Objects.nonNull(request.getStatus()), UserInfoDO::getUserStatus, request.getStatus())
-                .like(Objects.nonNull(request.getUsername()), UserInfoDO::getUsername, request.getUsername())
-                .like(Objects.nonNull(request.getNickname()), UserInfoDO::getNickname, request.getNickname())
-                .like(Objects.nonNull(request.getPhone()), UserInfoDO::getContactPhone, request.getPhone())
-                .like(Objects.nonNull(request.getEmail()), UserInfoDO::getContactEmail, request.getEmail());
+                .like(Strings.isNotBlank(request.getUsername()), UserInfoDO::getUsername, request.getUsername())
+                .like(Strings.isNotBlank(request.getNickname()), UserInfoDO::getNickname, request.getNickname())
+                .like(Strings.isNotBlank(request.getPhone()), UserInfoDO::getContactPhone, request.getPhone())
+                .like(Strings.isNotBlank(request.getEmail()), UserInfoDO::getContactEmail, request.getEmail());
         return DataQuery.of(userInfoDAO)
                 .page(request)
                 .wrapper(wrapper)
@@ -166,14 +167,14 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(request.getNickname())
                 .filter(Strings::isNotBlank)
                 .ifPresent(userDTO::setNickname);
-        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), Const.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.ok(effect);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public HttpWrapper<Integer> deleteUser(UserInfoRequest request) {
-        List<Long> idList = new ArrayList<>();
+        List<Long> idList = Lists.newList();
         HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
         if (!check.isOk()) {
             return check;
@@ -189,7 +190,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public HttpWrapper<Integer> updateStatus(UserInfoRequest request) {
-        List<Long> idList = new ArrayList<>();
+        List<Long> idList = Lists.newList();
         HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
         if (!check.isOk()) {
             return check;

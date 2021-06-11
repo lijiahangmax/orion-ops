@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.consts.command.ExecType;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
@@ -160,10 +162,25 @@ public class CommandExecServiceImpl implements CommandExecService {
         } else {
             Wrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                     .eq(CommandExecDO::getUserId, Currents.getUserId())
-                    .eq(CommandExecDO::getId, id);
+                    .eq(CommandExecDO::getId, id)
+                    .last(Const.LIMIT_1);
             return commandExecDAO.selectOne(wrapper);
         }
     }
+
+    @Override
+    public String getExecLogFilePath(Long id) {
+        LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
+                .like(!Currents.isAdministrator(), CommandExecDO::getUserId, Currents.getUserId())
+                .notIn(CommandExecDO::getExecType, ExecType.TAIL.getType())
+                .eq(CommandExecDO::getId, id);
+        return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
+                .map(CommandExecDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .orElse(null);
+    }
+
 
     /**
      * 填充组装数据

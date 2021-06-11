@@ -59,9 +59,9 @@ public class MachineProxyServiceImpl implements MachineProxyService {
     @Override
     public DataGrid<MachineProxyVO> listProxy(MachineProxyRequest request) {
         LambdaQueryWrapper<MachineProxyDO> wrapper = new LambdaQueryWrapper<MachineProxyDO>()
-                .like(Objects.nonNull(request.getHost()), MachineProxyDO::getProxyHost, request.getHost())
-                .like(Objects.nonNull(request.getUsername()), MachineProxyDO::getProxyUsername, request.getUsername())
-                .like(Objects.nonNull(request.getDescription()), MachineProxyDO::getDescription, request.getDescription())
+                .like(Strings.isNotBlank(request.getHost()), MachineProxyDO::getProxyHost, request.getHost())
+                .like(Strings.isNotBlank(request.getUsername()), MachineProxyDO::getProxyUsername, request.getUsername())
+                .like(Strings.isNotBlank(request.getDescription()), MachineProxyDO::getDescription, request.getDescription())
                 .eq(Objects.nonNull(request.getPort()), MachineProxyDO::getProxyPort, request.getPort())
                 .eq(Objects.nonNull(request.getType()), MachineProxyDO::getProxyType, request.getType())
                 .orderByDesc(MachineProxyDO::getCreateTime);

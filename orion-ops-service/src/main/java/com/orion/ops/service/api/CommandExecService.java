@@ -58,4 +58,12 @@ public interface CommandExecService {
      */
     CommandExecDO selectById(Long id);
 
+    /**
+     * 获取 exec command 日志
+     *
+     * @param id id
+     * @return logPath
+     */
+    String getExecLogFilePath(Long id);
+
 }
