@@ -38,4 +38,10 @@
         WHERE proxy_id = #{proxyId}
     </update>
 
+    <select id="selectIdByHost" resultType="java.lang.Long">
+        SELECT id
+        FROM machine_info
+        WHERE machine_host LIKE CONCAT('%', #{host},'%')
+    </select>
+
 </mapper>
