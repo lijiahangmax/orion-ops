@@ -1,6 +1,8 @@
 package com.orion.ops.config;
 
+import com.orion.ops.handler.tail.TailFileHandler;
 import com.orion.ops.handler.terminal.TerminalMessageHandler;
+import com.orion.ops.interceptor.TerminalAccessInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -22,9 +24,18 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Resource
     private TerminalMessageHandler terminalMessageHandler;
 
+    @Resource
+    private TerminalAccessInterceptor terminalAccessInterceptor;
+
+    @Resource
+    private TailFileHandler tailFileHandler;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
         webSocketHandlerRegistry.addHandler(terminalMessageHandler, "/orion/keep-alive/machine/terminal/{accessToken}")
+                .addInterceptors(terminalAccessInterceptor)
+                .setAllowedOrigins("*");
+        webSocketHandlerRegistry.addHandler(tailFileHandler, "/orion/keep-alive/tail/{token}")
                 .setAllowedOrigins("*");
     }
 

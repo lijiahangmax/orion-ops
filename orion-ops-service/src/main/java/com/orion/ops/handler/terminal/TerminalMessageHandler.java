@@ -19,7 +19,6 @@ import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.service.api.PassportService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.utils.Strings;
-import com.orion.utils.Urls;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -28,8 +27,9 @@ import org.springframework.web.socket.*;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import static com.orion.ops.utils.WebSockets.getToken;
 
 /**
  * webSocket 处理器
@@ -59,7 +59,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String token = this.getToken(session);
+        String token = getToken(session);
         // 检查伪造token
         Long tokenUserId = MachineTerminalService.getTokenUserId(token);
         if (tokenUserId == null) {
@@ -86,7 +86,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        String token = this.getToken(session);
+        String token = getToken(session);
         TerminalDataTransferDTO data = null;
         boolean valid = false;
         try {
@@ -153,14 +153,14 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        String token = this.getToken(session);
+        String token = getToken(session);
         log.error("terminal 操作异常拦截 token: {}, e: {}", token, exception);
         exception.printStackTrace();
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String token = this.getToken(session);
+        String token = getToken(session);
         int code = status.getCode();
         log.info("terminal 关闭连接 token: {} code: {} reason: {}", token, code, status.getReason());
         // 释放资源
@@ -183,7 +183,6 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         terminalSessionHolder.getSessionStore().remove(token);
-        redisTemplate.delete(Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token));
         // log
         MachineTerminalLogDO updateLog = new MachineTerminalLogDO();
         updateLog.setCloseCode(code);
@@ -197,15 +196,6 @@ public class TerminalMessageHandler implements WebSocketHandler {
         return false;
     }
 
-    /**
-     * 获取urlToken
-     *
-     * @param session session
-     * @return token
-     */
-    private String getToken(WebSocketSession session) {
-        return Urls.getUrlSource(Objects.requireNonNull(session.getUri()).toString());
-    }
 
     /**
      * 建立连接
@@ -264,8 +254,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
             session.close(TerminalCloseCode.IDENTITY_MISMATCH.close());
             return null;
         }
-        // 刷新token 过期时间
-        redisTemplate.expire(tokenKey, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        // 删除token
+        redisTemplate.delete(tokenKey);
         // 建立连接
         Long machineId = Long.valueOf(tokenValue);
         SessionStore sessionStore;

@@ -19,11 +19,6 @@ public enum ExecType {
      */
     BATCH_EXEC(10),
 
-    /**
-     * tail
-     */
-    TAIL(20),
-
     ;
 
     /**
