@@ -173,7 +173,6 @@ public abstract class AbstractExecHandler implements IExecHandler {
         log.error("execHandler-执行命令失败 execId: {} {}", execId, e);
         e.printStackTrace();
         this.updateStatus(ExecStatus.EXCEPTION);
-        this.close();
     }
 
     /**

@@ -1,9 +1,11 @@
-package com.orion.ops.handler.exec;
+package com.orion.ops.handler.exec.impl;
 
 import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.CommandExecDO;
+import com.orion.ops.handler.exec.AbstractExecHandler;
+import com.orion.ops.handler.exec.ExecHint;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
@@ -11,10 +13,7 @@ import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Date;
 
 /**
@@ -80,7 +79,7 @@ public class CommandExecHandler extends AbstractExecHandler {
 
             sb.append("# 执行命令开始\n")
                     .append(hint.getRealCommand())
-                    .append("\n\n--------------------------------------------------\n");
+                    .append("\n\n--------------------------------------------------\n\n");
             logOutputStream.write(Strings.bytes(sb.toString()));
             logOutputStream.flush();
         } catch (Exception e) {
@@ -128,6 +127,22 @@ public class CommandExecHandler extends AbstractExecHandler {
             logOutputStream.flush();
         } catch (Exception e) {
             log.error("execHandler-写入日志失败 {} {}", execId, e);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onException(Exception e) {
+        super.onException(e);
+        StringBuilder sb = new StringBuilder()
+                .append("\n--------------------------------------------------\n")
+                .append("# 命令执行异常\n");
+        try {
+            logOutputStream.write(Strings.bytes(sb.toString()));
+            e.printStackTrace(new PrintStream(logOutputStream));
+            logOutputStream.flush();
+        } catch (Exception ex) {
+            log.error("execHandler-写入日志失败 {} {}", execId, ex);
             e.printStackTrace();
         }
     }
