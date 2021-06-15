@@ -5,8 +5,10 @@ import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.file.FileDownloadType;
+import com.orion.ops.consts.file.FileTailType;
 import com.orion.ops.entity.request.FileDownloadRequest;
-import com.orion.ops.service.api.FileDownloadService;
+import com.orion.ops.entity.request.FileTailRequest;
+import com.orion.ops.service.api.FileService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
 import com.orion.utils.io.Files1;
@@ -31,30 +33,30 @@ import java.io.InputStream;
  */
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/file-download")
-public class FileDownloadController {
+@RequestMapping("/orion/api/file")
+public class FileController {
 
     @Resource
-    private FileDownloadService fileDownloadService;
+    private FileService fileService;
 
     /**
-     * 检查文件存在以及权限
+     * 下载文件 检查文件存在以及权限
      */
-    @RequestMapping("/check")
+    @RequestMapping("/download/token")
     @IgnoreWrapper
-    public HttpWrapper<String> check(@RequestBody FileDownloadRequest request) {
+    public HttpWrapper<String> getToken(@RequestBody FileDownloadRequest request) {
         Long id = Valid.notNull(request.getId());
         FileDownloadType type = Valid.notNull(FileDownloadType.of(request.getType()));
-        return fileDownloadService.checkFile(id, type);
+        return fileService.getDownloadToken(id, type);
     }
 
     /**
      * 下载文件
      */
-    @RequestMapping("/{token}")
+    @RequestMapping("/download/{token}")
     @IgnoreWrapper
     public void downloadLogFile(@PathVariable String token, HttpServletResponse response) throws IOException {
-        String filePath = fileDownloadService.getPathByToken(token);
+        String filePath = fileService.getPathByDownloadToken(token);
         InputStream inputStream;
         String fileName;
         if (filePath == null || !Files1.isFile(filePath)) {
@@ -66,6 +68,17 @@ public class FileDownloadController {
             inputStream = Files1.openInputStreamFastSafe(file);
         }
         Servlets.transfer(response, inputStream, fileName);
+    }
+
+    /**
+     * tail文件 检查文件存在以及权限
+     */
+    @RequestMapping("/tail/token")
+    @IgnoreWrapper
+    public HttpWrapper<String> getToken(@RequestBody FileTailRequest request) {
+        Valid.notNull(request.getRelId());
+        Valid.notNull(FileTailType.of(request.getType()));
+        return fileService.getTailToken(request);
     }
 
 }

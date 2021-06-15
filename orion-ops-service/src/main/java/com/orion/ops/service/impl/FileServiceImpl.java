@@ -4,18 +4,21 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.DownloadType;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
+import com.orion.ops.consts.file.FileDownloadType;
+import com.orion.ops.consts.file.FileTailType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
-import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
-import com.orion.ops.service.api.FileDownloadService;
+import com.orion.ops.entity.dto.FileTailDTO;
+import com.orion.ops.entity.request.FileTailRequest;
+import com.orion.ops.service.api.CommandExecService;
+import com.orion.ops.service.api.FileService;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.Currents;
 import com.orion.utils.Strings;
@@ -32,8 +35,8 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2021/6/8 17:37
  */
-@Service("fileDownloadService")
-public class FileDownloadServiceImpl implements FileDownloadService {
+@Service("fileService")
+public class FileServiceImpl implements FileService {
 
     @Resource
     private MachineSecretKeyDAO machineSecretKeyDAO;
@@ -42,24 +45,24 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private MachineTerminalLogDAO machineTerminalLogDAO;
 
     @Resource
-    private CommandExecDAO commandExecDAO;
+    private CommandExecService commandExecService;
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public HttpWrapper<String> checkFile(Long id, DownloadType type) {
+    public HttpWrapper<String> getDownloadToken(Long id, FileDownloadType type) {
         String path;
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
-                path = this.getSecretKeyFilePath(id);
+                path = this.getDownloadSecretKeyFilePath(id);
                 break;
             case TERMINAL_LOG:
-                path = this.getTerminalLogFilePath(id);
+                path = this.getDownloadTerminalLogFilePath(id);
                 break;
             case EXEC_LOG:
-                path = this.getExecLogFilePath(id);
+                path = commandExecService.getExecLogFilePath(id);
                 break;
             default:
                 path = null;
@@ -80,7 +83,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     }
 
     @Override
-    public String getPathByToken(String token) {
+    public String getPathByDownloadToken(String token) {
         if (Strings.isBlank(token)) {
             return null;
         }
@@ -100,50 +103,66 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         return download.getFilePath();
     }
 
+    @Override
+    public HttpWrapper<String> getTailToken(FileTailRequest request) {
+        Long relId = request.getRelId();
+        String path;
+        Long machineId;
+        // 获取日志路径
+        switch (FileTailType.of(request.getType())) {
+            case EXEC_LOG:
+                path = commandExecService.getExecLogFilePath(relId);
+                machineId = Const.HOST_MACHINE_ID;
+                break;
+            default:
+                path = null;
+                machineId = Const.HOST_MACHINE_ID;
+                break;
+        }
+        // 检查文件是否存在
+        if (path == null || !Files1.isFile(path)) {
+            return HttpWrapper.of(ResultCode.FILE_MISSING);
+        }
+        // 设置缓存
+        FileTailDTO tail = new FileTailDTO();
+        tail.setFilePath(path);
+        tail.setUserId(Currents.getUserId());
+        tail.setMachineId(machineId);
+        String token = UUIds.random15();
+        String key = Strings.format(KeyConst.FILE_TAIL, token);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_EXPIRE, TimeUnit.SECONDS);
+        return HttpWrapper.<String>ok().data(token);
+    }
+
     /**
-     * 获取秘钥路径
+     * 获取下载 秘钥路径
      *
      * @param id id
      * @return path
-     * @see DownloadType#SECRET_KEY
+     * @see FileDownloadType#SECRET_KEY
      */
-    private String getSecretKeyFilePath(Long id) {
+    private String getDownloadSecretKeyFilePath(Long id) {
         return Optional.ofNullable(machineSecretKeyDAO.selectById(id))
                 .map(MachineSecretKeyDO::getSecretKeyPath)
                 .map(MachineKeyService::getKeyPath)
+                .filter(Strings::isNotBlank)
                 .orElse(null);
     }
 
     /**
-     * 获取 terminal 日志
+     * 获取下载 terminal日志路径
      *
      * @param id id
      * @return path
-     * @see DownloadType#TERMINAL_LOG
+     * @see FileDownloadType#TERMINAL_LOG
      */
-    private String getTerminalLogFilePath(Long id) {
+    private String getDownloadTerminalLogFilePath(Long id) {
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
                 .like(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
                 .eq(MachineTerminalLogDO::getId, id);
         return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
                 .map(MachineTerminalLogDO::getOperateLogFile)
-                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
-                .orElse(null);
-    }
-
-    /**
-     * 获取 exec command 日志
-     *
-     * @param id id
-     * @return logPath
-     * @see DownloadType#EXEC_LOG
-     */
-    private String getExecLogFilePath(Long id) {
-        LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
-                .like(!Currents.isAdministrator(), CommandExecDO::getUserId, Currents.getUserId())
-                .eq(CommandExecDO::getId, id);
-        return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
-                .map(CommandExecDO::getLogPath)
+                .filter(Strings::isNotBlank)
                 .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
                 .orElse(null);
     }
