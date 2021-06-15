@@ -172,7 +172,6 @@ public class CommandExecServiceImpl implements CommandExecService {
     public String getExecLogFilePath(Long id) {
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                 .like(!Currents.isAdministrator(), CommandExecDO::getUserId, Currents.getUserId())
-                .notIn(CommandExecDO::getExecType, ExecType.TAIL.getType())
                 .eq(CommandExecDO::getId, id);
         return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
                 .map(CommandExecDO::getLogPath)

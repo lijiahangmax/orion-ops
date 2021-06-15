@@ -196,7 +196,6 @@ public class TerminalMessageHandler implements WebSocketHandler {
         return false;
     }
 
-
     /**
      * 建立连接
      *
