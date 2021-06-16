@@ -7,13 +7,13 @@ import com.orion.id.UUIds;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
-import com.orion.ops.consts.ws.WsProtocol;
 import com.orion.ops.consts.ws.WsCloseCode;
+import com.orion.ops.consts.ws.WsProtocol;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.handler.terminal.manager.TerminalSessionHolder;
+import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.service.api.PassportService;
@@ -43,7 +43,7 @@ import static com.orion.ops.utils.WebSockets.getToken;
 public class TerminalMessageHandler implements WebSocketHandler {
 
     @Resource
-    private TerminalSessionHolder terminalSessionHolder;
+    private TerminalSessionManager terminalSessionManager;
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -125,7 +125,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 }
             } else {
                 // 获取
-                handler = terminalSessionHolder.getSessionStore().get(token);
+                handler = terminalSessionManager.getSessionStore().get(token);
             }
             // 未找到连接
             if (handler == null) {
@@ -168,7 +168,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (WsCloseCode.HEART_DOWN.equals(type) ||
                 WsCloseCode.RUNTIME_VALID_EXCEPTION.equals(type) ||
                 WsCloseCode.FORCED_OFFLINE.equals(type)) {
-            IOperateHandler handler = terminalSessionHolder.getSessionStore().get(token);
+            IOperateHandler handler = terminalSessionManager.getSessionStore().get(token);
             if (handler == null) {
                 return;
             }
@@ -182,7 +182,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (!released) {
             return;
         }
-        terminalSessionHolder.getSessionStore().remove(token);
+        terminalSessionManager.getSessionStore().remove(token);
         // log
         MachineTerminalLogDO updateLog = new MachineTerminalLogDO();
         updateLog.setCloseCode(code);
@@ -295,7 +295,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             log.error("terminal 建立连接失败-打开shell失败 host: {}, uid: {}, {}", host, tokenUserId, e);
             return null;
         }
-        terminalSessionHolder.getSessionStore().put(token, terminalHandler);
+        terminalSessionManager.getSessionStore().put(token, terminalHandler);
         log.info("terminal 建立连接成功 uid: {} machineId: {}", tokenUserId, machineId);
         return terminalHandler;
     }

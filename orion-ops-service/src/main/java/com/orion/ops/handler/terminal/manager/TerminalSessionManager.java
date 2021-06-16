@@ -6,16 +6,16 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.ops.handler.terminal.IOperateHandler;
-import com.orion.ops.handler.terminal.TerminalOperateHandler;
 import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.Strings;
 import com.orion.utils.time.DateRanges;
 import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -28,8 +28,12 @@ import java.util.stream.Collectors;
 @Component
 public class TerminalSessionManager {
 
-    @Resource
-    private TerminalSessionHolder terminalSessionHolder;
+    /**
+     * 已连接的 session
+     * key: token
+     * value: handler
+     */
+    private final Map<String, IOperateHandler> SESSION_STORE = new ConcurrentHashMap<>();
 
     /**
      * session 列表
@@ -38,7 +42,7 @@ public class TerminalSessionManager {
      * @return dataGrid
      */
     public DataGrid<MachineTerminalManagerVO> getOnlineTerminal(MachineTerminalManagerRequest request) {
-        List<MachineTerminalManagerVO> sessionList = terminalSessionHolder.getSessionStore().values()
+        List<MachineTerminalManagerVO> sessionList = SESSION_STORE.values()
                 .stream()
                 .filter(s -> Optional.ofNullable(request.getToken())
                         .filter(Strings::isNotBlank)
@@ -84,7 +88,7 @@ public class TerminalSessionManager {
      * @param token token
      */
     public HttpWrapper<?> forceOffline(String token) {
-        IOperateHandler handler = terminalSessionHolder.getSessionStore().get(token);
+        IOperateHandler handler = SESSION_STORE.get(token);
         if (handler == null) {
             return HttpWrapper.error("未查询到连接信息");
         }
@@ -94,6 +98,10 @@ public class TerminalSessionManager {
         } catch (Exception e) {
             return HttpWrapper.error("下线失败");
         }
+    }
+
+    public Map<String, IOperateHandler> getSessionStore() {
+        return SESSION_STORE;
     }
 
 }

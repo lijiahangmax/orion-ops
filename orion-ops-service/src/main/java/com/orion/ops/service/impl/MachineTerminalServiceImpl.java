@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.protocol.TerminalConst;
+import com.orion.ops.consts.terminal.TerminalConst;
 import com.orion.ops.dao.MachineTerminalDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;

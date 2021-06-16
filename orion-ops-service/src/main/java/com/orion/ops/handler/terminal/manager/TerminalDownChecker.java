@@ -18,11 +18,11 @@ import javax.annotation.Resource;
 public class TerminalDownChecker {
 
     @Resource
-    private TerminalSessionHolder terminalSessionHolder;
+    private TerminalSessionManager terminalSessionManager;
 
     @Scheduled(cron = "0 */1 * * * ?")
     private void configureTasks() {
-        terminalSessionHolder.getSessionStore().forEach((k, v) -> {
+        terminalSessionManager.getSessionStore().forEach((k, v) -> {
             if (!v.isDown()) {
                 return;
             }
