@@ -128,7 +128,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .like(Strings.isNotBlank(request.getDescription()), MachineInfoDO::getDescription, request.getDescription())
                 .like(Strings.isNotBlank(request.getUsername()), MachineInfoDO::getUsername, request.getUsername())
                 .eq(Objects.nonNull(request.getProxyId()), MachineInfoDO::getProxyId, request.getProxyId())
-                .eq(Objects.nonNull(request.getSystemType()), MachineInfoDO::getSystemType, request.getSystemType())
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
                 .ne(Objects.nonNull(request.getExcludeId()), MachineInfoDO::getId, request.getExcludeId())
@@ -386,7 +385,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         entity.setUsername(request.getUsername());
         entity.setPassword(null);
         entity.setAuthType(request.getAuthType());
-        entity.setSystemType(request.getSystemType());
         entity.setSystemVersion(request.getSystemVersion());
         entity.setMachineStatus(request.getStatus());
     }

@@ -86,12 +86,6 @@ public class MachineInfoDO implements Serializable {
     private Integer authType;
 
     /**
-     * 系统类型  1: linux 2: windows
-     */
-    @TableField("system_type")
-    private Integer systemType;
-
-    /**
      * 机器版本 如: centOS7.0
      */
     @TableField("system_version")

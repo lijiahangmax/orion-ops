@@ -2,7 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.file.FileTailMode;
+import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
@@ -63,7 +63,6 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
             insert.setAuthType(MachineAuthType.PASSWORD.getType());
-            insert.setSystemType(Systems.BE_UNIX ? 1 : 2);
             insert.setSystemVersion(Systems.OS_NAME + Strings.SPACE + Systems.OS_VERSION);
             insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);

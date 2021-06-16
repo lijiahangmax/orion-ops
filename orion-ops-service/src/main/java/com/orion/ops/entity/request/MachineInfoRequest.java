@@ -78,11 +78,6 @@ public class MachineInfoRequest extends PageRequest {
     private Integer authType;
 
     /**
-     * 系统类型  1: linux 2: windows
-     */
-    private Integer systemType;
-
-    /**
      * 机器版本 如: centOS7.0
      */
     private String systemVersion;

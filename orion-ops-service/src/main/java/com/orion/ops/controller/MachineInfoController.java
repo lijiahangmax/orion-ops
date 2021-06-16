@@ -2,9 +2,8 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.machine.SystemType;
+import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
 import com.orion.ops.service.api.MachineInfoService;
@@ -140,8 +139,6 @@ public class MachineInfoController {
         if (MachineAuthType.PASSWORD.equals(machineAuthTypeEnum)) {
             Valid.notBlank(request.getPassword());
         }
-        Integer systemType = Valid.notNull(request.getSystemType());
-        Valid.notNull(SystemType.of(systemType));
     }
 
 }

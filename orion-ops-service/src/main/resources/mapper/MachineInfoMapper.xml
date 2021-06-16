@@ -14,7 +14,6 @@
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="auth_type" property="authType"/>
-        <result column="system_type" property="systemType"/>
         <result column="system_version" property="systemVersion"/>
         <result column="machine_status" property="machineStatus"/>
         <result column="create_time" property="createTime"/>
@@ -23,7 +22,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, auth_type, system_type, system_version, machine_status, create_time, update_time
+        id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, auth_type, system_version, machine_status, create_time, update_time
     </sql>
 
     <update id="setId">

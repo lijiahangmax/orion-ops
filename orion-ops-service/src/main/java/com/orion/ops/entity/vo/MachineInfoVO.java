@@ -82,11 +82,6 @@ public class MachineInfoVO {
     private Integer authType;
 
     /**
-     * 系统类型  1: linux 2: windows
-     */
-    private Integer systemType;
-
-    /**
      * 机器版本 如: centOS7.0
      */
     private String systemVersion;
@@ -118,7 +113,6 @@ public class MachineInfoVO {
             vo.setDescription(p.getDescription());
             vo.setUsername(p.getUsername());
             vo.setAuthType(p.getAuthType());
-            vo.setSystemType(p.getSystemType());
             vo.setSystemVersion(p.getSystemVersion());
             vo.setStatus(p.getMachineStatus());
             vo.setCreateTime(p.getCreateTime());
