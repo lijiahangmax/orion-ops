@@ -1,4 +1,4 @@
-package com.orion.ops.consts.protocol;
+package com.orion.ops.consts.ws;
 
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -10,14 +10,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * 终端服务端常量
+ * ws服务端响应常量
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/16 21:48
  */
 @AllArgsConstructor
-public enum TerminalProtocol {
+public enum WsProtocol {
 
     /**
      * 握手

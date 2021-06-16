@@ -1,4 +1,4 @@
-package com.orion.ops.consts.protocol;
+package com.orion.ops.consts.terminal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

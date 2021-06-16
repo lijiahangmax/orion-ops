@@ -1,4 +1,4 @@
-package com.orion.ops.consts.protocol;
+package com.orion.ops.consts.terminal;
 
 import com.orion.ops.consts.Const;
 
