@@ -5,7 +5,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
-import com.orion.ops.handler.terminal.AbstractTerminalHandler;
+import com.orion.ops.handler.terminal.IOperateHandler;
+import com.orion.ops.handler.terminal.TerminalOperateHandler;
 import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.Strings;
 import com.orion.utils.time.DateRanges;
@@ -83,7 +84,7 @@ public class TerminalSessionManager {
      * @param token token
      */
     public HttpWrapper<?> forceOffline(String token) {
-        AbstractTerminalHandler handler = terminalSessionHolder.getSessionStore().get(token);
+        IOperateHandler handler = terminalSessionHolder.getSessionStore().get(token);
         if (handler == null) {
             return HttpWrapper.error("未查询到连接信息");
         }

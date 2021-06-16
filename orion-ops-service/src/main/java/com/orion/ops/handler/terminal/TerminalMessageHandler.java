@@ -6,9 +6,9 @@ import com.orion.exception.ConnectionRuntimeException;
 import com.orion.id.UUIds;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.machine.MachineConst;
-import com.orion.ops.consts.protocol.TerminalCloseCode;
-import com.orion.ops.consts.protocol.TerminalOperate;
-import com.orion.ops.consts.protocol.TerminalProtocol;
+import com.orion.ops.consts.terminal.TerminalOperate;
+import com.orion.ops.consts.ws.WsProtocol;
+import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
@@ -63,7 +63,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         // 检查伪造token
         Long tokenUserId = MachineTerminalService.getTokenUserId(token);
         if (tokenUserId == null) {
-            session.close(TerminalCloseCode.FORGE_TOKEN.close());
+            session.close(WsCloseCode.FORGE_TOKEN.close());
             return;
         }
         // 检查token
@@ -71,7 +71,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String v = redisTemplate.opsForValue().get(tokenKey);
         // 未查询到token
         if (v == null) {
-            session.close(TerminalCloseCode.INCORRECT_TOKEN.close());
+            session.close(WsCloseCode.INCORRECT_TOKEN.close());
             return;
         }
         // 刷新token 过期时间
@@ -80,7 +80,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String id = UUIds.random19();
         String idKey = Strings.format(KeyConst.TERMINAL_ID, id);
         redisTemplate.opsForValue().set(idKey, token, KeyConst.TERMINAL_ID_EXPIRE, TimeUnit.SECONDS);
-        session.sendMessage(new TextMessage(TerminalProtocol.ACK.msg(id)));
+        session.sendMessage(new TextMessage(WsProtocol.ACK.msg(id)));
         log.info("terminal 建立ws连接 token: {}", token);
     }
 
@@ -100,23 +100,23 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 // ignore
             }
             if (data == null) {
-                session.sendMessage(new TextMessage(TerminalProtocol.ILLEGAL_BODY.get()));
+                session.sendMessage(new TextMessage(WsProtocol.ILLEGAL_BODY.get()));
                 return;
             }
             // 操作
             TerminalOperate operate = TerminalOperate.of(data.getOperate());
             if (operate == null) {
-                session.sendMessage(new TextMessage(TerminalProtocol.UNKNOWN_OPERATE.get()));
+                session.sendMessage(new TextMessage(WsProtocol.UNKNOWN_OPERATE.get()));
                 return;
             }
             // 检查参数
             String id = data.getId();
             if (id == null) {
-                session.sendMessage(new TextMessage(TerminalProtocol.ARGUMENT.get()));
+                session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
                 return;
             }
 
-            AbstractTerminalHandler handler;
+            IOperateHandler handler;
             if (operate == TerminalOperate.CONNECT) {
                 // 建立连接
                 handler = this.connect(session, data, token);
@@ -129,13 +129,13 @@ public class TerminalMessageHandler implements WebSocketHandler {
             }
             // 未找到连接
             if (handler == null) {
-                session.close(TerminalCloseCode.UNKNOWN_CONNECT.close());
+                session.close(WsCloseCode.UNKNOWN_CONNECT.close());
                 return;
             }
             // 认证
             valid = handler.valid(id);
             if (!valid) {
-                session.close(TerminalCloseCode.VALID.close());
+                session.close(WsCloseCode.VALID.close());
                 return;
             }
             // 操作
@@ -144,9 +144,9 @@ public class TerminalMessageHandler implements WebSocketHandler {
             log.error("terminal 处理操作异常 token: {}, data: {}, e: {}", token, data, e);
             e.printStackTrace();
             if (valid) {
-                session.close(TerminalCloseCode.RUNTIME_VALID_EXCEPTION.close());
+                session.close(WsCloseCode.RUNTIME_VALID_EXCEPTION.close());
             } else {
-                session.close(TerminalCloseCode.RUNTIME_EXCEPTION.close());
+                session.close(WsCloseCode.RUNTIME_EXCEPTION.close());
             }
         }
     }
@@ -164,21 +164,21 @@ public class TerminalMessageHandler implements WebSocketHandler {
         int code = status.getCode();
         log.info("terminal 关闭连接 token: {} code: {} reason: {}", token, code, status.getReason());
         // 释放资源
-        TerminalCloseCode type = TerminalCloseCode.of(code);
-        if (TerminalCloseCode.HEART_DOWN.equals(type) ||
-                TerminalCloseCode.RUNTIME_VALID_EXCEPTION.equals(type) ||
-                TerminalCloseCode.FORCED_OFFLINE.equals(type)) {
-            AbstractTerminalHandler handler = terminalSessionHolder.getSessionStore().get(token);
+        WsCloseCode type = WsCloseCode.of(code);
+        if (WsCloseCode.HEART_DOWN.equals(type) ||
+                WsCloseCode.RUNTIME_VALID_EXCEPTION.equals(type) ||
+                WsCloseCode.FORCED_OFFLINE.equals(type)) {
+            IOperateHandler handler = terminalSessionHolder.getSessionStore().get(token);
             if (handler == null) {
                 return;
             }
             handler.disconnect();
         }
         boolean released = type == null ||
-                TerminalCloseCode.HEART_DOWN.equals(type) ||
-                TerminalCloseCode.FORCED_OFFLINE.equals(type) ||
-                TerminalCloseCode.DISCONNECT.equals(type) ||
-                TerminalCloseCode.EOF_CALLBACK.equals(type);
+                WsCloseCode.HEART_DOWN.equals(type) ||
+                WsCloseCode.FORCED_OFFLINE.equals(type) ||
+                WsCloseCode.DISCONNECT.equals(type) ||
+                WsCloseCode.EOF_CALLBACK.equals(type);
         if (!released) {
             return;
         }
@@ -213,21 +213,21 @@ public class TerminalMessageHandler implements WebSocketHandler {
             // ignore
         }
         if (connectInfo == null) {
-            session.sendMessage(new TextMessage(TerminalProtocol.ARGUMENT.get()));
+            session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
             return null;
         }
         String loginToken = connectInfo.getLoginToken();
         if (Strings.isBlank(loginToken) ||
                 connectInfo.getRows() == null || connectInfo.getCols() == null ||
                 connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
-            session.sendMessage(new TextMessage(TerminalProtocol.ARGUMENT.get()));
+            session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
             return null;
         }
         // 检查伪造token
         Long tokenUserId = MachineTerminalService.getTokenUserId(token);
         if (tokenUserId == null) {
             log.info("terminal 建立连接驳回-伪造token token: {}", token);
-            session.close(TerminalCloseCode.FORGE_TOKEN.close());
+            session.close(WsCloseCode.FORGE_TOKEN.close());
             return null;
         }
         // 检查token
@@ -235,7 +235,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String tokenValue = redisTemplate.opsForValue().get(tokenKey);
         if (tokenValue == null) {
             log.info("terminal 建立连接驳回-token不存在 token: {}", token);
-            session.close(TerminalCloseCode.INCORRECT_TOKEN.close());
+            session.close(WsCloseCode.INCORRECT_TOKEN.close());
             return null;
         }
         // 检查id
@@ -243,14 +243,14 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String idValue = redisTemplate.opsForValue().get(idKey);
         if (idValue == null || !idValue.equals(token)) {
             log.info("terminal 建立连接驳回-tokenId认证失败 token: {}", token);
-            session.close(TerminalCloseCode.IDENTITY_MISMATCH.close());
+            session.close(WsCloseCode.IDENTITY_MISMATCH.close());
             return null;
         }
         // 检查操作用户
         UserDTO userDTO = passportService.getUserByToken(loginToken);
         if (userDTO == null || !tokenUserId.equals(userDTO.getId())) {
             log.info("terminal 建立连接驳回-用户认证失败 token: {}", token);
-            session.close(TerminalCloseCode.IDENTITY_MISMATCH.close());
+            session.close(WsCloseCode.IDENTITY_MISMATCH.close());
             return null;
         }
         // 删除token
@@ -263,11 +263,11 @@ public class TerminalMessageHandler implements WebSocketHandler {
             sessionStore = machineInfoService.openSessionStore(machineId);
         } catch (Exception e) {
             if (e instanceof ConnectionRuntimeException) {
-                session.close(TerminalCloseCode.CONNECTED_FAILURE.close());
+                session.close(WsCloseCode.CONNECTED_FAILURE.close());
             } else if (e instanceof AuthenticationException) {
-                session.close(TerminalCloseCode.CONNECTED_AUTH_FAILURE.close());
+                session.close(WsCloseCode.CONNECTED_AUTH_FAILURE.close());
             } else {
-                session.close(TerminalCloseCode.CONNECTED_EXCEPTION.close());
+                session.close(WsCloseCode.CONNECTED_EXCEPTION.close());
             }
             log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, {}", tokenUserId, e);
             return null;
@@ -291,7 +291,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             // 打开shell
             this.openShell(terminalHandler);
         } catch (Exception e) {
-            session.close(TerminalCloseCode.OPEN_SHELL_EXCEPTION.close());
+            session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.close());
             log.error("terminal 建立连接失败-打开shell失败 host: {}, uid: {}, {}", host, tokenUserId, e);
             return null;
         }

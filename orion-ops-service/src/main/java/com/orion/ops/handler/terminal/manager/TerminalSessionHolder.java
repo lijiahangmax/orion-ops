@@ -1,6 +1,6 @@
 package com.orion.ops.handler.terminal.manager;
 
-import com.orion.ops.handler.terminal.AbstractTerminalHandler;
+import com.orion.ops.handler.terminal.IOperateHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -19,11 +19,11 @@ public class TerminalSessionHolder {
     /**
      * 已连接的 session
      * key: token
-     * value: id
+     * value: handler
      */
-    private final Map<String, AbstractTerminalHandler> SESSION_STORE = new ConcurrentHashMap<>();
+    private final Map<String, IOperateHandler> SESSION_STORE = new ConcurrentHashMap<>();
 
-    public Map<String, AbstractTerminalHandler> getSessionStore() {
+    public Map<String, IOperateHandler> getSessionStore() {
         return SESSION_STORE;
     }
 

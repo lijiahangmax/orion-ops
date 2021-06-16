@@ -17,7 +17,7 @@ import java.util.Map;
 import static com.orion.ops.utils.WebSockets.getToken;
 
 /**
- * terminal 拦截器
+ * terminal 访问拦截器
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -35,7 +35,7 @@ public class TerminalAccessInterceptor implements HandshakeInterceptor {
         String token = getToken(request);
         String key = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         boolean access = Booleans.isTrue(redisTemplate.hasKey(key));
-        log.info("尝试建立连接开始 token: {}, 结果: {}", token, access);
+        log.info("terminal尝试打开ws连接开始 token: {}, 结果: {}", token, access);
         return access;
     }
 
