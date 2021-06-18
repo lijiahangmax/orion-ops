@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.file.FileDownloadType;
+import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.entity.request.FileTailRequest;
 
 /**

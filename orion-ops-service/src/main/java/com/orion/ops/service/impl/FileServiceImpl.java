@@ -7,8 +7,8 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.file.FileDownloadType;
-import com.orion.ops.consts.file.FileTailType;
+import com.orion.ops.consts.download.FileDownloadType;
+import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
@@ -76,7 +76,7 @@ public class FileServiceImpl implements FileService {
         FileDownloadDTO download = new FileDownloadDTO();
         download.setFilePath(path);
         download.setUserId(Currents.getUserId());
-        String token = UUIds.random15();
+        String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_DOWNLOAD, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(download), KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.<String>ok().data(token);
@@ -128,9 +128,9 @@ public class FileServiceImpl implements FileService {
         tail.setFilePath(path);
         tail.setUserId(Currents.getUserId());
         tail.setMachineId(machineId);
-        String token = UUIds.random15();
-        String key = Strings.format(KeyConst.FILE_TAIL, token);
-        redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_EXPIRE, TimeUnit.SECONDS);
+        String token = UUIds.random19();
+        String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.<String>ok().data(token);
     }
 

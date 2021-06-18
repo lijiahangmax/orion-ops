@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.ops.consts.file.FileDownloadType;
+import com.orion.ops.consts.download.FileDownloadType;
 import lombok.Data;
 
 /**

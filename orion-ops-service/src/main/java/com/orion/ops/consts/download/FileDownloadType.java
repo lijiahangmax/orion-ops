@@ -1,4 +1,4 @@
-package com.orion.ops.consts.file;
+package com.orion.ops.consts.download;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

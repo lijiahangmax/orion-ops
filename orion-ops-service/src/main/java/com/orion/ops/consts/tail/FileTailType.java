@@ -1,36 +1,43 @@
-package com.orion.ops.consts.machine;
+package com.orion.ops.consts.tail;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 系统类型枚举
+ * tail 文件类型
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/4/14 22:27
+ * @since 2021/6/10 18:48
  */
-@Getter
 @AllArgsConstructor
-public enum SystemType {
+@Getter
+public enum FileTailType {
 
     /**
-     * linux
+     * 命令执行日志
      */
-    LINUX(1),
+    EXEC_LOG(10),
 
     /**
-     * windows
+     * 本机文件
      */
-    WINDOWS(2);
+    LOCAL_FILE(20),
+
+    /**
+     * 远程文件
+     */
+    REMOTE_FILE(30),
+
+    ;
 
     Integer type;
 
-    public static SystemType of(Integer type) {
+    public static FileTailType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (SystemType value : values()) {
+        for (FileTailType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
