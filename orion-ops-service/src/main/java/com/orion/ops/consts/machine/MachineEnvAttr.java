@@ -35,7 +35,7 @@ public enum MachineEnvAttr {
     /**
      * 文件追踪偏移量
      */
-    TAIL_OFFSET(true, true, "文件追踪偏移量(byte)"),
+    TAIL_OFFSET(true, true, "文件追踪偏移量(行)"),
 
     /**
      * 日志目录

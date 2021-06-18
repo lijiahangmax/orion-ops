@@ -119,7 +119,7 @@ public class HostMachineInitialize implements CommandLineRunner {
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
             case TAIL_OFFSET:
-                return Const.TAIL_OFFSET_BYTES + Strings.EMPTY;
+                return Const.TAIL_OFFSET_LINE + Strings.EMPTY;
             default:
                 return null;
         }

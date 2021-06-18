@@ -183,7 +183,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 case TEMP_PATH:
                     env.setAttrValue(home + Const.TEMP_PATH);
                 case TAIL_OFFSET:
-                    env.setAttrValue(Const.TAIL_OFFSET_BYTES + Strings.EMPTY);
+                    env.setAttrValue(Const.TAIL_OFFSET_LINE + Strings.EMPTY);
                     break;
                 default:
                     break;

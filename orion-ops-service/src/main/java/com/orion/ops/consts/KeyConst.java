@@ -55,13 +55,23 @@ public class KeyConst {
     public static final int FILE_DOWNLOAD_EXPIRE = 60 * 5;
 
     /**
-     * file:tail:{token}
+     * file:tail:access:{token}
      */
-    public static final String FILE_TAIL = "file:tail:{}";
+    public static final String FILE_TAIL_ACCESS = "file:tail:{}";
 
     /**
      * 5 min
      */
-    public static final int FILE_TAIL_EXPIRE = 60 * 5;
+    public static final int FILE_TAIL_ACCESS_EXPIRE = 60 * 5;
+
+    /**
+     * file:tail:id:{id}
+     */
+    public static final String FILE_TAIL_ID = "file:tail:{}";
+
+    /**
+     * 5 min
+     */
+    public static final int FILE_TAIL_ID_EXPIRE = 60;
 
 }
