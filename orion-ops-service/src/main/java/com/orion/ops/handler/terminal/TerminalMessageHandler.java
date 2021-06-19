@@ -3,7 +3,6 @@ package com.orion.ops.handler.terminal;
 import com.alibaba.fastjson.JSON;
 import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
-import com.orion.id.UUIds;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
@@ -59,6 +58,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String id = session.getId();
         String token = getToken(session);
         // 检查伪造token
         Long tokenUserId = MachineTerminalService.getTokenUserId(token);
@@ -68,25 +68,31 @@ public class TerminalMessageHandler implements WebSocketHandler {
         }
         // 检查token
         String tokenKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        String v = redisTemplate.opsForValue().get(tokenKey);
+        String tokenValue = redisTemplate.opsForValue().get(tokenKey);
         // 未查询到token
-        if (v == null) {
+        if (tokenValue == null) {
             session.close(WsCloseCode.INCORRECT_TOKEN.close());
             return;
         }
+        // 检查bind
+        String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+        String bindValue = redisTemplate.opsForValue().get(bindKey);
+        if (bindValue != null) {
+            session.close(WsCloseCode.TOKEN_BIND.close());
+            return;
+        }
+        // token绑定
+        redisTemplate.opsForValue().set(bindKey, id, KeyConst.TERMINAL_BIND_EXPIRE, TimeUnit.SECONDS);
         // 刷新token 过期时间
         redisTemplate.expire(tokenKey, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
-        // 握手设置id
-        String id = UUIds.random19();
-        String idKey = Strings.format(KeyConst.TERMINAL_ID, id);
-        redisTemplate.opsForValue().set(idKey, token, KeyConst.TERMINAL_ID_EXPIRE, TimeUnit.SECONDS);
-        session.sendMessage(new TextMessage(WsProtocol.ACK.msg(id)));
-        log.info("terminal 建立ws连接 token: {}", token);
+        session.sendMessage(new TextMessage(WsProtocol.ACK.get()));
+        log.info("terminal 建立ws连接 token: {}, id: {}", token, id);
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String token = getToken(session);
+        String id = session.getId();
         TerminalDataTransferDTO data = null;
         boolean valid = false;
         try {
@@ -109,17 +115,10 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 session.sendMessage(new TextMessage(WsProtocol.UNKNOWN_OPERATE.get()));
                 return;
             }
-            // 检查参数
-            String id = data.getId();
-            if (id == null) {
-                session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
-                return;
-            }
-
             IOperateHandler handler;
             if (operate == TerminalOperate.CONNECT) {
                 // 建立连接
-                handler = this.connect(session, data, token);
+                handler = this.connect(session, id, data, token);
                 if (handler == null) {
                     return;
                 }
@@ -160,35 +159,31 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String token = getToken(session);
+        String id = session.getId();
         int code = status.getCode();
-        log.info("terminal 关闭连接 token: {} code: {} reason: {}", token, code, status.getReason());
-        // 释放资源
-        WsCloseCode type = WsCloseCode.of(code);
-        if (WsCloseCode.HEART_DOWN.equals(type) ||
-                WsCloseCode.RUNTIME_VALID_EXCEPTION.equals(type) ||
-                WsCloseCode.FORCED_OFFLINE.equals(type)) {
-            IOperateHandler handler = terminalSessionManager.getSessionStore().get(token);
-            if (handler == null) {
-                return;
-            }
-            handler.disconnect();
-        }
-        boolean released = type == null ||
-                WsCloseCode.HEART_DOWN.equals(type) ||
-                WsCloseCode.FORCED_OFFLINE.equals(type) ||
-                WsCloseCode.DISCONNECT.equals(type) ||
-                WsCloseCode.EOF_CALLBACK.equals(type);
-        if (!released) {
+        String token = getToken(session);
+        String accessKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
+        String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+        String bindValue = redisTemplate.opsForValue().get(bindKey);
+        if (!id.equals(bindValue)) {
             return;
         }
+        log.info("terminal 关闭连接 token: {}, id:{}, code: {}, reason: {}", token, id, code, status.getReason());
+        redisTemplate.delete(accessKey);
+        redisTemplate.delete(bindKey);
+        // 释放资源
+        IOperateHandler handler = terminalSessionManager.getSessionStore().get(token);
+        if (handler == null) {
+            return;
+        }
+        handler.disconnect();
         terminalSessionManager.getSessionStore().remove(token);
         // log
         MachineTerminalLogDO updateLog = new MachineTerminalLogDO();
         updateLog.setCloseCode(code);
         updateLog.setDisconnectedTime(new Date());
         Integer logUpdateEffect = machineTerminalService.updateAccessLog(token, updateLog);
-        log.info("terminal 连接关闭更新日志 token: {} effect: {}", token, logUpdateEffect);
+        log.info("terminal 连接关闭更新日志 token: {}, id: {}, effect: {}", token, id, logUpdateEffect);
     }
 
     @Override
@@ -203,8 +198,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
      * @param data    data
      * @return handler
      */
-    private TerminalOperateHandler connect(WebSocketSession session, TerminalDataTransferDTO data, String token) throws IOException {
-        log.info("terminal 尝试建立连接 token: {} data: {}", token, JSON.toJSONString(data));
+    private TerminalOperateHandler connect(WebSocketSession session, String id, TerminalDataTransferDTO data, String token) throws IOException {
+        log.info("terminal 尝试建立连接 token: {}, id: {}, data: {}", token, id, JSON.toJSONString(data));
         // 检查参数
         TerminalConnectDTO connectInfo = null;
         try {
@@ -239,10 +234,10 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return null;
         }
         // 检查id
-        String idKey = Strings.format(KeyConst.TERMINAL_ID, data.getId());
+        String idKey = Strings.format(KeyConst.TERMINAL_BIND, token);
         String idValue = redisTemplate.opsForValue().get(idKey);
-        if (idValue == null || !idValue.equals(token)) {
-            log.info("terminal 建立连接驳回-tokenId认证失败 token: {}", token);
+        if (idValue == null || !idValue.equals(id)) {
+            log.info("terminal 建立连接驳回-id认证失败 token: {}", token);
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());
             return null;
         }
@@ -280,7 +275,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         config.setUsername(userDTO.getUsername());
         config.setMachineId(machineId);
         config.setMachineHost(host);
-        config.setSessionId(data.getId());
+        config.setSessionId(id);
         config.setCols(connectInfo.getCols());
         config.setRows(connectInfo.getRows());
         config.setWidth(connectInfo.getWidth());
@@ -296,7 +291,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return null;
         }
         terminalSessionManager.getSessionStore().put(token, terminalHandler);
-        log.info("terminal 建立连接成功 uid: {} machineId: {}", tokenUserId, machineId);
+        log.info("terminal 建立连接成功, uid: {}, machineId: {}", tokenUserId, machineId);
         return terminalHandler;
     }
 

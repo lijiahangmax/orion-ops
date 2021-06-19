@@ -26,6 +26,11 @@ public enum WsCloseCode {
     FORGE_TOKEN(4120, WsCloseReason.CLOSED_CONNECTION),
 
     /**
+     * token已被绑定
+     */
+    TOKEN_BIND(4125, WsCloseReason.CLOSED_CONNECTION),
+
+    /**
      * 未知的连接
      */
     UNKNOWN_CONNECT(4130, WsCloseReason.CLOSED_CONNECTION),

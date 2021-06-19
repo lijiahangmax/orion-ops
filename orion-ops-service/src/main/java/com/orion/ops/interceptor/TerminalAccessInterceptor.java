@@ -33,8 +33,12 @@ public class TerminalAccessInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         String token = getToken(request);
-        String key = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        boolean access = Booleans.isTrue(redisTemplate.hasKey(key));
+        String tokenKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
+        boolean access = Booleans.isTrue(redisTemplate.hasKey(tokenKey));
+        if (access) {
+            String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+            access = !Booleans.isTrue(redisTemplate.hasKey(bindKey));
+        }
         log.info("terminal尝试打开ws连接开始 token: {}, 结果: {}", token, access);
         return access;
     }
