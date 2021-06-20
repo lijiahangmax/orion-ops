@@ -26,7 +26,7 @@ public class Valid extends com.orion.utils.Valid {
     }
 
     public static void eq(Object o1, Object o2) {
-        eq(o1, o2, MessageConst.MISSING_PARAM);
+        eq(o1, o2, MessageConst.INVALID_PARAM);
     }
 
     public static void allNotNull(Object... objects) {
@@ -46,7 +46,11 @@ public class Valid extends com.orion.utils.Valid {
     }
 
     public static boolean isTrue(boolean s) {
-        return isTrue(s, MessageConst.MISSING_PARAM);
+        return isTrue(s, MessageConst.INVALID_PARAM);
+    }
+
+    public static <T extends Comparable<T>> T gte(T t1, T t2) {
+        return gte(t1, t2, MessageConst.INVALID_PARAM);
     }
 
 }

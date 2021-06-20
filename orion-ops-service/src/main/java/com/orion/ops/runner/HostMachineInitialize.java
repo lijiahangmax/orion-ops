@@ -2,9 +2,9 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -120,6 +120,8 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return FileTailMode.TRACKER.getMode();
             case TAIL_OFFSET:
                 return Const.TAIL_OFFSET_LINE + Strings.EMPTY;
+            case TAIL_CHARSET:
+                return Const.UTF_8;
             default:
                 return null;
         }

@@ -38,6 +38,11 @@ public enum MachineEnvAttr {
     TAIL_OFFSET(true, true, "文件追踪偏移量(行)"),
 
     /**
+     * 文件追踪编码格式
+     */
+    TAIL_CHARSET(true, true, "文件追踪编码格式"),
+
+    /**
      * 日志目录
      */
     LOG_PATH(true, true, "日志目录"),

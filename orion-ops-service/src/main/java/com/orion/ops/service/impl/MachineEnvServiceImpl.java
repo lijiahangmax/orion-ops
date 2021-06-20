@@ -150,6 +150,17 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
+    public String getMachineEnv(Long machineId, String env) {
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, machineId)
+                .eq(MachineEnvDO::getAttrKey, env)
+                .last(Const.LIMIT_1);
+        return Optional.ofNullable(machineEnvDAO.selectOne(wrapper))
+                .map(MachineEnvDO::getAttrValue)
+                .orElse(null);
+    }
+
+    @Override
     public MutableLinkedHashMap<String, String> getMachineEnv(Long machineId) {
         MutableLinkedHashMap<String, String> env = new MutableLinkedHashMap<>();
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
@@ -184,6 +195,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                     env.setAttrValue(home + Const.TEMP_PATH);
                 case TAIL_OFFSET:
                     env.setAttrValue(Const.TAIL_OFFSET_LINE + Strings.EMPTY);
+                    break;
+                case TAIL_CHARSET:
+                    env.setAttrValue(Const.UTF_8);
                     break;
                 default:
                     break;

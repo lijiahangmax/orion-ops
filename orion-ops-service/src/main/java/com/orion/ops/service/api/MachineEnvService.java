@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 
@@ -56,6 +57,15 @@ public interface MachineEnvService {
      * @return effect
      */
     DataGrid<MachineEnvVO> listEnv(MachineEnvRequest request);
+
+    /**
+     * 获取机器变量
+     *
+     * @param machineId machineId
+     * @param env       envKey
+     * @return env
+     */
+    String getMachineEnv(Long machineId, String env);
 
     /**
      * 获取机器环境变量
