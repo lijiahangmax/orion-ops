@@ -23,4 +23,14 @@ public class FileTailRequest {
      */
     private Integer type;
 
+    /**
+     * 文件尾部偏移行
+     */
+    private Integer offset;
+
+    /**
+     * 编码集
+     */
+    private String charset;
+
 }

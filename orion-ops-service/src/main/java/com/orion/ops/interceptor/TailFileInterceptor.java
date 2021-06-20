@@ -33,8 +33,12 @@ public class TailFileInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         String token = getToken(request);
-        String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
-        boolean access = Booleans.isTrue(redisTemplate.hasKey(key));
+        String tokenKey = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
+        boolean access = Booleans.isTrue(redisTemplate.hasKey(tokenKey));
+        if (access) {
+            String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND, token);
+            access = !Booleans.isTrue(redisTemplate.hasKey(bindKey));
+        }
         log.info("tail 尝试建立ws连接开始 token: {}, 结果: {}", token, access);
         return access;
     }
