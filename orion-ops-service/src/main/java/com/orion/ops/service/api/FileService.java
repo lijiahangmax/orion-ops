@@ -3,6 +3,7 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.entity.request.FileTailRequest;
+import com.orion.ops.entity.vo.FileTailVO;
 
 /**
  * 文件下载service
@@ -34,8 +35,8 @@ public interface FileService {
      * tail文件 检查文件是否存在
      *
      * @param request request
-     * @return token
+     * @return FileTailVO
      */
-    HttpWrapper<String> getTailToken(FileTailRequest request);
+    HttpWrapper<FileTailVO> getTailToken(FileTailRequest request);
 
 }

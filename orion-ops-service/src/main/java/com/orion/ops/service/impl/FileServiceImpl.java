@@ -6,21 +6,24 @@ import com.orion.id.UUIds;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.download.FileDownloadType;
-import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.tail.FileTailMode;
+import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.ops.entity.request.FileTailRequest;
-import com.orion.ops.service.api.CommandExecService;
-import com.orion.ops.service.api.FileService;
-import com.orion.ops.service.api.MachineKeyService;
+import com.orion.ops.entity.vo.FileTailVO;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
+import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,6 +46,12 @@ public class FileServiceImpl implements FileService {
 
     @Resource
     private MachineTerminalLogDAO machineTerminalLogDAO;
+
+    @Resource
+    private MachineEnvService machineEnvService;
+
+    @Resource
+    private MachineInfoService machineInfoService;
 
     @Resource
     private CommandExecService commandExecService;
@@ -104,7 +113,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public HttpWrapper<String> getTailToken(FileTailRequest request) {
+    public HttpWrapper<FileTailVO> getTailToken(FileTailRequest request) {
         Long relId = request.getRelId();
         String path;
         Long machineId;
@@ -116,22 +125,49 @@ public class FileServiceImpl implements FileService {
                 break;
             default:
                 path = null;
-                machineId = Const.HOST_MACHINE_ID;
+                machineId = -1L;
                 break;
         }
         // 检查文件是否存在
-        if (path == null || !Files1.isFile(path)) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
+        if (Const.HOST_MACHINE_ID.equals(machineId)) {
+            if (path == null || !Files1.isFile(path)) {
+                return HttpWrapper.of(ResultCode.FILE_MISSING);
+            }
+        }
+        // 查询机器
+        MachineInfoDO machine = machineInfoService.selectById(machineId);
+        if (machine == null) {
+            return HttpWrapper.error(MessageConst.INVALID_MACHINE);
         }
         // 设置缓存
         FileTailDTO tail = new FileTailDTO();
         tail.setFilePath(path);
         tail.setUserId(Currents.getUserId());
         tail.setMachineId(machineId);
+        tail.setMode(this.getMachineTailMode(machineId));
+        Integer offset = request.getOffset();
+        if (offset != null) {
+            tail.setOffset(offset);
+        } else {
+            tail.setOffset(this.getTailOffset(machineId));
+        }
+        String charset = request.getCharset();
+        if (charset != null) {
+            tail.setCharset(charset);
+        } else {
+            tail.setCharset(this.getCharset(machineId));
+        }
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
-        return HttpWrapper.<String>ok().data(token);
+        // 设置返回
+        FileTailVO res = new FileTailVO();
+        res.setToken(token);
+        res.setHost(machine.getMachineHost());
+        res.setFile(tail.getFilePath());
+        res.setOffset(tail.getOffset());
+        res.setCharset(tail.getCharset());
+        return HttpWrapper.<FileTailVO>ok().data(res);
     }
 
     /**
@@ -165,6 +201,51 @@ public class FileServiceImpl implements FileService {
                 .filter(Strings::isNotBlank)
                 .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
                 .orElse(null);
+    }
+
+    /**
+     * 获取文件tail模型
+     *
+     * @param machineId 机器id
+     * @return mode
+     */
+    private String getMachineTailMode(Long machineId) {
+        if (Const.HOST_MACHINE_ID.equals(machineId)) {
+            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getValue());
+            return FileTailMode.of(mode, true).getMode();
+        } else {
+            return FileTailMode.TAIL.getMode();
+        }
+    }
+
+    /**
+     * 获取文件tail 尾行偏移量
+     *
+     * @param machineId 机器id
+     * @return offset line
+     */
+    private Integer getTailOffset(Long machineId) {
+        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getValue());
+        if (Strings.isInteger(offset)) {
+            return Integer.valueOf(offset);
+        } else {
+            return Const.TAIL_OFFSET_LINE;
+        }
+    }
+
+    /**
+     * 获取编码集
+     *
+     * @param machineId 机器id
+     * @return 编码集
+     */
+    private String getCharset(Long machineId) {
+        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getValue());
+        if (Charsets.isSupported(charset)) {
+            return charset;
+        } else {
+            return Const.UTF_8;
+        }
     }
 
 }

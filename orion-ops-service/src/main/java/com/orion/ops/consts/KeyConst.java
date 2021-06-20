@@ -19,9 +19,9 @@ public class KeyConst {
     public static final String LOGIN_TOKEN_KEY = "auth:info:{}";
 
     /**
-     * 2 day
+     * 3 day
      */
-    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24 * 2;
+    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24 * 3;
 
     /**
      * terminal访问token
@@ -30,19 +30,40 @@ public class KeyConst {
     public static final String TERMINAL_ACCESS_TOKEN = "terminal:access:{}";
 
     /**
-     * 5 min
+     * 5min
      */
     public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 5;
 
     /**
-     * terminal:id:{id}
+     * terminal绑定session token
+     * terminal:bind:{token}
      */
-    public static final String TERMINAL_ID = "terminal:id:{}";
+    public static final String TERMINAL_BIND = "terminal:bind:{}";
 
     /**
-     * 1 min
+     * 6 h
      */
-    public static final int TERMINAL_ID_EXPIRE = 60;
+    public static final int TERMINAL_BIND_EXPIRE = 60 * 60 * 6;
+
+    /**
+     * file:tail:access{token}
+     */
+    public static final String FILE_TAIL_ACCESS = "file:tail:access:{}";
+
+    /**
+     * 5 min
+     */
+    public static final int FILE_TAIL_ACCESS_EXPIRE = 60 * 5;
+
+    /**
+     * file:tail:bind:{id}
+     */
+    public static final String FILE_TAIL_BIND = "file:tail:bind:{}";
+
+    /**
+     * 5 min
+     */
+    public static final int FILE_TAIL_BIND_EXPIRE = 60 * 60 * 6;
 
     /**
      * file:download:{token}
@@ -53,25 +74,5 @@ public class KeyConst {
      * 5 min
      */
     public static final int FILE_DOWNLOAD_EXPIRE = 60 * 5;
-
-    /**
-     * file:tail:access:{token}
-     */
-    public static final String FILE_TAIL_ACCESS = "file:tail:{}";
-
-    /**
-     * 5 min
-     */
-    public static final int FILE_TAIL_ACCESS_EXPIRE = 60 * 5;
-
-    /**
-     * file:tail:id:{id}
-     */
-    public static final String FILE_TAIL_ID = "file:tail:{}";
-
-    /**
-     * 5 min
-     */
-    public static final int FILE_TAIL_ID_EXPIRE = 60;
 
 }

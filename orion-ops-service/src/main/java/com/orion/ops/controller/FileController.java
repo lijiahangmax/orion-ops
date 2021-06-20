@@ -8,9 +8,11 @@ import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.entity.request.FileTailRequest;
+import com.orion.ops.entity.vo.FileTailVO;
 import com.orion.ops.service.api.FileService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
+import com.orion.utils.Charsets;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * 文件下载api
@@ -75,9 +78,17 @@ public class FileController {
      */
     @RequestMapping("/tail/token")
     @IgnoreWrapper
-    public HttpWrapper<String> getToken(@RequestBody FileTailRequest request) {
+    public HttpWrapper<FileTailVO> getToken(@RequestBody FileTailRequest request) {
         Valid.notNull(request.getRelId());
         Valid.notNull(FileTailType.of(request.getType()));
+        Integer offset = request.getOffset();
+        if (offset != null) {
+            Valid.gte(offset, 0);
+        }
+        String charset = request.getCharset();
+        if (charset != null) {
+            Valid.isTrue(Charsets.isSupported(charset));
+        }
         return fileService.getTailToken(request);
     }
 

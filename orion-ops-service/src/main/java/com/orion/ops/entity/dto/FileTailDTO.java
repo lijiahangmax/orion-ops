@@ -27,4 +27,25 @@ public class FileTailDTO {
      */
     private Long machineId;
 
+    /**
+     * tail 模式
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_MODE
+     * @see com.orion.ops.consts.tail.FileTailMode
+     */
+    private String mode;
+
+    /**
+     * tail 尾行偏移量
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_OFFSET
+     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
+     */
+    private Integer offset;
+
+    /**
+     * 编码集
+     */
+    private String charset;
+
 }

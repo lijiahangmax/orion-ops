@@ -34,15 +34,19 @@ public enum FileTailMode {
     String mode;
 
     public static FileTailMode of(String mode) {
+        return of(mode, false);
+    }
+
+    public static FileTailMode of(String mode, boolean hostMachine) {
         if (Strings.isBlank(mode)) {
-            return TRACKER;
+            return hostMachine ? TRACKER : TAIL;
         }
         for (FileTailMode value : values()) {
             if (value.mode.equals(mode)) {
                 return value;
             }
         }
-        return TRACKER;
+        return hostMachine ? TRACKER : TAIL;
     }
 
 }
