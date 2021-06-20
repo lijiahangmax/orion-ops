@@ -114,7 +114,6 @@ public abstract class AbstractExecHandler implements IExecHandler {
         env.put("info.tag", machine.getMachineTag());
         env.put("info.desc", machine.getDescription());
         env.put("info.username", machine.getUsername());
-        env.put("info.system.type", machine.getSystemType() + Strings.EMPTY);
     }
 
     /**

@@ -17,6 +17,7 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.ShellExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Arrays1;
+import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -183,7 +184,7 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public boolean valid(String id) {
-        return hint.getSessionId().equals(id);
+        return Objects1.eq(hint.getSessionId(), id);
     }
 
     @Override

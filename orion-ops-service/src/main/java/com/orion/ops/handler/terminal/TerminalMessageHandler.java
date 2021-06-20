@@ -152,8 +152,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        String token = getToken(session);
-        log.error("terminal 操作异常拦截 token: {}, e: {}", token, exception);
+        log.error("terminal 操作异常拦截 token: {}, e: {}", getToken(session), exception);
         exception.printStackTrace();
     }
 
@@ -172,12 +171,11 @@ public class TerminalMessageHandler implements WebSocketHandler {
         redisTemplate.delete(accessKey);
         redisTemplate.delete(bindKey);
         // 释放资源
-        IOperateHandler handler = terminalSessionManager.getSessionStore().get(token);
+        IOperateHandler handler = terminalSessionManager.getSessionStore().remove(token);
         if (handler == null) {
             return;
         }
         handler.disconnect();
-        terminalSessionManager.getSessionStore().remove(token);
         // log
         MachineTerminalLogDO updateLog = new MachineTerminalLogDO();
         updateLog.setCloseCode(code);

@@ -15,11 +15,6 @@ import java.io.Serializable;
 public class TerminalDataTransferDTO implements Serializable {
 
     /**
-     * session id
-     */
-    private String id;
-
-    /**
      * 操作
      */
     private String operate;
