@@ -19,6 +19,7 @@ public enum FileTailMode {
      * 仅宿主机
      *
      * @see com.orion.tail.Tracker
+     * @see com.orion.ops.handler.tail.impl.TrackerTailFileHandler
      */
     TRACKER("tracker"),
 
@@ -26,6 +27,8 @@ public enum FileTailMode {
      * tail 命令
      * <p>
      * 宿主机 远程机器
+     *
+     * @see com.orion.ops.handler.tail.impl.ExecTailFileHandler
      */
     TAIL("tail"),
 
