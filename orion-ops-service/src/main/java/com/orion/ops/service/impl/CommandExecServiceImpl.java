@@ -55,7 +55,7 @@ public class CommandExecServiceImpl implements CommandExecService {
     private ExecSessionHolder execSessionHolder;
 
     @Override
-    public HttpWrapper<Map<Long, Long>> batchSubmitTask(CommandExecRequest request) {
+    public HttpWrapper<Map<String, Long>> batchSubmitTask(CommandExecRequest request) {
         Valid.notBlank(request.getCommand());
         List<Long> machineIdList = request.getMachineIdList();
         // 检查是否有运行中的任务
@@ -87,7 +87,11 @@ public class CommandExecServiceImpl implements CommandExecService {
         }
         // 执行命令
         Map<Long, Long> tailToken = this.executeBatchCommand(request, sessionStore);
-        return HttpWrapper.ok(tailToken);
+        Map<String, Long> result = Maps.newLinkedMap();
+        tailToken.forEach((k, v) -> {
+            result.put(k + "", v);
+        });
+        return HttpWrapper.ok(result);
     }
 
     @Override
