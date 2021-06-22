@@ -65,6 +65,4 @@ public class CommandExecController {
         return commandExecService.terminatedExec(id);
     }
 
-    // tail
-
 }

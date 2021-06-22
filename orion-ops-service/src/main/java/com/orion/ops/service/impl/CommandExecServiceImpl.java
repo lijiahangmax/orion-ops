@@ -153,6 +153,7 @@ public class CommandExecServiceImpl implements CommandExecService {
             // 更新状态
             CommandExecDO updateStatus = new CommandExecDO();
             updateStatus.setId(id);
+            updateStatus.setExitCode(-1);
             updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
             effect += commandExecDAO.updateById(updateStatus);
         }
