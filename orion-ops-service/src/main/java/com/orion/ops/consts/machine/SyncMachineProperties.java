@@ -29,6 +29,9 @@ public enum SyncMachineProperties {
     private String command;
 
     public static SyncMachineProperties of(String prop) {
+        if (prop == null) {
+            return null;
+        }
         for (SyncMachineProperties value : values()) {
             if (value.prop.equals(prop)) {
                 return value;

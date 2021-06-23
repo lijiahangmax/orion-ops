@@ -24,6 +24,8 @@ public class MessageConst {
 
     public static final String INVALID_MACHINE = "未知的机器";
 
+    public static final String INVALID_PROXY = "未查询到代理信息";
+
     public static final String UNABLE_SYNC_PROP = "无法同步属性";
 
     public static final String EXCEPTION_MESSAGE = "系统繁忙";

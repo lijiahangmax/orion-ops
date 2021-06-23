@@ -180,17 +180,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Long id = request.getId();
         String syncProp = request.getSyncProp();
         SyncMachineProperties func = SyncMachineProperties.of(syncProp);
-        Valid.notNull(MessageConst.UNABLE_SYNC_PROP);
+        Valid.notNull(func, MessageConst.UNABLE_SYNC_PROP);
         MachineInfoDO machine = new MachineInfoDO();
         machine.setId(id);
-        String res;
-        switch (Objects.requireNonNull(func)) {
+        String res = this.getCommandResultSync(id, func.getCommand());
+        switch (func) {
             case MACHINE_NAME:
-                res = this.getCommandResultSync(id, func.getCommand());
                 machine.setMachineName(res);
                 break;
             case SYSTEM_VERSION:
-                res = this.getCommandResultSync(id, func.getCommand());
                 machine.setSystemVersion(res);
                 break;
             default:
@@ -290,10 +288,10 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
             }
             session.connect(MachineConst.CONNECT_TIMEOUT);
-            log.info("远程机器建立连接-成功 {}@{}/{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
+            log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
             return session;
         } catch (Exception e) {
-            log.error("远程机器建立连接-失败 {}@{}/{} {}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort(), e);
+            log.error("远程机器建立连接-失败 {}@{}:{} {}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort(), e);
             throw e;
         }
     }
@@ -344,7 +342,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         try {
             session = this.openSessionStore(id);
             executor = session.getCommandExecutor(command);
-            executor.connect(3000);
+            executor.connect();
             String res = SessionStore.getCommandOutputResultString(executor);
             log.info("执行机器命令-成功 {} {} {}", id, command, res);
             return res;
@@ -368,7 +366,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             return;
         }
         MachineProxyDO proxy = machineProxyDAO.selectById(proxyId);
-        Valid.notNull(proxy, "未查询到代理信息");
+        Valid.notNull(proxy, MessageConst.INVALID_PROXY);
     }
 
     /**
