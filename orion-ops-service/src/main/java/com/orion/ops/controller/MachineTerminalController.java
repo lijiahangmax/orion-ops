@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 
 /**
  * 终端
@@ -50,6 +52,16 @@ public class MachineTerminalController {
     }
 
     /**
+     * 获取支持的终端类型
+     */
+    @RequestMapping("/support/pty")
+    public String[] getSupportedPty() {
+        return Arrays.stream(TerminalType.values())
+                .map(TerminalType::getType)
+                .toArray(String[]::new);
+    }
+
+    /**
      * 修改配置
      */
     @RequestMapping("/setting")
@@ -57,7 +69,7 @@ public class MachineTerminalController {
         Valid.notNull(request.getId());
         String terminalType = request.getTerminalType();
         if (!Strings.isBlank(terminalType)) {
-            Valid.notNull(TerminalType.of(terminalType), "终端类型不合法");
+            Valid.notNull(TerminalType.of(terminalType), MessageConst.INVALID_PTY);
         }
         return machineTerminalService.setting(request);
     }

@@ -116,11 +116,14 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.PIC_PATH);
             case TEMP_PATH:
                 return createOrionOpsPath(Const.TEMP_PATH);
+            case SWAP_PATH:
+                return createOrionOpsPath(Const.SWAP_PATH);
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
             case TAIL_OFFSET:
                 return Const.TAIL_OFFSET_LINE + Strings.EMPTY;
             case TAIL_CHARSET:
+            case SFTP_CHARSET:
                 return Const.UTF_8;
             default:
                 return null;

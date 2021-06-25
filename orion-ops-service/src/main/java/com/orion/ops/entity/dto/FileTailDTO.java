@@ -45,6 +45,8 @@ public class FileTailDTO {
 
     /**
      * 编码集
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_CHARSET
      */
     private String charset;
 

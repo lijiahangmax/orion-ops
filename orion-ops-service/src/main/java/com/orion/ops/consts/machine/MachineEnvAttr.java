@@ -28,6 +28,16 @@ public enum MachineEnvAttr {
     PIC_PATH(true, false, "图片目录"),
 
     /**
+     * 临时交换目录
+     */
+    SWAP_PATH(true, false, "临时交换目录"),
+
+    /**
+     * sftp 文件名称编码格式 默认UTF-8
+     */
+    SFTP_CHARSET(true, true, "sftp 文件名称编码格式"),
+
+    /**
      * 文件追踪模式 tracker或tail 默认tracker
      */
     TAIL_MODE(true, false, "文件追踪模式 tracker或tail"),

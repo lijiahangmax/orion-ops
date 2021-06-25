@@ -193,10 +193,12 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                     break;
                 case TEMP_PATH:
                     env.setAttrValue(home + Const.TEMP_PATH);
+                    break;
                 case TAIL_OFFSET:
                     env.setAttrValue(Const.TAIL_OFFSET_LINE + Strings.EMPTY);
                     break;
                 case TAIL_CHARSET:
+                case SFTP_CHARSET:
                     env.setAttrValue(Const.UTF_8);
                     break;
                 default:
