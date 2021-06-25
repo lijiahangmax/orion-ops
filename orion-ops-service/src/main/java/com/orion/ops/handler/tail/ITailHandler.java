@@ -13,7 +13,9 @@ public interface ITailHandler extends SafeCloseable {
 
     /**
      * 开始
+     *
+     * @throws Exception Exception
      */
-    void start();
+    void start() throws Exception;
 
 }

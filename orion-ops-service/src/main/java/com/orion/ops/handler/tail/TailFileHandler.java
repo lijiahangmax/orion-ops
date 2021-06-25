@@ -73,7 +73,7 @@ public class TailFileHandler implements WebSocketHandler {
             this.openTailHandler(session, token, fileTail);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("tail 打开处理器-失败 e: {}, token: {}, id: {}", e.getMessage(), token, id);
+            log.error("tail 打开处理器-失败 e: {}, token: {}, id: {}", e, token, id);
         }
     }
 
@@ -96,7 +96,7 @@ public class TailFileHandler implements WebSocketHandler {
         if (!id.equals(bindValue)) {
             return;
         }
-        log.info("tail 关闭连接 token: {}, id:{}, code: {}, reason: {}", token, id, status.getCode(), status.getReason());
+        log.info("tail 关闭连接 token: {}, id: {}, code: {}, reason: {}", token, id, status.getCode(), status.getReason());
         redisTemplate.delete(bindKey);
         // 释放资源
         ITailHandler handler = tailSessionHolder.getHolder().remove(token);
@@ -117,8 +117,9 @@ public class TailFileHandler implements WebSocketHandler {
      * @param session  session
      * @param token    token
      * @param fileTail tailDTO
+     * @throws Exception Exception
      */
-    private void openTailHandler(WebSocketSession session, String token, FileTailDTO fileTail) {
+    private void openTailHandler(WebSocketSession session, String token, FileTailDTO fileTail) throws Exception {
         String id = session.getId();
         TailFileHint hint = new TailFileHint();
         hint.setSessionId(id);

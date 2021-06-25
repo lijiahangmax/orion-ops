@@ -1,6 +1,9 @@
 package com.orion.ops.handler.tail.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.orion.lang.thread.HookRunnable;
 import com.orion.ops.consts.SchedulerPools;
+import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailFileHint;
 import com.orion.tail.Tracker;
@@ -11,6 +14,7 @@ import com.orion.tail.mode.FileOffsetMode;
 import com.orion.utils.Threads;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -21,6 +25,7 @@ import org.springframework.web.socket.WebSocketSession;
  * @version 1.0.0
  * @since 2021/6/18 17:36
  */
+@Slf4j
 public class TrackerTailFileHandler implements ITailHandler, LineHandler {
 
     @Getter
@@ -38,26 +43,50 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
 
     private DelayTracker tracker;
 
+    private volatile boolean close;
+
     public TrackerTailFileHandler(String token, WebSocketSession session, TailFileHint hint) {
         this.token = token;
         this.session = session;
         this.hint = hint;
-        this.tracker = new DelayTracker(hint.getPath(), this);
-        tracker.charset(hint.getCharset());
-        tracker.offset(FileOffsetMode.LINE, hint.getOffset());
-        tracker.notFoundMode(FileNotFoundMode.WAIT_COUNT, 10);
+        log.info("tail TRACKER 监听文件初始化 token: {}, hint: {}", token, JSON.toJSONString(hint));
     }
 
     @Override
     public void start() {
-        Threads.start(() -> {
+        this.tracker = new DelayTracker(hint.getPath(), this);
+        tracker.charset(hint.getCharset());
+        tracker.offset(FileOffsetMode.LINE, hint.getOffset());
+        tracker.notFoundMode(FileNotFoundMode.WAIT_COUNT, 10);
+        Threads.start(new HookRunnable(() -> {
+            log.info("tail TRACKER 开始监听文件 token: {}", token);
             tracker.tail();
-        }, SchedulerPools.TAIL_SCHEDULER);
+        }, this::callback), SchedulerPools.TAIL_SCHEDULER);
+    }
+
+    /**
+     * 回调
+     */
+    @SneakyThrows
+    private void callback() {
+        log.info("tail TRACKER 监听文件结束 token: {}", token);
+        if (close) {
+            return;
+        }
+        if (session.isOpen()) {
+            session.close(WsCloseCode.EOF_CALLBACK.close());
+        }
     }
 
     @Override
     public void close() {
-        tracker.stop();
+        if (close) {
+            return;
+        }
+        this.close = true;
+        if (tracker != null) {
+            tracker.stop();
+        }
     }
 
     @SneakyThrows
