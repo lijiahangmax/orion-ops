@@ -23,7 +23,7 @@ public class TypeStoreRegisterRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("注册vo转换器-开始");
-        new PackageScanner("com.orion.ops.entity.vo")
+        new PackageScanner("com.orion.ops.entity.vo.*")
                 .with(OrionOpsServiceApplication.class)
                 .scan()
                 .getClasses()
