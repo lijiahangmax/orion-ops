@@ -1,6 +1,7 @@
 package com.orion.ops.config;
 
 import com.orion.exception.IORuntimeException;
+import com.orion.exception.SftpException;
 import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
@@ -79,6 +80,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> ioExceptionHandler(Exception ex) {
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {SftpException.class, com.jcraft.jsch.SftpException.class})
+    public HttpWrapper<?> sftpExceptionHandler(Exception ex) {
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.SFTP_OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = CodeArgumentException.class)

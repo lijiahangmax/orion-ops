@@ -22,11 +22,15 @@ public class MessageConst {
 
     public static final String INVALID_PARAM = "非法参数";
 
+    public static final String SFTP_OPERATOR_ERROR = "操作异常";
+
     public static final String INVALID_MACHINE = "未知的机器";
 
     public static final String INVALID_PROXY = "未查询到代理信息";
 
     public static final String UNABLE_SYNC_PROP = "无法同步属性";
+
+    public static final String INVALID_PTY = "终端类型不合法";
 
     public static final String EXCEPTION_MESSAGE = "系统繁忙";
 
@@ -47,5 +51,13 @@ public class MessageConst {
     public static final String MACHINE_ENV_EXIST = "环境变量已存在";
 
     public static final String MACHINE_ENV_MISSING = "环境变量不存在";
+
+    public static final String TOKEN_EMPTY = "token为空";
+
+    public static final String SESSION_EXPIRE = "会话过期";
+
+    public static final String PATH_NOT_NORMALIZE = "路径不合法";
+
+    public static final String DEL_ROOT_PATH = "你TM敢删除根目录?";
 
 }

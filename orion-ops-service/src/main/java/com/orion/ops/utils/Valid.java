@@ -1,6 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.MessageConst;
+import com.orion.utils.Exceptions;
 
 import java.util.Collection;
 
@@ -47,6 +48,16 @@ public class Valid extends com.orion.utils.Valid {
 
     public static boolean isTrue(boolean s) {
         return isTrue(s, MessageConst.INVALID_PARAM);
+    }
+
+    public static boolean isFalse(boolean s) {
+        return isFalse(s, MessageConst.INVALID_PARAM);
+    }
+
+    public static void sftp(boolean s) {
+        if (!s) {
+            throw Exceptions.sftp(MessageConst.SFTP_OPERATOR_ERROR);
+        }
     }
 
     public static <T extends Comparable<T>> T gte(T t1, T t2) {

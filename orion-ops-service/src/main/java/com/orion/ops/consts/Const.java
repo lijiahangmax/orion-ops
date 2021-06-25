@@ -24,6 +24,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TEMP_PATH = "temp";
 
+    public static final String SWAP_PATH = "swap";
+
     public static final String ROOT = "root";
 
     public static final Integer FORBID_DELETE_CAN = 1;
