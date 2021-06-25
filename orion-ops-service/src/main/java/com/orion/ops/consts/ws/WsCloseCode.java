@@ -66,6 +66,16 @@ public enum WsCloseCode {
     OPEN_SHELL_EXCEPTION(4220, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
 
     /**
+     * 打开command出现异常
+     */
+    OPEN_COMMAND_EXCEPTION(4225, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
+
+    /**
+     * 打开sftp出现异常
+     */
+    OPEN_SFTP_EXCEPTION(4230, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
+
+    /**
      * 服务出现异常
      */
     RUNTIME_EXCEPTION(4300, WsCloseReason.CLOSED_CONNECTION),

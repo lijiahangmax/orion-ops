@@ -1,10 +1,7 @@
 package com.orion.ops.handler.terminal;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.exception.AuthenticationException;
-import com.orion.exception.ConnectionRuntimeException;
 import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.consts.ws.WsProtocol;
@@ -16,6 +13,7 @@ import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.service.api.PassportService;
+import com.orion.ops.utils.WebSockets;
 import com.orion.remote.channel.SessionStore;
 import com.orion.utils.Strings;
 import lombok.extern.slf4j.Slf4j;
@@ -210,9 +208,9 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return null;
         }
         String loginToken = connectInfo.getLoginToken();
-        if (Strings.isBlank(loginToken) ||
-                connectInfo.getRows() == null || connectInfo.getCols() == null ||
-                connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
+        if (Strings.isBlank(loginToken)
+                || connectInfo.getRows() == null || connectInfo.getCols() == null
+                || connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
             session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
             return null;
         }
@@ -255,14 +253,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
             // 打开session
             sessionStore = machineInfoService.openSessionStore(machineId);
         } catch (Exception e) {
-            if (e instanceof ConnectionRuntimeException) {
-                session.close(WsCloseCode.CONNECTED_FAILURE.close());
-            } else if (e instanceof AuthenticationException) {
-                session.close(WsCloseCode.CONNECTED_AUTH_FAILURE.close());
-            } else {
-                session.close(WsCloseCode.CONNECTED_EXCEPTION.close());
-            }
-            log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, {}", tokenUserId, e);
+            WebSockets.openSessionStoreThrowClose(session, e);
+            log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, machineId: {}, e: {}", tokenUserId, machineId, e);
             return null;
         }
         // 配置
@@ -282,33 +274,17 @@ public class TerminalMessageHandler implements WebSocketHandler {
         TerminalOperateHandler terminalHandler = new TerminalOperateHandler(token, config, session, sessionStore);
         try {
             // 打开shell
-            this.openShell(terminalHandler);
+            log.info("terminal 尝试建立连接-尝试打开shell token: {}", terminalHandler.getToken());
+            terminalHandler.connect();
+            log.info("terminal 建立连接成功-打开shell成功 token: {}", terminalHandler.getToken());
         } catch (Exception e) {
             session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.close());
             log.error("terminal 建立连接失败-打开shell失败 host: {}, uid: {}, {}", host, tokenUserId, e);
             return null;
         }
         terminalSessionManager.getSessionStore().put(token, terminalHandler);
-        log.info("terminal 建立连接成功, uid: {}, machineId: {}", tokenUserId, machineId);
+        log.info("terminal 建立连接成功 uid: {}, machineId: {}", tokenUserId, machineId);
         return terminalHandler;
-    }
-
-    /**
-     * 打开shell
-     */
-    private void openShell(TerminalOperateHandler terminalHandler) {
-        RuntimeException ex = null;
-        for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {
-            log.info("terminal 建立连接-尝试打开shell 第{}次尝试 token: {}", (i + 1), terminalHandler.getToken());
-            try {
-                terminalHandler.connect();
-                return;
-            } catch (RuntimeException e) {
-                // retry
-                ex = e;
-            }
-        }
-        throw ex;
     }
 
 }

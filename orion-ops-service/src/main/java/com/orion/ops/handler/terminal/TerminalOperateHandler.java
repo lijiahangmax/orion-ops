@@ -3,7 +3,6 @@ package com.orion.ops.handler.terminal;
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.terminal.TerminalConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
@@ -14,6 +13,7 @@ import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.remote.channel.SessionStore;
+import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.ShellExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Arrays1;
@@ -29,6 +29,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -79,22 +80,19 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     protected volatile boolean close;
 
-    protected volatile boolean callback;
-
     public TerminalOperateHandler(String token, TerminalConnectHint hint, WebSocketSession session, SessionStore sessionStore) {
         this.token = token;
         this.hint = hint;
         this.session = session;
         this.sessionStore = sessionStore;
         this.lastPing = System.currentTimeMillis();
-        this.callback = true;
-        this.open();
+        this.init();
     }
 
     /**
      * 打开session
      */
-    private void open() {
+    private void init() {
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(hint.getTerminalType());
         executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
@@ -119,36 +117,51 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public void connect() {
-        executor.connect(MachineConst.CONNECT_TIMEOUT);
-        executor.scheduler(SchedulerPools.TERMINAL_SCHEDULER)
-                .callback(d -> {
-                    if (!this.callback) {
-                        return;
-                    }
-                    this.disconnect();
-                    this.sendClose(WsCloseCode.EOF_CALLBACK);
-                    log.info("terminal eof回调 {}", token);
-                });
-        executor.streamHandler((k, i) -> {
-            byte[] bs = new byte[Const.BUFFER_KB_2];
-            BufferedInputStream in = new BufferedInputStream(i, Const.BUFFER_KB_2);
-            int read;
-            try {
-                while (session.isOpen() && (read = in.read(bs)) != -1) {
-                    session.sendMessage(new TextMessage(WsProtocol.OK.msg(Arrays1.resize(bs, read))));
-                }
-            } catch (IOException ex) {
-                if (session.isOpen()) {
-                    try {
-                        session.close(WsCloseCode.READ_EXCEPTION.close());
-                    } catch (Exception ex1) {
-                        log.error("terminal 处理流失败 关闭连接失败", ex1);
-                    }
-                } else {
-                    log.error("terminal 读取流失败", ex);
-                }
+        executor.connect()
+                .scheduler(SchedulerPools.TERMINAL_SCHEDULER)
+                .callback(this::callback)
+                .streamHandler(this::streamHandler)
+                .exec();
+    }
+
+    /**
+     * 回调
+     *
+     * @param executor executor
+     */
+    private void callback(BaseRemoteExecutor executor) {
+        if (close) {
+            return;
+        }
+        this.sendClose(WsCloseCode.EOF_CALLBACK);
+        log.info("terminal eof回调 {}", token);
+    }
+
+    /**
+     * 标准输入处理
+     *
+     * @param executor    executor
+     * @param inputStream stream
+     */
+    private void streamHandler(BaseRemoteExecutor executor, InputStream inputStream) {
+        byte[] bs = new byte[Const.BUFFER_KB_4];
+        BufferedInputStream in = new BufferedInputStream(inputStream, Const.BUFFER_KB_4);
+        int read;
+        try {
+            while (session.isOpen() && (read = in.read(bs)) != -1) {
+                session.sendMessage(new TextMessage(WsProtocol.OK.msg(Arrays1.resize(bs, read))));
             }
-        }).exec();
+        } catch (IOException ex) {
+            if (session.isOpen()) {
+                try {
+                    session.close(WsCloseCode.READ_EXCEPTION.close());
+                } catch (Exception ex1) {
+                    log.error("terminal 处理流失败 关闭连接失败", ex1);
+                }
+            } else {
+                log.error("terminal 读取流失败", ex);
+            }
+        }
     }
 
     @Override
@@ -159,8 +172,8 @@ public class TerminalOperateHandler implements IOperateHandler {
         this.close = true;
         try {
             Streams.close(logStream);
-            executor.disconnectChannel();
-            sessionStore.disconnect();
+            Streams.close(executor);
+            Streams.close(sessionStore);
         } catch (Exception e) {
             log.error("terminal 断开连接 失败 token: {}, {}", token, e);
         }
@@ -168,16 +181,12 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public void forcedOffline() throws Exception {
-        this.callback = false;
-        this.disconnect();
         session.close(WsCloseCode.FORCED_OFFLINE.close());
         log.info("terminal 管理员强制断连 {}", token);
     }
 
     @Override
     public void heartDown() throws Exception {
-        this.callback = false;
-        this.disconnect();
         session.close(WsCloseCode.HEART_DOWN.close());
         log.info("terminal 心跳结束断连 {}", token);
     }
@@ -203,7 +212,6 @@ public class TerminalOperateHandler implements IOperateHandler {
                 session.sendMessage(new TextMessage(WsProtocol.PONG.get()));
                 return;
             case DISCONNECT:
-                this.disconnect();
                 this.sendClose(WsCloseCode.DISCONNECT);
                 log.info("terminal 用户主动断连 {}", token);
                 return;
