@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.download.FileDownloadType;
+import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailVO;
 
@@ -29,7 +30,7 @@ public interface FileService {
      * @param token token
      * @return path
      */
-    String getPathByDownloadToken(String token);
+    FileDownloadDTO getPathByDownloadToken(String token);
 
     /**
      * tail文件 检查文件是否存在

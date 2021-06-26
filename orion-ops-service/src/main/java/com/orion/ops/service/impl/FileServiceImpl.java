@@ -62,19 +62,24 @@ public class FileServiceImpl implements FileService {
     @Override
     public HttpWrapper<String> getDownloadToken(Long id, FileDownloadType type) {
         String path;
+        String name;
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
                 path = this.getDownloadSecretKeyFilePath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case TERMINAL_LOG:
                 path = this.getDownloadTerminalLogFilePath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case EXEC_LOG:
                 path = commandExecService.getExecLogFilePath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             default:
                 path = null;
+                name = null;
                 break;
         }
         // 检查文件是否存在
@@ -84,6 +89,7 @@ public class FileServiceImpl implements FileService {
         // 设置缓存
         FileDownloadDTO download = new FileDownloadDTO();
         download.setFilePath(path);
+        download.setFileName(Strings.def(name, Const.UNKNOWN));
         download.setUserId(Currents.getUserId());
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_DOWNLOAD, token);
@@ -92,7 +98,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String getPathByDownloadToken(String token) {
+    public FileDownloadDTO getPathByDownloadToken(String token) {
         if (Strings.isBlank(token)) {
             return null;
         }
@@ -109,7 +115,7 @@ public class FileServiceImpl implements FileService {
             return null;
         }
         redisTemplate.delete(key);
-        return download.getFilePath();
+        return download;
     }
 
     @Override
@@ -211,7 +217,7 @@ public class FileServiceImpl implements FileService {
      */
     private String getMachineTailMode(Long machineId) {
         if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getValue());
+            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.name());
             return FileTailMode.of(mode, true).getMode();
         } else {
             return FileTailMode.TAIL.getMode();
@@ -225,7 +231,7 @@ public class FileServiceImpl implements FileService {
      * @return offset line
      */
     private Integer getTailOffset(Long machineId) {
-        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getValue());
+        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.name());
         if (Strings.isInteger(offset)) {
             return Integer.valueOf(offset);
         } else {
@@ -240,7 +246,7 @@ public class FileServiceImpl implements FileService {
      * @return 编码集
      */
     private String getCharset(Long machineId) {
-        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getValue());
+        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.name());
         if (Charsets.isSupported(charset)) {
             return charset;
         } else {

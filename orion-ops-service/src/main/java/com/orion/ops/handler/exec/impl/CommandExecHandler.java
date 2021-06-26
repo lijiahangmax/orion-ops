@@ -34,7 +34,7 @@ public class CommandExecHandler extends AbstractExecHandler {
 
     public CommandExecHandler(ExecHint hint) {
         super(hint);
-        this.logPathSuffix = "/command";
+        this.logPathSuffix = Const.COMMAND_LOG_DIR;
     }
 
     @Override
@@ -93,9 +93,10 @@ public class CommandExecHandler extends AbstractExecHandler {
      * 获取日志目录
      */
     protected void getLogPath() {
-        this.logPath = Const.EXEC_LOG_PATH + logPathSuffix + "/" + execId
+        this.logPath = Const.EXEC_LOG_DIR + logPathSuffix + "/" + execId
                 + "_" + hint.getMachineId()
-                + "_" + Dates.current(Dates.YMDHMS2) + ".log";
+                + "_" + Dates.current(Dates.YMDHMS2)
+                + "." + Const.SUFFIX_LOG;
         CommandExecDO update = new CommandExecDO();
         update.setId(execId);
         update.setLogPath(logPath);

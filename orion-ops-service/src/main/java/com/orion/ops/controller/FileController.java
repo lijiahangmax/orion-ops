@@ -6,6 +6,7 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.consts.tail.FileTailType;
+import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailVO;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.util.Optional;
 
 /**
  * 文件下载api
@@ -59,18 +60,25 @@ public class FileController {
     @RequestMapping("/download/{token}")
     @IgnoreWrapper
     public void downloadLogFile(@PathVariable String token, HttpServletResponse response) throws IOException {
-        String filePath = fileService.getPathByDownloadToken(token);
+        FileDownloadDTO downloadFile = fileService.getPathByDownloadToken(token);
         InputStream inputStream;
         String fileName;
-        if (filePath == null || !Files1.isFile(filePath)) {
+        Optional<File> fileOptional = Optional.ofNullable(downloadFile)
+                .map(FileDownloadDTO::getFilePath)
+                .filter(Files1::isFile)
+                .map(File::new);
+        if (!fileOptional.isPresent()) {
             fileName = Const.UNKNOWN;
             inputStream = Streams.toInputStream(Const.UNKNOWN);
         } else {
-            File file = new File(filePath);
-            fileName = Files1.getFileName(file);
-            inputStream = Files1.openInputStreamFastSafe(file);
+            fileName = downloadFile.getFileName();
+            inputStream = Files1.openInputStreamFastSafe(fileOptional.get());
         }
-        Servlets.transfer(response, inputStream, fileName);
+        try {
+            Servlets.transfer(response, inputStream, fileName);
+        } finally {
+            Streams.close(inputStream);
+        }
     }
 
     /**

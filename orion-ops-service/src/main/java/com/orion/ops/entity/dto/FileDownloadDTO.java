@@ -18,6 +18,11 @@ public class FileDownloadDTO {
     private String filePath;
 
     /**
+     * 文件名称
+     */
+    private String fileName;
+
+    /**
      * 下载用户id
      */
     private Long userId;
