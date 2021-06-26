@@ -96,8 +96,10 @@ public class TerminalOperateHandler implements IOperateHandler {
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(hint.getTerminalType());
         executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
-        String logPath = "/" + TerminalConst.TERMINAL + "/"
-                + Dates.current(Dates.YMDHMS2) + "_" + MachineTerminalService.getTokenUserId(token) + ".log";
+        String logPath = Const.TERMINAL_LOG_DIR + "/"
+                + Dates.current(Dates.YMDHMS2)
+                + "_" + MachineTerminalService.getTokenUserId(token)
+                + "." + Const.SUFFIX_LOG;
         String realLogPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
         this.logStream = Files1.openOutputStreamSafe(realLogPath);
         log.info("terminal 开始记录用户操作日志: {} {}", token, logPath);

@@ -26,6 +26,18 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SWAP_PATH = "swap";
 
+    public static final String TERMINAL_LOG_DIR = "/terminal";
+
+    public static final String EXEC_LOG_DIR = "/exec";
+
+    public static final String COMMAND_LOG_DIR = "/command";
+
+    public static final String HEAD_PIC_DIR = "/head_pic";
+
+    public static final String UPLOAD_DIR = "/upload";
+
+    public static final String DOWNLOAD_DIR = "/download";
+
     public static final String ROOT = "root";
 
     public static final Integer FORBID_DELETE_CAN = 1;
@@ -39,7 +51,5 @@ public class Const extends com.orion.constant.Const {
     public static final int TAIL_OFFSET_LINE = 500;
 
     public static final Long HOST_MACHINE_ID = 1L;
-
-    public static final String EXEC_LOG_PATH = "/exec";
 
 }

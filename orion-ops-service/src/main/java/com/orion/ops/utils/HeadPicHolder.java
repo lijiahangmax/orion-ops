@@ -33,8 +33,6 @@ public class HeadPicHolder {
      */
     private static final ImageIcons ICONS_GEN = new ImageIcons();
 
-    private static final String HEAD_PIC_DIR = "/head_pic/";
-
     private static final String HEAD_PIC_SUFFIX = Const.SUFFIX_PNG;
 
     /**
@@ -45,7 +43,7 @@ public class HeadPicHolder {
      * @return path
      */
     public static String getPicPath(Long uid, String suffix) {
-        return HEAD_PIC_DIR + uid + "." + suffix;
+        return Const.HEAD_PIC_DIR + "/" + uid + "." + suffix;
     }
 
     /**
@@ -56,7 +54,7 @@ public class HeadPicHolder {
      * @return path
      */
     public static String touchPicFile(Long uid, String suffix) {
-        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + HEAD_PIC_DIR + uid + "." + suffix);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + Const.HEAD_PIC_DIR + "/" + uid + "." + suffix);
         Files1.touch(path);
         return path;
     }
@@ -72,7 +70,7 @@ public class HeadPicHolder {
         if (Strings.isBlank(nickname)) {
             nickname = "O";
         }
-        String url = HEAD_PIC_DIR + uid + "." + HEAD_PIC_SUFFIX;
+        String url = Const.HEAD_PIC_DIR + "/" + uid + "." + HEAD_PIC_SUFFIX;
         char name = Arrays1.last(nickname.toCharArray(), 'O');
         BufferedImage img = ICONS_GEN.execute(name);
         String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);

@@ -60,4 +60,6 @@ public class MessageConst {
 
     public static final String DEL_ROOT_PATH = "你TM敢删除根目录?";
 
+    public static final String FILE_NOTFOUND = "文件不存在";
+
 }

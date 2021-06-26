@@ -29,6 +29,11 @@ public enum FileDownloadType {
      */
     EXEC_LOG(30),
 
+    /**
+     * sftp 下载文件
+     */
+    SFTP_FILE(40),
+
     ;
 
     /**
