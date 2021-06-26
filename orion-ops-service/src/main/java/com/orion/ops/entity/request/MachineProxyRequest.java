@@ -49,6 +49,8 @@ public class MachineProxyRequest extends PageRequest {
 
     /**
      * 代理类型
+     *
+     * @see com.orion.ops.consts.machine.ProxyType
      */
     private Integer type;
 

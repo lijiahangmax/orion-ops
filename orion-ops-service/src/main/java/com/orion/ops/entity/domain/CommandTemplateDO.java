@@ -39,6 +39,8 @@ public class CommandTemplateDO implements Serializable {
 
     /**
      * 模板类型
+     *
+     * @see com.orion.ops.consts.TemplateType
      */
     @TableField("template_type")
     private Integer templateType;

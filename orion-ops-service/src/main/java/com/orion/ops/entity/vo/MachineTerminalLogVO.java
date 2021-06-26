@@ -70,6 +70,8 @@ public class MachineTerminalLogVO {
 
     /**
      * close code
+     *
+     * @see com.orion.ops.consts.ws.WsCloseCode
      */
     private Integer closeCode;
 

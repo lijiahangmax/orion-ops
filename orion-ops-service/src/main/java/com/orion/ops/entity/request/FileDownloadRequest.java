@@ -1,6 +1,5 @@
 package com.orion.ops.entity.request;
 
-import com.orion.ops.consts.download.FileDownloadType;
 import lombok.Data;
 
 /**
@@ -19,7 +18,7 @@ public class FileDownloadRequest {
     private Long id;
 
     /**
-     * @see FileDownloadType
+     * @see com.orion.ops.consts.download.FileDownloadType
      */
     private Integer type;
 

@@ -65,6 +65,9 @@ public class UserInfoDO implements Serializable {
 
     /**
      * 用户状态 1启用 2禁用
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
      */
     @TableField("user_status")
     private Integer userStatus;

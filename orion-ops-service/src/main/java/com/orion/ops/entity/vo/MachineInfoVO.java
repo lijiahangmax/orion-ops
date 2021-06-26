@@ -78,6 +78,8 @@ public class MachineInfoVO {
 
     /**
      * 机器认证方式 1: 账号认证 2: key认证
+     *
+     * @see com.orion.ops.consts.machine.MachineAuthType
      */
     private Integer authType;
 
@@ -88,6 +90,9 @@ public class MachineInfoVO {
 
     /**
      * 机器状态 1有效 2无效
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
      */
     private Integer status;
 

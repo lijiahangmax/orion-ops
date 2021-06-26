@@ -42,6 +42,9 @@ public class UserInfoVO {
 
     /**
      * 1启用 2停用
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
      */
     private Integer status;
 

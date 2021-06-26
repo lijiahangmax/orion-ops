@@ -16,6 +16,8 @@ public class TerminalDataTransferDTO implements Serializable {
 
     /**
      * 操作
+     *
+     * @see com.orion.ops.consts.terminal.TerminalOperate
      */
     private String operate;
 

@@ -39,6 +39,8 @@ public class TerminalAccessVO {
 
     /**
      * 终端类型
+     *
+     * @see com.orion.remote.TerminalType
      */
     private String terminalType;
 

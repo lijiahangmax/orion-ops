@@ -57,6 +57,8 @@ public class MachineProxyDO implements Serializable {
 
     /**
      * 代理类型 1http代理 2socket4代理 3socket5代理
+     *
+     * @see com.orion.ops.consts.machine.ProxyType
      */
     @TableField("proxy_type")
     private Integer proxyType;

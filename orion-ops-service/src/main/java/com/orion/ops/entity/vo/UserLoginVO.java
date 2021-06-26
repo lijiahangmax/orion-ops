@@ -34,6 +34,8 @@ public class UserLoginVO {
 
     /**
      * 角色类型
+     *
+     * @see com.orion.ops.consts.RoleType
      */
     private Integer roleType;
 

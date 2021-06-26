@@ -39,6 +39,8 @@ public class HistoryValueSnapshotDO implements Serializable {
 
     /**
      * 值类型
+     *
+     * @see com.orion.ops.consts.HistoryValueType
      */
     @TableField("value_type")
     private Integer valueType;

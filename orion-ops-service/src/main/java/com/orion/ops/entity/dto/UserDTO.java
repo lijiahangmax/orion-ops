@@ -33,8 +33,8 @@ public class UserDTO implements Serializable {
 
     /**
      * 角色类型
-     * <p>
-     * {@link com.orion.ops.consts.RoleType}
+     *
+     * @see com.orion.ops.consts.RoleType
      */
     private Integer roleType;
 

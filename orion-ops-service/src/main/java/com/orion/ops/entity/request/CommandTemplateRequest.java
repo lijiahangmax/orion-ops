@@ -27,6 +27,8 @@ public class CommandTemplateRequest extends PageRequest {
 
     /**
      * type
+     *
+     * @see com.orion.ops.consts.TemplateType
      */
     private Integer type;
 

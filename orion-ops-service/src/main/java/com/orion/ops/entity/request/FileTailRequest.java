@@ -1,6 +1,5 @@
 package com.orion.ops.entity.request;
 
-import com.orion.ops.consts.tail.FileTailType;
 import lombok.Data;
 
 /**
@@ -19,7 +18,7 @@ public class FileTailRequest {
     private Long relId;
 
     /**
-     * @see FileTailType
+     * @see com.orion.ops.consts.tail.FileTailType
      */
     private Integer type;
 

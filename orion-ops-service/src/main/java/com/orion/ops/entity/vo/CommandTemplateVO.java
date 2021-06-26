@@ -1,6 +1,5 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.consts.TemplateType;
 import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
@@ -31,7 +30,7 @@ public class CommandTemplateVO {
     /**
      * 模板类型
      *
-     * @see TemplateType
+     * @see com.orion.ops.consts.TemplateType
      */
     private Integer type;
 

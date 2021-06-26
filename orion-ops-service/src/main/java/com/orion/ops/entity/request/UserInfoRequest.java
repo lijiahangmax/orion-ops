@@ -51,6 +51,9 @@ public class UserInfoRequest extends PageRequest {
 
     /**
      * 用户状态 1启用 2禁用
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
      */
     private Integer status;
 

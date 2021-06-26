@@ -12,16 +12,16 @@ import java.util.Date;
 
 /**
  * <p>
- * 机器终端操作日志
+ * sftp传输日志表
  * </p>
  *
  * @author Jiahang Li
- * @since 2021-04-19
+ * @since 2021-06-26
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("machine_terminal_log")
-public class MachineTerminalLogDO implements Serializable {
+@TableName("file_transfer_log")
+public class FileTransferLogDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,8 +40,22 @@ public class MachineTerminalLogDO implements Serializable {
     /**
      * 用户名
      */
-    @TableField("username")
-    private String username;
+    @TableField("user_name")
+    private String userName;
+
+    /**
+     * token
+     */
+    @TableField("token")
+    private String token;
+
+    /**
+     * 操作类型 10上传 20下载 30传输
+     *
+     * @see com.orion.ops.consts.sftp.SftpOperatorType
+     */
+    @TableField("operator_type")
+    private Integer operatorType;
 
     /**
      * 机器id
@@ -50,42 +64,36 @@ public class MachineTerminalLogDO implements Serializable {
     private Long machineId;
 
     /**
-     * 机器host
+     * 远程文件
      */
-    @TableField("machine_host")
-    private String machineHost;
+    @TableField("remote_file")
+    private String remoteFile;
 
     /**
-     * token
+     * 本机文件
      */
-    @TableField("access_token")
-    private String accessToken;
+    @TableField("local_file")
+    private String localFile;
 
     /**
-     * 建立连接时间
+     * 文件大小
      */
-    @TableField("connected_time")
-    private Date connectedTime;
+    @TableField("file_size")
+    private Long fileSize;
 
     /**
-     * 断开连接时间
+     * 当前进度
      */
-    @TableField("disconnected_time")
-    private Date disconnectedTime;
+    @TableField("now_progress")
+    private Double nowProgress;
 
     /**
-     * close code
+     * 传输状态 10未开始 20进行中 30已暂停 40已取消 50已完成 60传输异常
      *
-     * @see com.orion.ops.consts.ws.WsCloseCode
+     * @see com.orion.ops.consts.sftp.SftpTransferStatus
      */
-    @TableField("close_code")
-    private Integer closeCode;
-
-    /**
-     * 日志文件路径
-     */
-    @TableField("operate_log_file")
-    private String operateLogFile;
+    @TableField("transfer_status")
+    private Integer transferStatus;
 
     /**
      * 创建时间

@@ -51,6 +51,8 @@ public class CommandExecDO implements Serializable {
 
     /**
      * 执行类型 10批量执行
+     *
+     * @see com.orion.ops.consts.command.ExecType
      */
     @TableField("exec_type")
     private Integer execType;
@@ -63,6 +65,8 @@ public class CommandExecDO implements Serializable {
 
     /**
      * 执行状态 10未开始 20执行中 30执行成功 40执行失败 50执行终止
+     *
+     * @see com.orion.ops.consts.command.ExecStatus
      */
     @TableField("exec_status")
     private Integer execStatus;

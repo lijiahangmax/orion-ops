@@ -39,24 +39,32 @@ public class MachineTerminalDO implements Serializable {
 
     /**
      * 终端类型
+     *
+     * @see com.orion.remote.TerminalType#XTERM_256_COLOR
      */
     @TableField("terminal_type")
     private String terminalType;
 
     /**
      * 背景色
+     *
+     * @see com.orion.ops.consts.terminal.TerminalConst#BACKGROUND_COLOR
      */
     @TableField("background_color")
     private String backgroundColor;
 
     /**
      * 字体颜色
+     *
+     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_COLOR
      */
     @TableField("font_color")
     private String fontColor;
 
     /**
      * 字体大小
+     *
+     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_SIZE
      */
     @TableField("font_size")
     private Integer fontSize;
