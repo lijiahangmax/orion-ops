@@ -50,12 +50,12 @@ public class FileTransferLogDO implements Serializable {
     private String token;
 
     /**
-     * 操作类型 10上传 20下载 30传输
+     * 传输类型 10上传 20下载 30传输
      *
-     * @see com.orion.ops.consts.sftp.SftpOperatorType
+     * @see com.orion.ops.consts.sftp.SftpTransferType
      */
-    @TableField("operator_type")
-    private Integer operatorType;
+    @TableField("transfer_type")
+    private Integer transferType;
 
     /**
      * 机器id
@@ -74,6 +74,12 @@ public class FileTransferLogDO implements Serializable {
      */
     @TableField("local_file")
     private String localFile;
+
+    /**
+     * 当前大小
+     */
+    @TableField("current_size")
+    private Long currentSize;
 
     /**
      * 文件大小
