@@ -1,5 +1,6 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
@@ -146,6 +147,44 @@ public class SftpController {
     }
 
     /**
+     * 下载文件
+     */
+    @RequestMapping("/transfer/download/exec")
+    public String download(@RequestBody FileDownloadRequest request) {
+        this.checkNormalize(request.getPath());
+        this.setExecutor(request);
+        return sftpService.download(request);
+    }
+
+    /**
+     * 传输恢复
+     */
+    @RequestMapping("/transfer/download/resume")
+    public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
+        String token = Valid.notBlank(request.getToken());
+        sftpService.downloadResume(token);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 传输列表
+     */
+    @RequestMapping("/transfer/list")
+    public HttpWrapper<?> transferList(@RequestBody FileTransferResumeRequest request) {
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 传输暂停
+     */
+    @RequestMapping("/transfer/stop")
+    public HttpWrapper<?> transferStop(@RequestBody FileTransferStopRequest request) {
+        String token = Valid.notBlank(request.getToken());
+        sftpService.transferStop(token);
+        return HttpWrapper.ok();
+    }
+
+    /**
      * 查询列表
      */
     private FileListVO ll(FileBaseRequest request) {
@@ -158,7 +197,7 @@ public class SftpController {
      * @param request FileBaseRequest
      */
     private void setExecutor(FileBaseRequest request) {
-        SftpExecutor executor = sftpService.getExecutorByToken(request.getToken());
+        SftpExecutor executor = sftpService.getBasicExecutorByToken(request.getToken());
         request.setExecutor(executor);
     }
 
@@ -172,8 +211,7 @@ public class SftpController {
         Valid.isTrue(Files1.isNormalize(path), MessageConst.PATH_NOT_NORMALIZE);
     }
 
-    // 上传列表
-    // 下载列表
+    // 传输列表
     // download
     // upload
 

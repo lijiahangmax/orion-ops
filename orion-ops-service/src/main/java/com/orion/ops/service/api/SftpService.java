@@ -97,11 +97,48 @@ public interface SftpService {
     void changeGroup(FileChangeGroupRequest request);
 
     /**
+     * 下载文件
+     *
+     * @param request request
+     * @return token
+     */
+    String download(FileDownloadRequest request);
+
+    /**
+     * 传输恢复
+     *
+     * @param token token
+     */
+    void downloadResume(String token);
+
+    // /**
+    //  * 传输列表
+    //  *
+    //  * @param request request
+    //  */
+    // void transferList(FileTransferResumeRequest request);
+
+    /**
+     * 传输暂停
+     *
+     * @param token token
+     */
+    void transferStop(String token);
+
+    /**
      * 通过token获取 SftpExecutor
      *
      * @param token token
      * @return SftpExecutor
      */
-    SftpExecutor getExecutorByToken(String token);
+    SftpExecutor getBasicExecutorByToken(String token);
+
+    /**
+     * 获取token信息
+     *
+     * @param token token
+     * @return userId machineId
+     */
+    Long[] getTokenInfo(String token);
 
 }
