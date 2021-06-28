@@ -1,7 +1,9 @@
 package com.orion.ops.config;
 
+import com.orion.ops.handler.sftp.notify.FileTransferNotifyHandler;
 import com.orion.ops.handler.tail.TailFileHandler;
 import com.orion.ops.handler.terminal.TerminalMessageHandler;
+import com.orion.ops.interceptor.FileTransferNotifyInterceptor;
 import com.orion.ops.interceptor.TailFileInterceptor;
 import com.orion.ops.interceptor.TerminalAccessInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +36,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Resource
     private TailFileInterceptor tailFileInterceptor;
 
+    @Resource
+    private FileTransferNotifyHandler fileTransferNotifyHandler;
+
+    @Resource
+    private FileTransferNotifyInterceptor fileTransferNotifyInterceptor;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
         webSocketHandlerRegistry.addHandler(terminalMessageHandler, "/orion/keep-alive/machine/terminal/{token}")
@@ -41,6 +49,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*");
         webSocketHandlerRegistry.addHandler(tailFileHandler, "/orion/keep-alive/tail/{token}")
                 .addInterceptors(tailFileInterceptor)
+                .setAllowedOrigins("*");
+        webSocketHandlerRegistry.addHandler(fileTransferNotifyHandler, "/orion/keep-alive/sftp/notify/{token}")
+                .addInterceptors(fileTransferNotifyInterceptor)
                 .setAllowedOrigins("*");
     }
 
