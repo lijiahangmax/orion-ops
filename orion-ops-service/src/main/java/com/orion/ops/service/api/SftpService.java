@@ -1,9 +1,12 @@
 package com.orion.ops.service.api;
 
 import com.orion.ops.entity.request.sftp.*;
+import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.remote.channel.sftp.SftpExecutor;
+
+import java.util.List;
 
 /**
  * sftp api
@@ -111,12 +114,13 @@ public interface SftpService {
      */
     void downloadResume(String token);
 
-    // /**
-    //  * 传输列表
-    //  *
-    //  * @param request request
-    //  */
-    // void transferList(FileTransferResumeRequest request);
+    /**
+     * 传输列表
+     *
+     * @param machineId 机器id
+     * @return  rows
+     */
+    List<FileTransferLogVO> transferList(Long machineId);
 
     /**
      * 传输暂停

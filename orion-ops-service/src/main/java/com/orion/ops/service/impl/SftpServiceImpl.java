@@ -12,6 +12,7 @@ import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
+import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileDetailVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
@@ -260,6 +261,18 @@ public class SftpServiceImpl implements SftpService {
         hint.setTransferType(SftpTransferType.DOWNLOAD);
         // 提交下载
         new DownloadFileProcessor(hint, session).resume();
+    }
+
+    @Override
+    public List<FileTransferLogVO> transferList(Long machineId) {
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType())
+                .orderByDesc(FileTransferLogDO::getId);
+        return fileTransferLogDAO.selectList(wrapper).stream()
+                .map(s -> Converts.to(s, FileTransferLogVO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
