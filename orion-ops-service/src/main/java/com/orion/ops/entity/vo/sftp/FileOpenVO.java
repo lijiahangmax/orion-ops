@@ -20,9 +20,9 @@ public class FileOpenVO extends FileListVO {
     private String home;
 
     /**
-     * token
+     * sessionToken
      */
-    private String token;
+    private String sessionToken;
 
     /**
      * 编码格式

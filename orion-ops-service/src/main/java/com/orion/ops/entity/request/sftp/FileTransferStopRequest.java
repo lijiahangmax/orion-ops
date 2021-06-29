@@ -13,8 +13,8 @@ import lombok.Data;
 public class FileTransferStopRequest {
 
     /**
-     * token
+     * fileToken
      */
-    private String token;
+    private String fileToken;
 
 }

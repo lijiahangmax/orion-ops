@@ -14,9 +14,9 @@ import lombok.Data;
 public class FileBaseRequest {
 
     /**
-     * token
+     * sessionToken
      */
-    private String token;
+    private String sessionToken;
 
     /**
      * 当前路径

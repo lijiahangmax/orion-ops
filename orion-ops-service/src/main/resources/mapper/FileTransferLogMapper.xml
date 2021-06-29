@@ -7,7 +7,7 @@
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="user_name" property="userName"/>
-        <result column="token" property="token"/>
+        <result column="file_token" property="fileToken"/>
         <result column="transfer_type" property="transferType"/>
         <result column="machine_id" property="machineId"/>
         <result column="remote_file" property="remoteFile"/>
@@ -22,7 +22,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, user_name, token, transfer_type, machine_id, remote_file, local_file, current_size, file_size, now_progress, transfer_status, create_time, update_time
+        id, user_id, user_name, file_token, transfer_type, machine_id, remote_file, local_file, current_size, file_size, now_progress, transfer_status, create_time, update_time
     </sql>
 
 </mapper>
