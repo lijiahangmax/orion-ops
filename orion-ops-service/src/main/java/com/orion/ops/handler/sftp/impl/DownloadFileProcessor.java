@@ -1,4 +1,4 @@
-package com.orion.ops.handler.sftp.download;
+package com.orion.ops.handler.sftp.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.SchedulerPools;
@@ -26,14 +26,14 @@ public class DownloadFileProcessor extends FileTransferProcessor {
 
     @Override
     public void exec() {
-        log.info("sftp文件下载-提交任务 machineId: {}, remote: {}, hint: {}", hint.getMachineId(), hint.getRemoteFile(), JSON.toJSONString(hint));
+        log.info("sftp文件下载-提交任务 machineId: {}, local: {}, remote: {}, hint: {}", hint.getMachineId(), hint.getLocalFile(), hint.getRemoteFile(), JSON.toJSONString(hint));
         Threads.start(this, SchedulerPools.SFTP_SCHEDULER);
     }
 
     @Override
     public void resume() {
         super.resume = true;
-        log.info("sftp文件下载-恢复传输 machineId: {}, remote: {}, hint: {}", hint.getMachineId(), hint.getRemoteFile(), JSON.toJSONString(hint));
+        log.info("sftp文件下载-恢复传输 machineId: {}, local: {}, remote: {}, hint: {}", hint.getMachineId(), hint.getLocalFile(), hint.getRemoteFile(), JSON.toJSONString(hint));
         Threads.start(this, SchedulerPools.SFTP_SCHEDULER);
     }
 
@@ -41,9 +41,10 @@ public class DownloadFileProcessor extends FileTransferProcessor {
     protected void handler() {
         String remoteFile = hint.getRemoteFile();
         String localFile = MachineEnvAttr.SWAP_PATH.getValue() + hint.getLocalFile();
-        log.info("sftp文件下载-开始传输 token: {}, machineId: {}, remote: {}, localFile: {}", token, hint.getMachineId(), remoteFile, localFile);
+        log.info("sftp文件下载-开始传输 fileToken: {}, machineId: {}, local: {}, remote: {}", fileToken, hint.getMachineId(), localFile, remoteFile);
         SftpDownload download = executor.download(remoteFile, localFile);
         this.initProgress(download.getProgress());
         download.run();
     }
+
 }

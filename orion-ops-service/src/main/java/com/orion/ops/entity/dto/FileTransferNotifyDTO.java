@@ -25,9 +25,9 @@ public class FileTransferNotifyDTO {
     private Object body;
 
     /**
-     * token
+     * fileToken
      */
-    private String token;
+    private String fileToken;
 
     @Data
     public static class FileTransferNotifyProgress {

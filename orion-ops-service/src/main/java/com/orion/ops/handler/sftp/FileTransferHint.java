@@ -19,9 +19,9 @@ public class FileTransferHint {
     private Long resumeId;
 
     /**
-     * token
+     * fileToken
      */
-    private String token;
+    private String fileToken;
 
     /**
      * 用户id

@@ -100,49 +100,73 @@ public interface SftpService {
     void changeGroup(FileChangeGroupRequest request);
 
     /**
+     * 获取上传文件token
+     *
+     * @param sessionToken sessionToken
+     * @return fileToken
+     */
+    String getUploadToken(String sessionToken);
+
+    /**
+     * 检查上传token
+     *
+     * @param fileToken fileToken
+     * @return machineId
+     */
+    Long checkUploadToken(String fileToken);
+
+    /**
+     * 上传文件
+     *
+     * @param request request
+     * @return fileToken
+     */
+    String upload(FileUploadRequest request);
+
+    /**
      * 下载文件
      *
      * @param request request
-     * @return token
+     * @return fileToken
      */
     String download(FileDownloadRequest request);
 
     /**
      * 传输恢复
      *
-     * @param token token
+     * @param fileToken fileToken
      */
-    void downloadResume(String token);
+    void downloadResume(String fileToken);
 
     /**
      * 传输列表
      *
      * @param machineId 机器id
-     * @return  rows
+     * @return rows
      */
     List<FileTransferLogVO> transferList(Long machineId);
 
     /**
      * 传输暂停
      *
-     * @param token token
+     * @param fileToken fileToken
      */
-    void transferStop(String token);
+    void transferStop(String fileToken);
 
     /**
      * 通过token获取 SftpExecutor
      *
-     * @param token token
+     * @param sessionToken sessionToken
      * @return SftpExecutor
      */
-    SftpExecutor getBasicExecutorByToken(String token);
+    SftpExecutor getBasicExecutorByToken(String sessionToken);
 
     /**
      * 获取token信息
      *
-     * @param token token
+     * @param sessionToken sessionToken
      * @return userId machineId
      */
-    Long[] getTokenInfo(String token);
+    Long[] getTokenInfo(String sessionToken);
 
 }

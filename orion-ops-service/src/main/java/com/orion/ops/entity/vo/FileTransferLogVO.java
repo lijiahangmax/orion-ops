@@ -21,9 +21,9 @@ public class FileTransferLogVO {
     private Long id;
 
     /**
-     * token
+     * fileToken
      */
-    private String token;
+    private String fileToken;
 
     /**
      * 传输类型 10上传 20下载 30传输
@@ -68,7 +68,7 @@ public class FileTransferLogVO {
         TypeStore.STORE.register(FileTransferLogDO.class, FileTransferLogVO.class, s -> {
             FileTransferLogVO vo = new FileTransferLogVO();
             vo.setId(s.getId());
-            vo.setToken(s.getToken());
+            vo.setFileToken(s.getFileToken());
             vo.setType(s.getTransferType());
             vo.setRemoteFile(s.getRemoteFile());
             vo.setLocalFile(s.getLocalFile());

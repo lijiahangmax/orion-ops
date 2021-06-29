@@ -19,7 +19,8 @@ import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.handler.sftp.FileTransferHint;
 import com.orion.ops.handler.sftp.FileTransferProcessor;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
-import com.orion.ops.handler.sftp.download.DownloadFileProcessor;
+import com.orion.ops.handler.sftp.impl.DownloadFileProcessor;
+import com.orion.ops.handler.sftp.impl.UploadFileProcessor;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
@@ -84,28 +85,27 @@ public class SftpServiceImpl implements SftpService {
         // 获取当前用户
         Long userId = Currents.getUserId();
         // 获取charset
-        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.SFTP_CHARSET.name());
-        if (!Charsets.isSupported(charset)) {
-            charset = Const.UTF_8;
-        }
+        String charset = this.getSftpCharset(machineId);
         // 获取executor
         SftpExecutor executor = BASIC_EXECUTOR.get(machineId);
-        if (executor == null || !executor.isConnected()) {
+        if (executor == null) {
             // 打开sftp连接
             SessionStore sessionStore = machineInfoService.openSessionStore(machineId);
             executor = sessionStore.getSftpExecutor(charset);
             executor.connect();
             SESSION.put(machineId, sessionStore);
             BASIC_EXECUTOR.put(machineId, executor);
+        } else if (!executor.isConnected()) {
+            executor.connect();
         }
         // 生成token
-        String token = this.generatorToken(userId, machineId);
+        String sessionToken = this.generatorSessionToken(userId, machineId);
         // 查询列表
         String path = executor.getHome();
         FileListVO list = this.list(path, 0, executor);
         // 返回数据
         FileOpenVO openVO = new FileOpenVO();
-        openVO.setToken(token);
+        openVO.setSessionToken(sessionToken);
         openVO.setHome(path);
         openVO.setCharset(charset);
         openVO.setPath(list.getPath());
@@ -199,6 +199,57 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
+    public String getUploadToken(String sessionToken) {
+        Long[] tokenInfo = this.getTokenInfo(sessionToken);
+        Long userId = Currents.getUserId();
+        Valid.isTrue(tokenInfo[0].equals(userId), MessageConst.SESSION_EXPIRE);
+        // 生成文件token
+        String fileToken = ObjectIds.next();
+        String key = Strings.format(KeyConst.SFTP_UPLOAD_TOKEN, fileToken);
+        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1], KeyConst.SFTP_UPLOAD_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        return fileToken;
+    }
+
+    @Override
+    public Long checkUploadToken(String fileToken) {
+        // 获取缓存
+        String key = Strings.format(KeyConst.SFTP_UPLOAD_TOKEN, fileToken);
+        String value = redisTemplate.opsForValue().get(key);
+        Valid.notBlank(value, MessageConst.TOKEN_EXPIRE);
+        // 解析缓存
+        Long[] valueInfo = Arrays1.mapper(Objects.requireNonNull(value).split("_"), Long[]::new, Long::valueOf);
+        Valid.isTrue(valueInfo[0].equals(Currents.getUserId()), MessageConst.TOKEN_EXPIRE);
+        Long machineId = valueInfo[1];
+        Valid.notNull(this.getSessionStore(machineId), MessageConst.SESSION_EXPIRE);
+        // 删除缓存
+        redisTemplate.delete(key);
+        return machineId;
+    }
+
+    @Override
+    public String upload(FileUploadRequest request) {
+        // 获取连接
+        Long machineId = request.getMachineId();
+        SessionStore session = this.getSessionStore(machineId);
+        Valid.notNull(session, MessageConst.SESSION_EXPIRE);
+        UserDTO user = Currents.getUser();
+        // 构建下载参数
+        FileTransferHint hint = new FileTransferHint();
+        hint.setFileToken(request.getFileToken());
+        hint.setUserId(user.getId());
+        hint.setUsername(user.getUsername());
+        hint.setMachineId(machineId);
+        hint.setRemoteFile(request.getRemotePath());
+        hint.setLocalFile(request.getLocalPath());
+        hint.setFileSize(request.getSize());
+        hint.setCharset(this.getSftpCharset(machineId));
+        hint.setTransferType(SftpTransferType.UPLOAD);
+        // 提交上传
+        new UploadFileProcessor(hint, session).exec();
+        return request.getFileToken();
+    }
+
+    @Override
     public String download(FileDownloadRequest request) {
         // 查询远程文件是否存在
         String path = Files1.getPath(request.getPath());
@@ -206,33 +257,33 @@ public class SftpServiceImpl implements SftpService {
         SftpFile file = executor.getFile(path);
         Valid.notNull(file, MessageConst.FILE_NOTFOUND);
         // 获取token信息
-        Long machineId = this.getTokenInfo(request.getToken())[1];
-        String token = ObjectIds.next();
+        Long machineId = this.getTokenInfo(request.getSessionToken())[1];
+        String fileToken = ObjectIds.next();
         UserDTO user = Currents.getUser();
         // 获取连接
-        SessionStore session = SESSION.get(machineId);
+        SessionStore session = this.getSessionStore(machineId);
         Valid.notNull(session, MessageConst.SESSION_EXPIRE);
         // 构建下载参数
         FileTransferHint hint = new FileTransferHint();
-        hint.setToken(token);
+        hint.setFileToken(fileToken);
         hint.setUserId(user.getId());
         hint.setUsername(user.getUsername());
         hint.setMachineId(machineId);
         hint.setRemoteFile(path);
-        hint.setLocalFile(Const.DOWNLOAD_DIR + "/" + token + ".swp");
+        hint.setLocalFile(Const.DOWNLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX);
         hint.setFileSize(file.getSize());
         hint.setCharset(executor.getCharset());
         hint.setTransferType(SftpTransferType.DOWNLOAD);
         // 提交下载
         new DownloadFileProcessor(hint, session).exec();
-        return token;
+        return fileToken;
     }
 
     @Override
-    public void downloadResume(String token) {
-        FileTransferLogDO transferLog = this.getTransferLogByToken(token);
+    public void downloadResume(String fileToken) {
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
-        FileTransferProcessor processor = transferProcessorManager.getProcessor(token);
+        FileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         if (processor != null) {
             return;
         }
@@ -245,12 +296,12 @@ public class SftpServiceImpl implements SftpService {
         SftpFile file = executor.getFile(transferLog.getRemoteFile());
         Valid.notNull(file, MessageConst.FILE_NOTFOUND);
         // 获取连接
-        SessionStore session = SESSION.get(transferLog.getMachineId());
+        SessionStore session = this.getSessionStore(transferLog.getMachineId());
         Valid.notNull(session, MessageConst.SESSION_EXPIRE);
         // 构建下载参数
         FileTransferHint hint = new FileTransferHint();
         hint.setResumeId(transferLog.getId());
-        hint.setToken(token);
+        hint.setFileToken(fileToken);
         hint.setUserId(transferLog.getUserId());
         hint.setUsername(transferLog.getUserName());
         hint.setMachineId(transferLog.getMachineId());
@@ -258,7 +309,7 @@ public class SftpServiceImpl implements SftpService {
         hint.setLocalFile(transferLog.getLocalFile());
         hint.setFileSize(transferLog.getFileSize());
         hint.setCharset(executor.getCharset());
-        hint.setTransferType(SftpTransferType.DOWNLOAD);
+        hint.setTransferType(SftpTransferType.of(transferLog.getTransferType()));
         // 提交下载
         new DownloadFileProcessor(hint, session).resume();
     }
@@ -276,14 +327,14 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public void transferStop(String token) {
-        FileTransferProcessor transferProcessor = this.getTransferProcessor(token);
+    public void transferStop(String fileToken) {
+        FileTransferProcessor transferProcessor = this.getTransferProcessor(fileToken);
         transferProcessor.stop();
     }
 
     @Override
-    public SftpExecutor getBasicExecutorByToken(String token) {
-        Long[] values = this.getTokenInfo(token);
+    public SftpExecutor getBasicExecutorByToken(String sessionToken) {
+        Long[] values = this.getTokenInfo(sessionToken);
         boolean resolve = values[0].equals(Currents.getUserId());
         Valid.isTrue(resolve, MessageConst.SESSION_EXPIRE);
         // 检查缓存机器
@@ -296,39 +347,39 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public Long[] getTokenInfo(String token) {
-        Valid.notBlank(token, MessageConst.TOKEN_EMPTY);
-        String key = Strings.format(KeyConst.SFTP_SESSION, token);
+    public Long[] getTokenInfo(String sessionToken) {
+        Valid.notBlank(sessionToken, MessageConst.TOKEN_EMPTY);
+        String key = Strings.format(KeyConst.SFTP_SESSION, sessionToken);
         String value = redisTemplate.opsForValue().get(key);
         Valid.notBlank(value, MessageConst.SESSION_EXPIRE);
         return Arrays1.mapper(Objects.requireNonNull(value).split("_"), Long[]::new, Long::valueOf);
     }
 
     /**
-     * 生成token
+     * 生成sessionToken
      *
      * @param userId    userId
      * @param machineId 机器id
-     * @return token
+     * @return sessionToken
      */
-    private String generatorToken(Long userId, Long machineId) {
+    private String generatorSessionToken(Long userId, Long machineId) {
         // 生成token
-        String token = UUIds.random15();
+        String sessionToken = UUIds.random15();
         // 设置缓存
-        String key = Strings.format(KeyConst.SFTP_SESSION, token);
-        redisTemplate.opsForValue().set(key, userId + "_" + machineId, KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.MINUTES);
-        return token;
+        String key = Strings.format(KeyConst.SFTP_SESSION, sessionToken);
+        redisTemplate.opsForValue().set(key, userId + "_" + machineId, KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
+        return sessionToken;
     }
 
     /**
      * 查询传输日志
      *
-     * @param token token
+     * @param fileToken fileToken
      * @return FileTransferLogDO
      */
-    private FileTransferLogDO getTransferLogByToken(String token) {
+    private FileTransferLogDO getTransferLogByToken(String fileToken) {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
-                .eq(FileTransferLogDO::getToken, token)
+                .eq(FileTransferLogDO::getFileToken, fileToken)
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId());
         return fileTransferLogDAO.selectOne(wrapper);
     }
@@ -336,14 +387,48 @@ public class SftpServiceImpl implements SftpService {
     /**
      * 获取传输对象处理器
      *
-     * @param token token
+     * @param fileToken fileToken
      * @return FileTransferProcessor
      */
-    private FileTransferProcessor getTransferProcessor(String token) {
-        FileTransferLogDO transferLog = this.getTransferLogByToken(token);
+    private FileTransferProcessor getTransferProcessor(String fileToken) {
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
-        FileTransferProcessor processor = transferProcessorManager.getProcessor(token);
+        FileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         return Valid.notNull(processor, MessageConst.UNSELECTED_TRANSFER_PROCESSOR);
+    }
+
+    /**
+     * 获取sftp编码格式
+     *
+     * @param machineId 机器id
+     * @return 编码格式
+     */
+    private String getSftpCharset(Long machineId) {
+        // 查询执行器
+        SftpExecutor executor = BASIC_EXECUTOR.get(machineId);
+        if (executor != null) {
+            return executor.getCharset();
+        }
+        // 查询环境
+        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.SFTP_CHARSET.name());
+        if (!Charsets.isSupported(charset)) {
+            charset = Const.UTF_8;
+        }
+        return charset;
+    }
+
+    /**
+     * 获取sessionStore
+     *
+     * @param machineId machineId
+     * @return SessionStore
+     */
+    private SessionStore getSessionStore(Long machineId) {
+        SessionStore sessionStore = SESSION.get(machineId);
+        if (sessionStore != null && !sessionStore.isConnected()) {
+            sessionStore.connect();
+        }
+        return sessionStore;
     }
 
 }

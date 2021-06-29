@@ -4,18 +4,24 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.request.sftp.*;
+import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.service.api.SftpService;
+import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.utils.io.Files1;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * sftp 操作
@@ -147,10 +153,45 @@ public class SftpController {
     }
 
     /**
+     * 获取上传文件fileToken
+     */
+    @RequestMapping("/upload/token/{sessionToken}")
+    public String getUploadToken(@PathVariable String sessionToken) {
+        return sftpService.getUploadToken(sessionToken);
+    }
+
+    /**
+     * 上传文件
+     */
+    @RequestMapping("/upload/exec")
+    public String uploadFile(@RequestParam("fileToken") String fileToken, @RequestParam("remotePath") String remotePath,
+                             @RequestParam("file") MultipartFile file) throws IOException {
+        // 检查路径
+        this.checkNormalize(remotePath);
+        // 检查token
+        Long machineId = sftpService.checkUploadToken(fileToken);
+        // 传输文件到本地
+        String localPath = Const.UPLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX;
+        Path localAbsolutePath = Paths.get(MachineEnvAttr.SWAP_PATH.getValue(), localPath);
+        Files1.touch(localAbsolutePath);
+        file.transferTo(localAbsolutePath);
+
+        // 提交任务
+        FileUploadRequest request = new FileUploadRequest();
+        request.setMachineId(machineId);
+        request.setFileToken(fileToken);
+        request.setLocalPath(localPath);
+        request.setRemotePath(Files1.getPath(remotePath + "/" + file.getOriginalFilename()));
+        request.setSize(file.getSize());
+        sftpService.upload(request);
+        return fileToken;
+    }
+
+    /**
      * 下载文件
      */
-    @RequestMapping("/transfer/download/exec")
-    public String download(@RequestBody FileDownloadRequest request) {
+    @RequestMapping("/download/exec")
+    public String downloadFile(@RequestBody FileDownloadRequest request) {
         this.checkNormalize(request.getPath());
         this.setExecutor(request);
         return sftpService.download(request);
@@ -159,18 +200,10 @@ public class SftpController {
     /**
      * 传输恢复
      */
-    @RequestMapping("/transfer/download/resume")
+    @RequestMapping("/download/resume")
     public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
-        String token = Valid.notBlank(request.getToken());
-        sftpService.downloadResume(token);
-        return HttpWrapper.ok();
-    }
-
-    /**
-     * 传输列表
-     */
-    @RequestMapping("/transfer/list")
-    public HttpWrapper<?> transferList(@RequestBody FileTransferResumeRequest request) {
+        String fileToken = Valid.notBlank(request.getFileToken());
+        sftpService.downloadResume(fileToken);
         return HttpWrapper.ok();
     }
 
@@ -179,9 +212,19 @@ public class SftpController {
      */
     @RequestMapping("/transfer/stop")
     public HttpWrapper<?> transferStop(@RequestBody FileTransferStopRequest request) {
-        String token = Valid.notBlank(request.getToken());
-        sftpService.transferStop(token);
+        String fileToken = Valid.notBlank(request.getFileToken());
+        sftpService.transferStop(fileToken);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 传输列表
+     */
+    @RequestMapping("/transfer/list/{sessionToken}")
+    public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
+        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
+        return sftpService.transferList(tokenInfo[1]);
     }
 
     /**
@@ -192,12 +235,12 @@ public class SftpController {
     }
 
     /**
-     * 通过token 设置 SftpExecutor
+     * 通过sessionToken 获取 SftpExecutor
      *
      * @param request FileBaseRequest
      */
     private void setExecutor(FileBaseRequest request) {
-        SftpExecutor executor = sftpService.getBasicExecutorByToken(request.getToken());
+        SftpExecutor executor = sftpService.getBasicExecutorByToken(request.getSessionToken());
         request.setExecutor(executor);
     }
 
@@ -210,9 +253,5 @@ public class SftpController {
         Valid.notBlank(path);
         Valid.isTrue(Files1.isNormalize(path), MessageConst.PATH_NOT_NORMALIZE);
     }
-
-    // 传输列表
-    // download
-    // upload
 
 }
