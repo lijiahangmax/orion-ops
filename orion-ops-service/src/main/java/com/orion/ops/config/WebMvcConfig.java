@@ -15,6 +15,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -101,6 +102,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = RpcWrapperException.class)
     public HttpWrapper<?> rpcWrapperExceptionHandler(RpcWrapperException ex) {
         return ex.getWrapper().toHttpWrapper();
+    }
+
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public HttpWrapper<?> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException ex) {
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.FILE_TOO_LARGE).data(ex.getMessage());
     }
 
 }
