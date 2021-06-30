@@ -81,11 +81,6 @@ public enum WsCloseCode {
     RUNTIME_EXCEPTION(4300, WsCloseReason.CLOSED_CONNECTION),
 
     /**
-     * 服务出现异常 (已认证)
-     */
-    RUNTIME_VALID_EXCEPTION(4301, WsCloseReason.CLOSED_CONNECTION),
-
-    /**
      * 心跳结束
      */
     HEART_DOWN(4310, WsCloseReason.CLOSED_CONNECTION),

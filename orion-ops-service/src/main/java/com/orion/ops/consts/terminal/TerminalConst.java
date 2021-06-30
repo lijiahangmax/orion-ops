@@ -37,6 +37,6 @@ public class TerminalConst {
     /**
      * 默认字体大小
      */
-    public static final int FONT_SIZE = 18;
+    public static final int FONT_SIZE = 14;
 
 }

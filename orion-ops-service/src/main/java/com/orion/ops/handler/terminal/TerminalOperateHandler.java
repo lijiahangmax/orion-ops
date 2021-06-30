@@ -17,7 +17,6 @@ import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.ShellExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Arrays1;
-import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -154,15 +153,9 @@ public class TerminalOperateHandler implements IOperateHandler {
                 session.sendMessage(new TextMessage(WsProtocol.OK.msg(Arrays1.resize(bs, read))));
             }
         } catch (IOException ex) {
-            if (session.isOpen()) {
-                try {
-                    session.close(WsCloseCode.READ_EXCEPTION.close());
-                } catch (Exception ex1) {
-                    log.error("terminal 处理流失败 关闭连接失败", ex1);
-                }
-            } else {
-                log.error("terminal 读取流失败", ex);
-            }
+            log.error("terminal 读取流失败", ex);
+            ex.printStackTrace();
+            this.sendClose(WsCloseCode.READ_EXCEPTION);
         }
     }
 
@@ -183,19 +176,14 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public void forcedOffline() throws Exception {
-        session.close(WsCloseCode.FORCED_OFFLINE.close());
+        this.sendClose(WsCloseCode.FORCED_OFFLINE);
         log.info("terminal 管理员强制断连 {}", token);
     }
 
     @Override
     public void heartDown() throws Exception {
-        session.close(WsCloseCode.HEART_DOWN.close());
+        this.sendClose(WsCloseCode.HEART_DOWN);
         log.info("terminal 心跳结束断连 {}", token);
-    }
-
-    @Override
-    public boolean valid(String id) {
-        return Objects1.eq(hint.getSessionId(), id);
     }
 
     @Override
@@ -231,7 +219,7 @@ public class TerminalOperateHandler implements IOperateHandler {
      * @param data    data
      * @param operate 操作
      */
-    private void handleData(TerminalDataTransferDTO data, TerminalOperate operate) {
+    private void handleData(TerminalDataTransferDTO data, TerminalOperate operate) throws IOException {
         String body = data.getBody();
         if (body == null) {
             return;
@@ -250,41 +238,38 @@ public class TerminalOperateHandler implements IOperateHandler {
             case HANGUP:
                 bs = new byte[]{24, 10};
                 break;
-
             default:
                 return;
         }
-        try {
-            logStream.write(bs);
-            executor.write(bs);
-        } catch (Exception e) {
-            log.info("terminal 处理operate失败 token: {} {}", token, e);
+        if (executor.isClosed()) {
+            System.out.println("11111111111111111111111111111111111111111111111");
+            System.out.println("11111111111111111111111111111111111111111111111");
+            System.out.println("11111111111111111111111111111111111111111111111");
+            System.out.println("11111111111111111111111111111111111111111111111");
+            System.out.println("11111111111111111111111111111111111111111111111");
+            executor.connect();
         }
+        logStream.write(bs);
+        executor.write(bs);
     }
 
     /**
      * 重置大小
      */
-    private void resize(String body) {
+    private void resize(String body) throws IOException {
         // 检查参数
-        TerminalConnectDTO window = null;
-        try {
-            window = JSON.parseObject(body, TerminalConnectDTO.class);
-        } catch (Exception e) {
-            // ignore
-        }
+        TerminalConnectDTO window = JSON.parseObject(body, TerminalConnectDTO.class);
         if (window == null) {
-            try {
-                session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
-            } catch (Exception e) {
-                // ignore
-            }
+            session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
             return;
         }
         hint.setCols(window.getCols());
         hint.setRows(window.getRows());
         hint.setWidth(window.getWidth());
         hint.setHeight(window.getHeight());
+        if (executor.isClosed()) {
+            executor.connect();
+        }
         executor.size(window.getCols(), window.getRows(), window.getWidth(), window.getHeight());
     }
 
@@ -298,7 +283,7 @@ public class TerminalOperateHandler implements IOperateHandler {
             try {
                 session.close(code.close());
             } catch (IOException e) {
-                log.error("terminal 发送断开连接命令 失败 token: {}, {}", token, e);
+                log.error("terminal 发送断开连接命令 失败 token: {}, code: {}, e: {}", token, code.getCode(), e);
             }
         }
     }

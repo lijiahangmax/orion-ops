@@ -14,8 +14,6 @@ import java.util.Date;
 @Data
 public class TerminalConnectHint {
 
-    private String sessionId;
-
     /**
      * 行数
      */

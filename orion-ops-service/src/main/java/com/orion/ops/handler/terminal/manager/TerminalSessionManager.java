@@ -104,4 +104,16 @@ public class TerminalSessionManager {
         return SESSION_STORE;
     }
 
+    public IOperateHandler getSession(String key) {
+        return SESSION_STORE.get(key);
+    }
+
+    public IOperateHandler removeSession(String key) {
+        return SESSION_STORE.remove(key);
+    }
+
+    public void addSession(String key, IOperateHandler handler) {
+        SESSION_STORE.put(key, handler);
+    }
+
 }

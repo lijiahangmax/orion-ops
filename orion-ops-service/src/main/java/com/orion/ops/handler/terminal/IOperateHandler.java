@@ -33,14 +33,6 @@ public interface IOperateHandler extends TerminalManagementHandler {
     void handleMessage(TerminalDataTransferDTO data, TerminalOperate operate) throws Exception;
 
     /**
-     * 认证
-     *
-     * @param id id
-     * @return 是否认证成功
-     */
-    boolean valid(String id);
-
-    /**
      * 心跳是否结束
      *
      * @return true结束
