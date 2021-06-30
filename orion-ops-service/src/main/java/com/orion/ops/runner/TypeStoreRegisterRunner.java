@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * @since 2021/5/27 18:55
  */
 @Component
-@Order(200)
+@Order(300)
 @Slf4j
 public class TypeStoreRegisterRunner implements CommandLineRunner {
 
