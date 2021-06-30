@@ -136,7 +136,7 @@ public interface SftpService {
      *
      * @param fileToken fileToken
      */
-    void downloadResume(String fileToken);
+    void transferResume(String fileToken);
 
     /**
      * 传输列表

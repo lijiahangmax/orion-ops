@@ -183,8 +183,7 @@ public class SftpController {
         request.setLocalPath(localPath);
         request.setRemotePath(Files1.getPath(remotePath + "/" + file.getOriginalFilename()));
         request.setSize(file.getSize());
-        sftpService.upload(request);
-        return fileToken;
+        return sftpService.upload(request);
     }
 
     /**
@@ -200,10 +199,10 @@ public class SftpController {
     /**
      * 传输恢复
      */
-    @RequestMapping("/download/resume")
+    @RequestMapping("/transfer/resume")
     public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
         String fileToken = Valid.notBlank(request.getFileToken());
-        sftpService.downloadResume(fileToken);
+        sftpService.transferResume(fileToken);
         return HttpWrapper.ok();
     }
 

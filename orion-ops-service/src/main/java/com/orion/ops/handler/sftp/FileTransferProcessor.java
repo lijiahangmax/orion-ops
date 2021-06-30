@@ -1,9 +1,5 @@
 package com.orion.ops.handler.sftp;
 
-import com.alibaba.fastjson.JSON;
-import com.orion.able.Executable;
-import com.orion.able.Renewable;
-import com.orion.able.Stoppable;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.sftp.SftpNotifyType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
@@ -18,19 +14,20 @@ import com.orion.support.progress.ByteTransferProgress;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
+import com.orion.utils.json.Jsons;
 import com.orion.utils.math.Numbers;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * sftp file
+ * sftp 传输文件基类
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/26 14:58
  */
 @Slf4j
-public abstract class FileTransferProcessor implements Runnable, Stoppable, Executable, Renewable {
+public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean("fileTransferLogDAO");
 
@@ -78,10 +75,8 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
         transferProcessorManager.addProcessor(fileToken, this);
         try {
             if (resume) {
-                // 插入记录
                 this.resumeRecord();
             } else {
-                // 插入记录
                 this.insertRecord();
             }
             // 打开连接
@@ -163,7 +158,7 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
         String transferRate = Files1.getSize(progress.getNowRate());
         String transferCurrent = Files1.getSize(progress.getCurrent());
         // debug
-        log.debug(transferCurrent + " " + progressRate + "% " + transferRate + "/s");
+        // log.info(transferCurrent + " " + progressRate + "% " + transferRate + "/s");
         // notify progress
         notifyProgress.setCurrent(transferCurrent);
         notifyProgress.setProgress(progressRate);
@@ -186,8 +181,10 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
             }
         } else {
             String transferCurrent = Files1.getSize(progress.getCurrent());
+            String transferRate = Files1.getSize(progress.getNowRate());
             notifyProgress.setCurrent(transferCurrent);
             notifyProgress.setProgress(100 + "");
+            notifyProgress.setRate(transferRate);
             // notify progress
             this.notifyProgress();
             // notify status
@@ -223,6 +220,8 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
         if (id == null) {
             return;
         }
+        record.setTransferStatus(status);
+        // 更新
         FileTransferLogDO update = new FileTransferLogDO();
         update.setId(id);
         update.setNowProgress(progress);
@@ -249,7 +248,7 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
      */
     protected void notifyAdd() {
         notifyBody.setType(SftpNotifyType.ADD.getType());
-        notifyBody.setBody(JSON.toJSONString(Converts.to(record, FileTransferLogVO.class)));
+        notifyBody.setBody(Jsons.toJsonWriteNull(Converts.to(record, FileTransferLogVO.class)));
         transferProcessorManager.notifySession(userMachine, notifyBody);
     }
 
@@ -258,7 +257,7 @@ public abstract class FileTransferProcessor implements Runnable, Stoppable, Exec
      */
     protected void notifyProgress() {
         notifyBody.setType(SftpNotifyType.PROGRESS.getType());
-        notifyBody.setBody(JSON.toJSONString(notifyProgress));
+        notifyBody.setBody(Jsons.toJsonWriteNull(notifyProgress));
         transferProcessorManager.notifySession(userMachine, notifyBody);
     }
 

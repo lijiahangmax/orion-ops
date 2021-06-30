@@ -17,10 +17,8 @@ import com.orion.ops.entity.vo.sftp.FileDetailVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.handler.sftp.FileTransferHint;
-import com.orion.ops.handler.sftp.FileTransferProcessor;
+import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
-import com.orion.ops.handler.sftp.impl.DownloadFileProcessor;
-import com.orion.ops.handler.sftp.impl.UploadFileProcessor;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
@@ -245,7 +243,7 @@ public class SftpServiceImpl implements SftpService {
         hint.setCharset(this.getSftpCharset(machineId));
         hint.setTransferType(SftpTransferType.UPLOAD);
         // 提交上传
-        new UploadFileProcessor(hint, session).exec();
+        IFileTransferProcessor.of(hint, session).exec();
         return request.getFileToken();
     }
 
@@ -275,26 +273,18 @@ public class SftpServiceImpl implements SftpService {
         hint.setCharset(executor.getCharset());
         hint.setTransferType(SftpTransferType.DOWNLOAD);
         // 提交下载
-        new DownloadFileProcessor(hint, session).exec();
+        IFileTransferProcessor.of(hint, session).exec();
         return fileToken;
     }
 
     @Override
-    public void downloadResume(String fileToken) {
+    public void transferResume(String fileToken) {
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
-        FileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
+        IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         if (processor != null) {
             return;
         }
-        // 查询远程文件是否存在
-        SftpExecutor executor = BASIC_EXECUTOR.get(transferLog.getMachineId());
-        Valid.notNull(executor, MessageConst.SESSION_EXPIRE);
-        if (executor.isClosed()) {
-            executor.connect();
-        }
-        SftpFile file = executor.getFile(transferLog.getRemoteFile());
-        Valid.notNull(file, MessageConst.FILE_NOTFOUND);
         // 获取连接
         SessionStore session = this.getSessionStore(transferLog.getMachineId());
         Valid.notNull(session, MessageConst.SESSION_EXPIRE);
@@ -308,10 +298,10 @@ public class SftpServiceImpl implements SftpService {
         hint.setRemoteFile(transferLog.getRemoteFile());
         hint.setLocalFile(transferLog.getLocalFile());
         hint.setFileSize(transferLog.getFileSize());
-        hint.setCharset(executor.getCharset());
+        hint.setCharset(this.getSftpCharset(transferLog.getMachineId()));
         hint.setTransferType(SftpTransferType.of(transferLog.getTransferType()));
         // 提交下载
-        new DownloadFileProcessor(hint, session).resume();
+        IFileTransferProcessor.of(hint, session).resume();
     }
 
     @Override
@@ -328,7 +318,7 @@ public class SftpServiceImpl implements SftpService {
 
     @Override
     public void transferStop(String fileToken) {
-        FileTransferProcessor transferProcessor = this.getTransferProcessor(fileToken);
+        IFileTransferProcessor transferProcessor = this.getTransferProcessor(fileToken);
         transferProcessor.stop();
     }
 
@@ -390,10 +380,10 @@ public class SftpServiceImpl implements SftpService {
      * @param fileToken fileToken
      * @return FileTransferProcessor
      */
-    private FileTransferProcessor getTransferProcessor(String fileToken) {
+    private IFileTransferProcessor getTransferProcessor(String fileToken) {
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
-        FileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
+        IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         return Valid.notNull(processor, MessageConst.UNSELECTED_TRANSFER_PROCESSOR);
     }
 

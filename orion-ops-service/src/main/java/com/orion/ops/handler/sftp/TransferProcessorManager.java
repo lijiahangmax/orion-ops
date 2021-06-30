@@ -1,8 +1,8 @@
 package com.orion.ops.handler.sftp;
 
-import com.alibaba.fastjson.JSON;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.utils.collect.Lists;
+import com.orion.utils.json.Jsons;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -25,7 +25,7 @@ public class TransferProcessorManager {
      * key: token
      * value: processor
      */
-    private Map<String, FileTransferProcessor> transferProcessor = new ConcurrentHashMap<>();
+    private Map<String, IFileTransferProcessor> transferProcessor = new ConcurrentHashMap<>();
 
     /**
      * key: sessionId
@@ -51,7 +51,7 @@ public class TransferProcessorManager {
      * @param token     token
      * @param processor processor
      */
-    public void addProcessor(String token, FileTransferProcessor processor) {
+    public void addProcessor(String token, IFileTransferProcessor processor) {
         transferProcessor.put(token, processor);
     }
 
@@ -70,7 +70,7 @@ public class TransferProcessorManager {
      * @param token token
      * @return processor
      */
-    public FileTransferProcessor getProcessor(String token) {
+    public IFileTransferProcessor getProcessor(String token) {
         return transferProcessor.get(token);
     }
 
@@ -119,7 +119,7 @@ public class TransferProcessorManager {
                 continue;
             }
             // 通知
-            session.sendMessage(new TextMessage(JSON.toJSONString(notify)));
+            session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
         }
     }
 
