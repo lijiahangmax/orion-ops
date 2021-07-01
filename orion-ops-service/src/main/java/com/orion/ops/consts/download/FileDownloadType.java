@@ -32,7 +32,7 @@ public enum FileDownloadType {
     /**
      * sftp 下载文件
      */
-    SFTP_FILE(40),
+    SFTP_DOWNLOAD(40),
 
     ;
 

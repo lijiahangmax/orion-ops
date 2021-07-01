@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
@@ -59,6 +60,7 @@ public class FileController {
      */
     @RequestMapping("/download/{token}")
     @IgnoreWrapper
+    @IgnoreAuth
     public void downloadLogFile(@PathVariable String token, HttpServletResponse response) throws IOException {
         FileDownloadDTO downloadFile = fileService.getPathByDownloadToken(token);
         InputStream inputStream;

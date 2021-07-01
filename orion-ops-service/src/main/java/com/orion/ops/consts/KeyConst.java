@@ -68,7 +68,7 @@ public class KeyConst {
     public static final String FILE_TAIL_BIND = "file:tail:bind:{}";
 
     /**
-     * 5 min
+     * 6 h
      */
     public static final int FILE_TAIL_BIND_EXPIRE = 60 * 60 * 6;
 
@@ -95,5 +95,17 @@ public class KeyConst {
      * 6 h
      */
     public static final int SFTP_SESSION_EXPIRE = 60 * 60 * 6;
+
+    /**
+     * sftp上传token
+     * <p>
+     * "sftp:upload:{token}
+     */
+    public static final String SFTP_UPLOAD_TOKEN = "sftp:upload:{}";
+
+    /**
+     * 5 min
+     */
+    public static final int SFTP_UPLOAD_TOKEN_EXPIRE = 60 * 5;
 
 }

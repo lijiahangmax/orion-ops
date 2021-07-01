@@ -14,6 +14,7 @@ import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
+import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
@@ -57,12 +58,15 @@ public class FileServiceImpl implements FileService {
     private CommandExecService commandExecService;
 
     @Resource
+    private SftpService sftpService;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public HttpWrapper<String> getDownloadToken(Long id, FileDownloadType type) {
-        String path;
-        String name;
+        String path = null;
+        String name = null;
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
@@ -77,9 +81,14 @@ public class FileServiceImpl implements FileService {
                 path = commandExecService.getExecLogFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
+            case SFTP_DOWNLOAD:
+                FileTransferLogDO transferLog = sftpService.getDownloadFilePath(id);
+                if (transferLog != null) {
+                    path = transferLog.getLocalFile();
+                    name = Files1.getFileName(transferLog.getRemoteFile());
+                }
+                break;
             default:
-                path = null;
-                name = null;
                 break;
         }
         // 检查文件是否存在
@@ -109,9 +118,6 @@ public class FileServiceImpl implements FileService {
         }
         FileDownloadDTO download = JSON.parseObject(value, FileDownloadDTO.class);
         if (download == null) {
-            return null;
-        }
-        if (!Currents.getUserId().equals(download.getUserId())) {
             return null;
         }
         redisTemplate.delete(key);
@@ -200,7 +206,7 @@ public class FileServiceImpl implements FileService {
      */
     private String getDownloadTerminalLogFilePath(Long id) {
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
-                .like(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
+                .eq(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
                 .eq(MachineTerminalLogDO::getId, id);
         return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
                 .map(MachineTerminalLogDO::getOperateLogFile)
