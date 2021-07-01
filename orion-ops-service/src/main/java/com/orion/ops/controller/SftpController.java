@@ -197,13 +197,13 @@ public class SftpController {
     }
 
     /**
-     * 传输恢复
+     * 传输列表
      */
-    @RequestMapping("/transfer/resume")
-    public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
-        String fileToken = Valid.notBlank(request.getFileToken());
-        sftpService.transferResume(fileToken);
-        return HttpWrapper.ok();
+    @RequestMapping("/transfer/list/{sessionToken}")
+    public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
+        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
+        return sftpService.transferList(tokenInfo[1]);
     }
 
     /**
@@ -217,17 +217,36 @@ public class SftpController {
     }
 
     /**
-     * 传输列表
+     * 传输恢复
      */
-    @RequestMapping("/transfer/list/{sessionToken}")
-    public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
-        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
-        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
-        return sftpService.transferList(tokenInfo[1]);
+    @RequestMapping("/transfer/resume")
+    public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
+        String fileToken = Valid.notBlank(request.getFileToken());
+        sftpService.transferResume(fileToken);
+        return HttpWrapper.ok();
     }
 
     /**
-     * 查询列表
+     * 传输删除(单个)
+     */
+    @RequestMapping("/transfer/remove")
+    public Integer transferRemove(@RequestBody FileTransferRemoveRequest request) {
+        String fileToken = Valid.notBlank(request.getFileToken());
+        return sftpService.transferRemove(fileToken);
+    }
+
+    /**
+     * 传输清空(全部)
+     */
+    @RequestMapping("/transfer/clear/{sessionToken}")
+    public Integer transferRemove(@PathVariable("sessionToken") String sessionToken) {
+        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
+        return sftpService.transferClear(tokenInfo[1]);
+    }
+
+    /**
+     * 查询文件列表
      */
     private FileListVO ll(FileBaseRequest request) {
         return sftpService.list(request.getCurrent(), request.getAll(), request.getExecutor());

@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
@@ -132,13 +133,6 @@ public interface SftpService {
     String download(FileDownloadRequest request);
 
     /**
-     * 传输恢复
-     *
-     * @param fileToken fileToken
-     */
-    void transferResume(String fileToken);
-
-    /**
      * 传输列表
      *
      * @param machineId 机器id
@@ -152,6 +146,37 @@ public interface SftpService {
      * @param fileToken fileToken
      */
     void transferStop(String fileToken);
+
+    /**
+     * 传输恢复
+     *
+     * @param fileToken fileToken
+     */
+    void transferResume(String fileToken);
+
+    /**
+     * 传输删除(单个)
+     *
+     * @param fileToken fileToken
+     * @return effect
+     */
+    Integer transferRemove(String fileToken);
+
+    /**
+     * 传输清空(全部)
+     *
+     * @param machineId machineId
+     * @return effect
+     */
+    Integer transferClear(Long machineId);
+
+    /**
+     * 获取sftp下载文件本地路径
+     *
+     * @param id id
+     * @return FileTransferLogDO
+     */
+    FileTransferLogDO getDownloadFilePath(Long id);
 
     /**
      * 通过token获取 SftpExecutor

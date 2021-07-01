@@ -54,6 +54,8 @@ public class MessageConst {
 
     public static final String TOKEN_EMPTY = "token为空";
 
+    public static final String TOKEN_EXPIRE = "token过期";
+
     public static final String SESSION_EXPIRE = "会话过期";
 
     public static final String PATH_NOT_NORMALIZE = "路径不合法";
@@ -61,5 +63,13 @@ public class MessageConst {
     public static final String DEL_ROOT_PATH = "你TM敢删除根目录?";
 
     public static final String FILE_NOTFOUND = "文件不存在";
+
+    public static final String UNSELECTED_TRANSFER_LOG = "未找到传输对象";
+
+    public static final String UNSELECTED_TRANSFER_PROCESSOR = "未找到传输进程";
+
+    public static final String FILE_TOO_LARGE = "文件过大";
+
+    public static final String INVALID_STATUS = "状态不合法";
 
 }

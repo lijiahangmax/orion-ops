@@ -102,6 +102,15 @@ public class FileTransferLogDO implements Serializable {
     private Integer transferStatus;
 
     /**
+     * 是否显示 1显示 2不显示
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    @TableField("show_type")
+    private Integer showType;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

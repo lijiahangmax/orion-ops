@@ -22,9 +22,4 @@ public class FileDownloadRequest {
      */
     private Integer type;
 
-    /**
-     * 下载token
-     */
-    private String token;
-
 }

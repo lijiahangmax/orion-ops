@@ -7,6 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -278,9 +279,29 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
+    public List<FileTransferLogVO> transferList(Long machineId) {
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType())
+                .orderByDesc(FileTransferLogDO::getId);
+        return fileTransferLogDAO.selectList(wrapper).stream()
+                .map(s -> Converts.to(s, FileTransferLogVO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void transferStop(String fileToken) {
+        IFileTransferProcessor transferProcessor = this.getTransferProcessor(fileToken);
+        transferProcessor.stop();
+    }
+
+    @Override
     public void transferResume(String fileToken) {
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
+        Valid.isTrue(SftpTransferStatus.PAUSE.getStatus().equals(transferLog.getTransferStatus()), MessageConst.INVALID_STATUS);
         IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         if (processor != null) {
             return;
@@ -305,21 +326,40 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public List<FileTransferLogVO> transferList(Long machineId) {
+    public Integer transferRemove(String fileToken) {
+        FileTransferLogDO update = new FileTransferLogDO();
+        update.setShowType(Const.DISABLE);
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getFileToken, fileToken)
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
-                .eq(FileTransferLogDO::getMachineId, machineId)
-                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType())
-                .orderByDesc(FileTransferLogDO::getId);
-        return fileTransferLogDAO.selectList(wrapper).stream()
-                .map(s -> Converts.to(s, FileTransferLogVO.class))
-                .collect(Collectors.toList());
+                .ne(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
+        return fileTransferLogDAO.update(update, wrapper);
     }
 
     @Override
-    public void transferStop(String fileToken) {
-        IFileTransferProcessor transferProcessor = this.getTransferProcessor(fileToken);
-        transferProcessor.stop();
+    public Integer transferClear(Long machineId) {
+        FileTransferLogDO update = new FileTransferLogDO();
+        update.setShowType(Const.DISABLE);
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .ne(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
+        return fileTransferLogDAO.update(update, wrapper);
+    }
+
+    @Override
+    public FileTransferLogDO getDownloadFilePath(Long id) {
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(!Currents.isAdministrator(), FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.FINISH.getStatus())
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .eq(FileTransferLogDO::getId, id);
+        FileTransferLogDO transferLog = fileTransferLogDAO.selectOne(wrapper);
+        if (transferLog == null) {
+            return null;
+        }
+        transferLog.setLocalFile(MachineEnvAttr.SWAP_PATH.getValue() + transferLog.getLocalFile());
+        return transferLog;
     }
 
     @Override
