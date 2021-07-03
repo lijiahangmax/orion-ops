@@ -144,7 +144,7 @@ public class CommandExecServiceImpl implements CommandExecService {
         if (execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
                 || execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
             // 停止任务
-            Optional.ofNullable(execSessionHolder.getHolder().get(id)).ifPresent(IExecHandler::close);
+            Optional.ofNullable(execSessionHolder.getSession(id)).ifPresent(IExecHandler::close);
             execDO = this.selectById(id);
         }
         // 停止任务再次查询
@@ -176,7 +176,7 @@ public class CommandExecServiceImpl implements CommandExecService {
     @Override
     public String getExecLogFilePath(Long id) {
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
-                .like(!Currents.isAdministrator(), CommandExecDO::getUserId, Currents.getUserId())
+                .eq(!Currents.isAdministrator(), CommandExecDO::getUserId, Currents.getUserId())
                 .eq(CommandExecDO::getId, id);
         return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
                 .map(CommandExecDO::getLogPath)

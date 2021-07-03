@@ -21,8 +21,34 @@ public class ExecSessionHolder {
      */
     private final Map<Long, IExecHandler> HOLDER = new ConcurrentHashMap<>();
 
-    public Map<Long, IExecHandler> getHolder() {
-        return HOLDER;
+    /**
+     * 添加session
+     *
+     * @param id      id
+     * @param session session
+     */
+    public void addSession(Long id, IExecHandler session) {
+        HOLDER.put(id, session);
+    }
+
+    /**
+     * 获取session
+     *
+     * @param id id
+     * @return session
+     */
+    public IExecHandler getSession(Long id) {
+        return HOLDER.get(id);
+    }
+
+    /**
+     * 删除session
+     *
+     * @param id id
+     * @return session
+     */
+    public IExecHandler removeSession(Long id) {
+        return HOLDER.remove(id);
     }
 
 }

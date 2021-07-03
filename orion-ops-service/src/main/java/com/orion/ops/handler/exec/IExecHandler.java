@@ -32,7 +32,7 @@ public interface IExecHandler extends Runnable, SafeCloseable {
     static IExecHandler with(ExecHint hint) {
         return Selector.<ExecType, IExecHandler>of(hint.getExecType())
                 .test(Branches.eq(ExecType.BATCH_EXEC).then(new CommandExecHandler(hint)))
-                .or(new CommandExecHandler(hint));
+                .get();
     }
 
 }

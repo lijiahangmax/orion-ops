@@ -92,24 +92,23 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 session.sendMessage(new TextMessage(WsProtocol.UNKNOWN_OPERATE.get()));
                 return;
             }
-            IOperateHandler handler;
             if (operate == TerminalOperate.CONNECT) {
                 // 建立连接
-                handler = this.connect(session, id, data, token);
-                if (handler == null) {
+                if (session.getAttributes().get(CONNECTED_KEY) != null) {
                     return;
                 }
-            } else {
-                // 获取连接
-                if (session.getAttributes().get(CONNECTED_KEY) == null) {
-                    session.close(WsCloseCode.VALID.close());
-                    return;
-                }
-                handler = terminalSessionManager.getSession(token);
-                if (handler == null) {
-                    session.close(WsCloseCode.UNKNOWN_CONNECT.close());
-                    return;
-                }
+                this.connect(session, id, data, token);
+                return;
+            }
+            // 获取连接
+            if (session.getAttributes().get(CONNECTED_KEY) == null) {
+                session.close(WsCloseCode.VALID.close());
+                return;
+            }
+            IOperateHandler handler = terminalSessionManager.getSession(token);
+            if (handler == null) {
+                session.close(WsCloseCode.UNKNOWN_CONNECT.close());
+                return;
             }
             // 操作
             handler.handleMessage(data, operate);
@@ -166,9 +165,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
      *
      * @param session session
      * @param data    data
-     * @return handler
      */
-    private TerminalOperateHandler connect(WebSocketSession session, String id, TerminalDataTransferDTO data, String token) throws IOException {
+    private void connect(WebSocketSession session, String id, TerminalDataTransferDTO data, String token) throws IOException {
         log.info("terminal 尝试建立连接 token: {}, id: {}, data: {}", token, id, JSON.toJSONString(data));
         // 检查参数
         TerminalConnectDTO connectInfo = JSON.parseObject(data.getBody(), TerminalConnectDTO.class);
@@ -178,7 +176,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 || connectInfo.getRows() == null || connectInfo.getCols() == null
                 || connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
             session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
-            return null;
+            return;
         }
         // 获取token信息
         Long tokenUserId = MachineTerminalService.getTokenUserId(token);
@@ -189,7 +187,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (machineId == null) {
             log.info("terminal 建立连接拒绝-token认证失败 token: {}", token);
             session.close(WsCloseCode.INCORRECT_TOKEN.close());
-            return null;
+            return;
         }
         // 检查绑定
         String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
@@ -197,14 +195,14 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (bindValue == null || !bindValue.equals(id)) {
             log.info("terminal 建立连接拒绝-bind认证失败 token: {}", token);
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());
-            return null;
+            return;
         }
         // 检查操作用户
         UserDTO userDTO = passportService.getUserByToken(loginToken);
         if (userDTO == null || !tokenUserId.equals(userDTO.getId())) {
             log.info("terminal 建立连接拒绝-用户认证失败 token: {}", token);
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());
-            return null;
+            return;
         }
         // 删除token
         redisTemplate.delete(tokenKey);
@@ -218,22 +216,22 @@ public class TerminalMessageHandler implements WebSocketHandler {
         } catch (Exception e) {
             WebSockets.openSessionStoreThrowClose(session, e);
             log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, machineId: {}, e: {}", tokenUserId, machineId, e);
-            return null;
+            return;
         }
         // 配置
         String host = sessionStore.getHost();
-        TerminalConnectHint config = new TerminalConnectHint();
+        TerminalConnectHint hint = new TerminalConnectHint();
         String terminalType = machineTerminalService.getMachineConfig(machineId).getTerminalType();
-        config.setUserId(tokenUserId);
-        config.setUsername(userDTO.getUsername());
-        config.setMachineId(machineId);
-        config.setMachineHost(host);
-        config.setCols(connectInfo.getCols());
-        config.setRows(connectInfo.getRows());
-        config.setWidth(connectInfo.getWidth());
-        config.setHeight(connectInfo.getHeight());
-        config.setTerminalType(terminalType);
-        TerminalOperateHandler terminalHandler = new TerminalOperateHandler(token, config, session, sessionStore);
+        hint.setUserId(tokenUserId);
+        hint.setUsername(userDTO.getUsername());
+        hint.setMachineId(machineId);
+        hint.setMachineHost(host);
+        hint.setCols(connectInfo.getCols());
+        hint.setRows(connectInfo.getRows());
+        hint.setWidth(connectInfo.getWidth());
+        hint.setHeight(connectInfo.getHeight());
+        hint.setTerminalType(terminalType);
+        TerminalOperateHandler terminalHandler = new TerminalOperateHandler(token, hint, session, sessionStore);
         try {
             // 打开shell
             log.info("terminal 尝试建立连接-尝试打开shell token: {}", terminalHandler.getToken());
@@ -242,11 +240,11 @@ public class TerminalMessageHandler implements WebSocketHandler {
         } catch (Exception e) {
             session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.close());
             log.error("terminal 建立连接失败-打开shell失败 host: {}, uid: {}, {}", host, tokenUserId, e);
-            return null;
+            return;
         }
         terminalSessionManager.addSession(token, terminalHandler);
+        session.sendMessage(new TextMessage(WsProtocol.CONNECTED.get()));
         log.info("terminal 建立连接成功 uid: {}, machineId: {}", tokenUserId, machineId);
-        return terminalHandler;
     }
 
 }

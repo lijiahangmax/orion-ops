@@ -42,7 +42,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
 
     protected static MachineEnvService machineEnvService = SpringHolder.getBean("machineEnvService");
 
-    protected static Map<Long, IExecHandler> execSessionHolder = ((ExecSessionHolder) SpringHolder.getBean("execSessionHolder")).getHolder();
+    protected static ExecSessionHolder execSessionHolder = SpringHolder.getBean("execSessionHolder");
 
     @Getter
     protected ExecHint hint;
@@ -80,7 +80,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
         try {
             // 打开commandExecutor
             this.executor = hint.getSession().getCommandExecutor(hint.getRealCommand());
-            execSessionHolder.put(execId, this);
+            execSessionHolder.addSession(execId, this);
             this.updateStatus(ExecStatus.RUNNABLE);
             this.openComputed();
 
@@ -233,7 +233,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
                 Dates.format(endDate, Dates.YMDHMSS), endDate.getTime() - hint.getStartDate().getTime());
         // 释放资源
         Streams.close(executor);
-        execSessionHolder.remove(execId);
+        execSessionHolder.removeSession(execId);
     }
 
     public boolean isDone() {

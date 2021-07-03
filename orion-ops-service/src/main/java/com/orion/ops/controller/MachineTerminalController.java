@@ -86,7 +86,7 @@ public class MachineTerminalController {
      * 强制下线 (管理员)
      */
     @RequestMapping("/manager/offline")
-    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR})
     public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {
         String token = Valid.notBlank(request.getToken());
         return terminalSessionManager.forceOffline(token);
@@ -96,7 +96,7 @@ public class MachineTerminalController {
      * session列表 (管理员)
      */
     @RequestMapping("/manager/session/list")
-    @RequireRole(value = {RoleType.ADMINISTRATOR, RoleType.ADMINISTRATOR})
+    @RequireRole(value = {RoleType.ADMINISTRATOR})
     public DataGrid<MachineTerminalManagerVO> sessionList(@RequestBody MachineTerminalManagerRequest request) {
         return terminalSessionManager.getOnlineTerminal(request);
     }
