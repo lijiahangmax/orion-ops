@@ -89,7 +89,6 @@ public class FileController {
     @RequestMapping("/tail/token")
     @IgnoreWrapper
     public HttpWrapper<FileTailVO> getToken(@RequestBody FileTailRequest request) {
-        Valid.notNull(request.getRelId());
         Valid.notNull(FileTailType.of(request.getType()));
         Integer offset = request.getOffset();
         if (offset != null) {

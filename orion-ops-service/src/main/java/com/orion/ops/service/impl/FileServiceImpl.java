@@ -24,6 +24,7 @@ import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailVO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.Valid;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
@@ -126,18 +127,28 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public HttpWrapper<FileTailVO> getTailToken(FileTailRequest request) {
-        Long relId = request.getRelId();
-        String path;
-        Long machineId;
+        String path = request.getPath();
+        Long machineId = request.getMachineId();
         // 获取日志路径
         switch (FileTailType.of(request.getType())) {
             case EXEC_LOG:
+                // 执行日志
+                Long relId = request.getRelId();
+                Valid.notNull(relId);
                 path = commandExecService.getExecLogFilePath(relId);
                 machineId = Const.HOST_MACHINE_ID;
                 break;
+            case LOCAL_FILE:
+                // 本机文件
+                Valid.notBlank(path);
+                machineId = Const.HOST_MACHINE_ID;
+                break;
+            case REMOTE_FILE:
+                // 远程文件
+                Valid.notBlank(path);
+                Valid.notNull(machineId);
+                break;
             default:
-                path = null;
-                machineId = -1L;
                 break;
         }
         // 检查文件是否存在

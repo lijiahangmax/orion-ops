@@ -23,6 +23,19 @@ public class FileTailRequest {
     private Integer type;
 
     /**
+     * tail的文件路径
+     *
+     * @see com.orion.ops.consts.tail.FileTailType#LOCAL_FILE
+     * @see com.orion.ops.consts.tail.FileTailType#REMOTE_FILE
+     */
+    private String path;
+
+    /**
+     * 机器id
+     */
+    private Long machineId;
+
+    /**
      * 文件尾部偏移行
      */
     private Integer offset;

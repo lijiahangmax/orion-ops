@@ -17,7 +17,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.annotation.Resource;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.orion.ops.utils.WebSockets.getToken;
@@ -46,14 +46,7 @@ public class TailFileHandler implements WebSocketHandler {
         // 检查token
         String tokenKey = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
         String tokenValue = redisTemplate.opsForValue().get(tokenKey);
-        FileTailDTO fileTail = Optional.ofNullable(tokenValue)
-                .map(t -> JSON.parseObject(tokenValue, FileTailDTO.class))
-                .orElse(null);
-        // 未查询到token
-        if (fileTail == null) {
-            session.close(WsCloseCode.INCORRECT_TOKEN.close());
-            return;
-        }
+        FileTailDTO fileTail = JSON.parseObject(tokenValue, FileTailDTO.class);
         // 检查bind
         String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
@@ -64,13 +57,11 @@ public class TailFileHandler implements WebSocketHandler {
         // 删除token
         redisTemplate.delete(tokenKey);
         // token绑定
-        redisTemplate.opsForValue().set(bindKey, id, KeyConst.TERMINAL_BIND_EXPIRE, TimeUnit.SECONDS);
-        // 刷新token 过期时间
-        redisTemplate.expire(tokenKey, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(bindKey, id, KeyConst.FILE_TAIL_BIND_EXPIRE, TimeUnit.SECONDS);
         log.info("tail 建立ws连接 token: {}, id: {}", token, id);
         // 打开日志流
         try {
-            this.openTailHandler(session, token, fileTail);
+            this.openTailHandler(session, token, Objects.requireNonNull(fileTail));
         } catch (Exception e) {
             e.printStackTrace();
             log.error("tail 打开处理器-失败 e: {}, token: {}, id: {}", e, token, id);
@@ -99,7 +90,7 @@ public class TailFileHandler implements WebSocketHandler {
         log.info("tail 关闭连接 token: {}, id: {}, code: {}, reason: {}", token, id, status.getCode(), status.getReason());
         redisTemplate.delete(bindKey);
         // 释放资源
-        ITailHandler handler = tailSessionHolder.getHolder().remove(token);
+        ITailHandler handler = tailSessionHolder.removeSession(token);
         if (handler == null) {
             return;
         }
@@ -137,7 +128,7 @@ public class TailFileHandler implements WebSocketHandler {
         } else {
             return;
         }
-        tailSessionHolder.getHolder().put(token, handler);
+        tailSessionHolder.addSession(token, handler);
         handler.start();
     }
 
