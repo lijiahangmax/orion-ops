@@ -74,4 +74,6 @@ public class MessageConst {
 
     public static final String NAME_TAG_PRESENT = "名称或tag重复";
 
+    public static final String FORBID_DELETE = "禁止删除";
+
 }

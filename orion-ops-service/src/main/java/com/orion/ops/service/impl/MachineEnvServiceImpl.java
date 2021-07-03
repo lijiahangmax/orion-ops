@@ -61,7 +61,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         entity.setAttrKey(request.getKey().trim());
         entity.setAttrValue(request.getValue());
         entity.setDescription(request.getDescription());
-        entity.setForbidDelete(Const.FORBID_DELETE_CAN);
         machineEnvDAO.insert(entity);
         return entity.getId();
     }
@@ -93,7 +92,8 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         for (Long id : idList) {
             MachineEnvDO env = machineEnvDAO.selectById(id);
             Valid.notNull(env, MessageConst.MACHINE_ENV_MISSING);
-            Valid.eq(Const.FORBID_DELETE_CAN, env.getForbidDelete(), "{} 禁止删除", env.getAttrKey());
+            String key = env.getAttrKey();
+            Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
             effect += machineEnvDAO.deleteById(id);
         }
         return effect;
@@ -128,7 +128,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 insertEnv.setAttrKey(sourceEnv.getAttrKey());
                 insertEnv.setAttrValue(sourceEnv.getAttrValue());
                 insertEnv.setDescription(sourceEnv.getDescription());
-                insertEnv.setForbidDelete(Const.FORBID_DELETE_CAN);
                 effect += machineEnvDAO.insert(insertEnv);
             }
         }
@@ -183,7 +182,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             env.setMachineId(machineId);
             env.setDescription(attr.getDescription());
             env.setAttrKey(attr.name());
-            env.setForbidDelete(Const.FORBID_DELETE_NOT);
             switch (attr) {
                 case LOG_PATH:
                     env.setAttrValue(home + Const.LOG_PATH);

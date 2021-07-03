@@ -9,14 +9,13 @@
         <result column="attr_key" property="attrKey"/>
         <result column="attr_value" property="attrValue"/>
         <result column="description" property="description"/>
-        <result column="forbid_delete" property="forbidDelete"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, machine_id, attr_key, attr_value, description, forbid_delete, create_time, update_time
+        id, machine_id, attr_key, attr_value, description, create_time, update_time
     </sql>
 
 </mapper>

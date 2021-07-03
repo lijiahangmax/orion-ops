@@ -91,7 +91,6 @@ public class HostMachineInitialize implements CommandLineRunner {
                 insert.setAttrKey(key);
                 insert.setAttrValue(this.getAttrValue(attr));
                 insert.setDescription(attr.getDescription());
-                insert.setForbidDelete(Const.FORBID_DELETE_NOT);
                 machineEnvDAO.insert(insert);
             }
         }

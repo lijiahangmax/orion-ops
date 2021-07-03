@@ -56,15 +56,6 @@ public class MachineEnvDO implements Serializable {
     private String description;
 
     /**
-     * 是否禁止删除 1可以删除 2禁止删除
-     *
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_CAN
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_NOT
-     */
-    @TableField("forbid_delete")
-    private Integer forbidDelete;
-
-    /**
      * 创建时间
      */
     @TableField("create_time")
