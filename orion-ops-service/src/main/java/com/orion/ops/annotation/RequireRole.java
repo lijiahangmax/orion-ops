@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 public @interface RequireRole {
 
     /**
-     * 所需权限
+     * 所需角色
      * <p>
      * {@link com.orion.ops.consts.RoleType}
      */

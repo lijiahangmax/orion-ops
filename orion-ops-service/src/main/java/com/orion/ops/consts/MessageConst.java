@@ -72,4 +72,6 @@ public class MessageConst {
 
     public static final String INVALID_STATUS = "状态不合法";
 
+    public static final String NAME_TAG_PRESENT = "名称或tag重复";
+
 }

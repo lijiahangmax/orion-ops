@@ -1,6 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.MessageConst;
+import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
 
 import java.util.Collection;
@@ -62,6 +63,13 @@ public class Valid extends com.orion.utils.Valid {
 
     public static <T extends Comparable<T>> T gte(T t1, T t2) {
         return gte(t1, t2, MessageConst.INVALID_PARAM);
+    }
+
+    @SafeVarargs
+    public static <T> boolean in(T t, T... ts) {
+        notNull(t);
+        notEmpty(ts);
+        return isTrue(Arrays1.contains(ts, t), MessageConst.INVALID_PARAM);
     }
 
 }
