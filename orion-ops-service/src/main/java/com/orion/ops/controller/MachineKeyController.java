@@ -53,7 +53,6 @@ public class MachineKeyController {
      */
     @RequestMapping("/update")
     public HttpWrapper<Integer> updateKey(@RequestBody MachineKeyRequest request) {
-        Valid.notBlank(request.getName());
         Valid.notNull(request.getId());
         try {
             Integer effect = machineKeyService.updateSecretKey(request);

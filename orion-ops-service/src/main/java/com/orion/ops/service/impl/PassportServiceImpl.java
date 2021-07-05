@@ -69,6 +69,7 @@ public class PassportServiceImpl implements PassportService {
             updateUser.setHeadPic(url);
         }
         // 更新最后登录时间
+        updateUser.setUpdateTime(new Date());
         updateUser.setLastLoginTime(new Date());
         userInfoDAO.updateById(updateUser);
         // 设置token
@@ -143,6 +144,7 @@ public class PassportServiceImpl implements PassportService {
         Long userId = userInfo.getId();
         updateUser.setId(userId);
         updateUser.setPassword(newPassword);
+        updateUser.setUpdateTime(new Date());
         userInfoDAO.updateById(updateUser);
         // 删除token
         redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));

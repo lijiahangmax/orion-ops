@@ -109,9 +109,10 @@ public enum MachineEnvAttr {
     }
 
     public static MachineEnvAttr of(String key) {
-        return Arrays.stream(values())
-                .filter(a -> a.name().equals(key)).findFirst()
-                .orElse(null);
+        if (key == null) {
+            return null;
+        }
+        return valueOf(key);
     }
 
 }

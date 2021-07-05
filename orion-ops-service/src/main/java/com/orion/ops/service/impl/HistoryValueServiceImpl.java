@@ -21,6 +21,7 @@ import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 历史值快照 实现
@@ -104,6 +105,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         MachineEnvDO update = new MachineEnvDO();
         update.setId(valueId);
         update.setAttrValue(value);
+        update.setUpdateTime(new Date());
         Integer effect = machineEnvDAO.updateById(update);
         return Tuple.of(effect, env.getAttrValue());
     }
@@ -123,6 +125,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         CommandTemplateDO updateTemplate = new CommandTemplateDO();
         updateTemplate.setId(valueId);
         updateTemplate.setTemplateValue(value);
+        updateTemplate.setUpdateTime(new Date());
         Integer effect = commandTemplateDAO.updateById(updateTemplate);
         return Tuple.of(effect, template.getTemplateValue());
     }

@@ -54,4 +54,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SWAP_FILE_SUFFIX = ".swp";
 
+    public static final Integer INCR = 1;
+
+    public static final Integer DECR = 2;
+
 }

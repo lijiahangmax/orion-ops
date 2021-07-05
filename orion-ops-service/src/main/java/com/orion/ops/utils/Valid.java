@@ -66,10 +66,11 @@ public class Valid extends com.orion.utils.Valid {
     }
 
     @SafeVarargs
-    public static <T> boolean in(T t, T... ts) {
+    public static <T> T in(T t, T... ts) {
         notNull(t);
         notEmpty(ts);
-        return isTrue(Arrays1.contains(ts, t), MessageConst.INVALID_PARAM);
+        isTrue(Arrays1.contains(ts, t), MessageConst.INVALID_PARAM);
+        return t;
     }
 
 }

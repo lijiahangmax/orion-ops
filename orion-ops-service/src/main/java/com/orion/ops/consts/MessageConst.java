@@ -48,9 +48,9 @@ public class MessageConst {
 
     public static final String METADATA_MISSING = "元数据缺失";
 
-    public static final String MACHINE_ENV_EXIST = "环境变量已存在";
+    public static final String ENV_PRESENT = "环境变量已存在";
 
-    public static final String MACHINE_ENV_MISSING = "环境变量不存在";
+    public static final String ENV_MISSING = "环境变量不存在";
 
     public static final String TOKEN_EMPTY = "token为空";
 
@@ -75,5 +75,7 @@ public class MessageConst {
     public static final String NAME_TAG_PRESENT = "名称或tag重复";
 
     public static final String FORBID_DELETE = "禁止删除";
+
+    public static final String APP_MISSING = "应用不存在";
 
 }

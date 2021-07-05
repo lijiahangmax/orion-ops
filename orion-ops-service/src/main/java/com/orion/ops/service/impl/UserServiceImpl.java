@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
         UserInfoDO update = new UserInfoDO();
         update.setId(userId);
         update.setHeadPic(headPic);
+        update.setUpdateTime(new Date());
         userInfoDAO.updateById(update);
         return HttpWrapper.ok(userId);
     }
@@ -131,16 +132,11 @@ public class UserServiceImpl implements UserService {
         }
         UserInfoDO update = new UserInfoDO();
         update.setId(updateId);
-        Optional.ofNullable(request.getNickname())
-                .filter(Strings::isNotBlank)
-                .ifPresent(update::setNickname);
-        Optional.ofNullable(request.getPhone())
-                .filter(Strings::isNotBlank)
-                .ifPresent(update::setContactPhone);
-        Optional.ofNullable(request.getEmail())
-                .filter(Strings::isNotBlank)
-                .ifPresent(update::setContactEmail);
-        Optional.ofNullable(request.getStatus()).ifPresent(update::setUserStatus);
+        update.setNickname(request.getNickname());
+        update.setContactPhone(request.getPhone());
+        update.setContactEmail(request.getEmail());
+        update.setUserStatus(request.getStatus());
+        update.setUpdateTime(new Date());
         RoleType roleType = RoleType.of(request.getRole());
         if (!updateCurrent) {
             if (!Currents.isAdministrator()) {
@@ -202,6 +198,7 @@ public class UserServiceImpl implements UserService {
             UserInfoDO update = new UserInfoDO();
             update.setId(id);
             update.setUserStatus(status);
+            update.setUpdateTime(new Date());
             effect += userInfoDAO.updateById(update);
             if (disable) {
                 redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
@@ -228,6 +225,7 @@ public class UserServiceImpl implements UserService {
         UserInfoDO update = new UserInfoDO();
         update.setId(userId);
         update.setHeadPic(url);
+        update.setUpdateTime(new Date());
         return userInfoDAO.updateById(update);
     }
 

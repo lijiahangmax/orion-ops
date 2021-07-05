@@ -45,7 +45,6 @@ public class CommandTemplateController {
     @RequestMapping("/update")
     public Integer update(@RequestBody CommandTemplateRequest request) {
         Valid.notNull(request.getId());
-        Valid.notBlank(request.getName());
         Integer type = request.getType();
         if (type != null) {
             Valid.notNull(TemplateType.of(type));

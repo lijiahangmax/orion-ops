@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Jiahang Li
@@ -69,6 +69,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         key.setId(id);
         key.setKeyName(request.getName());
         key.setDescription(request.getDescription());
+        key.setUpdateTime(new Date());
         if (Strings.isBlank(fileBase64) && Strings.isBlank(password)) {
             return machineSecretKeyDAO.updateById(key);
         }

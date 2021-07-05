@@ -19,6 +19,7 @@ import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -69,6 +70,7 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
         update.setTemplateType(request.getType());
         update.setTemplateValue(value);
         update.setDescription(request.getDescription());
+        update.setUpdateTime(new Date());
         return commandTemplateDAO.updateById(update);
     }
 

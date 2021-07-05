@@ -17,14 +17,13 @@ import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -52,9 +51,10 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, request.getMachineId())
                 .eq(MachineEnvDO::getAttrKey, request.getKey());
-        if (machineEnvDAO.selectCount(wrapper).compareTo(0) > 0) {
-            throw Exceptions.invalidArgument(MessageConst.MACHINE_ENV_EXIST);
-        }
+        boolean present = DataQuery.of(machineEnvDAO)
+                .wrapper(wrapper)
+                .present();
+        Valid.isTrue(!present, MessageConst.ENV_PRESENT);
         // 新增
         MachineEnvDO entity = new MachineEnvDO();
         entity.setMachineId(request.getMachineId());
@@ -70,7 +70,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         // 查询
         Long id = request.getId();
         MachineEnvDO before = machineEnvDAO.selectById(id);
-        Valid.notNull(before, MessageConst.MACHINE_ENV_MISSING);
+        Valid.notNull(before, MessageConst.ENV_MISSING);
         // 检查是否修改了值
         String value = request.getValue();
         String beforeValue = before.getAttrValue();
@@ -78,11 +78,12 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, beforeValue);
         }
         // 修改
-        MachineEnvDO entity = new MachineEnvDO();
-        entity.setId(id);
-        entity.setAttrValue(value);
-        entity.setDescription(request.getDescription());
-        return machineEnvDAO.updateById(entity);
+        MachineEnvDO update = new MachineEnvDO();
+        update.setId(id);
+        update.setAttrValue(value);
+        update.setDescription(request.getDescription());
+        update.setUpdateTime(new Date());
+        return machineEnvDAO.updateById(update);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         int effect = 0;
         for (Long id : idList) {
             MachineEnvDO env = machineEnvDAO.selectById(id);
-            Valid.notNull(env, MessageConst.MACHINE_ENV_MISSING);
+            Valid.notNull(env, MessageConst.ENV_MISSING);
             String key = env.getAttrKey();
             Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
             effect += machineEnvDAO.deleteById(id);
@@ -138,9 +139,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     public DataGrid<MachineEnvVO> listEnv(MachineEnvRequest request) {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .like(Strings.isNotBlank(request.getKey()), MachineEnvDO::getAttrKey, request.getKey())
-                .like(Strings.isNotBlank(request.getValue()), MachineEnvDO::getAttrValue, request.getValue())
-                .like(Strings.isNotBlank(request.getDescription()), MachineEnvDO::getDescription, request.getDescription())
-                .eq(Objects.nonNull(request.getMachineId()), MachineEnvDO::getMachineId, request.getMachineId())
+                .eq(MachineEnvDO::getMachineId, request.getMachineId())
                 .orderByAsc(MachineEnvDO::getId);
         return DataQuery.of(machineEnvDAO)
                 .page(request)

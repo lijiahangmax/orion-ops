@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -114,6 +115,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             MachineInfoDO entity = new MachineInfoDO();
             entity.setId(id);
             entity.setMachineStatus(status);
+            entity.setUpdateTime(new Date());
             effect += machineInfoDAO.updateById(entity);
         }
         return effect;
@@ -197,6 +199,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         if (res == null) {
             return null;
         }
+        machine.setUpdateTime(new Date());
         machineInfoDAO.updateById(machine);
         return res;
     }

@@ -27,6 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -106,6 +107,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setFontSize(request.getFontSize());
         update.setFontColor(request.getFontColor());
         update.setBackgroundColor(request.getBackgroundColor());
+        update.setUpdateTime(new Date());
         return machineTerminalDAO.updateById(update);
     }
 
