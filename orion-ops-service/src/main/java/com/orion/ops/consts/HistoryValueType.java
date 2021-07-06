@@ -24,6 +24,11 @@ public enum HistoryValueType {
      */
     COMMAND_TEMPLATE(20),
 
+    /**
+     * 应用环境变量
+     */
+    APP_ENV(30),
+
     ;
 
     Integer type;

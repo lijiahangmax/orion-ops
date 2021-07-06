@@ -5,9 +5,11 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Tuple;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.CommandTemplateDAO;
 import com.orion.ops.dao.HistoryValueSnapshotDAO;
 import com.orion.ops.dao.MachineEnvDAO;
+import com.orion.ops.entity.domain.ApplicationEnvDO;
 import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.ops.entity.domain.HistoryValueSnapshotDO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -41,6 +43,9 @@ public class HistoryValueServiceImpl implements HistoryValueService {
 
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
+
+    @Resource
+    private ApplicationEnvDAO applicationEnvDAO;
 
     @Override
     public void addHistory(Long valueId, HistoryValueType valueType, String beforeValue) {
@@ -82,6 +87,9 @@ public class HistoryValueServiceImpl implements HistoryValueService {
             case COMMAND_TEMPLATE:
                 tuple = this.rollbackCommandTemplate(valueId, updateValue);
                 break;
+            case APP_ENV:
+                tuple = this.rollbackAppEnv(valueId, updateValue);
+                break;
             default:
                 return 0;
         }
@@ -122,12 +130,31 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         CommandTemplateDO template = commandTemplateDAO.selectById(valueId);
         Valid.notNull(template, MessageConst.METADATA_MISSING);
         // 更新
-        CommandTemplateDO updateTemplate = new CommandTemplateDO();
-        updateTemplate.setId(valueId);
-        updateTemplate.setTemplateValue(value);
-        updateTemplate.setUpdateTime(new Date());
-        Integer effect = commandTemplateDAO.updateById(updateTemplate);
+        CommandTemplateDO update = new CommandTemplateDO();
+        update.setId(valueId);
+        update.setTemplateValue(value);
+        update.setUpdateTime(new Date());
+        Integer effect = commandTemplateDAO.updateById(update);
         return Tuple.of(effect, template.getTemplateValue());
+    }
+    /**
+     * 回滚 应用环境变量模板
+     *
+     * @param valueId valueId
+     * @param value   value
+     * @return effect value
+     */
+    private Tuple rollbackAppEnv(Long valueId, String value) {
+        // 查询
+        ApplicationEnvDO env = applicationEnvDAO.selectById(valueId);
+        Valid.notNull(env, MessageConst.METADATA_MISSING);
+        // 更新
+        ApplicationEnvDO update = new ApplicationEnvDO();
+        update.setId(valueId);
+        update.setAttrValue(value);
+        update.setUpdateTime(new Date());
+        Integer effect = applicationEnvDAO.updateById(update);
+        return Tuple.of(effect, env.getAttrValue());
     }
 
 }

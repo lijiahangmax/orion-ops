@@ -10,6 +10,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -30,6 +32,7 @@ import java.io.IOException;
  * @version 1.0.0
  * @since 2021/4/2 10:24
  */
+@Slf4j
 @Configuration
 @RestControllerAdvice
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -60,33 +63,43 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
-    public HttpWrapper<?> httpRequestExceptionHandler(Exception ex) {
+    public HttpWrapper<?> httpRequestExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("httpRequestExceptionHandler url: {}, http请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
     }
 
     @ExceptionHandler(value = Exception.class)
-    public HttpWrapper<?> exceptionHandler(Exception ex) {
+    public HttpWrapper<?> normalExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("normalExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
-    public HttpWrapper<?> invalidArgumentExceptionHandler(Exception ex) {
-        ex.printStackTrace();
+    public HttpWrapper<?> invalidArgumentExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("invalidArgumentExceptionHandler url: {}, 参数异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         return HttpWrapper.error().msg(ex.getMessage());
     }
 
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
-    public HttpWrapper<?> ioExceptionHandler(Exception ex) {
+    public HttpWrapper<?> ioExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("ioExceptionHandler url: {}, io异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {SftpException.class, com.jcraft.jsch.SftpException.class})
-    public HttpWrapper<?> sftpExceptionHandler(Exception ex) {
+    public HttpWrapper<?> sftpExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("sftpExceptionHandler url: {}, sftp处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.SFTP_OPERATOR_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public HttpWrapper<?> maxUploadSizeExceededExceptionHandler(HttpServletRequest request, MaxUploadSizeExceededException ex) {
+        log.error("maxUploadSizeExceededExceptionHandler url: {}, 上传异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
+        return HttpWrapper.error().msg(MessageConst.FILE_TOO_LARGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = CodeArgumentException.class)
@@ -102,12 +115,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = RpcWrapperException.class)
     public HttpWrapper<?> rpcWrapperExceptionHandler(RpcWrapperException ex) {
         return ex.getWrapper().toHttpWrapper();
-    }
-
-    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
-    public HttpWrapper<?> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException ex) {
-        ex.printStackTrace();
-        return HttpWrapper.error().msg(MessageConst.FILE_TOO_LARGE).data(ex.getMessage());
     }
 
 }

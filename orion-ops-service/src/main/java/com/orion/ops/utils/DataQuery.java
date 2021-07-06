@@ -71,6 +71,11 @@ public class DataQuery<T> {
         return dao.selectCount(wrapper);
     }
 
+    public boolean present() {
+        Valid.notNull(wrapper, "wrapper is null");
+        return dao.selectCount(wrapper) > 0;
+    }
+
     public DataGrid<T> dataGrid() {
         return this.dataGrid(Function.identity());
     }
