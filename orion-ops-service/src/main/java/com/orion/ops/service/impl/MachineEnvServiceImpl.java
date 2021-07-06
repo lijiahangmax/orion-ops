@@ -164,9 +164,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId)
                 .orderByAsc(MachineEnvDO::getId);
-        machineEnvDAO.selectList(wrapper).forEach(e -> {
-            env.put(e.getAttrKey(), e.getAttrValue());
-        });
+        machineEnvDAO.selectList(wrapper).forEach(e -> env.put(e.getAttrKey(), e.getAttrValue()));
         return env;
     }
 
@@ -203,6 +201,13 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             }
             machineEnvDAO.insert(env);
         }
+    }
+
+    @Override
+    public Integer deleteEnvByMachineId(Long machineId) {
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, machineId);
+        return machineEnvDAO.delete(wrapper);
     }
 
     /**

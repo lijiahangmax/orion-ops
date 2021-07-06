@@ -2,7 +2,6 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 
@@ -81,5 +80,13 @@ public interface MachineEnvService {
      * @param machineId 机器id
      */
     void initEnv(Long machineId);
+
+    /**
+     * 删除机器环境变量
+     *
+     * @param machineId 机器id
+     * @return effect
+     */
+    Integer deleteEnvByMachineId(Long machineId);
 
 }

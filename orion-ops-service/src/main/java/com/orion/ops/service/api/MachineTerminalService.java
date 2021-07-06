@@ -71,6 +71,14 @@ public interface MachineTerminalService {
     DataGrid<MachineTerminalLogVO> listAccessLog(MachineTerminalLogRequest request);
 
     /**
+     * 通过机器id删除终端配置
+     *
+     * @param machineId 机器id
+     * @return effect
+     */
+    Integer deleteTerminalByMachineId(Long machineId);
+
+    /**
      * 获取 token 中的 userId
      *
      * @param token token

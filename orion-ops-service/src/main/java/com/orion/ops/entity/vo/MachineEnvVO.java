@@ -1,5 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
@@ -49,6 +51,14 @@ public class MachineEnvVO {
      */
     private Date updateTime;
 
+    /**
+     * 是否禁止删除 1可以删除 2禁止删除
+     *
+     * @see com.orion.ops.consts.Const#FORBID_DELETE_CAN
+     * @see com.orion.ops.consts.Const#FORBID_DELETE_NOT
+     */
+    private Integer forbidDelete;
+
     static {
         TypeStore.STORE.register(MachineEnvDO.class, MachineEnvVO.class, p -> {
             MachineEnvVO vo = new MachineEnvVO();
@@ -59,6 +69,8 @@ public class MachineEnvVO {
             vo.setDescription(p.getDescription());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
+            Integer forbidDelete = MachineEnvAttr.of(p.getAttrKey()) == null ? Const.FORBID_DELETE_CAN : Const.FORBID_DELETE_NOT;
+            vo.setForbidDelete(forbidDelete);
             return vo;
         });
     }

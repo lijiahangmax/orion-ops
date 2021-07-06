@@ -146,4 +146,11 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                 .dataGrid(MachineTerminalLogVO.class);
     }
 
+    @Override
+    public Integer deleteTerminalByMachineId(Long machineId) {
+        LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
+                .eq(MachineTerminalLogDO::getMachineId, machineId);
+        return machineTerminalLogDAO.delete(wrapper);
+    }
+
 }

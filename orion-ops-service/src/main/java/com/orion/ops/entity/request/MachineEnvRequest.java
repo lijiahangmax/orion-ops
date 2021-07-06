@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 环境变量
+ * 机器环境变量
  *
  * @author Jiahang Li
  * @version 1.0.0

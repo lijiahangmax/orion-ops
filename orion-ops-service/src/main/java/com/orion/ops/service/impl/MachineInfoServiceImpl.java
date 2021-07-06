@@ -18,8 +18,10 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
+import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.ValueMix;
 import com.orion.process.Processes;
@@ -64,6 +66,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Resource
     private MachineEnvService machineEnvService;
 
+    @Resource
+    private MachineTerminalService machineTerminalService;
+
+    @Resource
+    private ApplicationInfoService applicationInfoService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long addUpdateMachine(MachineInfoRequest request) {
@@ -99,10 +107,14 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Integer deleteMachine(List<Long> idList) {
         int effect = 0;
         for (Long id : idList) {
+            // 删除机器
             effect += machineInfoDAO.deleteById(id);
-            LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                    .eq(MachineEnvDO::getMachineId, id);
-            machineEnvDAO.delete(wrapper);
+            // 删除环境变量
+            effect += machineEnvService.deleteEnvByMachineId(id);
+            // 删除终端配置
+            effect += machineTerminalService.deleteTerminalByMachineId(id);
+            // 删除应用机器
+            effect += applicationInfoService.deleteAppMachineByMachineId(id);
         }
         return effect;
     }
@@ -163,7 +175,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
-        machine.setMachineName(machine.getMachineName() + " Copy");
+        machine.setMachineName(machine.getMachineName() + " " + Const.COPY);
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量
