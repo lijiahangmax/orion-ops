@@ -21,6 +21,11 @@ public class ApplicationInfoRequest extends PageRequest {
     private Long id;
 
     /**
+     * 环境id
+     */
+    private Long profileId;
+
+    /**
      * 名称
      */
     private String name;
