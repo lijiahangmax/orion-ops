@@ -62,7 +62,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         }
         MachineTerminalDO insert = new MachineTerminalDO();
         insert.setMachineId(machineId);
-        insert.setTerminalType(TerminalType.XTERM_256_COLOR.getType());
+        insert.setTerminalType(TerminalType.XTERM.getType());
         insert.setBackgroundColor(TerminalConst.BACKGROUND_COLOR);
         insert.setFontColor(TerminalConst.FONT_COLOR);
         insert.setFontSize(TerminalConst.FONT_SIZE);

@@ -40,7 +40,7 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 终端类型
      *
-     * @see com.orion.remote.TerminalType#XTERM_256_COLOR
+     * @see com.orion.remote.TerminalType#XTERM
      */
     @TableField("terminal_type")
     private String terminalType;

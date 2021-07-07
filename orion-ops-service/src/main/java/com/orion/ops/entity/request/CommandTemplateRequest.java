@@ -26,13 +26,6 @@ public class CommandTemplateRequest extends PageRequest {
     private String name;
 
     /**
-     * type
-     *
-     * @see com.orion.ops.consts.TemplateType
-     */
-    private Integer type;
-
-    /**
      * 模板值
      */
     private String value;

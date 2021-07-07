@@ -45,7 +45,6 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
         entity.setCreateUserId(user.getId());
         entity.setCreateUserName(user.getUsername());
         entity.setTemplateName(request.getName());
-        entity.setTemplateType(request.getType());
         entity.setTemplateValue(request.getValue());
         entity.setDescription(request.getDescription());
         commandTemplateDAO.insert(entity);
@@ -67,7 +66,6 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
         CommandTemplateDO update = new CommandTemplateDO();
         update.setId(id);
         update.setTemplateName(request.getName());
-        update.setTemplateType(request.getType());
         update.setTemplateValue(value);
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
@@ -78,7 +76,6 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     public DataGrid<CommandTemplateVO> listTemplate(CommandTemplateRequest request) {
         LambdaQueryWrapper<CommandTemplateDO> wrapper = new LambdaQueryWrapper<CommandTemplateDO>()
                 .eq(Objects.nonNull(request.getId()), CommandTemplateDO::getId, request.getId())
-                .eq(Objects.nonNull(request.getType()), CommandTemplateDO::getTemplateType, request.getType())
                 .like(Strings.isNotBlank(request.getName()), CommandTemplateDO::getTemplateName, request.getName())
                 .like(Strings.isNotBlank(request.getDescription()), CommandTemplateDO::getDescription, request.getDescription())
                 .orderByDesc(CommandTemplateDO::getId);

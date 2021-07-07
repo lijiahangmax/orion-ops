@@ -2,7 +2,6 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.TemplateType;
 import com.orion.ops.entity.request.CommandTemplateRequest;
 import com.orion.ops.entity.vo.CommandTemplateVO;
 import com.orion.ops.service.api.CommandTemplateService;
@@ -35,7 +34,6 @@ public class CommandTemplateController {
     public Long add(@RequestBody CommandTemplateRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getValue());
-        Valid.notNull(TemplateType.of(request.getType()));
         return commandTemplateService.addTemplate(request);
     }
 
@@ -45,10 +43,7 @@ public class CommandTemplateController {
     @RequestMapping("/update")
     public Integer update(@RequestBody CommandTemplateRequest request) {
         Valid.notNull(request.getId());
-        Integer type = request.getType();
-        if (type != null) {
-            Valid.notNull(TemplateType.of(type));
-        }
+        Valid.notBlank(request.getValue());
         return commandTemplateService.updateTemplate(request);
     }
 

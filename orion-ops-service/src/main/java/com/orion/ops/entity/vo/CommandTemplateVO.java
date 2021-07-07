@@ -28,13 +28,6 @@ public class CommandTemplateVO {
     private String name;
 
     /**
-     * 模板类型
-     *
-     * @see com.orion.ops.consts.TemplateType
-     */
-    private Integer type;
-
-    /**
      * 模板值
      */
     private String value;
@@ -79,7 +72,6 @@ public class CommandTemplateVO {
             CommandTemplateVO vo = new CommandTemplateVO();
             vo.setId(p.getId());
             vo.setName(p.getTemplateName());
-            vo.setType(p.getTemplateType());
             vo.setValue(p.getTemplateValue());
             vo.setDescription(p.getDescription());
             vo.setCreateUserId(p.getCreateUserId());
