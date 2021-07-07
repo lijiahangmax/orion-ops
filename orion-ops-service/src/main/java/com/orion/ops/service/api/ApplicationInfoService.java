@@ -1,8 +1,13 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.domain.ApplicationMachineDO;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
+import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
+
+import java.util.List;
 
 /**
  * 应用服务
@@ -53,5 +58,47 @@ public interface ApplicationInfoService {
      * @return rows
      */
     DataGrid<ApplicationInfoVO> listApp(ApplicationInfoRequest request);
+
+    /**
+     * 获取应用详情
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return detail
+     */
+    ApplicationDetailVO getAppDetail(Long appId, Long profileId);
+
+    /**
+     * 配置app环境
+     *
+     * @param request request
+     */
+    void configAppProfile(ApplicationConfigRequest request);
+
+    /**
+     * 获取应用环境的机器
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return machineList
+     */
+    List<ApplicationMachineDO> getAppProfileMachine(Long appId, Long profileId);
+
+    /**
+     * 通过机器id删除应用机器
+     *
+     * @param machineId machineId
+     * @return effect
+     */
+    Integer deleteAppMachineByMachineId(Long machineId);
+
+    /**
+     * 通过appId profileId删除应用机器
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return effect
+     */
+    Integer deleteAppMachineByAppProfileId(Long appId, Long profileId);
 
 }

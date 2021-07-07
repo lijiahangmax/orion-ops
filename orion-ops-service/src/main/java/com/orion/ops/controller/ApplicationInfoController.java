@@ -1,9 +1,13 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.app.VcsType;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
+import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.utils.Valid;
@@ -74,5 +78,34 @@ public class ApplicationInfoController {
     public DataGrid<ApplicationInfoVO> listApp(@RequestBody ApplicationInfoRequest request) {
         return applicationService.listApp(request);
     }
+
+    /**
+     * 详情应用
+     */
+    @RequestMapping("/detail")
+    public ApplicationDetailVO appDetail(@RequestBody ApplicationInfoRequest request) {
+        Long appId = Valid.notNull(request.getId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return applicationService.getAppDetail(appId, profileId);
+    }
+
+    /**
+     * 配置应用
+     */
+    @RequestMapping("/config")
+    public HttpWrapper<?> configApp(@RequestBody ApplicationConfigRequest request) {
+        Valid.notNull(request.getAppId());
+        Valid.notNull(request.getProfileId());
+        Valid.notNull(request.getEnv());
+        Valid.notBlank(request.getEnv().getVcsCodePath());
+        Valid.notBlank(request.getEnv().getVcsRootPath());
+        Valid.notNull(VcsType.of(request.getEnv().getVcsType()));
+        Valid.notBlank(request.getEnv().getDistPath());
+        Valid.notEmpty(request.getMachineIdList());
+        applicationService.configAppProfile(request);
+        return HttpWrapper.ok();
+    }
+
+    // 修改同步 复制 机器相关
 
 }
