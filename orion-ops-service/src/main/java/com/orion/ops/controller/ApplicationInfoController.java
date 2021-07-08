@@ -4,7 +4,9 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.VcsType;
+import com.orion.ops.entity.request.ApplicationConfigDeployActionRequest;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 应用 api
@@ -102,6 +105,13 @@ public class ApplicationInfoController {
         Valid.notNull(VcsType.of(request.getEnv().getVcsType()));
         Valid.notBlank(request.getEnv().getDistPath());
         Valid.notEmpty(request.getMachineIdList());
+        List<ApplicationConfigDeployActionRequest> actions = Valid.notEmpty(request.getActions());
+        for (ApplicationConfigDeployActionRequest action : actions) {
+            Valid.notBlank(action.getName());
+            Valid.notBlank(action.getCommand());
+            ActionType actionType = Valid.notNull(ActionType.of(action.getType()));
+            Valid.isTrue(!ActionType.CONNECT.equals(actionType));
+        }
         applicationService.configAppProfile(request);
         return HttpWrapper.ok();
     }

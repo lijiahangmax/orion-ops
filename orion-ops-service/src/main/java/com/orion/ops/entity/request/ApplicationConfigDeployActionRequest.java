@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2021/7/7 19:00
  */
 @Data
-public class ApplicationConfigActionRequest {
+public class ApplicationConfigDeployActionRequest {
 
     /**
      * 名称

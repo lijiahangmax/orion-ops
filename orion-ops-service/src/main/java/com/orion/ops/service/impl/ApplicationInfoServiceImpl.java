@@ -4,22 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.dao.ApplicationEnvDAO;
+import com.orion.ops.dao.ApplicationDeployActionDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
-import com.orion.ops.entity.domain.ApplicationInfoDO;
-import com.orion.ops.entity.domain.ApplicationMachineDO;
-import com.orion.ops.entity.domain.ApplicationProfileDO;
-import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.request.ApplicationConfigEnvRequest;
-import com.orion.ops.entity.request.ApplicationConfigRequest;
-import com.orion.ops.entity.request.ApplicationEnvRequest;
-import com.orion.ops.entity.request.ApplicationInfoRequest;
+import com.orion.ops.entity.domain.*;
+import com.orion.ops.entity.request.*;
+import com.orion.ops.entity.vo.ApplicationDeployActionVO;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
+import com.orion.ops.service.api.ApplicationDeployActionService;
 import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.service.api.MachineInfoService;
@@ -57,13 +54,16 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private ApplicationProfileDAO applicationProfileDAO;
 
     @Resource
-    private ApplicationEnvDAO applicationEnvDAO;
-
-    @Resource
     private ApplicationEnvService applicationEnvService;
 
     @Resource
     private MachineInfoService machineInfoService;
+
+    @Resource
+    private ApplicationDeployActionDAO applicationDeployActionDAO;
+
+    @Resource
+    private ApplicationDeployActionService applicationDeployActionService;
 
     @Override
     public Long insertApp(ApplicationInfoRequest request) {
@@ -156,6 +156,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(id, null);
         // 删除机器
         effect += this.deleteAppMachineByAppProfileId(id, null);
+        // 删除部署步骤
+        effect += applicationDeployActionService.deleteAppActionByAppProfileId(id, null);
         return effect;
     }
 
@@ -211,7 +213,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 })
                 .collect(Collectors.toList());
         // 查询部署流程
-
+        List<ApplicationDeployActionVO> actions = applicationDeployActionService.getDeployActions(appId, profileId);
         // 组装数据
         ApplicationDetailVO detail = Converts.to(app, ApplicationDetailVO.class);
         detail.setProfileId(profile.getId());
@@ -223,6 +225,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         detail.setDistPath(distPath);
         detail.setMachineCount(machines.size());
         detail.setMachines(machines);
+        detail.setActions(actions);
         return detail;
     }
 
@@ -237,25 +240,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Object[] envKeys = Arrays.stream(ApplicationEnvAttr.values()).map(Enum::name).toArray();
         // 配置环境变量
         applicationEnvService.deleteAppProfileEnvByAppProfileId(appId, profileId, envKeys);
-        this.toAppEnv(request);
+        this.configAppEnv(request.getEnv(), appId, profileId);
         // 配置机器
         this.deleteAppMachineByAppProfileId(appId, profileId);
-        this.toAppMachines(request);
+        this.configAppMachines(request.getMachineIdList(), appId, profileId);
         // 配置部署
-
-        // 同步其他环境 环境变量
-        if (Const.CONFIGURED.equals(request.getSyncEnv())) {
-
-        }
-        // 同步其他环境 机器
-        if (Const.CONFIGURED.equals(request.getSyncMachine())) {
-
-        }
-
-        // 同步其他环境 部署
-        if (Const.CONFIGURED.equals(request.getSyncAction())) {
-
-        }
+        applicationDeployActionService.deleteAppActionByAppProfileId(appId, profileId);
+        this.configAppDeployAction(request.getActions(), appId, profileId);
     }
 
     @Override
@@ -299,12 +290,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     /**
-     * ApplicationConfigRequest -> ApplicationEnvDO
+     * 配置app环境
      *
-     * @param request request
+     * @param env       env
+     * @param appId     appId
+     * @param profileId profileId
      */
-    private void toAppEnv(ApplicationConfigRequest request) {
-        ApplicationConfigEnvRequest env = request.getEnv();
+    private void configAppEnv(ApplicationConfigEnvRequest env, Long appId, Long profileId) {
         // 版本控制根目录
         ApplicationEnvRequest vcsRootPath = new ApplicationEnvRequest();
         vcsRootPath.setKey(ApplicationEnvAttr.VCS_ROOT_PATH.name());
@@ -328,33 +320,61 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // reduce
         List<ApplicationEnvRequest> envs = Lists.of(vcsRootPath, vcsCodePath, vcsType, distPath);
         envs.forEach(e -> {
-            e.setAppId(request.getAppId());
-            e.setProfileId(request.getProfileId());
+            e.setAppId(appId);
+            e.setProfileId(profileId);
         });
         envs.forEach(applicationEnvService::addAppEnv);
     }
 
     /**
-     * ApplicationConfigRequest -> ApplicationMachineDO
+     * 配置app机器
      *
-     * @param request ApplicationConfigRequest
+     * @param machineIdList 机器列表
+     * @param appId         appId
+     * @param profileId     profileId
      */
-    private void toAppMachines(ApplicationConfigRequest request) {
-        // 构建
-        List<ApplicationMachineDO> list = request.getMachineIdList().stream()
+    private void configAppMachines(List<Long> machineIdList, Long appId, Long profileId) {
+        List<ApplicationMachineDO> list = machineIdList.stream()
                 .map(i -> {
                     ApplicationMachineDO machine = new ApplicationMachineDO();
-                    machine.setAppId(request.getAppId());
-                    machine.setProfileId(request.getProfileId());
+                    machine.setAppId(appId);
+                    machine.setProfileId(profileId);
                     machine.setMachineId(i);
                     return machine;
                 }).collect(Collectors.toList());
         // 检查
-        for (Long machineId : request.getMachineIdList()) {
+        for (Long machineId : machineIdList) {
             MachineInfoDO machine = machineInfoService.selectById(machineId);
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         }
         list.forEach(applicationMachineDAO::insert);
+    }
+
+    /**
+     * 配置app部署步骤
+     *
+     * @param actions   actions
+     * @param appId     appId
+     * @param profileId profileId
+     */
+    private void configAppDeployAction(List<ApplicationConfigDeployActionRequest> actions, Long appId, Long profileId) {
+        // 插入建立连接
+        ApplicationConfigDeployActionRequest connectAction = new ApplicationConfigDeployActionRequest();
+        connectAction.setType(ActionType.CONNECT.getType());
+        connectAction.setName(Const.CONNECT);
+        actions.add(0, connectAction);
+        // 新增
+        for (int i = 0; i < actions.size(); i++) {
+            ApplicationConfigDeployActionRequest action = actions.get(i);
+            ApplicationDeployActionDO entity = new ApplicationDeployActionDO();
+            entity.setAppId(appId);
+            entity.setProfileId(profileId);
+            entity.setActionType(action.getType());
+            entity.setActionName(action.getName());
+            entity.setActionCommand(action.getCommand());
+            entity.setActionStep(i + i);
+            applicationDeployActionDAO.insert(entity);
+        }
     }
 
 }
