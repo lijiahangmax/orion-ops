@@ -66,7 +66,7 @@ public enum MachineEnvAttr {
      * 宿主机存放部署产物目录
      * 目标集群产物分发的目录
      */
-    DIST_PATH(true, true, "产物目录"),
+    DIST_PATH(true, true, "宿主机存放部署产物目录 目标集群产物分发目录"),
 
     ;
 

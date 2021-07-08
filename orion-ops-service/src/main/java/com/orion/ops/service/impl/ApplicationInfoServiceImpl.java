@@ -9,9 +9,13 @@ import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
-import com.orion.ops.entity.domain.*;
+import com.orion.ops.entity.domain.ApplicationInfoDO;
+import com.orion.ops.entity.domain.ApplicationMachineDO;
+import com.orion.ops.entity.domain.ApplicationProfileDO;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.ApplicationConfigEnvRequest;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
+import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
@@ -22,12 +26,12 @@ import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -240,16 +244,18 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 配置部署
 
         // 同步其他环境 环境变量
-        if (Const.CONFIGURED.equals(request.getSyncDefaultProfileEnv())) {
+        if (Const.CONFIGURED.equals(request.getSyncEnv())) {
 
         }
         // 同步其他环境 机器
-        if (Const.CONFIGURED.equals(request.getSyncDefaultProfileMachine())) {
+        if (Const.CONFIGURED.equals(request.getSyncMachine())) {
 
         }
 
         // 同步其他环境 部署
+        if (Const.CONFIGURED.equals(request.getSyncAction())) {
 
+        }
     }
 
     @Override
@@ -298,38 +304,34 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
      * @param request request
      */
     private void toAppEnv(ApplicationConfigRequest request) {
-        List<ApplicationEnvDO> list = new ArrayList<>();
         ApplicationConfigEnvRequest env = request.getEnv();
         // 版本控制根目录
-        ApplicationEnvDO vcsRootPath = new ApplicationEnvDO();
-        vcsRootPath.setAttrKey(ApplicationEnvAttr.VCS_ROOT_PATH.name());
-        vcsRootPath.setAttrValue(env.getVcsRootPath());
+        ApplicationEnvRequest vcsRootPath = new ApplicationEnvRequest();
+        vcsRootPath.setKey(ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        vcsRootPath.setValue(env.getVcsRootPath());
         vcsRootPath.setDescription(ApplicationEnvAttr.VCS_ROOT_PATH.getDescription());
         // 应用代码目录
-        ApplicationEnvDO vcsCodePath = new ApplicationEnvDO();
-        vcsCodePath.setAttrKey(ApplicationEnvAttr.VCS_CODE_PATH.name());
-        vcsCodePath.setAttrValue(env.getVcsCodePath());
+        ApplicationEnvRequest vcsCodePath = new ApplicationEnvRequest();
+        vcsCodePath.setKey(ApplicationEnvAttr.VCS_CODE_PATH.name());
+        vcsCodePath.setValue(env.getVcsCodePath());
         vcsCodePath.setDescription(ApplicationEnvAttr.VCS_CODE_PATH.getDescription());
         // 版本管理工具
-        ApplicationEnvDO vcsType = new ApplicationEnvDO();
-        vcsType.setAttrKey(ApplicationEnvAttr.VCS_TYPE.name());
-        vcsType.setAttrValue(env.getVcsType());
+        ApplicationEnvRequest vcsType = new ApplicationEnvRequest();
+        vcsType.setKey(ApplicationEnvAttr.VCS_TYPE.name());
+        vcsType.setValue(env.getVcsType());
         vcsType.setDescription(ApplicationEnvAttr.VCS_TYPE.getDescription());
         // 构建产物目录
-        ApplicationEnvDO distPath = new ApplicationEnvDO();
-        distPath.setAttrKey(ApplicationEnvAttr.DIST_PATH.name());
-        distPath.setAttrValue(env.getDistPath());
+        ApplicationEnvRequest distPath = new ApplicationEnvRequest();
+        distPath.setKey(ApplicationEnvAttr.DIST_PATH.name());
+        distPath.setValue(env.getDistPath());
         distPath.setDescription(ApplicationEnvAttr.DIST_PATH.getDescription());
         // reduce
-        list.add(vcsRootPath);
-        list.add(vcsCodePath);
-        list.add(vcsType);
-        list.add(distPath);
-        list.forEach(e -> {
+        List<ApplicationEnvRequest> envs = Lists.of(vcsRootPath, vcsCodePath, vcsType, distPath);
+        envs.forEach(e -> {
             e.setAppId(request.getAppId());
             e.setProfileId(request.getProfileId());
         });
-        list.forEach(applicationEnvDAO::insert);
+        envs.forEach(applicationEnvService::addAppEnv);
     }
 
     /**

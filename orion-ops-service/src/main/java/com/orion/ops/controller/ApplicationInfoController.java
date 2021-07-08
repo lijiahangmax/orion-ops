@@ -106,6 +106,6 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
-    // 修改同步 复制 机器相关
+    // 复制
 
 }

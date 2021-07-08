@@ -19,7 +19,7 @@ public enum ApplicationEnvAttr {
     /**
      * 版本控制根目录
      */
-    VCS_ROOT_PATH("版本控制根目录"),
+    VCS_ROOT_PATH("版本控制根目录 (.git)"),
 
     /**
      * 应用代码目录
@@ -36,7 +36,7 @@ public enum ApplicationEnvAttr {
     /**
      * 构建产物目录
      */
-    DIST_PATH("构建产物目录"),
+    DIST_PATH("构建产物目录 (代码目录的相对目录)"),
 
     ;
 

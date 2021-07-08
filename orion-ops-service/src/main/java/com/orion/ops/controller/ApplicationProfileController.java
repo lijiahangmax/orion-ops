@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/profile")
+@RequestMapping("/orion/api/app-profile")
 public class ApplicationProfileController {
 
     @Resource
@@ -45,9 +45,9 @@ public class ApplicationProfileController {
     @RequestMapping("/update")
     public Integer updateProfile(@RequestBody ApplicationProfileRequest request) {
         Valid.notNull(request.getId());
-        Valid.notBlank(request.getName());
-        Valid.notBlank(request.getTag());
-        Valid.in(request.getReleaseAudit(), Const.ENABLE, Const.DISABLE);
+        if (request.getReleaseAudit() != null) {
+            Valid.in(request.getReleaseAudit(), Const.ENABLE, Const.DISABLE);
+        }
         return applicationProfileService.updateProfile(request);
     }
 
