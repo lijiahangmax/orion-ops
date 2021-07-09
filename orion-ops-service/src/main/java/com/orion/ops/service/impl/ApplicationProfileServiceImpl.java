@@ -6,13 +6,16 @@ import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
-import com.orion.ops.service.api.ApplicationProfileService;
+import com.orion.ops.service.api.*;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,16 +32,21 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     @Resource
     private ApplicationProfileDAO applicationProfileDAO;
 
+    @Resource
+    private ApplicationMachineService applicationMachineService;
+
+    @Resource
+    private ApplicationEnvService applicationEnvService;
+
+    @Resource
+    private ApplicationDeployActionService applicationDeployActionService;
+
     @Override
     public Long addProfile(ApplicationProfileRequest request) {
         String name = request.getName();
         String tag = request.getTag();
         // 重复检查
-        LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
-                .eq(ApplicationProfileDO::getProfileName, name)
-                .eq(ApplicationProfileDO::getProfileTag, tag);
-        Integer count = applicationProfileDAO.selectCount(presentWrapper);
-        Valid.eq(count, 0, MessageConst.NAME_TAG_PRESENT);
+        this.checkPresent(null, name, tag);
         // 插入
         ApplicationProfileDO insert = new ApplicationProfileDO();
         insert.setProfileName(request.getName());
@@ -55,12 +63,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         String name = request.getName();
         String tag = request.getTag();
         // 重复检查
-        LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
-                .ne(ApplicationProfileDO::getId, id)
-                .eq(ApplicationProfileDO::getProfileName, name)
-                .eq(ApplicationProfileDO::getProfileTag, tag);
-        Integer count = applicationProfileDAO.selectCount(presentWrapper);
-        Valid.eq(count, 0, MessageConst.NAME_TAG_PRESENT);
+        this.checkPresent(id, name, tag);
         // 修改
         ApplicationProfileDO update = new ApplicationProfileDO();
         update.setId(id);
@@ -68,23 +71,50 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         update.setProfileTag(request.getTag());
         update.setDescription(request.getDescription());
         update.setReleaseAudit(request.getReleaseAudit());
+        update.setUpdateTime(new Date());
         return applicationProfileDAO.updateById(update);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer deleteProfile(Long id) {
-        // 删除关联
-        return applicationProfileDAO.deleteById(id);
+        int effect = 0;
+        // 删除环境
+        effect += applicationProfileDAO.deleteById(id);
+        // 删除环境变量
+        effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(null, id);
+        // 删除环境机器
+        effect += applicationMachineService.deleteAppMachineByAppProfileId(null, id);
+        // 删除环境部署步骤
+        effect += applicationDeployActionService.deleteAppActionByAppProfileId(null, id);
+        return effect;
     }
 
     @Override
     public List<ApplicationProfileVO> listProfile(ApplicationProfileRequest request) {
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
-                .eq(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
-                .eq(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag());
+                .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
+                .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag());
         return applicationProfileDAO.selectList(wrapper).stream()
                 .map(s -> Converts.to(s, ApplicationProfileVO.class))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 检查是否存在
+     *
+     * @param id   id
+     * @param name name
+     * @param tag  tag
+     */
+    private void checkPresent(Long id, String name, String tag) {
+        LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
+                .ne(id != null, ApplicationProfileDO::getId, id)
+                .and(s -> s.eq(ApplicationProfileDO::getProfileName, name)
+                        .or()
+                        .eq(ApplicationProfileDO::getProfileTag, tag));
+        boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.NAME_TAG_PRESENT);
     }
 
 }

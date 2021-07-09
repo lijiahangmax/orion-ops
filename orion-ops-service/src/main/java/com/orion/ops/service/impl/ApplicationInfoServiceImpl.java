@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.dao.ApplicationDeployActionDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
@@ -16,10 +15,7 @@ import com.orion.ops.entity.vo.ApplicationDeployActionVO;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
-import com.orion.ops.service.api.ApplicationDeployActionService;
-import com.orion.ops.service.api.ApplicationEnvService;
-import com.orion.ops.service.api.ApplicationInfoService;
-import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
@@ -49,6 +45,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Resource
     private ApplicationMachineDAO applicationMachineDAO;
+
+    @Resource
+    private ApplicationMachineService applicationMachineService;
 
     @Resource
     private ApplicationProfileDAO applicationProfileDAO;
@@ -155,7 +154,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 删除环境变量
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(id, null);
         // 删除机器
-        effect += this.deleteAppMachineByAppProfileId(id, null);
+        effect += applicationMachineService.deleteAppMachineByAppProfileId(id, null);
         // 删除部署步骤
         effect += applicationDeployActionService.deleteAppActionByAppProfileId(id, null);
         return effect;
@@ -204,14 +203,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.name());
         String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.name());
         // 查询机器
-        List<ApplicationMachineVO> machines = this.getAppProfileMachine(appId, profileId).stream()
-                .map(m -> {
-                    MachineInfoDO machine = machineInfoService.selectById(m.getMachineId());
-                    ApplicationMachineVO machineVO = Converts.to(machine, ApplicationMachineVO.class);
-                    machineVO.setId(m.getId());
-                    return machineVO;
-                })
-                .collect(Collectors.toList());
+        List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询部署流程
         List<ApplicationDeployActionVO> actions = applicationDeployActionService.getDeployActions(appId, profileId);
         // 组装数据
@@ -242,7 +234,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         applicationEnvService.deleteAppProfileEnvByAppProfileId(appId, profileId, envKeys);
         this.configAppEnv(request.getEnv(), appId, profileId);
         // 配置机器
-        this.deleteAppMachineByAppProfileId(appId, profileId);
+        applicationMachineService.deleteAppMachineByAppProfileId(appId, profileId);
         this.configAppMachines(request.getMachineIdList(), appId, profileId);
         // 配置部署
         applicationDeployActionService.deleteAppActionByAppProfileId(appId, profileId);
@@ -251,35 +243,20 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Override
     public void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId) {
+        // 查询应用和环境
+        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
+        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
+        Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_MISSING);
+        // 配置环境变量
+
+        // 配置机器
+
 
     }
 
     @Override
     public void copyApplication(Long appId) {
 
-    }
-
-    @Override
-    public List<ApplicationMachineDO> getAppProfileMachine(Long appId, Long profileId) {
-        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
-                .eq(ApplicationMachineDO::getAppId, appId)
-                .eq(ApplicationMachineDO::getMachineId, profileId);
-        return applicationMachineDAO.selectList(wrapper);
-    }
-
-    @Override
-    public Integer deleteAppMachineByMachineId(Long machineId) {
-        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
-                .eq(ApplicationMachineDO::getMachineId, machineId);
-        return applicationMachineDAO.delete(wrapper);
-    }
-
-    @Override
-    public Integer deleteAppMachineByAppProfileId(Long appId, Long profileId) {
-        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
-                .eq(appId != null, ApplicationMachineDO::getAppId, appId)
-                .eq(profileId != null, ApplicationMachineDO::getProfileId, profileId);
-        return applicationMachineDAO.delete(wrapper);
     }
 
     /**
@@ -368,11 +345,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
      * @param profileId profileId
      */
     private void configAppDeployAction(List<ApplicationConfigDeployActionRequest> actions, Long appId, Long profileId) {
-        // 插入建立连接
-        ApplicationConfigDeployActionRequest connectAction = new ApplicationConfigDeployActionRequest();
-        connectAction.setType(ActionType.CONNECT.getType());
-        connectAction.setName(Const.CONNECT);
-        actions.add(0, connectAction);
         // 新增
         for (int i = 0; i < actions.size(); i++) {
             ApplicationConfigDeployActionRequest action = actions.get(i);
