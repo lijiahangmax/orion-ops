@@ -76,6 +76,22 @@ public interface ApplicationInfoService {
     void configAppProfile(ApplicationConfigRequest request);
 
     /**
+     * 同步app环境
+     *
+     * @param appId         appId
+     * @param profileId     profileId
+     * @param syncProfileId 需要同步的profileId
+     */
+    void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId);
+
+    /**
+     * 复制app
+     *
+     * @param appId appId
+     */
+    void copyApplication(Long appId);
+
+    /**
      * 获取应用环境的机器
      *
      * @param appId     appId

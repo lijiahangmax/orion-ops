@@ -61,11 +61,16 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
                 .eq(ApplicationEnvDO::getProfileId, profileId)
-                .eq(ApplicationEnvDO::getAttrKey, key);
-        boolean present = DataQuery.of(applicationEnvDAO)
-                .wrapper(wrapper)
-                .present();
-        Valid.isTrue(!present, MessageConst.ENV_PRESENT);
+                .eq(ApplicationEnvDO::getAttrKey, key)
+                .last(Const.LIMIT_1);
+        ApplicationEnvDO env = applicationEnvDAO.selectOne(wrapper);
+        if (env != null) {
+            // 修改
+            Long id = env.getId();
+            request.setId(id);
+            this.updateAppEnv(request);
+            return id;
+        }
         // 新增
         ApplicationEnvDO entity = new ApplicationEnvDO();
         entity.setAppId(appId);
@@ -75,20 +80,6 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         entity.setDescription(request.getDescription());
         applicationEnvDAO.insert(entity);
         return entity.getId();
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Integer deleteAppEnv(List<Long> idList) {
-        int effect = 0;
-        for (Long id : idList) {
-            ApplicationEnvDO env = applicationEnvDAO.selectById(id);
-            Valid.notNull(env, MessageConst.ENV_MISSING);
-            String key = env.getAttrKey();
-            Valid.isTrue(ApplicationEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
-            effect += applicationEnvDAO.deleteById(id);
-        }
-        return effect;
     }
 
     @Override
@@ -110,6 +101,20 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         return applicationEnvDAO.updateById(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteAppEnv(List<Long> idList) {
+        int effect = 0;
+        for (Long id : idList) {
+            ApplicationEnvDO env = applicationEnvDAO.selectById(id);
+            Valid.notNull(env, MessageConst.ENV_MISSING);
+            String key = env.getAttrKey();
+            Valid.isTrue(ApplicationEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            effect += applicationEnvDAO.deleteById(id);
+        }
+        return effect;
     }
 
     @Override

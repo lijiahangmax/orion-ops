@@ -50,11 +50,16 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         // 查询
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, request.getMachineId())
-                .eq(MachineEnvDO::getAttrKey, request.getKey());
-        boolean present = DataQuery.of(machineEnvDAO)
-                .wrapper(wrapper)
-                .present();
-        Valid.isTrue(!present, MessageConst.ENV_PRESENT);
+                .eq(MachineEnvDO::getAttrKey, request.getKey())
+                .last(Const.LIMIT_1);
+        MachineEnvDO env = machineEnvDAO.selectOne(wrapper);
+        if (env != null) {
+            // 修改
+            Long id = env.getId();
+            request.setId(id);
+            this.updateEnv(request);
+            return id;
+        }
         // 新增
         MachineEnvDO entity = new MachineEnvDO();
         entity.setMachineId(request.getMachineId());

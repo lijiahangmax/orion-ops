@@ -250,6 +250,16 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     @Override
+    public void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId) {
+
+    }
+
+    @Override
+    public void copyApplication(Long appId) {
+
+    }
+
+    @Override
     public List<ApplicationMachineDO> getAppProfileMachine(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
