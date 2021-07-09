@@ -77,4 +77,13 @@ public interface ApplicationEnvService {
      */
     Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId, Object... envKey);
 
+    /**
+     * 同步app环境变量
+     *
+     * @param appId         appId
+     * @param profileId     profileId
+     * @param syncProfileId 需要同步的profileId
+     */
+    void syncAppProfileEnv(Long appId, Long profileId, Long syncProfileId);
+
 }

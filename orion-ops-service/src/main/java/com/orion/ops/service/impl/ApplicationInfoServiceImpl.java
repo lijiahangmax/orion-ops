@@ -242,16 +242,18 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId) {
         // 查询应用和环境
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
         Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_MISSING);
-        // 配置环境变量
-
-        // 配置机器
-
-
+        // 同步环境变量
+        applicationEnvService.syncAppProfileEnv(appId, profileId, syncProfileId);
+        // 同步机器
+        applicationMachineService.syncAppProfileMachine(appId, profileId, syncProfileId);
+        // 同步部署
+        applicationDeployActionService.syncAppProfileAction(appId, profileId, syncProfileId);
     }
 
     @Override
@@ -346,15 +348,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
      */
     private void configAppDeployAction(List<ApplicationConfigDeployActionRequest> actions, Long appId, Long profileId) {
         // 新增
-        for (int i = 0; i < actions.size(); i++) {
-            ApplicationConfigDeployActionRequest action = actions.get(i);
+        for (ApplicationConfigDeployActionRequest action : actions) {
             ApplicationDeployActionDO entity = new ApplicationDeployActionDO();
             entity.setAppId(appId);
             entity.setProfileId(profileId);
             entity.setActionType(action.getType());
             entity.setActionName(action.getName());
             entity.setActionCommand(action.getCommand());
-            entity.setActionStep(i + i);
             applicationDeployActionDAO.insert(entity);
         }
     }

@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * app环境 实现
@@ -160,6 +161,35 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
                 .eq(profileId != null, ApplicationEnvDO::getProfileId, profileId)
                 .in(!Arrays1.isEmpty(envKeys), ApplicationEnvDO::getAttrKey, envKeys);
         return applicationEnvDAO.delete(wrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppProfileEnv(Long appId, Long profileId, Long syncProfileId) {
+        // 查询
+        LambdaQueryWrapper<ApplicationEnvDO> querySourceWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                .eq(ApplicationEnvDO::getAppId, appId)
+                .eq(ApplicationEnvDO::getProfileId, profileId);
+        List<ApplicationEnvDO> sourceEnvs = applicationEnvDAO.selectList(querySourceWrapper);
+        // 更新
+        for (ApplicationEnvDO sourceEnv : sourceEnvs) {
+            ApplicationEnvRequest update = new ApplicationEnvRequest();
+            update.setAppId(appId);
+            update.setProfileId(syncProfileId);
+            update.setKey(sourceEnv.getAttrKey());
+            update.setValue(sourceEnv.getAttrValue());
+            update.setDescription(sourceEnv.getDescription());
+            this.addAppEnv(update);
+        }
+        // 删除
+        List<String> sourceKeys = sourceEnvs.stream()
+                .map(ApplicationEnvDO::getAttrKey)
+                .collect(Collectors.toList());
+        LambdaQueryWrapper<ApplicationEnvDO> deleteWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                .eq(ApplicationEnvDO::getAppId, appId)
+                .eq(ApplicationEnvDO::getProfileId, syncProfileId)
+                .ne(ApplicationEnvDO::getAttrKey, sourceKeys);
+        applicationEnvDAO.delete(deleteWrapper);
     }
 
 }

@@ -7,6 +7,7 @@ import com.orion.ops.entity.vo.ApplicationDeployActionVO;
 import com.orion.ops.service.api.ApplicationDeployActionService;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,11 +38,37 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
     public List<ApplicationDeployActionVO> getDeployActions(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationDeployActionDO> wrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
                 .eq(ApplicationDeployActionDO::getAppId, appId)
-                .eq(ApplicationDeployActionDO::getProfileId, profileId)
-                .orderByAsc(ApplicationDeployActionDO::getActionStep);
-        return applicationDeployActionDAO.selectList(wrapper).stream()
+                .eq(ApplicationDeployActionDO::getProfileId, profileId);
+        List<ApplicationDeployActionVO> actions = applicationDeployActionDAO.selectList(wrapper).stream()
                 .map(s -> Converts.to(s, ApplicationDeployActionVO.class))
                 .collect(Collectors.toList());
+        for (int i = 0; i < actions.size(); i++) {
+            actions.get(0).setStep(i + 1);
+        }
+        return actions;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppProfileAction(Long appId, Long profileId, Long syncProfileId) {
+        // 删除
+        LambdaQueryWrapper<ApplicationDeployActionDO> deleteWrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
+                .eq(ApplicationDeployActionDO::getAppId, appId)
+                .eq(ApplicationDeployActionDO::getProfileId, syncProfileId);
+        applicationDeployActionDAO.delete(deleteWrapper);
+        // 查询
+        LambdaQueryWrapper<ApplicationDeployActionDO> queryWrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
+                .eq(ApplicationDeployActionDO::getAppId, appId)
+                .eq(ApplicationDeployActionDO::getProfileId, profileId);
+        List<ApplicationDeployActionDO> actions = applicationDeployActionDAO.selectList(queryWrapper);
+        // 新增
+        for (ApplicationDeployActionDO action : actions) {
+            action.setId(null);
+            action.setCreateTime(null);
+            action.setUpdateTime(null);
+            action.setProfileId(syncProfileId);
+            applicationDeployActionDAO.insert(action);
+        }
     }
 
 }

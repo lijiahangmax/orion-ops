@@ -9,7 +9,6 @@
         <result column="profile_id" property="profileId"/>
         <result column="action_name" property="actionName"/>
         <result column="action_type" property="actionType"/>
-        <result column="action_step" property="actionStep"/>
         <result column="action_command" property="actionCommand"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -17,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, profile_id, action_name, action_type, action_step, action_command, create_time, update_time
+        id, app_id, profile_id, action_name, action_type, action_command, create_time, update_time
     </sql>
 
 </mapper>

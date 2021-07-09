@@ -31,4 +31,13 @@ public interface ApplicationDeployActionService {
      */
     List<ApplicationDeployActionVO> getDeployActions(Long appId, Long profileId);
 
+    /**
+     * 同步app操作步骤
+     *
+     * @param appId         appId
+     * @param profileId     profileId
+     * @param syncProfileId 需要同步的profileId
+     */
+    void syncAppProfileAction(Long appId, Long profileId, Long syncProfileId);
+
 }

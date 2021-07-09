@@ -48,5 +48,13 @@ public interface ApplicationMachineService {
      */
     Integer deleteAppMachineByAppProfileId(Long appId, Long profileId);
 
+    /**
+     * 同步app机器
+     *
+     * @param appId         appId
+     * @param profileId     profileId
+     * @param syncProfileId 需要同步的profileId
+     */
+    void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId);
 
 }

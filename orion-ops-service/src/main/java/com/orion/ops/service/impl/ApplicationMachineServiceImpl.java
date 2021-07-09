@@ -9,6 +9,7 @@ import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -69,6 +70,29 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
                 .eq(appId != null, ApplicationMachineDO::getAppId, appId)
                 .eq(profileId != null, ApplicationMachineDO::getProfileId, profileId);
         return applicationMachineDAO.delete(wrapper);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId) {
+        // 删除
+        LambdaQueryWrapper<ApplicationMachineDO> deleteWrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, syncProfileId);
+        applicationMachineDAO.delete(deleteWrapper);
+        // 查询
+        LambdaQueryWrapper<ApplicationMachineDO> queryWrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, profileId);
+        List<ApplicationMachineDO> machines = applicationMachineDAO.selectList(queryWrapper);
+        // 新增
+        for (ApplicationMachineDO machine : machines) {
+            machine.setId(null);
+            machine.setCreateTime(null);
+            machine.setUpdateTime(null);
+            machine.setProfileId(syncProfileId);
+            applicationMachineDAO.insert(machine);
+        }
     }
 
 }

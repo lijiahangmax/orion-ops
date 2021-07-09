@@ -18,10 +18,7 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
-import com.orion.ops.service.api.ApplicationInfoService;
-import com.orion.ops.service.api.MachineEnvService;
-import com.orion.ops.service.api.MachineInfoService;
-import com.orion.ops.service.api.MachineTerminalService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.ValueMix;
 import com.orion.process.Processes;
@@ -70,7 +67,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private MachineTerminalService machineTerminalService;
 
     @Resource
-    private ApplicationInfoService applicationInfoService;
+    private ApplicationMachineService applicationMachineService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -114,7 +111,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             // 删除终端配置
             effect += machineTerminalService.deleteTerminalByMachineId(id);
             // 删除应用机器
-            effect += applicationInfoService.deleteAppMachineByMachineId(id);
+            effect += applicationMachineService.deleteAppMachineByMachineId(id);
         }
         return effect;
     }
