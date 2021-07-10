@@ -80,4 +80,6 @@ public class MessageConst {
 
     public static final String PROFILE_MISSING = "环境不存在";
 
+    public static final String APP_PROFILE_NOT_CONFIGURED = "应用环境还未配置";
+
 }

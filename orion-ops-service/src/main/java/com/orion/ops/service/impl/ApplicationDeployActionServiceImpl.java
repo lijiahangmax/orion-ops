@@ -79,6 +79,7 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
         List<ApplicationDeployActionDO> actions = applicationDeployActionDAO.selectList(wrapper);
         actions.forEach(s -> {
             s.setId(null);
+            s.setAppId(targetAppId);
             s.setCreateTime(null);
             s.setUpdateTime(null);
         });

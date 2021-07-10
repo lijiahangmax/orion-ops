@@ -111,6 +111,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
         List<ApplicationMachineDO> machines = applicationMachineDAO.selectList(wrapper);
         machines.forEach(s -> {
             s.setId(null);
+            s.setAppId(targetAppId);
             s.setCreateTime(null);
             s.setUpdateTime(null);
         });

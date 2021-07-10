@@ -200,6 +200,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         List<ApplicationEnvDO> envs = applicationEnvDAO.selectList(wrapper);
         envs.forEach(s -> {
             s.setId(null);
+            s.setAppId(targetAppId);
             s.setCreateTime(null);
             s.setUpdateTime(null);
         });
