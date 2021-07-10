@@ -176,9 +176,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         }
         // 查询机器
         for (ApplicationInfoVO app : appList) {
-            LambdaQueryWrapper<ApplicationMachineDO> machineWrapper = new LambdaQueryWrapper<>();
-            // 机器数量
-            Integer machineCount = applicationMachineDAO.selectCount(machineWrapper);
+            Integer machineCount = applicationMachineService.selectAppProfileMachineCount(app.getId(), request.getProfileId());
             app.setMachineCount(machineCount);
             if (machineCount == 0) {
                 app.setIsConfig(Const.NOT_CONFIGURED);
@@ -248,17 +246,39 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
         Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_MISSING);
+        // 检查环境是否已配置
+        boolean isConfig = this.checkAppConfig(appId, profileId);
+        Valid.isTrue(isConfig, MessageConst.APP_PROFILE_NOT_CONFIGURED);
         // 同步环境变量
         applicationEnvService.syncAppProfileEnv(appId, profileId, syncProfileId);
         // 同步机器
         applicationMachineService.syncAppProfileMachine(appId, profileId, syncProfileId);
-        // 同步部署
+        // 同步部署步骤
         applicationDeployActionService.syncAppProfileAction(appId, profileId, syncProfileId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void copyApplication(Long appId) {
+        // 查询app
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
+        app.setId(null);
+        app.setAppName(app.getAppName() + " " + Const.COPY);
+        app.setCreateTime(null);
+        app.setUpdateTime(null);
+        applicationInfoDAO.insert(app);
+        Long targetAppId = app.getId();
+        // 复制环境变量
+        applicationEnvService.copyAppEnv(appId, targetAppId);
+        // 复制机器
+        applicationMachineService.copyAppMachine(appId, targetAppId);
+        // 复制部署步骤
+        applicationDeployActionService.copyAppAction(appId, targetAppId);
+    }
 
+    @Override
+    public boolean checkAppConfig(Long appId, Long profileId) {
+        return applicationMachineService.selectAppProfileMachineCount(appId, profileId) > 0;
     }
 
     /**

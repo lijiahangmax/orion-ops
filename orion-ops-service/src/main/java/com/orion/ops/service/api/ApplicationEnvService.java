@@ -86,4 +86,12 @@ public interface ApplicationEnvService {
      */
     void syncAppProfileEnv(Long appId, Long profileId, Long syncProfileId);
 
+    /**
+     * 复制环境变量
+     *
+     * @param appId       appId
+     * @param targetAppId targetAppId
+     */
+    void copyAppEnv(Long appId, Long targetAppId);
+
 }

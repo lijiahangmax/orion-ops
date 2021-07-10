@@ -73,6 +73,14 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
+    public Integer selectAppProfileMachineCount(Long appId, Long profileId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getMachineId, profileId);
+        return applicationMachineDAO.selectCount(wrapper);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId) {
         // 删除
@@ -93,6 +101,20 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
             machine.setProfileId(syncProfileId);
             applicationMachineDAO.insert(machine);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copyAppMachine(Long appId, Long targetAppId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId);
+        List<ApplicationMachineDO> machines = applicationMachineDAO.selectList(wrapper);
+        machines.forEach(s -> {
+            s.setId(null);
+            s.setCreateTime(null);
+            s.setUpdateTime(null);
+        });
+        machines.forEach(applicationMachineDAO::insert);
     }
 
 }

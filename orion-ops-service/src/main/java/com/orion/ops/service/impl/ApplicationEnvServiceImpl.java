@@ -192,4 +192,18 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         applicationEnvDAO.delete(deleteWrapper);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copyAppEnv(Long appId, Long targetAppId) {
+        LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                .eq(ApplicationEnvDO::getAppId, appId);
+        List<ApplicationEnvDO> envs = applicationEnvDAO.selectList(wrapper);
+        envs.forEach(s -> {
+            s.setId(null);
+            s.setCreateTime(null);
+            s.setUpdateTime(null);
+        });
+        envs.forEach(applicationEnvDAO::insert);
+    }
+
 }

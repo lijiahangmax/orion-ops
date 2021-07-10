@@ -49,6 +49,15 @@ public interface ApplicationMachineService {
     Integer deleteAppMachineByAppProfileId(Long appId, Long profileId);
 
     /**
+     * 通过appId profileId查询应用机器数量
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return count
+     */
+    Integer selectAppProfileMachineCount(Long appId, Long profileId);
+
+    /**
      * 同步app机器
      *
      * @param appId         appId
@@ -56,5 +65,13 @@ public interface ApplicationMachineService {
      * @param syncProfileId 需要同步的profileId
      */
     void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId);
+
+    /**
+     * 复制app机器
+     *
+     * @param appId       appId
+     * @param targetAppId targetAppId
+     */
+    void copyAppMachine(Long appId, Long targetAppId);
 
 }

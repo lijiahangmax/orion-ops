@@ -9,6 +9,7 @@ import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.entity.request.ApplicationConfigDeployActionRequest;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
+import com.orion.ops.entity.request.ApplicationSyncConfigRequest;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.service.api.ApplicationInfoService;
@@ -116,6 +117,26 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
-    // 复制
+    /**
+     * 同步配置
+     */
+    @RequestMapping("/sync")
+    public HttpWrapper<?> syncAppConfig(@RequestBody ApplicationSyncConfigRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        Long syncProfileId = Valid.notNull(request.getSyncProfileId());
+        applicationService.syncAppProfileConfig(appId, profileId, syncProfileId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 复制应用
+     */
+    @RequestMapping("/copy")
+    public HttpWrapper<?> copyApplication(@RequestBody ApplicationInfoRequest request) {
+        Long appId = Valid.notNull(request.getId());
+        applicationService.copyApplication(appId);
+        return HttpWrapper.ok();
+    }
 
 }

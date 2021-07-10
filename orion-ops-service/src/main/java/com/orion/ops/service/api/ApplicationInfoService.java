@@ -88,4 +88,13 @@ public interface ApplicationInfoService {
      */
     void copyApplication(Long appId);
 
+    /**
+     * 检查app是否已经配置
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 检测app是否已经配置
+     */
+    boolean checkAppConfig(Long appId, Long profileId);
+
 }
