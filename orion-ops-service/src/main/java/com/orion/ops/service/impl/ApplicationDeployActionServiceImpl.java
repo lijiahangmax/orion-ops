@@ -71,4 +71,18 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copyAppAction(Long appId, Long targetAppId) {
+        LambdaQueryWrapper<ApplicationDeployActionDO> wrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
+                .eq(ApplicationDeployActionDO::getAppId, appId);
+        List<ApplicationDeployActionDO> actions = applicationDeployActionDAO.selectList(wrapper);
+        actions.forEach(s -> {
+            s.setId(null);
+            s.setCreateTime(null);
+            s.setUpdateTime(null);
+        });
+        actions.forEach(applicationDeployActionDAO::insert);
+    }
+
 }

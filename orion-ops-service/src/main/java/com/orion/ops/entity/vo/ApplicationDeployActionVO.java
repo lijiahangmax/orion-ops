@@ -38,7 +38,6 @@ public class ApplicationDeployActionVO {
         TypeStore.STORE.register(ApplicationDeployActionDO.class, ApplicationDeployActionVO.class, p -> {
             ApplicationDeployActionVO vo = new ApplicationDeployActionVO();
             vo.setId(p.getId());
-            vo.setStep(p.getActionStep());
             vo.setName(p.getActionName());
             vo.setCommand(p.getActionCommand());
             return vo;

@@ -56,12 +56,6 @@ public class ApplicationDeployActionDO implements Serializable {
     private Integer actionType;
 
     /**
-     * 步骤
-     */
-    @TableField("action_step")
-    private Integer actionStep;
-
-    /**
      * 执行命令
      */
     @TableField("action_command")

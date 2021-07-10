@@ -40,4 +40,12 @@ public interface ApplicationDeployActionService {
      */
     void syncAppProfileAction(Long appId, Long profileId, Long syncProfileId);
 
+    /**
+     * 复制部署步骤
+     *
+     * @param appId       appId
+     * @param targetAppId targetAppId
+     */
+    void copyAppAction(Long appId, Long targetAppId);
+
 }
