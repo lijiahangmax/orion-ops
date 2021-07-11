@@ -236,7 +236,7 @@ public class UserServiceImpl implements UserService {
         Long userId = Currents.getUserId();
         for (Long id : request.getIdList()) {
             if (id == null) {
-                return HttpWrapper.error(MessageConst.MISSING_PARAM);
+                return HttpWrapper.error(MessageConst.ABSENT_PARAM);
             }
             if (userId.equals(id)) {
                 return HttpWrapper.of(ResultCode.NO_PERMISSION);

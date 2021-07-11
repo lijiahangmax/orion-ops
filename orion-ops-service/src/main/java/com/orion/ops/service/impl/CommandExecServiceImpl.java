@@ -70,7 +70,7 @@ public class CommandExecServiceImpl implements CommandExecService {
                     .in(CommandExecDO::getExecStatus, ExecStatus.WAITING.getStatus(), ExecStatus.RUNNABLE.getStatus());
             Integer task = commandExecDAO.selectCount(wrapper);
             if (task.compareTo(0) > 0) {
-                return HttpWrapper.error(machine.getMachineHost() + " 有正在执行的任务");
+                return HttpWrapper.error(machine.getMachineHost() + " " + MessageConst.EXEC_TASK_RUNNABLE_PRESENT);
             }
         }
         // 建立连接
@@ -130,7 +130,7 @@ public class CommandExecServiceImpl implements CommandExecService {
     @Override
     public CommandExecVO execDetail(Long id) {
         CommandExecDO execDO = this.selectById(id);
-        Valid.notNull(execDO, MessageConst.EXEC_TASK_MISSING);
+        Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
         CommandExecVO execVO = Converts.to(execDO, CommandExecVO.class);
         this.assembleExecData(Collections.singletonList(execVO));
         return execVO;
@@ -139,7 +139,7 @@ public class CommandExecServiceImpl implements CommandExecService {
     @Override
     public Integer terminatedExec(Long id) {
         CommandExecDO execDO = this.selectById(id);
-        Valid.notNull(execDO, MessageConst.EXEC_TASK_MISSING);
+        Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
         int effect = 0;
         if (execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
                 || execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {

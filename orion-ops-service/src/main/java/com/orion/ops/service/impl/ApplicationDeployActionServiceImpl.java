@@ -43,7 +43,7 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
                 .map(s -> Converts.to(s, ApplicationDeployActionVO.class))
                 .collect(Collectors.toList());
         for (int i = 0; i < actions.size(); i++) {
-            actions.get(0).setStep(i + 1);
+            actions.get(i).setStep(i + 1);
         }
         return actions;
     }

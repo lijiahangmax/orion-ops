@@ -56,8 +56,8 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
         String key = request.getKey();
-        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
-        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
+        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         // 重复检查
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
@@ -88,7 +88,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         // 查询
         Long id = request.getId();
         ApplicationEnvDO before = applicationEnvDAO.selectById(id);
-        Valid.notNull(before, MessageConst.ENV_MISSING);
+        Valid.notNull(before, MessageConst.ENV_ABSENT);
         // 检查是否修改了值
         String value = request.getValue();
         String beforeValue = before.getAttrValue();
@@ -110,7 +110,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         int effect = 0;
         for (Long id : idList) {
             ApplicationEnvDO env = applicationEnvDAO.selectById(id);
-            Valid.notNull(env, MessageConst.ENV_MISSING);
+            Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
             Valid.isTrue(ApplicationEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
             effect += applicationEnvDAO.deleteById(id);

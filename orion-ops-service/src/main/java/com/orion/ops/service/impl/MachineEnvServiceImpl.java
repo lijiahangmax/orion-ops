@@ -75,7 +75,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         // 查询
         Long id = request.getId();
         MachineEnvDO before = machineEnvDAO.selectById(id);
-        Valid.notNull(before, MessageConst.ENV_MISSING);
+        Valid.notNull(before, MessageConst.ENV_ABSENT);
         // 检查是否修改了值
         String value = request.getValue();
         String beforeValue = before.getAttrValue();
@@ -97,7 +97,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         int effect = 0;
         for (Long id : idList) {
             MachineEnvDO env = machineEnvDAO.selectById(id);
-            Valid.notNull(env, MessageConst.ENV_MISSING);
+            Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
             Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
             effect += machineEnvDAO.deleteById(id);

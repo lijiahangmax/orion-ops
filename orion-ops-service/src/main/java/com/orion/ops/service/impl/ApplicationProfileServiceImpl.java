@@ -6,7 +6,10 @@ import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
-import com.orion.ops.service.api.*;
+import com.orion.ops.service.api.ApplicationDeployActionService;
+import com.orion.ops.service.api.ApplicationEnvService;
+import com.orion.ops.service.api.ApplicationMachineService;
+import com.orion.ops.service.api.ApplicationProfileService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
@@ -44,9 +47,8 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     @Override
     public Long addProfile(ApplicationProfileRequest request) {
         String name = request.getName();
-        String tag = request.getTag();
         // 重复检查
-        this.checkPresent(null, name, tag);
+        this.checkNamePresent(null, name);
         // 插入
         ApplicationProfileDO insert = new ApplicationProfileDO();
         insert.setProfileName(request.getName());
@@ -61,9 +63,8 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     public Integer updateProfile(ApplicationProfileRequest request) {
         Long id = request.getId();
         String name = request.getName();
-        String tag = request.getTag();
         // 重复检查
-        this.checkPresent(id, name, tag);
+        this.checkNamePresent(id, name);
         // 修改
         ApplicationProfileDO update = new ApplicationProfileDO();
         update.setId(id);
@@ -105,16 +106,13 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
      *
      * @param id   id
      * @param name name
-     * @param tag  tag
      */
-    private void checkPresent(Long id, String name, String tag) {
+    private void checkNamePresent(Long id, String name) {
         LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
                 .ne(id != null, ApplicationProfileDO::getId, id)
-                .and(s -> s.eq(ApplicationProfileDO::getProfileName, name)
-                        .or()
-                        .eq(ApplicationProfileDO::getProfileTag, tag));
+                .and(s -> s.eq(ApplicationProfileDO::getProfileName, name));
         boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
-        Valid.isTrue(!present, MessageConst.NAME_TAG_PRESENT);
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 }

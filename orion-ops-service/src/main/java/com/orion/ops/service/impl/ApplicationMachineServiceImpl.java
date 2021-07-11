@@ -45,7 +45,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     public List<ApplicationMachineVO> getAppProfileMachineList(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
-                .eq(ApplicationMachineDO::getMachineId, profileId);
+                .eq(ApplicationMachineDO::getProfileId, profileId);
         return applicationMachineDAO.selectList(wrapper)
                 .stream()
                 .map(m -> {
@@ -76,7 +76,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     public Integer selectAppProfileMachineCount(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
-                .eq(ApplicationMachineDO::getMachineId, profileId);
+                .eq(ApplicationMachineDO::getProfileId, profileId);
         return applicationMachineDAO.selectCount(wrapper);
     }
 

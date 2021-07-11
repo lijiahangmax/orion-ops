@@ -74,7 +74,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     @Override
     public Integer rollback(Long id) {
         HistoryValueSnapshotDO historyValue = historyValueSnapshotDAO.selectById(id);
-        Valid.notNull(historyValue, MessageConst.HISTORY_VALUE_MISSING);
+        Valid.notNull(historyValue, MessageConst.HISTORY_VALUE_ABSENT);
         // 修改值
         Long valueId = historyValue.getValueId();
         String updateValue = historyValue.getBeforeValue();
@@ -108,7 +108,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     private Tuple rollbackMachineEnv(Long valueId, String value) {
         // 查询
         MachineEnvDO env = machineEnvDAO.selectById(valueId);
-        Valid.notNull(env, MessageConst.METADATA_MISSING);
+        Valid.notNull(env, MessageConst.METADATA_ABSENT);
         // 更新
         MachineEnvDO update = new MachineEnvDO();
         update.setId(valueId);
@@ -128,7 +128,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     private Tuple rollbackCommandTemplate(Long valueId, String value) {
         // 查询
         CommandTemplateDO template = commandTemplateDAO.selectById(valueId);
-        Valid.notNull(template, MessageConst.METADATA_MISSING);
+        Valid.notNull(template, MessageConst.METADATA_ABSENT);
         // 更新
         CommandTemplateDO update = new CommandTemplateDO();
         update.setId(valueId);
@@ -147,7 +147,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     private Tuple rollbackAppEnv(Long valueId, String value) {
         // 查询
         ApplicationEnvDO env = applicationEnvDAO.selectById(valueId);
-        Valid.notNull(env, MessageConst.METADATA_MISSING);
+        Valid.notNull(env, MessageConst.METADATA_ABSENT);
         // 更新
         ApplicationEnvDO update = new ApplicationEnvDO();
         update.setId(valueId);

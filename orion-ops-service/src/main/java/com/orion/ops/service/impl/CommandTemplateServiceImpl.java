@@ -55,7 +55,7 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     public Integer updateTemplate(CommandTemplateRequest request) {
         Long id = request.getId();
         CommandTemplateDO before = commandTemplateDAO.selectById(id);
-        Valid.notNull(before, MessageConst.TEMPLATE_MISSING);
+        Valid.notNull(before, MessageConst.TEMPLATE_ABSENT);
         // 检查是否更新了值
         String value = request.getValue();
         String beforeValue = before.getTemplateValue();
@@ -88,7 +88,7 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     @Override
     public CommandTemplateVO templateDetail(Long id) {
         CommandTemplateDO template = commandTemplateDAO.selectById(id);
-        Valid.notNull(template, MessageConst.TEMPLATE_MISSING);
+        Valid.notNull(template, MessageConst.TEMPLATE_ABSENT);
         return Converts.to(template, CommandTemplateVO.class);
     }
 
