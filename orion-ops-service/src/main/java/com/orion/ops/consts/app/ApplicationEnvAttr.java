@@ -36,7 +36,7 @@ public enum ApplicationEnvAttr {
     /**
      * 构建产物目录
      */
-    DIST_PATH("构建产物目录 (代码目录的相对目录)"),
+    DIST_PATH("构建产物文件目录"),
 
     ;
 

@@ -52,7 +52,7 @@ public enum ResultCode implements CodeInfo {
 
         @Override
         public String message() {
-            return MessageConst.FILE_MISSING;
+            return MessageConst.FILE_ABSENT;
         }
     },
 
