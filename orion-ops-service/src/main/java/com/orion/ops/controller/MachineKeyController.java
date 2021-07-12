@@ -2,12 +2,13 @@ package com.orion.ops.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,15 +37,14 @@ public class MachineKeyController {
      * 添加秘钥
      */
     @RequestMapping("/add")
-    public HttpWrapper<Long> addKey(@RequestBody MachineKeyRequest request) {
+    public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getFile());
         try {
-            Long id = machineKeyService.addSecretKey(request);
-            return HttpWrapper.ok(id);
+            return machineKeyService.addSecretKey(request);
         } catch (Exception e) {
             log.error("添加秘钥失败 {} {}", JSON.toJSONString(request), e);
-            return HttpWrapper.error("添加秘钥失败");
+            throw Exceptions.runtime(MessageConst.ADD_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -52,14 +52,13 @@ public class MachineKeyController {
      * 添加秘钥
      */
     @RequestMapping("/update")
-    public HttpWrapper<Integer> updateKey(@RequestBody MachineKeyRequest request) {
+    public Integer updateKey(@RequestBody MachineKeyRequest request) {
         Valid.notNull(request.getId());
         try {
-            Integer effect = machineKeyService.updateSecretKey(request);
-            return HttpWrapper.ok(effect);
+            return machineKeyService.updateSecretKey(request);
         } catch (Exception e) {
             log.error("修改秘钥失败 {} {}", JSON.toJSONString(request), e);
-            return HttpWrapper.error("修改秘钥失败");
+            throw Exceptions.runtime(MessageConst.UPDATE_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -67,14 +66,13 @@ public class MachineKeyController {
      * 删除秘钥
      */
     @RequestMapping("/remove")
-    public HttpWrapper<Integer> removeKey(@RequestBody MachineKeyRequest request) {
+    public Integer removeKey(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
-            Integer effect = machineKeyService.removeSecretKey(idList);
-            return HttpWrapper.ok(effect);
+            return machineKeyService.removeSecretKey(idList);
         } catch (Exception e) {
             log.error("删除秘钥失败 {} {}", idList, e);
-            return HttpWrapper.error("删除秘钥失败");
+            throw Exceptions.runtime(MessageConst.REMOVE_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -90,14 +88,13 @@ public class MachineKeyController {
      * 挂载秘钥
      */
     @RequestMapping("/mount")
-    public HttpWrapper<Integer> mountKey(@RequestBody MachineKeyRequest request) {
+    public Integer mountKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
         try {
-            Integer status = machineKeyService.mountKey(id);
-            return HttpWrapper.ok(status);
+            return machineKeyService.mountKey(id);
         } catch (Exception e) {
             log.error("挂载秘钥失败 {} {}", id, e);
-            return HttpWrapper.error("挂载秘钥失败");
+            throw Exceptions.runtime(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -105,14 +102,13 @@ public class MachineKeyController {
      * 卸载秘钥
      */
     @RequestMapping("/unmount")
-    public HttpWrapper<Integer> unmountKey(@RequestBody MachineKeyRequest request) {
+    public Integer unmountKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
         try {
-            Integer status = machineKeyService.unmountKey(id);
-            return HttpWrapper.ok(status);
+            return machineKeyService.unmountKey(id);
         } catch (Exception e) {
             log.error("挂载秘钥失败 {} {}", id, e);
-            return HttpWrapper.error("卸载秘钥失败");
+            throw Exceptions.runtime(MessageConst.UNMOUNT_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -120,14 +116,13 @@ public class MachineKeyController {
      * 临时挂载秘钥
      */
     @RequestMapping("/temp-mount")
-    public HttpWrapper<Integer> tempMount(@RequestBody MachineKeyRequest request) {
+    public Integer tempMount(@RequestBody MachineKeyRequest request) {
         String file = Valid.notBlank(request.getFile());
         try {
-            Integer status = machineKeyService.tempMountKey(file, request.getPassword());
-            return HttpWrapper.ok(status);
+            return machineKeyService.tempMountKey(file, request.getPassword());
         } catch (Exception e) {
             log.error("临时挂载秘钥失败", e);
-            return HttpWrapper.error("临时挂载秘钥失败");
+            throw Exceptions.runtime(MessageConst.TEMP_MOUNT_SECRET_KEY_ERROR, e);
         }
     }
 

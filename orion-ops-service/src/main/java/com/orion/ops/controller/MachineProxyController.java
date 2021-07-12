@@ -81,7 +81,7 @@ public class MachineProxyController {
             Valid.notNull(request.getPassword());
         }
         if (!Matches.isIpv4(host)) {
-            throw Exceptions.invalidArgument(MessageConst.MISSING_PARAM);
+            throw Exceptions.invalidArgument(MessageConst.ABSENT_PARAM);
         }
     }
 
