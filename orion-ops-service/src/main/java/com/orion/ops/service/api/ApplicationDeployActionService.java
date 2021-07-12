@@ -32,6 +32,15 @@ public interface ApplicationDeployActionService {
     List<ApplicationDeployActionVO> getDeployActions(Long appId, Long profileId);
 
     /**
+     * 通过appId profileId查询操作步骤数量数量
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return count
+     */
+    Integer selectAppProfileActionCount(Long appId, Long profileId);
+
+    /**
      * 同步app操作步骤
      *
      * @param appId         appId

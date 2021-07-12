@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +31,17 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
 
     @Resource
     private MachineInfoService machineInfoService;
+
+    @Override
+    public Long getAppProfileMachineId(Long id, Long appId, Long profileId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getId, id)
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, profileId);
+        return Optional.ofNullable(applicationMachineDAO.selectOne(wrapper))
+                .map(ApplicationMachineDO::getMachineId)
+                .orElse(null);
+    }
 
     @Override
     public List<Long> getAppProfileMachineIdList(Long appId, Long profileId) {

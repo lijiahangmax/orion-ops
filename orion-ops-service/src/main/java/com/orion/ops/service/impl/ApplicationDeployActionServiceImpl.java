@@ -49,6 +49,14 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
     }
 
     @Override
+    public Integer selectAppProfileActionCount(Long appId, Long profileId) {
+        LambdaQueryWrapper<ApplicationDeployActionDO> wrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
+                .eq(ApplicationDeployActionDO::getAppId, appId)
+                .eq(ApplicationDeployActionDO::getProfileId, profileId);
+        return applicationDeployActionDAO.selectCount(wrapper);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileAction(Long appId, Long profileId, Long syncProfileId) {
         // 删除

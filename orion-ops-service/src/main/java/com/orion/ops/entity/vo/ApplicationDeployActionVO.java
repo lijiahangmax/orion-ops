@@ -30,6 +30,13 @@ public class ApplicationDeployActionVO {
     private String name;
 
     /**
+     * 类型
+     *
+     * @see com.orion.ops.consts.app.ActionType
+     */
+    private Integer type;
+
+    /**
      * 命令
      */
     private String command;
@@ -39,6 +46,7 @@ public class ApplicationDeployActionVO {
             ApplicationDeployActionVO vo = new ApplicationDeployActionVO();
             vo.setId(p.getId());
             vo.setName(p.getActionName());
+            vo.setType(p.getActionType());
             vo.setCommand(p.getActionCommand());
             return vo;
         });
