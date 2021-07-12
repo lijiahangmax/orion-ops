@@ -15,41 +15,52 @@ import lombok.Getter;
 public enum ActionType {
 
     /**
+     * 初始化
+     */
+    INIT(5, false),
+
+    /**
      * 建立连接
      */
-    CONNECT(10),
+    CONNECT(10, false),
 
     /**
      * 检出代码
      */
-    CHECKOUT(20),
+    CHECKOUT(20, true),
 
     /**
      * 传输产物
      */
-    TRANSFER(30),
+    TRANSFER(30, true),
 
     /**
      * 主机命令
      */
-    HOST_COMMAND(40),
+    HOST_COMMAND(40, true),
 
     /**
      * 目标机器命令
      */
-    TARGET_COMMAND(50),
+    TARGET_COMMAND(50, true),
 
     ;
 
     Integer type;
 
-    public static ActionType of(Integer type) {
+    boolean client;
+
+    public static ActionType of(Integer type, boolean client) {
         if (type == null) {
             return null;
         }
         for (ActionType value : values()) {
             if (value.type.equals(type)) {
-                return value;
+                if (!client) {
+                    return value;
+                } else if (value.client) {
+                    return value;
+                }
             }
         }
         return null;

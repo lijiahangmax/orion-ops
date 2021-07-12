@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.entity.request.ApplicationConfigDeployActionRequest;
@@ -14,6 +15,7 @@ import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -106,13 +108,7 @@ public class ApplicationInfoController {
         Valid.notNull(VcsType.of(request.getEnv().getVcsType()));
         Valid.notBlank(request.getEnv().getDistPath());
         Valid.notEmpty(request.getMachineIdList());
-        List<ApplicationConfigDeployActionRequest> actions = Valid.notEmpty(request.getActions());
-        for (ApplicationConfigDeployActionRequest action : actions) {
-            Valid.notBlank(action.getName());
-            Valid.notBlank(action.getCommand());
-            ActionType actionType = Valid.notNull(ActionType.of(action.getType()));
-            Valid.isTrue(!ActionType.CONNECT.equals(actionType));
-        }
+        this.checkActionType(Valid.notEmpty(request.getActions()));
         applicationService.configAppProfile(request);
         return HttpWrapper.ok();
     }
@@ -137,6 +133,64 @@ public class ApplicationInfoController {
         Long appId = Valid.notNull(request.getId());
         applicationService.copyApplication(appId);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 检查配置步骤的合法性
+     *
+     * @param actions actions
+     */
+    private void checkActionType(List<ApplicationConfigDeployActionRequest> actions) {
+        // 检查参数
+        for (ApplicationConfigDeployActionRequest action : actions) {
+            Valid.notBlank(action.getName());
+            ActionType actionType = Valid.notNull(ActionType.of(action.getType(), true));
+            Valid.isTrue(!ActionType.CONNECT.equals(actionType));
+            if (ActionType.HOST_COMMAND.equals(actionType)
+                    || ActionType.TARGET_COMMAND.equals(actionType)) {
+                Valid.notBlank(action.getCommand());
+            }
+        }
+        // 检查单一操作
+        int checkoutIndex = -1;
+        int transferIndex = -1;
+        for (int i = 0; i < actions.size(); i++) {
+            ActionType type = ActionType.of(actions.get(i).getType(), true);
+            if (ActionType.CHECKOUT.equals(type)) {
+                if (checkoutIndex == -1) {
+                    checkoutIndex = i;
+                } else {
+                    throw Exceptions.invalidArgument(MessageConst.CHECKOUT_ACTION_PRESENT);
+                }
+            } else if (ActionType.TRANSFER.equals(type)) {
+                if (transferIndex == -1) {
+                    transferIndex = i;
+                } else {
+                    throw Exceptions.invalidArgument(MessageConst.TRANSFER_ACTION_PRESENT);
+                }
+            }
+        }
+        // 检查传输和检出的时序
+        if (checkoutIndex == -1) {
+            throw Exceptions.invalidArgument(MessageConst.CHECKOUT_ACTION_ABSENT);
+        }
+        if (transferIndex != -1 && transferIndex < checkoutIndex) {
+            throw Exceptions.invalidArgument(MessageConst.TRANSFER_ACTION_WRONG_STEP);
+        }
+        // 检查先宿主再目标
+        int lastTargetCommand = -1;
+        for (int i = 0; i < actions.size(); i++) {
+            ActionType type = ActionType.of(actions.get(i).getType(), true);
+            if (ActionType.HOST_COMMAND.equals(type)
+                    || ActionType.CHECKOUT.equals(type)
+                    || ActionType.TRANSFER.equals(type)) {
+                if (lastTargetCommand != -1) {
+                    throw Exceptions.invalidArgument(MessageConst.HOST_ACTION_WRONG_STEP);
+                }
+            } else if (ActionType.TARGET_COMMAND.equals(type)) {
+                lastTargetCommand = i;
+            }
+        }
     }
 
 }

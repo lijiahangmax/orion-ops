@@ -18,14 +18,18 @@ import com.orion.ops.entity.vo.ApplicationMachineVO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
+import com.orion.vcs.git.Gits;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,13 +72,12 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public Long insertApp(ApplicationInfoRequest request) {
         // 检查是否存在
         String name = request.getName();
-        String tag = request.getTag();
         // 重复检查
-        this.checkPresent(null, name, tag);
+        this.checkNamePresent(null, name);
         // 插入
         ApplicationInfoDO insert = new ApplicationInfoDO();
         insert.setAppName(name);
-        insert.setAppTag(tag);
+        insert.setAppTag(request.getTag());
         insert.setAppSort(request.getSort());
         insert.setDescription(request.getDescription());
         applicationInfoDAO.insert(insert);
@@ -85,14 +88,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public Integer updateApp(ApplicationInfoRequest request) {
         Long id = request.getId();
         String name = request.getName();
-        String tag = request.getTag();
         // 重复检查
-        this.checkPresent(id, name, tag);
+        this.checkNamePresent(id, name);
         // 更新
         ApplicationInfoDO update = new ApplicationInfoDO();
         update.setId(id);
         update.setAppName(name);
-        update.setAppTag(tag);
+        update.setAppTag(request.getTag());
         update.setAppSort(request.getSort());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
@@ -103,7 +105,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public Integer updateAppSort(Long id, boolean incr) {
         // 查询原来的排序
         ApplicationInfoDO app = applicationInfoDAO.selectById(id);
-        Valid.notNull(app, MessageConst.APP_MISSING);
+        Valid.notNull(app, MessageConst.APP_ABSENT);
         Integer beforeSort = app.getAppSort();
         // 查询下一个排序
         LambdaQueryWrapper<ApplicationInfoDO> wrapper;
@@ -165,7 +167,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
                 .like(!Strings.isBlank(request.getName()), ApplicationInfoDO::getAppName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationInfoDO::getAppTag, request.getTag())
-                .orderByAsc(ApplicationInfoDO::getAppSort);
+                .orderByAsc(ApplicationInfoDO::getAppSort)
+                .orderByAsc(ApplicationInfoDO::getId);
         // 查询应用
         DataGrid<ApplicationInfoVO> appList = DataQuery.of(applicationInfoDAO)
                 .page(request)
@@ -191,15 +194,16 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public ApplicationDetailVO getAppDetail(Long appId, Long profileId) {
         // 查询应用
         ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
-        Valid.notNull(app, MessageConst.APP_MISSING);
+        Valid.notNull(app, MessageConst.APP_ABSENT);
         // 查询环境
         ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
-        Valid.notNull(profile, MessageConst.PROFILE_MISSING);
+        Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
         // 查询环境变量
         String vcsRootPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
         String vcsCodePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_CODE_PATH.name());
         String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.name());
         String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.name());
+        String vcsRemoteUrl = this.getVcsRemoteUrl(vcsRootPath);
         // 查询机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询部署流程
@@ -213,6 +217,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         detail.setVcsCodePath(vcsCodePath);
         detail.setVscType(vcsType);
         detail.setDistPath(distPath);
+        detail.setVcsRemoteUrl(vcsRemoteUrl);
         detail.setMachineCount(machines.size());
         detail.setMachines(machines);
         detail.setActions(actions);
@@ -224,12 +229,12 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public void configAppProfile(ApplicationConfigRequest request) {
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
+        // 检查代码仓库是否正确
+        this.checkVcsLocalPath(request.getEnv());
         // 查询应用和环境
-        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
-        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
-        Object[] envKeys = Arrays.stream(ApplicationEnvAttr.values()).map(Enum::name).toArray();
+        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         // 配置环境变量
-        applicationEnvService.deleteAppProfileEnvByAppProfileId(appId, profileId, envKeys);
         this.configAppEnv(request.getEnv(), appId, profileId);
         // 配置机器
         applicationMachineService.deleteAppMachineByAppProfileId(appId, profileId);
@@ -243,9 +248,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId) {
         // 查询应用和环境
-        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
-        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_MISSING);
-        Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_MISSING);
+        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
+        Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_ABSENT);
         // 检查环境是否已配置
         boolean isConfig = this.checkAppConfig(appId, profileId);
         Valid.isTrue(isConfig, MessageConst.APP_PROFILE_NOT_CONFIGURED);
@@ -261,7 +266,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Transactional(rollbackFor = Exception.class)
     public void copyApplication(Long appId) {
         // 查询app
-        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_MISSING);
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         app.setId(null);
         app.setAppName(app.getAppName() + " " + Const.COPY);
         app.setCreateTime(null);
@@ -278,7 +283,42 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Override
     public boolean checkAppConfig(Long appId, Long profileId) {
-        return applicationMachineService.selectAppProfileMachineCount(appId, profileId) > 0;
+        return applicationDeployActionService.selectAppProfileActionCount(appId, profileId) > 0;
+    }
+
+    /**
+     * 检查app 版本控制工具路径
+     *
+     * @param env env
+     */
+    private void checkVcsLocalPath(ApplicationConfigEnvRequest env) {
+        boolean codePathPresent = Files1.isDirectory(env.getVcsCodePath());
+        Valid.isTrue(codePathPresent, MessageConst.CODE_PATH_ABSENT);
+        File rootPath = new File(env.getVcsRootPath());
+        boolean rootPathPresent = Files1.isDirectory(rootPath);
+        Valid.isTrue(rootPathPresent, MessageConst.VCS_ROOT_PATH_ABSENT);
+        Gits git = null;
+        try {
+            git = Gits.of(rootPath);
+        } catch (Exception e) {
+            throw Exceptions.invalidArgument(MessageConst.VCS_ROOT_PATH_UNCONNECTED, e);
+        } finally {
+            Streams.close(git);
+        }
+    }
+
+    /**
+     * 获取版本控制远程url
+     *
+     * @param path path
+     * @return remote url
+     */
+    private String getVcsRemoteUrl(String path) {
+        try (Gits git = Gits.of(new File(path))) {
+            return git.getRemoteUrl();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -286,16 +326,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
      *
      * @param id   id
      * @param name name
-     * @param tag  tag
      */
-    private void checkPresent(Long id, String name, String tag) {
+    private void checkNamePresent(Long id, String name) {
         LambdaQueryWrapper<ApplicationInfoDO> presentWrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
                 .ne(id != null, ApplicationInfoDO::getId, id)
-                .and(s -> s.eq(ApplicationInfoDO::getAppName, name)
-                        .or()
-                        .eq(ApplicationInfoDO::getAppTag, tag));
+                .and(s -> s.eq(ApplicationInfoDO::getAppName, name));
         boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
-        Valid.isTrue(!present, MessageConst.NAME_TAG_PRESENT);
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
     /**
