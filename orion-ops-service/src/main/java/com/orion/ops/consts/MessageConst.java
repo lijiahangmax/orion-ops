@@ -24,6 +24,8 @@ public class MessageConst {
 
     public static final String SFTP_OPERATOR_ERROR = "操作异常";
 
+    public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
+
     public static final String INVALID_MACHINE = "未知的机器";
 
     public static final String INVALID_PROXY = "未查询到代理信息";
@@ -112,5 +114,12 @@ public class MessageConst {
 
     public static final String TEMP_MOUNT_SECRET_KEY_ERROR = "临时挂载秘钥失败";
 
+    public static final String AUTO_AUDIT_RESOLVE = "自动审核通过";
+
+    public static final String AUDIT_NO_REQUIRED = "无需审核";
+
+    public static final String RELEASE_BILL_ABSENT = "上线单不存在";
+
+    public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚上线单";
 
 }

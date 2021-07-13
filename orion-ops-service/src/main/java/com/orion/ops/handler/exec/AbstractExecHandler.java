@@ -108,11 +108,10 @@ public abstract class AbstractExecHandler implements IExecHandler {
         Map<String, String> machineEnv = machineEnvService.getMachineEnv(hint.getMachineId());
         machineEnv.forEach((k, v) -> env.put("env." + k, v));
         // machine
-        env.put("info.host", machine.getMachineHost());
-        env.put("info.port", machine.getSshPort() + Strings.EMPTY);
         env.put("info.name", machine.getMachineName());
         env.put("info.tag", machine.getMachineTag());
-        env.put("info.desc", machine.getDescription());
+        env.put("info.host", machine.getMachineHost());
+        env.put("info.port", machine.getSshPort() + Strings.EMPTY);
         env.put("info.username", machine.getUsername());
     }
 

@@ -77,11 +77,6 @@ public class ApplicationDetailVO {
     private String distPath;
 
     /**
-     * 代码远程目录
-     */
-    private String vcsRemoteUrl;
-
-    /**
      * 关联机器
      */
     private List<ApplicationMachineVO> machines;
@@ -101,6 +96,5 @@ public class ApplicationDetailVO {
             return vo;
         });
     }
-
 
 }

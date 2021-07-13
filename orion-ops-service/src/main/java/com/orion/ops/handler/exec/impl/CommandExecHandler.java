@@ -53,14 +53,16 @@ public class CommandExecHandler extends AbstractExecHandler {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append("# 准备执行命令\n")
-                    .append("执行用户: ").append(hint.getUsername()).append(Letters.LF)
-                    .append("任务id: ").append(execId).append(Letters.LF)
-                    .append("任务类型: ").append(hint.getExecType().name()).append(Letters.LF)
-                    .append("机器id: ").append(hint.getMachineId()).append(Letters.LF)
-                    .append("机器host: ").append(machine.getMachineHost()).append(Letters.LF)
-                    .append("机器user: ").append(machine.getUsername()).append(Letters.LF)
-                    .append("机器name: ").append(machine.getMachineName()).append(Letters.LF)
-                    .append("开始时间: ").append(Dates.format(hint.getStartDate(), Dates.YMDHMSS)).append(Letters.LF);
+                    .append("@ssh: ").append(machine.getUsername()).append("@")
+                    .append(machine.getMachineHost()).append(":")
+                    .append(machine.getSshPort()).append(Letters.LF)
+                    .append("执行用户: ").append(hint.getUserId()).append(Letters.TAB)
+                    .append(hint.getUsername()).append(Letters.LF)
+                    .append("执行任务: ").append(execId).append(Letters.TAB)
+                    .append(hint.getExecType().name()).append(Letters.LF)
+                    .append("执行机器: ").append(hint.getMachineId()).append(Letters.TAB)
+                    .append(machine.getMachineName()).append(Letters.LF)
+                    .append("开始时间: ").append(Dates.format(hint.getStartDate(), Dates.YMDHMS)).append(Letters.LF);
             Long relId = hint.getRelId();
             if (relId != null) {
                 sb.append("relId: ").append(relId).append(Letters.LF);
@@ -77,9 +79,10 @@ public class CommandExecHandler extends AbstractExecHandler {
                 sb.append(Letters.LF);
             }
 
-            sb.append("# 执行命令开始\n")
-                    .append(hint.getRealCommand())
-                    .append("\n\n--------------------------------------------------\n\n");
+            sb.append("# 命令\n")
+                    .append(hint.getRealCommand()).append(Letters.LF)
+                    .append(Letters.LF)
+                    .append("# 开始执行\n");
             logOutputStream.write(Strings.bytes(sb.toString()));
             logOutputStream.flush();
         } catch (Exception e) {
@@ -117,12 +120,14 @@ public class CommandExecHandler extends AbstractExecHandler {
     protected void callback(BaseRemoteExecutor executor) {
         super.callback(executor);
         Date endDate = new Date();
+        String interval = Dates.interval(endDate, hint.getStartDate(), "d", "h", "m", "s");
         StringBuilder sb = new StringBuilder()
-                .append("\n--------------------------------------------------\n")
+                .append(Letters.LF)
                 .append("# 命令执行完毕\n")
                 .append("exit code: ").append(hint.getExitCode()).append(Letters.LF)
-                .append("结束时间: ").append(Dates.format(endDate, Dates.YMDHMSS))
-                .append("; used ").append(endDate.getTime() - hint.getStartDate().getTime()).append(" ms\n");
+                .append("结束时间: ").append(Dates.format(endDate, Dates.YMDHMS))
+                .append("; used ").append(interval).append(" (")
+                .append(endDate.getTime() - hint.getStartDate().getTime()).append(" ms)\n");
         try {
             logOutputStream.write(Strings.bytes(sb.toString()));
             logOutputStream.flush();

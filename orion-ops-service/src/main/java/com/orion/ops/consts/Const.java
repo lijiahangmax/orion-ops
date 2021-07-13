@@ -64,6 +64,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String COPY = "Copy";
 
+    public static final String INIT = "初始化";
+
     public static final String CONNECT = "建立连接";
 
 }
