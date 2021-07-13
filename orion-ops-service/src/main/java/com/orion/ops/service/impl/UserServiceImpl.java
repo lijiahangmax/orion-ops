@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
         UserInfoDO user = userInfoDAO.selectById(id);
         Valid.notNull(user, "未查询到用户信息");
         UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
-        if (HeadPicHolder.isExist(user.getHeadPic())) {
-            userVo.setHeadPic(HeadPicHolder.getBase64(user.getHeadPic()));
+        if (AvatarPicHolder.isExist(user.getAvatarPic())) {
+            userVo.setHeadPic(AvatarPicHolder.getBase64(user.getAvatarPic()));
         }
         return userVo;
     }
@@ -105,10 +105,10 @@ public class UserServiceImpl implements UserService {
         userInfoDAO.insert(insert);
         Long userId = insert.getId();
         // 生成头像
-        String headPic = HeadPicHolder.generatorUserHeadPic(userId, request.getNickname());
+        String headPic = AvatarPicHolder.generatorUserHeadPic(userId, request.getNickname());
         UserInfoDO update = new UserInfoDO();
         update.setId(userId);
-        update.setHeadPic(headPic);
+        update.setAvatarPic(headPic);
         update.setUpdateTime(new Date());
         userInfoDAO.updateById(update);
         return HttpWrapper.ok(userId);
@@ -212,19 +212,19 @@ public class UserServiceImpl implements UserService {
         Long userId = Currents.getUserId();
         UserInfoDO userInfo = userInfoDAO.selectById(userId);
         // 删除原图片
-        if (!Strings.isBlank(userInfo.getHeadPic())) {
-            HeadPicHolder.deletePic(userInfo.getHeadPic());
+        if (!Strings.isBlank(userInfo.getAvatarPic())) {
+            AvatarPicHolder.deletePic(userInfo.getAvatarPic());
         }
         // 写入图片
         String type = Base64s.img64Type(headPic);
-        String url = HeadPicHolder.getPicPath(userId, type);
+        String url = AvatarPicHolder.getPicPath(userId, type);
         byte[] pic = Base64s.img64Decode(headPic);
-        String fullPicPath = HeadPicHolder.touchPicFile(userId, type);
+        String fullPicPath = AvatarPicHolder.touchPicFile(userId, type);
         FileWriters.writeFast(fullPicPath, pic);
         // 更新
         UserInfoDO update = new UserInfoDO();
         update.setId(userId);
-        update.setHeadPic(url);
+        update.setAvatarPic(url);
         update.setUpdateTime(new Date());
         return userInfoDAO.updateById(update);
     }

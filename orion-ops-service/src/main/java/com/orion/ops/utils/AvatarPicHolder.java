@@ -23,9 +23,9 @@ import java.io.IOException;
  * @since 2021/4/21 21:43
  */
 @Slf4j
-public class HeadPicHolder {
+public class AvatarPicHolder {
 
-    private HeadPicHolder() {
+    private AvatarPicHolder() {
     }
 
     /**
@@ -33,7 +33,7 @@ public class HeadPicHolder {
      */
     private static final ImageIcons ICONS_GEN = new ImageIcons();
 
-    private static final String HEAD_PIC_SUFFIX = Const.SUFFIX_PNG;
+    private static final String AVATAR_PIC_SUFFIX = Const.SUFFIX_PNG;
 
     /**
      * 获取头像路径
@@ -43,7 +43,7 @@ public class HeadPicHolder {
      * @return path
      */
     public static String getPicPath(Long uid, String suffix) {
-        return Const.HEAD_PIC_DIR + "/" + uid + "." + suffix;
+        return Const.AVATAR_PIC_DIR + "/" + uid + "." + suffix;
     }
 
     /**
@@ -54,7 +54,7 @@ public class HeadPicHolder {
      * @return path
      */
     public static String touchPicFile(Long uid, String suffix) {
-        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + Const.HEAD_PIC_DIR + "/" + uid + "." + suffix);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + Const.AVATAR_PIC_DIR + "/" + uid + "." + suffix);
         Files1.touch(path);
         return path;
     }
@@ -70,7 +70,7 @@ public class HeadPicHolder {
         if (Strings.isBlank(nickname)) {
             nickname = "O";
         }
-        String url = Const.HEAD_PIC_DIR + "/" + uid + "." + HEAD_PIC_SUFFIX;
+        String url = Const.AVATAR_PIC_DIR + "/" + uid + "." + AVATAR_PIC_SUFFIX;
         char name = Arrays1.last(nickname.toCharArray(), 'O');
         BufferedImage img = ICONS_GEN.execute(name);
         String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);

@@ -73,10 +73,10 @@ public class UserInfoDO implements Serializable {
     private Integer userStatus;
 
     /**
-     * 头像
+     * 头像地址
      */
-    @TableField("head_pic")
-    private String headPic;
+    @TableField("avatar_pic")
+    private String avatarPic;
 
     /**
      * 联系手机

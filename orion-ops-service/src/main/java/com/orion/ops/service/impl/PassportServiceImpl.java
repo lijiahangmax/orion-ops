@@ -15,7 +15,7 @@ import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.HeadPicHolder;
+import com.orion.ops.utils.AvatarPicHolder;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -63,10 +63,10 @@ public class PassportServiceImpl implements PassportService {
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
         // 检查头像
-        if (!HeadPicHolder.isExist(userInfo.getHeadPic())) {
-            String url = HeadPicHolder.generatorUserHeadPic(userId, userInfo.getNickname());
-            userInfo.setHeadPic(url);
-            updateUser.setHeadPic(url);
+        if (!AvatarPicHolder.isExist(userInfo.getAvatarPic())) {
+            String url = AvatarPicHolder.generatorUserHeadPic(userId, userInfo.getNickname());
+            userInfo.setAvatarPic(url);
+            updateUser.setAvatarPic(url);
         }
         // 更新最后登录时间
         updateUser.setUpdateTime(new Date());
@@ -91,7 +91,7 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
         // 头像
-        loginInfo.setHeadPic(HeadPicHolder.getBase64(userInfo.getHeadPic()));
+        loginInfo.setHeadPic(AvatarPicHolder.getBase64(userInfo.getAvatarPic()));
         return HttpWrapper.ok(loginInfo);
     }
 
