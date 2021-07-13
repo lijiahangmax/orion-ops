@@ -17,8 +17,8 @@ public interface HistoryValueService {
     /**
      * 添加历史值快照
      *
-     * @param valueId    valueId
-     * @param valueType  valueType
+     * @param valueId     valueId
+     * @param valueType   valueType
      * @param beforeValue beforeValue
      */
     void addHistory(Long valueId, HistoryValueType valueType, String beforeValue);

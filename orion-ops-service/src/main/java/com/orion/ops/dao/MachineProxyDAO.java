@@ -1,7 +1,7 @@
 package com.orion.ops.dao;
 
-import com.orion.ops.entity.domain.MachineProxyDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.orion.ops.entity.domain.MachineProxyDO;
 
 /**
  * <p>

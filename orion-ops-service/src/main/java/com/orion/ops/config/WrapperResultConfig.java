@@ -8,7 +8,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +34,5 @@ public class WrapperResultConfig {
         }
         requestMappingHandlerAdapter.setReturnValueHandlers(list);
     }
-
 
 }

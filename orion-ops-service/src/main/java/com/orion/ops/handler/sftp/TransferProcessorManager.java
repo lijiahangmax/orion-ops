@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -86,7 +85,7 @@ public class TransferProcessorManager {
         String userMachine = userId + "_" + machineId;
         idMapping.put(id, session);
         sessionUserMachineMapping.put(id, userMachine);
-        userMachineSessionMapping.computeIfAbsent(userMachine, s -> new ArrayList<>()).add(id);
+        userMachineSessionMapping.computeIfAbsent(userMachine, s -> Lists.newList()).add(id);
     }
 
     /**
