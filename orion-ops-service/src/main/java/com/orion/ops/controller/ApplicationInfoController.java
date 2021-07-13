@@ -7,12 +7,11 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.VcsType;
-import com.orion.ops.entity.request.ApplicationConfigDeployActionRequest;
-import com.orion.ops.entity.request.ApplicationConfigRequest;
-import com.orion.ops.entity.request.ApplicationInfoRequest;
-import com.orion.ops.entity.request.ApplicationSyncConfigRequest;
+import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
+import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
+import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
@@ -133,6 +132,27 @@ public class ApplicationInfoController {
         Long appId = Valid.notNull(request.getId());
         applicationService.copyApplication(appId);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 获取分支列表
+     */
+    @RequestMapping("/branch/list")
+    public List<ApplicationVcsBranchVO> getBranchList(@RequestBody ApplicationVcsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return applicationService.getVcsBranchList(appId, profileId);
+    }
+
+    /**
+     * 获取提交列表
+     */
+    @RequestMapping("/commit/list")
+    public List<ApplicationVcsCommitVO> getCommitList(@RequestBody ApplicationVcsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        String branchName = Valid.notBlank(request.getBranchName());
+        return applicationService.getVcsCommitList(appId, profileId, branchName);
     }
 
     /**

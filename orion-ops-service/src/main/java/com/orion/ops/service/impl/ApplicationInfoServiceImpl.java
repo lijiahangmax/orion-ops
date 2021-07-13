@@ -11,10 +11,7 @@ import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.request.*;
-import com.orion.ops.entity.vo.ApplicationDeployActionVO;
-import com.orion.ops.entity.vo.ApplicationDetailVO;
-import com.orion.ops.entity.vo.ApplicationInfoVO;
-import com.orion.ops.entity.vo.ApplicationMachineVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
@@ -203,7 +200,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String vcsCodePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_CODE_PATH.name());
         String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.name());
         String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.name());
-        String vcsRemoteUrl = this.getVcsRemoteUrl(vcsRootPath);
         // 查询机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询部署流程
@@ -217,7 +213,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         detail.setVcsCodePath(vcsCodePath);
         detail.setVscType(vcsType);
         detail.setDistPath(distPath);
-        detail.setVcsRemoteUrl(vcsRemoteUrl);
         detail.setMachineCount(machines.size());
         detail.setMachines(machines);
         detail.setActions(actions);
@@ -286,6 +281,28 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         return applicationDeployActionService.selectAppProfileActionCount(appId, profileId) > 0;
     }
 
+    @Override
+    public List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId) {
+        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        try (Gits git = Gits.of(new File(path))) {
+            // 查询分支信息
+            return git.branchList().stream()
+                    .map(s -> Converts.to(s, ApplicationVcsBranchVO.class))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public List<ApplicationVcsCommitVO> getVcsCommitList(Long appId, Long profileId, String branchName) {
+        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        try (Gits git = Gits.of(new File(path))) {
+            // 查询提交信息
+            return git.logList(branchName, 15).stream()
+                    .map(s -> Converts.to(s, ApplicationVcsCommitVO.class))
+                    .collect(Collectors.toList());
+        }
+    }
+
     /**
      * 检查app 版本控制工具路径
      *
@@ -308,20 +325,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     /**
-     * 获取版本控制远程url
-     *
-     * @param path path
-     * @return remote url
-     */
-    private String getVcsRemoteUrl(String path) {
-        try (Gits git = Gits.of(new File(path))) {
-            return git.getRemoteUrl();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * 检查是否存在
      *
      * @param id   id
@@ -330,7 +333,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private void checkNamePresent(Long id, String name) {
         LambdaQueryWrapper<ApplicationInfoDO> presentWrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
                 .ne(id != null, ApplicationInfoDO::getId, id)
-                .and(s -> s.eq(ApplicationInfoDO::getAppName, name));
+                .eq(ApplicationInfoDO::getAppName, name);
         boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }

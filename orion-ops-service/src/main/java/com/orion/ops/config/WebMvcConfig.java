@@ -2,6 +2,7 @@ package com.orion.ops.config;
 
 import com.orion.exception.IORuntimeException;
 import com.orion.exception.SftpException;
+import com.orion.exception.VcsException;
 import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
@@ -95,6 +96,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         log.error("sftpExceptionHandler url: {}, sftp处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.SFTP_OPERATOR_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = VcsException.class)
+    public HttpWrapper<?> vcsExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("vcsExceptionHandler url: {}, vsc处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)

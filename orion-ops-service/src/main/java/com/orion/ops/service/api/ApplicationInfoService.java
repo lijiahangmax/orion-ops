@@ -5,6 +5,10 @@ import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
+import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
+import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
+
+import java.util.List;
 
 /**
  * 应用服务
@@ -96,5 +100,24 @@ public interface ApplicationInfoService {
      * @return 检测app是否已经配置
      */
     boolean checkAppConfig(Long appId, Long profileId);
+
+    /**
+     * 获取版本信息列表
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 分支信息
+     */
+    List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId);
+
+    /**
+     * 获取提交列表
+     *
+     * @param appId      appId
+     * @param profileId  profileId
+     * @param branchName 分支名称
+     * @return log
+     */
+    List<ApplicationVcsCommitVO> getVcsCommitList(Long appId, Long profileId, String branchName);
 
 }
