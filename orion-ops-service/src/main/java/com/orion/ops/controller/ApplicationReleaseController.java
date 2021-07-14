@@ -1,6 +1,10 @@
 package com.orion.ops.controller;
 
+import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.RoleType;
+import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.service.api.ReleaseInfoService;
@@ -43,6 +47,20 @@ public class ApplicationReleaseController {
         Valid.notBlank(request.getCommitMessage());
         Valid.notEmpty(request.getAppMachineIdList());
         return applicationReleaseService.submitAppRelease(request);
+    }
+
+    /**
+     * 审核上线单
+     */
+    @RequestMapping("/audit")
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public Integer submitReleaseBill(@RequestBody ApplicationReleaseAuditRequest request) {
+        Valid.notNull(request.getId());
+        AuditStatus status = Valid.notNull(AuditStatus.of(request.getStatus()));
+        if (AuditStatus.REJECT.equals(status)) {
+            Valid.notBlank(request.getReason());
+        }
+        return applicationReleaseService.auditAppRelease(request);
     }
 
 }

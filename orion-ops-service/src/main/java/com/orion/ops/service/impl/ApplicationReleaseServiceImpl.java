@@ -1,5 +1,6 @@
 package com.orion.ops.service.impl;
 
+import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.RoleType;
@@ -10,6 +11,7 @@ import com.orion.ops.consts.app.ReleaseType;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
+import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 import com.orion.ops.entity.vo.ApplicationDeployActionVO;
 import com.orion.ops.service.api.*;
@@ -103,6 +105,35 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 插入部署操作
         this.insertNormalReleaseAction(releaseId, request);
         return releaseId;
+    }
+
+    @Override
+    public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
+        UserDTO user = Currents.getUser();
+        // 查询上线单
+        ReleaseBillDO releaseBill = releaseBillDAO.selectById(request.getId());
+        Valid.notNull(releaseBill, MessageConst.RELEASE_BILL_ABSENT);
+        if (!ReleaseStatus.WAIT_AUDIT.getStatus().equals(releaseBill.getReleaseStatus())) {
+            return 0;
+        }
+        AuditStatus status = AuditStatus.of(request.getStatus());
+        // 更新
+        ReleaseBillDO update = new ReleaseBillDO();
+        update.setId(releaseBill.getId());
+        update.setAuditUserId(user.getId());
+        update.setAuditUserName(user.getUsername());
+        update.setAuditTime(new Date());
+        update.setAuditReason(request.getReason());
+        if (AuditStatus.RESOLVE.equals(status)) {
+            // 通过
+            update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+        } else if (AuditStatus.REJECT.equals(status)) {
+            // 驳回
+            update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
+        } else {
+            return 0;
+        }
+        return releaseBillDAO.updateById(update);
     }
 
     /**

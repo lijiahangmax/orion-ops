@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 
 /**
@@ -18,5 +19,13 @@ public interface ApplicationReleaseService {
      * @return id
      */
     Long submitAppRelease(ApplicationReleaseSubmitRequest request);
+
+    /**
+     * 审核上线单
+     *
+     * @param request request
+     * @return effect
+     */
+    Integer auditAppRelease(ApplicationReleaseAuditRequest request);
 
 }

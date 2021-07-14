@@ -32,7 +32,7 @@ public class Const extends com.orion.constant.Const {
 
     public static final String COMMAND_LOG_DIR = "/command";
 
-    public static final String HEAD_PIC_DIR = "/head_pic";
+    public static final String AVATAR_PIC_DIR = "/avatar_pic";
 
     public static final String UPLOAD_DIR = "/upload";
 
