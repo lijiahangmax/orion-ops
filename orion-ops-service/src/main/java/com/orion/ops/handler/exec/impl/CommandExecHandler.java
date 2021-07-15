@@ -71,16 +71,9 @@ public class CommandExecHandler extends AbstractExecHandler {
             if (!Strings.isBlank(description)) {
                 sb.append("描述: ").append(description).append(Letters.LF);
             }
-            sb.append(Letters.LF);
-
-            if (env != null) {
-                sb.append("# 机器环境变量\n");
-                env.forEach((k, v) -> sb.append(k).append(" = ").append(v).append(Letters.LF));
-                sb.append(Letters.LF);
-            }
-
-            sb.append("# 命令\n")
-                    .append(hint.getRealCommand()).append(Letters.LF)
+            sb.append(Letters.LF)
+                    .append("# 命令\n")
+                    .append(hint.getCommand()).append(Letters.LF)
                     .append(Letters.LF)
                     .append("# 开始执行\n");
             logOutputStream.write(Strings.bytes(sb.toString()));
@@ -89,7 +82,6 @@ public class CommandExecHandler extends AbstractExecHandler {
             log.error("execHandler-写入日志失败 {} {}", execId, e);
             e.printStackTrace();
         }
-        this.env = null;
     }
 
     /**

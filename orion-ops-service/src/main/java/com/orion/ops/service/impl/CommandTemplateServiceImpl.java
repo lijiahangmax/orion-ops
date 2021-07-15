@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.CommandTemplateDAO;
 import com.orion.ops.entity.domain.CommandTemplateDO;
@@ -10,7 +9,6 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.CommandTemplateRequest;
 import com.orion.ops.entity.vo.CommandTemplateVO;
 import com.orion.ops.service.api.CommandTemplateService;
-import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
@@ -35,9 +33,6 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
 
-    @Resource
-    private HistoryValueService historyValueService;
-
     @Override
     public Long addTemplate(CommandTemplateRequest request) {
         UserDTO user = Currents.getUser();
@@ -53,20 +48,11 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
 
     @Override
     public Integer updateTemplate(CommandTemplateRequest request) {
-        Long id = request.getId();
-        CommandTemplateDO before = commandTemplateDAO.selectById(id);
-        Valid.notNull(before, MessageConst.TEMPLATE_ABSENT);
-        // 检查是否更新了值
-        String value = request.getValue();
-        String beforeValue = before.getTemplateValue();
-        if (!Strings.isBlank(value) && !value.equals(beforeValue)) {
-            historyValueService.addHistory(id, HistoryValueType.COMMAND_TEMPLATE, beforeValue);
-        }
         // 更新
         CommandTemplateDO update = new CommandTemplateDO();
-        update.setId(id);
+        update.setId(request.getId());
         update.setTemplateName(request.getName());
-        update.setTemplateValue(value);
+        update.setTemplateValue(request.getValue());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         return commandTemplateDAO.updateById(update);

@@ -19,6 +19,7 @@ import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.exec.ExecSessionHolder;
 import com.orion.ops.handler.exec.IExecHandler;
 import com.orion.ops.service.api.CommandExecService;
+import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -52,17 +53,22 @@ public class CommandExecServiceImpl implements CommandExecService {
     private MachineInfoService machineInfoService;
 
     @Resource
+    private MachineEnvService machineEnvService;
+
+    @Resource
     private ExecSessionHolder execSessionHolder;
 
     @Override
     public HttpWrapper<Map<String, Long>> batchSubmitTask(CommandExecRequest request) {
         Valid.notBlank(request.getCommand());
         List<Long> machineIdList = request.getMachineIdList();
+        Map<Long, MachineInfoDO> machineCache = Maps.newMap();
         // 检查是否有运行中的任务
         Long userId = Currents.getUserId();
         for (Long mid : machineIdList) {
             MachineInfoDO machine = machineInfoService.selectById(mid);
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+            machineCache.put(machine.getId(), machine);
             LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                     .eq(CommandExecDO::getExecType, ExecType.BATCH_EXEC.getType())
                     .eq(CommandExecDO::getUserId, userId)
@@ -74,19 +80,19 @@ public class CommandExecServiceImpl implements CommandExecService {
             }
         }
         // 建立连接
-        Map<Long, SessionStore> sessionStore = Maps.newLinkedMap();
+        Map<Long, SessionStore> sessionStoreMap = Maps.newLinkedMap();
         for (Long mid : machineIdList) {
             try {
                 SessionStore session = machineInfoService.openSessionStore(mid);
-                sessionStore.put(mid, session);
+                sessionStoreMap.put(mid, session);
             } catch (Exception e) {
                 e.printStackTrace();
-                sessionStore.values().forEach(Streams::close);
+                sessionStoreMap.values().forEach(Streams::close);
                 throw e;
             }
         }
         // 执行命令
-        Map<Long, Long> tailToken = this.executeBatchCommand(request, sessionStore);
+        Map<Long, Long> tailToken = this.executeBatchCommand(request, sessionStoreMap, machineCache);
         Map<String, Long> result = Maps.newLinkedMap();
         tailToken.forEach((k, v) -> {
             result.put(k + "", v);
@@ -185,7 +191,6 @@ public class CommandExecServiceImpl implements CommandExecService {
                 .orElse(null);
     }
 
-
     /**
      * 填充组装数据
      *
@@ -202,25 +207,51 @@ public class CommandExecServiceImpl implements CommandExecService {
     /**
      * 执行命令
      *
-     * @param request      request
-     * @param sessionStore sessions
+     * @param request         request
+     * @param sessionStoreMap sessions
+     * @param machineCache    machineCache
      * @return key: mid, value: execId
      */
-    private Map<Long, Long> executeBatchCommand(CommandExecRequest request, Map<Long, SessionStore> sessionStore) {
+    private Map<Long, Long> executeBatchCommand(CommandExecRequest request, Map<Long, SessionStore> sessionStoreMap, Map<Long, MachineInfoDO> machineCache) {
         Map<Long, Long> execResult = Maps.newLinkedMap();
-        sessionStore.forEach((k, v) -> {
+        sessionStoreMap.forEach((machineId, session) -> {
             ExecHint hint = new ExecHint();
             hint.setExecType(ExecType.BATCH_EXEC);
             hint.setRelId(request.getRelId());
-            hint.setMachineId(k);
-            hint.setSession(v);
-            hint.setCommand(request.getCommand());
+            hint.setMachineId(machineId);
+            hint.setSession(session);
             hint.setDescription(request.getDescription());
+            // 设置命令
+            MachineInfoDO machine = machineCache.get(machineId);
+            hint.setMachine(machine);
+            hint.setCommand(this.replaceCommand(machine, request.getCommand()));
+            // 提交执行
             IExecHandler handler = IExecHandler.with(hint);
             Long eid = handler.submit(hint);
-            execResult.put(k, eid);
+            execResult.put(machineId, eid);
         });
         return execResult;
+    }
+
+    /**
+     * 替换命令占位符
+     *
+     * @param machine machine
+     * @param command command
+     * @return replaced command
+     */
+    private String replaceCommand(MachineInfoDO machine, String command) {
+        Map<String, String> env = Maps.newMap();
+        // machine env
+        Map<String, String> machineEnv = machineEnvService.getMachineEnv(machine.getId());
+        machineEnv.forEach((k, v) -> env.put("env." + k, v));
+        // machine
+        env.put("machine.name", machine.getMachineName());
+        env.put("machine.tag", machine.getMachineTag());
+        env.put("machine.host", machine.getMachineHost());
+        env.put("machine.port", machine.getSshPort() + Strings.EMPTY);
+        env.put("machine.username", machine.getUsername());
+        return Strings.format(command, "#", env);
     }
 
 }

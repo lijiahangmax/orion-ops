@@ -1,21 +1,17 @@
 package com.orion.ops.handler.exec;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.service.api.MachineEnvService;
-import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
@@ -24,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * 命令执行器 基类
@@ -37,10 +32,6 @@ import java.util.Map;
 public abstract class AbstractExecHandler implements IExecHandler {
 
     protected static CommandExecDAO commandExecDAO = SpringHolder.getBean("commandExecDAO");
-
-    protected static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
-
-    protected static MachineEnvService machineEnvService = SpringHolder.getBean("machineEnvService");
 
     protected static ExecSessionHolder execSessionHolder = SpringHolder.getBean("execSessionHolder");
 
@@ -55,8 +46,6 @@ public abstract class AbstractExecHandler implements IExecHandler {
 
     protected MachineInfoDO machine;
 
-    protected Map<String, String> env;
-
     protected AbstractExecHandler(ExecHint hint) {
         this.hint = hint;
         this.valid();
@@ -65,21 +54,17 @@ public abstract class AbstractExecHandler implements IExecHandler {
     @Override
     public Long submit(ExecHint hint) {
         log.info("execHandler-执行命令开始 machineId: {}, type: {}, startDate: {}", hint.getMachineId(), hint.getExecType(), Dates.current(Dates.YMDHMSS));
+        this.machine = hint.getMachine();
         this.insertRecord();
-        this.machine = machineInfoService.selectById(hint.getMachineId());
         Threads.start(this, SchedulerPools.EXEC_SCHEDULER);
         return execId;
     }
 
     @Override
     public void run() {
-        // 获取环境变量
-        this.getEnv();
-        // 设置替换命令
-        this.replaceCommand();
         try {
             // 打开commandExecutor
-            this.executor = hint.getSession().getCommandExecutor(hint.getRealCommand());
+            this.executor = hint.getSession().getCommandExecutor(hint.getCommand());
             execSessionHolder.addSession(execId, this);
             this.updateStatus(ExecStatus.RUNNABLE);
             this.openComputed();
@@ -97,39 +82,6 @@ public abstract class AbstractExecHandler implements IExecHandler {
         } finally {
             this.close();
         }
-    }
-
-    /**
-     * 获取环境变量
-     */
-    protected void getEnv() {
-        this.env = new MutableLinkedHashMap<>();
-        // machine env
-        Map<String, String> machineEnv = machineEnvService.getMachineEnv(hint.getMachineId());
-        machineEnv.forEach((k, v) -> env.put("env." + k, v));
-        // machine
-        env.put("info.name", machine.getMachineName());
-        env.put("info.tag", machine.getMachineTag());
-        env.put("info.host", machine.getMachineHost());
-        env.put("info.port", machine.getSshPort() + Strings.EMPTY);
-        env.put("info.username", machine.getUsername());
-    }
-
-    /**
-     * 替换命令
-     */
-    protected void replaceCommand() {
-        if (env == null) {
-            hint.setRealCommand(hint.getCommand());
-            return;
-        }
-        String realCommand = Strings.format(hint.getCommand(), "#", env);
-        hint.setRealCommand(realCommand);
-        // 更新命令
-        CommandExecDO update = new CommandExecDO();
-        update.setId(execId);
-        update.setExecCommand(realCommand);
-        commandExecDAO.updateById(update);
     }
 
     /**
