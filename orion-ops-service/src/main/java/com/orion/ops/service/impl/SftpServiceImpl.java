@@ -31,6 +31,7 @@ import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +41,6 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,12 +71,12 @@ public class SftpServiceImpl implements SftpService {
     /**
      * 连接信息
      */
-    private final Map<Long, SessionStore> SESSION = new ConcurrentHashMap<>();
+    private final Map<Long, SessionStore> sessionHolder = Maps.newCurrentHashMap();
 
     /**
      * 基本操作的executor 不包含(upload, download)
      */
-    private final Map<Long, SftpExecutor> BASIC_EXECUTOR = new ConcurrentHashMap<>();
+    private final Map<Long, SftpExecutor> basicExecutorHolder = Maps.newCurrentHashMap();
 
     @Override
     public FileOpenVO open(Long machineId) {
@@ -85,14 +85,14 @@ public class SftpServiceImpl implements SftpService {
         // 获取charset
         String charset = this.getSftpCharset(machineId);
         // 获取executor
-        SftpExecutor executor = BASIC_EXECUTOR.get(machineId);
+        SftpExecutor executor = basicExecutorHolder.get(machineId);
         if (executor == null) {
             // 打开sftp连接
             SessionStore sessionStore = machineInfoService.openSessionStore(machineId);
             executor = sessionStore.getSftpExecutor(charset);
             executor.connect();
-            SESSION.put(machineId, sessionStore);
-            BASIC_EXECUTOR.put(machineId, executor);
+            sessionHolder.put(machineId, sessionStore);
+            basicExecutorHolder.put(machineId, executor);
         } else if (!executor.isConnected()) {
             executor.connect();
         }
@@ -364,7 +364,7 @@ public class SftpServiceImpl implements SftpService {
         boolean resolve = values[0].equals(Currents.getUserId());
         Valid.isTrue(resolve, MessageConst.SESSION_EXPIRE);
         // 检查缓存机器
-        SftpExecutor executor = BASIC_EXECUTOR.get(values[1]);
+        SftpExecutor executor = basicExecutorHolder.get(values[1]);
         Valid.notNull(executor, MessageConst.SESSION_EXPIRE);
         if (executor.isClosed()) {
             executor.connect();
@@ -431,7 +431,7 @@ public class SftpServiceImpl implements SftpService {
      */
     private String getSftpCharset(Long machineId) {
         // 查询执行器
-        SftpExecutor executor = BASIC_EXECUTOR.get(machineId);
+        SftpExecutor executor = basicExecutorHolder.get(machineId);
         if (executor != null) {
             return executor.getCharset();
         }
@@ -450,7 +450,7 @@ public class SftpServiceImpl implements SftpService {
      * @return SessionStore
      */
     private SessionStore getSessionStore(Long machineId) {
-        SessionStore sessionStore = SESSION.get(machineId);
+        SessionStore sessionStore = sessionHolder.get(machineId);
         if (sessionStore != null && !sessionStore.isConnected()) {
             sessionStore.connect();
         }

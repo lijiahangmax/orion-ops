@@ -1,21 +1,20 @@
 package com.orion.ops.handler.terminal.manager;
 
-import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.ops.handler.terminal.IOperateHandler;
-import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
+import com.orion.utils.convert.Converts;
 import com.orion.utils.time.DateRanges;
-import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +32,7 @@ public class TerminalSessionManager {
      * key: token
      * value: handler
      */
-    private final Map<String, IOperateHandler> SESSION_STORE = new ConcurrentHashMap<>();
+    private final Map<String, IOperateHandler> sessionHolder = Maps.newCurrentHashMap();
 
     /**
      * session 列表
@@ -42,7 +41,7 @@ public class TerminalSessionManager {
      * @return dataGrid
      */
     public DataGrid<MachineTerminalManagerVO> getOnlineTerminal(MachineTerminalManagerRequest request) {
-        List<MachineTerminalManagerVO> sessionList = SESSION_STORE.values()
+        List<MachineTerminalManagerVO> sessionList = sessionHolder.values()
                 .stream()
                 .filter(s -> Optional.ofNullable(request.getToken())
                         .filter(Strings::isNotBlank)
@@ -65,18 +64,11 @@ public class TerminalSessionManager {
                     return DateRanges.inRange(request.getConnectedTimeStart(), request.getConnectedTimeEnd(), s.getHint().getConnectedTime());
                 })
                 .map(s -> {
-                    MachineTerminalManagerVO session = new MachineTerminalManagerVO();
-                    TerminalConnectHint hint = s.getHint();
-                    session.setToken(s.getToken());
-                    session.setUserId(hint.getUserId());
-                    session.setConnectedTime(hint.getConnectedTime());
-                    Optional.ofNullable(hint.getConnectedTime()).map(Dates::ago).ifPresent(session::setConnectedTimeAgo);
-                    session.setMachineId(hint.getMachineId());
-                    session.setHost(hint.getMachineHost());
-                    session.setLogId(hint.getLogId());
-                    return session;
+                    MachineTerminalManagerVO vo = Converts.to(s.getHint(), MachineTerminalManagerVO.class);
+                    vo.setToken(s.getToken());
+                    return vo;
                 }).collect(Collectors.toList());
-        List<MachineTerminalManagerVO> page = new LimitList<>(sessionList)
+        List<MachineTerminalManagerVO> page = Lists.newLimitList(sessionList)
                 .limit(request.getLimit())
                 .page(request.getPage());
         return DataGrid.of(page, sessionList.size());
@@ -88,7 +80,7 @@ public class TerminalSessionManager {
      * @param token token
      */
     public HttpWrapper<?> forceOffline(String token) {
-        IOperateHandler handler = SESSION_STORE.get(token);
+        IOperateHandler handler = sessionHolder.get(token);
         if (handler == null) {
             return HttpWrapper.error("未查询到连接信息");
         }
@@ -101,19 +93,19 @@ public class TerminalSessionManager {
     }
 
     public Map<String, IOperateHandler> getSessionStore() {
-        return SESSION_STORE;
+        return sessionHolder;
     }
 
     public IOperateHandler getSession(String key) {
-        return SESSION_STORE.get(key);
+        return sessionHolder.get(key);
     }
 
     public IOperateHandler removeSession(String key) {
-        return SESSION_STORE.remove(key);
+        return sessionHolder.remove(key);
     }
 
     public void addSession(String key, IOperateHandler handler) {
-        SESSION_STORE.put(key, handler);
+        sessionHolder.put(key, handler);
     }
 
 }

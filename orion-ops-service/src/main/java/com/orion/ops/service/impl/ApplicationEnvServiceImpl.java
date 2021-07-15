@@ -74,14 +74,17 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             return id;
         }
         // 新增
-        ApplicationEnvDO entity = new ApplicationEnvDO();
-        entity.setAppId(appId);
-        entity.setProfileId(profileId);
-        entity.setAttrKey(key.trim());
-        entity.setAttrValue(request.getValue());
-        entity.setDescription(request.getDescription());
-        applicationEnvDAO.insert(entity);
-        return entity.getId();
+        ApplicationEnvDO insert = new ApplicationEnvDO();
+        insert.setAppId(appId);
+        insert.setProfileId(profileId);
+        insert.setAttrKey(key.trim());
+        insert.setAttrValue(request.getValue());
+        insert.setDescription(request.getDescription());
+        applicationEnvDAO.insert(insert);
+        // 插入历史值
+        Long id = insert.getId();
+        historyValueService.addHistory(id, HistoryValueType.APP_ENV, Const.ADD, null, request.getValue());
+        return id;
     }
 
     @Override
@@ -91,15 +94,15 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         ApplicationEnvDO before = applicationEnvDAO.selectById(id);
         Valid.notNull(before, MessageConst.ENV_ABSENT);
         // 检查是否修改了值
-        String value = request.getValue();
         String beforeValue = before.getAttrValue();
-        if (!Strings.isBlank(value) && !value.equals(beforeValue)) {
-            historyValueService.addHistory(id, HistoryValueType.APP_ENV, beforeValue);
+        String afterValue = request.getValue();
+        if (afterValue != null && !afterValue.equals(beforeValue)) {
+            historyValueService.addHistory(id, HistoryValueType.APP_ENV, Const.UPDATE, beforeValue, afterValue);
         }
         // 更新
         ApplicationEnvDO update = new ApplicationEnvDO();
         update.setId(id);
-        update.setAttrValue(value);
+        update.setAttrValue(afterValue);
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         return applicationEnvDAO.updateById(update);

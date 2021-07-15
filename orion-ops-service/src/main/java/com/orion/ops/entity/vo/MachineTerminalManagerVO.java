@@ -1,8 +1,12 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.handler.terminal.TerminalConnectHint;
+import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 机器终端 管理员面板
@@ -48,5 +52,20 @@ public class MachineTerminalManagerVO {
      * logId
      */
     private Long logId;
+
+    static {
+        TypeStore.STORE.register(TerminalConnectHint.class, MachineTerminalManagerVO.class, p -> {
+            MachineTerminalManagerVO vo = new MachineTerminalManagerVO();
+            vo.setUserId(p.getUserId());
+            vo.setMachineId(p.getMachineId());
+            vo.setHost(p.getMachineHost());
+            vo.setLogId(p.getLogId());
+            vo.setConnectedTime(p.getConnectedTime());
+            Optional.ofNullable(p.getConnectedTime())
+                    .map(Dates::ago)
+                    .ifPresent(vo::setConnectedTimeAgo);
+            return vo;
+        });
+    }
 
 }

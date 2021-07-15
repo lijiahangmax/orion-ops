@@ -62,13 +62,16 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             return id;
         }
         // 新增
-        MachineEnvDO entity = new MachineEnvDO();
-        entity.setMachineId(request.getMachineId());
-        entity.setAttrKey(request.getKey().trim());
-        entity.setAttrValue(request.getValue());
-        entity.setDescription(request.getDescription());
-        machineEnvDAO.insert(entity);
-        return entity.getId();
+        MachineEnvDO insert = new MachineEnvDO();
+        insert.setMachineId(request.getMachineId());
+        insert.setAttrKey(request.getKey().trim());
+        insert.setAttrValue(request.getValue());
+        insert.setDescription(request.getDescription());
+        machineEnvDAO.insert(insert);
+        // 插入历史值
+        Long id = insert.getId();
+        historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.ADD, null, request.getValue());
+        return id;
     }
 
     @Override
@@ -78,15 +81,15 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         MachineEnvDO before = machineEnvDAO.selectById(id);
         Valid.notNull(before, MessageConst.ENV_ABSENT);
         // 检查是否修改了值
-        String value = request.getValue();
         String beforeValue = before.getAttrValue();
-        if (!Strings.isBlank(value) && !value.equals(beforeValue)) {
-            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, beforeValue);
+        String afterValue = request.getValue();
+        if (afterValue != null && !afterValue.equals(beforeValue)) {
+            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.UPDATE, beforeValue, afterValue);
         }
         // 修改
         MachineEnvDO update = new MachineEnvDO();
         update.setId(id);
-        update.setAttrValue(value);
+        update.setAttrValue(afterValue);
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         return machineEnvDAO.updateById(update);

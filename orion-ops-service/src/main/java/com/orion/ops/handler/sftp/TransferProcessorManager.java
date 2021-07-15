@@ -2,6 +2,7 @@ package com.orion.ops.handler.sftp;
 
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.json.Jsons;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Jiahang Li
@@ -24,25 +24,25 @@ public class TransferProcessorManager {
      * key: token
      * value: processor
      */
-    private Map<String, IFileTransferProcessor> transferProcessor = new ConcurrentHashMap<>();
+    private final Map<String, IFileTransferProcessor> transferProcessor = Maps.newCurrentHashMap();
 
     /**
      * key: sessionId
      * value: webSocketSession
      */
-    private Map<String, WebSocketSession> idMapping = new ConcurrentHashMap<>();
+    private final Map<String, WebSocketSession> idMapping = Maps.newCurrentHashMap();
 
     /**
      * key: sessionId
      * value: userId_machineId
      */
-    private Map<String, String> sessionUserMachineMapping = new ConcurrentHashMap<>();
+    private final Map<String, String> sessionUserMachineMapping = Maps.newCurrentHashMap();
 
     /**
      * key: userId_machineId
      * value: sessionIdList
      */
-    private Map<String, List<String>> userMachineSessionMapping = new ConcurrentHashMap<>();
+    private final Map<String, List<String>> userMachineSessionMapping = Maps.newCurrentHashMap();
 
     /**
      * 添加processor

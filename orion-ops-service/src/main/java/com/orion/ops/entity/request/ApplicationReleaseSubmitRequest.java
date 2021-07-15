@@ -56,9 +56,7 @@ public class ApplicationReleaseSubmitRequest {
 
     /**
      * app机器id列表
-     *
-     * @see com.orion.ops.entity.domain.ApplicationMachineDO#setId(Long)
      */
-    private List<Long> appMachineIdList;
+    private List<Long> machineIdList;
 
 }
