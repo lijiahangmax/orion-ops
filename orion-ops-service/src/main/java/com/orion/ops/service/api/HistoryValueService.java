@@ -17,11 +17,13 @@ public interface HistoryValueService {
     /**
      * 添加历史值快照
      *
-     * @param valueId     valueId
-     * @param valueType   valueType
-     * @param beforeValue beforeValue
+     * @param valueId      valueId
+     * @param valueType    valueType
+     * @param operatorType operatorType
+     * @param beforeValue  beforeValue
+     * @param afterValue   afterValue
      */
-    void addHistory(Long valueId, HistoryValueType valueType, String beforeValue);
+    void addHistory(Long valueId, HistoryValueType valueType, Integer operatorType, String beforeValue, String afterValue);
 
     /**
      * 值列表

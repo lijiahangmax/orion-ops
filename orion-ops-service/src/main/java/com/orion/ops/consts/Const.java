@@ -62,6 +62,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer NOT_CONFIGURED = 2;
 
+    public static final Integer ADD = 1;
+
+    public static final Integer UPDATE = 2;
+
     public static final String COPY = "Copy";
 
     public static final String CONNECT = "建立连接";

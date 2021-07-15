@@ -3,14 +3,13 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Tuple;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.ApplicationEnvDAO;
-import com.orion.ops.dao.CommandTemplateDAO;
 import com.orion.ops.dao.HistoryValueSnapshotDAO;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
-import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.ops.entity.domain.HistoryValueSnapshotDO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -20,6 +19,7 @@ import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Objects1;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,18 +42,17 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     private MachineEnvDAO machineEnvDAO;
 
     @Resource
-    private CommandTemplateDAO commandTemplateDAO;
-
-    @Resource
     private ApplicationEnvDAO applicationEnvDAO;
 
     @Override
-    public void addHistory(Long valueId, HistoryValueType valueType, String beforeValue) {
+    public void addHistory(Long valueId, HistoryValueType valueType, Integer operatorType, String beforeValue, String afterValue) {
         UserDTO user = Currents.getUser();
         HistoryValueSnapshotDO insert = new HistoryValueSnapshotDO();
         insert.setValueId(valueId);
+        insert.setOperatorType(operatorType);
         insert.setValueType(valueType.getType());
         insert.setBeforeValue(beforeValue);
+        insert.setAfterValue(afterValue);
         insert.setUpdateUserId(user.getId());
         insert.setUpdateUserName(user.getUsername());
         historyValueSnapshotDAO.insert(insert);
@@ -77,15 +76,12 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         Valid.notNull(historyValue, MessageConst.HISTORY_VALUE_ABSENT);
         // 修改值
         Long valueId = historyValue.getValueId();
-        String updateValue = historyValue.getBeforeValue();
+        String updateValue = Objects1.def(historyValue.getBeforeValue(), historyValue.getAfterValue());
         HistoryValueType valueType = HistoryValueType.of(historyValue.getValueType());
         Tuple tuple;
         switch (valueType) {
             case MACHINE_ENV:
                 tuple = this.rollbackMachineEnv(valueId, updateValue);
-                break;
-            case COMMAND_TEMPLATE:
-                tuple = this.rollbackCommandTemplate(valueId, updateValue);
                 break;
             case APP_ENV:
                 tuple = this.rollbackAppEnv(valueId, updateValue);
@@ -94,7 +90,7 @@ public class HistoryValueServiceImpl implements HistoryValueService {
                 return 0;
         }
         // 添加历史记录
-        this.addHistory(valueId, valueType, tuple.get(1));
+        this.addHistory(valueId, valueType, Const.UPDATE, tuple.get(1), updateValue);
         return tuple.get(0);
     }
 
@@ -116,26 +112,6 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         update.setUpdateTime(new Date());
         Integer effect = machineEnvDAO.updateById(update);
         return Tuple.of(effect, env.getAttrValue());
-    }
-
-    /**
-     * 回滚 命令模板
-     *
-     * @param valueId valueId
-     * @param value   value
-     * @return effect value
-     */
-    private Tuple rollbackCommandTemplate(Long valueId, String value) {
-        // 查询
-        CommandTemplateDO template = commandTemplateDAO.selectById(valueId);
-        Valid.notNull(template, MessageConst.METADATA_ABSENT);
-        // 更新
-        CommandTemplateDO update = new CommandTemplateDO();
-        update.setId(valueId);
-        update.setTemplateValue(value);
-        update.setUpdateTime(new Date());
-        Integer effect = commandTemplateDAO.updateById(update);
-        return Tuple.of(effect, template.getTemplateValue());
     }
 
     /**

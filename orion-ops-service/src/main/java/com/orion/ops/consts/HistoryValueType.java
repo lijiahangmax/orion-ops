@@ -20,14 +20,9 @@ public enum HistoryValueType {
     MACHINE_ENV(10),
 
     /**
-     * 命令模板
-     */
-    COMMAND_TEMPLATE(20),
-
-    /**
      * 应用环境变量
      */
-    APP_ENV(30),
+    APP_ENV(20),
 
     ;
 

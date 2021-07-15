@@ -23,9 +23,22 @@ public class HistoryValueVO {
     private Long id;
 
     /**
+     * 操作类型 1新增 2修改
+     *
+     * @see com.orion.ops.consts.Const#ADD
+     * @see com.orion.ops.consts.Const#UPDATE
+     */
+    private Integer type;
+
+    /**
      * 原始值
      */
     private String beforeValue;
+
+    /**
+     * 新值
+     */
+    private String afterValue;
 
     /**
      * 修改人id
@@ -51,7 +64,9 @@ public class HistoryValueVO {
         TypeStore.STORE.register(HistoryValueSnapshotDO.class, HistoryValueVO.class, p -> {
             HistoryValueVO vo = new HistoryValueVO();
             vo.setId(p.getId());
+            vo.setType(p.getOperatorType());
             vo.setBeforeValue(p.getBeforeValue());
+            vo.setAfterValue(p.getAfterValue());
             vo.setUpdateUserId(p.getUpdateUserId());
             vo.setUpdateUserName(p.getUpdateUserName());
             vo.setCreateTime(p.getCreateTime());
