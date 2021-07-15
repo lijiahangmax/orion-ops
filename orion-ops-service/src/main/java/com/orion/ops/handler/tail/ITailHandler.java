@@ -18,4 +18,18 @@ public interface ITailHandler extends SafeCloseable {
      */
     void start() throws Exception;
 
+    /**
+     * 获取机器id
+     *
+     * @return 机器id
+     */
+    Long getMachineId();
+
+    /**
+     * 获取文件路径
+     *
+     * @return 文件路径
+     */
+    String getFilePath();
+
 }

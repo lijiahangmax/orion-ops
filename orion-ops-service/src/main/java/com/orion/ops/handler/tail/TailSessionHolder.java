@@ -1,9 +1,13 @@
 package com.orion.ops.handler.tail;
 
+import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * tail 会话持有者
@@ -19,7 +23,13 @@ public class TailSessionHolder {
      * key: token
      * value: ITailHandler
      */
-    private final Map<String, ITailHandler> HOLDER = new ConcurrentHashMap<>();
+    private final Map<String, ITailHandler> holder = Maps.newCurrentHashMap();
+
+    /**
+     * key: machineId:filePath
+     * value: token
+     */
+    private final Map<String, List<String>> fileTokenMapping = Maps.newCurrentHashMap();
 
     /**
      * 添加session
@@ -28,7 +38,9 @@ public class TailSessionHolder {
      * @param session session
      */
     public void addSession(String token, ITailHandler session) {
-        HOLDER.put(token, session);
+        holder.put(token, session);
+        fileTokenMapping.computeIfAbsent(session.getMachineId() + ":" + session.getFilePath(), s -> Lists.newList()).add(token);
+        System.out.println(1);
     }
 
     /**
@@ -38,7 +50,25 @@ public class TailSessionHolder {
      * @return session
      */
     public ITailHandler getSession(String token) {
-        return HOLDER.get(token);
+        return holder.get(token);
+    }
+
+    /**
+     * 获取session
+     *
+     * @param machineId machineId
+     * @param path      path
+     * @return session
+     */
+    public List<ITailHandler> getSession(Long machineId, String path) {
+        List<String> tokenList = fileTokenMapping.get(machineId + ":" + path);
+        if (Lists.isEmpty(tokenList)) {
+            return Lists.newList();
+        }
+        return tokenList.stream()
+                .map(holder::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -48,7 +78,11 @@ public class TailSessionHolder {
      * @return session
      */
     public ITailHandler removeSession(String token) {
-        return HOLDER.remove(token);
+        ITailHandler handler = holder.remove(token);
+        if (handler != null) {
+            fileTokenMapping.remove(handler.getMachineId() + ":" + handler.getFilePath());
+        }
+        return handler;
     }
 
 }

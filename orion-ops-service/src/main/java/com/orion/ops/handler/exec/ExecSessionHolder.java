@@ -1,9 +1,9 @@
 package com.orion.ops.handler.exec;
 
+import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * exec 实例持有者
@@ -19,7 +19,7 @@ public class ExecSessionHolder {
      * key: execId
      * value: IExecHandler
      */
-    private final Map<Long, IExecHandler> HOLDER = new ConcurrentHashMap<>();
+    private final Map<Long, IExecHandler> holder = Maps.newCurrentHashMap();
 
     /**
      * 添加session
@@ -28,7 +28,7 @@ public class ExecSessionHolder {
      * @param session session
      */
     public void addSession(Long id, IExecHandler session) {
-        HOLDER.put(id, session);
+        holder.put(id, session);
     }
 
     /**
@@ -38,7 +38,7 @@ public class ExecSessionHolder {
      * @return session
      */
     public IExecHandler getSession(Long id) {
-        return HOLDER.get(id);
+        return holder.get(id);
     }
 
     /**
@@ -48,7 +48,7 @@ public class ExecSessionHolder {
      * @return session
      */
     public IExecHandler removeSession(Long id) {
-        return HOLDER.remove(id);
+        return holder.remove(id);
     }
 
 }

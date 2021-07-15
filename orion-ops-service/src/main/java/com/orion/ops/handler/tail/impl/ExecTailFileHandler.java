@@ -84,6 +84,16 @@ public class ExecTailFileHandler implements ITailHandler {
         log.info("tail EXEC_TAIL 监听文件开始 token: {}", token);
     }
 
+    @Override
+    public Long getMachineId() {
+        return hint.getMachineId();
+    }
+
+    @Override
+    public String getFilePath() {
+        return hint.getPath();
+    }
+
     /**
      * 回调
      *
@@ -92,9 +102,6 @@ public class ExecTailFileHandler implements ITailHandler {
     @SneakyThrows
     private void callback(BaseRemoteExecutor executor) {
         log.info("tail EXEC_TAIL 监听文件结束 token: {}", token);
-        if (close) {
-            return;
-        }
         if (session.isOpen()) {
             session.close(WsCloseCode.EOF_CALLBACK.close());
         }
@@ -116,12 +123,15 @@ public class ExecTailFileHandler implements ITailHandler {
     }
 
     @Override
+    @SneakyThrows
     public void close() {
         if (close) {
             return;
         }
         this.close = true;
-        executor.close();
+        if (executor != null) {
+            executor.close();
+        }
     }
 
     @Override

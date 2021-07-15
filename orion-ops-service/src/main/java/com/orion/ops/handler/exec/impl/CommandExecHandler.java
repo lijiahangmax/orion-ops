@@ -6,7 +6,10 @@ import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.handler.exec.AbstractExecHandler;
 import com.orion.ops.handler.exec.ExecHint;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -26,6 +29,8 @@ import java.util.Date;
 @Slf4j
 public class CommandExecHandler extends AbstractExecHandler {
 
+    protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean("tailSessionHolder");
+
     protected String logPathSuffix;
 
     protected String logPath;
@@ -41,7 +46,7 @@ public class CommandExecHandler extends AbstractExecHandler {
     protected void openComputed() {
         this.getLogPath();
         log.info("execHandler-打开日志流 {} {}", execId, logPath);
-        File logFile = new File(MachineEnvAttr.LOG_PATH.getValue() + logPath);
+        File logFile = new File(logPath);
         this.logOutputStream = Files1.openOutputStreamFastSafe(logFile);
         this.logOpenComputed();
     }
@@ -88,13 +93,14 @@ public class CommandExecHandler extends AbstractExecHandler {
      * 获取日志目录
      */
     protected void getLogPath() {
-        this.logPath = Const.EXEC_LOG_DIR + logPathSuffix + "/" + execId
+        String generatorLogPath = Const.EXEC_LOG_DIR + logPathSuffix + "/" + execId
                 + "_" + hint.getMachineId()
                 + "_" + Dates.current(Dates.YMDHMS2)
                 + "." + Const.SUFFIX_LOG;
+        this.logPath = MachineEnvAttr.LOG_PATH.getValue() + generatorLogPath;
         CommandExecDO update = new CommandExecDO();
         update.setId(execId);
-        update.setLogPath(logPath);
+        update.setLogPath(generatorLogPath);
         commandExecDAO.updateById(update);
     }
 
@@ -149,6 +155,14 @@ public class CommandExecHandler extends AbstractExecHandler {
     public void close() {
         super.close();
         Streams.close(logOutputStream);
+        // 关闭正在tail的日志
+        try {
+            tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath)
+                    .forEach(ITailHandler::close);
+        } catch (Exception e) {
+            log.error("execHandler-关闭tail失败 {} {}", execId, e);
+            e.printStackTrace();
+        }
     }
 
 }
