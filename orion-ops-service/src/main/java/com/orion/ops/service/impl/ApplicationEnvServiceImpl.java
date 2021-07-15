@@ -19,6 +19,7 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,7 +146,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getAppProfileEnv(Long appId, Long profileId) {
-        MutableLinkedHashMap<String, String> env = new MutableLinkedHashMap<>();
+        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
                 .eq(ApplicationEnvDO::getProfileId, profileId)
@@ -188,7 +189,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         LambdaQueryWrapper<ApplicationEnvDO> deleteWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
                 .eq(ApplicationEnvDO::getProfileId, syncProfileId)
-                .ne(ApplicationEnvDO::getAttrKey, sourceKeys);
+                .notIn(ApplicationEnvDO::getAttrKey, sourceKeys);
         applicationEnvDAO.delete(deleteWrapper);
     }
 

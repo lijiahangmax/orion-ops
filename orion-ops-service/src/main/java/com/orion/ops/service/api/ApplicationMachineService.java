@@ -16,12 +16,12 @@ public interface ApplicationMachineService {
     /**
      * 获取应用环境的机器
      *
-     * @param id        id
+     * @param machineId machineId
      * @param appId     appId
      * @param profileId profileId
      * @return machineId
      */
-    Long getAppProfileMachineId(Long id, Long appId, Long profileId);
+    Long getAppProfileMachineId(Long machineId, Long appId, Long profileId);
 
     /**
      * 获取应用环境的机器id

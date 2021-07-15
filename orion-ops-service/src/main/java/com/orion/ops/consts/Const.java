@@ -32,7 +32,7 @@ public class Const extends com.orion.constant.Const {
 
     public static final String COMMAND_LOG_DIR = "/command";
 
-    public static final String AVATAR_PIC_DIR = "/avatar_pic";
+    public static final String AVATAR_PIC_DIR = "/avatar";
 
     public static final String UPLOAD_DIR = "/upload";
 
@@ -63,8 +63,6 @@ public class Const extends com.orion.constant.Const {
     public static final Integer NOT_CONFIGURED = 2;
 
     public static final String COPY = "Copy";
-
-    public static final String INIT = "初始化";
 
     public static final String CONNECT = "建立连接";
 

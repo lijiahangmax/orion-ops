@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 应用环境服务实现
@@ -96,9 +95,8 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
                 .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag());
-        return applicationProfileDAO.selectList(wrapper).stream()
-                .map(s -> Converts.to(s, ApplicationProfileVO.class))
-                .collect(Collectors.toList());
+        List<ApplicationProfileDO> profileList = applicationProfileDAO.selectList(wrapper);
+        return Converts.toList(profileList, ApplicationProfileVO.class);
     }
 
     /**
@@ -110,7 +108,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     private void checkNamePresent(Long id, String name) {
         LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
                 .ne(id != null, ApplicationProfileDO::getId, id)
-                .and(s -> s.eq(ApplicationProfileDO::getProfileName, name));
+                .eq(ApplicationProfileDO::getProfileName, name);
         boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }

@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * sftp实现
@@ -129,9 +128,7 @@ public class SftpServiceImpl implements SftpService {
         }
         // 返回
         FileListVO fileListVO = new FileListVO();
-        List<FileDetailVO> files = fileList.stream()
-                .map(f -> Converts.to(f, FileDetailVO.class))
-                .collect(Collectors.toList());
+        List<FileDetailVO> files = Converts.toList(fileList, FileDetailVO.class);
         fileListVO.setPath(path);
         fileListVO.setFiles(files);
         return fileListVO;
@@ -286,9 +283,8 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType())
                 .orderByDesc(FileTransferLogDO::getId);
-        return fileTransferLogDAO.selectList(wrapper).stream()
-                .map(s -> Converts.to(s, FileTransferLogVO.class))
-                .collect(Collectors.toList());
+        List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
+        return Converts.toList(logList, FileTransferLogVO.class);
     }
 
     @Override

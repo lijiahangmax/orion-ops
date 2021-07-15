@@ -22,6 +22,8 @@ import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.vcs.git.Gits;
+import com.orion.vcs.git.info.BranchInfo;
+import com.orion.vcs.git.info.LogInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -286,9 +288,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
         try (Gits git = Gits.of(new File(path))) {
             // 查询分支信息
-            return git.branchList().stream()
-                    .map(s -> Converts.to(s, ApplicationVcsBranchVO.class))
-                    .collect(Collectors.toList());
+            List<BranchInfo> branchList = git.branchList();
+            return Converts.toList(branchList, ApplicationVcsBranchVO.class);
         }
     }
 
@@ -297,9 +298,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
         try (Gits git = Gits.of(new File(path))) {
             // 查询提交信息
-            return git.logList(branchName, 15).stream()
-                    .map(s -> Converts.to(s, ApplicationVcsCommitVO.class))
-                    .collect(Collectors.toList());
+            List<LogInfo> logList = git.logList(branchName, 15);
+            return Converts.toList(logList, ApplicationVcsCommitVO.class);
         }
     }
 

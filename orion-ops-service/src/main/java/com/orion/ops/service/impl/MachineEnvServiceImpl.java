@@ -18,6 +18,7 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,7 +166,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getMachineEnv(Long machineId) {
-        MutableLinkedHashMap<String, String> env = new MutableLinkedHashMap<>();
+        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId)
                 .orderByAsc(MachineEnvDO::getId);

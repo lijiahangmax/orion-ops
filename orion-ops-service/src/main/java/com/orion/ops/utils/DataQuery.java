@@ -24,8 +24,6 @@ public class DataQuery<T> {
 
     private BaseMapper<T> dao;
 
-    private Function<T, ?> convert;
-
     private PageRequest page;
 
     private LambdaQueryWrapper<T> wrapper;
@@ -34,9 +32,8 @@ public class DataQuery<T> {
         this.dao = dao;
     }
 
-    public DataQuery(BaseMapper<T> dao, Function<T, ?> convert, PageRequest page, LambdaQueryWrapper<T> wrapper) {
+    public DataQuery(BaseMapper<T> dao, PageRequest page, LambdaQueryWrapper<T> wrapper) {
         this.dao = dao;
-        this.convert = convert;
         this.page = page;
         this.wrapper = wrapper;
     }
@@ -48,12 +45,12 @@ public class DataQuery<T> {
 
     public DataQuery<T> page(PageRequest page) {
         Valid.notNull(page, "page is null");
-        return new DataQuery<>(dao, convert, page, wrapper);
+        return new DataQuery<>(dao, page, wrapper);
     }
 
     public DataQuery<T> wrapper(LambdaQueryWrapper<T> wrapper) {
         Valid.notNull(wrapper, "wrapper is null");
-        return new DataQuery<>(dao, convert, page, wrapper);
+        return new DataQuery<>(dao, page, wrapper);
     }
 
     public Optional<T> get() {
@@ -61,9 +58,20 @@ public class DataQuery<T> {
         return Optional.ofNullable(dao.selectOne(wrapper));
     }
 
+    public <R> Optional<R> get(Class<R> c) {
+        Valid.notNull(wrapper, "wrapper is null");
+        return Optional.ofNullable(dao.selectOne(wrapper))
+                .map(s -> Converts.to(s, c));
+    }
+
     public Stream<T> list() {
         Valid.notNull(wrapper, "wrapper is null");
         return dao.selectList(wrapper).stream();
+    }
+
+    public <R> List<R> list(Class<R> c) {
+        Valid.notNull(wrapper, "wrapper is null");
+        return Converts.toList(dao.selectList(wrapper), c);
     }
 
     public Integer count() {

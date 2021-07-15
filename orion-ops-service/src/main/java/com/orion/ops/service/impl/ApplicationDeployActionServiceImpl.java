@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * app部署步骤实现
@@ -39,9 +38,8 @@ public class ApplicationDeployActionServiceImpl implements ApplicationDeployActi
         LambdaQueryWrapper<ApplicationDeployActionDO> wrapper = new LambdaQueryWrapper<ApplicationDeployActionDO>()
                 .eq(ApplicationDeployActionDO::getAppId, appId)
                 .eq(ApplicationDeployActionDO::getProfileId, profileId);
-        List<ApplicationDeployActionVO> actions = applicationDeployActionDAO.selectList(wrapper).stream()
-                .map(s -> Converts.to(s, ApplicationDeployActionVO.class))
-                .collect(Collectors.toList());
+        List<ApplicationDeployActionDO> actionsList = applicationDeployActionDAO.selectList(wrapper);
+        List<ApplicationDeployActionVO> actions = Converts.toList(actionsList, ApplicationDeployActionVO.class);
         for (int i = 0; i < actions.size(); i++) {
             actions.get(i).setStep(i + 1);
         }
