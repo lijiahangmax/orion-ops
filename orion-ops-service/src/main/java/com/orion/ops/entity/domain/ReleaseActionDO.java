@@ -38,6 +38,12 @@ public class ReleaseActionDO implements Serializable {
     private Long releaseId;
 
     /**
+     * 机器id
+     */
+    @TableField("machine_id")
+    private Long machineId;
+
+    /**
      * 操作id
      */
     @TableField("action_id")
@@ -60,6 +66,20 @@ public class ReleaseActionDO implements Serializable {
      */
     @TableField("action_command")
     private String actionCommand;
+
+    /**
+     * 操作日志路径
+     */
+    @TableField("log_path")
+    private String logPath;
+
+    /**
+     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过
+     *
+     * @see com.orion.ops.consts.app.ActionStatus
+     */
+    @TableField("run_status")
+    private Integer runStatus;
 
     /**
      * 创建时间

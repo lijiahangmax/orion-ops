@@ -1,11 +1,16 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
+import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
+import com.orion.ops.entity.vo.ReleaseBillDetailVO;
+import com.orion.ops.entity.vo.ReleaseBillListVO;
+import com.orion.ops.entity.vo.ReleaseBillLogVO;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.service.api.ReleaseInfoService;
 import com.orion.ops.utils.Valid;
@@ -45,7 +50,7 @@ public class ApplicationReleaseController {
         Valid.notBlank(request.getBranchName());
         Valid.notBlank(request.getCommitId());
         Valid.notBlank(request.getCommitMessage());
-        Valid.notEmpty(request.getAppMachineIdList());
+        Valid.notEmpty(request.getMachineIdList());
         return applicationReleaseService.submitAppRelease(request);
     }
 

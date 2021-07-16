@@ -12,6 +12,7 @@ import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
+import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 import com.orion.ops.entity.vo.ApplicationDeployActionVO;
 import com.orion.ops.service.api.*;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 上线单服务
@@ -69,12 +71,6 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private ReleaseMachineDAO releaseMachineDAO;
 
     @Resource
-    private ReleaseAppEnvDAO releaseAppEnvDAO;
-
-    @Resource
-    private ReleaseMachineEnvDAO releaseMachineEnvDAO;
-
-    @Resource
     private ReleaseActionDAO releaseActionDAO;
 
     @Resource
@@ -99,11 +95,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 插入机器信息
         List<ReleaseMachineDO> machines = this.insertNormalReleaseMachine(releaseId, request);
         // 插入应用环境变量
-        this.insertNormalAppReleaseEnv(releaseId, app, profile);
-        // 插入机器环境变量
-        this.insertNormalMachineReleaseEnv(releaseId, machines);
+        Map<String, String> appEnv = this.getAppReleaseEnv(app, profile);
         // 插入部署操作
-        this.insertNormalReleaseAction(releaseId, request);
+        this.insertNormalReleaseAction(releaseId, request, machines, appEnv);
         return releaseId;
     }
 
@@ -134,6 +128,51 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             return 0;
         }
         return releaseBillDAO.updateById(update);
+    }
+
+    /**
+     * 获取应用环境变量
+     *
+     * @param app     app
+     * @param profile profile
+     * @return env
+     */
+    private Map<String, String> getAppReleaseEnv(ApplicationInfoDO app, ApplicationProfileDO profile) {
+        // 插入环境信息
+        Map<String, String> envs = Maps.newLinkedMap();
+        envs.put("appName", app.getAppName());
+        envs.put("appTag", app.getAppTag());
+        envs.put("profileName", profile.getProfileName());
+        envs.put("profileTag", profile.getProfileTag());
+        // 插入应用环境变量
+        Map<String, String> appProfileEnvs = applicationEnvService.getAppProfileEnv(app.getId(), profile.getId());
+        appProfileEnvs.forEach((k, v) -> {
+            envs.put("app." + k, v);
+        });
+        return envs;
+    }
+
+    /**
+     * 获取机器环境变量
+     *
+     * @param machineId machineId
+     * @return env
+     */
+    private Map<String, String> getMachineReleaseEnv(Long machineId) {
+        Map<String, String> envs = Maps.newLinkedMap();
+        // 查询机器
+        MachineInfoDO machine = machineInfoDAO.selectById(machineId);
+        envs.put("machineName", machine.getMachineName());
+        envs.put("machineTag", machine.getMachineTag());
+        envs.put("machineHost", machine.getMachineHost());
+        envs.put("machinePort", machine.getSshPort() + Strings.EMPTY);
+        envs.put("machineUsername", machine.getUsername());
+        // 查询环境变量
+        Map<String, String> machineEnvs = machineEnvService.getMachineEnv(machineId);
+        machineEnvs.forEach((k, v) -> {
+            envs.put("machine." + k, v);
+        });
+        return envs;
     }
 
     /**
@@ -184,7 +223,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      */
     private List<ReleaseMachineDO> insertNormalReleaseMachine(Long releaseId, ApplicationReleaseSubmitRequest request) {
         List<ReleaseMachineDO> list = Lists.newList();
-        for (Long id : request.getAppMachineIdList()) {
+        for (Long id : request.getMachineIdList()) {
             // 查询机器信息
             Long machineId = applicationMachineService.getAppProfileMachineId(id, request.getAppId(), request.getProfileId());
             Valid.notNull(machineId, MessageConst.INVALID_MACHINE);
@@ -204,99 +243,74 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     /**
-     * 插入应用环境变量
-     *
-     * @param releaseId releaseId
-     * @param app       app
-     * @param profile   profile
-     */
-    private void insertNormalAppReleaseEnv(Long releaseId, ApplicationInfoDO app, ApplicationProfileDO profile) {
-        // 插入环境信息
-        Map<String, String> envs = Maps.newLinkedMap();
-        envs.put("appName", app.getAppName());
-        envs.put("appTag", app.getAppTag());
-        envs.put("profileName", profile.getProfileName());
-        envs.put("profileTag", profile.getProfileTag());
-        // 插入应用环境变量
-        Map<String, String> appProfileEnvs = applicationEnvService.getAppProfileEnv(app.getId(), profile.getId());
-        appProfileEnvs.forEach((k, v) -> {
-            envs.put("app." + k, v);
-        });
-        // 插入
-        envs.forEach((k, v) -> {
-            ReleaseAppEnvDO env = new ReleaseAppEnvDO();
-            env.setReleaseId(releaseId);
-            env.setEnvKey(k);
-            env.setEnvValue(v);
-            releaseAppEnvDAO.insert(env);
-        });
-    }
-
-    /**
-     * 插入应用环境变量
-     *
-     * @param releaseId releaseId
-     * @param machines  machines
-     */
-    private void insertNormalMachineReleaseEnv(Long releaseId, List<ReleaseMachineDO> machines) {
-        for (ReleaseMachineDO releaseMachine : machines) {
-            Map<String, String> envs = Maps.newLinkedMap();
-            // 查询机器
-            Long machineId = releaseMachine.getMachineId();
-            MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-            envs.put("machineName", machine.getMachineName());
-            envs.put("machineTag", machine.getMachineTag());
-            envs.put("machineHost", machine.getMachineHost());
-            envs.put("machinePort", machine.getSshPort() + Strings.EMPTY);
-            envs.put("machineUsername", machine.getUsername());
-            // 查询环境变量
-            Map<String, String> machineEnvs = machineEnvService.getMachineEnv(machineId);
-            machineEnvs.forEach((k, v) -> {
-                envs.put("machine." + k, v);
-            });
-            // 插入
-            envs.forEach((k, v) -> {
-                ReleaseMachineEnvDO env = new ReleaseMachineEnvDO();
-                env.setReleaseId(releaseId);
-                env.setMachineId(machineId);
-                env.setEnvKey(k);
-                env.setEnvValue(v);
-                releaseMachineEnvDAO.insert(env);
-            });
-        }
-    }
-
-    /**
      * 插入部署步骤信息
      *
      * @param releaseId releaseId
      * @param request   request
      */
-    private void insertNormalReleaseAction(Long releaseId, ApplicationReleaseSubmitRequest request) {
+    private void insertNormalReleaseAction(Long releaseId, ApplicationReleaseSubmitRequest request, List<ReleaseMachineDO> machines, Map<String, String> appEnv) {
         List<ReleaseActionDO> list = Lists.newList();
-        // 插入默认步骤
-        ReleaseActionDO init = new ReleaseActionDO();
-        init.setReleaseId(releaseId);
-        init.setActionName(Const.INIT);
-        init.setActionType(ActionType.INIT.getType());
-        list.add(init);
-        ReleaseActionDO connect = new ReleaseActionDO();
-        connect.setReleaseId(releaseId);
-        connect.setActionName(Const.CONNECT);
-        connect.setActionType(ActionType.CONNECT.getType());
-        list.add(connect);
         // 查询步骤
         List<ApplicationDeployActionVO> actions = applicationDeployActionService.getDeployActions(request.getAppId(), request.getProfileId());
+        List<ApplicationDeployActionVO> hostActions = actions.stream()
+                .filter(a -> ActionType.isHost(a.getType()))
+                .collect(Collectors.toList());
+        // 插入宿主机默认步骤
+        ApplicationDeployActionVO connectAction = new ApplicationDeployActionVO();
+        connectAction.setName(Const.CONNECT);
+        connectAction.setType(ActionType.CONNECT.getType());
+        hostActions.add(0, connectAction);
+        // 查询宿主机环境变量
+        Map<String, String> hostMachineEnv = this.getMachineReleaseEnv(Const.HOST_MACHINE_ID);
+        // 设置宿主机操作步骤
+        for (ApplicationDeployActionVO action : hostActions) {
+            ReleaseActionDO targetAction = toActionDoWithActionVO(action, releaseId, Const.HOST_MACHINE_ID, hostMachineEnv, appEnv);
+            list.add(targetAction);
+        }
+        // 设置机器操作步骤
+        for (ReleaseMachineDO machine : machines) {
+            Long machineId = machine.getMachineId();
+            // 查询机器环境变量
+            Map<String, String> machineEnv = this.getMachineReleaseEnv(machineId);
+            // 设置目标机器步骤
+            for (ApplicationDeployActionVO action : actions) {
+                if (ActionType.isHost(action.getType())) {
+                    continue;
+                }
+                ReleaseActionDO targetAction = toActionDoWithActionVO(action, releaseId, machineId, machineEnv, appEnv);
+                list.add(targetAction);
+            }
+        }
         // 插入
-        actions.stream().map(a -> {
-            ReleaseActionDO action = new ReleaseActionDO();
-            action.setReleaseId(releaseId);
-            action.setActionId(a.getId());
-            action.setActionName(a.getName());
-            action.setActionType(a.getType());
-            action.setActionCommand(a.getCommand());
-            return action;
-        }).forEach(releaseActionDAO::insert);
+        list.forEach(releaseActionDAO::insert);
+    }
+
+    /**
+     * ApplicationDeployActionVO > ReleaseActionDO
+     *
+     * @param action     ApplicationDeployActionVO
+     * @param releaseId  releaseId
+     * @param machineId  machineId
+     * @param machineEnv machineEnv
+     * @param appEnv     appEnv
+     * @return ReleaseActionDO
+     */
+    private ReleaseActionDO toActionDoWithActionVO(ApplicationDeployActionVO action, Long releaseId, Long machineId, Map<String, String> machineEnv, Map<String, String> appEnv) {
+        ReleaseActionDO realAction = new ReleaseActionDO();
+        realAction.setReleaseId(releaseId);
+        realAction.setMachineId(machineId);
+        realAction.setActionId(action.getId());
+        realAction.setActionName(action.getName());
+        realAction.setActionType(action.getType());
+        String command = action.getCommand();
+        if (!Strings.isBlank(command)) {
+            // 替换应用环境变量占位符
+            command = Strings.format(command, "#", appEnv);
+            // 替换机器环境变量占位符
+            command = Strings.format(command, "#", machineEnv);
+            realAction.setActionCommand(command);
+        }
+        return realAction;
     }
 
     /**

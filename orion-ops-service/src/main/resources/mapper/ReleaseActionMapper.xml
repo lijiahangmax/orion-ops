@@ -6,17 +6,20 @@
     <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ReleaseActionDO">
         <id column="id" property="id"/>
         <result column="release_id" property="releaseId"/>
+        <result column="machine_id" property="machineId"/>
         <result column="action_id" property="actionId"/>
         <result column="action_name" property="actionName"/>
         <result column="action_type" property="actionType"/>
         <result column="action_command" property="actionCommand"/>
+        <result column="log_path" property="logPath"/>
+        <result column="run_status" property="runStatus"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, release_id, action_id, action_name, action_type, action_command, create_time, update_time
+        id, release_id, machine_id, action_id, action_name, action_type, action_command, log_path, run_status, create_time, update_time
     </sql>
 
 </mapper>
