@@ -55,6 +55,15 @@ public class ApplicationReleaseController {
     }
 
     /**
+     * 回滚上线单
+     */
+    @RequestMapping("/rollback")
+    public Long rollbackReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
+        Valid.notNull(request.getId());
+        return applicationReleaseService.rollbackAppRelease(request);
+    }
+
+    /**
      * 审核上线单
      */
     @RequestMapping("/audit")

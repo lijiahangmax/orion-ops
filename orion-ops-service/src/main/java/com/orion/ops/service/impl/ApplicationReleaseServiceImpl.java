@@ -102,6 +102,32 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long rollbackAppRelease(ApplicationReleaseBillRequest request) {
+        Long rollbackId = request.getId();
+        UserDTO user = Currents.getUser();
+        // 查询回滚上线单
+        ReleaseBillDO rollbackBill = releaseBillDAO.selectById(rollbackId);
+        Valid.notNull(rollbackBill, MessageConst.RELEASE_BILL_ABSENT);
+        Valid.isTrue(ReleaseStatus.EXCEPTION.getStatus().equals(rollbackBill.getReleaseStatus()), MessageConst.STATUS_UNABLE_ROLLBACK_RELEASE);
+        Long appId = rollbackBill.getAppId();
+        Long profileId = rollbackBill.getProfileId();
+        // 检查应用环境
+        ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
+        Valid.notNull(app, MessageConst.APP_ABSENT);
+        ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
+        Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
+        // 插入上线单信息
+        ReleaseBillDO releaseBill = this.insertRollbackReleaseBill(rollbackBill, user, profile);
+        Long releaseId = releaseBill.getId();
+        // 插入机器信息
+        this.insertRollbackReleaseMachine(releaseId, rollbackId);
+        // 插入部署操作
+        this.insertRollbackReleaseAction(releaseId, rollbackId);
+        return releaseId;
+    }
+
+    @Override
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
         UserDTO user = Currents.getUser();
         // 查询上线单
@@ -311,6 +337,76 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             realAction.setActionCommand(command);
         }
         return realAction;
+    }
+
+    /**
+     * 插入上线单
+     *
+     * @param rollbackBill 回滚上线单
+     * @param user         user
+     * @param profile      profile
+     * @return 上线单
+     */
+    private ReleaseBillDO insertRollbackReleaseBill(ReleaseBillDO rollbackBill, UserDTO user, ApplicationProfileDO profile) {
+        boolean needAudit = Const.ENABLE.equals(profile.getReleaseAudit());
+        boolean isAdmin = RoleType.isAdministrator(user.getRoleType());
+        // 构建数据
+        ReleaseBillDO releaseBill = new ReleaseBillDO();
+        releaseBill.setReleaseTitle(rollbackBill.getReleaseTitle());
+        releaseBill.setReleaseDescription(rollbackBill.getReleaseDescription());
+        releaseBill.setAppId(rollbackBill.getAppId());
+        releaseBill.setAppName(rollbackBill.getAppName());
+        releaseBill.setAppTag(rollbackBill.getAppTag());
+        releaseBill.setProfileId(rollbackBill.getProfileId());
+        releaseBill.setProfileName(rollbackBill.getProfileName());
+        releaseBill.setProfileTag(rollbackBill.getProfileTag());
+        releaseBill.setReleaseType(ReleaseType.ROLLBACK.getType());
+        releaseBill.setRollbackReleaseId(rollbackBill.getId());
+        this.setCreateAuditInfo(releaseBill, user, needAudit, isAdmin);
+        releaseBill.setVcsLocalPath(rollbackBill.getVcsLocalPath());
+        releaseBill.setVcsRemoteUrl(rollbackBill.getVcsRemoteUrl());
+        releaseBill.setBranchName(rollbackBill.getBranchName());
+        releaseBill.setCommitId(rollbackBill.getCommitId());
+        releaseBill.setCommitMessage(rollbackBill.getCommitMessage());
+        releaseBill.setDistPath(rollbackBill.getDistPath());
+        releaseBill.setCreateUserId(user.getId());
+        releaseBill.setCreateUserName(user.getUsername());
+        releaseBillDAO.insert(releaseBill);
+        return releaseBill;
+    }
+
+    /**
+     * 插入上线单机器
+     *
+     * @param releaseId  releaseId
+     * @param rollbackId rollbackId
+     */
+    private void insertRollbackReleaseMachine(Long releaseId, Long rollbackId) {
+        releaseInfoService.getReleaseMachine(rollbackId).stream()
+                .peek(s -> {
+                    s.setId(null);
+                    s.setReleaseId(releaseId);
+                    s.setLogPath(null);
+                    s.setRunStatus(null);
+                    s.setCreateTime(null);
+                    s.setUpdateTime(null);
+                }).forEach(releaseMachineDAO::insert);
+    }
+
+    /**
+     * 插入部署步骤信息
+     *
+     * @param releaseId  releaseId
+     * @param rollbackId rollbackId
+     */
+    private void insertRollbackReleaseAction(Long releaseId, Long rollbackId) {
+        releaseInfoService.getReleaseAction(rollbackId).stream()
+                .peek(s -> {
+                    s.setId(null);
+                    s.setReleaseId(releaseId);
+                    s.setCreateTime(null);
+                    s.setUpdateTime(null);
+                }).forEach(releaseActionDAO::insert);
     }
 
     /**

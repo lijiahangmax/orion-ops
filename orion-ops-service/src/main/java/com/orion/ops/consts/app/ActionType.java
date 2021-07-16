@@ -61,4 +61,14 @@ public enum ActionType {
         return null;
     }
 
+    /**
+     * 检查是否是宿主机命令
+     *
+     * @param type type
+     * @return ignore
+     */
+    public static boolean isHost(Integer type) {
+        return !TARGET_COMMAND.type.equals(type);
+    }
+
 }
