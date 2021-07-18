@@ -1,7 +1,8 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.entity.domain.*;
+import com.orion.ops.entity.domain.ReleaseActionDO;
+import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.vo.ReleaseBillDetailVO;
 import com.orion.ops.entity.vo.ReleaseBillListVO;
@@ -27,31 +28,6 @@ public interface ReleaseInfoService {
     List<ReleaseMachineDO> getReleaseMachine(Long releaseId);
 
     /**
-     * 查询部署应用环境变量
-     *
-     * @param releaseId releaseId
-     * @return env
-     */
-    List<ReleaseAppEnvDO> getReleaseAppEnv(Long releaseId);
-
-    /**
-     * 查询部署机器环境变量
-     *
-     * @param releaseId releaseId
-     * @return env
-     */
-    List<ReleaseMachineEnvDO> getReleaseMachineEnv(Long releaseId);
-
-    /**
-     * 查询部署机器环境变量
-     *
-     * @param releaseId releaseId
-     * @param machineId machineId
-     * @return env
-     */
-    List<ReleaseMachineEnvDO> getReleaseMachineEnv(Long releaseId, Long machineId);
-
-    /**
      * 查询部署操作
      *
      * @param releaseId releaseId
@@ -60,12 +36,13 @@ public interface ReleaseInfoService {
     List<ReleaseActionDO> getReleaseAction(Long releaseId);
 
     /**
-     * 查询部署操作日志
+     * 查询部署操作
      *
-     * @param releaseActionId releaseActionId
-     * @return log
+     * @param releaseId releaseId
+     * @param machineId machineId
+     * @return action
      */
-    ReleaseActionLogDO getReleaseActionLog(Long releaseActionId);
+    List<ReleaseActionDO> getReleaseAction(Long releaseId, Long machineId);
 
     /**
      * 上线单列表

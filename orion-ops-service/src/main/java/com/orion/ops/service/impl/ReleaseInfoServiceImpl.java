@@ -3,16 +3,21 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
-import com.orion.ops.dao.*;
-import com.orion.ops.entity.domain.*;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.dao.ReleaseActionDAO;
+import com.orion.ops.dao.ReleaseBillDAO;
+import com.orion.ops.dao.ReleaseMachineDAO;
+import com.orion.ops.entity.domain.ReleaseActionDO;
+import com.orion.ops.entity.domain.ReleaseBillDO;
+import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
-import com.orion.ops.entity.vo.ReleaseBillDetailVO;
-import com.orion.ops.entity.vo.ReleaseBillListVO;
-import com.orion.ops.entity.vo.ReleaseBillLogVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.ReleaseInfoService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,44 +41,13 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
     private ReleaseMachineDAO releaseMachineDAO;
 
     @Resource
-    private ReleaseAppEnvDAO releaseAppEnvDAO;
-
-    @Resource
-    private ReleaseMachineEnvDAO releaseMachineEnvDAO;
-
-    @Resource
     private ReleaseActionDAO releaseActionDAO;
-
-    @Resource
-    private ReleaseActionLogDAO releaseActionLogDAO;
 
     @Override
     public List<ReleaseMachineDO> getReleaseMachine(Long releaseId) {
         LambdaQueryWrapper<ReleaseMachineDO> wrapper = new LambdaQueryWrapper<ReleaseMachineDO>()
                 .eq(ReleaseMachineDO::getReleaseId, releaseId);
         return releaseMachineDAO.selectList(wrapper);
-    }
-
-    @Override
-    public List<ReleaseAppEnvDO> getReleaseAppEnv(Long releaseId) {
-        LambdaQueryWrapper<ReleaseAppEnvDO> wrapper = new LambdaQueryWrapper<ReleaseAppEnvDO>()
-                .eq(ReleaseAppEnvDO::getReleaseId, releaseId);
-        return releaseAppEnvDAO.selectList(wrapper);
-    }
-
-    @Override
-    public List<ReleaseMachineEnvDO> getReleaseMachineEnv(Long releaseId) {
-        LambdaQueryWrapper<ReleaseMachineEnvDO> wrapper = new LambdaQueryWrapper<ReleaseMachineEnvDO>()
-                .eq(ReleaseMachineEnvDO::getReleaseId, releaseId);
-        return releaseMachineEnvDAO.selectList(wrapper);
-    }
-
-    @Override
-    public List<ReleaseMachineEnvDO> getReleaseMachineEnv(Long releaseId, Long machineId) {
-        LambdaQueryWrapper<ReleaseMachineEnvDO> wrapper = new LambdaQueryWrapper<ReleaseMachineEnvDO>()
-                .eq(ReleaseMachineEnvDO::getReleaseId, releaseId)
-                .eq(ReleaseMachineEnvDO::getMachineId, machineId);
-        return releaseMachineEnvDAO.selectList(wrapper);
     }
 
     @Override
@@ -84,11 +58,11 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
     }
 
     @Override
-    public ReleaseActionLogDO getReleaseActionLog(Long releaseActionId) {
-        LambdaQueryWrapper<ReleaseActionLogDO> wrapper = new LambdaQueryWrapper<ReleaseActionLogDO>()
-                .eq(ReleaseActionLogDO::getReleaseActionId, releaseActionId)
-                .last(Const.LIMIT_1);
-        return releaseActionLogDAO.selectOne(wrapper);
+    public List<ReleaseActionDO> getReleaseAction(Long releaseId, Long machineId) {
+        LambdaQueryWrapper<ReleaseActionDO> wrapper = new LambdaQueryWrapper<ReleaseActionDO>()
+                .eq(ReleaseActionDO::getReleaseId, releaseId)
+                .eq(ReleaseActionDO::getMachineId, machineId);
+        return releaseActionDAO.selectList(wrapper);
     }
 
     @Override
@@ -113,7 +87,30 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
     @Override
     public ReleaseBillDetailVO releaseBillDetail(Long id) {
-        return null;
+        // 查询上线单信息
+        ReleaseBillDO releaseBill = Valid.notNull(releaseBillDAO.selectById(id), MessageConst.RELEASE_BILL_ABSENT);
+        ReleaseBillDetailVO detailVO = Converts.to(releaseBill, ReleaseBillDetailVO.class);
+        // 查询主机操作信息
+        List<ReleaseActionDO> hostActions = this.getReleaseAction(id, Const.HOST_MACHINE_ID);
+        List<ReleaseActionVO> hostActionVO = Converts.toList(hostActions, ReleaseActionVO.class);
+        for (int i = 0; i < hostActionVO.size(); i++) {
+            hostActionVO.get(i).setStep(i + 1);
+        }
+        detailVO.setHostActions(hostActionVO);
+        // 查询机器信息
+        List<ReleaseMachineDO> machines = this.getReleaseMachine(id);
+        List<ReleaseMachineVO> machineVO = Converts.toList(machines, ReleaseMachineVO.class);
+        detailVO.setMachines(machineVO);
+        // 查询机器操作信息
+        for (ReleaseMachineVO releaseMachineVO : machineVO) {
+            List<ReleaseActionDO> targetActions = this.getReleaseAction(id, releaseMachineVO.getMachineId());
+            List<ReleaseActionVO> targetActionVO = Converts.toList(targetActions, ReleaseActionVO.class);
+            for (int i = 0; i < targetActionVO.size(); i++) {
+                targetActionVO.get(i).setStep(i + 1);
+            }
+            releaseMachineVO.setActions(targetActionVO);
+        }
+        return detailVO;
     }
 
     @Override

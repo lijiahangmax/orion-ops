@@ -77,4 +77,39 @@ public class ApplicationReleaseController {
         return applicationReleaseService.auditAppRelease(request);
     }
 
+    /**
+     * 运行上线单
+     */
+    @RequestMapping("/runnable")
+    public void runnableReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
+        Valid.notNull(request.getId());
+        applicationReleaseService.runnableAppRelease(request);
+    }
+
+    /**
+     * 上线单列表
+     */
+    @RequestMapping("/list")
+    public DataGrid<ReleaseBillListVO> releaseBillList(@RequestBody ApplicationReleaseBillRequest request) {
+        return releaseInfoService.releaseBillList(request);
+    }
+
+    /**
+     * 上线单详情
+     */
+    @RequestMapping("/detail")
+    public ReleaseBillDetailVO releaseBillDetail(@RequestBody ApplicationReleaseBillRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return releaseInfoService.releaseBillDetail(id);
+    }
+
+    /**
+     * 上线单日志
+     */
+    @RequestMapping("/log")
+    public ReleaseBillLogVO releaseBillLog(@RequestBody ApplicationReleaseBillRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return releaseInfoService.releaseBillLog(id);
+    }
+
 }
