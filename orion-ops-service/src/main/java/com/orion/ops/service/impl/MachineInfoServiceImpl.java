@@ -245,12 +245,18 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public SessionStore openSessionStore(Long id) {
         MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+        return this.openSessionStore(machine);
+    }
+
+    @Override
+    public SessionStore openSessionStore(MachineInfoDO machine) {
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         Exception ex = null;
         String msg = MessageConst.CONN_EXCEPTION_MESSAGE;
         for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {
-            log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}", (i + 1), id);
+            log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}, host: {}", (i + 1), machine.getId(), machine.getMachineHost());
             try {
-                return this.openSessionStore(machine);
+                return this.connectSessionStore(machine);
             } catch (Exception e) {
                 ex = e;
                 if (e instanceof ConnectionRuntimeException) {
@@ -274,7 +280,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
      * @param machine machine
      * @return SessionStore
      */
-    private SessionStore openSessionStore(MachineInfoDO machine) {
+    private SessionStore connectSessionStore(MachineInfoDO machine) {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         Long proxyId = machine.getProxyId();
         SessionStore session;

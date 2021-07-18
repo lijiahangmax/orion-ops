@@ -184,6 +184,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
                 Dates.format(endDate, Dates.YMDHMSS), endDate.getTime() - hint.getStartDate().getTime());
         // 释放资源
         Streams.close(executor);
+        Streams.close(hint.getSession());
         execSessionHolder.removeSession(execId);
     }
 
@@ -192,7 +193,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
     }
 
     public boolean isClose() {
-        return executor.isClose();
+        return executor.isClosed();
     }
 
 }

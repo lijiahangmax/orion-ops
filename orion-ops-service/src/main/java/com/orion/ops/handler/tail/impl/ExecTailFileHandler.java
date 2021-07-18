@@ -14,6 +14,7 @@ import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.io.Streams;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,8 @@ public class ExecTailFileHandler implements ITailHandler {
      */
     private TailFileHint hint;
 
+    private SessionStore sessionStore;
+
     private CommandExecutor executor;
 
     private volatile boolean close;
@@ -62,10 +65,9 @@ public class ExecTailFileHandler implements ITailHandler {
 
     @Override
     public void start() throws Exception {
-        // 打开session
-        SessionStore sessionStore;
         try {
-            sessionStore = machineInfoService.openSessionStore(hint.getMachineId());
+            // 打开session
+            this.sessionStore = machineInfoService.openSessionStore(hint.getMachineId());
             log.error("tail 建立连接成功machineId: {}", hint.getMachineId());
         } catch (Exception e) {
             WebSockets.openSessionStoreThrowClose(session, e);
@@ -129,9 +131,8 @@ public class ExecTailFileHandler implements ITailHandler {
             return;
         }
         this.close = true;
-        if (executor != null) {
-            executor.close();
-        }
+        Streams.close(executor);
+        Streams.close(sessionStore);
     }
 
     @Override

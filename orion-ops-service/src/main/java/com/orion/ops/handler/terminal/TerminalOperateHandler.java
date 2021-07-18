@@ -241,7 +241,7 @@ public class TerminalOperateHandler implements IOperateHandler {
             default:
                 return;
         }
-        if (executor.isClosed()) {
+        if (!executor.isConnected()) {
             System.out.println("11111111111111111111111111111111111111111111111");
             System.out.println("11111111111111111111111111111111111111111111111");
             System.out.println("11111111111111111111111111111111111111111111111");
@@ -267,7 +267,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         hint.setRows(window.getRows());
         hint.setWidth(window.getWidth());
         hint.setHeight(window.getHeight());
-        if (executor.isClosed()) {
+        if (!executor.isConnected()) {
             executor.connect();
         }
         executor.size(window.getCols(), window.getRows(), window.getWidth(), window.getHeight());

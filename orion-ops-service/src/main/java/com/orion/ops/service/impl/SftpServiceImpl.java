@@ -366,7 +366,7 @@ public class SftpServiceImpl implements SftpService {
         // 检查缓存机器
         SftpExecutor executor = basicExecutorHolder.get(values[1]);
         Valid.notNull(executor, MessageConst.SESSION_EXPIRE);
-        if (executor.isClosed()) {
+        if (!executor.isConnected()) {
             executor.connect();
         }
         return executor;
