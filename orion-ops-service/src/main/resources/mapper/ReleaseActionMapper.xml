@@ -13,13 +13,15 @@
         <result column="action_command" property="actionCommand"/>
         <result column="log_path" property="logPath"/>
         <result column="run_status" property="runStatus"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, release_id, machine_id, action_id, action_name, action_type, action_command, log_path, run_status, create_time, update_time
+        id, release_id, machine_id, action_id, action_name, action_type, action_command, log_path, run_status, start_time, end_time, create_time, update_time
     </sql>
 
 </mapper>

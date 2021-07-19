@@ -76,6 +76,24 @@ public class ReleaseMachineDO implements Serializable {
     private String logPath;
 
     /**
+     * 产物文件
+     */
+    @TableField("dist_path")
+    private String distPath;
+
+    /**
+     * 开始时间
+     */
+    @TableField("start_time")
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    @TableField("end_time")
+    private Date endTime;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

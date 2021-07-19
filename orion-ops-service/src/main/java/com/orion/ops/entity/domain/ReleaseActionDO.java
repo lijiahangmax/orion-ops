@@ -82,6 +82,18 @@ public class ReleaseActionDO implements Serializable {
     private Integer runStatus;
 
     /**
+     * 开始时间
+     */
+    @TableField("start_time")
+    private Date startTime;
+
+    /**
+     * 结束时间
+     */
+    @TableField("end_time")
+    private Date endTime;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")
