@@ -141,10 +141,9 @@ public class TerminalOperateHandler implements IOperateHandler {
     /**
      * 标准输入处理
      *
-     * @param executor    executor
      * @param inputStream stream
      */
-    private void streamHandler(BaseRemoteExecutor executor, InputStream inputStream) {
+    private void streamHandler(InputStream inputStream) {
         byte[] bs = new byte[Const.BUFFER_KB_4];
         BufferedInputStream in = new BufferedInputStream(inputStream, Const.BUFFER_KB_4);
         int read;

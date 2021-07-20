@@ -105,4 +105,12 @@ public interface MachineInfoService {
      */
     SessionStore openSessionStore(Long id);
 
+    /**
+     * 建立远程连接
+     *
+     * @param machine machine
+     * @return session
+     */
+    SessionStore openSessionStore(MachineInfoDO machine);
+
 }

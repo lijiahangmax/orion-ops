@@ -55,12 +55,12 @@ public enum MachineEnvAttr {
     /**
      * 日志目录
      */
-    LOG_PATH(true, true, "日志目录"),
+    LOG_PATH(true, false, "日志目录"),
 
     /**
      * 临时文件目录
      */
-    TEMP_PATH(true, true, "临时目录"),
+    TEMP_PATH(true, false, "临时目录"),
 
     /**
      * 宿主机存放部署产物目录

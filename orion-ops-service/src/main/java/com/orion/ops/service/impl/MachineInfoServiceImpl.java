@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -369,8 +370,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             return res;
         } catch (Exception e) {
             log.error("执行机器命令-失败 {} {} {}", id, command, e);
-            if (e instanceof ConnectionRuntimeException | e instanceof AuthenticationException) {
-                throw e;
+            if (e instanceof IOException) {
+                throw Exceptions.ioRuntime(e);
+            } else if (e instanceof ConnectionRuntimeException) {
+                throw (ConnectionRuntimeException) e;
+            } else if (e instanceof AuthenticationException) {
+                throw (AuthenticationException) e;
             }
             return null;
         } finally {

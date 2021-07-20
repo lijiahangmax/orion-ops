@@ -17,7 +17,7 @@ public enum SyncMachineProperties {
     /**
      * 机器名称
      */
-    MACHINE_NAME("machineName", "cat /etc/hostname"),
+    MACHINE_NAME("machineName", "cat /etc/redhat-release"),
 
     /**
      * 系统版本

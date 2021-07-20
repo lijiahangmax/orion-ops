@@ -105,7 +105,7 @@ public class CommandExecHandler extends AbstractExecHandler {
     }
 
     @Override
-    protected void processStandardOutputStream(BaseRemoteExecutor executor, InputStream in) {
+    protected void processStandardOutputStream(InputStream in) {
         try {
             Streams.transfer(in, logOutputStream);
         } catch (IOException ex) {

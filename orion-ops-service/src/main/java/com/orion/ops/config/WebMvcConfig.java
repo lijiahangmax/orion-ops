@@ -1,6 +1,7 @@
 package com.orion.ops.config;
 
 import com.orion.exception.IORuntimeException;
+import com.orion.exception.LogException;
 import com.orion.exception.SftpException;
 import com.orion.exception.VcsException;
 import com.orion.exception.argument.CodeArgumentException;
@@ -102,6 +103,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> vcsExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("vcsExceptionHandler url: {}, vsc处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = LogException.class)
+    public HttpWrapper<?> logExceptionHandler(HttpServletRequest request, LogException ex) {
+        log.error("logExceptionHandler url: {}, 处理异常打印日志: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        if (ex.hasCause()) {
+            ex.printStackTrace();
+        }
         return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
     }
 

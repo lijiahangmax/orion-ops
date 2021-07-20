@@ -112,11 +112,10 @@ public class ExecTailFileHandler implements ITailHandler {
     /**
      * 处理标准输入流
      *
-     * @param executor    executor
      * @param inputStream 流
      */
     @SneakyThrows
-    private void handler(BaseRemoteExecutor executor, InputStream inputStream) {
+    private void handler(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_4);
         String line;
         while ((line = reader.readLine()) != null) {

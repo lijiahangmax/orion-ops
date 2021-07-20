@@ -92,10 +92,9 @@ public abstract class AbstractExecHandler implements IExecHandler {
     /**
      * 处理命令输出
      *
-     * @param executor executor
-     * @param in       in
+     * @param in in
      */
-    protected abstract void processStandardOutputStream(BaseRemoteExecutor executor, InputStream in);
+    protected abstract void processStandardOutputStream(InputStream in);
 
     /**
      * 完成回调
