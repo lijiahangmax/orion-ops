@@ -187,7 +187,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             MachineEnvAttr attr = MachineEnvAttr.of(key);
             env.setMachineId(machineId);
             env.setDescription(attr.getDescription());
-            env.setAttrKey(attr.name());
+            env.setAttrKey(attr.getKey());
             switch (attr) {
                 case LOG_PATH:
                     env.setAttrValue(home + Const.LOG_PATH);

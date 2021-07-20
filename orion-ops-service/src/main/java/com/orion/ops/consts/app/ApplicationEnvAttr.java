@@ -1,6 +1,5 @@
 package com.orion.ops.consts.app;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -12,7 +11,6 @@ import java.util.Arrays;
  * @version 1.0.0
  * @since 2021/7/4 11:29
  */
-@AllArgsConstructor
 @Getter
 public enum ApplicationEnvAttr {
 
@@ -36,21 +34,31 @@ public enum ApplicationEnvAttr {
     /**
      * 构建产物目录
      */
-    DIST_PATH("构建产物文件目录"),
+    DIST_PATH("构建产物文件路径"),
 
     ;
+
+    /**
+     * key
+     */
+    String key;
 
     /**
      * 描述
      */
     String description;
 
+    ApplicationEnvAttr(String description) {
+        this.description = description;
+        this.key = this.name().toLowerCase();
+    }
+
     public static ApplicationEnvAttr of(String key) {
         if (key == null) {
             return null;
         }
         return Arrays.stream(values())
-                .filter(a -> a.name().equals(key)).findFirst()
+                .filter(a -> a.key.equals(key)).findFirst()
                 .orElse(null);
     }
 

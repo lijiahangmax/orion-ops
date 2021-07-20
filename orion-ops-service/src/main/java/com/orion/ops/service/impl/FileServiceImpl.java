@@ -234,7 +234,7 @@ public class FileServiceImpl implements FileService {
      */
     private String getMachineTailMode(Long machineId) {
         if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.name());
+            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getKey());
             return FileTailMode.of(mode, true).getMode();
         } else {
             return FileTailMode.TAIL.getMode();
@@ -248,7 +248,7 @@ public class FileServiceImpl implements FileService {
      * @return offset line
      */
     private Integer getTailOffset(Long machineId) {
-        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.name());
+        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
         if (Strings.isInteger(offset)) {
             return Integer.valueOf(offset);
         } else {
@@ -263,7 +263,7 @@ public class FileServiceImpl implements FileService {
      * @return 编码集
      */
     private String getCharset(Long machineId) {
-        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.name());
+        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getKey());
         if (Charsets.isSupported(charset)) {
             return charset;
         } else {

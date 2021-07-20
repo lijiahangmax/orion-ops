@@ -198,10 +198,10 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
         Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
         // 查询环境变量
-        String vcsRootPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
-        String vcsCodePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_CODE_PATH.name());
-        String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.name());
-        String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.name());
+        String vcsRootPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
+        String vcsCodePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_CODE_PATH.getKey());
+        String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.getKey());
+        String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.getKey());
         // 查询机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询部署流程
@@ -285,7 +285,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Override
     public List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId) {
-        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
         try (Gits git = Gits.of(new File(path))) {
             // 查询分支信息
             List<BranchInfo> branchList = git.branchList();
@@ -295,7 +295,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Override
     public List<ApplicationVcsCommitVO> getVcsCommitList(Long appId, Long profileId, String branchName) {
-        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
         try (Gits git = Gits.of(new File(path))) {
             // 查询提交信息
             List<LogInfo> logList = git.logList(branchName, 15);
@@ -348,22 +348,22 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private void configAppEnv(ApplicationConfigEnvRequest env, Long appId, Long profileId) {
         // 版本控制根目录
         ApplicationEnvRequest vcsRootPath = new ApplicationEnvRequest();
-        vcsRootPath.setKey(ApplicationEnvAttr.VCS_ROOT_PATH.name());
+        vcsRootPath.setKey(ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
         vcsRootPath.setValue(env.getVcsRootPath());
         vcsRootPath.setDescription(ApplicationEnvAttr.VCS_ROOT_PATH.getDescription());
         // 应用代码目录
         ApplicationEnvRequest vcsCodePath = new ApplicationEnvRequest();
-        vcsCodePath.setKey(ApplicationEnvAttr.VCS_CODE_PATH.name());
+        vcsCodePath.setKey(ApplicationEnvAttr.VCS_CODE_PATH.getKey());
         vcsCodePath.setValue(env.getVcsCodePath());
         vcsCodePath.setDescription(ApplicationEnvAttr.VCS_CODE_PATH.getDescription());
         // 版本管理工具
         ApplicationEnvRequest vcsType = new ApplicationEnvRequest();
-        vcsType.setKey(ApplicationEnvAttr.VCS_TYPE.name());
+        vcsType.setKey(ApplicationEnvAttr.VCS_TYPE.getKey());
         vcsType.setValue(env.getVcsType());
         vcsType.setDescription(ApplicationEnvAttr.VCS_TYPE.getDescription());
         // 构建产物目录
         ApplicationEnvRequest distPath = new ApplicationEnvRequest();
-        distPath.setKey(ApplicationEnvAttr.DIST_PATH.name());
+        distPath.setKey(ApplicationEnvAttr.DIST_PATH.getKey());
         distPath.setValue(env.getDistPath());
         distPath.setDescription(ApplicationEnvAttr.DIST_PATH.getDescription());
         // reduce

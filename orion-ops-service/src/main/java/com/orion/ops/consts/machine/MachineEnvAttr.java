@@ -71,6 +71,11 @@ public enum MachineEnvAttr {
     ;
 
     /**
+     * key
+     */
+    String key;
+
+    /**
      * 宿主机是否需要
      */
     boolean host;
@@ -92,19 +97,20 @@ public enum MachineEnvAttr {
         this.host = host;
         this.target = target;
         this.description = description;
+        this.key = this.name().toLowerCase();
     }
 
     public static List<String> getHostKeys() {
         return Arrays.stream(values())
                 .filter(MachineEnvAttr::isHost)
-                .map(MachineEnvAttr::name)
+                .map(MachineEnvAttr::getKey)
                 .collect(Collectors.toList());
     }
 
     public static List<String> getTargetKeys() {
         return Arrays.stream(values())
                 .filter(MachineEnvAttr::isTarget)
-                .map(MachineEnvAttr::name)
+                .map(MachineEnvAttr::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -113,7 +119,7 @@ public enum MachineEnvAttr {
             return null;
         }
         return Arrays.stream(values())
-                .filter(a -> a.name().equals(key)).findFirst()
+                .filter(a -> a.key.equals(key)).findFirst()
                 .orElse(null);
     }
 
