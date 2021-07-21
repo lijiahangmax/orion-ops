@@ -27,12 +27,12 @@ public enum ActionStatus {
     /**
      * 已完成
      */
-    FINISH(20),
+    FINISH(30),
 
     /**
      * 执行失败
      */
-    EXCEPTION(20),
+    EXCEPTION(40),
 
     /**
      * 已跳过

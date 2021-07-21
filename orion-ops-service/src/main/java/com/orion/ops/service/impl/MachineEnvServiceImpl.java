@@ -86,6 +86,13 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         if (afterValue != null && !afterValue.equals(beforeValue)) {
             historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.UPDATE, beforeValue, afterValue);
         }
+        // 判断是否是宿主机系统环境变量
+        if (Const.HOST_MACHINE_ID.equals(before.getMachineId())) {
+            MachineEnvAttr env = MachineEnvAttr.of(before.getAttrKey());
+            if (env != null) {
+                env.setValue(afterValue);
+            }
+        }
         // 修改
         MachineEnvDO update = new MachineEnvDO();
         update.setId(id);
