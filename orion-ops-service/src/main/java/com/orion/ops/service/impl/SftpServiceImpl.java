@@ -29,7 +29,6 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.utils.Arrays1;
-import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
@@ -435,12 +434,8 @@ public class SftpServiceImpl implements SftpService {
         if (executor != null) {
             return executor.getCharset();
         }
-        // 查询环境
-        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.SFTP_CHARSET.name());
-        if (!Charsets.isSupported(charset)) {
-            charset = Const.UTF_8;
-        }
-        return charset;
+        // 查询环境变量
+        return machineEnvService.getSftpCharset(machineId);
     }
 
     /**

@@ -167,18 +167,18 @@ public class FileServiceImpl implements FileService {
         tail.setFilePath(path);
         tail.setUserId(Currents.getUserId());
         tail.setMachineId(machineId);
-        tail.setMode(this.getMachineTailMode(machineId));
+        tail.setMode(machineEnvService.getMachineTailMode(machineId));
         Integer offset = request.getOffset();
         if (offset != null) {
             tail.setOffset(offset);
         } else {
-            tail.setOffset(this.getTailOffset(machineId));
+            tail.setOffset(machineEnvService.getTailOffset(machineId));
         }
         String charset = request.getCharset();
         if (charset != null) {
             tail.setCharset(charset);
         } else {
-            tail.setCharset(this.getCharset(machineId));
+            tail.setCharset(machineEnvService.getTailCharset(machineId));
         }
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
@@ -224,51 +224,6 @@ public class FileServiceImpl implements FileService {
                 .filter(Strings::isNotBlank)
                 .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
                 .orElse(null);
-    }
-
-    /**
-     * 获取文件tail模型
-     *
-     * @param machineId 机器id
-     * @return mode
-     */
-    private String getMachineTailMode(Long machineId) {
-        if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            String mode = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getKey());
-            return FileTailMode.of(mode, true).getMode();
-        } else {
-            return FileTailMode.TAIL.getMode();
-        }
-    }
-
-    /**
-     * 获取文件tail 尾行偏移量
-     *
-     * @param machineId 机器id
-     * @return offset line
-     */
-    private Integer getTailOffset(Long machineId) {
-        String offset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
-        if (Strings.isInteger(offset)) {
-            return Integer.valueOf(offset);
-        } else {
-            return Const.TAIL_OFFSET_LINE;
-        }
-    }
-
-    /**
-     * 获取编码集
-     *
-     * @param machineId 机器id
-     * @return 编码集
-     */
-    private String getCharset(Long machineId) {
-        String charset = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getKey());
-        if (Charsets.isSupported(charset)) {
-            return charset;
-        } else {
-            return Const.UTF_8;
-        }
     }
 
 }

@@ -168,6 +168,8 @@ public class SftpController {
                              @RequestParam("file") MultipartFile file) throws IOException {
         // 检查路径
         this.checkNormalize(remotePath);
+        Valid.notBlank(fileToken);
+        Valid.notNull(file);
         // 检查token
         Long machineId = sftpService.checkUploadToken(fileToken);
         // 传输文件到本地

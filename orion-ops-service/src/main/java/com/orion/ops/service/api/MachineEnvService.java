@@ -89,4 +89,36 @@ public interface MachineEnvService {
      */
     Integer deleteEnvByMachineId(Long machineId);
 
+    /**
+     * 获取sftp编码格式
+     *
+     * @param machineId 机器id
+     * @return 编码格式
+     */
+    String getSftpCharset(Long machineId);
+
+    /**
+     * 获取文件tail模型
+     *
+     * @param machineId 机器id
+     * @return mode
+     */
+    String getMachineTailMode(Long machineId);
+
+    /**
+     * 获取文件tail 尾行偏移量
+     *
+     * @param machineId 机器id
+     * @return offset line
+     */
+    Integer getTailOffset(Long machineId);
+
+    /**
+     * 获取编码集
+     *
+     * @param machineId 机器id
+     * @return 编码集
+     */
+    String getTailCharset(Long machineId);
+
 }

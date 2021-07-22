@@ -7,6 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
@@ -17,6 +18,7 @@ import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Service;
@@ -224,6 +226,46 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId);
         return machineEnvDAO.delete(wrapper);
+    }
+
+    @Override
+    public String getSftpCharset(Long machineId) {
+        // 查询环境
+        String charset = this.getMachineEnv(machineId, MachineEnvAttr.SFTP_CHARSET.getKey());
+        if (!Charsets.isSupported(charset)) {
+            charset = Const.UTF_8;
+        }
+        return charset;
+    }
+
+    @Override
+    public String getMachineTailMode(Long machineId) {
+        if (Const.HOST_MACHINE_ID.equals(machineId)) {
+            String mode = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getKey());
+            return FileTailMode.of(mode, true).getMode();
+        } else {
+            return FileTailMode.TAIL.getMode();
+        }
+    }
+
+    @Resource
+    public Integer getTailOffset(Long machineId) {
+        String offset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
+        if (Strings.isInteger(offset)) {
+            return Integer.valueOf(offset);
+        } else {
+            return Const.TAIL_OFFSET_LINE;
+        }
+    }
+
+    @Override
+    public String getTailCharset(Long machineId) {
+        String charset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getKey());
+        if (Charsets.isSupported(charset)) {
+            return charset;
+        } else {
+            return Const.UTF_8;
+        }
     }
 
     /**
