@@ -22,14 +22,6 @@ public interface ApplicationReleaseService {
     Long submitAppRelease(ApplicationReleaseSubmitRequest request);
 
     /**
-     * 回滚上线单
-     *
-     * @param request request
-     * @return id
-     */
-    Long rollbackAppRelease(ApplicationReleaseBillRequest request);
-
-    /**
      * 审核上线单
      *
      * @param request request
@@ -37,5 +29,19 @@ public interface ApplicationReleaseService {
      */
     Integer auditAppRelease(ApplicationReleaseAuditRequest request);
 
+    /**
+     * 执行上线单
+     *
+     * @param request request
+     */
+    void runnableAppRelease(ApplicationReleaseBillRequest request);
+
+    // /**
+    //  * 回滚上线单
+    //  *
+    //  * @param request request
+    //  * @return id
+    //  */
+    // Long rollbackAppRelease(ApplicationReleaseBillRequest request);
 
 }

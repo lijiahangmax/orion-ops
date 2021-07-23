@@ -144,6 +144,15 @@ public class ReleaseBillDO implements Serializable {
     private String distPath;
 
     /**
+     * 产物快照文件
+     *
+     * @see com.orion.ops.consts.app.ActionType#TRANSFER
+     * @see com.orion.ops.handler.release.action.ReleaseTransferActionHandler
+     */
+    @TableField("dist_snapshot_path")
+    private String distSnapshotPath;
+
+    /**
      * 创建人id
      */
     @TableField("create_user_id")
