@@ -44,6 +44,11 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
     private ReleaseActionDAO releaseActionDAO;
 
     @Override
+    public ReleaseBillDO getReleaseBill(Long id) {
+        return releaseBillDAO.selectById(id);
+    }
+
+    @Override
     public List<ReleaseMachineDO> getReleaseMachine(Long releaseId) {
         LambdaQueryWrapper<ReleaseMachineDO> wrapper = new LambdaQueryWrapper<ReleaseMachineDO>()
                 .eq(ReleaseMachineDO::getReleaseId, releaseId);

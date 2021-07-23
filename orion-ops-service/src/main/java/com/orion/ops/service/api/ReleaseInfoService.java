@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.domain.ReleaseActionDO;
+import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.vo.ReleaseBillDetailVO;
@@ -18,6 +19,14 @@ import java.util.List;
  * @since 2021/7/12 17:05
  */
 public interface ReleaseInfoService {
+
+    /**
+     * 查询上线单
+     *
+     * @param id id
+     * @return 上线单
+     */
+    ReleaseBillDO getReleaseBill(Long id);
 
     /**
      * 查询部署机器
