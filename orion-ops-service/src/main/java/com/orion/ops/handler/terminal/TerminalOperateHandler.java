@@ -12,6 +12,7 @@ import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.service.api.MachineTerminalService;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.ShellExecutor;
@@ -20,7 +21,6 @@ import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
-import com.orion.utils.time.Dates;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
@@ -95,10 +95,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(hint.getTerminalType());
         executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
-        String logPath = Const.TERMINAL_LOG_DIR + "/"
-                + Dates.current(Dates.YMDHMS2)
-                + "_" + MachineTerminalService.getTokenUserId(token)
-                + "." + Const.SUFFIX_LOG;
+        String logPath = PathBuilders.getTerminalLogPath(hint.getUserId());
         String realLogPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
         this.logStream = Files1.openOutputStreamSafe(realLogPath);
         log.info("terminal 开始记录用户操作日志: {} {}", token, logPath);

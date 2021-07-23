@@ -54,7 +54,7 @@ public class AvatarPicHolder {
      * @return path
      */
     public static String touchPicFile(Long uid, String suffix) {
-        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + Const.AVATAR_PIC_DIR + "/" + uid + "." + suffix);
+        String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + getPicPath(uid, suffix));
         Files1.touch(path);
         return path;
     }
@@ -70,7 +70,7 @@ public class AvatarPicHolder {
         if (Strings.isBlank(nickname)) {
             nickname = "O";
         }
-        String url = Const.AVATAR_PIC_DIR + "/" + uid + "." + AVATAR_PIC_SUFFIX;
+        String url = getPicPath(uid, AVATAR_PIC_SUFFIX);
         char name = Arrays1.last(nickname.toCharArray(), 'O');
         BufferedImage img = ICONS_GEN.execute(name);
         String path = Files1.getPath(MachineEnvAttr.PIC_PATH.getValue() + url);

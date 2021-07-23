@@ -8,6 +8,7 @@ import com.orion.ops.handler.exec.AbstractExecHandler;
 import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
@@ -93,10 +94,7 @@ public class CommandExecHandler extends AbstractExecHandler {
      * 获取日志目录
      */
     protected void getLogPath() {
-        String generatorLogPath = Const.EXEC_LOG_DIR + logPathSuffix + "/" + execId
-                + "_" + hint.getMachineId()
-                + "_" + Dates.current(Dates.YMDHMS2)
-                + "." + Const.SUFFIX_LOG;
+        String generatorLogPath = PathBuilders.getExecLogPath(logPathSuffix, execId, hint.getMachineId());
         this.logPath = MachineEnvAttr.LOG_PATH.getValue() + generatorLogPath;
         CommandExecDO update = new CommandExecDO();
         update.setId(execId);

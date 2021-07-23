@@ -32,7 +32,7 @@ public enum ApplicationEnvAttr {
     VCS_TYPE("版本管理工具"),
 
     /**
-     * 构建产物目录
+     * 构建产物文件路径
      */
     DIST_PATH("构建产物文件路径"),
 

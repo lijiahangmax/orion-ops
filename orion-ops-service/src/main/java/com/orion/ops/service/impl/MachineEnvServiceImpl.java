@@ -248,7 +248,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         }
     }
 
-    @Resource
+    @Override
     public Integer getTailOffset(Long machineId) {
         String offset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
         if (Strings.isInteger(offset)) {

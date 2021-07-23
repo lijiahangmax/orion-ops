@@ -28,6 +28,14 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TERMINAL_LOG_DIR = "/terminal";
 
+    public static final String RELEASE_LOG_DIR = "/release";
+
+    public static final String RELEASE_HOST_LOG_PREFIX = "/host";
+
+    public static final String RELEASE_TARGET_LOG_PREFIX = "/target";
+
+    public static final String RELEASE_ACTION_LOG_PREFIX = "/action";
+
     public static final String EXEC_LOG_DIR = "/exec";
 
     public static final String COMMAND_LOG_DIR = "/command";
