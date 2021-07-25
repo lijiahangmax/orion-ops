@@ -15,7 +15,7 @@ import java.io.File;
  * @see com.orion.ops.consts.app.ActionType#CHECKOUT
  * @since 2021/7/15 18:49
  */
-public class ReleaseCheckoutActionHandler extends AbstractReleaseHostActionHandler {
+public class ReleaseCheckoutActionHandler extends AbstractReleaseActionHandler {
 
     private Gits git;
 
@@ -28,11 +28,17 @@ public class ReleaseCheckoutActionHandler extends AbstractReleaseHostActionHandl
         String vcsLocalPath = hint.getVcsLocalPath();
         String branchName = hint.getBranchName();
         String commitId = hint.getCommitId();
-        this.printLog("开始检出代码 path: {}, branch: {}, commitId: {}", vcsLocalPath, branchName, commitId);
+        this.appendLog("开始检出代码 path: {}, branch: {}, commitId: {}", vcsLocalPath, branchName, commitId);
         this.git = Gits.of(new File(vcsLocalPath));
-        git.clean().pull()
-                .checkout(branchName)
+        git.clean().checkout(branchName)
+                .pull()
                 .reset(commitId);
+    }
+
+    @Override
+    protected void setLoggerAppender() {
+        super.setLoggerAppender();
+        appender.then(hint.getHostLogOutputStream()).onClose(false);
     }
 
     @Override

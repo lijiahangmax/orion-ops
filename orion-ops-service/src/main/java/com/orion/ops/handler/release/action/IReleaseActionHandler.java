@@ -15,8 +15,6 @@ import java.util.Date;
  */
 public interface IReleaseActionHandler extends SafeCloseable {
 
-    ReleaseActionDAO RELEASE_ACTION_DAO = SpringHolder.getBean("releaseActionDAO");
-
     /**
      * 执行
      */
@@ -30,11 +28,9 @@ public interface IReleaseActionHandler extends SafeCloseable {
     void onException(Exception e);
 
     /**
-     * 是否已处理
-     *
-     * @return 是否已处理
+     * 跳过
      */
-    boolean isHandled();
+    void skip();
 
     /**
      * 修改actionStatus
@@ -50,16 +46,7 @@ public interface IReleaseActionHandler extends SafeCloseable {
         update.setRunStatus(status.getStatus());
         update.setStartTime(startTime);
         update.setEndTime(endTime);
-        RELEASE_ACTION_DAO.updateById(update);
-    }
-
-    /**
-     * 修改action
-     *
-     * @param entity action
-     */
-    default void updateAction(ReleaseActionDO entity) {
-        RELEASE_ACTION_DAO.updateById(entity);
+        SpringHolder.getBean(ReleaseActionDAO.class).updateById(update);
     }
 
 }

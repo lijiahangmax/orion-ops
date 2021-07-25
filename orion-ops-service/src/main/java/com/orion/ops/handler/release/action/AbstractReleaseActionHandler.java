@@ -3,17 +3,19 @@ package com.orion.ops.handler.release.action;
 import com.orion.exception.LogException;
 import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
+import com.orion.lang.io.OutputAppender;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.handler.release.hint.ReleaseActionHint;
 import com.orion.ops.handler.release.hint.ReleaseHint;
+import com.orion.support.Attempt;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 
@@ -25,7 +27,7 @@ import java.util.Date;
  * @since 2021/7/17 12:07
  */
 @Slf4j
-public abstract class AbstractReleaseHostActionHandler implements IReleaseActionHandler {
+public abstract class AbstractReleaseActionHandler implements IReleaseActionHandler {
 
     /**
      * hint
@@ -37,29 +39,25 @@ public abstract class AbstractReleaseHostActionHandler implements IReleaseAction
      */
     protected ReleaseActionHint action;
 
-    /**
-     * 开始时间
-     */
     protected Date startDate;
 
-    /**
-     * 结束时间
-     */
     protected Date endDate;
 
     protected boolean handled;
 
-    public AbstractReleaseHostActionHandler(ReleaseHint hint, ReleaseActionHint action) {
+    protected OutputAppender appender;
+
+    public AbstractReleaseActionHandler(ReleaseHint hint, ReleaseActionHint action) {
         this.hint = hint;
         this.action = action;
-        this.setLogger();
     }
 
     @Override
     public void handle() {
+        this.setLoggerAppender();
         this.handled = true;
         this.startDate = new Date();
-        this.printLog(">>>>> 开始执行宿主机操作-{} {}", action.getName(), Dates.format(startDate));
+        this.appendLog(">>>>> 开始执行上线单步骤操作-{} {}", action.getName(), Dates.format(startDate));
         this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, startDate, null);
         Exception e = null;
         try {
@@ -71,14 +69,15 @@ public abstract class AbstractReleaseHostActionHandler implements IReleaseAction
         // 完成回调
         this.endDate = new Date();
         if (e == null) {
-            this.printLog("<<<<< 宿主机操作执行完成-{} {}", action.getName(), Dates.format(startDate));
+            this.appendLog("<<<<< 上线单步骤操作执行完成-{} {}\n", action.getName(), Dates.format(startDate));
             this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, null, endDate);
         } else {
             log.error("上线单处理宿主机操作-处理操作 异常: {}", e.getMessage());
-            this.printLog("<<<<< 宿主机操作执行失败-{} {}", action.getName(), Dates.format(startDate));
+            this.appendLog("<<<<< 上线单步骤操作执行失败-{} {}\n", action.getName(), Dates.format(startDate));
             this.updateActionStatus(action.getId(), ActionStatus.EXCEPTION, null, endDate);
             this.onException(e);
         }
+        Streams.close(this);
     }
 
     @Override
@@ -86,27 +85,31 @@ public abstract class AbstractReleaseHostActionHandler implements IReleaseAction
         if (e instanceof HttpWrapperException) {
             HttpWrapper<?> wrapper = ((HttpWrapperException) e).getWrapper();
             if (wrapper != null) {
-                this.printLog(wrapper.getMsg());
+                this.appendLog(wrapper.getMsg());
             } else {
-                this.printLog(e.getMessage());
+                this.appendLog(e.getMessage());
             }
         } else if (e instanceof InvalidArgumentException) {
-            this.printLog(e.getMessage());
+            this.appendLog(e.getMessage());
         } else if (e instanceof LogException) {
             if (((LogException) e).hasCause()) {
-                this.printLog(e);
+                this.appendLog(e);
             } else {
-                this.printLog(e.getMessage());
+                this.appendLog(e.getMessage());
             }
         } else {
-            this.printLog(e);
+            this.appendLog(e);
         }
         throw Exceptions.runtime(e);
     }
 
     @Override
-    public boolean isHandled() {
-        return this.handled;
+    public void skip() {
+        if (handled) {
+            return;
+        }
+        this.appendLog("----- 操作步骤跳过-{}", action.getName());
+        this.updateActionStatus(action.getId(), ActionStatus.SKIPPED, null, null);
     }
 
     /**
@@ -118,53 +121,37 @@ public abstract class AbstractReleaseHostActionHandler implements IReleaseAction
 
     /**
      * 设置日志信息
-     * 如果需要单独记录action日志则重写
      */
-    protected void setLogger() {
+    protected void setLoggerAppender() {
+        this.appender = OutputAppender.create(Files1.openOutputStreamFastSafe(action.getLogPath()));
     }
 
     /**
-     * 输出日志到宿主机日志
+     * 输出日志到appender
      *
      * @param message message
      * @param args    args
      */
-    protected void printLog(String message, Object... args) {
+    protected void appendLog(String message, Object... args) {
         try {
             byte[] bytes = Strings.bytes(Strings.format(message, args) + "\n");
-            OutputStream hostLogOutputStream = hint.getHostLogOutputStream();
-            if (hostLogOutputStream != null) {
-                hostLogOutputStream.write(bytes);
-                hostLogOutputStream.flush();
-            }
-            OutputStream logOutputStream = action.getLogOutputStream();
-            if (logOutputStream != null) {
-                logOutputStream.write(bytes);
-                logOutputStream.flush();
-            }
+            appender.write(bytes);
         } catch (Exception e) {
-            log.error("上线单处理宿主机命操作-记录日志 异常: {}", e.getMessage(), e);
+            log.error("上线单处理操作步骤-记录日志 异常: {}", e.getMessage(), e);
             e.printStackTrace();
         }
     }
 
     /**
-     * 输出日志到宿主机日志
+     * 输出日志到appender
      *
      * @param e e
      */
-    protected void printLog(Exception e) {
+    protected void appendLog(Exception e) {
         try {
-            OutputStream hostLogOutputStream = hint.getHostLogOutputStream();
-            if (hostLogOutputStream != null) {
-                e.printStackTrace(new PrintStream(hostLogOutputStream));
-                hostLogOutputStream.flush();
-            }
-            OutputStream logOutputStream = action.getLogOutputStream();
-            if (logOutputStream != null) {
-                e.printStackTrace(new PrintStream(logOutputStream));
-                logOutputStream.flush();
-            }
+            appender.handle(Attempt.rethrows(o -> {
+                e.printStackTrace(new PrintStream(o));
+            }));
         } catch (Exception ex) {
             log.error("上线单处理宿主机命操作-记录日志 异常: {}", ex.getMessage(), ex);
             ex.printStackTrace();
@@ -173,7 +160,7 @@ public abstract class AbstractReleaseHostActionHandler implements IReleaseAction
 
     @Override
     public void close() {
-        Streams.close(action.getLogOutputStream());
+        Streams.close(appender);
     }
 
 }
