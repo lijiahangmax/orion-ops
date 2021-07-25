@@ -57,8 +57,8 @@ public class CommandExecHandler extends AbstractExecHandler {
      */
     protected void logOpenComputed() {
         try {
-            StringBuilder sb = new StringBuilder();
-            sb.append("# 准备执行命令\n")
+            StringBuilder sb = new StringBuilder()
+                    .append("# 准备执行命令\n")
                     .append("@ssh: ").append(machine.getUsername()).append("@")
                     .append(machine.getMachineHost()).append(":")
                     .append(machine.getSshPort()).append(Letters.LF)
@@ -123,7 +123,8 @@ public class CommandExecHandler extends AbstractExecHandler {
                 .append("exit code: ").append(hint.getExitCode()).append(Letters.LF)
                 .append("结束时间: ").append(Dates.format(endDate, Dates.YMDHMS))
                 .append("; used ").append(interval).append(" (")
-                .append(endDate.getTime() - hint.getStartDate().getTime()).append(" ms)\n");
+                .append(endDate.getTime() - hint.getStartDate().getTime())
+                .append(" ms)\n");
         try {
             logOutputStream.write(Strings.bytes(sb.toString()));
             logOutputStream.flush();
