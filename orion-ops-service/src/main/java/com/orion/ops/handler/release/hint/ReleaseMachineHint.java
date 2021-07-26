@@ -25,9 +25,19 @@ public class ReleaseMachineHint {
     private Long machineId;
 
     /**
+     * 机器用户名
+     */
+    private String username;
+
+    /**
      * 机器主机
      */
-    private String machineHost;
+    private String host;
+
+    /**
+     * 机器端口
+     */
+    private Integer port;
 
     /**
      * 远程机器产物文件

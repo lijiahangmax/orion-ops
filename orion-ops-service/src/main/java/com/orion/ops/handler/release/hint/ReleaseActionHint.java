@@ -39,9 +39,4 @@ public class ReleaseActionHint {
      */
     private String logPath;
 
-    /**
-     * 操作日志流
-     */
-    private OutputStream logOutputStream;
-
 }

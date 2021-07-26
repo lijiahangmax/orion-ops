@@ -39,26 +39,29 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
      */
     protected ReleaseActionHint action;
 
-    protected Date startDate;
+    protected Date startTime;
 
-    protected Date endDate;
+    protected Date endTime;
 
     protected boolean handled;
 
     protected OutputAppender appender;
 
+    protected boolean success;
+
     public AbstractReleaseActionHandler(ReleaseHint hint, ReleaseActionHint action) {
         this.hint = hint;
         this.action = action;
+        this.success = true;
     }
 
     @Override
     public void handle() {
         this.setLoggerAppender();
         this.handled = true;
-        this.startDate = new Date();
-        this.appendLog(">>>>> 开始执行上线单步骤操作-{} {}", action.getName(), Dates.format(startDate));
-        this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, startDate, null);
+        this.startTime = new Date();
+        this.appendLog("# 开始执行上线单步骤操作-{} {}", action.getName(), Dates.format(startTime));
+        this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, startTime, null);
         Exception e = null;
         try {
             // 执行操作
@@ -67,14 +70,15 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
             e = ex;
         }
         // 完成回调
-        this.endDate = new Date();
+        this.endTime = new Date();
         if (e == null) {
-            this.appendLog("<<<<< 上线单步骤操作执行完成-{} {}\n", action.getName(), Dates.format(startDate));
-            this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, null, endDate);
+            this.appendLog("# 上线单步骤操作执行完成-{} {}\n", action.getName(), Dates.format(startTime));
+            this.updateActionStatus(action.getId(), ActionStatus.FINISH, null, endTime);
         } else {
+            this.success = false;
             log.error("上线单处理宿主机操作-处理操作 异常: {}", e.getMessage());
-            this.appendLog("<<<<< 上线单步骤操作执行失败-{} {}\n", action.getName(), Dates.format(startDate));
-            this.updateActionStatus(action.getId(), ActionStatus.EXCEPTION, null, endDate);
+            this.appendLog("# 上线单步骤操作执行失败-{} {}\n", action.getName(), Dates.format(startTime));
+            this.updateActionStatus(action.getId(), ActionStatus.EXCEPTION, null, endTime);
             this.onException(e);
         }
         Streams.close(this);
@@ -82,6 +86,16 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
 
     @Override
     public void onException(Exception e) {
+        this.handlerException(e);
+        throw Exceptions.runtime(e);
+    }
+
+    /**
+     * 处理异常
+     *
+     * @param e e
+     */
+    protected void handlerException(Exception e) {
         if (e instanceof HttpWrapperException) {
             HttpWrapper<?> wrapper = ((HttpWrapperException) e).getWrapper();
             if (wrapper != null) {
@@ -100,7 +114,6 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
         } else {
             this.appendLog(e);
         }
-        throw Exceptions.runtime(e);
     }
 
     @Override
@@ -110,6 +123,11 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
         }
         this.appendLog("----- 操作步骤跳过-{}", action.getName());
         this.updateActionStatus(action.getId(), ActionStatus.SKIPPED, null, null);
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return success;
     }
 
     /**

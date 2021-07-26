@@ -33,7 +33,14 @@ public interface IReleaseActionHandler extends SafeCloseable {
     void skip();
 
     /**
-     * 修改actionStatus
+     * 是否执行成功
+     *
+     * @return 是否执行成功
+     */
+    boolean isSuccess();
+
+    /**
+     * 修改 ActionStatus
      *
      * @param id        id
      * @param status    status
