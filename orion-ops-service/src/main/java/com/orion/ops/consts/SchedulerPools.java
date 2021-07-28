@@ -5,6 +5,7 @@ import com.orion.utils.Systems;
 import com.orion.utils.Threads;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 /**
@@ -36,7 +37,7 @@ public class SchedulerPools {
             .setNamedThreadFactory("exec-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_60)
+            .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
             .setAllowCoreThreadTimeOut(true)
             .build();
@@ -65,12 +66,38 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeOut(true)
             .build();
 
+    /**
+     * 上线单 主线程操作线程池
+     */
+    public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("release-main-thread-")
+            .setCorePoolSize(0)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+    /**
+     * 上线单 目标机器操作线程池
+     */
+    public static final ExecutorService RELEASE_TARGET_CHAIN_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("release-target-chain-thread-")
+            .setCorePoolSize(4)
+            .setMaxPoolSize(4)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(EXEC_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(TAIL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(RELEASE_TARGET_CHAIN_SCHEDULER, Const.MS_S_3);
         });
     }
 

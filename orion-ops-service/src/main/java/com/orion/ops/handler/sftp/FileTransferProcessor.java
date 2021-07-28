@@ -87,7 +87,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             this.handler();
             log.info("sftp传输文件-传输完毕 fileToken: {}", fileToken);
         } catch (Exception e) {
-            log.error("sftp传输文件-出现异常 fileToken: {}, e: {}, message: {}", fileToken, e.getClass(), e.getMessage());
+            log.error("sftp传输文件-出现异常 fileToken: {}, e: {}, message: {}", fileToken, e.getClass().getName(), e.getMessage());
             // 程序错误并非传输错误修改状态
             if (progress == null || !progress.isError()) {
                 log.error("sftp传输文件-运行异常 fileToken: {}", fileToken, e);

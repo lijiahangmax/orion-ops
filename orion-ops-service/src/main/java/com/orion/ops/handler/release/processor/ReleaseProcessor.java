@@ -3,6 +3,7 @@ package com.orion.ops.handler.release.processor;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.able.SafeCloseable;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ReleaseStatus;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ReleaseBillDAO;
@@ -95,7 +96,7 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
                     // 修改目标机器版本
                     this.updateAppMachineReleaseId();
                     // 阻塞执行目标机器操作
-                    Threads.blockRun(targetChains, null);
+                    Threads.blockRun(targetChains, SchedulerPools.RELEASE_TARGET_CHAIN_SCHEDULER);
                     boolean allMatchineSuccess = targetChains.stream()
                             .map(ReleaseTargetChainActionHandler::isSuccess)
                             .allMatch(Boolean::booleanValue);
@@ -123,6 +124,8 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
     private void init() {
         // 记录时间
         this.startTime = new Date();
+        // 更新时间
+        this.updateRelease(hint.getReleaseId(), null, startTime, null);
         // 打开日志流
         hint.setHostLogOutputStream(Files1.openOutputStreamFastSafe(hint.getHostLogPath()));
         // 打印日志
@@ -163,7 +166,7 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
             e.printStackTrace();
         }
         // 修改状态
-        this.updateReleaseStatus(hint.getReleaseId(), status, startTime, endTime);
+        this.updateRelease(hint.getReleaseId(), status, null, endTime);
     }
 
     /**
@@ -212,14 +215,14 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
     }
 
     /**
-     * 修改 ReleaseStatus
+     * 更新 ReleaseBill
      *
      * @param id        id
      * @param status    status
      * @param startTime startTime
      * @param endTime   endTime
      */
-    private void updateReleaseStatus(Long id, ReleaseStatus status, Date startTime, Date endTime) {
+    private void updateRelease(Long id, ReleaseStatus status, Date startTime, Date endTime) {
         ReleaseBillDO update = new ReleaseBillDO();
         update.setId(id);
         update.setReleaseStatus(status.getStatus());
