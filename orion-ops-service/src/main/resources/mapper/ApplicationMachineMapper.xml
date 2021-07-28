@@ -8,13 +8,14 @@
         <result column="app_id" property="appId"/>
         <result column="profile_id" property="profileId"/>
         <result column="machine_id" property="machineId"/>
+        <result column="release_id" property="releaseId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, profile_id, machine_id, create_time, update_time
+        id, app_id, profile_id, machine_id, release_id, create_time, update_time
     </sql>
 
 </mapper>

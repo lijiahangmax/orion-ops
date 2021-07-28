@@ -73,7 +73,9 @@ public class ReleaseProcessorFactory {
         hint.setReleaseId(releaseBill.getId());
         hint.setTitle(releaseBill.getReleaseTitle());
         hint.setDescription(releaseBill.getReleaseDescription());
+        hint.setAppId(releaseBill.getAppId());
         hint.setAppName(releaseBill.getAppName());
+        hint.setProfileId(releaseBill.getProfileId());
         hint.setProfileName(releaseBill.getProfileName());
         hint.setType(releaseBill.getReleaseType());
         hint.setVcsLocalPath(releaseBill.getVcsLocalPath());
@@ -104,7 +106,7 @@ public class ReleaseProcessorFactory {
                     hint.setId(s.getId());
                     hint.setMachineId(s.getMachineId());
                     hint.setLogPath(MachineEnvAttr.LOG_PATH.getValue() + s.getLogPath());
-                    hint.setDistPath(hint.getDistPath());
+                    hint.setDistPath(s.getDistPath());
                     return hint;
                 }).collect(Collectors.toList());
     }

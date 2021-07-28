@@ -33,9 +33,19 @@ public class ReleaseHint {
     private String description;
 
     /**
+     * 应用id
+     */
+    private Long appId;
+
+    /**
      * 应用名称
      */
     private String appName;
+
+    /**
+     * 环境id
+     */
+    private Long profileId;
 
     /**
      * 环境名称

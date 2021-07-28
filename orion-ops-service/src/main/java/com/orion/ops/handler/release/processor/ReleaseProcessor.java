@@ -1,14 +1,17 @@
 package com.orion.ops.handler.release.processor;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.able.SafeCloseable;
-import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ReleaseStatus;
+import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ReleaseBillDAO;
+import com.orion.ops.entity.domain.ApplicationMachineDO;
 import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.handler.release.action.IReleaseActionHandler;
 import com.orion.ops.handler.release.action.ReleaseTargetChainActionHandler;
 import com.orion.ops.handler.release.hint.ReleaseHint;
+import com.orion.ops.handler.release.hint.ReleaseMachineHint;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
@@ -22,6 +25,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 上线单 宿主机处理器
@@ -88,6 +92,8 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
             // 执行目标机器
             if (e == null) {
                 if (!targetChains.isEmpty()) {
+                    // 修改目标机器版本
+                    this.updateAppMachineReleaseId();
                     // 阻塞执行目标机器操作
                     Threads.blockRun(targetChains, null);
                     boolean allMatchineSuccess = targetChains.stream()
@@ -145,16 +151,17 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
         // 记录日志
         this.endTime = new Date();
         String interval = Dates.interval(endTime, startTime, "d", "h", "m", "s");
-        if (e != null) {
-            e.printStackTrace();
-            this.appendLog(e);
-        }
         StringBuilder sb = new StringBuilder()
-                .append("# 上线单宿主机操作执行").append(e == null ? "成功" : "失败")
+                .append("# 上线单执行").append(e == null ? "成功" : "失败")
                 .append(", 结束时间: ").append(Dates.format(endTime, Dates.YMDHMS))
                 .append("; used ").append(interval);
         sb.append(" (").append(endTime.getTime() - startTime.getTime()).append(" ms)");
         this.appendLog(sb.toString());
+        // 异常日志
+        if (e != null) {
+            log.error("上线单执行运行异常: {} {}", e.getClass().getName(), e.getMessage());
+            e.printStackTrace();
+        }
         // 修改状态
         this.updateReleaseStatus(hint.getReleaseId(), status, startTime, endTime);
     }
@@ -219,6 +226,23 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
         update.setReleaseStartTime(startTime);
         update.setReleaseEndTime(endTime);
         SpringHolder.getBean(ReleaseBillDAO.class).updateById(update);
+    }
+
+    /**
+     * 修改 ApplicationMachine releaseId
+     */
+    private void updateAppMachineReleaseId() {
+        List<Long> machineIds = hint.getMachines().stream()
+                .map(ReleaseMachineHint::getMachineId)
+                .collect(Collectors.toList());
+        // 更新
+        ApplicationMachineDO update = new ApplicationMachineDO();
+        update.setReleaseId(hint.getReleaseId());
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, hint.getAppId())
+                .eq(ApplicationMachineDO::getProfileId, hint.getProfileId())
+                .in(ApplicationMachineDO::getMachineId, machineIds);
+        SpringHolder.getBean(ApplicationMachineDAO.class).update(update, wrapper);
     }
 
 }
