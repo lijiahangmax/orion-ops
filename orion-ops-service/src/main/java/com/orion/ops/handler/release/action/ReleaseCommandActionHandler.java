@@ -3,6 +3,7 @@ package com.orion.ops.handler.release.action;
 import com.orion.ops.consts.Const;
 import com.orion.ops.handler.release.hint.ReleaseActionHint;
 import com.orion.ops.handler.release.hint.ReleaseHint;
+import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.support.Attempt;
 import com.orion.utils.Exceptions;
@@ -30,16 +31,24 @@ public class ReleaseCommandActionHandler extends AbstractReleaseActionHandler {
     @Override
     protected void handleAction() throws IOException {
         this.appendLog("开始执行命令: {}", action.getCommand());
-        this.executor = hint.getSessionHolder().get(Const.HOST_MACHINE_ID)
-                .getCommandExecutor(action.getCommand());
-        executor.sync()
-                .inherit()
-                .streamHandler(Attempt.rethrows(this::handlerStandardOutputStream))
-                .connect()
-                .exec();
+        try {
+            SessionStore session = hint.getSessionHolder().get(Const.HOST_MACHINE_ID);
+            if (!session.isConnected()) {
+                session.connect();
+            }
+            this.executor = session.getCommandExecutor(action.getCommand());
+            executor.sync()
+                    .inherit()
+                    .streamHandler(Attempt.rethrows(this::handlerStandardOutputStream))
+                    .connect()
+                    .exec();
+        } catch (Exception e) {
+            this.appendLog("命令执行失败: {}, err: {} {}", action.getCommand(), e.getClass().getName(), e.getMessage());
+            throw e;
+        }
         int exitCode = executor.getExitCode();
         if (exitCode != 0) {
-            throw Exceptions.log("执行命令失败 exitCode: " + exitCode);
+            throw Exceptions.log("执行命令非正常结束 exitCode: " + exitCode);
         } else {
             this.appendLog("执行命令成功");
         }

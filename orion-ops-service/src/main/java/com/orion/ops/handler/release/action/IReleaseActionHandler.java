@@ -17,15 +17,18 @@ public interface IReleaseActionHandler extends SafeCloseable {
 
     /**
      * 执行
+     *
+     * @throws Exception Exception
      */
-    void handle();
+    void handle() throws Exception;
 
     /**
      * 异常处理
      *
      * @param e e
+     * @throws Exception throws
      */
-    void onException(Exception e);
+    void onException(Exception e) throws Exception;
 
     /**
      * 跳过
@@ -40,14 +43,14 @@ public interface IReleaseActionHandler extends SafeCloseable {
     boolean isSuccess();
 
     /**
-     * 修改 ActionStatus
+     * 更新 Action
      *
      * @param id        id
      * @param status    status
      * @param startTime startTime
      * @param endTime   endTime
      */
-    default void updateActionStatus(Long id, ActionStatus status, Date startTime, Date endTime) {
+    default void updateAction(Long id, ActionStatus status, Date startTime, Date endTime) {
         ReleaseActionDO update = new ReleaseActionDO();
         update.setId(id);
         update.setRunStatus(status.getStatus());

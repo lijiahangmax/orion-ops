@@ -9,7 +9,6 @@ import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.handler.release.hint.ReleaseActionHint;
 import com.orion.ops.handler.release.hint.ReleaseHint;
 import com.orion.support.Attempt;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -56,12 +55,12 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
     }
 
     @Override
-    public void handle() {
+    public void handle() throws Exception {
         this.setLoggerAppender();
         this.handled = true;
         this.startTime = new Date();
         this.appendLog("# 开始执行上线单步骤操作-{} {}", action.getName(), Dates.format(startTime));
-        this.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, startTime, null);
+        this.updateAction(action.getId(), ActionStatus.RUNNABLE, startTime, null);
         Exception e = null;
         try {
             // 执行操作
@@ -73,21 +72,21 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
         this.endTime = new Date();
         if (e == null) {
             this.appendLog("# 上线单步骤操作执行完成-{} {}\n", action.getName(), Dates.format(startTime));
-            this.updateActionStatus(action.getId(), ActionStatus.FINISH, null, endTime);
+            this.updateAction(action.getId(), ActionStatus.FINISH, null, endTime);
         } else {
             this.success = false;
             log.error("上线单处理宿主机操作-处理操作 异常: {}", e.getMessage());
             this.appendLog("# 上线单步骤操作执行失败-{} {}\n", action.getName(), Dates.format(startTime));
-            this.updateActionStatus(action.getId(), ActionStatus.EXCEPTION, null, endTime);
+            this.updateAction(action.getId(), ActionStatus.EXCEPTION, null, endTime);
             this.onException(e);
         }
         Streams.close(this);
     }
 
     @Override
-    public void onException(Exception e) {
+    public void onException(Exception e) throws Exception {
         this.handlerException(e);
-        throw Exceptions.runtime(e);
+        throw e;
     }
 
     /**
@@ -106,10 +105,9 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
         } else if (e instanceof InvalidArgumentException) {
             this.appendLog(e.getMessage());
         } else if (e instanceof LogException) {
+            this.appendLog(e.getMessage());
             if (((LogException) e).hasCause()) {
                 this.appendLog(e);
-            } else {
-                this.appendLog(e.getMessage());
             }
         } else {
             this.appendLog(e);
@@ -122,7 +120,7 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
             return;
         }
         this.appendLog("----- 操作步骤跳过-{}", action.getName());
-        this.updateActionStatus(action.getId(), ActionStatus.SKIPPED, null, null);
+        this.updateAction(action.getId(), ActionStatus.SKIPPED, null, null);
     }
 
     @Override

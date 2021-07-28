@@ -40,7 +40,7 @@ public class ReleaseTargetCommandActionHandler extends AbstractReleaseActionHand
         this.setLoggerAppender();
         super.handled = true;
         super.startTime = new Date();
-        super.updateActionStatus(action.getId(), ActionStatus.RUNNABLE, startTime, null);
+        super.updateAction(action.getId(), ActionStatus.RUNNABLE, startTime, null);
         Exception e = null;
         try {
             // 执行操作
@@ -51,11 +51,11 @@ public class ReleaseTargetCommandActionHandler extends AbstractReleaseActionHand
         // 完成回调
         this.endTime = new Date();
         if (e == null) {
-            super.updateActionStatus(action.getId(), ActionStatus.FINISH, null, endTime);
+            super.updateAction(action.getId(), ActionStatus.FINISH, null, endTime);
         } else {
             super.success = false;
             log.error("上线单处理目标机器操作-处理操作 异常: {}", e.getMessage());
-            super.updateActionStatus(action.getId(), ActionStatus.EXCEPTION, null, endTime);
+            super.updateAction(action.getId(), ActionStatus.EXCEPTION, null, endTime);
             super.onException(e);
         }
         Streams.close(this);
