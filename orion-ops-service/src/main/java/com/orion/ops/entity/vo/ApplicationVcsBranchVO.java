@@ -24,6 +24,13 @@ public class ApplicationVcsBranchVO {
      */
     private String name;
 
+    /**
+     * 是否为默认
+     *
+     * @see com.orion.ops.consts.Const#IS_DEFAULT
+     */
+    private Integer isDefault;
+
     static {
         TypeStore.STORE.register(BranchInfo.class, ApplicationVcsBranchVO.class, p -> {
             ApplicationVcsBranchVO vo = new ApplicationVcsBranchVO();

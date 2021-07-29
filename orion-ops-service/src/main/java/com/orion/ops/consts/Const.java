@@ -62,6 +62,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SWAP_FILE_SUFFIX = ".swp";
 
+    public static final Integer IS_DEFAULT = 1;
+
     public static final Integer INCR = 1;
 
     public static final Integer DECR = 2;
@@ -73,6 +75,8 @@ public class Const extends com.orion.constant.Const {
     public static final Integer ADD = 1;
 
     public static final Integer UPDATE = 2;
+
+    public static final Integer VCS_COMMIT_LIMIT = 15;
 
     public static final String COPY = "Copy";
 

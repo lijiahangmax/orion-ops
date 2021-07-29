@@ -122,6 +122,8 @@ public class MessageConst {
 
     public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚上线单";
 
+    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行上线单";
+
     public static final String RELEASE_MACHINE_ABSENT = "未查询到上线单机器";
 
 }

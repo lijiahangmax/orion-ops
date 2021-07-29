@@ -8,10 +8,7 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.entity.request.*;
-import com.orion.ops.entity.vo.ApplicationDetailVO;
-import com.orion.ops.entity.vo.ApplicationInfoVO;
-import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
-import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
@@ -135,9 +132,19 @@ public class ApplicationInfoController {
     }
 
     /**
+     * 获取版本信息
+     */
+    @RequestMapping("/vcs/info")
+    public ApplicationVcsInfoVO getVcsDefaultInfo(@RequestBody ApplicationVcsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return applicationService.getVcsInfo(appId, profileId);
+    }
+
+    /**
      * 获取分支列表
      */
-    @RequestMapping("/branch/list")
+    @RequestMapping("/vcs/branch")
     public List<ApplicationVcsBranchVO> getBranchList(@RequestBody ApplicationVcsRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
@@ -147,7 +154,7 @@ public class ApplicationInfoController {
     /**
      * 获取提交列表
      */
-    @RequestMapping("/commit/list")
+    @RequestMapping("/vcs/commit")
     public List<ApplicationVcsCommitVO> getCommitList(@RequestBody ApplicationVcsRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());

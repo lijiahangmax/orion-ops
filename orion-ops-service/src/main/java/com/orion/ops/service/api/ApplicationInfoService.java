@@ -3,10 +3,7 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
-import com.orion.ops.entity.vo.ApplicationDetailVO;
-import com.orion.ops.entity.vo.ApplicationInfoVO;
-import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
-import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
+import com.orion.ops.entity.vo.*;
 
 import java.util.List;
 
@@ -103,6 +100,15 @@ public interface ApplicationInfoService {
 
     /**
      * 获取版本信息列表
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 分支信息
+     */
+    ApplicationVcsInfoVO getVcsInfo(Long appId, Long profileId);
+
+    /**
+     * 获取分支列表
      *
      * @param appId     appId
      * @param profileId profileId

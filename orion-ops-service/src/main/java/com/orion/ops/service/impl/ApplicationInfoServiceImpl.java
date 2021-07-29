@@ -67,6 +67,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Resource
     private ApplicationDeployActionService applicationDeployActionService;
 
+    @Resource
+    private ReleaseInfoService releaseInfoService;
+
     @Override
     public Long insertApp(ApplicationInfoRequest request) {
         // 检查是否存在
@@ -213,7 +216,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         detail.setProfileTag(profile.getProfileTag());
         detail.setVcsRootPath(vcsRootPath);
         detail.setVcsCodePath(vcsCodePath);
-        detail.setVscType(vcsType);
+        detail.setVcsType(vcsType);
         detail.setDistPath(distPath);
         detail.setMachineCount(machines.size());
         detail.setMachines(machines);
@@ -284,6 +287,35 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     @Override
+    public ApplicationVcsInfoVO getVcsInfo(Long appId, Long profileId) {
+        // 查询上线单
+        ReleaseBillDO lastRelease = releaseInfoService.getLastReleaseBill(appId, profileId);
+        // 查询vcs路径
+        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
+        // 获取vcs实例
+        try (Gits git = Gits.of(new File(path))) {
+            ApplicationVcsInfoVO vcsInfo = new ApplicationVcsInfoVO();
+            ApplicationVcsBranchVO branch;
+            // 获取分支列表
+            List<ApplicationVcsBranchVO> branches = Converts.toList(git.branchList(), ApplicationVcsBranchVO.class);
+            if (lastRelease != null) {
+                branch = branches.stream()
+                        .filter(s -> s.getName().equals(lastRelease.getBranchName()))
+                        .findFirst()
+                        .orElseGet(() -> branches.get(0));
+            } else {
+                branch = branches.get(0);
+            }
+            branch.setIsDefault(Const.IS_DEFAULT);
+            // 获取commit
+            List<LogInfo> logList = git.logList(branch.getName(), Const.VCS_COMMIT_LIMIT);
+            vcsInfo.setBranches(branches);
+            vcsInfo.setCommits(Converts.toList(logList, ApplicationVcsCommitVO.class));
+            return vcsInfo;
+        }
+    }
+
+    @Override
     public List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId) {
         String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
         try (Gits git = Gits.of(new File(path))) {
@@ -298,7 +330,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
         try (Gits git = Gits.of(new File(path))) {
             // 查询提交信息
-            List<LogInfo> logList = git.logList(branchName, 15);
+            List<LogInfo> logList = git.logList(branchName, Const.VCS_COMMIT_LIMIT);
             return Converts.toList(logList, ApplicationVcsCommitVO.class);
         }
     }
