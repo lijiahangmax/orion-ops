@@ -63,7 +63,7 @@ public class TailSessionHolder {
     public List<ITailHandler> getSession(Long machineId, String path) {
         List<String> tokenList = fileTokenMapping.get(machineId + ":" + path);
         if (Lists.isEmpty(tokenList)) {
-            return Lists.newList();
+            return Lists.empty();
         }
         return tokenList.stream()
                 .map(holder::get)

@@ -8,6 +8,8 @@ import com.orion.ops.dao.ReleaseMachineDAO;
 import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.handler.release.hint.ReleaseHint;
 import com.orion.ops.handler.release.hint.ReleaseMachineHint;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -84,7 +86,7 @@ public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandle
         this.handled = true;
         this.startTime = new Date();
         // 更新状态
-        this.updateMachineStatus(machine.getId(), ActionStatus.RUNNABLE, startTime, null);
+        this.updateMachine(machine.getId(), ActionStatus.RUNNABLE, startTime, null);
         // 打印日志
         StringBuilder sb = new StringBuilder()
                 .append("# 开始执行上线单宿主机操作").append(Letters.LF)
@@ -101,6 +103,8 @@ public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandle
      * @param e e
      */
     private void processFinished(Exception e) {
+        // 关闭日志handler
+        this.closeTailHandler();
         // 记录日志
         this.endTime = new Date();
         String interval = Dates.interval(endTime, startTime, "d", "h", "m", "s");
@@ -118,9 +122,9 @@ public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandle
         }
         // 修改状态
         if (e == null) {
-            this.updateMachineStatus(machine.getId(), ActionStatus.FINISH, null, endTime);
+            this.updateMachine(machine.getId(), ActionStatus.FINISH, null, endTime);
         } else {
-            this.updateMachineStatus(machine.getId(), ActionStatus.EXCEPTION, null, endTime);
+            this.updateMachine(machine.getId(), ActionStatus.EXCEPTION, null, endTime);
             this.onException(e);
         }
     }
@@ -146,7 +150,7 @@ public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandle
      * @param startTime startTime
      * @param endTime   endTime
      */
-    private void updateMachineStatus(Long id, ActionStatus status, Date startTime, Date endTime) {
+    private void updateMachine(Long id, ActionStatus status, Date startTime, Date endTime) {
         ReleaseMachineDO update = new ReleaseMachineDO();
         update.setId(id);
         update.setRunStatus(status.getStatus());
@@ -160,6 +164,16 @@ public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandle
         super.close();
         Streams.close(machine.getLogOutputStream());
         actions.forEach(Streams::close);
+    }
+
+    /**
+     * 关闭日志 tail handler
+     */
+    private void closeTailHandler() {
+        // 关闭宿主机日志
+        SpringHolder.getBean(TailSessionHolder.class)
+                .getSession(Const.HOST_MACHINE_ID, machine.getLogPath())
+                .forEach(ITailHandler::close);
     }
 
 }

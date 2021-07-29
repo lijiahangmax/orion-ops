@@ -13,6 +13,8 @@ import com.orion.ops.handler.release.action.IReleaseActionHandler;
 import com.orion.ops.handler.release.action.ReleaseTargetChainActionHandler;
 import com.orion.ops.handler.release.hint.ReleaseHint;
 import com.orion.ops.handler.release.hint.ReleaseMachineHint;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
@@ -93,6 +95,8 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
             // 执行目标机器
             if (e == null) {
                 if (!targetChains.isEmpty()) {
+                    // 关闭宿主机日志
+                    this.closeHostTailHandler();
                     // 修改目标机器版本
                     this.updateAppMachineReleaseId();
                     // 阻塞执行目标机器操作
@@ -125,7 +129,7 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
         // 记录时间
         this.startTime = new Date();
         // 更新时间
-        this.updateRelease(hint.getReleaseId(), null, startTime, null);
+        this.updateRelease(hint.getReleaseId(), ReleaseStatus.RUNNABLE, startTime, null);
         // 打开日志流
         hint.setHostLogOutputStream(Files1.openOutputStreamFastSafe(hint.getHostLogPath()));
         // 打印日志
@@ -212,6 +216,8 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
         targetChains.forEach(Streams::close);
         // 释放连接
         hint.getSessionHolder().forEach((k, v) -> Streams.close(v));
+        // 关闭tail
+        this.closeAllTailHandler();
     }
 
     /**
@@ -246,6 +252,31 @@ public class ReleaseProcessor implements Runnable, SafeCloseable {
                 .eq(ApplicationMachineDO::getProfileId, hint.getProfileId())
                 .in(ApplicationMachineDO::getMachineId, machineIds);
         SpringHolder.getBean(ApplicationMachineDAO.class).update(update, wrapper);
+    }
+
+    /**
+     * 关闭宿主机日志 tail handler
+     */
+    private void closeHostTailHandler() {
+        // 关闭宿主机日志
+        SpringHolder.getBean(TailSessionHolder.class)
+                .getSession(Const.HOST_MACHINE_ID, hint.getHostLogPath())
+                .forEach(ITailHandler::close);
+    }
+
+    /**
+     * 关闭tail handler
+     */
+    private void closeAllTailHandler() {
+        TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+        // 关闭宿主机日志
+        tailSessionHolder.getSession(Const.HOST_MACHINE_ID, hint.getHostLogPath())
+                .forEach(ITailHandler::close);
+        // 关闭目标机器日志
+        for (ReleaseMachineHint machine : hint.getMachines()) {
+            tailSessionHolder.getSession(Const.HOST_MACHINE_ID, machine.getLogPath())
+                    .forEach(ITailHandler::close);
+        }
     }
 
 }
