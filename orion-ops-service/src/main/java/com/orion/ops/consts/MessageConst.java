@@ -122,9 +122,13 @@ public class MessageConst {
 
     public static final String RELEASE_MACHINE_ABSENT = "上线单机器不存在";
 
-    public static final String LOG_FILE_ABSENT = "日志文件不存在";
+    public static final String UNKNOWN_RELEASE_TYPE = "未知的发布类型";
 
-    public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚上线单";
+    public static final String RELEASE_TYPE_UNABLE_COPY = "当前类型不支持此操作";
+
+    public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚";
+
+    public static final String FILE_ABSENT_UNABLE_ROLLBACK_RELEASE = "产物快照丢失无法回滚";
 
     public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行上线单";
 

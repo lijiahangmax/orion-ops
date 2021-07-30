@@ -56,7 +56,14 @@ public class ApplicationReleaseController {
         return applicationReleaseService.submitAppRelease(request);
     }
 
-    // copy
+    /**
+     * 复制上线单
+     */
+    @RequestMapping("/copy")
+    public Long copyReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationReleaseService.copyAppRelease(id);
+    }
 
     /**
      * 审核上线单

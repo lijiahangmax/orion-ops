@@ -36,12 +36,12 @@ public interface ApplicationReleaseService {
      */
     void runnableAppRelease(ApplicationReleaseBillRequest request);
 
-    // /**
-    //  * 回滚上线单
-    //  *
-    //  * @param request request
-    //  * @return id
-    //  */
-    // Long rollbackAppRelease(ApplicationReleaseBillRequest request);
+    /**
+     * 回滚上线单
+     *
+     * @param id id
+     * @return id
+     */
+    Long rollbackAppRelease(Long id);
 
 }

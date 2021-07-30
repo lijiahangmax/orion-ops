@@ -93,4 +93,20 @@ public interface ReleaseInfoService {
      */
     String releaseMachineLog(Long releaseMachineId);
 
+    /**
+     * 复制 release 机器
+     *
+     * @param sourceReleaseId sourceReleaseId
+     * @param targetReleaseId targetReleaseId
+     */
+    void copyReleaseMachine(Long sourceReleaseId, Long targetReleaseId);
+
+    /**
+     * 复制 release action
+     *
+     * @param sourceReleaseId sourceReleaseId
+     * @param targetReleaseId targetReleaseId
+     */
+    void copyReleaseAction(Long sourceReleaseId, Long targetReleaseId);
+
 }

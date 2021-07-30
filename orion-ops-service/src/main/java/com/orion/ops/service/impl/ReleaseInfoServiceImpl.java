@@ -102,7 +102,6 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
                 .eq(Objects.nonNull(request.getAppId()), ReleaseBillDO::getAppId, request.getAppId())
                 .eq(Objects.nonNull(request.getProfileId()), ReleaseBillDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getStatus()), ReleaseBillDO::getReleaseStatus, request.getStatus())
-                .isNull(ReleaseBillDO::getRollbackReleaseId)
                 .and(Const.ENABLE.equals(request.getOnlyMyself()), w -> w
                         .eq(ReleaseBillDO::getCreateUserId, userId)
                         .or()
@@ -154,6 +153,52 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
         ReleaseMachineDO releaseMachine = releaseMachineDAO.selectById(releaseMachineId);
         Valid.notNull(releaseMachine, MessageConst.RELEASE_MACHINE_ABSENT);
         return this.getFileTailLine(releaseMachine.getLogPath());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copyReleaseMachine(Long sourceReleaseId, Long targetReleaseId) {
+        // 查询原始数据
+        List<ReleaseMachineDO> sourceMachines = this.getReleaseMachine(sourceReleaseId);
+        for (ReleaseMachineDO sourceMachine : sourceMachines) {
+            // 构建数据
+            ReleaseMachineDO targetMachine = new ReleaseMachineDO();
+            targetMachine.setReleaseId(targetReleaseId);
+            targetMachine.setMachineId(sourceMachine.getMachineId());
+            targetMachine.setMachineName(sourceMachine.getMachineName());
+            targetMachine.setMachineTag(sourceMachine.getMachineTag());
+            targetMachine.setMachineHost(sourceMachine.getMachineHost());
+            targetMachine.setRunStatus(ActionStatus.WAIT_RUNNABLE.getStatus());
+            targetMachine.setLogPath(PathBuilders.getReleaseTargetMachineLogPath(targetReleaseId, sourceMachine.getMachineId()));
+            targetMachine.setDistPath(sourceMachine.getDistPath());
+            // 插入
+            releaseMachineDAO.insert(targetMachine);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void copyReleaseAction(Long sourceReleaseId, Long targetReleaseId) {
+        // 查询原始数据
+        List<ReleaseActionDO> sourceActions = this.getReleaseAction(sourceReleaseId);
+        for (ReleaseActionDO sourceAction : sourceActions) {
+            // 构建数据
+            ReleaseActionDO releaseAction = new ReleaseActionDO();
+            releaseAction.setMachineId(sourceAction.getMachineId());
+            releaseAction.setReleaseId(targetReleaseId);
+            releaseAction.setActionId(sourceAction.getActionId());
+            releaseAction.setActionType(sourceAction.getActionType());
+            releaseAction.setActionName(sourceAction.getActionName());
+            releaseAction.setActionCommand(sourceAction.getActionCommand());
+            releaseAction.setRunStatus(ActionStatus.WAIT_RUNNABLE.getStatus());
+            // 插入
+            releaseActionDAO.insert(releaseAction);
+            ReleaseActionDO updateAction = new ReleaseActionDO();
+            updateAction.setId(releaseAction.getId());
+            updateAction.setLogPath(PathBuilders.getReleaseActionLogPath(targetReleaseId, releaseAction.getId()));
+            // 更新
+            releaseActionDAO.updateById(updateAction);
+        }
     }
 
     /**
