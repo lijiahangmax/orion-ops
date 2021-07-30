@@ -91,6 +91,15 @@ public class ApplicationReleaseController {
     }
 
     /**
+     * 回滚上线单
+     */
+    @RequestMapping("/rollback")
+    public Long rollbackReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationReleaseService.rollbackAppRelease(id);
+    }
+
+    /**
      * 上线单列表
      */
     @RequestMapping("/list")

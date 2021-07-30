@@ -120,6 +120,31 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long rollbackAppRelease(Long id) {
+        // 查询上线单
+        ReleaseBillDO rollbackRelease = releaseBillDAO.selectById(id);
+        Valid.notNull(rollbackRelease, MessageConst.RELEASE_BILL_ABSENT);
+        if (rollbackRelease.getRollbackReleaseId() != null) {
+            throw Exceptions.argument(MessageConst.RELEASE_TYPE_UNABLE_COPY);
+        }
+        // 检查状态
+        ReleaseStatus status = ReleaseStatus.of(rollbackRelease.getReleaseStatus());
+        if (ReleaseStatus.WAIT_AUDIT.equals(status)
+                || ReleaseStatus.AUDIT_REJECT.equals(status)
+                || ReleaseStatus.WAIT_RUNNABLE.equals(status)
+                || ReleaseStatus.RUNNABLE.equals(status)
+                || ReleaseStatus.EXCEPTION.equals(status)) {
+            throw Exceptions.argument(MessageConst.STATUS_UNABLE_ROLLBACK_RELEASE);
+        }
+        // 检查快照产物
+        String distSnapshotPath = MachineEnvAttr.DIST_PATH.getValue() + rollbackRelease.getDistSnapshotPath();
+        Valid.isTrue(Files1.isFile(distSnapshotPath), MessageConst.FILE_ABSENT_UNABLE_ROLLBACK_RELEASE);
+        // 复制
+        return this.copyReleaseBill(rollbackRelease, true);
+    }
+
+    @Override
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
         UserDTO user = Currents.getUser();
         // 查询上线单

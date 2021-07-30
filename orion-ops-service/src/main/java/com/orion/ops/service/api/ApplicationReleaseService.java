@@ -22,6 +22,14 @@ public interface ApplicationReleaseService {
     Long submitAppRelease(ApplicationReleaseSubmitRequest request);
 
     /**
+     * 复制上线单
+     *
+     * @param id id
+     * @return targetId
+     */
+    Long copyAppRelease(Long id);
+
+    /**
      * 审核上线单
      *
      * @param request request
