@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
@@ -17,6 +18,7 @@ import com.orion.ops.entity.vo.MachineEnvVO;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
@@ -187,10 +189,31 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
+    public MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId, String prefix) {
+        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
+        // 查询机器
+        MachineInfoDO machine = machineInfoDAO.selectById(machineId);
+        if (machine == null) {
+            return env;
+        }
+        env.put(EnvConst.MACHINE_NAME, machine.getMachineName());
+        env.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
+        env.put(EnvConst.MACHINE_HOST, machine.getMachineHost());
+        env.put(EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
+        env.put(EnvConst.MACHINE_USERNAME, machine.getUsername());
+        // 查询环境变量
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, machineId)
+                .orderByAsc(MachineEnvDO::getId);
+        machineEnvDAO.selectList(wrapper).forEach(e -> env.put(prefix + e.getAttrKey(), e.getAttrValue()));
+        return env;
+    }
+
+    @Override
     public void initEnv(Long machineId) {
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         List<String> keys = MachineEnvAttr.getTargetKeys();
-        String home = this.getEnvPath(machine.getUsername());
+        String home = PathBuilders.getEnvPath(machine.getUsername());
         for (String key : keys) {
             MachineEnvDO env = new MachineEnvDO();
             MachineEnvAttr attr = MachineEnvAttr.of(key);
@@ -265,20 +288,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             return charset;
         } else {
             return Const.UTF_8;
-        }
-    }
-
-    /**
-     * 获取环境根目录
-     *
-     * @param username 用户名
-     * @return 目录
-     */
-    private String getEnvPath(String username) {
-        if (Const.ROOT.equals(username)) {
-            return "/" + Const.ROOT + "/" + Const.ORION_OPS + "/";
-        } else {
-            return "/home/" + username + "/" + Const.ORION_OPS + "/";
         }
     }
 

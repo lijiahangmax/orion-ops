@@ -9,6 +9,7 @@ import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.utils.Strings;
 import com.orion.utils.Systems;
 import com.orion.utils.io.Files1;
@@ -133,11 +134,11 @@ public class HostMachineInitialize implements CommandLineRunner {
     /**
      * 创建项目目录
      *
-     * @param name name
+     * @param path path
      * @return path
      */
-    public static String createOrionOpsPath(String name) {
-        String dir = Systems.HOME_DIR + "/" + Const.ORION_OPS + "/" + name;
+    public static String createOrionOpsPath(String path) {
+        String dir = PathBuilders.getHostEnvPath(path);
         dir = Files1.getPath(dir);
         Files1.mkdirs(dir);
         return dir;

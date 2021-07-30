@@ -82,7 +82,7 @@ public class ReleaseProcessorFactory {
         hint.setBranchName(releaseBill.getBranchName());
         hint.setCommitId(releaseBill.getCommitId());
         hint.setDistPath(releaseBill.getDistPath());
-        hint.setDistSnapshotPath(releaseBill.getDistSnapshotPath());
+        hint.setDistSnapshotPath(MachineEnvAttr.DIST_PATH.getValue() + releaseBill.getDistSnapshotPath());
         hint.setReleaseUserId(releaseBill.getReleaseUserId());
         hint.setReleaseUserName(releaseBill.getReleaseUserName());
         String logPath = releaseBill.getLogPath();

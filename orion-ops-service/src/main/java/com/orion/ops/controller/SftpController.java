@@ -11,6 +11,7 @@ import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.utils.io.Files1;
@@ -173,7 +174,7 @@ public class SftpController {
         // 检查token
         Long machineId = sftpService.checkUploadToken(fileToken);
         // 传输文件到本地
-        String localPath = Const.UPLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX;
+        String localPath = PathBuilders.getSftpUploadFilePath(fileToken);
         Path localAbsolutePath = Paths.get(MachineEnvAttr.SWAP_PATH.getValue(), localPath);
         Files1.touch(localAbsolutePath);
         file.transferTo(localAbsolutePath);

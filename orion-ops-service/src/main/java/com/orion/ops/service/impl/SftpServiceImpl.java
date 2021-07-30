@@ -24,6 +24,7 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
@@ -265,7 +266,7 @@ public class SftpServiceImpl implements SftpService {
         hint.setUsername(user.getUsername());
         hint.setMachineId(machineId);
         hint.setRemoteFile(path);
-        hint.setLocalFile(Const.DOWNLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX);
+        hint.setLocalFile(PathBuilders.getSftpDownloadFilePath(fileToken));
         hint.setFileSize(file.getSize());
         hint.setCharset(executor.getCharset());
         hint.setTransferType(SftpTransferType.DOWNLOAD);

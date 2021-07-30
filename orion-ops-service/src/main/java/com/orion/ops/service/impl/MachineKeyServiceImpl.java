@@ -10,6 +10,7 @@ import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
@@ -43,7 +44,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         key.setKeyName(request.getName());
         key.setPassword(request.getPassword());
         key.setDescription(request.getDescription());
-        String file = "/" + ObjectIds.next() + "_id_rsa";
+        String file = PathBuilders.getSecretKeyPath();
         String path = MachineKeyService.getKeyPath(file);
         key.setSecretKeyPath(file);
         Files1.touch(path);
