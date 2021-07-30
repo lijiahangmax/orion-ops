@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.app.ActionStatus;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ReleaseActionDAO;
 import com.orion.ops.dao.ReleaseBillDAO;
 import com.orion.ops.dao.ReleaseMachineDAO;
@@ -11,16 +13,28 @@ import com.orion.ops.entity.domain.ReleaseActionDO;
 import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
-import com.orion.ops.entity.vo.*;
+import com.orion.ops.entity.vo.ReleaseActionVO;
+import com.orion.ops.entity.vo.ReleaseBillDetailVO;
+import com.orion.ops.entity.vo.ReleaseBillListVO;
+import com.orion.ops.entity.vo.ReleaseMachineVO;
 import com.orion.ops.service.api.ReleaseInfoService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.io.FileReaders;
+import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,6 +60,16 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
     @Override
     public ReleaseBillDO getReleaseBill(Long id) {
         return releaseBillDAO.selectById(id);
+    }
+
+    @Override
+    public ReleaseBillDO getLastReleaseBill(Long appId, Long profileId) {
+        LambdaQueryWrapper<ReleaseBillDO> wrapper = new LambdaQueryWrapper<ReleaseBillDO>()
+                .eq(ReleaseBillDO::getAppId, appId)
+                .eq(ReleaseBillDO::getProfileId, profileId)
+                .orderByDesc(ReleaseBillDO::getId)
+                .last(Const.LIMIT_1);
+        return releaseBillDAO.selectOne(wrapper);
     }
 
     @Override
@@ -119,8 +143,52 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
     }
 
     @Override
-    public ReleaseBillLogVO releaseBillLog(Long id) {
-        return null;
+    public String releaseTargetLog(Long releaseId) {
+        ReleaseBillDO releaseBill = releaseBillDAO.selectById(releaseId);
+        Valid.notNull(releaseBill, MessageConst.RELEASE_BILL_ABSENT);
+        return this.getFileTailLine(releaseBill.getLogPath());
+    }
+
+    @Override
+    public String releaseMachineLog(Long releaseMachineId) {
+        ReleaseMachineDO releaseMachine = releaseMachineDAO.selectById(releaseMachineId);
+        Valid.notNull(releaseMachine, MessageConst.RELEASE_MACHINE_ABSENT);
+        return this.getFileTailLine(releaseMachine.getLogPath());
+    }
+
+    /**
+     * 获取file 尾行数据
+     *
+     * @param path path
+     * @return lines
+     */
+    private String getFileTailLine(String path) {
+        RandomAccessFile reader = null;
+        try {
+            if (Strings.isBlank(path)) {
+                return Strings.EMPTY;
+            }
+            File file = new File(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + "/" + path));
+            // 文件不存在
+            if (!Files1.isFile(file)) {
+                return Strings.EMPTY;
+            }
+            // 行数
+            String off = MachineEnvAttr.TAIL_OFFSET.getValue();
+            int offset;
+            if (Strings.isNumber(off)) {
+                offset = Integer.valueOf(off);
+            } else {
+                offset = Const.TAIL_OFFSET_LINE;
+            }
+            // 获取偏移量
+            reader = Files1.openRandomAccess(file, Const.ACCESS_R);
+            return FileReaders.readTailLines(reader, offset);
+        } catch (IOException e) {
+            throw Exceptions.ioRuntime(e);
+        } finally {
+            Streams.close(reader);
+        }
     }
 
 }

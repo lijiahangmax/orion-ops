@@ -120,10 +120,12 @@ public class MessageConst {
 
     public static final String RELEASE_BILL_ABSENT = "上线单不存在";
 
+    public static final String RELEASE_MACHINE_ABSENT = "上线单机器不存在";
+
+    public static final String LOG_FILE_ABSENT = "日志文件不存在";
+
     public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚上线单";
 
     public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行上线单";
-
-    public static final String RELEASE_MACHINE_ABSENT = "未查询到上线单机器";
 
 }

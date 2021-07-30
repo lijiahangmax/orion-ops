@@ -1,16 +1,18 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
+import com.orion.ops.entity.request.ApplicationReleaseLogRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 import com.orion.ops.entity.vo.ReleaseBillDetailVO;
 import com.orion.ops.entity.vo.ReleaseBillListVO;
-import com.orion.ops.entity.vo.ReleaseBillLogVO;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.service.api.ReleaseInfoService;
 import com.orion.ops.utils.Valid;
@@ -54,14 +56,7 @@ public class ApplicationReleaseController {
         return applicationReleaseService.submitAppRelease(request);
     }
 
-    // /**
-    //  * 回滚上线单
-    //  */
-    // @RequestMapping("/rollback")
-    // public Long rollbackReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
-    //     Valid.notNull(request.getId());
-    //     return applicationReleaseService.rollbackAppRelease(request);
-    // }
+    // copy
 
     /**
      * 审核上线单
@@ -81,9 +76,11 @@ public class ApplicationReleaseController {
      * 运行上线单
      */
     @RequestMapping("/runnable")
-    public void runnableReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
+    @IgnoreWrapper
+    public HttpWrapper<?> runnableReleaseBill(@RequestBody ApplicationReleaseBillRequest request) {
         Valid.notNull(request.getId());
         applicationReleaseService.runnableAppRelease(request);
+        return HttpWrapper.ok();
     }
 
     /**
@@ -104,12 +101,21 @@ public class ApplicationReleaseController {
     }
 
     /**
-     * 上线单日志
+     * 上线单宿主机日志
      */
-    @RequestMapping("/log")
-    public ReleaseBillLogVO releaseBillLog(@RequestBody ApplicationReleaseBillRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return releaseInfoService.releaseBillLog(id);
+    @RequestMapping("/target/log")
+    public String releaseTargetLog(@RequestBody ApplicationReleaseLogRequest request) {
+        Long releaseId = Valid.notNull(request.getReleaseId());
+        return releaseInfoService.releaseTargetLog(releaseId);
+    }
+
+    /**
+     * 上线单目标机器日志
+     */
+    @RequestMapping("/machine/log")
+    public String releaseMachineLog(@RequestBody ApplicationReleaseLogRequest request) {
+        Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
+        return releaseInfoService.releaseMachineLog(releaseMachineId);
     }
 
 }

@@ -7,7 +7,6 @@ import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.vo.ReleaseBillDetailVO;
 import com.orion.ops.entity.vo.ReleaseBillListVO;
-import com.orion.ops.entity.vo.ReleaseBillLogVO;
 
 import java.util.List;
 
@@ -27,6 +26,15 @@ public interface ReleaseInfoService {
      * @return 上线单
      */
     ReleaseBillDO getReleaseBill(Long id);
+
+    /**
+     * 查询最后一个上线单
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 上线单
+     */
+    ReleaseBillDO getLastReleaseBill(Long appId, Long profileId);
 
     /**
      * 查询部署机器
@@ -70,11 +78,19 @@ public interface ReleaseInfoService {
     ReleaseBillDetailVO releaseBillDetail(Long id);
 
     /**
-     * 上线单日志
+     * 上线单宿主机日志
      *
-     * @param id id
-     * @return ReleaseBillLogVO
+     * @param releaseId 上线单id
+     * @return log
      */
-    ReleaseBillLogVO releaseBillLog(Long id);
+    String releaseTargetLog(Long releaseId);
+
+    /**
+     * 上线单目标机器日志
+     *
+     * @param releaseMachineId 机器id
+     * @return log
+     */
+    String releaseMachineLog(Long releaseMachineId);
 
 }
