@@ -242,16 +242,7 @@ public class CommandExecServiceImpl implements CommandExecService {
      * @return replaced command
      */
     private String replaceCommand(MachineInfoDO machine, String command) {
-        Map<String, String> env = Maps.newMap();
-        // machine env
-        Map<String, String> machineEnv = machineEnvService.getMachineEnv(machine.getId());
-        machineEnv.forEach((k, v) -> env.put(EnvConst.ENV_PREFIX + k, v));
-        // machine
-        env.put(EnvConst.MACHINE_NAME, machine.getMachineName());
-        env.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
-        env.put(EnvConst.MACHINE_HOST, machine.getMachineHost());
-        env.put(EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
-        env.put(EnvConst.MACHINE_USERNAME, machine.getUsername());
+        Map<String, String> env = machineEnvService.getFullMachineEnv(machine.getId(), EnvConst.ENV_PREFIX);
         return Strings.format(command, EnvConst.SYMBOL, env);
     }
 

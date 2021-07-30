@@ -176,7 +176,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
-        machine.setMachineName(machine.getMachineName() + " " + Const.COPY);
+        machine.setMachineName(machine.getMachineName() + " - " + Const.COPY);
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量

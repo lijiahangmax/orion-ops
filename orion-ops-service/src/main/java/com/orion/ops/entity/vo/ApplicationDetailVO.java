@@ -69,7 +69,7 @@ public class ApplicationDetailVO {
     /**
      * 版本管理工具
      */
-    private String vscType;
+    private String vcsType;
 
     /**
      * 构建产物目录

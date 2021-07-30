@@ -15,11 +15,6 @@ import lombok.Getter;
 public enum ActionType {
 
     /**
-     * 初始化
-     */
-    INIT(5, false),
-
-    /**
      * 建立连接
      */
     CONNECT(10, false),

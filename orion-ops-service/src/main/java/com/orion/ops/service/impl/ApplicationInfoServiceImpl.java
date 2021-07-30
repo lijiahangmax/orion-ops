@@ -268,7 +268,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询app
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         app.setId(null);
-        app.setAppName(app.getAppName() + " " + Const.COPY);
+        app.setAppName(app.getAppName() + " - " + Const.COPY);
         app.setCreateTime(null);
         app.setUpdateTime(null);
         applicationInfoDAO.insert(app);
