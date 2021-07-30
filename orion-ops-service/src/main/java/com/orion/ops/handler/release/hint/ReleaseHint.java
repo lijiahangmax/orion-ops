@@ -23,6 +23,11 @@ public class ReleaseHint {
     private Long releaseId;
 
     /**
+     * 回滚上线单id
+     */
+    private Long rollbackReleaseId;
+
+    /**
      * 发布标题
      */
     private String title;

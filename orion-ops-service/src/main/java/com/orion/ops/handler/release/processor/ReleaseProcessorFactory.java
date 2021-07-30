@@ -2,7 +2,9 @@ package com.orion.ops.handler.release.processor;
 
 import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
+import com.orion.ops.consts.app.ReleaseType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ReleaseActionDO;
 import com.orion.ops.entity.domain.ReleaseBillDO;
@@ -11,6 +13,7 @@ import com.orion.ops.handler.release.hint.ReleaseActionHint;
 import com.orion.ops.handler.release.hint.ReleaseHint;
 import com.orion.ops.handler.release.hint.ReleaseMachineHint;
 import com.orion.ops.service.api.ReleaseInfoService;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Valid;
 import com.orion.utils.collect.Lists;
@@ -43,7 +46,7 @@ public class ReleaseProcessorFactory {
      * @param releaseId releaseId
      * @return ReleaseProcessor
      */
-    public ReleaseProcessor createReleaseProcessor(Long releaseId) {
+    public IReleaseProcessor createReleaseProcessor(Long releaseId) {
         // 构建上线单信息
         ReleaseHint hint = this.buildReleaseHint(releaseId);
         // 构建上线单机器
@@ -54,9 +57,12 @@ public class ReleaseProcessorFactory {
         // 构建主机action
         List<IReleaseActionHandler> hostActionHandler = this.buildReleaseHostActionList(hint, actions);
         // 构建目标机器action
-        List<ReleaseTargetChainActionHandler> targetChains = this.buildReleaseTargetActionList(hint, machines, actions);
-        // 处理器
-        return new ReleaseProcessor(hint, hostActionHandler, targetChains);
+        List<ReleaseTargetStageHandler> targetStages = this.buildReleaseTargetActionList(hint, machines, actions);
+        // 处理器选择
+        return Selector.<ReleaseType, IReleaseProcessor>of(ReleaseType.of(hint.getType()))
+                .test(Branches.eq(ReleaseType.NORMAL).then(s -> new NormalReleaseProcessor(hint, hostActionHandler, targetStages)))
+                .test(Branches.eq(ReleaseType.ROLLBACK).then(s -> new RollbackReleaseProcessor(hint, hostActionHandler, targetStages)))
+                .orThrow(() -> Exceptions.argument(MessageConst.UNKNOWN_RELEASE_TYPE));
     }
 
     /**
@@ -71,6 +77,7 @@ public class ReleaseProcessorFactory {
         // 封装
         ReleaseHint hint = new ReleaseHint();
         hint.setReleaseId(releaseBill.getId());
+        hint.setRollbackReleaseId(releaseBill.getRollbackReleaseId());
         hint.setTitle(releaseBill.getReleaseTitle());
         hint.setDescription(releaseBill.getReleaseDescription());
         hint.setAppId(releaseBill.getAppId());
@@ -140,30 +147,30 @@ public class ReleaseProcessorFactory {
      * @param actions actions
      * @return list
      */
-    private List<ReleaseTargetChainActionHandler> buildReleaseTargetActionList(ReleaseHint hint, List<ReleaseMachineHint> machines, List<ReleaseActionDO> actions) {
+    private List<ReleaseTargetStageHandler> buildReleaseTargetActionList(ReleaseHint hint, List<ReleaseMachineHint> machines, List<ReleaseActionDO> actions) {
         Map<Long, List<ReleaseActionDO>> machineActions = actions.stream()
                 .filter(r -> !ActionType.isHost(r.getActionType()))
                 .collect(Collectors.groupingBy(ReleaseActionDO::getMachineId));
         if (machineActions.isEmpty()) {
             return Lists.empty();
         }
-        // 目标机器chain
+        // 目标机器stage
         return machineActions.entrySet().stream()
-                .map(e -> this.buildTargetActionChain(hint, machines, e.getKey(), e.getValue()))
+                .map(e -> this.buildTargetActionStage(hint, machines, e.getKey(), e.getValue()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 构建 targetActionChain
+     * 构建 targetActionStage
      *
      * @param hint           hint
      * @param machines       machines
      * @param machineId      machineId
      * @param machineActions machineActions
-     * @return ReleaseTargetChainActionHandler
+     * @return ReleaseTargetStageHandler
      */
-    private ReleaseTargetChainActionHandler buildTargetActionChain(ReleaseHint hint, List<ReleaseMachineHint> machines, Long machineId, List<ReleaseActionDO> machineActions) {
+    private ReleaseTargetStageHandler buildTargetActionStage(ReleaseHint hint, List<ReleaseMachineHint> machines, Long machineId, List<ReleaseActionDO> machineActions) {
         // 机器配置
         Optional<ReleaseMachineHint> machine = machines.stream()
                 .filter(m -> m.getMachineId().equals(machineId))
@@ -182,7 +189,7 @@ public class ReleaseProcessorFactory {
         if (actions.isEmpty()) {
             return null;
         }
-        return new ReleaseTargetChainActionHandler(hint, machineHint, actions);
+        return new ReleaseTargetStageHandler(hint, machineHint, actions);
     }
 
     /**
