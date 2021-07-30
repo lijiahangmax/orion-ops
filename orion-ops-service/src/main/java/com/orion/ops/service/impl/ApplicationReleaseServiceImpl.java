@@ -1,9 +1,6 @@
 package com.orion.ops.service.impl;
 
-import com.orion.ops.consts.AuditStatus;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.ReleaseStatus;
@@ -16,12 +13,13 @@ import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.request.ApplicationReleaseSubmitRequest;
 import com.orion.ops.entity.vo.ApplicationDeployActionVO;
-import com.orion.ops.handler.release.ReleaseProcessor;
-import com.orion.ops.handler.release.ReleaseProcessorFactory;
+import com.orion.ops.handler.release.processor.ReleaseProcessor;
+import com.orion.ops.handler.release.processor.ReleaseProcessorFactory;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
@@ -109,6 +107,33 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long rollbackAppRelease(ApplicationReleaseBillRequest request) {
+        // Long rollbackId = request.getId();
+        // UserDTO user = Currents.getUser();
+        // // 查询回滚上线单
+        // ReleaseBillDO rollbackBill = releaseBillDAO.selectById(rollbackId);
+        // Valid.notNull(rollbackBill, MessageConst.RELEASE_BILL_ABSENT);
+        // Valid.isTrue(ReleaseStatus.EXCEPTION.getStatus().equals(rollbackBill.getReleaseStatus()), MessageConst.STATUS_UNABLE_ROLLBACK_RELEASE);
+        // Long appId = rollbackBill.getAppId();
+        // Long profileId = rollbackBill.getProfileId();
+        // // 检查应用环境
+        // ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
+        // Valid.notNull(app, MessageConst.APP_ABSENT);
+        // ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
+        // Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
+        // // 插入上线单信息
+        // ReleaseBillDO releaseBill = this.insertRollbackReleaseBill(rollbackBill, user, profile);
+        // Long releaseId = releaseBill.getId();
+        // // 插入机器信息
+        // this.insertRollbackReleaseMachine(releaseId, rollbackId);
+        // // 插入部署操作
+        // this.insertRollbackReleaseAction(releaseId, rollbackId);
+        // return releaseId;
+        return null;
+    }
+
+    @Override
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
         UserDTO user = Currents.getUser();
         // 查询上线单
@@ -140,8 +165,26 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     @Override
     public void runnableAppRelease(ApplicationReleaseBillRequest request) {
         Long id = request.getId();
+        ReleaseBillDO releaseBill = releaseInfoService.getReleaseBill(id);
+        Valid.notNull(releaseBill, MessageConst.RELEASE_BILL_ABSENT);
+        // 检查状态
+        ReleaseStatus status = ReleaseStatus.of(releaseBill.getReleaseStatus());
+        if (ReleaseStatus.WAIT_AUDIT.equals(status)
+                || ReleaseStatus.AUDIT_REJECT.equals(status)
+                || ReleaseStatus.RUNNABLE.equals(status)
+                || ReleaseStatus.FINISH.equals(status)) {
+            throw Exceptions.argument(MessageConst.STATUS_UNABLE_RUNNABLE_RELEASE);
+        }
+        // 修改
+        UserDTO user = Currents.getUser();
+        ReleaseBillDO update = new ReleaseBillDO();
+        update.setId(id);
+        update.setReleaseUserId(user.getId());
+        update.setReleaseUserName(user.getUsername());
+        releaseBillDAO.updateById(update);
+        // 创建且运行
         ReleaseProcessor processor = releaseProcessorFactory.createReleaseProcessor(id);
-        processor.exec();
+        SchedulerPools.RELEASE_MAIN_SCHEDULER.execute(processor);
     }
 
     /**
@@ -154,7 +197,6 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      * @return bill
      */
     private ReleaseBillDO insertNormalReleaseBill(ApplicationReleaseSubmitRequest request, UserDTO user, ApplicationInfoDO app, ApplicationProfileDO profile) {
-        boolean isAdmin = RoleType.isAdministrator(user.getRoleType());
         boolean needAudit = Const.ENABLE.equals(profile.getReleaseAudit());
         // 构建数据
         ReleaseBillDO releaseBill = new ReleaseBillDO();
@@ -168,7 +210,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         releaseBill.setProfileTag(profile.getProfileTag());
         releaseBill.setReleaseType(ReleaseType.NORMAL.getType());
         // 设置审核状态
-        this.setCreateAuditInfo(releaseBill, user, needAudit, isAdmin);
+        this.setCreateAuditInfo(releaseBill, user, needAudit);
         // 查询环境变量
         String distPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.DIST_PATH.getKey());
         String vcsLocalPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
@@ -250,7 +292,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         hostActions.add(0, connectAction);
         // 查询宿主机环境变量
         Map<String, String> hostMachineEnv = this.getMachineReleaseEnv(Const.HOST_MACHINE_ID);
-        hostMachineEnv.put("dist_path", releaseBill.getDistPath());
+        hostMachineEnv.put(EnvConst.DIST_PATH, releaseBill.getDistPath());
 
         // 设置宿主机操作步骤
         for (ApplicationDeployActionVO action : hostActions) {
@@ -262,7 +304,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             Long machineId = machine.getMachineId();
             // 查询机器环境变量
             Map<String, String> machineEnv = this.getMachineReleaseEnv(machineId);
-            machineEnv.put("target_dist_path", machine.getDistPath());
+            machineEnv.put(EnvConst.TARGET_DIST_PATH, machine.getDistPath());
             // 设置目标机器步骤
             for (ApplicationDeployActionVO action : actions) {
                 if (ActionType.isHost(action.getType())) {
@@ -293,14 +335,14 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private Map<String, String> getAppReleaseEnv(ApplicationInfoDO app, ApplicationProfileDO profile) {
         // 插入环境信息
         Map<String, String> envs = Maps.newLinkedMap();
-        envs.put("app_name", app.getAppName());
-        envs.put("app_tag", app.getAppTag());
-        envs.put("profile_name", profile.getProfileName());
-        envs.put("profile_tag", profile.getProfileTag());
+        envs.put(EnvConst.APP_NAME, app.getAppName());
+        envs.put(EnvConst.APP_TAG, app.getAppTag());
+        envs.put(EnvConst.PROFILE_NAME, profile.getProfileName());
+        envs.put(EnvConst.PROFILE_TAG, profile.getProfileTag());
         // 插入应用环境变量
         Map<String, String> appProfileEnvs = applicationEnvService.getAppProfileEnv(app.getId(), profile.getId());
         appProfileEnvs.forEach((k, v) -> {
-            envs.put("app." + k, v);
+            envs.put(EnvConst.APP_PREFIX + k, v);
         });
         return envs;
     }
@@ -315,15 +357,15 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Map<String, String> envs = Maps.newLinkedMap();
         // 查询机器
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-        envs.put("machine_name", machine.getMachineName());
-        envs.put("machine_tag", machine.getMachineTag());
-        envs.put("machine_host", machine.getMachineHost());
-        envs.put("machine_port", machine.getSshPort() + Strings.EMPTY);
-        envs.put("machine_username", machine.getUsername());
+        envs.put(EnvConst.MACHINE_NAME, machine.getMachineName());
+        envs.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
+        envs.put(EnvConst.MACHINE_HOST, machine.getMachineHost());
+        envs.put(EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
+        envs.put(EnvConst.MACHINE_USERNAME, machine.getUsername());
         // 查询环境变量
         Map<String, String> machineEnvs = machineEnvService.getMachineEnv(machineId);
         machineEnvs.forEach((k, v) -> {
-            envs.put("machine." + k, v);
+            envs.put(EnvConst.MACHINE_PREFIX + k, v);
         });
         return envs;
     }
@@ -334,9 +376,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      * @param releaseBill releaseBill
      * @param user        user
      * @param needAudit   needAudit
-     * @param isAdmin     isAdmin
      */
-    private void setCreateAuditInfo(ReleaseBillDO releaseBill, UserDTO user, boolean needAudit, boolean isAdmin) {
+    private void setCreateAuditInfo(ReleaseBillDO releaseBill, UserDTO user, boolean needAudit) {
+        boolean isAdmin = RoleType.isAdministrator(user.getRoleType());
         // 需要审核 & 不是管理员
         if (needAudit && !isAdmin) {
             releaseBill.setReleaseStatus(ReleaseStatus.WAIT_AUDIT.getStatus());
@@ -373,9 +415,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         String command = action.getCommand();
         if (!Strings.isBlank(command)) {
             // 替换应用环境变量占位符
-            command = Strings.format(command, "#", appEnv);
+            command = Strings.format(command, EnvConst.SYMBOL, appEnv);
             // 替换机器环境变量占位符
-            command = Strings.format(command, "#", machineEnv);
+            command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
             realAction.setActionCommand(command);
         }
         return realAction;
@@ -444,41 +486,6 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     //     releaseBillDAO.insert(releaseBill);
     //     // releaseBill.setDistSnapshotPath();
     //     return releaseBill;
-    // }
-    //
-    // /**
-    //  * 插入上线单机器
-    //  *
-    //  * @param releaseId  releaseId
-    //  * @param rollbackId rollbackId
-    //  */
-    // private void insertRollbackReleaseMachine(Long releaseId, Long rollbackId) {
-    //     releaseInfoService.getReleaseMachine(rollbackId).stream()
-    //             .peek(s -> {
-    //                 s.setId(null);
-    //                 s.setReleaseId(releaseId);
-    //                 s.setLogPath(null);
-    //                 s.setRunStatus(null);
-    //                 s.setCreateTime(null);
-    //                 s.setUpdateTime(null);
-    //                 // s.setDistPath();
-    //             }).forEach(releaseMachineDAO::insert);
-    // }
-    //
-    // /**
-    //  * 插入部署步骤信息
-    //  *
-    //  * @param releaseId  releaseId
-    //  * @param rollbackId rollbackId
-    //  */
-    // private void insertRollbackReleaseAction(Long releaseId, Long rollbackId) {
-    //     releaseInfoService.getReleaseAction(rollbackId).stream()
-    //             .peek(s -> {
-    //                 s.setId(null);
-    //                 s.setReleaseId(releaseId);
-    //                 s.setCreateTime(null);
-    //                 s.setUpdateTime(null);
-    //             }).forEach(releaseActionDAO::insert);
     // }
 
 }

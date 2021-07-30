@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.consts.command.ExecType;
@@ -244,14 +245,14 @@ public class CommandExecServiceImpl implements CommandExecService {
         Map<String, String> env = Maps.newMap();
         // machine env
         Map<String, String> machineEnv = machineEnvService.getMachineEnv(machine.getId());
-        machineEnv.forEach((k, v) -> env.put("env." + k, v));
+        machineEnv.forEach((k, v) -> env.put(EnvConst.ENV_PREFIX + k, v));
         // machine
-        env.put("machine.name", machine.getMachineName());
-        env.put("machine.tag", machine.getMachineTag());
-        env.put("machine.host", machine.getMachineHost());
-        env.put("machine.port", machine.getSshPort() + Strings.EMPTY);
-        env.put("machine.username", machine.getUsername());
-        return Strings.format(command, "#", env);
+        env.put(EnvConst.MACHINE_NAME, machine.getMachineName());
+        env.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
+        env.put(EnvConst.MACHINE_HOST, machine.getMachineHost());
+        env.put(EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
+        env.put(EnvConst.MACHINE_USERNAME, machine.getUsername());
+        return Strings.format(command, EnvConst.SYMBOL, env);
     }
 
 }
