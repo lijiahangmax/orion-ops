@@ -46,7 +46,7 @@ public enum ReleaseStatus {
 
     ;
 
-    Integer status;
+    private final Integer status;
 
     public static ReleaseStatus of(Integer status) {
         if (status == null) {

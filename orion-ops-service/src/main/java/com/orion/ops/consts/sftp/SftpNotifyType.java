@@ -31,6 +31,18 @@ public enum SftpNotifyType {
 
     ;
 
-    Integer type;
+    private final Integer type;
+
+    public static SftpNotifyType of(Integer type) {
+        if (type == null) {
+            return null;
+        }
+        for (SftpNotifyType value : values()) {
+            if (value.type.equals(type)) {
+                return value;
+            }
+        }
+        return null;
+    }
 
 }

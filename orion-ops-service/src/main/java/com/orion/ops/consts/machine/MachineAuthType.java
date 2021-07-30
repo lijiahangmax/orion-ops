@@ -24,7 +24,7 @@ public enum MachineAuthType {
      */
     KEY(2);
 
-    Integer type;
+    private final Integer type;
 
     public static MachineAuthType of(Integer type) {
         if (type == null) {

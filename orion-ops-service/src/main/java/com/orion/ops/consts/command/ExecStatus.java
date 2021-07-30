@@ -41,6 +41,18 @@ public enum ExecStatus {
 
     ;
 
-    Integer status;
+    private final Integer status;
+
+    public static ExecStatus of(Integer status) {
+        if (status == null) {
+            return null;
+        }
+        for (ExecStatus value : values()) {
+            if (value.status.equals(status)) {
+                return value;
+            }
+        }
+        return null;
+    }
 
 }

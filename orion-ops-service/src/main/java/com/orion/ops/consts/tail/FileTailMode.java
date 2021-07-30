@@ -34,7 +34,7 @@ public enum FileTailMode {
 
     ;
 
-    String mode;
+    private final String mode;
 
     public static FileTailMode of(String mode) {
         return of(mode, false);

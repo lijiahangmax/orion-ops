@@ -31,7 +31,7 @@ public enum RoleType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
     public static RoleType of(Integer type) {
         if (type == null) {

@@ -26,7 +26,7 @@ public enum HistoryValueType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
     public static HistoryValueType of(Integer type) {
         if (type == null) {

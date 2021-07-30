@@ -31,7 +31,7 @@ public enum SftpTransferType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
     public static SftpTransferType of(Integer type) {
         if (type == null) {

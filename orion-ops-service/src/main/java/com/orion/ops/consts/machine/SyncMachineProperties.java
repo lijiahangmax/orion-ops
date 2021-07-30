@@ -24,9 +24,9 @@ public enum SyncMachineProperties {
      */
     SYSTEM_VERSION("systemVersion", "uname -a");
 
-    private String prop;
+    private final String prop;
 
-    private String command;
+    private final String command;
 
     public static SyncMachineProperties of(String prop) {
         if (prop == null) {

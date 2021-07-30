@@ -39,7 +39,7 @@ public enum FileDownloadType {
     /**
      * 类型
      */
-    Integer type;
+    private final Integer type;
 
     public static FileDownloadType of(Integer type) {
         if (type == null) {

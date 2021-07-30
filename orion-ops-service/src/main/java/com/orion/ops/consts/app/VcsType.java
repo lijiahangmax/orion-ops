@@ -21,7 +21,7 @@ public enum VcsType {
 
     ;
 
-    String type;
+    private final String type;
 
     public static VcsType of(String type) {
         if (type == null) {

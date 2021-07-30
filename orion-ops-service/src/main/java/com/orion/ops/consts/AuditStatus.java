@@ -26,7 +26,7 @@ public enum AuditStatus {
 
     ;
 
-    Integer status;
+    private final Integer status;
 
     public static AuditStatus of(Integer status) {
         if (status == null) {

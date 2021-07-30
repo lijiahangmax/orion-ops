@@ -41,7 +41,7 @@ public enum ActionStatus {
 
     ;
 
-    Integer status;
+    private final Integer status;
 
     public static ActionStatus of(Integer status) {
         if (status == null) {

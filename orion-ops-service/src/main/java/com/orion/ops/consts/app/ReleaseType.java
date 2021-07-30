@@ -26,7 +26,7 @@ public enum ReleaseType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
     public static ReleaseType of(Integer type) {
         if (type == null) {

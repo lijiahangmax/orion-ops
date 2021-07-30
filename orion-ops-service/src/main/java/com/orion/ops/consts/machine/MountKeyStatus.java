@@ -29,6 +29,18 @@ public enum MountKeyStatus {
      */
     UNMOUNT(3);
 
-    private Integer status;
+    private final Integer status;
+
+    public static MountKeyStatus of(Integer status) {
+        if (status == null) {
+            return null;
+        }
+        for (MountKeyStatus value : values()) {
+            if (value.status.equals(status)) {
+                return value;
+            }
+        }
+        return null;
+    }
 
 }

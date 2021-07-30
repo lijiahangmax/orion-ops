@@ -73,25 +73,25 @@ public enum MachineEnvAttr {
     /**
      * key
      */
-    String key;
+    private final String key;
 
     /**
      * 宿主机是否需要
      */
-    boolean host;
+    private final boolean host;
 
     /**
      * 目标机器是否需要
      */
-    boolean target;
+    private final boolean target;
 
     /**
      * 描述
      */
-    String description;
+    private final String description;
 
     @Setter
-    String value;
+    private String value;
 
     MachineEnvAttr(boolean host, boolean target, String description) {
         this.host = host;

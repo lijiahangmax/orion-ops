@@ -31,7 +31,7 @@ public enum FileTailType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
     public static FileTailType of(Integer type) {
         if (type == null) {

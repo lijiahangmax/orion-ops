@@ -56,7 +56,7 @@ public enum WsProtocol {
 
     ;
 
-    String code;
+    private final String code;
 
     /**
      * 分隔符

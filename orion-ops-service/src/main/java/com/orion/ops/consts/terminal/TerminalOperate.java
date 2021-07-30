@@ -56,7 +56,7 @@ public enum TerminalOperate {
 
     ;
 
-    private String operate;
+    private final String operate;
 
     public static TerminalOperate of(String operate) {
         for (TerminalOperate value : values()) {

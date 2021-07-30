@@ -41,12 +41,12 @@ public enum ApplicationEnvAttr {
     /**
      * key
      */
-    String key;
+    private final String key;
 
     /**
      * 描述
      */
-    String description;
+    private final String description;
 
     ApplicationEnvAttr(String description) {
         this.description = description;

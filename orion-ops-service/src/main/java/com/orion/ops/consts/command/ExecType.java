@@ -24,7 +24,7 @@ public enum ExecType {
     /**
      * 类型
      */
-    Integer type;
+    private final Integer type;
 
     public static ExecType of(Integer type) {
         for (ExecType value : values()) {

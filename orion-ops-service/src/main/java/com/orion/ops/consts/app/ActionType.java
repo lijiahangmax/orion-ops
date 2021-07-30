@@ -41,9 +41,9 @@ public enum ActionType {
 
     ;
 
-    Integer type;
+    private final Integer type;
 
-    boolean client;
+    private final boolean client;
 
     public static ActionType of(Integer type, boolean client) {
         if (type == null) {

@@ -42,7 +42,7 @@ public enum SftpTransferStatus {
 
     ;
 
-    Integer status;
+    private final Integer status;
 
     public static SftpTransferStatus of(Integer status) {
         if (status == null) {

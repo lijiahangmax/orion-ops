@@ -107,9 +107,9 @@ public enum WsCloseCode {
 
     ;
 
-    private int code;
+    private final int code;
 
-    private String reason;
+    private final String reason;
 
     public CloseStatus close() {
         return new CloseStatus(code, reason);
