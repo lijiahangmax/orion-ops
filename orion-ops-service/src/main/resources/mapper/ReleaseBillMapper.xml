@@ -21,7 +21,6 @@
         <result column="vcs_remote_url" property="vcsRemoteUrl"/>
         <result column="branch_name" property="branchName"/>
         <result column="commit_id" property="commitId"/>
-        <result column="commit_message" property="commitMessage"/>
         <result column="dist_path" property="distPath"/>
         <result column="dist_snapshot_path" property="distSnapshotPath"/>
         <result column="create_user_id" property="createUserId"/>
@@ -40,7 +39,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, release_title, release_description, app_id, app_name, app_tag, profile_id, profile_name, profile_tag, log_path, release_type, release_status, rollback_release_id, vcs_local_path, vcs_remote_url, branch_name, commit_id, commit_message, dist_path, dist_snapshot_path, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason, release_start_time, release_end_time, release_user_id, release_user_name, create_time, update_time
+        id, release_title, release_description, app_id, app_name, app_tag, profile_id, profile_name, profile_tag, log_path, release_type, release_status, rollback_release_id, vcs_local_path, vcs_remote_url, branch_name, commit_id, dist_path, dist_snapshot_path, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason, release_start_time, release_end_time, release_user_id, release_user_name, create_time, update_time
     </sql>
 
 </mapper>

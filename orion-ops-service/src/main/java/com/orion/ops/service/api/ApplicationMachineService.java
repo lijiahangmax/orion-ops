@@ -42,7 +42,7 @@ public interface ApplicationMachineService {
     List<ApplicationMachineVO> getAppProfileMachineList(Long appId, Long profileId);
 
     /**
-     * 通过机器id删除应用机器
+     * 通过机器 id 删除应用机器
      *
      * @param machineId machineId
      * @return effect
@@ -50,7 +50,7 @@ public interface ApplicationMachineService {
     Integer deleteAppMachineByMachineId(Long machineId);
 
     /**
-     * 通过appId profileId删除应用机器
+     * 通过 appId profileId 删除应用机器
      *
      * @param appId     appId
      * @param profileId profileId
@@ -59,7 +59,7 @@ public interface ApplicationMachineService {
     Integer deleteAppMachineByAppProfileId(Long appId, Long profileId);
 
     /**
-     * 通过appId profileId查询应用机器数量
+     * 通过 appId profileId 查询应用机器数量
      *
      * @param appId     appId
      * @param profileId profileId
@@ -68,7 +68,7 @@ public interface ApplicationMachineService {
     Integer selectAppProfileMachineCount(Long appId, Long profileId);
 
     /**
-     * 同步app机器
+     * 同步 app 机器
      *
      * @param appId         appId
      * @param profileId     profileId
@@ -77,11 +77,21 @@ public interface ApplicationMachineService {
     void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId);
 
     /**
-     * 复制app机器
+     * 复制 app 机器
      *
      * @param appId       appId
      * @param targetAppId targetAppId
      */
     void copyAppMachine(Long appId, Long targetAppId);
+
+    /**
+     * 更新 app releaseId
+     *
+     * @param appId         appId
+     * @param profileId     profileId
+     * @param releaseId     releaseId
+     * @param machineIdList machineIdList
+     */
+    void updateAppMachineReleaseId(Long appId, Long profileId, Long releaseId, List<Long> machineIdList);
 
 }

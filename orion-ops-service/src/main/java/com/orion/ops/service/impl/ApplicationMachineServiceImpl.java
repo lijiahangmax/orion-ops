@@ -7,6 +7,7 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.ReleaseInfoService;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
 
     @Resource
     private MachineInfoService machineInfoService;
+
+    @Resource
+    private ReleaseInfoService releaseInfoService;
 
     @Override
     public Long getAppProfileMachineId(Long machineId, Long appId, Long profileId) {
@@ -61,9 +65,18 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
         return applicationMachineDAO.selectList(wrapper)
                 .stream()
                 .map(m -> {
+                    // 查询机器
                     MachineInfoDO machine = machineInfoService.selectById(m.getMachineId());
                     ApplicationMachineVO machineVO = Converts.to(machine, ApplicationMachineVO.class);
                     machineVO.setId(m.getId());
+                    // 查询版本
+                    Optional.ofNullable(m.getReleaseId())
+                            .map(releaseInfoService::getReleaseBill)
+                            .ifPresent(r -> {
+                                machineVO.setReleaseId(r.getId());
+                                machineVO.setBranchName(r.getBranchName());
+                                machineVO.setCommitId(r.getCommitId());
+                            });
                     return machineVO;
                 })
                 .collect(Collectors.toList());
@@ -128,6 +141,17 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
             s.setUpdateTime(null);
         });
         machines.forEach(applicationMachineDAO::insert);
+    }
+
+    @Override
+    public void updateAppMachineReleaseId(Long appId, Long profileId, Long releaseId, List<Long> machineIdList) {
+        ApplicationMachineDO update = new ApplicationMachineDO();
+        update.setReleaseId(releaseId);
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, profileId)
+                .in(ApplicationMachineDO::getMachineId, machineIdList);
+        applicationMachineDAO.update(update, wrapper);
     }
 
 }

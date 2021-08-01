@@ -42,11 +42,13 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
 
     protected Date endTime;
 
-    protected boolean handled;
-
     protected OutputAppender appender;
 
+    protected boolean handled;
+
     protected boolean success;
+
+    protected boolean skipped;
 
     public AbstractReleaseActionHandler(ReleaseHint hint, ReleaseActionHint action) {
         this.hint = hint;
@@ -102,6 +104,7 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
             } else {
                 this.appendLog(e.getMessage());
             }
+            this.appendLog(e);
         } else if (e instanceof InvalidArgumentException) {
             this.appendLog(e.getMessage());
         } else if (e instanceof LogException) {
@@ -116,10 +119,14 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
 
     @Override
     public void skip() {
-        if (handled) {
+        if (handled || skipped) {
             return;
         }
-        this.appendLog("----- 操作步骤跳过-{}", action.getName());
+        this.skipped = true;
+        if (appender == null) {
+            this.setLoggerAppender();
+        }
+        this.appendLog("----- 操作步骤跳过-{}\n", action.getName());
         this.updateAction(action.getId(), ActionStatus.SKIPPED, null, null);
     }
 
@@ -150,8 +157,10 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
      */
     protected void appendLog(String message, Object... args) {
         try {
-            byte[] bytes = Strings.bytes(Strings.format(message, args) + "\n");
-            appender.write(bytes);
+            if (appender != null) {
+                byte[] bytes = Strings.bytes(Strings.format(message, args) + "\n");
+                appender.write(bytes);
+            }
         } catch (Exception e) {
             log.error("上线单处理操作步骤-记录日志 异常: {}", e.getMessage(), e);
             e.printStackTrace();
@@ -165,9 +174,11 @@ public abstract class AbstractReleaseActionHandler implements IReleaseActionHand
      */
     protected void appendLog(Exception e) {
         try {
-            appender.handle(Attempt.rethrows(o -> {
-                e.printStackTrace(new PrintStream(o));
-            }));
+            if (appender != null) {
+                appender.handle(Attempt.rethrows(o -> {
+                    e.printStackTrace(new PrintStream(o));
+                }));
+            }
         } catch (Exception ex) {
             log.error("上线单处理宿主机命操作-记录日志 异常: {}", ex.getMessage(), ex);
             ex.printStackTrace();

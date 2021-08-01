@@ -132,12 +132,6 @@ public class ReleaseBillDO implements Serializable {
     private String commitId;
 
     /**
-     * 发布提交message
-     */
-    @TableField("commit_message")
-    private String commitMessage;
-
-    /**
      * 产物目录
      */
     @TableField("dist_path")

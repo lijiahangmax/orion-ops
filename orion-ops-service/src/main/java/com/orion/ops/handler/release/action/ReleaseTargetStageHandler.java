@@ -28,13 +28,13 @@ import java.util.List;
  * @since 2021/7/24 12:30
  */
 @Slf4j
-public class ReleaseTargetChainActionHandler extends AbstractReleaseActionHandler implements Runnable {
+public class ReleaseTargetStageHandler extends AbstractReleaseActionHandler implements Runnable {
 
     private ReleaseMachineHint machine;
 
     private List<IReleaseActionHandler> actions;
 
-    public ReleaseTargetChainActionHandler(ReleaseHint hint, ReleaseMachineHint machine, List<IReleaseActionHandler> actions) {
+    public ReleaseTargetStageHandler(ReleaseHint hint, ReleaseMachineHint machine, List<IReleaseActionHandler> actions) {
         super(hint, null);
         this.machine = machine;
         this.actions = actions;

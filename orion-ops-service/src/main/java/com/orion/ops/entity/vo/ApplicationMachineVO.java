@@ -34,6 +34,21 @@ public class ApplicationMachineVO {
      */
     private String machineHost;
 
+    /**
+     * 当前版本上线单id
+     */
+    private Long releaseId;
+
+    /**
+     * 发布分支
+     */
+    private String branchName;
+
+    /**
+     * 发布提交id
+     */
+    private String commitId;
+
     static {
         TypeStore.STORE.register(MachineInfoDO.class, ApplicationMachineVO.class, p -> {
             ApplicationMachineVO vo = new ApplicationMachineVO();

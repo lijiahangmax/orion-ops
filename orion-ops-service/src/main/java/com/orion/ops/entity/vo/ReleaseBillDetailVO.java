@@ -85,11 +85,6 @@ public class ReleaseBillDetailVO {
     private String commitId;
 
     /**
-     * 发布提交message
-     */
-    private String commitMessage;
-
-    /**
      * 产物目录
      */
     private String distPath;
@@ -200,7 +195,6 @@ public class ReleaseBillDetailVO {
             vo.setBranchName(p.getBranchName());
             vo.setCommitId(p.getCommitId());
             vo.setDistPath(p.getDistPath());
-            vo.setCommitMessage(p.getCommitMessage());
             vo.setCreateUserId(p.getCreateUserId());
             vo.setCreateUserName(p.getCreateUserName());
             vo.setAuditUserId(p.getAuditUserId());
