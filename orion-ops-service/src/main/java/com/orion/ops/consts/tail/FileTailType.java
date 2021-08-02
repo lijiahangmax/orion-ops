@@ -20,14 +20,19 @@ public enum FileTailType {
     EXEC_LOG(10),
 
     /**
-     * 本机文件
+     * tail 列表
      */
-    LOCAL_FILE(20),
+    TAIL_LIST(20),
 
     /**
-     * 远程文件
+     * 上线单 宿主机步骤
      */
-    REMOTE_FILE(30),
+    RELEASE_HOST(30),
+
+    /**
+     * 上线单 目标机器步骤
+     */
+    RELEASE_STAGE(40),
 
     ;
 

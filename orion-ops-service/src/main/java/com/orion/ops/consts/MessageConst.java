@@ -26,6 +26,8 @@ public class MessageConst {
 
     public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
 
+    public static final String UNKNOWN_DATA = "未查询到数据";
+
     public static final String INVALID_MACHINE = "未知的机器";
 
     public static final String INVALID_PROXY = "未查询到代理信息";

@@ -56,6 +56,14 @@ public interface FileTailService {
     FileTailVO getTailDetail(Long id);
 
     /**
+     * 更新 更新时间
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer updateFileUpdateTime(Long id);
+
+    /**
      * 获取机器配置
      *
      * @param machineId machineId

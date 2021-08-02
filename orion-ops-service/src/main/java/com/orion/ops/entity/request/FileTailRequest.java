@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
+import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 文件tail 请求
@@ -10,23 +12,21 @@ import lombok.Data;
  * @since 2021/6/10 18:52
  */
 @Data
-public class FileTailRequest {
+@EqualsAndHashCode(callSuper = true)
+public class FileTailRequest extends PageRequest {
 
     /**
-     * relId
+     * id
      */
-    private Long relId;
+    private Long id;
 
     /**
-     * @see com.orion.ops.consts.tail.FileTailType
+     * 名称
      */
-    private Integer type;
+    private String name;
 
     /**
-     * tail的文件路径
-     *
-     * @see com.orion.ops.consts.tail.FileTailType#LOCAL_FILE
-     * @see com.orion.ops.consts.tail.FileTailType#REMOTE_FILE
+     * 文件路径
      */
     private String path;
 
@@ -37,12 +37,26 @@ public class FileTailRequest {
 
     /**
      * 文件尾部偏移行
+     *
+     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
      */
     private Integer offset;
 
     /**
      * 编码集
+     *
+     * @see com.orion.ops.consts.Const#UTF_8
      */
     private String charset;
+
+    /**
+     * relId
+     */
+    private Long relId;
+
+    /**
+     * @see com.orion.ops.consts.tail.FileTailType
+     */
+    private Integer type;
 
 }

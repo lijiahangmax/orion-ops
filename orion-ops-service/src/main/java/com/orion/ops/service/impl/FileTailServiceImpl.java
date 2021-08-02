@@ -17,10 +17,7 @@ import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;
-import com.orion.ops.service.api.CommandExecService;
-import com.orion.ops.service.api.FileTailService;
-import com.orion.ops.service.api.MachineEnvService;
-import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
@@ -58,6 +55,9 @@ public class FileTailServiceImpl implements FileTailService {
     private FileTailListDAO fileTailListDAO;
 
     @Resource
+    private ReleaseInfoService releaseInfoService;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -65,61 +65,57 @@ public class FileTailServiceImpl implements FileTailService {
         Long relId = request.getRelId();
         Valid.notNull(relId);
         FileTailVO res = null;
-        String path = request.getPath();
-        Long machineId = request.getMachineId();
+        String path = null;
         // 获取日志路径
         switch (FileTailType.of(request.getType())) {
             case EXEC_LOG:
                 // 执行日志
                 path = commandExecService.getExecLogFilePath(relId);
-                machineId = Const.HOST_MACHINE_ID;
                 break;
             case TAIL_LIST:
                 // tail list
                 res = this.getTailDetail(relId);
                 Valid.notBlank(res.getMachineHost(), MessageConst.INVALID_MACHINE);
+                // 更新修改时间
+                this.updateFileUpdateTime(relId);
                 break;
             case RELEASE_HOST:
                 // 上线单 宿主机步骤
-
+                path = releaseInfoService.getReleaseHostLogPath(relId);
                 break;
             case RELEASE_STAGE:
                 // 上线单 目标机器步骤
-
+                path = releaseInfoService.getReleaseStageLogPath(relId);
                 break;
             default:
                 break;
         }
-        // 检查文件是否存在
-        if (path == null) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
+        if (res == null) {
+            // 检查文件是否存在
+            if (path == null || !Files1.isFile(path)) {
+                return HttpWrapper.of(ResultCode.FILE_MISSING);
+            }
+            // 查询机器
+            MachineInfoDO machine = machineInfoService.selectById(Const.HOST_MACHINE_ID);
+            if (machine == null) {
+                return HttpWrapper.error(MessageConst.INVALID_MACHINE);
+            }
+            // 设置返回
+            res = new FileTailVO();
+            res.setMachineId(machine.getId());
+            res.setMachineName(machine.getMachineName());
+            res.setMachineHost(machine.getMachineHost());
+            res.setPath(path);
+            res.setOffset(machineEnvService.getTailOffset(Const.HOST_MACHINE_ID));
+            res.setCharset(machineEnvService.getTailCharset(Const.HOST_MACHINE_ID));
         }
-        if (Const.HOST_MACHINE_ID.equals(machineId) && !Files1.isFile(path)) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
-        }
-        // 查询机器
-        MachineInfoDO machine = machineInfoService.selectById(machineId);
-        if (machine == null) {
-            return HttpWrapper.error(MessageConst.INVALID_MACHINE);
-        }
-        // 设置返回
         String token = UUIds.random19();
-        res = new FileTailVO();
         res.setToken(token);
-        res.setMachineId(machine.getId());
-        res.setMachineName(machine.getMachineName());
-        res.setMachineHost(machine.getMachineHost());
-        res.setPath(path);
-        res.setOffset(machineEnvService.getTailOffset(machineId));
-        res.setCharset(machineEnvService.getTailCharset(machineId));
+
         // 设置缓存
-        FileTailDTO tail = new FileTailDTO();
-        tail.setFilePath(path);
+        FileTailDTO tail = Converts.to(res, FileTailDTO.class);
         tail.setUserId(Currents.getUserId());
-        tail.setMachineId(machineId);
-        tail.setMode(machineEnvService.getMachineTailMode(machineId));
-        tail.setOffset(res.getOffset());
-        tail.setCharset(res.getCharset());
+        tail.setMode(machineEnvService.getMachineTailMode(Const.HOST_MACHINE_ID));
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.<FileTailVO>ok().data(res);
@@ -183,6 +179,14 @@ public class FileTailServiceImpl implements FileTailService {
             vo.setMachineHost(machine.getMachineHost());
         }
         return vo;
+    }
+
+    @Override
+    public Integer updateFileUpdateTime(Long id) {
+        FileTailListDO update = new FileTailListDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        return fileTailListDAO.updateById(update);
     }
 
     @Override
