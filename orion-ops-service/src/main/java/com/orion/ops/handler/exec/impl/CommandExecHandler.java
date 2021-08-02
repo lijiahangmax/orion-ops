@@ -12,6 +12,7 @@ import com.orion.ops.utils.PathBuilders;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
@@ -156,6 +157,7 @@ public class CommandExecHandler extends AbstractExecHandler {
         Streams.close(logOutputStream);
         // 关闭正在tail的日志
         try {
+            Threads.sleep(Const.MS_S_3);
             tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath)
                     .forEach(ITailHandler::close);
         } catch (Exception e) {

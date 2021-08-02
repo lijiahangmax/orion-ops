@@ -11,6 +11,7 @@ import com.orion.ops.handler.release.hint.ReleaseMachineHint;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Threads;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
@@ -171,9 +172,12 @@ public class ReleaseTargetStageHandler extends AbstractReleaseActionHandler impl
      */
     private void closeTailHandler() {
         // 关闭宿主机日志
-        SpringHolder.getBean(TailSessionHolder.class)
-                .getSession(Const.HOST_MACHINE_ID, machine.getLogPath())
-                .forEach(ITailHandler::close);
+        Threads.start(() -> {
+            Threads.sleep(Const.MS_S_3);
+            SpringHolder.getBean(TailSessionHolder.class)
+                    .getSession(Const.HOST_MACHINE_ID, machine.getLogPath())
+                    .forEach(ITailHandler::close);
+        });
     }
 
 }

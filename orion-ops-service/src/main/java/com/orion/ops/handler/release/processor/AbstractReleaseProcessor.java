@@ -246,6 +246,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     protected void closeAllTailHandler() {
         TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
         // 关闭宿主机日志
+        Threads.sleep(Const.MS_S_3);
         tailSessionHolder.getSession(Const.HOST_MACHINE_ID, hint.getHostLogPath())
                 .forEach(ITailHandler::close);
         // 关闭目标机器日志
