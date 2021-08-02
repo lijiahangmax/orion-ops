@@ -6,26 +6,17 @@ import com.orion.id.UUIds;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.tail.FileTailMode;
-import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
-import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
-import com.orion.ops.entity.dto.FileTailDTO;
-import com.orion.ops.entity.request.FileTailRequest;
-import com.orion.ops.entity.vo.FileTailVO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.Valid;
-import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,8 +31,8 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2021/6/8 17:37
  */
-@Service("fileService")
-public class FileServiceImpl implements FileService {
+@Service("fileDownloadService")
+public class FileDownloadServiceImpl implements FileDownloadService {
 
     @Resource
     private MachineSecretKeyDAO machineSecretKeyDAO;
@@ -50,13 +41,10 @@ public class FileServiceImpl implements FileService {
     private MachineTerminalLogDAO machineTerminalLogDAO;
 
     @Resource
-    private MachineEnvService machineEnvService;
-
-    @Resource
-    private MachineInfoService machineInfoService;
-
-    @Resource
     private CommandExecService commandExecService;
+
+    @Resource
+    private ReleaseInfoService releaseInfoService;
 
     @Resource
     private SftpService sftpService;
@@ -71,23 +59,37 @@ public class FileServiceImpl implements FileService {
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
+                // 秘钥
                 path = this.getDownloadSecretKeyFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case TERMINAL_LOG:
+                // terminal 日志
                 path = this.getDownloadTerminalLogFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case EXEC_LOG:
+                // 执行日志
                 path = commandExecService.getExecLogFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case SFTP_DOWNLOAD:
+                // sftp 下载文件
                 FileTransferLogDO transferLog = sftpService.getDownloadFilePath(id);
                 if (transferLog != null) {
                     path = transferLog.getLocalFile();
                     name = Files1.getFileName(transferLog.getRemoteFile());
                 }
+                break;
+            case RELEASE_HOST_LOG:
+                // 上线单宿主机日志
+                path = releaseInfoService.getReleaseHostLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case RELEASE_STAGE_LOG:
+                // 上线单目标机器日志
+                path = releaseInfoService.getReleaseStageLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             default:
                 break;
@@ -123,74 +125,6 @@ public class FileServiceImpl implements FileService {
         }
         redisTemplate.delete(key);
         return download;
-    }
-
-    @Override
-    public HttpWrapper<FileTailVO> getTailToken(FileTailRequest request) {
-        String path = request.getPath();
-        Long machineId = request.getMachineId();
-        // 获取日志路径
-        switch (FileTailType.of(request.getType())) {
-            case EXEC_LOG:
-                // 执行日志
-                Long relId = request.getRelId();
-                Valid.notNull(relId);
-                path = commandExecService.getExecLogFilePath(relId);
-                machineId = Const.HOST_MACHINE_ID;
-                break;
-            case LOCAL_FILE:
-                // 本机文件
-                Valid.notBlank(path);
-                machineId = Const.HOST_MACHINE_ID;
-                break;
-            case REMOTE_FILE:
-                // 远程文件
-                Valid.notBlank(path);
-                Valid.notNull(machineId);
-                break;
-            default:
-                break;
-        }
-        // 检查文件是否存在
-        if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            if (path == null || !Files1.isFile(path)) {
-                return HttpWrapper.of(ResultCode.FILE_MISSING);
-            }
-        }
-        // 查询机器
-        MachineInfoDO machine = machineInfoService.selectById(machineId);
-        if (machine == null) {
-            return HttpWrapper.error(MessageConst.INVALID_MACHINE);
-        }
-        // 设置缓存
-        FileTailDTO tail = new FileTailDTO();
-        tail.setFilePath(path);
-        tail.setUserId(Currents.getUserId());
-        tail.setMachineId(machineId);
-        tail.setMode(machineEnvService.getMachineTailMode(machineId));
-        Integer offset = request.getOffset();
-        if (offset != null) {
-            tail.setOffset(offset);
-        } else {
-            tail.setOffset(machineEnvService.getTailOffset(machineId));
-        }
-        String charset = request.getCharset();
-        if (charset != null) {
-            tail.setCharset(charset);
-        } else {
-            tail.setCharset(machineEnvService.getTailCharset(machineId));
-        }
-        String token = UUIds.random19();
-        String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
-        redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
-        // 设置返回
-        FileTailVO res = new FileTailVO();
-        res.setToken(token);
-        res.setHost(machine.getMachineHost());
-        res.setFile(tail.getFilePath());
-        res.setOffset(tail.getOffset());
-        res.setCharset(tail.getCharset());
-        return HttpWrapper.<FileTailVO>ok().data(res);
     }
 
     /**

@@ -156,7 +156,7 @@ public class SftpController {
     /**
      * 获取上传文件fileToken
      */
-    @RequestMapping("/upload/token/{sessionToken}")
+    @RequestMapping("/upload/{sessionToken}/token")
     public String getUploadToken(@PathVariable String sessionToken) {
         return sftpService.getUploadToken(sessionToken);
     }
@@ -202,7 +202,7 @@ public class SftpController {
     /**
      * 传输列表
      */
-    @RequestMapping("/transfer/list/{sessionToken}")
+    @RequestMapping("/transfer/{sessionToken}/list")
     public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
         Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
         Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
@@ -241,7 +241,7 @@ public class SftpController {
     /**
      * 传输清空(全部)
      */
-    @RequestMapping("/transfer/clear/{sessionToken}")
+    @RequestMapping("/transfer/{sessionToken}/clear")
     public Integer transferRemove(@PathVariable("sessionToken") String sessionToken) {
         Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
         Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));

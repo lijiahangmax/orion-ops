@@ -34,6 +34,16 @@ public enum FileDownloadType {
      */
     SFTP_DOWNLOAD(40),
 
+    /**
+     * 上线单 宿主机日志
+     */
+    RELEASE_HOST_LOG(40),
+
+    /**
+     * 上线单 目标机器日志
+     */
+    RELEASE_STAGE_LOG(40),
+
     ;
 
     /**

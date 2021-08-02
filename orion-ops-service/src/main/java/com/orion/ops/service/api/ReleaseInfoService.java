@@ -109,4 +109,20 @@ public interface ReleaseInfoService {
      */
     void copyReleaseAction(Long sourceReleaseId, Long targetReleaseId);
 
+    /**
+     * 获取 release 宿主机日志路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getReleaseHostLogPath(Long id);
+
+    /**
+     * 获取 release 目标机器日志路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getReleaseStageLogPath(Long id);
+
 }

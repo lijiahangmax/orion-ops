@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 上线单信息查询service 实现
@@ -199,6 +200,24 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
             // 更新
             releaseActionDAO.updateById(updateAction);
         }
+    }
+
+    @Override
+    public String getReleaseHostLogPath(Long id) {
+        return Optional.ofNullable(releaseBillDAO.selectById(id))
+                .map(ReleaseBillDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .orElse(null);
+    }
+
+    @Override
+    public String getReleaseStageLogPath(Long id) {
+        return Optional.ofNullable(releaseMachineDAO.selectById(id))
+                .map(ReleaseMachineDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .orElse(null);
     }
 
     /**
