@@ -2,6 +2,8 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnvViewType;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
 import com.orion.ops.service.api.ApplicationEnvService;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 应用环境 api
@@ -68,6 +72,21 @@ public class ApplicationEnvController {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
         return applicationEnvService.listAppEnv(request);
+    }
+
+    /**
+     * 视图
+     */
+    @RequestMapping("/view")
+    public String view(@RequestBody ApplicationEnvRequest request) {
+        Valid.notNull(request.getAppId());
+        Valid.notNull(request.getProfileId());
+        EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
+        request.setLimit(Const.N_100000);
+        // 查询列表
+        Map<String, String> envs = applicationEnvService.listAppEnv(request).stream()
+                .collect(Collectors.toMap(ApplicationEnvVO::getKey, ApplicationEnvVO::getValue));
+        return viewType.toValue(envs);
     }
 
 }

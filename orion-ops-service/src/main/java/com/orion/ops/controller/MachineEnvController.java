@@ -1,7 +1,10 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnvViewType;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 import com.orion.ops.service.api.MachineEnvService;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 环境变量
@@ -58,15 +63,24 @@ public class MachineEnvController {
         return machineEnvService.deleteEnv(idList);
     }
 
-    /**
-     * 合并且替换
-     */
-    @RequestMapping("/merge")
-    public Integer merge(@RequestBody MachineEnvRequest request) {
-        Long sourceMachineId = Valid.notNull(request.getSourceMachineId());
-        Long targetMachineId = Valid.notNull(request.getTargetMachineId());
-        return machineEnvService.mergeEnv(sourceMachineId, targetMachineId);
-    }
+    // /**
+    //  * 合并且替换
+    //  */
+    // @RequestMapping("/merge")
+    // public Integer merge(@RequestBody MachineEnvRequest request) {
+    //   Long sourceMachineId = Valid.notNull(request.getSourceMachineId());
+    //   Long targetMachineId = Valid.notNull(request.getTargetMachineId());
+    //   return machineEnvService.mergeEnv(sourceMachineId, targetMachineId);
+    //   /**
+    //    * 合并选择的目标id
+    //    */
+    //   private Long sourceMachineId;
+    //
+    //   /**
+    //    * 合并选择的目标机器id
+    //    */
+    //   private Long targetMachineId;
+    // }
 
     /**
      * 列表
@@ -75,6 +89,20 @@ public class MachineEnvController {
     public DataGrid<MachineEnvVO> list(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getMachineId());
         return machineEnvService.listEnv(request);
+    }
+
+    /**
+     * 视图
+     */
+    @RequestMapping("/view")
+    public String view(@RequestBody MachineEnvRequest request) {
+        Valid.notNull(request.getMachineId());
+        EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
+        request.setLimit(Const.N_100000);
+        // 查询列表
+        Map<String, String> envs = machineEnvService.listEnv(request).stream()
+                .collect(Collectors.toMap(MachineEnvVO::getKey, MachineEnvVO::getValue));
+        return viewType.toValue(envs);
     }
 
 }

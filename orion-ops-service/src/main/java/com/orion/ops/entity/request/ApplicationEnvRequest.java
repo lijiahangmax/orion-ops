@@ -52,4 +52,11 @@ public class ApplicationEnvRequest extends PageRequest {
      */
     private String description;
 
+    /**
+     * 视图类型
+     *
+     * @see com.orion.ops.consts.EnvViewType
+     */
+    private Integer viewType;
+
 }

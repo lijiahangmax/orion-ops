@@ -28,16 +28,6 @@ public class MachineEnvRequest extends PageRequest {
     private List<Long> idList;
 
     /**
-     * 合并选择的目标id
-     */
-    private Long sourceMachineId;
-
-    /**
-     * 合并选择的目标机器id
-     */
-    private Long targetMachineId;
-
-    /**
      * 机器id
      */
     private Long machineId;
@@ -56,5 +46,12 @@ public class MachineEnvRequest extends PageRequest {
      * 描述
      */
     private String description;
+
+    /**
+     * 视图类型
+     *
+     * @see com.orion.ops.consts.EnvViewType
+     */
+    private Integer viewType;
 
 }
