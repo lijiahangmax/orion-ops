@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ReleaseActionDO;
 import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.entity.domain.ReleaseMachineDO;
@@ -124,5 +125,18 @@ public interface ReleaseInfoService {
      * @return path
      */
     String getReleaseStageLogPath(Long id);
+
+    /**
+     * 获取产物快照文件
+     *
+     * @param path path
+     * @return path
+     */
+    default String getDistSnapshotFilePath(String path) {
+        if (path == null) {
+            return null;
+        }
+        return MachineEnvAttr.DIST_PATH.getValue() + path;
+    }
 
 }

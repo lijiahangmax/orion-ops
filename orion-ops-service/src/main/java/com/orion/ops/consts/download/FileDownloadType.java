@@ -37,12 +37,17 @@ public enum FileDownloadType {
     /**
      * 上线单 宿主机日志
      */
-    RELEASE_HOST_LOG(40),
+    RELEASE_HOST_LOG(50),
 
     /**
      * 上线单 目标机器日志
      */
-    RELEASE_STAGE_LOG(40),
+    RELEASE_STAGE_LOG(60),
+
+    /**
+     * 上线单 快照文件
+     */
+    RELEASE_SNAPSHOT(70),
 
     ;
 

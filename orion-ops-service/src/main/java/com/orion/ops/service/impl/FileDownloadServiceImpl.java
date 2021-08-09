@@ -14,6 +14,7 @@ import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
+import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
@@ -90,6 +91,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 // 上线单目标机器日志
                 path = releaseInfoService.getReleaseStageLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case RELEASE_SNAPSHOT:
+                // 上线单产物快照
+                ReleaseBillDO releaseBill = releaseInfoService.getReleaseBill(id);
+                if (releaseBill != null) {
+                    path = releaseInfoService.getDistSnapshotFilePath(releaseBill.getDistSnapshotPath());
+                    name = Optional.ofNullable(releaseBill.getDistPath()).map(Files1::getFileName)
+                            .map(n -> releaseBill.getId() + "_" + n).orElse(null);
+                }
                 break;
             default:
                 break;
