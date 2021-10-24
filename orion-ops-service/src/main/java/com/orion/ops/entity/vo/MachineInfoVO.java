@@ -113,7 +113,7 @@ public class MachineInfoVO {
             vo.setProxyId(p.getProxyId());
             vo.setHost(p.getMachineHost());
             vo.setSshPort(p.getSshPort());
-            vo.setName(p.getUsername());
+            vo.setName(p.getMachineName());
             vo.setTag(p.getMachineTag());
             vo.setDescription(p.getDescription());
             vo.setUsername(p.getUsername());

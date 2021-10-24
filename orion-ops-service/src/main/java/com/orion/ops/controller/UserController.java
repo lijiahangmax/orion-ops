@@ -74,10 +74,10 @@ public class UserController {
     /**
      * 修改头像
      */
-    @RequestMapping("/update/head-pic")
-    public Integer updateHeadPic(@RequestBody UserInfoRequest request) {
-        String headPic = Valid.notBlank(request.getHeadPic());
-        return userService.updateHeadPic(headPic);
+    @RequestMapping("/update/avatar")
+    public Integer updateAvatar(@RequestBody UserInfoRequest request) {
+        String avatar = Valid.notBlank(request.getAvatar());
+        return userService.updateAvatar(avatar);
     }
 
     /**

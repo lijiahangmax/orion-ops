@@ -53,7 +53,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
 
     @Override
     public Long submit(ExecHint hint) {
-        log.info("execHandler-执行命令开始 machineId: {}, type: {}, startDate: {}", hint.getMachineId(), hint.getExecType(), Dates.current(Dates.YMDHMSS));
+        log.info("execHandler-执行命令开始 machineId: {}, type: {}, startDate: {}", hint.getMachineId(), hint.getExecType(), Dates.current(Dates.YMD_HMSS));
         this.machine = hint.getMachine();
         this.insertRecord();
         Threads.start(this, SchedulerPools.EXEC_SCHEDULER);
@@ -180,7 +180,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
         updateStatus.setEndDate(endDate);
         commandExecDAO.updateById(updateStatus);
         log.info("execHandler-关闭 id: {}, exitCode: {} endDate: {}; used {} ms", execId, hint.getExitCode(),
-                Dates.format(endDate, Dates.YMDHMSS), endDate.getTime() - hint.getStartDate().getTime());
+                Dates.format(endDate, Dates.YMD_HMSS), endDate.getTime() - hint.getStartDate().getTime());
         // 释放资源
         Streams.close(executor);
         Streams.close(hint.getSession());

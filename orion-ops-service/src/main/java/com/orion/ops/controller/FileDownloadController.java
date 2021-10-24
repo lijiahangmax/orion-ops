@@ -11,6 +11,7 @@ import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.service.api.FileDownloadService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
+import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,7 +74,7 @@ public class FileDownloadController {
             inputStream = Files1.openInputStreamFastSafe(fileOptional.get());
         }
         try {
-            Servlets.transfer(response, inputStream, fileName);
+            Servlets.transfer(response, inputStream, Strings.bytes(fileName, Const.UTF_8));
         } finally {
             Streams.close(inputStream);
         }

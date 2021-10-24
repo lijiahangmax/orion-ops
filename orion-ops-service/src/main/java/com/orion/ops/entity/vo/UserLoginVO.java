@@ -39,9 +39,4 @@ public class UserLoginVO {
      */
     private Integer roleType;
 
-    /**
-     * 头像base64
-     */
-    private String headPic;
-
 }

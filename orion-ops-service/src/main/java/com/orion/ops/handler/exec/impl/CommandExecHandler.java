@@ -69,7 +69,7 @@ public class CommandExecHandler extends AbstractExecHandler {
                     .append(hint.getExecType().name()).append(Letters.LF)
                     .append("执行机器: ").append(hint.getMachineId()).append(Letters.TAB)
                     .append(machine.getMachineName()).append(Letters.LF)
-                    .append("开始时间: ").append(Dates.format(hint.getStartDate(), Dates.YMDHMS)).append(Letters.LF);
+                    .append("开始时间: ").append(Dates.format(hint.getStartDate(), Dates.YMD_HMS)).append(Letters.LF);
             Long relId = hint.getRelId();
             if (relId != null) {
                 sb.append("relId: ").append(relId).append(Letters.LF);
@@ -122,7 +122,7 @@ public class CommandExecHandler extends AbstractExecHandler {
                 .append(Letters.LF)
                 .append("# 命令执行完毕\n")
                 .append("exit code: ").append(hint.getExitCode()).append(Letters.LF)
-                .append("结束时间: ").append(Dates.format(endDate, Dates.YMDHMS))
+                .append("结束时间: ").append(Dates.format(endDate, Dates.YMD_HMS))
                 .append("; used ").append(interval).append(" (")
                 .append(endDate.getTime() - hint.getStartDate().getTime())
                 .append(" ms)\n");

@@ -71,7 +71,7 @@ public class UserInfoVO {
     /**
      * 头像base64
      */
-    private String headPic;
+    private String avatar;
 
     static {
         TypeStore.STORE.register(UserInfoDO.class, UserInfoVO.class, d -> {

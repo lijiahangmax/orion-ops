@@ -99,7 +99,7 @@ public class MachineInfoController {
     /**
      * 同步属性
      */
-    @RequestMapping("/syncProp")
+    @RequestMapping("/sync/prop")
     public String syncProperties(@RequestBody MachineInfoRequest request) {
         Valid.notNull(request.getId());
         Valid.notBlank(request.getSyncProp());
