@@ -1,9 +1,6 @@
 package com.orion.ops.config;
 
-import com.orion.exception.IORuntimeException;
-import com.orion.exception.LogException;
-import com.orion.exception.SftpException;
-import com.orion.exception.VcsException;
+import com.orion.exception.*;
 import com.orion.exception.argument.CodeArgumentException;
 import com.orion.exception.argument.HttpWrapperException;
 import com.orion.exception.argument.InvalidArgumentException;
@@ -15,6 +12,8 @@ import com.orion.ops.interceptor.RoleInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -64,18 +63,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-    @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
-    public HttpWrapper<?> httpRequestExceptionHandler(HttpServletRequest request, Exception ex) {
-        log.error("httpRequestExceptionHandler url: {}, http请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
-        ex.printStackTrace();
-        return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
-    }
-
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> normalExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("normalExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class, MethodArgumentNotValidException.class, BindException.class})
+    public HttpWrapper<?> httpRequestExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("httpRequestExceptionHandler url: {}, http请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
     }
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
@@ -97,6 +97,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
         log.error("sftpExceptionHandler url: {}, sftp处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.SFTP_OPERATOR_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = EncryptException.class)
+    public HttpWrapper<?> encryptExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("encryptExceptionHandler url: {}, 数据加密异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.ENCRYPT_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = DecryptException.class)
+    public HttpWrapper<?> decryptExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("decryptExceptionHandler url: {}, 数据解密异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.DECRYPT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = VcsException.class)

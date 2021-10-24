@@ -14,48 +14,37 @@ public enum ResultCode implements CodeInfo {
     /**
      * 未认证
      */
-    UNAUTHORIZED() {
-        @Override
-        public int code() {
-            return 700;
-        }
-
-        @Override
-        public String message() {
-            return MessageConst.UNAUTHORIZED;
-        }
-    },
+    UNAUTHORIZED(700, MessageConst.UNAUTHORIZED),
 
     /**
      * 无权限
      */
-    NO_PERMISSION() {
-        @Override
-        public int code() {
-            return 710;
-        }
-
-        @Override
-        public String message() {
-            return MessageConst.NO_PERMISSION;
-        }
-    },
+    NO_PERMISSION(710, MessageConst.NO_PERMISSION),
 
     /**
      * 文件未找到
      */
-    FILE_MISSING() {
-        @Override
-        public int code() {
-            return 720;
-        }
-
-        @Override
-        public String message() {
-            return MessageConst.FILE_ABSENT;
-        }
-    },
+    FILE_MISSING(720, MessageConst.FILE_ABSENT),
 
     ;
+
+    private final int code;
+
+    private final String message;
+
+    ResultCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    @Override
+    public int code() {
+        return code;
+    }
+
+    @Override
+    public String message() {
+        return message;
+    }
 
 }

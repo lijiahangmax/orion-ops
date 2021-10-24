@@ -26,6 +26,10 @@ public class MessageConst {
 
     public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
 
+    public static final String ENCRYPT_ERROR = "数据加密异常";
+
+    public static final String DECRYPT_ERROR = "数据解密异常";
+
     public static final String UNKNOWN_DATA = "未查询到数据";
 
     public static final String INVALID_MACHINE = "未知的机器";
