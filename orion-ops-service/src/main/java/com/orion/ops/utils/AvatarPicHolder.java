@@ -66,7 +66,7 @@ public class AvatarPicHolder {
      * @param nickname name
      * @return 路径
      */
-    public static String generatorUserHeadPic(Long uid, String nickname) {
+    public static String generatorUserAvatar(Long uid, String nickname) {
         if (Strings.isBlank(nickname)) {
             nickname = "O";
         }
@@ -95,7 +95,7 @@ public class AvatarPicHolder {
         if (!Files1.isFile(path)) {
             return null;
         }
-        return Base64s.img64Encode(FileReaders.readFast(path), Files1.getSuffix(path));
+        return Base64s.img64Encode(FileReaders.readAllBytes(path), Files1.getSuffix(path));
     }
 
     /**

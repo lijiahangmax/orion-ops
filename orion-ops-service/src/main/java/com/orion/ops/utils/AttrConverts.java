@@ -77,7 +77,7 @@ public class AttrConverts {
      * @return env
      */
     public static MutableLinkedHashMap<String, String> fromXml(String xml) {
-        MutableLinkedHashMap<String, String> map = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
         DomExt.of(xml).toDomNode().forEach((k, v) -> {
             map.put(k, v.getStringValue());
         });
@@ -91,7 +91,7 @@ public class AttrConverts {
      * @return json
      */
     public static MutableLinkedHashMap<String, String> fromJson(String json) {
-        MutableLinkedHashMap<String, String> map = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
         JSONObject res = JSON.parseObject(json, Feature.OrderedField);
         res.forEach((k, v) -> map.put(k, v + Strings.EMPTY));
         return map;
@@ -104,7 +104,7 @@ public class AttrConverts {
      * @return env
      */
     public static MutableLinkedHashMap<String, String> fromProperties(String properties) {
-        MutableLinkedHashMap<String, String> map = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
         String[] rows = properties.split(Const.LF);
         for (String row : rows) {
             String key = row.split("=")[0];

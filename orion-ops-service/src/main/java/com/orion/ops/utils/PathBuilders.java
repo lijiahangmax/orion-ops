@@ -26,7 +26,7 @@ public class PathBuilders {
      */
     public static String getTerminalLogPath(Long userId) {
         return Const.TERMINAL_LOG_DIR
-                + "/" + Dates.current(Dates.YMDHMS2)
+                + "/" + Dates.current(Dates.YMD_HMS2)
                 + "_" + userId
                 + "." + Const.SUFFIX_LOG;
     }
@@ -43,7 +43,7 @@ public class PathBuilders {
         return Const.EXEC_LOG_DIR + suffix
                 + "/" + execId
                 + "_" + machineId
-                + "_" + Dates.current(Dates.YMDHMS2)
+                + "_" + Dates.current(Dates.YMD_HMS2)
                 + "." + Const.SUFFIX_LOG;
     }
 

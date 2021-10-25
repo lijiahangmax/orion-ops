@@ -5,9 +5,10 @@ import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base62s;
 import com.orion.utils.crypto.Signatures;
-import com.orion.utils.crypto.enums.CipherAlgorithm;
 import com.orion.utils.crypto.enums.PaddingMode;
+import com.orion.utils.crypto.enums.WorkingMode;
 import com.orion.utils.crypto.symmetric.EcbSymmetric;
+import com.orion.utils.crypto.symmetric.SymmetricBuilder;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -21,7 +22,11 @@ import java.util.Optional;
  */
 public class ValueMix {
 
-    private static final EcbSymmetric ECB = new EcbSymmetric(CipherAlgorithm.AES, PaddingMode.ZERO_PADDING);
+    private static final EcbSymmetric ECB = SymmetricBuilder.aes()
+            .workingMode(WorkingMode.ECB)
+            .paddingMode(PaddingMode.PKCS5_PADDING)
+            .generatorSecretKey(Const.ORION_OPS)
+            .buildEcb();
 
     private ValueMix() {
     }
@@ -36,7 +41,11 @@ public class ValueMix {
         if (value == null) {
             return null;
         }
-        return ECB.encrypt(value, Const.ORION_OPS);
+        try {
+            return ValueMix.ECB.encryptAsString(value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -50,7 +59,16 @@ public class ValueMix {
         if (value == null) {
             return null;
         }
-        return ECB.encrypt(value, key);
+        try {
+            return SymmetricBuilder.aes()
+                    .workingMode(WorkingMode.ECB)
+                    .paddingMode(PaddingMode.PKCS5_PADDING)
+                    .generatorSecretKey(key)
+                    .buildEcb()
+                    .encryptAsString(value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -63,7 +81,11 @@ public class ValueMix {
         if (value == null) {
             return null;
         }
-        return ECB.decrypt(value, Const.ORION_OPS);
+        try {
+            return ECB.decryptAsString(value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -77,7 +99,16 @@ public class ValueMix {
         if (value == null) {
             return null;
         }
-        return ECB.decrypt(value, key);
+        try {
+            return SymmetricBuilder.aes()
+                    .workingMode(WorkingMode.ECB)
+                    .paddingMode(PaddingMode.PKCS5_PADDING)
+                    .generatorSecretKey(key)
+                    .buildEcb()
+                    .decryptAsString(value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
