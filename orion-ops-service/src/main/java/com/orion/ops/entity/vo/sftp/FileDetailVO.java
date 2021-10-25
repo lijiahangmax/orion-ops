@@ -2,10 +2,12 @@ package com.orion.ops.entity.vo.sftp;
 
 import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.io.FileType;
 import com.orion.utils.io.Files1;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * sftp ls 文件信息
@@ -33,6 +35,11 @@ public class FileDetailVO {
     private String size;
 
     /**
+     * 大小 byte
+     */
+    private Long sizeByte;
+
+    /**
      * 属性
      */
     private String attr;
@@ -57,17 +64,27 @@ public class FileDetailVO {
      */
     private Date modifyTime;
 
+    /**
+     * 是否为目录
+     */
+    private Boolean isDir;
+
     static {
         TypeStore.STORE.register(SftpFile.class, FileDetailVO.class, s -> {
             FileDetailVO vo = new FileDetailVO();
             vo.setName(s.getName());
             vo.setPath(s.getPath());
             vo.setSize(Files1.getSize(s.getSize()));
+            vo.setSizeByte(s.getSize());
             vo.setPermission(s.getPermission());
             vo.setUid(s.getUid());
             vo.setGid(s.getGid());
             vo.setAttr(s.getPermissionString());
             vo.setModifyTime(s.getModifyTime());
+            Boolean isDir = Optional.ofNullable(FileType.of(vo.getAttr()))
+                    .map(FileType.DIRECTORY::equals)
+                    .orElse(false);
+            vo.setIsDir(isDir);
             return vo;
         });
     }

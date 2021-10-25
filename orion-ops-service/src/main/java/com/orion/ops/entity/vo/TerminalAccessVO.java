@@ -13,6 +13,11 @@ import lombok.Data;
 public class TerminalAccessVO {
 
     /**
+     * id
+     */
+    private Long id;
+
+    /**
      * 主机
      */
     private String host;

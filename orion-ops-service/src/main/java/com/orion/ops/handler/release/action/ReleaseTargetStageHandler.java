@@ -94,7 +94,7 @@ public class ReleaseTargetStageHandler extends AbstractReleaseActionHandler impl
                 .append("@ssh: ").append(machine.getUsername()).append("@")
                 .append(machine.getHost()).append(":")
                 .append(machine.getPort()).append(Letters.LF);
-        sb.append("开始时间: ").append(Dates.format(startTime, Dates.YMDHMS)).append(Letters.LF);
+        sb.append("开始时间: ").append(Dates.format(startTime, Dates.YMD_HMS)).append(Letters.LF);
         this.appendLog(sb.toString());
     }
 
@@ -111,7 +111,7 @@ public class ReleaseTargetStageHandler extends AbstractReleaseActionHandler impl
         String interval = Dates.interval(endTime, startTime, "d", "h", "m", "s");
         StringBuilder sb = new StringBuilder(Const.LF)
                 .append("# 远程机器操作执行操作").append(e == null ? "成功" : "失败")
-                .append(", 结束时间: ").append(Dates.format(endTime, Dates.YMDHMS))
+                .append(", 结束时间: ").append(Dates.format(endTime, Dates.YMD_HMS))
                 .append("; used ").append(interval);
         sb.append(" (").append(endTime.getTime() - startTime.getTime()).append(" ms)");
         this.appendLog(sb.toString());

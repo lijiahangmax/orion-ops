@@ -184,7 +184,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         String interval = Dates.interval(endTime, startTime, "d", "h", "m", "s");
         StringBuilder sb = new StringBuilder()
                 .append("# 上线单执行").append(exception == null ? "成功" : "失败")
-                .append(", 结束时间: ").append(Dates.format(endTime, Dates.YMDHMS))
+                .append(", 结束时间: ").append(Dates.format(endTime, Dates.YMD_HMS))
                 .append("; used ").append(interval);
         sb.append(" (").append(endTime.getTime() - startTime.getTime()).append(" ms)");
         this.appendLog(sb.toString());

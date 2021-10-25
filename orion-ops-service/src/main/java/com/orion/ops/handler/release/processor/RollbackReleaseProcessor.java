@@ -66,7 +66,7 @@ public class RollbackReleaseProcessor extends AbstractReleaseProcessor {
         if (!Strings.isBlank(hint.getDescription())) {
             sb.append("描述: ").append(hint.getDescription()).append(Const.LF);
         }
-        sb.append("开始时间: ").append(Dates.format(startTime, Dates.YMDHMS)).append(Const.LF);
+        sb.append("开始时间: ").append(Dates.format(startTime, Dates.YMD_HMS)).append(Const.LF);
         this.appendLog(sb.toString());
     }
 
