@@ -34,6 +34,8 @@ public class MessageConst {
 
     public static final String INVALID_MACHINE = "未知的机器";
 
+    public static final String MACHINE_NOT_ENABLE = "机器未启用";
+
     public static final String INVALID_PROXY = "未查询到代理信息";
 
     public static final String UNABLE_SYNC_PROP = "无法同步属性";
@@ -116,7 +118,7 @@ public class MessageConst {
 
     public static final String MOUNT_SECRET_KEY_ERROR = "挂载秘钥失败";
 
-    public static final String UNMOUNT_SECRET_KEY_ERROR = "卸载秘钥失败";
+    public static final String DUMP_SECRET_KEY_ERROR = "卸载秘钥失败";
 
     public static final String TEMP_MOUNT_SECRET_KEY_ERROR = "临时挂载秘钥失败";
 

@@ -75,7 +75,17 @@ public interface MachineKeyService {
      * @return status
      * @see MountKeyStatus
      */
-    Integer unmountKey(Long id);
+    Integer dumpKey(Long id);
+
+    /**
+     * 挂载所有秘钥
+     */
+    void mountAllKey();
+
+    /**
+     * 卸载所有秘钥
+     */
+    void dumpAllKey();
 
     /**
      * 挂载秘钥

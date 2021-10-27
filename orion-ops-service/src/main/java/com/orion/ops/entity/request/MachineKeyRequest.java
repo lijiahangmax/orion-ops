@@ -43,6 +43,16 @@ public class MachineKeyRequest extends PageRequest {
     private String description;
 
     /**
+     * 挂载状态
+     * 1 未找到
+     * 2 已挂载
+     * 3 未挂载
+     *
+     * @see com.orion.ops.consts.machine.MountKeyStatus
+     */
+    private Integer mountStatus;
+
+    /**
      * 文件base64
      */
     private String file;

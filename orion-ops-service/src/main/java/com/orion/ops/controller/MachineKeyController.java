@@ -39,6 +39,7 @@ public class MachineKeyController {
     @RequestMapping("/add")
     public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
+        Valid.notBlank(request.getPassword());
         Valid.notBlank(request.getFile());
         try {
             return machineKeyService.addSecretKey(request);
@@ -101,14 +102,40 @@ public class MachineKeyController {
     /**
      * 卸载秘钥
      */
-    @RequestMapping("/unmount")
-    public Integer unmountKey(@RequestBody MachineKeyRequest request) {
+    @RequestMapping("/dump")
+    public Integer dumpKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
         try {
-            return machineKeyService.unmountKey(id);
+            return machineKeyService.dumpKey(id);
         } catch (Exception e) {
-            log.error("挂载秘钥失败 {} {}", id, e);
-            throw Exceptions.runtime(MessageConst.UNMOUNT_SECRET_KEY_ERROR, e);
+            log.error("卸载秘钥失败 {} {}", id, e);
+            throw Exceptions.runtime(MessageConst.DUMP_SECRET_KEY_ERROR, e);
+        }
+    }
+
+    /**
+     * 挂载所有秘钥
+     */
+    @RequestMapping("/mount-all")
+    public void mountAllKey() {
+        try {
+            machineKeyService.mountAllKey();
+        } catch (Exception e) {
+            log.error("挂载所有秘钥失败", e);
+            throw Exceptions.runtime(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
+        }
+    }
+
+    /**
+     * 卸载所有秘钥
+     */
+    @RequestMapping("/dump-all")
+    public void dumpAllKey() {
+        try {
+            machineKeyService.dumpAllKey();
+        } catch (Exception e) {
+            log.error("卸载所有秘钥失败", e);
+            throw Exceptions.runtime(MessageConst.DUMP_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -118,8 +145,9 @@ public class MachineKeyController {
     @RequestMapping("/temp-mount")
     public Integer tempMount(@RequestBody MachineKeyRequest request) {
         String file = Valid.notBlank(request.getFile());
+        String password = Valid.notBlank(request.getPassword());
         try {
-            return machineKeyService.tempMountKey(file, request.getPassword());
+            return machineKeyService.tempMountKey(file, password);
         } catch (Exception e) {
             log.error("临时挂载秘钥失败", e);
             throw Exceptions.runtime(MessageConst.TEMP_MOUNT_SECRET_KEY_ERROR, e);

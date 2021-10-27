@@ -2,7 +2,9 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
+import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MountKeyStatus;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
@@ -18,6 +20,7 @@ import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
 import com.orion.utils.io.FileWriters;
 import com.orion.utils.io.Files1;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +28,16 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
+ * 机器秘钥服务
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/5 11:20
  */
+@Slf4j
 @Service("machineKeyService")
 public class MachineKeyServiceImpl implements MachineKeyService {
 
@@ -42,7 +49,6 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     public Long addSecretKey(MachineKeyRequest request) {
         MachineSecretKeyDO key = new MachineSecretKeyDO();
         key.setKeyName(request.getName());
-        key.setPassword(request.getPassword());
         key.setDescription(request.getDescription());
         String file = PathBuilders.getSecretKeyPath();
         String path = MachineKeyService.getKeyPath(file);
@@ -50,12 +56,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         Files1.touch(path);
         byte[] keyFileData = Base64s.decode(Strings.bytes(request.getFile()));
         FileWriters.writeFast(path, keyFileData);
-        String password = key.getPassword();
-        if (!Strings.isBlank(password)) {
-            key.setPassword(ValueMix.encrypt(password));
-        }
+        key.setPassword(ValueMix.encrypt(request.getPassword()));
         // 加载key
-        SessionHolder.addIdentity(path, password);
+        SessionHolder.addIdentity(path, request.getPassword());
         machineSecretKeyDAO.insert(key);
         return key.getId();
     }
@@ -63,43 +66,39 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateSecretKey(MachineKeyRequest request) {
-        MachineSecretKeyDO key = new MachineSecretKeyDO();
+        MachineSecretKeyDO updateKey = new MachineSecretKeyDO();
         Long id = request.getId();
+        updateKey.setId(id);
+        updateKey.setKeyName(request.getName());
+        updateKey.setDescription(request.getDescription());
+        updateKey.setUpdateTime(new Date());
         String password = request.getPassword();
         String fileBase64 = request.getFile();
-        key.setId(id);
-        key.setKeyName(request.getName());
-        key.setDescription(request.getDescription());
-        key.setUpdateTime(new Date());
         if (Strings.isBlank(fileBase64) && Strings.isBlank(password)) {
-            return machineSecretKeyDAO.updateById(key);
+            return machineSecretKeyDAO.updateById(updateKey);
         }
         // 移除原先的key
         MachineSecretKeyDO beforeKey = machineSecretKeyDAO.selectById(id);
-        String beforePassword = beforeKey.getPassword();
-        String beforeKeyFile = beforeKey.getSecretKeyPath();
-        String beforeSecretKeyPath = MachineKeyService.getKeyPath(beforeKeyFile);
-        SessionHolder.removeIdentity(beforeSecretKeyPath);
-        Files1.delete(beforeSecretKeyPath);
+        String beforeKeyPath = MachineKeyService.getKeyPath(beforeKey.getSecretKeyPath());
+        SessionHolder.removeIdentity(beforeKeyPath);
 
-        // 秘钥文件
         if (!Strings.isBlank(fileBase64)) {
-            Files1.touch(beforeSecretKeyPath);
+            // 修改秘钥文件 将新秘钥保存到本地
+            Files1.delete(beforeKeyPath);
+            String afterKeyFile = PathBuilders.getSecretKeyPath();
+            String afterKeyPath = MachineKeyService.getKeyPath(afterKeyFile);
+            Files1.touch(afterKeyPath);
             byte[] keyFileData = Base64s.decode(Strings.bytes(fileBase64));
-            FileWriters.writeFast(beforeSecretKeyPath, keyFileData);
+            FileWriters.writeFast(afterKeyPath, keyFileData);
+            updateKey.setSecretKeyPath(afterKeyFile);
+            updateKey.setPassword(ValueMix.encrypt(password));
+            SessionHolder.addIdentity(afterKeyPath, password);
+        } else {
+            // 修改密码
+            updateKey.setPassword(ValueMix.encrypt(password));
+            SessionHolder.addIdentity(beforeKeyPath, password);
         }
-
-        // 密码
-        if (!Strings.isBlank(password)) {
-            key.setPassword(ValueMix.encrypt(password));
-        }
-        if (Strings.isBlank(password) && !Strings.isBlank(beforePassword)) {
-            password = ValueMix.decrypt(password);
-        }
-
-        // 加载key
-        SessionHolder.addIdentity(beforeSecretKeyPath, Strings.def(password, (String) null));
-        return machineSecretKeyDAO.updateById(key);
+        return machineSecretKeyDAO.updateById(updateKey);
     }
 
     @Override
@@ -128,6 +127,13 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     public DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request) {
+        final int page = request.getPage();
+        final int limit = request.getLimit();
+        final boolean checkStatus = request.getMountStatus() != null;
+        if (checkStatus) {
+            request.setPage(Const.N_1);
+            request.setLimit(Const.N_100000);
+        }
         LambdaQueryWrapper<MachineSecretKeyDO> wrapper = new LambdaQueryWrapper<MachineSecretKeyDO>()
                 .like(Strings.isNotBlank(request.getName()), MachineSecretKeyDO::getKeyName, request.getName())
                 .like(Strings.isNotBlank(request.getDescription()), MachineSecretKeyDO::getDescription, request.getDescription())
@@ -154,19 +160,60 @@ public class MachineKeyServiceImpl implements MachineKeyService {
                 }
             }
         }
-        return dataGrid;
+        if (!checkStatus) {
+            return dataGrid;
+        } else {
+            // 手动过滤
+            List<MachineSecretKeyVO> totalRows = dataGrid.stream().filter(row -> request.getMountStatus().equals(row.getMountStatus()))
+                    .collect(Collectors.toList());
+            List<MachineSecretKeyVO> rows = new LimitList<>(totalRows, limit).page(page);
+            // 封装返回
+            DataGrid<MachineSecretKeyVO> newDataGrid = DataGrid.of(rows, totalRows.size());
+            newDataGrid.setPage(page);
+            newDataGrid.setLimit(limit);
+            return newDataGrid;
+        }
     }
 
     @Override
     public Integer mountKey(Long id) {
         MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return this.mountOrUnmount(key, true);
+        return this.mountOrDump(key, true);
     }
 
     @Override
-    public Integer unmountKey(Long id) {
+    public Integer dumpKey(Long id) {
         MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return this.mountOrUnmount(key, false);
+        return this.mountOrDump(key, false);
+    }
+
+    @Override
+    public void mountAllKey() {
+        List<MachineSecretKeyDO> keys = machineSecretKeyDAO.selectList(null);
+        for (MachineSecretKeyDO key : keys) {
+            String secretKeyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
+            File secretKey = new File(secretKeyPath);
+            if (!Files1.isFile(secretKey)) {
+                log.warn("加载ssh秘钥失败 未找到文件 {} {}", key.getKeyName(), secretKeyPath);
+                continue;
+            }
+            log.info("加载ssh秘钥 {} {}", key.getKeyName(), secretKeyPath);
+            String password = ValueMix.decrypt(key.getPassword());
+            if (password == null) {
+                log.warn("加载ssh秘钥失败 密码错误 {} {}", key.getKeyName(), secretKeyPath);
+                continue;
+            }
+            try {
+                SessionHolder.addIdentity(secretKeyPath, password);
+            } catch (Exception e) {
+                log.error("加载ssh秘钥失败 发生异常 {} {} {}", key.getKeyName(), secretKeyPath, e);
+            }
+        }
+    }
+
+    @Override
+    public void dumpAllKey() {
+        SessionHolder.removeAllIdentity();
     }
 
     @Override
@@ -189,7 +236,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
      * @param mount true挂载
      * @return status
      */
-    private Integer mountOrUnmount(MachineSecretKeyDO key, boolean mount) {
+    private Integer mountOrDump(MachineSecretKeyDO key, boolean mount) {
         String path = key.getSecretKeyPath();
         String keyPath = MachineKeyService.getKeyPath(path);
         File file = new File(keyPath);
@@ -197,13 +244,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             return MountKeyStatus.NOT_FOUND.getStatus();
         }
         if (mount) {
-            // 挂载
-            String password = key.getPassword();
-            if (!Strings.isBlank(password)) {
-                key.setPassword(ValueMix.encrypt(password));
-            }
             // 加载key
-            SessionHolder.addIdentity(keyPath, password);
+            SessionHolder.addIdentity(keyPath, ValueMix.decrypt(key.getPassword()));
         } else {
             // 卸载
             SessionHolder.removeIdentity(keyPath);
