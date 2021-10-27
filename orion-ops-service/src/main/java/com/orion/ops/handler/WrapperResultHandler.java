@@ -30,8 +30,8 @@ public class WrapperResultHandler implements HandlerMethodReturnValueHandler {
         if (!methodParameter.getContainingClass().isAnnotationPresent(RestWrapper.class)) {
             return false;
         }
-        return !methodParameter.hasMethodAnnotation(IgnoreWrapper.class)
-                && methodParameter.getExecutable().getAnnotatedReturnType().getType() != Void.TYPE;
+        return !methodParameter.hasMethodAnnotation(IgnoreWrapper.class);
+        // && methodParameter.getExecutable().getAnnotatedReturnType().getType() != Void.TYPE;
     }
 
     @Override

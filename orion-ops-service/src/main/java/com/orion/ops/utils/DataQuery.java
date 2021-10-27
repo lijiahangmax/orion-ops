@@ -97,7 +97,7 @@ public class DataQuery<T> {
         Valid.notNull(page, "page is null");
         Valid.notNull(wrapper, "wrapper is null");
         Integer count = dao.selectCount(wrapper);
-        Pager<R> pager = new Pager<>();
+        Pager<R> pager = new Pager<>(page);
         pager.setTotal(count);
         boolean next = pager.hasMoreData();
         if (next) {

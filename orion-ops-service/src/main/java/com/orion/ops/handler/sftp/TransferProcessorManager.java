@@ -114,7 +114,7 @@ public class TransferProcessorManager {
         }
         for (String sessionId : sessionIds) {
             WebSocketSession session = idMapping.get(sessionId);
-            if (!session.isOpen()) {
+            if (session == null || !session.isOpen()) {
                 continue;
             }
             // 通知
