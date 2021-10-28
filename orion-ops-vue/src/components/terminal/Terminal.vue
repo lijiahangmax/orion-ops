@@ -66,7 +66,9 @@
       }
     },
     created() {
-      this.machineId = parseInt(this.$route.query.id)
+      if (this.$route.query.id) {
+        this.machineId = parseInt(this.$route.query.id)
+      }
     },
     mounted() {
       if (!this.machineId) {
