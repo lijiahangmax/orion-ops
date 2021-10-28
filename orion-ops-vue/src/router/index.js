@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../views/Login.vue'
-import MachineTerminal from '../views/machine/MachineTerminal.vue'
+import Login from '../views/Login'
+import MachineTerminal from '../views/machine/MachineTerminal'
 
 Vue.use(VueRouter)
 
@@ -23,7 +23,7 @@ const routes = [
       requireAuth: true,
       title: '首页'
     },
-    component: () => import('../views/Index.vue')
+    component: () => import('../views/Index')
   },
   {
     path: '/console',
@@ -32,7 +32,7 @@ const routes = [
       requireAuth: true,
       title: '控制台'
     },
-    component: () => import('../views/Console.vue')
+    component: () => import('../views/Console')
   },
   {
     path: '/user/detail',
@@ -41,7 +41,7 @@ const routes = [
       requireAuth: true,
       title: '用户详情'
     },
-    component: () => import('../views/user/UserDetail.vue')
+    component: () => import('../views/user/UserDetail')
   },
   {
     path: '/machine/list',
@@ -50,7 +50,7 @@ const routes = [
       requireAuth: true,
       title: '机器列表'
     },
-    component: () => import('../views/machine/MachineList.vue')
+    component: () => import('../views/machine/MachineList')
   },
   {
     path: '/machine/terminal',
@@ -67,9 +67,27 @@ const routes = [
     name: 'machineEnv',
     meta: {
       requireAuth: true,
-      title: '机器环境变量'
+      title: '环境变量'
     },
-    component: () => import('../views/machine/MachineEnv.vue')
+    component: () => import('../views/machine/MachineEnv')
+  },
+  {
+    path: '/machine/key',
+    name: 'MachineKey',
+    meta: {
+      requireAuth: true,
+      title: '机器秘钥'
+    },
+    component: () => import('../views/machine/MachineKey')
+  },
+  {
+    path: '/machine/proxy',
+    name: 'MachineProxy',
+    meta: {
+      requireAuth: true,
+      title: '机器代理'
+    },
+    component: () => import('../views/machine/MachineProxy')
   }
 
 ]

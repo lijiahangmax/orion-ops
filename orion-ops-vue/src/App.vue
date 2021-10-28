@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import Layout from '@/components/Layout.vue'
+  import Layout from '@/components/layout/Layout'
   import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 
   export default {
@@ -51,6 +51,18 @@
     border-radius: 5px;
     background: #ADB5BD;
     transition: color .2s ease;
+  }
+
+  .copy-icon-left {
+    margin-right: 8px;
+  }
+
+  .copy-icon-right {
+    margin-left: 8px;
+  }
+
+  .span-blue {
+    color: #1890ff;
   }
 
 </style>

@@ -37,6 +37,12 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+Vue.prototype.$copy = function(value, tips = '已复制') {
+  if ($utils.copyToClipboard(value) && tips) {
+    this.$message.success(tips)
+  }
+}
+
 new Vue({
   router,
   store,
