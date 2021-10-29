@@ -125,6 +125,85 @@ function permission10toString(permission) {
   return res
 }
 
+/**
+ * 返回base64实际数据
+ */
+function getBase64Data(e) {
+  return e.substring(e.indexOf(',') + 1)
+}
+
+/**
+ *读取文件base64 返回promise
+ */
+function readFileBase64(e) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(e)
+    reader.onload = res => {
+      resolve(res.target.result)
+    }
+    reader.onerror = err => {
+      reject(err)
+    }
+  })
+}
+
+/**
+ * 获取页面路由
+ */
+function getRoute(url = location.href) {
+  return url.substring(url.lastIndexOf('#') + 1).split('?')[0]
+}
+
+/**
+ * 格式化数字为 ,分割
+ */
+function formatNumber(value = 0) {
+  value += ''
+  const list = value.split('.')
+  const prefix = list[0].charAt(0) === '-' ? '-' : ''
+  let num = prefix ? list[0].slice(1) : list[0]
+  let result = ''
+  while (num.length > 3) {
+    result = `,${num.slice(-3)}${result}`
+    num = num.slice(0, num.length - 3)
+  }
+  if (num) {
+    result = num + result
+  }
+  return `${prefix}${result}${list[1] ? `.${list[1]}` : ''}`
+}
+
+/**
+ * 判断是否为数字
+ */
+function isNumber(value, decimal = true, negative = true) {
+  let reg
+  if (decimal && negative) {
+    reg = /^-?[0-9]*(\.[0-9]*)?$/
+  } else if (!decimal && negative) {
+    reg = /^-?[0-9]*$/
+  } else if (decimal && !negative) {
+    reg = /^[0-9]*(\.[0-9]*)?$/
+  } else if (!decimal && !negative) {
+    reg = /^[0-9]*$/
+  } else {
+    return false
+  }
+  return (!isNaN(value) && reg.test(value)) || value === ''
+}
+
+/**
+ * 替换数字
+ */
+function replaceNumber(value) {
+  const s = value.charAt(value.length - 1)
+  if (s === '.' || s === '-') {
+    return s.substring(0, value.length - 1)
+  }
+  return s
+}
+
 export default {
   isEmptyStr,
   copyToClipboard,
@@ -134,5 +213,11 @@ export default {
   fullScreen,
   exitFullScreen,
   dateFormat,
-  permission10toString
+  permission10toString,
+  getBase64Data,
+  readFileBase64,
+  getRoute,
+  formatNumber,
+  isNumber,
+  replaceNumber
 }

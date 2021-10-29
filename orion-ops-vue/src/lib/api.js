@@ -146,13 +146,6 @@ const $api = {
   },
 
   /**
-   * 同步机器属性
-   */
-  syncMachineProp: param => {
-    return $http.$post('/machine/sync/prop', param)
-  },
-
-  /**
    * 获取终端访问信息
    */
   accessTerminal: param => {
@@ -316,6 +309,146 @@ const $api = {
    */
   getFileDownloadToken: param => {
     return $http.$post('/file-download/token', param)
+  },
+
+  /**
+   * 添加机器代理
+   */
+  addMachineProxy: param => {
+    return $http.$post('/proxy/add', param)
+  },
+
+  /**
+   * 更新机器代理
+   */
+  updateMachineProxy: param => {
+    return $http.$post('/proxy/update', param)
+  },
+
+  /**
+   * 机器代理列表
+   */
+  getMachineProxyList: param => {
+    return $http.$post('/proxy/list', param)
+  },
+
+  /**
+   * 删除机器代理
+   */
+  deleteMachineProxy: param => {
+    return $http.$post('/proxy/delete', param)
+  },
+
+  /**
+   * 添加秘钥
+   */
+  addMachineKey: param => {
+    return $http.$post('/key/add', param)
+  },
+
+  /**
+   *更新秘钥
+   */
+  updateMachineKey: param => {
+    return $http.$post('/key/update', param)
+  },
+
+  /**
+   * 删除秘钥
+   */
+  removeMachineKey: param => {
+    return $http.$post('/key/remove', param)
+  },
+
+  /**
+   * 查询秘钥列表
+   */
+  getMachineKeyList: param => {
+    return $http.$post('/key/list', param)
+  },
+
+  /**
+   *挂载秘钥
+   */
+  mountMachineKey: param => {
+    return $http.$post('/key/mount', param)
+  },
+
+  /**
+   * 卸载秘钥
+   */
+  dumpMachineKey: param => {
+    return $http.$post('/key/dump', param)
+  },
+
+  /**
+   * 挂载所有秘钥
+   */
+  mountAllMachineKey: () => {
+    return $http.$post('/key/mount-all')
+  },
+
+  /**
+   * 卸载所有秘钥
+   */
+  dumpAllMachineKey: () => {
+    return $http.$post('/key/dump-all')
+  },
+
+  /**
+   * 临时挂载秘钥
+   */
+  tempMountMachineKey: param => {
+    return $http.$post('/key/temp-mount', param)
+  },
+
+  /**
+   * 添加机器环境变量
+   */
+  addMachineEnv: param => {
+    return $http.$post('/env/add', param)
+  },
+
+  /**
+   * 更新机器环境变量
+   */
+  updateMachineEnv: param => {
+    return $http.$post('/env/update', param)
+  },
+
+  /**
+   * 删除机器环境变量
+   */
+  deleteMachineEnv: param => {
+    return $http.$post('/env/delete', param)
+  },
+
+  /**
+   * 获取机器环境变量列表
+   */
+  getMachineEnvList: param => {
+    return $http.$post('/env/list', param)
+  },
+
+  /**
+   * 获取机器环境变量视图
+   */
+  getMachineEnvView: param => {
+    return $http.$post('/env/view', param)
+  },
+
+  /**
+   * 获取历史值列表
+   */
+  getHistoryValueList: param => {
+    return $http.$post('/history-value/list', param)
+  },
+
+  /**
+   * 回滚历史值
+   */
+  rollbackHistoryValue: param => {
+    return $http.$post('/history-value/rollback', param)
   }
 
 }

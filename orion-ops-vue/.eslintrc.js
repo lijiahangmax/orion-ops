@@ -13,6 +13,8 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    // 变量未使用不报错
+    'no-unused-vars': 'off',
     // 行末分号 (启用)
     // 'semi': ['warn', 'always'],
     // 函数名后的空格 (禁用)
