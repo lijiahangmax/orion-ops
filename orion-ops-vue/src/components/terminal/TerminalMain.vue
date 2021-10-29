@@ -137,7 +137,7 @@
   const terminalEventHandler = {
     onResize(cols, rows) {
       // 调整大小
-      if (this.status !== 20) {
+      if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
         return
       }
       this.terminalConfig.cols = cols
@@ -193,7 +193,7 @@
   const clientHandler = {
     onopen() {
       console.log('open')
-      this.status = 10
+      this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
       this.loading()
       // 自适应窗口
       this.plugin.fit.fit()
@@ -214,14 +214,14 @@
     },
     onerror() {
       console.log('error')
-      this.status = 40
+      this.status = this.$enum.TERMINAL_STATUS.ERROR.value
       this.loading()
       this.$message.error('无法连接至服务器', 2)
       this.term.write('\x1B[1;3;31m\r\nfailed to establish connection\x1B[0m')
     },
     onclose(e) {
       console.log('close')
-      this.status = 30
+      this.status = this.$enum.TERMINAL_STATUS.DISCONNECTED.value
       this.term.write('\x1B[1;3;31m\r\n' + e.reason + '\x1B[0m')
       // 关闭窗口大小监听器
       window.removeEventListener('resize', this.windowChange)
@@ -250,7 +250,7 @@
       }))
     },
     key(e) {
-      if (this.status !== 20) {
+      if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
         return
       }
       this.client.send(JSON.stringify({
@@ -259,7 +259,7 @@
       }))
     },
     resize(cols, rows) {
-      if (this.status !== 20) {
+      if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
         return
       }
       console.log('resize', cols, rows)
@@ -335,7 +335,7 @@
     const len = msg.length
     switch (code) {
       case '010':
-        this.status = 20
+        this.status = this.$enum.TERMINAL_STATUS.CONNECTED.value
         this.term.focus()
         break
       case '100':

@@ -23,7 +23,7 @@
         <!-- 状态 -->
         <a-popconfirm placement="bottom" ok-text="确认" cancel-text="取消" @confirm="confirmStatus">
           <template slot="title">
-            <p v-if="machine.status === 20">确认断开?</p>
+            <p v-if="machine.status === $enum.TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
           <a-badge :count="this.statusLabel" :number-style="{
@@ -84,10 +84,10 @@
     },
     computed: {
       statusLabel: function() {
-        return this.$enum.TERMINAL_STATUS[this.machine.status].value
+        return this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).label
       },
       statusColor: function() {
-        return this.$enum.TERMINAL_STATUS[this.machine.status].color
+        return this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).color
       }
     },
     methods: {
@@ -105,7 +105,7 @@
         this.commandInput = ''
       },
       confirmStatus() {
-        if (this.machine.status === 20) {
+        if (this.machine.status === this.$enum.TERMINAL_STATUS.CONNECTED.value) {
           this.$emit('disconnect')
         } else {
           location.reload()
