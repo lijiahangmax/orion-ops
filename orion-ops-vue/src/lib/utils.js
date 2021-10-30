@@ -201,7 +201,7 @@ function replaceNumber(value) {
   if (s === '.' || s === '-') {
     return s.substring(0, value.length - 1)
   }
-  return s
+  return value
 }
 
 export default {
