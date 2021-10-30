@@ -8,8 +8,8 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineConst;
+import com.orion.ops.consts.machine.MachineProperty;
 import com.orion.ops.consts.machine.ProxyType;
-import com.orion.ops.consts.machine.SyncMachineProperties;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
@@ -191,33 +191,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     @Override
-    public String syncProperties(MachineInfoRequest request) {
-        Long id = request.getId();
-        String syncProp = request.getSyncProp();
-        SyncMachineProperties func = SyncMachineProperties.of(syncProp);
-        Valid.notNull(func, MessageConst.UNABLE_SYNC_PROP);
-        MachineInfoDO machine = new MachineInfoDO();
-        machine.setId(id);
-        String res = this.getCommandResultSync(id, func.getCommand());
-        switch (func) {
-            case MACHINE_NAME:
-                machine.setMachineName(res);
-                break;
-            case SYSTEM_VERSION:
-                machine.setSystemVersion(res);
-                break;
-            default:
-                return null;
-        }
-        if (res == null) {
-            return null;
-        }
-        machine.setUpdateTime(new Date());
-        machineInfoDAO.updateById(machine);
-        return res;
-    }
-
-    @Override
     public MachineInfoDO selectById(Long id) {
         return machineInfoDAO.selectById(id);
     }
@@ -246,6 +219,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public SessionStore openSessionStore(Long id) {
         MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+        if (!Const.ENABLE.equals(machine.getMachineStatus())) {
+            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
+        }
         return this.openSessionStore(machine);
     }
 
@@ -271,8 +247,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             }
         }
         ex.printStackTrace();
-        HttpWrapper<?> error = HttpWrapper.error("机器 " + machine.getMachineHost() + " " + msg);
-        throw Exceptions.httpWrapper(error, ex);
+        throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, "机器 " + machine.getMachineHost() + " " + msg, ex);
     }
 
     /**
@@ -318,14 +293,13 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         }
     }
 
-    /**
-     * 同步执行命令获取输出结果
-     *
-     * @param id      机器id
-     * @param command 命令
-     * @return result
-     */
-    private String getCommandResultSync(Long id, String command) {
+    @Override
+    public String getPropertiesResultSync(Long id, MachineProperty property) {
+        return getCommandResultSync(id, property.getCommand());
+    }
+
+    @Override
+    public String getCommandResultSync(Long id, String command) {
         String res;
         if (id.equals(Const.HOST_MACHINE_ID)) {
             // 本机
@@ -409,7 +383,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         entity.setUsername(request.getUsername());
         entity.setPassword(null);
         entity.setAuthType(request.getAuthType());
-        entity.setSystemVersion(request.getSystemVersion());
         entity.setMachineStatus(request.getStatus());
     }
 

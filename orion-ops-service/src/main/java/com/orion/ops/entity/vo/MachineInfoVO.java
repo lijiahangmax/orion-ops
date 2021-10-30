@@ -72,11 +72,6 @@ public class MachineInfoVO {
     private String username;
 
     /**
-     * key名称
-     */
-    private String keyName;
-
-    /**
      * 机器认证方式 1: 账号认证 2: key认证
      *
      * @see com.orion.ops.consts.machine.MachineAuthType
@@ -118,7 +113,6 @@ public class MachineInfoVO {
             vo.setDescription(p.getDescription());
             vo.setUsername(p.getUsername());
             vo.setAuthType(p.getAuthType());
-            vo.setSystemVersion(p.getSystemVersion());
             vo.setStatus(p.getMachineStatus());
             vo.setCreateTime(p.getCreateTime());
             return vo;

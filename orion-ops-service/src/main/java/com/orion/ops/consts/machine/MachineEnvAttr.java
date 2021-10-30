@@ -119,7 +119,8 @@ public enum MachineEnvAttr {
             return null;
         }
         return Arrays.stream(values())
-                .filter(a -> a.key.equals(key)).findFirst()
+                .filter(a -> a.key.equals(key))
+                .findFirst()
                 .orElse(null);
     }
 

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 同步机器属性
+ * 机器属性
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum SyncMachineProperties {
+public enum MachineProperty {
 
     /**
      * 机器名称
@@ -28,11 +28,11 @@ public enum SyncMachineProperties {
 
     private final String command;
 
-    public static SyncMachineProperties of(String prop) {
+    public static MachineProperty of(String prop) {
         if (prop == null) {
             return null;
         }
-        for (SyncMachineProperties value : values()) {
+        for (MachineProperty value : values()) {
             if (value.prop.equals(prop)) {
                 return value;
             }

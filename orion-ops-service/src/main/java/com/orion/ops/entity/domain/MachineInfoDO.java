@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,7 +31,7 @@ public class MachineInfoDO implements Serializable {
     /**
      * 代理id
      */
-    @TableField("proxy_id")
+    @TableField(value = "proxy_id", updateStrategy = FieldStrategy.IGNORED)
     private Long proxyId;
 
     /**
@@ -86,12 +83,6 @@ public class MachineInfoDO implements Serializable {
      */
     @TableField("auth_type")
     private Integer authType;
-
-    /**
-     * 机器版本 如: centOS7.0
-     */
-    @TableField("system_version")
-    private String systemVersion;
 
     /**
      * 机器状态 1有效 2无效

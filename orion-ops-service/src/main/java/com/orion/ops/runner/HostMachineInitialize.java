@@ -65,7 +65,6 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
             insert.setAuthType(MachineAuthType.PASSWORD.getType());
-            insert.setSystemVersion(Systems.OS_NAME + Strings.SPACE + Systems.OS_VERSION);
             insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);
             machineInfoDAO.setId(insert.getId(), Const.HOST_MACHINE_ID);
