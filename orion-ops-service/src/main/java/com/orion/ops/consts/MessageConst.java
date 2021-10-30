@@ -26,6 +26,16 @@ public class MessageConst {
 
     public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
 
+    public static final String TASK_ERROR = "任务执行异常";
+
+    public static final String CONNECT_ERROR = "连接异常";
+
+    public static final String TIMEOUT_ERROR = "处理超时";
+
+    public static final String INTERRUPT_ERROR = "操作中断";
+
+    public static final String UNSAFE_ERROR = "不安全的操作";
+
     public static final String ENCRYPT_ERROR = "数据加密异常";
 
     public static final String DECRYPT_ERROR = "数据解密异常";
@@ -38,11 +48,9 @@ public class MessageConst {
 
     public static final String INVALID_PROXY = "未查询到代理信息";
 
-    public static final String UNABLE_SYNC_PROP = "无法同步属性";
-
     public static final String INVALID_PTY = "终端类型不合法";
 
-    public static final String EXCEPTION_MESSAGE = "系统繁忙";
+    public static final String EXCEPTION_MESSAGE = "系统异常";
 
     public static final String AUTH_EXCEPTION_MESSAGE = "认证失败";
 
@@ -74,7 +82,7 @@ public class MessageConst {
 
     public static final String DEL_ROOT_PATH = "你TM敢删除根目录?";
 
-    public static final String FILE_NOTFOUND = "文件不存在";
+    public static final String FILE_NOT_FOUND = "文件不存在";
 
     public static final String UNSELECTED_TRANSFER_LOG = "未找到传输对象";
 

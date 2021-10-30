@@ -22,12 +22,12 @@ public enum MountKeyStatus {
     /**
      * 已挂载
      */
-    MOUNT(2),
+    MOUNTED(2),
 
     /**
      * 未挂载
      */
-    UNMOUNT(3);
+    DUMPED(3);
 
     private final Integer status;
 

@@ -151,9 +151,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
                 if (isFile) {
                     boolean match = loadKeys.stream().anyMatch(key -> key.endsWith(path));
                     if (match) {
-                        row.setMountStatus(MountKeyStatus.MOUNT.getStatus());
+                        row.setMountStatus(MountKeyStatus.MOUNTED.getStatus());
                     } else {
-                        row.setMountStatus(MountKeyStatus.UNMOUNT.getStatus());
+                        row.setMountStatus(MountKeyStatus.DUMPED.getStatus());
                     }
                 } else {
                     row.setMountStatus(MountKeyStatus.NOT_FOUND.getStatus());
@@ -264,9 +264,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         List<String> loadKeys = SessionHolder.getLoadKeys();
         boolean match = loadKeys.stream().anyMatch(k -> k.endsWith(path));
         if (match) {
-            return MountKeyStatus.MOUNT.getStatus();
+            return MountKeyStatus.MOUNTED.getStatus();
         } else {
-            return MountKeyStatus.UNMOUNT.getStatus();
+            return MountKeyStatus.DUMPED.getStatus();
         }
     }
 

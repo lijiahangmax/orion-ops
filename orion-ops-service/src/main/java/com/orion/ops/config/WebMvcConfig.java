@@ -25,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 
 /**
  * spring mvc 配置
@@ -68,6 +69,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         log.error("normalExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = ApplicationException.class)
+    public HttpWrapper<?> applicationExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("applicationExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(ex.getMessage());
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class,
@@ -118,6 +126,41 @@ public class WebMvcConfig implements WebMvcConfigurer {
         log.error("vcsExceptionHandler url: {}, vcs处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
         return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {TaskExecuteException.class, ExecuteException.class})
+    public HttpWrapper<?> taskExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("taskExceptionHandler url: {}, task处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.TASK_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = ConnectionRuntimeException.class)
+    public HttpWrapper<?> connectionExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("connectionExceptionHandler url: {}, connect异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.CONNECT_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {TimeoutException.class, java.util.concurrent.TimeoutException.class})
+    public HttpWrapper<?> timeoutExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("timeoutExceptionHandler url: {}, timeout异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.TIMEOUT_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {InterruptedException.class, InterruptedRuntimeException.class, InterruptedIOException.class})
+    public HttpWrapper<?> interruptExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("interruptExceptionHandler url: {}, interrupt异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.INTERRUPT_ERROR).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = UnsafeException.class)
+    public HttpWrapper<?> unsafeExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("unsafeExceptionHandler url: {}, unsafe异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
+        ex.printStackTrace();
+        return HttpWrapper.error().msg(MessageConst.UNSAFE_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = LogException.class)

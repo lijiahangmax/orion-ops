@@ -45,7 +45,7 @@ public class MachineKeyController {
             return machineKeyService.addSecretKey(request);
         } catch (Exception e) {
             log.error("添加秘钥失败 {} {}", JSON.toJSONString(request), e);
-            throw Exceptions.runtime(MessageConst.ADD_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.ADD_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -59,7 +59,7 @@ public class MachineKeyController {
             return machineKeyService.updateSecretKey(request);
         } catch (Exception e) {
             log.error("修改秘钥失败 {} {}", JSON.toJSONString(request), e);
-            throw Exceptions.runtime(MessageConst.UPDATE_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.UPDATE_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -73,7 +73,7 @@ public class MachineKeyController {
             return machineKeyService.removeSecretKey(idList);
         } catch (Exception e) {
             log.error("删除秘钥失败 {} {}", idList, e);
-            throw Exceptions.runtime(MessageConst.REMOVE_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.REMOVE_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -95,7 +95,7 @@ public class MachineKeyController {
             return machineKeyService.mountKey(id);
         } catch (Exception e) {
             log.error("挂载秘钥失败 {} {}", id, e);
-            throw Exceptions.runtime(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -109,7 +109,7 @@ public class MachineKeyController {
             return machineKeyService.dumpKey(id);
         } catch (Exception e) {
             log.error("卸载秘钥失败 {} {}", id, e);
-            throw Exceptions.runtime(MessageConst.DUMP_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.DUMP_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -122,7 +122,7 @@ public class MachineKeyController {
             machineKeyService.mountAllKey();
         } catch (Exception e) {
             log.error("挂载所有秘钥失败", e);
-            throw Exceptions.runtime(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -135,7 +135,7 @@ public class MachineKeyController {
             machineKeyService.dumpAllKey();
         } catch (Exception e) {
             log.error("卸载所有秘钥失败", e);
-            throw Exceptions.runtime(MessageConst.DUMP_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.DUMP_SECRET_KEY_ERROR, e);
         }
     }
 
@@ -150,7 +150,7 @@ public class MachineKeyController {
             return machineKeyService.tempMountKey(file, password);
         } catch (Exception e) {
             log.error("临时挂载秘钥失败", e);
-            throw Exceptions.runtime(MessageConst.TEMP_MOUNT_SECRET_KEY_ERROR, e);
+            throw Exceptions.app(MessageConst.TEMP_MOUNT_SECRET_KEY_ERROR, e);
         }
     }
 
