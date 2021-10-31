@@ -1,7 +1,7 @@
 module.exports = {
-  publicPath: '/orion/ops/',
+  publicPath: '/ops/',
   devServer: {
-    port: 10000
+    port: 10010
     // proxy: {
     //   '/api': {
     //     target: '',

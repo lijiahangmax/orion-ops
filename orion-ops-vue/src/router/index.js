@@ -76,6 +76,16 @@ const routes = [
         component: () => import('../views/machine/MachineKey')
       },
       {
+        path: '/terminal/session',
+        name: 'terminalSession',
+        meta: {
+          requireAuth: true,
+          requireAdmin: true,
+          title: '终端控制'
+        },
+        component: () => import('../views/machine/MachineTerminalSession')
+      },
+      {
         path: '/machine/proxy',
         name: 'MachineProxy',
         meta: {
@@ -85,6 +95,78 @@ const routes = [
         component: () => import('../views/machine/MachineProxy')
       },
       {
+        path: '/batch/exec',
+        name: 'batchExec',
+        meta: {
+          requireAuth: true,
+          title: '批量执行'
+        },
+        component: () => import('../views/exec/BatchExec')
+      },
+      {
+        path: '/log/view',
+        name: 'loggerView',
+        meta: {
+          requireAuth: true,
+          title: '日志面板'
+        },
+        component: () => import('../views/exec/LoggerView')
+      },
+      {
+        path: '/app/list',
+        name: 'appList',
+        meta: {
+          requireAuth: true,
+          title: '应用列表'
+        },
+        component: () => import('../views/app/AppList')
+      },
+      {
+        path: '/app/profile',
+        name: 'appProfile',
+        meta: {
+          requireAuth: true,
+          title: '环境管理'
+        },
+        component: () => import('../views/app/AppProfile')
+      },
+      {
+        path: '/app/env',
+        name: 'appEnv',
+        meta: {
+          requireAuth: true,
+          title: '环境变量'
+        },
+        component: () => import('../views/app/AppEnv')
+      },
+      {
+        path: '/release/config',
+        name: 'releaseConfig',
+        meta: {
+          requireAuth: true,
+          title: '发布配置'
+        },
+        component: () => import('../views/release/ReleaseConfig')
+      },
+      {
+        path: '/release/bill',
+        name: 'releaseBill',
+        meta: {
+          requireAuth: true,
+          title: '发布单'
+        },
+        component: () => import('../views/release/ReleaseBill')
+      },
+      {
+        path: '/user/list',
+        name: 'userList',
+        meta: {
+          requireAuth: true,
+          title: '用户列表'
+        },
+        component: () => import('../views/user/UserList')
+      },
+      {
         path: '/user/detail',
         name: 'userDetail',
         meta: {
@@ -92,6 +174,15 @@ const routes = [
           title: '用户详情'
         },
         component: () => import('../views/user/UserDetail')
+      },
+      {
+        path: '/template/list',
+        name: 'templateList',
+        meta: {
+          requireAuth: true,
+          title: '模板配置'
+        },
+        component: () => import('../views/template/TemplateList')
       },
       {
         path: '*',

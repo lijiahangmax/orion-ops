@@ -59,7 +59,7 @@ const $fetch = (url, method = 'get', config) => {
  * 填充默认配置
  */
 function fillDefaultConfig(config) {
-  for (var defaultConfigKey in defaultConfig) {
+  for (const defaultConfigKey in defaultConfig) {
     if (!(defaultConfigKey in config)) {
       config[defaultConfigKey] = defaultConfig[defaultConfigKey]
     }
