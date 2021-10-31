@@ -42,10 +42,7 @@
     <!-- 工具栏 -->
     <div class="machine-proxy-tools-bar">
       <a-button type="primary" icon="plus" @click="add">新建</a-button>
-      <a-button class="dynamic-button" type="danger" icon="delete"
-                v-show="selectedRowKeys.length" @click="batchRemove()">
-        批量删除
-      </a-button>
+      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">批量删除</a-button>
     </div>
     <!-- 表格 -->
     <div class="machine-proxy-table">
@@ -155,9 +152,7 @@
           username: null,
           type: null
         },
-        loading: false,
         rows: [],
-        selectedRowKeys: [],
         pagination: {
           current: 1,
           pageSize: 10,
@@ -166,6 +161,8 @@
             return `共 ${total}条`
           }
         },
+        loading: false,
+        selectedRowKeys: [],
         columns
       }
     },
@@ -183,15 +180,10 @@
           this.rows = data.rows
           this.pagination = pagination
           this.loading = false
+          this.selectedRowKeys = []
         }).catch(() => {
           this.loading = false
         })
-      },
-      add() {
-        this.$refs.addModal.add()
-      },
-      update(record) {
-        this.$refs.addModal.update(record)
       },
       remove(id) {
         this.$confirm({
@@ -228,6 +220,12 @@
           }
         })
       },
+      add() {
+        this.$refs.addModal.add()
+      },
+      update(record) {
+        this.$refs.addModal.update(record)
+      },
       resetForm() {
         this.$refs.query.resetFields()
         this.getList({})
@@ -248,6 +246,10 @@
 
   .machine-proxy-tools-bar {
     margin-bottom: 12px;
+  }
+
+  .machine-proxy-tools-bar > button {
+    margin-right: 8px;
   }
 
   .machine-proxy-search-form /deep/ .ant-form-item {

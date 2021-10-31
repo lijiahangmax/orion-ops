@@ -105,7 +105,7 @@
         loading: false,
         mask: true,
         record: null,
-        layout: layout,
+        layout,
         decorators: getDecorators.call(this),
         form: this.$form.createForm(this)
       }

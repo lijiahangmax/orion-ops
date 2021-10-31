@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import Terminal from '@/components/terminal/Terminal.vue'
+  import Terminal from '../../components/terminal/Terminal'
 
   export default {
     name: 'MachineTerminal',
