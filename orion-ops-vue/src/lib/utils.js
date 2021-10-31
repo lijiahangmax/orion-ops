@@ -204,6 +204,20 @@ function replaceNumber(value) {
   return value
 }
 
+/**
+ * 给array的元素定义一个key
+ */
+function defineArrayKey(array) {
+  if (!array || !array.length) {
+    return
+  }
+  for (const item of array) {
+    for (let i = 1; i < arguments.length; i++) {
+      item[arguments[i]] = null
+    }
+  }
+}
+
 export default {
   isEmptyStr,
   copyToClipboard,
@@ -219,5 +233,6 @@ export default {
   getRoute,
   formatNumber,
   isNumber,
-  replaceNumber
+  replaceNumber,
+  defineArrayKey
 }
