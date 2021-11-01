@@ -18,7 +18,7 @@
             <a-form-model-item label="挂载状态" prop="mountStatus">
               <a-select v-model="query.mountStatus" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_KEY_MOUNT_STATUS" :key="type.value">
-                  {{type.label}}
+                  {{ type.label }}
                 </a-select-option>
               </a-select>
             </a-form-model-item>
@@ -38,11 +38,12 @@
     <div class="machine-key-tools-bar">
       <a-button type="primary" icon="plus" @click="add">新建</a-button>
       <a-button type="primary" icon="safety" @click="tempMount">临时挂载</a-button>
-      <a-button type="primary" icon="pull-request" v-show="selectedRowKeys.length" @click="batchMount()">批量挂载</a-button>
       <a-button type="primary" icon="apartment" @click="mountAll">挂载全部</a-button>
-      <a-button type="danger" icon="poweroff" v-show="selectedRowKeys.length" @click="batchDump()">批量卸载</a-button>
-      <a-button type="danger" icon="gateway" @click="dumpAll">卸载全部</a-button>
-      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">批量删除</a-button>
+      <a-button type="danger" icon="gateway" style="margin-right: 0" @click="dumpAll">卸载全部</a-button>
+      <a-divider type="vertical" v-show="selectedRowKeys.length"/>
+      <a-button type="primary" icon="pull-request" v-show="selectedRowKeys.length" @click="batchMount()">挂载</a-button>
+      <a-button type="danger" icon="poweroff" v-show="selectedRowKeys.length" @click="batchDump()">卸载</a-button>
+      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
     </div>
     <!-- 表格 -->
     <div class="machine-key-table">
@@ -56,29 +57,55 @@
                size="middle">
         <!-- 秘钥路径 -->
         <div slot="path" slot-scope="record">
-          <a @click="loadDownloadUrl(record)">{{record.path}}</a>
+          <a @click="loadDownloadUrl(record)">{{ record.path }}</a>
           <a v-if="record.downloadUrl" :href="record.downloadUrl" @click="clearDownloadUrl(record)" style="margin-left: 10px">
             <a-icon type="download"/>
           </a>
         </div>
         <!-- 创建时间 -->
         <span slot="createTime" slot-scope="record">
-          {{record.createTime | formatDate({date: record.createTime, pattern: 'yyyy-MM-dd HH:mm:ss'})}}
+          {{
+            record.createTime | formatDate({
+              date: record.createTime,
+              pattern: 'yyyy-MM-dd HH:mm:ss'
+            })
+          }}
         </span>
         <!-- 挂载状态 -->
-        <a-tag slot="mountStatus" slot-scope="record"
-               @click="changeMountStatus(record)"
-               :style="{'cursor': record.mountStatus === 1 ? 'default' : 'pointer'}"
-               :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-          {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
-        </a-tag>
+        <div slot="mountStatus" slot-scope="record">
+          <!-- 未挂载 -->
+          <a-tag v-if="record.mountStatus === 1"
+                 :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
+            {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+          </a-tag>
+          <!-- 可操作 -->
+          <a-popconfirm v-else
+                        :title="record.mountStatus === 2 ?
+                        '是否卸载当前秘钥? 可能会导致机器无法连接!' :
+                        '是否挂载当前秘钥?'"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="changeMountStatus(record.id, record.mountStatus)">
+            <a-tag :style="{cursor: 'pointer'}"
+                   :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
+              {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+            </a-tag>
+          </a-popconfirm>
+        </div>
+
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 修改 -->
           <a @click="update(record)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
-          <a @click="remove(record.id)">删除</a>
+          <a-popconfirm title="确认删除当前秘钥?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove(record.id)">
+            <span class="span-blue pointer">删除</span>
+          </a-popconfirm>
         </div>
       </a-table>
     </div>
@@ -93,321 +120,298 @@
 </template>
 
 <script>
-  import _utils from '../../lib/utils'
-  import AddMachineKeyModal from '../../components/machine/AddMachineKeyModal'
-  import TempMountMachineKeyModal from '../../components/machine/TempMountMachineKeyModal'
+import _utils from '@/lib/utils'
+import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
+import TempMountMachineKeyModal from '@/components/machine/TempMountMachineKeyModal'
 
-  /**
-   * 列
-   */
-  const columns = [
-    {
-      title: '序号',
-      key: 'seq',
-      customRender: (text, record, index) => `${index + 1}`,
-      width: 60,
-      align: 'center'
-    },
-    {
-      title: '秘钥名称',
-      dataIndex: 'name',
-      key: 'name',
-      width: 200,
-      sorter: (a, b) => a.name.localeCompare(b.name)
-    },
-    {
-      title: '秘钥路径',
-      key: 'path',
-      scopedSlots: { customRender: 'path' },
-      width: 300
-    },
-    {
-      title: '创建时间',
-      key: 'createTime',
-      sorter: (a, b) => a.createTime - b.createTime,
-      scopedSlots: { customRender: 'createTime' },
-      width: 180
-    },
-    {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      width: 200
-    },
-    {
-      title: '挂载状态',
-      key: 'mountStatus',
-      width: 100,
-      scopedSlots: { customRender: 'mountStatus' }
-    },
-    {
-      title: '操作',
-      key: 'action',
-      fixed: 'right',
-      width: 160,
-      scopedSlots: { customRender: 'action' },
-      align: 'center'
+/**
+ * 列
+ */
+const columns = [
+  {
+    title: '序号',
+    key: 'seq',
+    customRender: (text, record, index) => `${index + 1}`,
+    width: 60,
+    align: 'center'
+  },
+  {
+    title: '秘钥名称',
+    dataIndex: 'name',
+    key: 'name',
+    width: 200,
+    sorter: (a, b) => a.name.localeCompare(b.name)
+  },
+  {
+    title: '秘钥路径',
+    key: 'path',
+    scopedSlots: { customRender: 'path' },
+    width: 300
+  },
+  {
+    title: '创建时间',
+    key: 'createTime',
+    sorter: (a, b) => a.createTime - b.createTime,
+    scopedSlots: { customRender: 'createTime' },
+    width: 180
+  },
+  {
+    title: '描述',
+    dataIndex: 'description',
+    key: 'description',
+    width: 200
+  },
+  {
+    title: '挂载状态',
+    key: 'mountStatus',
+    width: 100,
+    scopedSlots: { customRender: 'mountStatus' }
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 160,
+    scopedSlots: { customRender: 'action' },
+    align: 'center'
+  }
+]
+
+export default {
+  name: 'MachineKey',
+  components: {
+    AddMachineKeyModal,
+    TempMountMachineKeyModal
+  },
+  data: function() {
+    return {
+      query: {
+        name: null,
+        description: null,
+        mountStatus: null
+      },
+      rows: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showTotal: function(total) {
+          return `共 ${total}条`
+        }
+      },
+      loading: false,
+      selectedRowKeys: [],
+      columns
     }
-  ]
-
-  export default {
-    name: 'MachineKey',
-    components: {
-      AddMachineKeyModal,
-      TempMountMachineKeyModal
+  },
+  methods: {
+    getList(page = this.pagination) {
+      this.loading = true
+      this.$api.getMachineKeyList({
+        ...this.query,
+        page: page.current,
+        limit: page.pageSize
+      }).then(({ data }) => {
+        const pagination = { ...this.pagination }
+        pagination.total = data.total
+        pagination.current = data.page
+        // 定义下载路径
+        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        this.rows = data.rows
+        this.pagination = pagination
+        this.loading = false
+        this.selectedRowKeys = []
+      }).catch(() => {
+        this.loading = false
+      })
     },
-    data: function() {
-      return {
-        query: {
-          name: null,
-          description: null,
-          mountStatus: null
-        },
-        rows: [],
-        pagination: {
-          current: 1,
-          pageSize: 10,
-          total: 0,
-          showTotal: function(total) {
-            return `共 ${total}条`
-          }
-        },
-        loading: false,
-        selectedRowKeys: [],
-        columns
-      }
+    resetForm() {
+      this.$refs.query.resetFields()
+      this.getList({})
     },
-    methods: {
-      getList(page = this.pagination) {
-        this.loading = true
-        this.$api.getMachineKeyList({
-          ...this.query,
-          page: page.current,
-          limit: page.pageSize
-        }).then(({ data }) => {
-          const pagination = { ...this.pagination }
-          pagination.total = data.total
-          pagination.current = data.page
-          // 定义下载路径
-          this.$utils.defineArrayKey(data.rows, 'downloadUrl')
-          this.rows = data.rows
-          this.pagination = pagination
-          this.loading = false
-          this.selectedRowKeys = []
-        }).catch(() => {
-          this.loading = false
-        })
-      },
-      resetForm() {
-        this.$refs.query.resetFields()
-        this.getList({})
-      },
-      async loadDownloadUrl(record) {
+    async loadDownloadUrl(record) {
+      try {
         const downloadUrl = await this.$api.getFileDownloadToken({
           type: 10,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
-      },
-      clearDownloadUrl(record) {
-        record.downloadUrl = null
-      },
-      changeMountStatus(record) {
-        if (record.mountStatus === 2) {
-          // 已挂载
-          this.$confirm({
-            title: '确认卸载',
-            content: '是否卸载当前秘钥? 可能会导致机器无法连接!',
-            okType: 'danger',
-            okText: '确认',
-            cancelText: '取消',
-            onOk: () => {
-              this.$api.dumpMachineKey({
-                idList: [record.id]
-              }).then(() => {
-                this.$message.success('卸载成功')
-                this.getList()
-              }).catch(() => {
-                this.$message.error('卸载失败')
-              })
-            }
+      } catch (e) {
+        // ignore
+      }
+    },
+    clearDownloadUrl(record) {
+      record.downloadUrl = null
+    },
+    changeMountStatus(id, status) {
+      if (status === 2) {
+        this.$api.dumpMachineKey({
+          idList: [id]
+        }).then(() => {
+          this.$message.success('卸载成功')
+          this.getList()
+        }).catch(() => {
+          this.$message.error('卸载失败')
+        })
+      } else if (status === 3) {
+        // 未挂载
+        this.$api.mountMachineKey({
+          idList: [id]
+        }).then(() => {
+          this.$message.success('挂载成功')
+          this.getList()
+        }).catch(() => {
+          this.$message.error('挂载失败')
+        })
+      }
+    },
+    batchMount() {
+      this.$confirm({
+        title: '确认挂载',
+        content: '是否挂载选中秘钥?',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.$api.mountMachineKey({
+            idList: this.selectedRowKeys
+          }).then(() => {
+            this.$message.success('挂载成功')
+            this.getList()
+          }).catch(() => {
+            this.$message.error('挂载失败')
           })
-        } else if (record.mountStatus === 3) {
-          // 未挂载
-          this.$confirm({
-            title: '确认挂载',
-            content: '是否挂载当前秘钥?',
-            okText: '确认',
-            cancelText: '取消',
-            onOk: () => {
-              this.$api.mountMachineKey({
-                idList: [record.id]
-              }).then(() => {
-                this.$message.success('挂载成功')
-                this.getList()
-              }).catch(() => {
-                this.$message.error('挂载失败')
-              })
-            }
-          })
+          this.selectedRowKeys = []
         }
-      },
-      batchMount() {
-        this.$confirm({
-          title: '确认挂载',
-          content: '是否挂载选中秘钥?',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.mountMachineKey({
-              idList: this.selectedRowKeys
-            }).then(() => {
+      })
+    },
+    mountAll() {
+      this.$confirm({
+        title: '确认挂载全部',
+        content: '是否挂载全部秘钥?',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.$api.mountAllMachineKey()
+            .then(() => {
               this.$message.success('挂载成功')
               this.getList()
-            }).catch(() => {
+            })
+            .catch(() => {
               this.$message.error('挂载失败')
             })
-            this.selectedRowKeys = []
-          }
-        })
-      },
-      mountAll() {
-        this.$confirm({
-          title: '确认挂载全部',
-          content: '是否挂载全部秘钥?',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.mountAllMachineKey()
-              .then(() => {
-                this.$message.success('挂载成功')
-                this.getList()
-              })
-              .catch(() => {
-                this.$message.error('挂载失败')
-              })
-          }
-        })
-      },
-      batchDump() {
-        this.$confirm({
-          title: '确认卸载全部',
-          content: '是否卸载选中秘钥? 可能会导致机器无法连接!',
-          okType: 'danger',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.dumpMachineKey({
-              idList: this.selectedRowKeys
-            }).then(() => {
+        }
+      })
+    },
+    batchDump() {
+      this.$confirm({
+        title: '确认卸载全部',
+        content: '是否卸载选中秘钥? 可能会导致机器无法连接!',
+        okType: 'danger',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.$api.dumpMachineKey({
+            idList: this.selectedRowKeys
+          }).then(() => {
+            this.$message.success('卸载成功')
+            this.getList()
+          }).catch(() => {
+            this.$message.error('卸载失败')
+          })
+          this.selectedRowKeys = []
+        }
+      })
+    },
+    dumpAll() {
+      this.$confirm({
+        title: '确认卸载全部',
+        content: '是否卸载全部秘钥? 可能会导致机器无法连接!',
+        okType: 'danger',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.$api.dumpAllMachineKey()
+            .then(() => {
               this.$message.success('卸载成功')
               this.getList()
-            }).catch(() => {
+            })
+            .catch(() => {
               this.$message.error('卸载失败')
             })
-            this.selectedRowKeys = []
-          }
-        })
-      },
-      dumpAll() {
-        this.$confirm({
-          title: '确认卸载全部',
-          content: '是否卸载全部秘钥? 可能会导致机器无法连接!',
-          okType: 'danger',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.dumpAllMachineKey()
-              .then(() => {
-                this.$message.success('卸载成功')
-                this.getList()
-              })
-              .catch(() => {
-                this.$message.error('卸载失败')
-              })
-          }
-        })
-      },
-      remove(id) {
-        this.$confirm({
-          title: '确认删除',
-          content: '是否删除当前秘钥?',
-          okType: 'danger',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.removeMachineKey({
-              idList: [id]
-            }).then(() => {
-              this.$message.success('删除成功')
-              this.getList()
-            })
-          }
-        })
-      },
-      batchRemove() {
-        this.$confirm({
-          title: '确认删除',
-          content: '是否删除选中秘钥?',
-          okType: 'danger',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.$api.removeMachineKey({
-              idList: this.selectedRowKeys
-            }).then(() => {
-              this.$message.success('删除成功')
-              this.getList()
-            })
-            this.selectedRowKeys = []
-          }
-        })
-      },
-      tempMount() {
-        this.$refs.tempMountModal.add()
-      },
-      add() {
-        this.$refs.addModal.add()
-      },
-      update(record) {
-        this.$refs.addModal.update(record)
-      }
+        }
+      })
     },
-    filters: {
-      formatDate(origin, {
-        date,
-        pattern
-      }) {
-        return _utils.dateFormat(new Date(date), pattern)
-      }
+    remove(id) {
+      this.$api.removeMachineKey({
+        idList: [id]
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.getList()
+      })
     },
-    mounted() {
-      this.getList({})
+    batchRemove() {
+      this.$confirm({
+        title: '确认删除',
+        content: '是否删除选中秘钥?',
+        okType: 'danger',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.$api.removeMachineKey({
+            idList: this.selectedRowKeys
+          }).then(() => {
+            this.$message.success('删除成功')
+            this.getList()
+          })
+          this.selectedRowKeys = []
+        }
+      })
+    },
+    tempMount() {
+      this.$refs.tempMountModal.add()
+    },
+    add() {
+      this.$refs.addModal.add()
+    },
+    update(record) {
+      this.$refs.addModal.update(record)
     }
+  },
+  filters: {
+    formatDate(origin, {
+      date,
+      pattern
+    }) {
+      return _utils.dateFormat(new Date(date), pattern)
+    }
+  },
+  mounted() {
+    this.getList({})
   }
+}
 
 </script>
 
 <style scoped>
 
-  .machine-key-tools-bar {
-    margin-bottom: 12px;
-  }
+.machine-key-tools-bar {
+  margin-bottom: 12px;
+}
 
-  .machine-key-tools-bar > button {
-    margin-right: 8px;
-  }
+.machine-key-tools-bar > button {
+  margin-right: 8px;
+}
 
-  .machine-key-search {
-    margin: 12px 12px 0 12px;
-  }
+.machine-key-search {
+  margin: 12px 12px 0 12px;
+}
 
-  .machine-key-search-form /deep/ .ant-form-item {
-    display: flex;
-  }
+.machine-key-search-form /deep/ .ant-form-item {
+  display: flex;
+}
 
-  .machine-key-search-form /deep/ .ant-form-item-control-wrapper {
-    flex: 0.8;
-  }
+.machine-key-search-form /deep/ .ant-form-item-control-wrapper {
+  flex: 0.8;
+}
 
 </style>
