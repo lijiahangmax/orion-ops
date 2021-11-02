@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -176,15 +178,14 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     }
 
     @Override
-    public Integer mountKey(Long id) {
-        MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return this.mountOrDump(key, true);
-    }
-
-    @Override
-    public Integer dumpKey(Long id) {
-        MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
-        return this.mountOrDump(key, false);
+    public Map<String, Integer> mountOrDumpKeys(List<Long> idList, boolean mount) {
+        Map<String, Integer> map = new LinkedHashMap<>();
+        for (Long id : idList) {
+            MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
+            Integer status = this.mountOrDump(key, mount);
+            map.put(id + Strings.EMPTY, status);
+        }
+        return map;
     }
 
     @Override

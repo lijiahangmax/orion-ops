@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 机器秘钥
@@ -50,7 +51,7 @@ public class MachineKeyController {
     }
 
     /**
-     * 添加秘钥
+     * 更新秘钥
      */
     @RequestMapping("/update")
     public Integer updateKey(@RequestBody MachineKeyRequest request) {
@@ -89,12 +90,12 @@ public class MachineKeyController {
      * 挂载秘钥
      */
     @RequestMapping("/mount")
-    public Integer mountKey(@RequestBody MachineKeyRequest request) {
-        Long id = Valid.notNull(request.getId());
+    public Map<String, Integer> mountKeys(@RequestBody MachineKeyRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
-            return machineKeyService.mountKey(id);
+            return machineKeyService.mountOrDumpKeys(idList, true);
         } catch (Exception e) {
-            log.error("挂载秘钥失败 {} {}", id, e);
+            log.error("挂载秘钥失败 {} {}", idList, e);
             throw Exceptions.app(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
         }
     }
@@ -103,12 +104,12 @@ public class MachineKeyController {
      * 卸载秘钥
      */
     @RequestMapping("/dump")
-    public Integer dumpKey(@RequestBody MachineKeyRequest request) {
-        Long id = Valid.notNull(request.getId());
+    public Map<String, Integer> dumpKeys(@RequestBody MachineKeyRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
-            return machineKeyService.dumpKey(id);
+            return machineKeyService.mountOrDumpKeys(idList, false);
         } catch (Exception e) {
-            log.error("卸载秘钥失败 {} {}", id, e);
+            log.error("卸载秘钥失败 {} {}", idList, e);
             throw Exceptions.app(MessageConst.DUMP_SECRET_KEY_ERROR, e);
         }
     }

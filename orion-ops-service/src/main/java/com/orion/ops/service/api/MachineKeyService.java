@@ -9,6 +9,7 @@ import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.utils.io.Files1;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 机器秘钥service
@@ -62,20 +63,12 @@ public interface MachineKeyService {
     /**
      * 挂载秘钥
      *
-     * @param id id
-     * @return status
+     * @param idList idList
+     * @param mount  挂碍/卸载
+     * @return key: idString value: status
      * @see MountKeyStatus
      */
-    Integer mountKey(Long id);
-
-    /**
-     * 卸载秘钥
-     *
-     * @param id id
-     * @return status
-     * @see MountKeyStatus
-     */
-    Integer dumpKey(Long id);
+    Map<String, Integer> mountOrDumpKeys(List<Long> idList, boolean mount);
 
     /**
      * 挂载所有秘钥
