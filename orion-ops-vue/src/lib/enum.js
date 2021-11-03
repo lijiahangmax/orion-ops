@@ -58,6 +58,40 @@ const $enum = {
   },
 
   /**
+   * WS protocol
+   */
+  WS_PROTOCOL: {
+    ACK: {
+      value: '010',
+      label: 'akc'
+    },
+    CONNECTED: {
+      value: '015',
+      label: 'connected'
+    },
+    PONG: {
+      value: '020',
+      label: 'pong'
+    },
+    OK: {
+      value: '100',
+      label: 'ok'
+    },
+    UNKNOWN_OPERATE: {
+      value: '200',
+      label: 'unknown_operate'
+    },
+    MISS_ARGUMENT: {
+      value: '210',
+      label: 'miss_argument'
+    },
+    ILLEGAL_BODY: {
+      value: '220',
+      label: 'illegal_body'
+    }
+  },
+
+  /**
    * 文件类型
    */
   FILE_TYPE: {

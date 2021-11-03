@@ -160,10 +160,17 @@ const $api = {
   },
 
   /**
+   * 获取机器终端配置
+   */
+  getTerminalSetting: param => {
+    return $http.$post(`/terminal/get/${param.machineId}`, param)
+  },
+
+  /**
    * 修改机器终端配置
    */
   updateTerminalSetting: param => {
-    return $http.$post('/terminal/setting', param)
+    return $http.$post('/terminal/update', param)
   },
 
   /**
