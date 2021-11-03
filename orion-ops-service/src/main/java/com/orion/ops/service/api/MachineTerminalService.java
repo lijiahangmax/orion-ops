@@ -2,11 +2,11 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.terminal.TerminalConst;
-import com.orion.ops.entity.domain.MachineTerminalDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
 import com.orion.ops.entity.vo.MachineTerminalLogVO;
+import com.orion.ops.entity.vo.MachineTerminalVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.utils.ValueMix;
 
@@ -22,14 +22,6 @@ import java.util.Optional;
 public interface MachineTerminalService {
 
     /**
-     * 获取终端配置
-     *
-     * @param machineId 机器id
-     * @return 配置
-     */
-    MachineTerminalDO getMachineConfig(Long machineId);
-
-    /**
      * 获取访问配置
      *
      * @param machineId 机器id
@@ -38,12 +30,20 @@ public interface MachineTerminalService {
     TerminalAccessVO getAccessConfig(Long machineId);
 
     /**
+     * 获取终端配置
+     *
+     * @param machineId 机器id
+     * @return 配置
+     */
+    MachineTerminalVO getMachineConfig(Long machineId);
+
+    /**
      * 设置终端配置
      *
      * @param request request
      * @return effect
      */
-    Integer setting(MachineTerminalRequest request);
+    Integer updateSetting(MachineTerminalRequest request);
 
     /**
      * 添加日志

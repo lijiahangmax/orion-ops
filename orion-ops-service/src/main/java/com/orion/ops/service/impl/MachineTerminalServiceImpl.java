@@ -2,6 +2,8 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.terminal.TerminalConst;
@@ -13,6 +15,7 @@ import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
 import com.orion.ops.entity.vo.MachineTerminalLogVO;
+import com.orion.ops.entity.vo.MachineTerminalVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
@@ -21,7 +24,9 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.remote.TerminalType;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.convert.Converts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -55,33 +60,21 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
     private MachineInfoService machineInfoService;
 
     @Override
-    public MachineTerminalDO getMachineConfig(Long machineId) {
-        MachineTerminalDO config = machineTerminalDAO.selectOne(new LambdaQueryWrapper<MachineTerminalDO>().eq(MachineTerminalDO::getMachineId, machineId));
-        if (config != null) {
-            return config;
-        }
-        MachineTerminalDO insert = new MachineTerminalDO();
-        insert.setMachineId(machineId);
-        insert.setTerminalType(TerminalType.XTERM.getType());
-        insert.setBackgroundColor(TerminalConst.BACKGROUND_COLOR);
-        insert.setFontColor(TerminalConst.FONT_COLOR);
-        insert.setFontSize(TerminalConst.FONT_SIZE);
-        machineTerminalDAO.insert(insert);
-        return insert;
-    }
-
-    @Override
     public TerminalAccessVO getAccessConfig(Long machineId) {
         // 获取机器信息
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        if (!Const.ENABLE.equals(machine.getMachineStatus())) {
+            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
+        }
         // 设置accessToken
         Long userId = Currents.getUserId();
         String token = ValueMix.base62ecbEnc(userId + "_" + System.currentTimeMillis(), TerminalConst.TERMINAL);
         // 获取终端配置
-        MachineTerminalDO config = this.getMachineConfig(machineId);
+        MachineTerminalVO config = this.getMachineConfig(machineId);
         // 设置数据
         TerminalAccessVO access = new TerminalAccessVO();
+        access.setId(config.getId());
         access.setAccessToken(token);
         access.setHost(machine.getMachineHost());
         access.setPort(machine.getSshPort());
@@ -92,15 +85,36 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setBackgroundColor(config.getBackgroundColor());
         access.setFontSize(config.getFontSize());
         access.setFontColor(config.getFontColor());
+        access.setEnableWebLink(config.getEnableWebLink());
+        access.setEnableWebGL(config.getEnableWebGL());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(cacheKey, machineId + "", KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
-        log.info("用户获取terminal accessToken uid: {} machineId: {} token: {}", userId, machineId, token);
+        log.info("用户获取terminal uid: {} machineId: {} token: {}", userId, machineId, token);
         return access;
     }
 
     @Override
-    public Integer setting(MachineTerminalRequest request) {
+    public MachineTerminalVO getMachineConfig(Long machineId) {
+        MachineTerminalDO config = machineTerminalDAO.selectOne(new LambdaQueryWrapper<MachineTerminalDO>().eq(MachineTerminalDO::getMachineId, machineId));
+        if (config == null) {
+            // 初始化
+            MachineTerminalDO insert = new MachineTerminalDO();
+            insert.setMachineId(machineId);
+            insert.setTerminalType(TerminalType.XTERM.getType());
+            insert.setBackgroundColor(TerminalConst.BACKGROUND_COLOR);
+            insert.setFontColor(TerminalConst.FONT_COLOR);
+            insert.setFontSize(TerminalConst.FONT_SIZE);
+            insert.setEnableWebLink(Const.DISABLE);
+            insert.setEnableWebGL(Const.DISABLE);
+            machineTerminalDAO.insert(insert);
+            config = insert;
+        }
+        return Converts.to(config, MachineTerminalVO.class);
+    }
+
+    @Override
+    public Integer updateSetting(MachineTerminalRequest request) {
         MachineTerminalDO update = new MachineTerminalDO();
         update.setId(request.getId());
         update.setTerminalType(request.getTerminalType());
@@ -108,6 +122,8 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setFontColor(request.getFontColor());
         update.setBackgroundColor(request.getBackgroundColor());
         update.setUpdateTime(new Date());
+        update.setEnableWebLink(request.getEnableWebLink());
+        update.setEnableWebGL(request.getEnableWebGL());
         return machineTerminalDAO.updateById(update);
     }
 

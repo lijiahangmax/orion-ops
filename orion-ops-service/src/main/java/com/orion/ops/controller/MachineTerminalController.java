@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
@@ -11,12 +12,14 @@ import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
 import com.orion.ops.entity.vo.MachineTerminalLogVO;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
+import com.orion.ops.entity.vo.MachineTerminalVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
 import com.orion.remote.TerminalType;
 import com.orion.utils.Strings;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,16 +65,30 @@ public class MachineTerminalController {
     }
 
     /**
+     * 获取配置
+     */
+    @RequestMapping("/get/{machineId}")
+    public MachineTerminalVO getSetting(@PathVariable Long machineId) {
+        return machineTerminalService.getMachineConfig(machineId);
+    }
+
+    /**
      * 修改配置
      */
-    @RequestMapping("/setting")
-    public Integer setting(@RequestBody MachineTerminalRequest request) {
+    @RequestMapping("/update")
+    public Integer updateSetting(@RequestBody MachineTerminalRequest request) {
         Valid.notNull(request.getId());
         String terminalType = request.getTerminalType();
         if (!Strings.isBlank(terminalType)) {
             Valid.notNull(TerminalType.of(terminalType), MessageConst.INVALID_PTY);
         }
-        return machineTerminalService.setting(request);
+        if (request.getEnableWebLink() != null) {
+            Valid.in(request.getEnableWebLink(), Const.ENABLE, Const.DISABLE);
+        }
+        if (request.getEnableWebGL() != null) {
+            Valid.in(request.getEnableWebGL(), Const.ENABLE, Const.DISABLE);
+        }
+        return machineTerminalService.updateSetting(request);
     }
 
     /**
