@@ -248,7 +248,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         // 检查参数
         TerminalConnectDTO window = JSON.parseObject(body, TerminalConnectDTO.class);
         if (window == null) {
-            session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
+            session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
             return;
         }
         hint.setCols(window.getCols());

@@ -27,6 +27,8 @@ public class HistoryValueRequest extends PageRequest {
 
     /**
      * 值类型
+     *
+     * @see com.orion.ops.consts.HistoryValueType
      */
     private Integer valueType;
 

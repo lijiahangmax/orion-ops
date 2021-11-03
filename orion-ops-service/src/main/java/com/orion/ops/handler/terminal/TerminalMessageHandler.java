@@ -175,7 +175,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (connectInfo == null || Strings.isBlank(loginToken = connectInfo.getLoginToken())
                 || connectInfo.getRows() == null || connectInfo.getCols() == null
                 || connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
-            session.sendMessage(new TextMessage(WsProtocol.ARGUMENT.get()));
+            session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
             return;
         }
         // 获取token信息

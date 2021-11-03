@@ -80,11 +80,6 @@ public class MachineInfoRequest extends PageRequest {
     private Integer authType;
 
     /**
-     * 机器版本 如: centOS7.0
-     */
-    private String systemVersion;
-
-    /**
      * 机器状态 1有效 2无效
      *
      * @see com.orion.ops.consts.Const#ENABLE

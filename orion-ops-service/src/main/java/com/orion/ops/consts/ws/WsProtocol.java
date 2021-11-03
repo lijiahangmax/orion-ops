@@ -47,7 +47,7 @@ public enum WsProtocol {
     /**
      * 参数缺失
      */
-    ARGUMENT("210"),
+    MISS_ARGUMENT("210"),
 
     /**
      * 不合法的请求体

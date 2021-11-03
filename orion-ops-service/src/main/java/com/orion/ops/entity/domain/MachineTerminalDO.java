@@ -70,6 +70,24 @@ public class MachineTerminalDO implements Serializable {
     private Integer fontSize;
 
     /**
+     * 是否开启url link 1开启 2关闭
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    @TableField("enable_web_link")
+    private Integer enableWebLink;
+
+    /**
+     * 是否开启webGL加速 1开启 2关闭
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    @TableField("enable_web_gl")
+    private Integer enableWebGL;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")
