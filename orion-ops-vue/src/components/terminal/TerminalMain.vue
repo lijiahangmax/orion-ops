@@ -9,7 +9,7 @@
       <!-- 右键菜单 -->
       <div id="right-menu" ref="rightMenu">
         <a-dropdown :trigger="['click']">
-          <span id="right-menu-trigger"></span>
+          <span ref="rightMenuTrigger" id="right-menu-trigger"></span>
           <a-menu slot="overlay" @click="clickRightMenuItem">
             <a-menu-item key="selectAll">
               <span class="right-menu-item"><a-icon type="profile"/>全选</span>
@@ -83,44 +83,47 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { WebglAddon } from 'xterm-addon-webgl'
 
 import 'xterm/css/xterm.css'
 
 /**
- * 打开终端
+ * 初始化terminal
  */
-async function openTerminal() {
-  this.loading = this.$message.loading('建立连接中...', 10)
-  await this.$api.accessTerminal({ machineId: this.machineId })
-    .then(({ data }) => {
-      // terminal-config
-      this.terminalConfig.accessToken = data.accessToken
-      this.terminalConfig.theme.background = data.backgroundColor
-      this.terminalConfig.theme.foreground = data.fontColor
-      this.terminalConfig.fontSize = data.fontSize
-      this.terminalConfig.rows = this.getRows()
-      // ref-bar
-      this.$emit('dispatchAccessData', data)
-    })
-  // 注册terminal事件
-  this.term = new Terminal(this.terminalConfig)
+function initTerminal() {
+  // 打开terminal
+  this.term = new Terminal(this.options)
   this.term.open(document.getElementById('terminal'))
+  // 注册terminal事件
   this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
   this.term.onKey(event => terminalEventHandler.onKey.call(this, event))
   terminalEventHandler.registerCustomerKey.call(this)
 
-  // 注册terminal自适应组件
+  // 注册自适应组件
   this.plugin.fit = new FitAddon()
   this.term.loadAddon(this.plugin.fit)
-  // 注册terminal搜索组件
+  this.plugin.fit.fit()
+  this.options.cols = parseInt(this.term.cols)
+  // 注册搜索组件
   this.plugin.search = new SearchAddon()
   this.term.loadAddon(this.plugin.search)
-  // 注册url link组件
-  this.plugin.links = new WebLinksAddon()
-  this.term.loadAddon(this.plugin.links)
+  // 注册 url link组件
+  if (this.setting.enableWebLink === 1) {
+    this.plugin.links = new WebLinksAddon()
+    this.term.loadAddon(this.plugin.links)
+  }
+  // 注册 webgl web加速组件
+  if (this.setting.enableWebGL === 1) {
+    this.plugin.webgl = new WebglAddon()
+    try {
+      this.term.loadAddon(this.plugin.webgl)
+    } catch (e) {
+      console.error('loading addon webgl error', e)
+    }
+  }
 
   // 打开websocket
-  this.client = new WebSocket(this.$api.terminal(this.terminalConfig.accessToken))
+  this.client = new WebSocket(this.$api.terminal(this.setting.accessToken))
   this.client.onopen = event => {
     clientHandler.onopen.call(this, event)
   }
@@ -144,8 +147,8 @@ const terminalEventHandler = {
     if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
       return
     }
-    this.terminalConfig.cols = cols
-    this.terminalConfig.rows = rows
+    this.options.cols = cols
+    this.options.rows = rows
     terminalOperator.resize.call(this, cols, rows)
   },
   onKey(event) {
@@ -202,10 +205,7 @@ const clientHandler = {
   onopen() {
     console.log('open')
     this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
-    this.loading()
-    // 自适应窗口
-    this.plugin.fit.fit()
-    this.terminalConfig.cols = parseInt(this.term.cols)
+    this.$emit('closeLoading')
     // 建立连接
     terminalOperator.connect.call(this)
     // 注册窗口大小监听器
@@ -223,7 +223,7 @@ const clientHandler = {
   onerror() {
     console.log('error')
     this.status = this.$enum.TERMINAL_STATUS.ERROR.value
-    this.loading()
+    this.$emit('closeLoading')
     this.$message.error('无法连接至服务器', 2)
     this.term.write('\x1B[1;3;31m\r\nfailed to establish connection\x1B[0m')
   },
@@ -250,8 +250,8 @@ const terminalOperator = {
       operate: 'connect',
       body: {
         loginToken: this.$storage.get(this.$storage.keys.LOGIN_TOKEN),
-        rows: this.terminalConfig.rows,
-        cols: this.terminalConfig.cols,
+        cols: this.options.cols,
+        rows: this.options.rows,
         width: document.getElementById('terminal').offsetWidth,
         height: document.getElementById('terminal').offsetHeight
       }
@@ -274,8 +274,8 @@ const terminalOperator = {
     this.client.send(JSON.stringify({
       operate: 'resize',
       body: {
-        rows: rows,
         cols: cols,
+        rows: rows,
         width: document.getElementById('terminal').offsetWidth,
         height: document.getElementById('terminal').offsetHeight
       }
@@ -342,14 +342,19 @@ function parseProtocol(msg) {
   const code = msg.substring(0, 3)
   const len = msg.length
   switch (code) {
-    case '010':
+    case this.$enum.WS_PROTOCOL.ACK.value:
+      this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
+      this.term.focus()
+      break
+    case this.$enum.WS_PROTOCOL.CONNECTED.value:
       this.status = this.$enum.TERMINAL_STATUS.CONNECTED.value
       this.term.focus()
       break
-    case '100':
+    case this.$enum.WS_PROTOCOL.OK.value:
       this.term.write(msg.substring(4, len))
       break
     default:
+      console.log(this.$enum.valueOf(this.$enum.WS_PROTOCOL, code).label)
       break
   }
 }
@@ -361,13 +366,13 @@ export default {
   },
   data: function() {
     return {
-      loading: null,
       term: null,
       client: null,
       plugin: {
         fit: null,
         search: null,
-        links: null
+        links: null,
+        webgl: null
       },
       search: {
         visible: false,
@@ -379,17 +384,21 @@ export default {
       },
       status: 0,
       pingThread: null,
-      terminalConfig: {
+      setting: {
         accessToken: null,
-        rows: 36,
+        enableWebLink: 2,
+        enableWebGL: 2
+      },
+      options: {
         cols: 180,
+        rows: 36,
         cursorStyle: 'bar',
         cursorBlink: true,
         fastScrollModifier: 'shift',
         fontSize: 14,
         theme: {
-          background: '#212529',
-          foreground: '#FFFFFF'
+          foreground: '#FFFFFF',
+          background: '#212529'
         }
       }
     }
@@ -400,22 +409,28 @@ export default {
     }
   },
   methods: {
-    openTerminal() {
-      // 打开终端
-      openTerminal.call(this)
+    initTerminal(options, setting) {
+      this.options.fontSize = options.fontSize
+      this.options.theme.foreground = options.fontColor
+      this.options.theme.background = options.backgroundColor
+      this.options.rows = this.getRows()
+      this.setting.accessToken = setting.accessToken
+      this.setting.enableWebLink = setting.enableWebLink
+      this.setting.enableWebGL = setting.enableWebGL
+      initTerminal.call(this)
     },
     getRows() {
-      return parseInt((document.body.clientHeight - 42) / (this.terminalConfig.fontSize + 2))
+      return parseInt((document.body.clientHeight - 42) / (this.options.fontSize + 2))
     },
     windowChange() {
       this.plugin.fit.fit()
-      this.terminalConfig.cols = parseInt(this.term.cols)
-      this.terminalConfig.rows = this.getRows()
-      this.term.resize(this.terminalConfig.cols, this.terminalConfig.rows)
+      this.options.cols = parseInt(this.term.cols)
+      this.options.rows = this.getRows()
+      this.term.resize(this.options.cols, this.options.rows)
     },
     openRightMenu(e) {
       if (e.button === 2) {
-        document.getElementById('right-menu-trigger').click()
+        this.$refs.rightMenuTrigger.click()
         this.$refs.rightMenu.style.top = (e.offsetY + 30) + 'px'
         this.$refs.rightMenu.style.left = (e.offsetX + 10) + 'px'
         this.$refs.rightMenu.style.display = 'block'

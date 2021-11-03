@@ -59,7 +59,7 @@
     <div class="terminal-header-event-container">
       <!-- 设置模态框 -->
       <div id="terminal-settings-modal">
-        <TerminalSettingModal ref="settingModal" :setting="setting"/>
+        <TerminalSettingModal ref="settingModal" :machineId="machine.machineId"/>
       </div>
     </div>
   </div>
@@ -71,8 +71,7 @@ import TerminalSettingModal from './TerminalSettingModal'
 export default {
   name: 'TerminalHeader',
   props: {
-    machine: Object,
-    setting: Object
+    machine: Object
   },
   components: {
     TerminalSettingModal

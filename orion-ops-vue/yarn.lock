@@ -9154,6 +9154,16 @@ xterm-addon-search@^0.8.1:
   resolved "https://registry.nlark.com/xterm-addon-search/download/xterm-addon-search-0.8.1.tgz#dfc557e9bcf5fd8ed96292c0d271aa865bc545d5"
   integrity sha1-38VX6bz1/Y7ZYpLA0nGqhlvFRdU=
 
+xterm-addon-web-links@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.npmmirror.com/xterm-addon-web-links/download/xterm-addon-web-links-0.4.0.tgz#265cbf8221b9b315d0a748e1323bee331cd5da03"
+  integrity sha1-Jly/giG5sxXQp0jhMjvuMxzV2gM=
+
+xterm-addon-webgl@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.npmmirror.com/xterm-addon-webgl/download/xterm-addon-webgl-0.11.2.tgz#eeb01f85cb35b0e47d1a3b691d4c6de8b2584c8e"
+  integrity sha1-7rAfhcs1sOR9GjtpHUxt6LJYTI4=
+
 xterm@^4.14.1:
   version "4.14.1"
   resolved "https://registry.npmmirror.com/xterm/download/xterm-4.14.1.tgz#6884cb8fb3b83353b1a98139ea23daedf8e35796"
