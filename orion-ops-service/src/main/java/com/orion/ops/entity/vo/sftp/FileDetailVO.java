@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo.sftp;
 
+import com.orion.ops.consts.Const;
 import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.io.FileType;
@@ -69,6 +70,11 @@ public class FileDetailVO {
      */
     private Boolean isDir;
 
+    /**
+     * 是否安全
+     */
+    private Boolean isSafe;
+
     static {
         TypeStore.STORE.register(SftpFile.class, FileDetailVO.class, s -> {
             FileDetailVO vo = new FileDetailVO();
@@ -85,6 +91,7 @@ public class FileDetailVO {
                     .map(FileType.DIRECTORY::equals)
                     .orElse(false);
             vo.setIsDir(isDir);
+            vo.setIsSafe(!Const.UNSAFE_FS_DIR.contains(s.getPath()));
             return vo;
         });
     }

@@ -64,6 +64,11 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     @Override
     public void run() {
+        // 判断是否删除
+        FileTransferLogDO fileTransferLog = fileTransferLogDAO.selectById(record.getId());
+        if (Const.DISABLE.equals(fileTransferLog.getShowType())) {
+            return;
+        }
         transferProcessorManager.addProcessor(fileToken, this);
         try {
             // 开始传输

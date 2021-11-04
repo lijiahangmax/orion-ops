@@ -28,13 +28,13 @@ public class MessageConst {
 
     public static final String TASK_ERROR = "任务执行异常";
 
-    public static final String CONNECT_ERROR = "连接异常";
+    public static final String CONNECT_ERROR = "建立连接失败";
 
     public static final String TIMEOUT_ERROR = "处理超时";
 
     public static final String INTERRUPT_ERROR = "操作中断";
 
-    public static final String UNSAFE_ERROR = "不安全的操作";
+    public static final String UNSAFE_OPERATOR = "不安全的操作";
 
     public static final String ENCRYPT_ERROR = "数据加密异常";
 
@@ -80,9 +80,7 @@ public class MessageConst {
 
     public static final String PATH_NOT_NORMALIZE = "路径不合法";
 
-    public static final String DEL_ROOT_PATH = "你TM敢删除根目录?";
-
-    public static final String FILE_NOT_FOUND = "文件不存在";
+    public static final String FILE_NOT_FOUND = "文件 {} 不存在";
 
     public static final String UNSELECTED_TRANSFER_LOG = "未找到传输对象";
 

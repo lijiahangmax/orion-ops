@@ -396,14 +396,22 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public Integer transferRemove(String fileToken) {
+    public void transferRemove(String fileToken) {
+        // 获取请求文件
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
+        Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
+        // 如果是进行中则需要取消任务
+        if (SftpTransferStatus.RUNNABLE.getStatus().equals(transferLog.getTransferStatus())) {
+            IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
+            if (processor != null) {
+                processor.stop();
+            }
+        }
+        // 修改状态
         FileTransferLogDO update = new FileTransferLogDO();
+        update.setId(transferLog.getId());
         update.setShowType(Const.DISABLE);
-        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
-                .eq(FileTransferLogDO::getFileToken, fileToken)
-                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
-                .ne(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
-        return fileTransferLogDAO.update(update, wrapper);
+        fileTransferLogDAO.updateById(update);
     }
 
     @Override

@@ -167,9 +167,8 @@ public interface SftpService {
      * 传输删除(单个)
      *
      * @param fileToken fileToken
-     * @return effect
      */
-    Integer transferRemove(String fileToken);
+    void transferRemove(String fileToken);
 
     /**
      * 传输清空(全部)

@@ -239,16 +239,16 @@ public class SftpController {
     }
 
     /**
-     * 传输删除(单个)
+     * 传输删除(单个) 包含进行中的
      */
     @RequestMapping("/transfer/remove")
-    public Integer transferRemove(@RequestBody FileTransferRemoveRequest request) {
+    public void transferRemove(@RequestBody FileTransferRemoveRequest request) {
         String fileToken = Valid.notBlank(request.getFileToken());
-        return sftpService.transferRemove(fileToken);
+        sftpService.transferRemove(fileToken);
     }
 
     /**
-     * 传输清空(全部)
+     * 传输清空(全部) 不包含进行中的
      */
     @RequestMapping("/transfer/{sessionToken}/clear")
     public Integer transferRemove(@PathVariable("sessionToken") String sessionToken) {
