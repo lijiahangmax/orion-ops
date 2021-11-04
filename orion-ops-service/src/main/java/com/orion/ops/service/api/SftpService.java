@@ -146,7 +146,7 @@ public interface SftpService {
      *
      * @param fileToken fileToken
      */
-    void transferStop(String fileToken);
+    void transferPause(String fileToken);
 
     /**
      * 传输恢复
@@ -154,6 +154,20 @@ public interface SftpService {
      * @param fileToken fileToken
      */
     void transferResume(String fileToken);
+
+    /**
+     * 传输暂停
+     *
+     * @param sessionToken sessionToken
+     */
+    void transferPauseAll(String sessionToken);
+
+    /**
+     * 传输恢复
+     *
+     * @param sessionToken sessionToken
+     */
+    void transferResumeAll(String sessionToken);
 
     /**
      * 传输列表

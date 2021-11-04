@@ -345,7 +345,7 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public void transferStop(String fileToken) {
+    public void transferPause(String fileToken) {
         // 获取请求文件
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
@@ -354,7 +354,6 @@ public class SftpServiceImpl implements SftpService {
         // 获取执行器
         IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         Valid.notNull(processor, MessageConst.UNSELECTED_TRANSFER_PROCESSOR);
-        // 执行器不为空则停止
         processor.stop();
     }
 
@@ -381,6 +380,74 @@ public class SftpServiceImpl implements SftpService {
         // 提交下载
         String charset = this.getSftpCharset(machineId);
         IFileTransferProcessor.of(transferLog, charset).resume();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void transferPauseAll(String sessionToken) {
+        // 获取token信息
+        Long machineId = this.getMachineId(sessionToken);
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus());
+        List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
+        // 修改状态为暂停
+        for (FileTransferLogDO transferLog : transferLogs) {
+            FileTransferLogDO update = new FileTransferLogDO();
+            update.setId(transferLog.getId());
+            update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+            fileTransferLogDAO.updateById(update);
+        }
+        // 通知状态
+        for (FileTransferLogDO transferLog : transferLogs) {
+            FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+            notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
+            notify.setFileToken(transferLog.getFileToken());
+            notify.setBody(SftpTransferStatus.PAUSE.getStatus());
+            transferProcessorManager.notifySession(transferLog.getUserId(), machineId, notify);
+        }
+        // 获取执行器暂停
+        for (FileTransferLogDO transferLog : transferLogs) {
+            IFileTransferProcessor processor = transferProcessorManager.getProcessor(transferLog.getFileToken());
+            if (processor != null) {
+                processor.stop();
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void transferResumeAll(String sessionToken) {
+        // 获取token信息
+        Long machineId = this.getMachineId(sessionToken);
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.PAUSE.getStatus());
+        List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
+        // 修改状态为等待
+        for (FileTransferLogDO transferLog : transferLogs) {
+            FileTransferLogDO update = new FileTransferLogDO();
+            update.setId(transferLog.getId());
+            update.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+            fileTransferLogDAO.updateById(update);
+        }
+        // 通知状态
+        for (FileTransferLogDO transferLog : transferLogs) {
+            FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+            notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
+            notify.setFileToken(transferLog.getFileToken());
+            notify.setBody(SftpTransferStatus.WAIT.getStatus());
+            transferProcessorManager.notifySession(transferLog.getUserId(), machineId, notify);
+        }
+        // 提交下载
+        String charset = this.getSftpCharset(machineId);
+        for (FileTransferLogDO transferLog : transferLogs) {
+            IFileTransferProcessor.of(transferLog, charset).resume();
+        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.orion.ops.controller;
 
 import com.orion.id.ObjectIds;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
@@ -81,9 +80,6 @@ public class SftpController {
         this.checkNormalize(request.getPath());
         return sftpService.touch(request);
     }
-
-    // batch resume
-    // batch pause
 
     /**
      * 截断文件
@@ -221,21 +217,33 @@ public class SftpController {
     /**
      * 传输暂停
      */
-    @RequestMapping("/transfer/pause")
-    public HttpWrapper<?> transferStop(@RequestBody FileTransferStopRequest request) {
-        String fileToken = Valid.notBlank(request.getFileToken());
-        sftpService.transferStop(fileToken);
-        return HttpWrapper.ok();
+    @RequestMapping("/transfer/{fileToken}/pause")
+    public void transferPause(@PathVariable("fileToken") String fileToken) {
+        sftpService.transferPause(fileToken);
     }
 
     /**
      * 传输恢复
      */
-    @RequestMapping("/transfer/resume")
-    public HttpWrapper<?> transferResume(@RequestBody FileTransferResumeRequest request) {
-        String fileToken = Valid.notBlank(request.getFileToken());
+    @RequestMapping("/transfer/{fileToken}/resume")
+    public void transferResume(@PathVariable("fileToken") String fileToken) {
         sftpService.transferResume(fileToken);
-        return HttpWrapper.ok();
+    }
+
+    /**
+     * 批量暂停所有传输
+     */
+    @RequestMapping("/transfer/{sessionToken}/pause/all")
+    public void transferPauseAll(@PathVariable("sessionToken") String sessionToken) {
+        sftpService.transferPauseAll(sessionToken);
+    }
+
+    /**
+     * 批量恢复所有传输
+     */
+    @RequestMapping("/transfer/{sessionToken}resume/all")
+    public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
+        sftpService.transferResumeAll(sessionToken);
     }
 
     /**
