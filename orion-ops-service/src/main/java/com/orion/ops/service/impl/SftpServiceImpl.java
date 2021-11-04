@@ -7,10 +7,12 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.sftp.SftpNotifyType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
+import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
@@ -31,17 +33,21 @@ import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
+import com.orion.utils.json.Jsons;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +84,7 @@ public class SftpServiceImpl implements SftpService {
     public FileOpenVO open(Long machineId) {
         // 获取当前用户
         Long userId = Currents.getUserId();
-        SftpExecutor executor = getBasicExecutor(machineId);
+        SftpExecutor executor = this.getBasicExecutor(machineId);
         // 生成token
         String sessionToken = this.generatorSessionToken(userId, machineId);
         // 查询列表
@@ -96,31 +102,11 @@ public class SftpServiceImpl implements SftpService {
 
     @Override
     public FileListVO list(FileListRequest request) {
-        return this.list(request.getPath(), request.getAll(), request.getExecutor());
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        return this.list(request.getPath(), request.getAll(), executor);
     }
 
-    @Override
-    public FileListVO listDir(FileListRequest request) {
-        List<SftpFile> fileList;
-        SftpExecutor executor = request.getExecutor();
-        String path = request.getPath();
-        if (request.getAll() == 0) {
-            // 不查询隐藏文件
-            fileList = executor.listFilesFilter(path, f -> !f.getName().startsWith(".") && f.isDirectory(), false, true);
-        } else {
-            // 查询隐藏文件
-            fileList = executor.listDirs(path);
-        }
-        // 返回
-        FileListVO fileListVO = new FileListVO();
-        List<FileDetailVO> files = Converts.toList(fileList, FileDetailVO.class);
-        fileListVO.setPath(path);
-        fileListVO.setFiles(files);
-        return fileListVO;
-    }
-
-    @Override
-    public FileListVO list(String path, int all, SftpExecutor executor) {
+    private FileListVO list(String path, int all, SftpExecutor executor) {
         List<SftpFile> fileList;
         if (all == 0) {
             // 不查询隐藏文件
@@ -138,9 +124,30 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
+    public FileListVO listDir(FileListRequest request) {
+        List<SftpFile> fileList;
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        String path = request.getPath();
+        if (request.getAll() == 0) {
+            // 不查询隐藏文件
+            fileList = executor.listFilesFilter(path, f -> !f.getName().startsWith(".") && f.isDirectory(), false, true);
+        } else {
+            // 查询隐藏文件
+            fileList = executor.listDirs(path);
+        }
+        // 返回
+        FileListVO fileListVO = new FileListVO();
+        List<FileDetailVO> files = Converts.toList(fileList, FileDetailVO.class);
+        fileListVO.setPath(path);
+        fileListVO.setFiles(files);
+        return fileListVO;
+    }
+
+    @Override
     public String mkdir(FileMkdirRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().mkdirs(path);
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.mkdirs(path);
         Valid.sftp(r);
         return path;
     }
@@ -148,7 +155,8 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public String touch(FileTouchRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().touch(path);
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.touch(path);
         Valid.sftp(r);
         return path;
     }
@@ -156,7 +164,8 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public void truncate(FileTruncateRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().truncate(path);
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.truncate(path);
         Valid.sftp(r);
     }
 
@@ -164,14 +173,15 @@ public class SftpServiceImpl implements SftpService {
     public String move(FileMoveRequest request) {
         String source = Files1.getPath(request.getSource());
         String target = Files1.getPath(request.getTarget());
-        boolean r = request.getExecutor().mv(source, target);
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.mv(source, target);
         Valid.sftp(r);
         return target;
     }
 
     @Override
     public void remove(FileRemoveRequest request) {
-        SftpExecutor executor = request.getExecutor();
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
         request.getPaths().stream()
                 .map(Files1::getPath)
                 .forEach(executor::rm);
@@ -180,7 +190,8 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public String chmod(FileChmodRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().chmod(path, request.getPermission());
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.chmod(path, request.getPermission());
         Valid.sftp(r);
         return Files1.permission10toString(request.getPermission());
     }
@@ -188,20 +199,22 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public void chown(FileChownRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().chown(path, request.getUid());
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.chown(path, request.getUid());
         Valid.sftp(r);
     }
 
     @Override
     public void changeGroup(FileChangeGroupRequest request) {
         String path = Files1.getPath(request.getPath());
-        boolean r = request.getExecutor().chgrp(path, request.getGid());
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
+        boolean r = executor.chgrp(path, request.getGid());
         Valid.sftp(r);
     }
 
     @Override
     public List<String> checkFilePresent(FilePresentCheckRequest request) {
-        SftpExecutor executor = request.getExecutor();
+        SftpExecutor executor = this.getBasicExecutor(this.getMachineId(request.getSessionToken()));
         return request.getNames().stream()
                 .filter(Strings::isNotBlank)
                 .filter(s -> executor.isExist(Files1.getPath(request.getPath() + "/" + s)))
@@ -209,21 +222,21 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public String getUploadToken(String sessionToken) {
+    public String getUploadAccessToken(String sessionToken) {
         Long[] tokenInfo = this.getTokenInfo(sessionToken);
         Long userId = Currents.getUserId();
         Valid.isTrue(tokenInfo[0].equals(userId), MessageConst.SESSION_EXPIRE);
-        // 生成文件token
-        String fileToken = ObjectIds.next();
-        String key = Strings.format(KeyConst.SFTP_UPLOAD_TOKEN, fileToken);
-        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1], KeyConst.SFTP_UPLOAD_TOKEN_EXPIRE, TimeUnit.SECONDS);
-        return fileToken;
+        // 生成accessToken
+        String accessToken = UUIds.random32();
+        String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
+        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1], KeyConst.SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        return accessToken;
     }
 
     @Override
-    public Long checkUploadToken(String fileToken) {
+    public Long checkUploadAccessToken(String accessToken) {
         // 获取缓存
-        String key = Strings.format(KeyConst.SFTP_UPLOAD_TOKEN, fileToken);
+        String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
         String value = redisTemplate.opsForValue().get(key);
         Valid.notBlank(value, MessageConst.TOKEN_EXPIRE);
         // 解析缓存
@@ -237,56 +250,99 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public String upload(FileUploadRequest request) {
-        // 获取连接
-        Long machineId = request.getMachineId();
-        SessionStore session = this.getSessionStore(machineId);
-        Valid.notNull(session, MessageConst.SESSION_EXPIRE);
+    @Transactional(rollbackFor = Exception.class)
+    public void upload(Long machineId, List<FileUploadRequest> requestFiles) {
         UserDTO user = Currents.getUser();
-        // 构建下载参数
-        FileTransferHint hint = new FileTransferHint();
-        hint.setFileToken(request.getFileToken());
-        hint.setUserId(user.getId());
-        hint.setUsername(user.getUsername());
-        hint.setMachineId(machineId);
-        hint.setRemoteFile(request.getRemotePath());
-        hint.setLocalFile(request.getLocalPath());
-        hint.setFileSize(request.getSize());
-        hint.setCharset(this.getSftpCharset(machineId));
-        hint.setTransferType(SftpTransferType.UPLOAD);
-        // 提交上传
-        IFileTransferProcessor.of(hint, session).exec();
-        return request.getFileToken();
+        Long userId = user.getId();
+        // 初始化上传信息
+        List<FileTransferLogDO> uploadFiles = Lists.newList();
+        for (FileUploadRequest requestFile : requestFiles) {
+            FileTransferLogDO upload = new FileTransferLogDO();
+            upload.setUserId(userId);
+            upload.setUserName(user.getUsername());
+            upload.setFileToken(requestFile.getFileToken());
+            upload.setTransferType(SftpTransferType.UPLOAD.getType());
+            upload.setMachineId(machineId);
+            upload.setRemoteFile(requestFile.getRemotePath());
+            upload.setLocalFile(requestFile.getLocalPath());
+            upload.setCurrentSize(0L);
+            upload.setFileSize(requestFile.getSize());
+            upload.setNowProgress(0D);
+            upload.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+            uploadFiles.add(upload);
+        }
+        uploadFiles.forEach(fileTransferLogDAO::insert);
+        // 提交上传进程
+        String charset = this.getSftpCharset(machineId);
+        for (FileTransferLogDO uploadFile : uploadFiles) {
+            IFileTransferProcessor.of(uploadFile, charset).exec();
+        }
+        // 通知添加
+        for (FileTransferLogDO uploadFile : uploadFiles) {
+            FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+            notify.setType(SftpNotifyType.ADD.getType());
+            notify.setFileToken(uploadFile.getFileToken());
+            notify.setBody(Jsons.toJsonWriteNull(Converts.to(uploadFile, FileTransferLogVO.class)));
+            transferProcessorManager.notifySession(userId, machineId, notify);
+        }
     }
 
     @Override
-    public String download(FileDownloadRequest request) {
-        // 查询远程文件是否存在
-        String path = Files1.getPath(request.getPath());
-        SftpExecutor executor = request.getExecutor();
-        SftpFile file = executor.getFile(path);
-        Valid.notNull(file, MessageConst.FILE_NOT_FOUND);
+    @Transactional(rollbackFor = Exception.class)
+    public void download(FileDownloadRequest request) {
         // 获取token信息
-        Long machineId = this.getTokenInfo(request.getSessionToken())[1];
-        String fileToken = ObjectIds.next();
+        Long machineId = this.getMachineId(request.getSessionToken());
+        SftpExecutor executor = this.getBasicExecutor(machineId);
         UserDTO user = Currents.getUser();
-        // 获取连接
-        SessionStore session = this.getSessionStore(machineId);
-        Valid.notNull(session, MessageConst.SESSION_EXPIRE);
-        // 构建下载参数
-        FileTransferHint hint = new FileTransferHint();
-        hint.setFileToken(fileToken);
-        hint.setUserId(user.getId());
-        hint.setUsername(user.getUsername());
-        hint.setMachineId(machineId);
-        hint.setRemoteFile(path);
-        hint.setLocalFile(PathBuilders.getSftpDownloadFilePath(fileToken));
-        hint.setFileSize(file.getSize());
-        hint.setCharset(executor.getCharset());
-        hint.setTransferType(SftpTransferType.DOWNLOAD);
-        // 提交下载
-        IFileTransferProcessor.of(hint, session).exec();
-        return fileToken;
+        Long userId = user.getId();
+        // 定义文件转换器
+        Function<SftpFile, FileTransferLogDO> convert = file -> {
+            // 本地保存路径
+            String fileToken = ObjectIds.next();
+            String localPath = PathBuilders.getSftpDownloadFilePath(fileToken);
+            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localPath);
+            // 设置传输信息
+            FileTransferLogDO download = new FileTransferLogDO();
+            download.setUserId(userId);
+            download.setUserName(user.getUsername());
+            download.setFileToken(fileToken);
+            download.setTransferType(SftpTransferType.DOWNLOAD.getType());
+            download.setMachineId(machineId);
+            download.setRemoteFile(file.getPath());
+            download.setLocalFile(localAbsolutePath);
+            download.setCurrentSize(0L);
+            download.setFileSize(file.getSize());
+            download.setNowProgress(0D);
+            download.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+            return download;
+        };
+        // 初始化下载
+        List<FileTransferLogDO> downloadFiles = Lists.newList();
+        for (String path : request.getPaths()) {
+            SftpFile file = executor.getFile(path);
+            Valid.notNull(file, Strings.format(MessageConst.FILE_NOT_FOUND, path));
+            // 如果是文件夹则递归所有文件
+            if (file.isDirectory()) {
+                List<SftpFile> childFiles = executor.listFiles(path, true, false);
+                childFiles.forEach(f -> downloadFiles.add(convert.apply(f)));
+            } else {
+                downloadFiles.add(convert.apply(file));
+            }
+        }
+        downloadFiles.forEach(fileTransferLogDAO::insert);
+        // 提交上传进程
+        String charset = this.getSftpCharset(machineId);
+        for (FileTransferLogDO downloadFile : downloadFiles) {
+            IFileTransferProcessor.of(downloadFile, charset).exec();
+        }
+        // 通知添加
+        for (FileTransferLogDO downloadFile : downloadFiles) {
+            FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+            notify.setType(SftpNotifyType.ADD.getType());
+            notify.setFileToken(downloadFile.getFileToken());
+            notify.setBody(Jsons.toJsonWriteNull(Converts.to(downloadFile, FileTransferLogVO.class)));
+            transferProcessorManager.notifySession(userId, machineId, notify);
+        }
     }
 
     @Override
@@ -332,7 +388,7 @@ public class SftpServiceImpl implements SftpService {
         hint.setCharset(this.getSftpCharset(transferLog.getMachineId()));
         hint.setTransferType(SftpTransferType.of(transferLog.getTransferType()));
         // 提交下载
-        IFileTransferProcessor.of(hint, session).resume();
+        IFileTransferProcessor.of(null, null).resume();
     }
 
     @Override
@@ -384,6 +440,11 @@ public class SftpServiceImpl implements SftpService {
             executor.connect();
         }
         return executor;
+    }
+
+    @Override
+    public Long getMachineId(String sessionToken) {
+        return this.getTokenInfo(sessionToken)[1];
     }
 
     @Override

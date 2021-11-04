@@ -1,6 +1,5 @@
 package com.orion.ops.entity.request.sftp;
 
-import com.orion.remote.channel.sftp.SftpExecutor;
 import lombok.Data;
 
 /**
@@ -30,11 +29,6 @@ public class FileBaseRequest {
      * 1 查询
      */
     private int all;
-
-    /**
-     * executor
-     */
-    private SftpExecutor executor;
 
     public FileBaseRequest() {
         this.all = 0;

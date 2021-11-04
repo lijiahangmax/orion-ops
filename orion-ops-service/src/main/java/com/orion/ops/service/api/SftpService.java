@@ -43,16 +43,6 @@ public interface SftpService {
     FileListVO listDir(FileListRequest request);
 
     /**
-     * ls
-     *
-     * @param path     path
-     * @param all      0查询普通文件 1查询隐藏文件
-     * @param executor executor
-     * @return list
-     */
-    FileListVO list(String path, int all, SftpExecutor executor);
-
-    /**
      * mkdir
      *
      * @param request request
@@ -121,36 +111,35 @@ public interface SftpService {
     List<String> checkFilePresent(FilePresentCheckRequest request);
 
     /**
-     * 获取上传文件token
+     * 获取上传文件accessToken
      *
      * @param sessionToken sessionToken
-     * @return fileToken
+     * @return accessToken
      */
-    String getUploadToken(String sessionToken);
+    String getUploadAccessToken(String sessionToken);
 
     /**
      * 检查上传token
      *
-     * @param fileToken fileToken
+     * @param accessToken accessToken
      * @return machineId
      */
-    Long checkUploadToken(String fileToken);
+    Long checkUploadAccessToken(String accessToken);
 
     /**
      * 上传文件
      *
-     * @param request request
-     * @return fileToken
+     * @param requestFiles requestFiles
+     * @param machineId    machineId
      */
-    String upload(FileUploadRequest request);
+    void upload(Long machineId, List<FileUploadRequest> requestFiles);
 
     /**
      * 下载文件
      *
      * @param request request
-     * @return fileToken
      */
-    String download(FileDownloadRequest request);
+    void download(FileDownloadRequest request);
 
     /**
      * 传输列表
@@ -205,6 +194,14 @@ public interface SftpService {
      * @return SftpExecutor
      */
     SftpExecutor getBasicExecutorByToken(String sessionToken);
+
+    /**
+     * 获取机器id
+     *
+     * @param sessionToken sessionToken
+     * @return 机器id
+     */
+    Long getMachineId(String sessionToken);
 
     /**
      * 获取token信息
