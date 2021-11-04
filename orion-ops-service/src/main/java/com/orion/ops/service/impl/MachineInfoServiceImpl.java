@@ -8,7 +8,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineConst;
-import com.orion.ops.consts.machine.MachineProperty;
+import com.orion.ops.consts.machine.MachineProperties;
 import com.orion.ops.consts.machine.ProxyType;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
@@ -294,7 +294,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     @Override
-    public String getPropertiesResultSync(Long id, MachineProperty property) {
+    public String getPropertiesResultSync(Long id, MachineProperties property) {
         return getCommandResultSync(id, property.getCommand());
     }
 

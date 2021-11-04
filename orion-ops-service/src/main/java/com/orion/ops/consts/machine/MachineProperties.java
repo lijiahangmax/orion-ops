@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum MachineProperty {
+public enum MachineProperties {
 
     /**
      * 机器名称
@@ -28,11 +28,11 @@ public enum MachineProperty {
 
     private final String command;
 
-    public static MachineProperty of(String prop) {
+    public static MachineProperties of(String prop) {
         if (prop == null) {
             return null;
         }
-        for (MachineProperty value : values()) {
+        for (MachineProperties value : values()) {
             if (value.prop.equals(prop)) {
                 return value;
             }

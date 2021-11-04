@@ -55,14 +55,26 @@ public class SchedulerPools {
             .build();
 
     /**
-     * sftp 调度线程池
+     * sftp 上传线程池
      */
-    public static final ExecutorService SFTP_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("sftp-transfer-thread-")
+    public static final ExecutorService SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("sftp-upload-thread-")
             .setCorePoolSize(0)
-            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setMaxPoolSize(8)
             .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new SynchronousQueue<>())
+            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+    /**
+     * sftp 下载线程池
+     */
+    public static final ExecutorService SFTP_DOWNLOAD_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("sftp-download-thread-")
+            .setCorePoolSize(0)
+            .setMaxPoolSize(8)
+            .setKeepAliveTime(Const.MS_S_60)
+            .setWorkQueue(new LinkedBlockingQueue<>())
             .setAllowCoreThreadTimeOut(true)
             .build();
 
@@ -84,7 +96,7 @@ public class SchedulerPools {
     public static final ExecutorService RELEASE_TARGET_STAGE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-target-stage-thread-")
             .setCorePoolSize(4)
-            .setMaxPoolSize(4)
+            .setMaxPoolSize(12)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new LinkedBlockingQueue<>())
             .setAllowCoreThreadTimeOut(true)
@@ -95,7 +107,8 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(EXEC_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(TAIL_SCHEDULER, Const.MS_S_3);
-            Threads.shutdownPoolNow(SFTP_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SFTP_UPLOAD_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SFTP_DOWNLOAD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_TARGET_STAGE_SCHEDULER, Const.MS_S_3);
         });

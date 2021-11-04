@@ -20,14 +20,14 @@ public class FileTransferNotifyDTO {
     private Integer type;
 
     /**
-     * body
-     */
-    private Object body;
-
-    /**
      * fileToken
      */
     private String fileToken;
+
+    /**
+     * body
+     */
+    private Object body;
 
     @Data
     public static class FileTransferNotifyProgress {

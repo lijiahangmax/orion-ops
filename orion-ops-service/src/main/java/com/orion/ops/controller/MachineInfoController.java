@@ -37,6 +37,10 @@ public class MachineInfoController {
     public Long add(@RequestBody MachineInfoRequest request) {
         request.setId(null);
         this.check(request);
+        MachineAuthType machineAuthTypeEnum = Valid.notNull(MachineAuthType.of(request.getAuthType()));
+        if (MachineAuthType.PASSWORD.equals(machineAuthTypeEnum)) {
+            Valid.notBlank(request.getPassword());
+        }
         return machineInfoService.addUpdateMachine(request);
     }
 
@@ -66,7 +70,7 @@ public class MachineInfoController {
     public Integer status(@RequestBody MachineInfoRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         Integer status = Valid.notNull(request.getStatus());
-        Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
+        Valid.in(status, Const.ENABLE, Const.DISABLE);
         return machineInfoService.updateStatus(idList, status);
     }
 
@@ -97,16 +101,6 @@ public class MachineInfoController {
     }
 
     /**
-     * 同步属性
-     */
-    @RequestMapping("/sync/prop")
-    public String syncProperties(@RequestBody MachineInfoRequest request) {
-        Valid.notNull(request.getId());
-        Valid.notBlank(request.getSyncProp());
-        return machineInfoService.syncProperties(request);
-    }
-
-    /**
      * 尝试 ping 主机
      */
     @RequestMapping("/test/ping")
@@ -134,11 +128,6 @@ public class MachineInfoController {
         Valid.lte(sshPort, 65535, "ssh端口不正确");
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getUsername());
-        Integer authType = Valid.notNull(request.getAuthType());
-        MachineAuthType machineAuthTypeEnum = Valid.notNull(MachineAuthType.of(authType));
-        if (MachineAuthType.PASSWORD.equals(machineAuthTypeEnum)) {
-            Valid.notBlank(request.getPassword());
-        }
     }
 
 }

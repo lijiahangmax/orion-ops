@@ -159,8 +159,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     public DataGrid<MachineEnvVO> listEnv(MachineEnvRequest request) {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .like(Strings.isNotBlank(request.getKey()), MachineEnvDO::getAttrKey, request.getKey())
+                .like(Strings.isNotBlank(request.getValue()), MachineEnvDO::getAttrValue, request.getValue())
                 .eq(MachineEnvDO::getMachineId, request.getMachineId())
-                .orderByAsc(MachineEnvDO::getId);
+                .orderByDesc(MachineEnvDO::getUpdateTime);
         return DataQuery.of(machineEnvDAO)
                 .page(request)
                 .wrapper(wrapper)
@@ -180,7 +181,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getMachineEnv(Long machineId) {
-        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId)
                 .orderByAsc(MachineEnvDO::getId);
@@ -190,7 +191,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId, String prefix) {
-        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         // 查询机器
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         if (machine == null) {

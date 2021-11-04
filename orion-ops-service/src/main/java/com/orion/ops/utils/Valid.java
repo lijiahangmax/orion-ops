@@ -73,4 +73,8 @@ public class Valid extends com.orion.utils.Valid {
         return t;
     }
 
+    public static void isSafe(boolean s) {
+        isTrue(s, MessageConst.UNSAFE_OPERATOR);
+    }
+
 }

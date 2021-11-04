@@ -92,20 +92,20 @@ public class KeyConst {
     public static final String SFTP_SESSION = "sftp:session:{}";
 
     /**
-     * 6 h
+     * 12 h
      */
-    public static final int SFTP_SESSION_EXPIRE = 60 * 60 * 6;
+    public static final int SFTP_SESSION_EXPIRE = 60 * 60 * 12;
 
     /**
-     * sftp上传token
+     * sftp上传请求token
      * <p>
      * "sftp:upload:{token}
      */
-    public static final String SFTP_UPLOAD_TOKEN = "sftp:upload:{}";
+    public static final String SFTP_UPLOAD_ACCESS_TOKEN = "sftp:upload:{}";
 
     /**
-     * 5 min
+     * 5 h
      */
-    public static final int SFTP_UPLOAD_TOKEN_EXPIRE = 60 * 5;
+    public static final int SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE = 60 * 60 * 5;
 
 }
