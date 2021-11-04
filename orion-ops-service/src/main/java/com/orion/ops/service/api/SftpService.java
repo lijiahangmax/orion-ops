@@ -48,15 +48,17 @@ public interface SftpService {
      * mkdir
      *
      * @param request request
+     * @return 文件目录
      */
-    void mkdir(FileMkdirRequest request);
+    String mkdir(FileMkdirRequest request);
 
     /**
      * touch
      *
      * @param request request
+     * @return 文件目录
      */
-    void touch(FileTouchRequest request);
+    String touch(FileTouchRequest request);
 
     /**
      * truncate
@@ -69,8 +71,9 @@ public interface SftpService {
      * mv
      *
      * @param request request
+     * @return 移动后的位置
      */
-    void move(FileMoveRequest request);
+    String move(FileMoveRequest request);
 
     /**
      * rm -rf
@@ -83,8 +86,9 @@ public interface SftpService {
      * chmod
      *
      * @param request request
+     * @return 权限字符串
      */
-    void chmod(FileChmodRequest request);
+    String chmod(FileChmodRequest request);
 
     /**
      * chown
@@ -99,6 +103,14 @@ public interface SftpService {
      * @param request request
      */
     void changeGroup(FileChangeGroupRequest request);
+
+    /**
+     * 检查文件是否存在
+     *
+     * @param request request
+     * @return true存在
+     */
+    boolean checkFilePresent(FilePresentCheckRequest request);
 
     /**
      * 获取上传文件token

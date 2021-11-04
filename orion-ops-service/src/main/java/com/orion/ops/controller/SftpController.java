@@ -62,95 +62,96 @@ public class SftpController {
      * 创建文件夹
      */
     @RequestMapping("/mkdir")
-    public FileListVO mkdir(@RequestBody FileMkdirRequest request) {
-        this.checkNormalize(request.getCurrent());
+    public String mkdir(@RequestBody FileMkdirRequest request) {
         this.checkNormalize(request.getPath());
         this.setExecutor(request);
-        sftpService.mkdir(request);
-        return this.ll(request);
+        return sftpService.mkdir(request);
     }
 
     /**
      * 创建文件
      */
     @RequestMapping("/touch")
-    public FileListVO touch(@RequestBody FileTouchRequest request) {
-        this.checkNormalize(request.getCurrent());
+    public String touch(@RequestBody FileTouchRequest request) {
         this.checkNormalize(request.getPath());
         this.setExecutor(request);
-        sftpService.touch(request);
-        return this.ll(request);
+        return sftpService.touch(request);
     }
 
     /**
      * 截断文件
      */
     @RequestMapping("/truncate")
-    public FileListVO truncate(@RequestBody FileTruncateRequest request) {
+    public void truncate(@RequestBody FileTruncateRequest request) {
         this.checkNormalize(request.getPath());
         this.setExecutor(request);
         sftpService.truncate(request);
-        return this.ll(request);
     }
 
     /**
      * 移动
      */
     @RequestMapping("/move")
-    public FileListVO touch(@RequestBody FileMoveRequest request) {
+    public String move(@RequestBody FileMoveRequest request) {
         this.checkNormalize(request.getSource());
         Valid.notBlank(request.getTarget());
         this.setExecutor(request);
-        sftpService.move(request);
-        return this.ll(request);
+        return sftpService.move(request);
     }
 
     /**
      * 删除
      */
     @RequestMapping("/remove")
-    public FileListVO remove(@RequestBody FileRemoveRequest request) {
+    public void remove(@RequestBody FileRemoveRequest request) {
         this.checkNormalize(request.getPath());
         Valid.isFalse(Const.SLASH.equals(Files1.getPath(request.getPath().trim())), MessageConst.DEL_ROOT_PATH);
         this.setExecutor(request);
         sftpService.remove(request);
-        return this.ll(request);
     }
 
     /**
      * 修改权限
      */
     @RequestMapping("/chmod")
-    public FileListVO chmod(@RequestBody FileChmodRequest request) {
+    public String chmod(@RequestBody FileChmodRequest request) {
         this.checkNormalize(request.getPath());
         Valid.notNull(request.getPermission());
         this.setExecutor(request);
-        sftpService.chmod(request);
-        return this.ll(request);
+        return sftpService.chmod(request);
     }
 
     /**
      * 修改所有者
      */
     @RequestMapping("/chown")
-    public FileListVO chown(@RequestBody FileChownRequest request) {
+    public void chown(@RequestBody FileChownRequest request) {
         this.checkNormalize(request.getPath());
         Valid.notNull(request.getUid());
         this.setExecutor(request);
         sftpService.chown(request);
-        return this.ll(request);
     }
 
     /**
      * 修改所有组
      */
     @RequestMapping("/chgrp")
-    public FileListVO changeGroup(@RequestBody FileChangeGroupRequest request) {
+    public void changeGroup(@RequestBody FileChangeGroupRequest request) {
         this.checkNormalize(request.getPath());
         Valid.notNull(request.getGid());
         this.setExecutor(request);
         sftpService.changeGroup(request);
-        return this.ll(request);
+    }
+
+    /**
+     * 检查文件是否存在
+     */
+    @RequestMapping("/check/present")
+    public boolean checkFilePresent(@RequestBody FilePresentCheckRequest request) {
+        this.checkNormalize(request.getPath());
+        Valid.notBlank(request.getName());
+        this.setExecutor(request);
+        return sftpService.checkFilePresent(request);
     }
 
     /**
@@ -212,7 +213,7 @@ public class SftpController {
     /**
      * 传输暂停
      */
-    @RequestMapping("/transfer/stop")
+    @RequestMapping("/transfer/pause")
     public HttpWrapper<?> transferStop(@RequestBody FileTransferStopRequest request) {
         String fileToken = Valid.notBlank(request.getFileToken());
         sftpService.transferStop(fileToken);

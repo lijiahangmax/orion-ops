@@ -69,11 +69,6 @@ public class SftpServiceImpl implements SftpService {
     private RedisTemplate<String, String> redisTemplate;
 
     /**
-     * 连接信息
-     */
-    private final Map<Long, SessionStore> sessionHolder = Maps.newCurrentHashMap();
-
-    /**
      * 基本操作的executor 不包含(upload, download)
      */
     private final Map<Long, SftpExecutor> basicExecutorHolder = Maps.newCurrentHashMap();
@@ -82,20 +77,7 @@ public class SftpServiceImpl implements SftpService {
     public FileOpenVO open(Long machineId) {
         // 获取当前用户
         Long userId = Currents.getUserId();
-        // 获取charset
-        String charset = this.getSftpCharset(machineId);
-        // 获取executor
-        SftpExecutor executor = basicExecutorHolder.get(machineId);
-        if (executor == null) {
-            // 打开sftp连接
-            SessionStore sessionStore = machineInfoService.openSessionStore(machineId);
-            executor = sessionStore.getSftpExecutor(charset);
-            executor.connect();
-            sessionHolder.put(machineId, sessionStore);
-            basicExecutorHolder.put(machineId, executor);
-        } else if (!executor.isConnected()) {
-            executor.connect();
-        }
+        SftpExecutor executor = getBasicExecutor(machineId);
         // 生成token
         String sessionToken = this.generatorSessionToken(userId, machineId);
         // 查询列表
@@ -105,7 +87,7 @@ public class SftpServiceImpl implements SftpService {
         FileOpenVO openVO = new FileOpenVO();
         openVO.setSessionToken(sessionToken);
         openVO.setHome(path);
-        openVO.setCharset(charset);
+        openVO.setCharset(executor.getCharset());
         openVO.setPath(list.getPath());
         openVO.setFiles(list.getFiles());
         return openVO;
@@ -135,17 +117,19 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public void mkdir(FileMkdirRequest request) {
-        String path = Files1.getPath(request.getCurrent() + "/" + request.getPath());
+    public String mkdir(FileMkdirRequest request) {
+        String path = Files1.getPath(request.getPath());
         boolean r = request.getExecutor().mkdirs(path);
         Valid.sftp(r);
+        return path;
     }
 
     @Override
-    public void touch(FileTouchRequest request) {
-        String path = Files1.getPath(request.getCurrent() + "/" + request.getPath());
+    public String touch(FileTouchRequest request) {
+        String path = Files1.getPath(request.getPath());
         boolean r = request.getExecutor().touch(path);
         Valid.sftp(r);
+        return path;
     }
 
     @Override
@@ -156,11 +140,12 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public void move(FileMoveRequest request) {
+    public String move(FileMoveRequest request) {
         String source = Files1.getPath(request.getSource());
         String target = Files1.getPath(request.getTarget());
         boolean r = request.getExecutor().mv(source, target);
         Valid.sftp(r);
+        return target;
     }
 
     @Override
@@ -168,16 +153,17 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = request.getExecutor();
         SftpFile file = executor.getFile(path);
-        Valid.notNull(file, MessageConst.FILE_NOTFOUND);
+        Valid.notNull(file, MessageConst.FILE_NOT_FOUND);
         boolean r = executor.rm(path);
         Valid.sftp(r);
     }
 
     @Override
-    public void chmod(FileChmodRequest request) {
+    public String chmod(FileChmodRequest request) {
         String path = Files1.getPath(request.getPath());
         boolean r = request.getExecutor().chmod(path, request.getPermission());
         Valid.sftp(r);
+        return Files1.permission10toString(request.getPermission());
     }
 
     @Override
@@ -192,6 +178,12 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         boolean r = request.getExecutor().chgrp(path, request.getGid());
         Valid.sftp(r);
+    }
+
+    @Override
+    public boolean checkFilePresent(FilePresentCheckRequest request) {
+        String path = Files1.getPath(request.getPath() + "/" + request.getName());
+        return request.getExecutor().isExist(path);
     }
 
     @Override
@@ -251,7 +243,7 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = request.getExecutor();
         SftpFile file = executor.getFile(path);
-        Valid.notNull(file, MessageConst.FILE_NOTFOUND);
+        Valid.notNull(file, MessageConst.FILE_NOT_FOUND);
         // 获取token信息
         Long machineId = this.getTokenInfo(request.getSessionToken())[1];
         String fileToken = ObjectIds.next();
@@ -364,7 +356,7 @@ public class SftpServiceImpl implements SftpService {
         boolean resolve = values[0].equals(Currents.getUserId());
         Valid.isTrue(resolve, MessageConst.SESSION_EXPIRE);
         // 检查缓存机器
-        SftpExecutor executor = basicExecutorHolder.get(values[1]);
+        SftpExecutor executor = this.getBasicExecutor(values[1]);
         Valid.notNull(executor, MessageConst.SESSION_EXPIRE);
         if (!executor.isConnected()) {
             executor.connect();
@@ -440,17 +432,44 @@ public class SftpServiceImpl implements SftpService {
     }
 
     /**
+     * 获取sftp基本操作executor
+     *
+     * @param machineId machineId
+     * @return SftpExecutor
+     */
+    private SftpExecutor getBasicExecutor(Long machineId) {
+        // 获取executor
+        SftpExecutor executor = basicExecutorHolder.get(machineId);
+        if (executor != null) {
+            if (!executor.isConnected()) {
+                try {
+                    executor.connect();
+                } catch (Exception e) {
+                    // 无法连接则重新创建实例
+                    executor = null;
+                }
+            }
+        }
+        if (executor == null) {
+            // 获取charset
+            String charset = this.getSftpCharset(machineId);
+            // 打开sftp连接
+            SessionStore sessionStore = this.getSessionStore(machineId);
+            executor = sessionStore.getSftpExecutor(charset);
+            executor.connect();
+            basicExecutorHolder.put(machineId, executor);
+        }
+        return executor;
+    }
+
+    /**
      * 获取sessionStore
      *
      * @param machineId machineId
      * @return SessionStore
      */
     private SessionStore getSessionStore(Long machineId) {
-        SessionStore sessionStore = sessionHolder.get(machineId);
-        if (sessionStore != null && !sessionStore.isConnected()) {
-            sessionStore.connect();
-        }
-        return sessionStore;
+        return machineInfoService.openSessionStore(machineId);
     }
 
 }

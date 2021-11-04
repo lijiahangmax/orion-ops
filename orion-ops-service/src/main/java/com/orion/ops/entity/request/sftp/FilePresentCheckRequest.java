@@ -4,19 +4,24 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * sftp mkdir请求
+ * sftp 检查文件是否存在
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/6/23 20:08
+ * @since 2021/10/25 9:41
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FileMkdirRequest extends FileBaseRequest {
+public class FilePresentCheckRequest extends FileBaseRequest {
 
     /**
-     * 文件夹路径 绝对路径
+     * 当前路径
      */
     private String path;
+
+    /**
+     * 文件名称
+     */
+    private String name;
 
 }

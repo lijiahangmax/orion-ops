@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 public class FileTouchRequest extends FileBaseRequest {
 
     /**
-     * 路径 相对路径
+     * 路径 绝对路径
      */
     private String path;
 
