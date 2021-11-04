@@ -20,7 +20,7 @@ public enum SftpNotifyType {
     ADD(10),
 
     /**
-     * 进度 以及速率
+     * 进度以及速率
      */
     PROGRESS(20),
 

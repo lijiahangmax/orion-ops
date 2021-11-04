@@ -17,7 +17,6 @@ public enum SftpTransferStatus {
     /**
      * 10 未开始
      */
-    @Deprecated
     WAIT(10),
 
     /**

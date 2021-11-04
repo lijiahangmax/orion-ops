@@ -6,13 +6,12 @@ import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
-import com.orion.ops.entity.vo.FileTransferLogVO;
+import com.orion.ops.service.api.MachineInfoService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.support.progress.ByteTransferProgress;
 import com.orion.utils.Strings;
-import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import com.orion.utils.json.Jsons;
 import com.orion.utils.math.Numbers;
@@ -29,28 +28,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
+    protected static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
+
     protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean("fileTransferLogDAO");
 
     protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean("transferProcessorManager");
 
     protected SessionStore sessionStore;
 
-    @Getter
-    protected FileTransferHint hint;
-
-    @Getter
     protected SftpExecutor executor;
 
-    @Getter
     protected FileTransferLogDO record;
 
-    @Getter
-    protected String userMachine;
+    private String charset;
 
     @Getter
     protected String fileToken;
-
-    protected boolean resume;
 
     protected ByteTransferProgress progress;
 
@@ -60,11 +53,10 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     protected volatile boolean userCancel;
 
-    public FileTransferProcessor(FileTransferHint hint, SessionStore sessionStore) {
-        this.hint = hint;
-        this.sessionStore = sessionStore;
-        this.fileToken = hint.getFileToken();
-        this.userMachine = hint.getUserId() + "_" + hint.getMachineId();
+    public FileTransferProcessor(FileTransferLogDO record, String charset) {
+        this.record = record;
+        this.charset = charset;
+        this.fileToken = record.getFileToken();
         this.notifyBody = new FileTransferNotifyDTO();
         this.notifyBody.setFileToken(fileToken);
         this.notifyProgress = new FileTransferNotifyDTO.FileTransferNotifyProgress();
@@ -74,13 +66,11 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     public void run() {
         transferProcessorManager.addProcessor(fileToken, this);
         try {
-            if (resume) {
-                this.resumeRecord();
-            } else {
-                this.insertRecord();
-            }
+            // 开始传输
+            this.updateStatusAndNotify(SftpTransferStatus.RUNNABLE.getStatus());
             // 打开连接
-            this.executor = sessionStore.getSftpExecutor(Strings.def(hint.getCharset(), Const.UTF_8));
+            this.sessionStore = machineInfoService.openSessionStore(record.getMachineId());
+            this.executor = sessionStore.getSftpExecutor(Strings.def(charset, Const.UTF_8));
             executor.connect();
             log.info("sftp传输文件-初始化完毕, 准备处理传输 fileToken: {}", fileToken);
             // 处理
@@ -100,47 +90,24 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
         }
     }
 
+    @Override
+    public void stop() {
+        log.info("sftp传输文件-用户暂停 fileToken: {}", fileToken);
+        this.userCancel = true;
+        this.updateStatusAndNotify(SftpTransferStatus.PAUSE.getStatus());
+        this.disconnected();
+    }
+
     /**
      * 处理操作
      */
     protected abstract void handler();
 
     /**
-     * 插入明细
-     */
-    protected void insertRecord() {
-        this.record = new FileTransferLogDO();
-        record.setUserId(hint.getUserId());
-        record.setUserName(hint.getUsername());
-        record.setFileToken(hint.getFileToken());
-        record.setTransferType(hint.getTransferType().getType());
-        record.setMachineId(hint.getMachineId());
-        record.setRemoteFile(hint.getRemoteFile());
-        record.setLocalFile(hint.getLocalFile());
-        record.setCurrentSize(0L);
-        record.setFileSize(hint.getFileSize());
-        record.setNowProgress(0D);
-        record.setTransferStatus(SftpTransferStatus.RUNNABLE.getStatus());
-        fileTransferLogDAO.insert(record);
-        // notify add
-        this.notifyAdd();
-    }
-
-    /**
-     * 恢复下载设置明细
-     */
-    protected void resumeRecord() {
-        this.record = fileTransferLogDAO.selectById(hint.getResumeId());
-        // notify status
-        this.updateStatusAndNotify(SftpTransferStatus.RUNNABLE.getStatus());
-    }
-
-    /**
      * 初始化进度条
      */
     protected void initProgress(ByteTransferProgress progress) {
-        this.progress = progress;
-        progress.computeRate()
+        this.progress = progress.computeRate()
                 .rateAcceptor(this::transferAccept)
                 .callback(this::transferDoneCallback);
     }
@@ -192,17 +159,9 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
         }
     }
 
-    @Override
-    public void stop() {
-        log.info("sftp传输文件-用户暂停 fileToken: {}", fileToken);
-        this.userCancel = true;
-        this.updateStatusAndNotify(SftpTransferStatus.PAUSE.getStatus());
-        this.disconnected();
-    }
-
     protected void updateStatusAndNotify(Integer status) {
         if (progress == null) {
-            this.updateStatusAndNotify(status, 0D, 0L);
+            this.updateStatusAndNotify(status, null, null);
         } else {
             this.updateStatusAndNotify(status, progress.getProgress() * 100, progress.getCurrent());
         }
@@ -235,30 +194,12 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     }
 
     /**
-     * 断开连接
-     */
-    protected void disconnected() {
-        if (executor != null) {
-            executor.disconnectChannel();
-        }
-    }
-
-    /**
-     * 通知添加
-     */
-    protected void notifyAdd() {
-        notifyBody.setType(SftpNotifyType.ADD.getType());
-        notifyBody.setBody(Jsons.toJsonWriteNull(Converts.to(record, FileTransferLogVO.class)));
-        transferProcessorManager.notifySession(userMachine, notifyBody);
-    }
-
-    /**
      * 通知进度
      */
     protected void notifyProgress() {
         notifyBody.setType(SftpNotifyType.PROGRESS.getType());
         notifyBody.setBody(Jsons.toJsonWriteNull(notifyProgress));
-        transferProcessorManager.notifySession(userMachine, notifyBody);
+        transferProcessorManager.notifySession(record.getUserId(), record.getMachineId(), notifyBody);
     }
 
     /**
@@ -267,7 +208,16 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     protected void notifyChangeStatus(Integer status) {
         notifyBody.setType(SftpNotifyType.CHANGE_STATUS.getType());
         notifyBody.setBody(status);
-        transferProcessorManager.notifySession(userMachine, notifyBody);
+        transferProcessorManager.notifySession(record.getUserId(), record.getMachineId(), notifyBody);
+    }
+
+    /**
+     * 断开连接
+     */
+    protected void disconnected() {
+        if (executor != null) {
+            executor.disconnect();
+        }
     }
 
 }

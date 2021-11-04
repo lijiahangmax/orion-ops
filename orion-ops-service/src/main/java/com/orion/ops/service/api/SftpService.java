@@ -142,14 +142,6 @@ public interface SftpService {
     void download(FileDownloadRequest request);
 
     /**
-     * 传输列表
-     *
-     * @param machineId 机器id
-     * @return rows
-     */
-    List<FileTransferLogVO> transferList(Long machineId);
-
-    /**
      * 传输暂停
      *
      * @param fileToken fileToken
@@ -162,6 +154,14 @@ public interface SftpService {
      * @param fileToken fileToken
      */
     void transferResume(String fileToken);
+
+    /**
+     * 传输列表
+     *
+     * @param machineId 机器id
+     * @return rows
+     */
+    List<FileTransferLogVO> transferList(Long machineId);
 
     /**
      * 传输删除(单个)

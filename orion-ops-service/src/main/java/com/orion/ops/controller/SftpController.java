@@ -82,8 +82,6 @@ public class SftpController {
         return sftpService.touch(request);
     }
 
-    // batch upload
-    // batch download
     // batch resume
     // batch pause
 

@@ -82,7 +82,7 @@ public class TransferProcessorManager {
      * @param machineId machineId
      */
     public void authSessionNotify(String id, WebSocketSession session, Long userId, Long machineId) {
-        String userMachine = userId + "_" + machineId;
+        String userMachine = this.getUserMachine(userId, machineId);
         idMapping.put(id, session);
         sessionUserMachineMapping.put(id, userMachine);
         userMachineSessionMapping.computeIfAbsent(userMachine, s -> Lists.newList()).add(id);
@@ -107,8 +107,8 @@ public class TransferProcessorManager {
     }
 
     @SneakyThrows
-    public void notifySession(String userMachine, FileTransferNotifyDTO notify) {
-        List<String> sessionIds = userMachineSessionMapping.get(userMachine);
+    public void notifySession(Long userId, Long machineId, FileTransferNotifyDTO notify) {
+        List<String> sessionIds = userMachineSessionMapping.get(this.getUserMachine(userId, machineId));
         if (Lists.isEmpty(sessionIds)) {
             return;
         }
@@ -120,6 +120,17 @@ public class TransferProcessorManager {
             // 通知
             session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
         }
+    }
+
+    /**
+     * 获取用户机器key
+     *
+     * @param userId    userId
+     * @param machineId machineId
+     * @return key
+     */
+    private String getUserMachine(Long userId, Long machineId) {
+        return userId + "_" + machineId;
     }
 
 }
