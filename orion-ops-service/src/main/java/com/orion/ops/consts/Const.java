@@ -1,5 +1,9 @@
 package com.orion.ops.consts;
 
+import com.orion.utils.collect.Lists;
+
+import java.util.List;
+
 /**
  * 常量
  *
@@ -66,9 +70,9 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer IS_DEFAULT = 1;
 
-    public static final Integer INCR = 1;
+    public static final Integer INCREMENT = 1;
 
-    public static final Integer DECR = 2;
+    public static final Integer DECREMENT = 2;
 
     public static final Integer CONFIGURED = 1;
 
@@ -85,5 +89,19 @@ public class Const extends com.orion.constant.Const {
     public static final String ROLLBACK = "Rollback";
 
     public static final String CONNECT = "建立连接";
+
+    /**
+     * 不安全的文件夹
+     */
+    public static final List<String> UNSAFE_FS_DIR = Lists.of(
+            "/", "/bin", "/usr",
+            "/sbin", "/etc", "/tmp",
+            "/lib", "/var", "/home",
+            "/opt", "/root", "/run",
+            "/lib64", "/lost+found", "/media",
+            "/mnt", "/proc", "/sys",
+            "/svr", "/dev", "/boot",
+            "/usr/bin", "/usr/include", "/usr/lib",
+            "/usr/local", "/usr/sbin", ".tmp");
 
 }

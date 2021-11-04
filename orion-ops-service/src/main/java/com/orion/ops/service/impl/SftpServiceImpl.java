@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * sftp实现
@@ -99,6 +100,26 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
+    public FileListVO listDir(FileListRequest request) {
+        List<SftpFile> fileList;
+        SftpExecutor executor = request.getExecutor();
+        String path = request.getPath();
+        if (request.getAll() == 0) {
+            // 不查询隐藏文件
+            fileList = executor.listFilesFilter(path, f -> !f.getName().startsWith(".") && f.isDirectory(), false, true);
+        } else {
+            // 查询隐藏文件
+            fileList = executor.listDirs(path);
+        }
+        // 返回
+        FileListVO fileListVO = new FileListVO();
+        List<FileDetailVO> files = Converts.toList(fileList, FileDetailVO.class);
+        fileListVO.setPath(path);
+        fileListVO.setFiles(files);
+        return fileListVO;
+    }
+
+    @Override
     public FileListVO list(String path, int all, SftpExecutor executor) {
         List<SftpFile> fileList;
         if (all == 0) {
@@ -150,12 +171,10 @@ public class SftpServiceImpl implements SftpService {
 
     @Override
     public void remove(FileRemoveRequest request) {
-        String path = Files1.getPath(request.getPath());
         SftpExecutor executor = request.getExecutor();
-        SftpFile file = executor.getFile(path);
-        Valid.notNull(file, MessageConst.FILE_NOT_FOUND);
-        boolean r = executor.rm(path);
-        Valid.sftp(r);
+        request.getPaths().stream()
+                .map(Files1::getPath)
+                .forEach(executor::rm);
     }
 
     @Override
@@ -181,9 +200,12 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public boolean checkFilePresent(FilePresentCheckRequest request) {
-        String path = Files1.getPath(request.getPath() + "/" + request.getName());
-        return request.getExecutor().isExist(path);
+    public List<String> checkFilePresent(FilePresentCheckRequest request) {
+        SftpExecutor executor = request.getExecutor();
+        return request.getNames().stream()
+                .filter(Strings::isNotBlank)
+                .filter(s -> executor.isExist(Files1.getPath(request.getPath() + "/" + s)))
+                .collect(Collectors.toList());
     }
 
     @Override

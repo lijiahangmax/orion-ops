@@ -27,12 +27,20 @@ public interface SftpService {
     FileOpenVO open(Long machineId);
 
     /**
-     * ls
+     * 文件列表
      *
      * @param request request
      * @return list
      */
     FileListVO list(FileListRequest request);
+
+    /**
+     * 文件夹列表
+     *
+     * @param request request
+     * @return list
+     */
+    FileListVO listDir(FileListRequest request);
 
     /**
      * ls
@@ -108,9 +116,9 @@ public interface SftpService {
      * 检查文件是否存在
      *
      * @param request request
-     * @return true存在
+     * @return 存在的文件名称
      */
-    boolean checkFilePresent(FilePresentCheckRequest request);
+    List<String> checkFilePresent(FilePresentCheckRequest request);
 
     /**
      * 获取上传文件token

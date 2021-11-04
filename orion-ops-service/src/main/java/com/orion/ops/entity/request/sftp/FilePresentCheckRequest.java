@@ -3,6 +3,8 @@ package com.orion.ops.entity.request.sftp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * sftp 检查文件是否存在
  *
@@ -22,6 +24,6 @@ public class FilePresentCheckRequest extends FileBaseRequest {
     /**
      * 文件名称
      */
-    private String name;
+    private List<String> names;
 
 }

@@ -58,6 +58,13 @@ public class SftpController {
         return sftpService.list(request);
     }
 
+    @RequestMapping("/listDir")
+    public FileListVO listDir(@RequestBody FileListRequest request) {
+        this.checkNormalize(request.getPath());
+        this.setExecutor(request);
+        return sftpService.listDir(request);
+    }
+
     /**
      * 创建文件夹
      */
@@ -77,6 +84,11 @@ public class SftpController {
         this.setExecutor(request);
         return sftpService.touch(request);
     }
+
+    // batch upload
+    // batch download
+    // batch resume
+    // batch pause
 
     /**
      * 截断文件
@@ -104,8 +116,10 @@ public class SftpController {
      */
     @RequestMapping("/remove")
     public void remove(@RequestBody FileRemoveRequest request) {
-        this.checkNormalize(request.getPath());
-        Valid.isFalse(Const.SLASH.equals(Files1.getPath(request.getPath().trim())), MessageConst.DEL_ROOT_PATH);
+        List<String> paths = Valid.notEmpty(request.getPaths());
+        paths.forEach(this::checkNormalize);
+        boolean isSafe = paths.stream().noneMatch(Const.UNSAFE_FS_DIR::contains);
+        Valid.isSafe(isSafe);
         this.setExecutor(request);
         sftpService.remove(request);
     }
@@ -147,9 +161,9 @@ public class SftpController {
      * 检查文件是否存在
      */
     @RequestMapping("/check/present")
-    public boolean checkFilePresent(@RequestBody FilePresentCheckRequest request) {
+    public List<String> checkFilePresent(@RequestBody FilePresentCheckRequest request) {
         this.checkNormalize(request.getPath());
-        Valid.notBlank(request.getName());
+        Valid.notEmpty(request.getNames());
         this.setExecutor(request);
         return sftpService.checkFilePresent(request);
     }
@@ -247,13 +261,6 @@ public class SftpController {
         Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
         Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
         return sftpService.transferClear(tokenInfo[1]);
-    }
-
-    /**
-     * 查询文件列表
-     */
-    private FileListVO ll(FileBaseRequest request) {
-        return sftpService.list(request.getCurrent(), request.getAll(), request.getExecutor());
     }
 
     /**

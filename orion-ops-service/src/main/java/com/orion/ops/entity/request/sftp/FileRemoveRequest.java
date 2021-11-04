@@ -3,6 +3,8 @@ package com.orion.ops.entity.request.sftp;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * sftp rm -rf 命令
  *
@@ -17,6 +19,6 @@ public class FileRemoveRequest extends FileBaseRequest {
     /**
      * 路径 绝对路径
      */
-    private String path;
+    private List<String> paths;
 
 }
