@@ -40,14 +40,17 @@
               <!-- 工具栏 -->
               <div class="sftp-file-exec-buttons">
                 <a-button-group>
-                  <a-button :disabled="!sessionToken" @click="$copy(path)" title="复制路径" icon="link"/>
-                  <a-button :disabled="!sessionToken" @click="listFiles()" title="刷新" icon="reload"/>
                   <a-button :disabled="!sessionToken || selectedRowKeys.length === 0" @click="batchRemove()" title="批量删除" icon="delete"/>
                   <a-button :disabled="!sessionToken || selectedRowKeys.length === 0" @click="batchDownload()" title="批量下载" icon="cloud-download"/>
+                  <a-button :disabled="!sessionToken" @click="$copy(path)" title="复制路径" icon="link"/>
+                  <a-button :disabled="!sessionToken" @click="listFiles()" title="刷新" icon="reload"/>
                   <a-button :disabled="!sessionToken" @click="openTouch(true)" title="创建文件" icon="file-add"/>
                   <a-button :disabled="!sessionToken" @click="openTouch(false)" title="创建目录" icon="folder-add"/>
-                  <a-button :disabled="!sessionToken" @click="selectUploadFile" title="上传文件" :icon="canUpload ? 'cloud-upload' : 'loading'"/>
-                  <a-popover trigger="click" placement="bottomRight" :overlayClassName="'transfer-list-popover'">
+                  <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-upload-list-popover">
+                    <SftpUpload ref="upload" slot="content" :currentPath="path" :sessionToken="sessionToken"/>
+                    <a-button ref="uploadTrigger" :disabled="!sessionToken" title="上传" icon="cloud-upload"/>
+                  </a-popover>
+                  <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-transfer-list-popover">
                     <FileTransferList slot="content" :sessionToken="sessionToken"/>
                     <a-button :disabled="!sessionToken" title="传输列表" icon="unordered-list"/>
                   </a-popover>
@@ -70,7 +73,9 @@
             <!-- 名称 -->
             <div slot="name" slot-scope="record" class="file-name-cols">
               <!-- 图标 -->
-              <a-icon :type="getFileIcon(record.attr)" :title="getFileTitle(record.attr)" class="file-name-cols-icon"/>
+              <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
+                      :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).title"
+                      class="file-name-cols-icon"/>
               <!-- 名称 -->
               <a v-if="record.isDir" @click="listFiles(record.path)">{{ record.name }}</a>
               <span v-else>{{ record.name }}</span>
@@ -133,6 +138,7 @@ import SftpTouchModal from './SftpTouchModal'
 import SftpMoveModal from './SftpMoveModal'
 import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
+import SftpUpload from './SftpUpload'
 
 /**
  * 获取解析路径
@@ -204,14 +210,14 @@ export default {
     SftpTouchModal,
     SftpMoveModal,
     SftpChmodModal,
-    FileTransferList
+    FileTransferList,
+    SftpUpload
   },
   data: function() {
     return {
       visible: false,
       init: false,
       showHideFile: false,
-      canUpload: true,
       sessionToken: '',
       home: '',
       path: '',
@@ -301,12 +307,6 @@ export default {
       }).catch(() => {
         this.loading = false
       })
-    },
-    getFileIcon(attr) {
-      return this.$enum.valueOf(this.$enum.FILE_TYPE, attr.charAt(0)).icon
-    },
-    getFileTitle(attr) {
-      return this.$enum.valueOf(this.$enum.FILE_TYPE, attr.charAt(0)).label
     },
     cleanSelections() {
       this.selectedRowKeys = []
@@ -413,62 +413,6 @@ export default {
       this.chmod.sessionToken = this.sessionToken
       this.chmod.filePath = record.path
       this.chmod.permission = record.permission
-    },
-    selectUploadFile() {
-      if (!this.canUpload) {
-        this.$message.warning('请等待当前文件完毕后再次上传!')
-      } else {
-        document.getElementById('upload-file-input').click()
-      }
-    },
-    async checkUploadFile(e) {
-      if (e.target.files.length === 0) {
-        return
-      }
-      const file = e.target.files[0]
-      // 检查文件是否存在
-      const checkPresentRes = await this.$api.sftpCheckFilePresent({
-        sessionToken: this.sessionToken,
-        path: this.path,
-        name: file.name
-      })
-      if (checkPresentRes.data) {
-        this.$confirm({
-          title: '文件已存在',
-          content: '文件已存在, 是否继续上传?',
-          okText: '确认',
-          cancelText: '取消',
-          onOk: () => {
-            this.uploadFile(file)
-          }
-        })
-      } else {
-        this.uploadFile(file)
-      }
-    },
-    async uploadFile(file) {
-      this.canUpload = false
-      // 获取上传token
-      const uploadToken = await this.$api.getSftpUploadToken({
-        sessionToken: this.sessionToken
-      })
-      // 提示
-      this.$notification.open({
-        message: '文件开始上传',
-        description: `开始上传 ${file.name} 至 ${this.path}`,
-        duration: 3
-      })
-      const formData = new FormData()
-      formData.append('fileToken', uploadToken.data)
-      formData.append('remotePath', this.path)
-      formData.append('file', file)
-      this.$api.sftpUploadExec(formData).then(() => {
-        this.$message.success('文件上传请求提交成功')
-        this.canUpload = true
-      }).catch(e => {
-        this.$message.error('文件上传请求提交失败')
-        this.canUpload = true
-      })
     }
   },
   filters: {
@@ -544,10 +488,6 @@ export default {
 
 .path-item {
   display: flex;
-}
-
-.transfer-list-popover /deep/ .ant-popover-inner-content {
-  padding: 8px 2px 8px 8px;
 }
 
 </style>

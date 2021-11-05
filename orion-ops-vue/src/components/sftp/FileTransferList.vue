@@ -60,7 +60,7 @@
           </div>
           <!-- 按钮 -->
           <div class="transfer-list-item-action">
-            <a-icon title="暂停" v-if="item.status === 20" type="pause-circle" @click="pause(item.fileToken)"/>
+            <a-icon title="暂停" v-if="item.status === 10 || item.status === 20" type="pause-circle" @click="pause(item.fileToken)"/>
             <a-icon title="开始" v-if="item.status === 30" type="play-circle" @click="resume(item.fileToken)"/>
             <a-icon title="获取下载链接" v-if="item.status === 40 && !item.downloadUrl" type="link" @click="loadDownload(item)"/>
             <a v-if="item.status === 40 && item.downloadUrl" @click="clearDownloadUrl(item)" :href="item.downloadUrl">
@@ -186,13 +186,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 .transfer-list-bar {
   display: flex;
   justify-content: flex-end;
   padding-right: 10px;
-  background-color: #f8f9fa;
+  margin: 0 6px 6px 0;
+  background-color: #F8F9FA;
   padding: 5px;
   border-radius: 5px;
 }
@@ -206,7 +207,7 @@ export default {
 
 .transfer-list-items {
   width: 350px;
-  height: 250px;
+  height: 245px;
   overflow-y: auto;
 }
 
