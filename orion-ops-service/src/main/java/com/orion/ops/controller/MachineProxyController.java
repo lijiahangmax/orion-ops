@@ -2,15 +2,12 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.ProxyType;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
-import com.orion.utils.regexp.Matches;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +37,9 @@ public class MachineProxyController {
     public Long addProxy(@RequestBody MachineProxyRequest request) {
         request.setId(null);
         this.check(request);
+        if (!Strings.isBlank(request.getUsername())) {
+            Valid.notNull(request.getPassword());
+        }
         return machineProxyService.addUpdateProxy(request);
     }
 
@@ -74,15 +74,9 @@ public class MachineProxyController {
      * 合法校验
      */
     private void check(MachineProxyRequest request) {
-        String host = Valid.notBlank(request.getHost());
+        Valid.notBlank(request.getHost());
         Valid.notNull(request.getPort());
         Valid.notNull(ProxyType.of(request.getType()));
-        if (!Strings.isBlank(request.getUsername())) {
-            Valid.notNull(request.getPassword());
-        }
-        if (!Matches.isIpv4(host)) {
-            throw Exceptions.invalidArgument(MessageConst.ABSENT_PARAM);
-        }
     }
 
 }

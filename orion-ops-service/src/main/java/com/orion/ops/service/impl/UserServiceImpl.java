@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
         Valid.notNull(user, "未查询到用户信息");
         UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
         if (AvatarPicHolder.isExist(user.getAvatarPic())) {
-            userVo.setHeadPic(AvatarPicHolder.getBase64(user.getAvatarPic()));
+            userVo.setAvatar(AvatarPicHolder.getBase64(user.getAvatarPic()));
         }
         return userVo;
     }
@@ -105,10 +105,10 @@ public class UserServiceImpl implements UserService {
         userInfoDAO.insert(insert);
         Long userId = insert.getId();
         // 生成头像
-        String headPic = AvatarPicHolder.generatorUserHeadPic(userId, request.getNickname());
+        String avatar = AvatarPicHolder.generatorUserAvatar(userId, request.getNickname());
         UserInfoDO update = new UserInfoDO();
         update.setId(userId);
-        update.setAvatarPic(headPic);
+        update.setAvatarPic(avatar);
         update.setUpdateTime(new Date());
         userInfoDAO.updateById(update);
         return HttpWrapper.ok(userId);
@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer updateHeadPic(String headPic) {
+    public Integer updateAvatar(String avatar) {
         Long userId = Currents.getUserId();
         UserInfoDO userInfo = userInfoDAO.selectById(userId);
         // 删除原图片
@@ -216,9 +216,9 @@ public class UserServiceImpl implements UserService {
             AvatarPicHolder.deletePic(userInfo.getAvatarPic());
         }
         // 写入图片
-        String type = Base64s.img64Type(headPic);
+        String type = Base64s.img64Type(avatar);
         String url = AvatarPicHolder.getPicPath(userId, type);
-        byte[] pic = Base64s.img64Decode(headPic);
+        byte[] pic = Base64s.img64Decode(avatar);
         String fullPicPath = AvatarPicHolder.touchPicFile(userId, type);
         FileWriters.writeFast(fullPicPath, pic);
         // 更新

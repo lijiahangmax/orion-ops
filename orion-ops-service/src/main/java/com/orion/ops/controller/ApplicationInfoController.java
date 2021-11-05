@@ -60,8 +60,8 @@ public class ApplicationInfoController {
     @RequestMapping("/sort")
     public Integer updateAppSort(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
-        Integer adjust = Valid.in(request.getSortAdjust(), Const.INCR, Const.DECR);
-        return applicationService.updateAppSort(id, Const.INCR.equals(adjust));
+        Integer adjust = Valid.in(request.getSortAdjust(), Const.INCREMENT, Const.DECREMENT);
+        return applicationService.updateAppSort(id, Const.INCREMENT.equals(adjust));
     }
 
     /**

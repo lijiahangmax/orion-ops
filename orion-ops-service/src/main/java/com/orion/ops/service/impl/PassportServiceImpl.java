@@ -64,7 +64,7 @@ public class PassportServiceImpl implements PassportService {
         updateUser.setId(userId);
         // 检查头像
         if (!AvatarPicHolder.isExist(userInfo.getAvatarPic())) {
-            String url = AvatarPicHolder.generatorUserHeadPic(userId, userInfo.getNickname());
+            String url = AvatarPicHolder.generatorUserAvatar(userId, userInfo.getNickname());
             userInfo.setAvatarPic(url);
             updateUser.setAvatarPic(url);
         }
@@ -90,8 +90,6 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setUsername(userInfo.getUsername());
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
-        // 头像
-        loginInfo.setHeadPic(AvatarPicHolder.getBase64(userInfo.getAvatarPic()));
         return HttpWrapper.ok(loginInfo);
     }
 

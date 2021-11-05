@@ -48,8 +48,8 @@ public class ApplicationInfoRequest extends PageRequest {
     /**
      * 排序调整方向
      *
-     * @see com.orion.ops.consts.Const#INCR
-     * @see com.orion.ops.consts.Const#DECR
+     * @see com.orion.ops.consts.Const#INCREMENT
+     * @see com.orion.ops.consts.Const#DECREMENT
      */
     private Integer sortAdjust;
 

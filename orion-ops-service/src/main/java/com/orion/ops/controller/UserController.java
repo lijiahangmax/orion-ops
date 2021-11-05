@@ -97,8 +97,7 @@ public class UserController {
     @RequireRole(RoleType.ADMINISTRATOR)
     public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIdList());
-        Integer status = Valid.notNull(request.getStatus());
-        Valid.isTrue(Const.ENABLE.equals(status) || Const.DISABLE.equals(status));
+        Valid.in(Valid.notNull(request.getStatus()), Const.ENABLE, Const.DISABLE);
         return userService.updateStatus(request);
     }
 

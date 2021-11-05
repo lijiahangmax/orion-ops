@@ -70,6 +70,6 @@ public class UserInfoRequest extends PageRequest {
     /**
      * 头像base64
      */
-    private String headPic;
+    private String avatar;
 
 }
