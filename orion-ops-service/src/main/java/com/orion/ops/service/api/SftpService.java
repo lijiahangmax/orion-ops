@@ -156,6 +156,13 @@ public interface SftpService {
     void transferResume(String fileToken);
 
     /**
+     * 传输失败重试
+     *
+     * @param fileToken fileToken
+     */
+    void transferRetry(String fileToken);
+
+    /**
      * 传输暂停
      *
      * @param sessionToken sessionToken
@@ -168,6 +175,13 @@ public interface SftpService {
      * @param sessionToken sessionToken
      */
     void transferResumeAll(String sessionToken);
+
+    /**
+     * 传输失败重试
+     *
+     * @param sessionToken sessionToken
+     */
+    void transferRetryAll(String sessionToken);
 
     /**
      * 传输列表

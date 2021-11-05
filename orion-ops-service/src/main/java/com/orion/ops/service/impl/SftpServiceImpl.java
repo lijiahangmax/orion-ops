@@ -377,6 +377,27 @@ public class SftpServiceImpl implements SftpService {
         Long machineId = transferLog.getMachineId();
         // 判断状态是否为暂停
         Valid.eq(SftpTransferStatus.PAUSE.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
+        this.transferResumeRetry(transferLog, machineId);
+    }
+
+    @Override
+    public void transferRetry(String fileToken) {
+        // 获取请求文件
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
+        Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
+        Long machineId = transferLog.getMachineId();
+        // 判断状态是否为暂停
+        Valid.eq(SftpTransferStatus.ERROR.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
+        this.transferResumeRetry(transferLog, machineId);
+    }
+
+    /**
+     * 传输恢复/传输重试
+     *
+     * @param transferLog transferLog
+     * @param machineId   machineId
+     */
+    private void transferResumeRetry(FileTransferLogDO transferLog, Long machineId) {
         // 修改状态为等待
         FileTransferLogDO update = new FileTransferLogDO();
         update.setId(transferLog.getId());
@@ -457,6 +478,11 @@ public class SftpServiceImpl implements SftpService {
         for (FileTransferLogDO transferLog : transferLogs) {
             IFileTransferProcessor.of(transferLog, charset).exec();
         }
+    }
+
+    @Override
+    public void transferRetryAll(String sessionToken) {
+
     }
 
     @Override

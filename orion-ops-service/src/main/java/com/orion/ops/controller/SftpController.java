@@ -231,6 +231,14 @@ public class SftpController {
     }
 
     /**
+     * 传输失败重试
+     */
+    @RequestMapping("/transfer/{fileToken}/retry")
+    public void transferRetry(@PathVariable("fileToken") String fileToken) {
+        sftpService.transferRetry(fileToken);
+    }
+
+    /**
      * 批量暂停所有传输
      */
     @RequestMapping("/transfer/{sessionToken}/pause/all")
@@ -244,6 +252,14 @@ public class SftpController {
     @RequestMapping("/transfer/{sessionToken}/resume/all")
     public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferResumeAll(sessionToken);
+    }
+
+    /**
+     * 批量失败重试所有
+     */
+    @RequestMapping("/transfer/{sessionToken}/retry/all")
+    public void transferRetryAll(@PathVariable("sessionToken") String sessionToken) {
+        sftpService.transferRetryAll(sessionToken);
     }
 
     /**
