@@ -241,7 +241,7 @@ public class SftpController {
     /**
      * 批量恢复所有传输
      */
-    @RequestMapping("/transfer/{sessionToken}resume/all")
+    @RequestMapping("/transfer/{sessionToken}/resume/all")
     public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferResumeAll(sessionToken);
     }

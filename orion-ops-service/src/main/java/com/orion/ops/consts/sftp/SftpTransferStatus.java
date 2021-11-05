@@ -15,7 +15,7 @@ import lombok.Getter;
 public enum SftpTransferStatus {
 
     /**
-     * 10 未开始
+     * 10 等待中
      */
     WAIT(10),
 

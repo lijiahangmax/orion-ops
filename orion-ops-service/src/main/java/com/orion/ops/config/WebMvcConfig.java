@@ -160,7 +160,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> unsafeExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("unsafeExceptionHandler url: {}, unsafe异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
-        return HttpWrapper.error().msg(MessageConst.UNSAFE_ERROR).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.UNSAFE_OPERATOR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = LogException.class)

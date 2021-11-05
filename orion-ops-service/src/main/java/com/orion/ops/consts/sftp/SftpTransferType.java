@@ -29,6 +29,11 @@ public enum SftpTransferType {
      */
     TRANSFER(30),
 
+    /**
+     * 40 打包传输
+     */
+    PACKAGE(40),
+
     ;
 
     private final Integer type;
