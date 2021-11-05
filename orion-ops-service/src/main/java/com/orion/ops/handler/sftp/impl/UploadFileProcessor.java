@@ -40,7 +40,7 @@ public class UploadFileProcessor extends FileTransferProcessor {
         String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
         log.info("sftp文件上传-开始传输 fileToken: {}, machineId: {}, local: {}, remote: {}",
                 fileToken, record.getMachineId(), localAbsolutePath, remoteFile);
-        SftpUpload upload = executor.upload(remoteFile, localFile);
+        SftpUpload upload = executor.upload(remoteFile, localAbsolutePath);
         this.initProgress(upload.getProgress());
         upload.run();
     }

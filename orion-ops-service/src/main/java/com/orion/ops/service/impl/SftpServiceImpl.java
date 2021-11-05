@@ -346,11 +346,27 @@ public class SftpServiceImpl implements SftpService {
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
         // 判断状态是否为进行中
-        Valid.eq(SftpTransferStatus.RUNNABLE.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
+        Integer status = transferLog.getTransferStatus();
+        Valid.isTrue(SftpTransferStatus.WAIT.getStatus().equals(status)
+                || SftpTransferStatus.RUNNABLE.getStatus().equals(status), MessageConst.INVALID_STATUS);
         // 获取执行器
         IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
-        Valid.notNull(processor, MessageConst.UNSELECTED_TRANSFER_PROCESSOR);
-        processor.stop();
+        if (processor != null) {
+            // 执行器不为空则终止
+            processor.stop();
+        } else {
+            // 修改状态为暂停
+            FileTransferLogDO update = new FileTransferLogDO();
+            update.setId(transferLog.getId());
+            update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+            fileTransferLogDAO.updateById(update);
+            // 通知状态
+            FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+            notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
+            notify.setFileToken(transferLog.getFileToken());
+            notify.setBody(SftpTransferStatus.PAUSE.getStatus());
+            transferProcessorManager.notifySession(transferLog.getUserId(), transferLog.getMachineId(), notify);
+        }
     }
 
     @Override

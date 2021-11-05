@@ -11,6 +11,7 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.support.progress.ByteTransferProgress;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.json.Jsons;
@@ -87,9 +88,9 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             // 程序错误并非传输错误修改状态
             if (progress == null || !progress.isError()) {
                 log.error("sftp传输文件-运行异常 fileToken: {}", fileToken, e);
-                e.printStackTrace();
                 this.updateStatusAndNotify(SftpTransferStatus.ERROR.getStatus());
             }
+            e.printStackTrace();
         } finally {
             transferProcessorManager.removeProcessor(fileToken);
             this.disconnected();
@@ -124,19 +125,24 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      * @param progress progress
      */
     protected void transferAccept(ByteTransferProgress progress) {
-        if (progress.isDone()) {
-            return;
+        try {
+            if (progress.isDone()) {
+                return;
+            }
+            String progressRate = Numbers.setScale(progress.getProgress() * 100, 2);
+            String transferRate = Files1.getSize(progress.getNowRate());
+            String transferCurrent = Files1.getSize(progress.getCurrent());
+            // debug
+            // log.info(transferCurrent + " " + progressRate + "% " + transferRate + "/s");
+            // notify progress
+            notifyProgress.setCurrent(transferCurrent);
+            notifyProgress.setProgress(progressRate);
+            notifyProgress.setRate(transferRate);
+            this.notifyProgress();
+        } catch (Exception e) {
+            log.error("sftp-传输信息回调异常 fileToken: {}, digest: {}", fileToken, Exceptions.getDigest(e));
+            e.printStackTrace();
         }
-        String progressRate = Numbers.setScale(progress.getProgress() * 100, 2);
-        String transferRate = Files1.getSize(progress.getNowRate());
-        String transferCurrent = Files1.getSize(progress.getCurrent());
-        // debug
-        // log.info(transferCurrent + " " + progressRate + "% " + transferRate + "/s");
-        // notify progress
-        notifyProgress.setCurrent(transferCurrent);
-        notifyProgress.setProgress(progressRate);
-        notifyProgress.setRate(transferRate);
-        this.notifyProgress();
     }
 
     /**
@@ -145,23 +151,29 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      * @param progress progress
      */
     protected void transferDoneCallback(ByteTransferProgress progress) {
-        FileTransferLogDO update = new FileTransferLogDO();
-        update.setId(record.getId());
-        if (progress.isError()) {
-            // 非用户取消更新状态
-            if (!userCancel) {
-                this.updateStatusAndNotify(SftpTransferStatus.ERROR.getStatus());
+        try {
+
+            FileTransferLogDO update = new FileTransferLogDO();
+            update.setId(record.getId());
+            if (progress.isError()) {
+                // 非用户取消更新状态
+                if (!userCancel) {
+                    this.updateStatusAndNotify(SftpTransferStatus.ERROR.getStatus());
+                }
+            } else {
+                String transferCurrent = Files1.getSize(progress.getCurrent());
+                String transferRate = Files1.getSize(progress.getNowRate());
+                notifyProgress.setCurrent(transferCurrent);
+                notifyProgress.setProgress(100 + "");
+                notifyProgress.setRate(transferRate);
+                // notify progress
+                this.notifyProgress();
+                // notify status
+                this.updateStatusAndNotify(SftpTransferStatus.FINISH.getStatus(), 100D, progress.getEnd());
             }
-        } else {
-            String transferCurrent = Files1.getSize(progress.getCurrent());
-            String transferRate = Files1.getSize(progress.getNowRate());
-            notifyProgress.setCurrent(transferCurrent);
-            notifyProgress.setProgress(100 + "");
-            notifyProgress.setRate(transferRate);
-            // notify progress
-            this.notifyProgress();
-            // notify status
-            this.updateStatusAndNotify(SftpTransferStatus.FINISH.getStatus(), 100D, progress.getEnd());
+        } catch (Exception e) {
+            log.error("sftp-传输完成回调异常 fileToken: {}, digest: {}", fileToken, Exceptions.getDigest(e));
+            e.printStackTrace();
         }
     }
 
@@ -189,8 +201,8 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
         // 更新
         FileTransferLogDO update = new FileTransferLogDO();
         update.setId(id);
-        update.setNowProgress(progress);
         update.setTransferStatus(status);
+        update.setNowProgress(progress);
         update.setCurrentSize(currentSize);
         int effect = fileTransferLogDAO.updateById(update);
         log.info("sftp传输文件-更新状态 id: {}, fileToken: {}, status: {}, progress: {}, currentSize: {}, effect: {}",
