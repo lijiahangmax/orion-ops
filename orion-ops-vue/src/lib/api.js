@@ -287,21 +287,35 @@ const $api = {
    * sftp 传输暂停
    */
   sftpTransferPause: param => {
-    return $http.$post('/sftp/transfer/pause', param)
+    return $http.$post(`/sftp/transfer/${param.fileToken}/pause`, param)
   },
 
   /**
    * sftp 传输恢复
    */
   sftpTransferResume: param => {
-    return $http.$post('/sftp/transfer/resume', param)
+    return $http.$post(`/sftp/transfer/${param.fileToken}/resume`, param)
+  },
+
+  /**
+   * sftp 传输暂停全部
+   */
+  sftpTransferPauseAll: param => {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause/all`, param)
+  },
+
+  /**
+   * sftp 传输恢复全部
+   */
+  sftpTransferResumeAll: param => {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume/all`, param)
   },
 
   /**
    * sftp 传输删除(单个)
    */
   sftpTransferRemove: param => {
-    return $http.$post('/sftp/transfer/remove', param)
+    return $http.$post(`/sftp/transfer/${param.fileToken}/remove`, param)
   },
 
   /**

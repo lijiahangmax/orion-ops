@@ -225,6 +225,59 @@ const $enum = {
       label: '删除',
       color: '#ff922b'
     }
+  },
+
+  /**
+   * sftp 传输类型
+   */
+  SFTP_TRANSFER_TYPE: {
+    UPLOAD: {
+      value: 10,
+      label: '上传'
+    },
+    DOWNLOAD: {
+      value: 20,
+      label: '下载'
+    },
+    TRANSFER: {
+      value: 30,
+      label: '传输'
+    },
+    PACKAGE: {
+      value: 40,
+      label: '打包'
+    }
+  },
+
+  /**
+   * sftp 传输状态
+   */
+  SFTP_TRANSFER_STATUS: {
+    WAIT: {
+      value: 10,
+      label: '等待中',
+      color: '#FF922B'
+    },
+    RUNNABLE: {
+      value: 20,
+      label: '进行中',
+      color: '#5C7CFA'
+    },
+    PAUSE: {
+      value: 30,
+      label: '已暂停',
+      color: '#CED4DA'
+    },
+    FINISH: {
+      value: 40,
+      label: '已完成',
+      color: '#51CF66'
+    },
+    ERROR: {
+      value: 50,
+      label: '失败',
+      color: '#F03E3E'
+    }
   }
 
 }
