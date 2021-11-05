@@ -2,7 +2,7 @@
   <div class="terminal-main">
     <!-- terminal -->
     <div class="terminal-content">
-      <div id="terminal" @contextmenu.prevent="openRightMenu"></div>
+      <div id="terminal" ref="terminal" @contextmenu.prevent="openRightMenu"></div>
     </div>
     <!-- 事件 -->
     <div class="terminal-event-container">
@@ -93,7 +93,7 @@ import 'xterm/css/xterm.css'
 function initTerminal() {
   // 打开terminal
   this.term = new Terminal(this.options)
-  this.term.open(document.getElementById('terminal'))
+  this.term.open(this.$refs.terminal)
   // 注册terminal事件
   this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
   this.term.onKey(event => terminalEventHandler.onKey.call(this, event))
