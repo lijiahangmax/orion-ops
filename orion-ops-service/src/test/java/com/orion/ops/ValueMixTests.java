@@ -13,8 +13,8 @@ public class ValueMixTests {
 
     @Test
     public void machinePassword() {
-        String password = "123123123123";
-        Long machineId = 1L;
+        String password = "";
+        Long machineId = 33L;
         System.out.println(ValueMix.encrypt(password, machineId + Const.ORION_OPS));
     }
 

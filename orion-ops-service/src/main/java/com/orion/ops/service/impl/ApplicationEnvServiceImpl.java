@@ -149,7 +149,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getAppProfileEnv(Long appId, Long profileId) {
-        MutableLinkedHashMap<String, String> env = Maps.newLinkedMutableMap();
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
                 .eq(ApplicationEnvDO::getProfileId, profileId)

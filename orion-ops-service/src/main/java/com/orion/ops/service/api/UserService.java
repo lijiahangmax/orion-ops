@@ -65,9 +65,9 @@ public interface UserService {
     /**
      * 更新头像
      *
-     * @param headPic base64
+     * @param avatar base64
      * @return effect
      */
-    Integer updateHeadPic(String headPic);
+    Integer updateAvatar(String avatar);
 
 }

@@ -330,7 +330,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     /**
-     * 执行远程机群命令
+     * 执行远程机器命令
      */
     private String runRemoteCommand(Long id, String command) {
         SessionStore session = null;

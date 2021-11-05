@@ -1,6 +1,7 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -30,7 +31,8 @@ public class CleanTransferStatusRunner implements CommandLineRunner {
     public void run(String... args) {
         log.info("重置传输状态-开始");
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
-                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
+                .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus())
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE);
         fileTransferLogDAO.selectList(wrapper).forEach(c -> {
             FileTransferLogDO update = new FileTransferLogDO();
             update.setId(c.getId());

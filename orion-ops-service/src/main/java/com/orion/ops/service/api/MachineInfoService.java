@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.machine.MachineProperties;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
@@ -66,14 +67,6 @@ public interface MachineInfoService {
     Long copyMachine(Long id);
 
     /**
-     * 同步属性
-     *
-     * @param request request
-     * @return value
-     */
-    String syncProperties(MachineInfoRequest request);
-
-    /**
      * 通过id查询机器
      *
      * @param id id
@@ -112,5 +105,23 @@ public interface MachineInfoService {
      * @return session
      */
     SessionStore openSessionStore(MachineInfoDO machine);
+
+    /**
+     * 同步执行命令获取输出结果
+     *
+     * @param id       机器id
+     * @param property property
+     * @return result
+     */
+    String getPropertiesResultSync(Long id, MachineProperties property);
+
+    /**
+     * 同步执行命令获取输出结果
+     *
+     * @param id      机器id
+     * @param command 命令
+     * @return result
+     */
+    String getCommandResultSync(Long id, String command);
 
 }
