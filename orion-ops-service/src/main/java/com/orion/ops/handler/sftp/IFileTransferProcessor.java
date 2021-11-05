@@ -1,7 +1,6 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.able.Executable;
-import com.orion.able.Renewable;
 import com.orion.able.Stoppable;
 import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
@@ -17,7 +16,7 @@ import com.orion.ops.handler.sftp.impl.UploadFileProcessor;
  * @version 1.0.0
  * @since 2021/6/29 19:08
  */
-public interface IFileTransferProcessor extends Runnable, Stoppable, Executable, Renewable {
+public interface IFileTransferProcessor extends Runnable, Stoppable, Executable {
 
     /**
      * 获取执行processor

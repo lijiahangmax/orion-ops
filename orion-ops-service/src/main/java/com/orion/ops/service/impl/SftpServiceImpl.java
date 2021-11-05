@@ -39,7 +39,6 @@ import com.orion.utils.io.Files1;
 import com.orion.utils.json.Jsons;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -249,7 +248,6 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void upload(Long machineId, List<FileUploadRequest> requestFiles) {
         UserDTO user = Currents.getUser();
         Long userId = user.getId();
@@ -287,7 +285,6 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void download(FileDownloadRequest request) {
         // 获取token信息
         Long machineId = this.getMachineId(request.getSessionToken());
@@ -299,7 +296,6 @@ public class SftpServiceImpl implements SftpService {
             // 本地保存路径
             String fileToken = ObjectIds.next();
             String localPath = PathBuilders.getSftpDownloadFilePath(fileToken);
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localPath);
             // 设置传输信息
             FileTransferLogDO download = new FileTransferLogDO();
             download.setUserId(userId);
@@ -308,7 +304,7 @@ public class SftpServiceImpl implements SftpService {
             download.setTransferType(SftpTransferType.DOWNLOAD.getType());
             download.setMachineId(machineId);
             download.setRemoteFile(file.getPath());
-            download.setLocalFile(localAbsolutePath);
+            download.setLocalFile(localPath);
             download.setCurrentSize(0L);
             download.setFileSize(file.getSize());
             download.setNowProgress(0D);
@@ -358,7 +354,6 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void transferResume(String fileToken) {
         // 获取请求文件
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
@@ -379,11 +374,10 @@ public class SftpServiceImpl implements SftpService {
         transferProcessorManager.notifySession(transferLog.getUserId(), machineId, notify);
         // 提交下载
         String charset = this.getSftpCharset(machineId);
-        IFileTransferProcessor.of(transferLog, charset).resume();
+        IFileTransferProcessor.of(transferLog, charset).exec();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void transferPauseAll(String sessionToken) {
         // 获取token信息
         Long machineId = this.getMachineId(sessionToken);
@@ -418,7 +412,6 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void transferResumeAll(String sessionToken) {
         // 获取token信息
         Long machineId = this.getMachineId(sessionToken);
@@ -446,7 +439,7 @@ public class SftpServiceImpl implements SftpService {
         // 提交下载
         String charset = this.getSftpCharset(machineId);
         for (FileTransferLogDO transferLog : transferLogs) {
-            IFileTransferProcessor.of(transferLog, charset).resume();
+            IFileTransferProcessor.of(transferLog, charset).exec();
         }
     }
 

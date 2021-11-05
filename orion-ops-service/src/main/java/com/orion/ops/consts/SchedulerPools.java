@@ -47,20 +47,21 @@ public class SchedulerPools {
      */
     public static final ExecutorService TAIL_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("tail-thread-")
-            .setCorePoolSize(0)
+            .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new SynchronousQueue<>())
             .setAllowCoreThreadTimeOut(true)
             .build();
 
+
     /**
      * sftp 上传线程池
      */
     public static final ExecutorService SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-upload-thread-")
-            .setCorePoolSize(0)
-            .setMaxPoolSize(8)
+            .setCorePoolSize(6)
+            .setMaxPoolSize(6)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new LinkedBlockingQueue<>())
             .setAllowCoreThreadTimeOut(true)
@@ -71,8 +72,8 @@ public class SchedulerPools {
      */
     public static final ExecutorService SFTP_DOWNLOAD_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-download-thread-")
-            .setCorePoolSize(0)
-            .setMaxPoolSize(8)
+            .setCorePoolSize(6)
+            .setMaxPoolSize(6)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new LinkedBlockingQueue<>())
             .setAllowCoreThreadTimeOut(true)
@@ -83,7 +84,7 @@ public class SchedulerPools {
      */
     public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-main-thread-")
-            .setCorePoolSize(0)
+            .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
@@ -95,7 +96,7 @@ public class SchedulerPools {
      */
     public static final ExecutorService RELEASE_TARGET_STAGE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-target-stage-thread-")
-            .setCorePoolSize(4)
+            .setCorePoolSize(12)
             .setMaxPoolSize(12)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new LinkedBlockingQueue<>())
