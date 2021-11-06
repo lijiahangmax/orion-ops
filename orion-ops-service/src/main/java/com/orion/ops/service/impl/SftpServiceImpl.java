@@ -458,6 +458,29 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.PAUSE.getStatus());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
+        this.transferResumeRetryAll(transferLogs, machineId);
+    }
+
+    @Override
+    public void transferRetryAll(String sessionToken) {
+        // 获取token信息
+        Long machineId = this.getMachineId(sessionToken);
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.ERROR.getStatus());
+        List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
+        this.transferResumeRetryAll(transferLogs, machineId);
+    }
+
+    /**
+     * 传输恢复/传输重试全部
+     *
+     * @param transferLogs transferLogs
+     * @param machineId    machineId
+     */
+    private void transferResumeRetryAll(List<FileTransferLogDO> transferLogs, Long machineId) {
         // 修改状态为等待
         for (FileTransferLogDO transferLog : transferLogs) {
             FileTransferLogDO update = new FileTransferLogDO();
@@ -478,11 +501,6 @@ public class SftpServiceImpl implements SftpService {
         for (FileTransferLogDO transferLog : transferLogs) {
             IFileTransferProcessor.of(transferLog, charset).exec();
         }
-    }
-
-    @Override
-    public void transferRetryAll(String sessionToken) {
-
     }
 
     @Override
