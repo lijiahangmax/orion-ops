@@ -3,6 +3,7 @@ package com.orion.ops.utils;
 import com.orion.ops.consts.MessageConst;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
+import com.orion.utils.io.Files1;
 
 import java.util.Collection;
 
@@ -75,6 +76,16 @@ public class Valid extends com.orion.utils.Valid {
 
     public static void isSafe(boolean s) {
         isTrue(s, MessageConst.UNSAFE_OPERATOR);
+    }
+
+    /**
+     * 检查路径是否合法化 即不包含 ./ ../
+     *
+     * @param path path
+     */
+    public static void checkNormalize(String path) {
+        Valid.notBlank(path);
+        Valid.isTrue(Files1.isNormalize(path), MessageConst.PATH_NOT_NORMALIZE);
     }
 
 }

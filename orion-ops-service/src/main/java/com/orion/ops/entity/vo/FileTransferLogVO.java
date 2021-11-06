@@ -38,11 +38,6 @@ public class FileTransferLogVO {
     private String remoteFile;
 
     /**
-     * 本机文件
-     */
-    private String localFile;
-
-    /**
      * 当前大小
      */
     private String current;
@@ -71,7 +66,6 @@ public class FileTransferLogVO {
             vo.setFileToken(s.getFileToken());
             vo.setType(s.getTransferType());
             vo.setRemoteFile(s.getRemoteFile());
-            vo.setLocalFile(s.getLocalFile());
             vo.setCurrent(Files1.getSize(s.getCurrentSize()));
             vo.setSize(Files1.getSize(s.getFileSize()));
             vo.setProgress(s.getNowProgress());

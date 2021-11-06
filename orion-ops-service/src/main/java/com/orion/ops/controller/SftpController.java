@@ -3,8 +3,8 @@ package com.orion.ops.controller;
 import com.orion.id.ObjectIds;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
@@ -53,13 +53,13 @@ public class SftpController {
      */
     @RequestMapping("/list")
     public FileListVO list(@RequestBody FileListRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         return sftpService.list(request);
     }
 
     @RequestMapping("/listDir")
     public FileListVO listDir(@RequestBody FileListRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         return sftpService.listDir(request);
     }
 
@@ -68,7 +68,7 @@ public class SftpController {
      */
     @RequestMapping("/mkdir")
     public String mkdir(@RequestBody FileMkdirRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         return sftpService.mkdir(request);
     }
 
@@ -77,7 +77,7 @@ public class SftpController {
      */
     @RequestMapping("/touch")
     public String touch(@RequestBody FileTouchRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         return sftpService.touch(request);
     }
 
@@ -86,7 +86,7 @@ public class SftpController {
      */
     @RequestMapping("/truncate")
     public void truncate(@RequestBody FileTruncateRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         sftpService.truncate(request);
     }
 
@@ -95,7 +95,7 @@ public class SftpController {
      */
     @RequestMapping("/move")
     public String move(@RequestBody FileMoveRequest request) {
-        this.checkNormalize(request.getSource());
+        Valid.checkNormalize(request.getSource());
         Valid.notBlank(request.getTarget());
         return sftpService.move(request);
     }
@@ -106,7 +106,7 @@ public class SftpController {
     @RequestMapping("/remove")
     public void remove(@RequestBody FileRemoveRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
-        paths.forEach(this::checkNormalize);
+        paths.forEach(Valid::checkNormalize);
         boolean isSafe = paths.stream().noneMatch(Const.UNSAFE_FS_DIR::contains);
         Valid.isSafe(isSafe);
         sftpService.remove(request);
@@ -117,7 +117,7 @@ public class SftpController {
      */
     @RequestMapping("/chmod")
     public String chmod(@RequestBody FileChmodRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getPermission());
         return sftpService.chmod(request);
     }
@@ -127,7 +127,7 @@ public class SftpController {
      */
     @RequestMapping("/chown")
     public void chown(@RequestBody FileChownRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getUid());
         sftpService.chown(request);
     }
@@ -137,7 +137,7 @@ public class SftpController {
      */
     @RequestMapping("/chgrp")
     public void changeGroup(@RequestBody FileChangeGroupRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getGid());
         sftpService.changeGroup(request);
     }
@@ -147,7 +147,7 @@ public class SftpController {
      */
     @RequestMapping("/check/present")
     public List<String> checkFilePresent(@RequestBody FilePresentCheckRequest request) {
-        this.checkNormalize(request.getPath());
+        Valid.checkNormalize(request.getPath());
         Valid.notEmpty(request.getNames());
         return sftpService.checkFilePresent(request);
     }
@@ -167,7 +167,7 @@ public class SftpController {
     public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("remotePath") String remotePath,
                            @RequestParam("files") List<MultipartFile> files) throws IOException {
         // 检查路径
-        this.checkNormalize(remotePath);
+        Valid.checkNormalize(remotePath);
         Valid.notBlank(accessToken);
         Valid.notEmpty(files);
         // 检查token
@@ -200,18 +200,8 @@ public class SftpController {
     @RequestMapping("/download/exec")
     public void downloadFile(@RequestBody FileDownloadRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
-        paths.forEach(this::checkNormalize);
+        paths.forEach(Valid::checkNormalize);
         sftpService.download(request);
-    }
-
-    /**
-     * 传输列表
-     */
-    @RequestMapping("/transfer/{sessionToken}/list")
-    public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
-        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
-        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
-        return sftpService.transferList(tokenInfo[1]);
     }
 
     /**
@@ -263,6 +253,16 @@ public class SftpController {
     }
 
     /**
+     * 传输列表
+     */
+    @RequestMapping("/transfer/{sessionToken}/list")
+    public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
+        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
+        return sftpService.transferList(tokenInfo[1]);
+    }
+
+    /**
      * 传输删除(单个) 包含进行中的
      */
     @RequestMapping("/transfer/{fileToken}/remove")
@@ -281,13 +281,12 @@ public class SftpController {
     }
 
     /**
-     * 检查路径是否合法化 即不包含 ./ ../
-     *
-     * @param path path
+     * 传输打包 全部已完成未删除的文件
      */
-    private void checkNormalize(String path) {
-        Valid.notBlank(path);
-        Valid.isTrue(Files1.isNormalize(path), MessageConst.PATH_NOT_NORMALIZE);
+    @RequestMapping("/transfer/{sessionToken}/{packageType}/package")
+    public void transferPackage(@PathVariable("sessionToken") String sessionToken, @PathVariable("packageType") Integer packageType) {
+        SftpPackageType sftpPackageType = Valid.notNull(SftpPackageType.of(packageType));
+        sftpService.transferPackage(sessionToken, sftpPackageType);
     }
 
 }

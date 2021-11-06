@@ -38,14 +38,14 @@ public class FileTransferNotifyDTO {
         private String rate;
 
         /**
+         * 当前位置
+         */
+        private String current;
+
+        /**
          * 进度
          */
         private String progress;
-
-        /**
-         * 当前
-         */
-        private String current;
 
     }
 
