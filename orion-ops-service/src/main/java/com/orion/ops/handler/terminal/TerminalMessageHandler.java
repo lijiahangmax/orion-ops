@@ -62,7 +62,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String id = session.getId();
         String token = getToken(session);
         // token绑定
-        String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+        String bindKey = Strings.format(KeyConst.TERMINAL_BIND_TOKEN, token);
         redisTemplate.opsForValue().set(bindKey, id, KeyConst.TERMINAL_BIND_EXPIRE, TimeUnit.SECONDS);
         // 刷新token 过期时间
         String tokenKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
@@ -133,7 +133,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         int code = status.getCode();
         String token = getToken(session);
         String accessKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+        String bindKey = Strings.format(KeyConst.TERMINAL_BIND_TOKEN, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (!id.equals(bindValue)) {
             return;
@@ -190,7 +190,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         // 检查绑定
-        String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+        String bindKey = Strings.format(KeyConst.TERMINAL_BIND_TOKEN, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (bindValue == null || !bindValue.equals(id)) {
             log.info("terminal 建立连接拒绝-bind认证失败 token: {}", token);

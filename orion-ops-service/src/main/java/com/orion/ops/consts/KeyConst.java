@@ -37,11 +37,11 @@ public class KeyConst {
     public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 5;
 
     /**
-     * terminal绑定session token
+     * terminal绑定token
      * <p>
      * terminal:bind:{token}
      */
-    public static final String TERMINAL_BIND = "terminal:bind:{}";
+    public static final String TERMINAL_BIND_TOKEN = "terminal:bind:{}";
 
     /**
      * 6 h
@@ -53,7 +53,7 @@ public class KeyConst {
      * <p>
      * file:tail:access{token}
      */
-    public static final String FILE_TAIL_ACCESS = "file:tail:access:{}";
+    public static final String FILE_TAIL_ACCESS_TOKEN = "file:tail:access:{}";
 
     /**
      * 5 min
@@ -65,7 +65,7 @@ public class KeyConst {
      * <p>
      * file:tail:bind:{id}
      */
-    public static final String FILE_TAIL_BIND = "file:tail:bind:{}";
+    public static final String FILE_TAIL_BIND_TOKEN = "file:tail:bind:{}";
 
     /**
      * 6 h
@@ -77,7 +77,7 @@ public class KeyConst {
      * <p>
      * file:download:{token}
      */
-    public static final String FILE_DOWNLOAD = "file:download:{}";
+    public static final String FILE_DOWNLOAD_TOKEN = "file:download:{}";
 
     /**
      * 5 min
@@ -89,7 +89,7 @@ public class KeyConst {
      * <p>
      * "sftp:session:{token}
      */
-    public static final String SFTP_SESSION = "sftp:session:{}";
+    public static final String SFTP_SESSION_TOKEN = "sftp:session:{}";
 
     /**
      * 12 h

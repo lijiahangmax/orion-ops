@@ -44,11 +44,11 @@ public class TailFileHandler implements WebSocketHandler {
         String id = session.getId();
         String token = getToken(session);
         // 检查token
-        String tokenKey = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
+        String tokenKey = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         String tokenValue = redisTemplate.opsForValue().get(tokenKey);
         FileTailDTO fileTail = JSON.parseObject(tokenValue, FileTailDTO.class);
         // 检查bind
-        String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND, token);
+        String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND_TOKEN, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (bindValue != null) {
             session.close(WsCloseCode.TOKEN_BIND.close());
@@ -82,7 +82,7 @@ public class TailFileHandler implements WebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         String id = session.getId();
         String token = getToken(session);
-        String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND, token);
+        String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND_TOKEN, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (!id.equals(bindValue)) {
             return;

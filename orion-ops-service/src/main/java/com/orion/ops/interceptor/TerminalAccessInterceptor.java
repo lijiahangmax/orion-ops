@@ -36,7 +36,7 @@ public class TerminalAccessInterceptor implements HandshakeInterceptor {
         String tokenKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         boolean access = Booleans.isTrue(redisTemplate.hasKey(tokenKey));
         if (access) {
-            String bindKey = Strings.format(KeyConst.TERMINAL_BIND, token);
+            String bindKey = Strings.format(KeyConst.TERMINAL_BIND_TOKEN, token);
             access = !Booleans.isTrue(redisTemplate.hasKey(bindKey));
         }
         log.info("terminal尝试打开ws连接开始 token: {}, 结果: {}", token, access);

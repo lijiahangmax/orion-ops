@@ -33,7 +33,7 @@ public class FileTransferNotifyInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String token = getToken(request);
-        String tokenKey = Strings.format(KeyConst.SFTP_SESSION, token);
+        String tokenKey = Strings.format(KeyConst.SFTP_SESSION_TOKEN, token);
         boolean access = Booleans.isTrue(redisTemplate.hasKey(tokenKey));
         log.info("sftp通知 尝试建立ws连接开始 token: {}, 结果: {}", token, access);
         return access;

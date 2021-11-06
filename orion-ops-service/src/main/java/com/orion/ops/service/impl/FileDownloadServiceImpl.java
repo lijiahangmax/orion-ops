@@ -114,7 +114,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         download.setFileName(Strings.def(name, Const.UNKNOWN));
         download.setUserId(Currents.getUserId());
         String token = UUIds.random19();
-        String key = Strings.format(KeyConst.FILE_DOWNLOAD, token);
+        String key = Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(download), KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.<String>ok().data(token);
     }
@@ -124,7 +124,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         if (Strings.isBlank(token)) {
             return null;
         }
-        String key = Strings.format(KeyConst.FILE_DOWNLOAD, token);
+        String key = Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, token);
         String value = redisTemplate.opsForValue().get(key);
         if (Strings.isBlank(value)) {
             return null;

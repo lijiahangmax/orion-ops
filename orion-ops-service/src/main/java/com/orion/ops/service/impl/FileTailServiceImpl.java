@@ -116,7 +116,7 @@ public class FileTailServiceImpl implements FileTailService {
         FileTailDTO tail = Converts.to(res, FileTailDTO.class);
         tail.setUserId(Currents.getUserId());
         tail.setMode(machineEnvService.getMachineTailMode(Const.HOST_MACHINE_ID));
-        String key = Strings.format(KeyConst.FILE_TAIL_ACCESS, token);
+        String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
         return HttpWrapper.<FileTailVO>ok().data(res);
     }
