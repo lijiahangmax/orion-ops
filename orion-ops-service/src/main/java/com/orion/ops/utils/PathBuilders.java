@@ -128,7 +128,7 @@ public class PathBuilders {
      * @return path
      */
     public static String getSftpPackageFilePath(String fileToken) {
-        return Const.PACKAGE_DIR + "/" + fileToken + Const.SUFFIX_ZIP;
+        return Const.PACKAGE_DIR + "/" + fileToken + "." + Const.SUFFIX_ZIP;
     }
 
     /**

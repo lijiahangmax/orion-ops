@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.sftp.SftpNotifyType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
@@ -13,12 +12,12 @@ import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.io.compress.CompressTypeEnum;
 import com.orion.utils.io.compress.FileCompressor;
-import com.orion.utils.json.Jsons;
 import com.orion.utils.math.Numbers;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,11 +73,11 @@ public class PackageFileProcessor implements IFileTransferProcessor {
      */
     private FileCompressor compressor;
 
+    private Long userId;
+
+    private Long machineId;
+
     private String fileToken;
-
-    protected FileTransferNotifyDTO notifyBody;
-
-    protected FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress;
 
     private volatile boolean userCancel;
 
@@ -90,9 +89,8 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         this.fileToken = packageFile.getFileToken();
         this.currentSize = new AtomicLong();
         this.totalSize = packageFile.getFileSize();
-        this.notifyBody = new FileTransferNotifyDTO();
-        this.notifyBody.setFileToken(fileToken);
-        this.notifyProgress = new FileTransferNotifyDTO.FileTransferNotifyProgress();
+        this.userId = packageFile.getUserId();
+        this.machineId = packageFile.getMachineId();
     }
 
     @Override
@@ -100,7 +98,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         String localFile = packageFile.getLocalFile();
         String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
         log.info("sftp文件打包-提交任务 fileToken: {} machineId: {}, local: {}, remote: {}, record: {}, fileList: {}",
-                fileToken, packageFile.getMachineId(), localAbsolutePath, packageFile.getRemoteFile(),
+                fileToken, machineId, localAbsolutePath, packageFile.getRemoteFile(),
                 JSON.toJSONString(packageFile), JSON.toJSONString(fileList));
         Threads.start(this, SchedulerPools.SFTP_PACKAGE_SCHEDULER);
     }
@@ -222,17 +220,12 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         int effect = fileTransferLogDAO.updateById(update);
         log.info("sftp传输压缩-更新状态 fileToken: {}, status: {}, effect: {}", fileToken, status, effect);
         if (SftpTransferStatus.FINISH.equals(status)) {
-            // finish notify progress
-            notifyProgress.setCurrent(Files1.getSize(packageFile.getFileSize()));
-            notifyProgress.setProgress("100");
-            notifyBody.setType(SftpNotifyType.PROGRESS.getType());
-            notifyBody.setBody(Jsons.toJsonWriteNull(notifyProgress));
-            transferProcessorManager.notifySession(packageFile.getUserId(), packageFile.getMachineId(), notifyBody);
+            // 通知进度
+            FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(totalSize), "100");
+            transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
         }
-        // notify status
-        notifyBody.setType(SftpNotifyType.CHANGE_STATUS.getType());
-        notifyBody.setBody(status.getStatus());
-        transferProcessorManager.notifySession(packageFile.getUserId(), packageFile.getMachineId(), notifyBody);
+        // 通知状态
+        transferProcessorManager.notifySessionStatusEvent(userId, machineId, fileToken, status.getStatus());
     }
 
     /**
@@ -259,11 +252,8 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         update.setNowProgress(progress);
         fileTransferLogDAO.updateById(update);
         // 通知进度
-        notifyProgress.setCurrent(Files1.getSize(curr));
-        notifyProgress.setProgress(progressRate);
-        notifyBody.setType(SftpNotifyType.PROGRESS.getType());
-        notifyBody.setBody(Jsons.toJsonWriteNull(notifyProgress));
-        transferProcessorManager.notifySession(packageFile.getUserId(), packageFile.getMachineId(), notifyBody);
+        FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(curr), progressRate);
+        transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
     }
 
     /**
