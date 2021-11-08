@@ -35,9 +35,14 @@ public enum SftpTransferStatus {
     FINISH(40),
 
     /**
-     * 50 传输异常
+     * 50 已取消
      */
-    ERROR(50),
+    CANCEL(50),
+
+    /**
+     * 60 传输异常
+     */
+    ERROR(60),
 
     ;
 

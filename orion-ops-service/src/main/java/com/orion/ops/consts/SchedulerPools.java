@@ -80,6 +80,18 @@ public class SchedulerPools {
             .build();
 
     /**
+     * sftp 打包线程池
+     */
+    public static final ExecutorService SFTP_PACKAGE_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("sftp-package-thread-")
+            .setCorePoolSize(4)
+            .setMaxPoolSize(4)
+            .setKeepAliveTime(Const.MS_S_60)
+            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+    /**
      * 上线单 主线程操作线程池
      */
     public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()

@@ -17,26 +17,28 @@ public enum SftpTransferType {
     /**
      * 10 上传
      */
-    UPLOAD(10),
+    UPLOAD(10, "上传"),
 
     /**
      * 20 下载
      */
-    DOWNLOAD(20),
+    DOWNLOAD(20, "下载"),
 
     /**
      * 30 传输
      */
-    TRANSFER(30),
+    TRANSFER(30, "传输"),
 
     /**
-     * 40 打包传输
+     * 40 打包
      */
-    PACKAGE(40),
+    PACKAGE(40, "打包"),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static SftpTransferType of(Integer type) {
         if (type == null) {
