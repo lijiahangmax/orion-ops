@@ -1,9 +1,15 @@
 package com.orion.ops.handler.sftp;
 
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.sftp.SftpNotifyType;
+import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.utils.Exceptions;
+import com.orion.utils.Threads;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.convert.Converts;
 import com.orion.utils.json.Jsons;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -108,6 +114,61 @@ public class TransferProcessorManager {
         sessionIds.removeIf(s -> s.equals(id));
     }
 
+    /**
+     * 通知session 添加事件
+     *
+     * @param userId    userId
+     * @param machineId machineId
+     * @param fileToken fileToken
+     * @param record    record
+     */
+    public void notifySessionAddEvent(Long userId, Long machineId, String fileToken, FileTransferLogDO record) {
+        FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+        notify.setType(SftpNotifyType.ADD.getType());
+        notify.setFileToken(fileToken);
+        notify.setBody(Jsons.toJsonWriteNull(Converts.to(record, FileTransferLogVO.class)));
+        this.notifySession(userId, machineId, notify);
+    }
+
+    /**
+     * 通知session 进度事件
+     *
+     * @param userId    userId
+     * @param machineId machineId
+     * @param fileToken fileToken
+     * @param progress  progress
+     */
+    public void notifySessionProgressEvent(Long userId, Long machineId, String fileToken, FileTransferNotifyDTO.FileTransferNotifyProgress progress) {
+        FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+        notify.setType(SftpNotifyType.PROGRESS.getType());
+        notify.setFileToken(fileToken);
+        notify.setBody(Jsons.toJsonWriteNull(progress));
+        this.notifySession(userId, machineId, notify);
+    }
+
+    /**
+     * 通知session 状态事件
+     *
+     * @param userId    userId
+     * @param machineId machineId
+     * @param fileToken fileToken
+     * @param status    status
+     */
+    public void notifySessionStatusEvent(Long userId, Long machineId, String fileToken, Integer status) {
+        FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+        notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
+        notify.setFileToken(fileToken);
+        notify.setBody(status);
+        this.notifySession(userId, machineId, notify);
+    }
+
+    /**
+     * 通知session
+     *
+     * @param userId    userId
+     * @param machineId machineId
+     * @param notify    notifyInfo
+     */
     public void notifySession(Long userId, Long machineId, FileTransferNotifyDTO notify) {
         List<String> sessionIds = userMachineSessionMapping.get(this.getUserMachine(userId, machineId));
         if (Lists.isEmpty(sessionIds)) {
@@ -119,11 +180,19 @@ public class TransferProcessorManager {
                 continue;
             }
             // 通知
-            try {
-                session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
-            } catch (Exception e) {
-                log.error("通知session失败 userId: {}, machineId: {} sessionId: {}, e: {}", userId, machineId, session, Exceptions.getDigest(e));
-                e.printStackTrace();
+            Exception ex = null;
+            for (int i = 0; i < 3; i++) {
+                try {
+                    session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
+                    break;
+                } catch (Exception e) {
+                    ex = e;
+                    log.error("通知session失败 userId: {}, machineId: {} sessionId: {}, try: {}, e: {}", userId, machineId, session, (i + 1), Exceptions.getDigest(e));
+                    Threads.sleep(Const.N_100);
+                }
+            }
+            if (ex != null) {
+                ex.printStackTrace();
             }
         }
     }

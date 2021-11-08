@@ -29,6 +29,14 @@ public class FileTransferNotifyDTO {
      */
     private Object body;
 
+    public static FileTransferNotifyProgress progress(String rate, String current, String progress) {
+        FileTransferNotifyProgress notifyProgress = new FileTransferNotifyProgress();
+        notifyProgress.setRate(rate);
+        notifyProgress.setCurrent(current);
+        notifyProgress.setProgress(progress);
+        return notifyProgress;
+    }
+
     @Data
     public static class FileTransferNotifyProgress {
 
