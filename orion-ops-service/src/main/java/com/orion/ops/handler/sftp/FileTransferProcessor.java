@@ -1,7 +1,8 @@
 package com.orion.ops.handler.sftp;
 
+import com.orion.id.UUIds;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.sftp.SftpNotifyType;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -11,13 +12,14 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.support.progress.ByteTransferProgress;
+import com.orion.support.progress.ByteTransferRateProgress;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
-import com.orion.utils.json.Jsons;
 import com.orion.utils.math.Numbers;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
 
 /**
  * sftp 传输文件基类
@@ -35,22 +37,21 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean("transferProcessorManager");
 
+    private String charset;
+
     protected SessionStore sessionStore;
 
     protected SftpExecutor executor;
 
     protected FileTransferLogDO record;
 
-    private String charset;
+    protected Long userId;
 
-    @Getter
+    protected Long machineId;
+
     protected String fileToken;
 
-    protected ByteTransferProgress progress;
-
-    protected FileTransferNotifyDTO notifyBody;
-
-    protected FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress;
+    protected ByteTransferRateProgress progress;
 
     protected volatile boolean userCancel;
 
@@ -58,9 +59,8 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
         this.record = record;
         this.charset = charset;
         this.fileToken = record.getFileToken();
-        this.notifyBody = new FileTransferNotifyDTO();
-        this.notifyBody.setFileToken(fileToken);
-        this.notifyProgress = new FileTransferNotifyDTO.FileTransferNotifyProgress();
+        this.userId = record.getUserId();
+        this.machineId = record.getMachineId();
     }
 
     @Override
@@ -76,12 +76,18 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             // 开始传输
             this.updateStatusAndNotify(SftpTransferStatus.RUNNABLE.getStatus());
             // 打开连接
-            this.sessionStore = machineInfoService.openSessionStore(record.getMachineId());
+            this.sessionStore = machineInfoService.openSessionStore(machineId);
             this.executor = sessionStore.getSftpExecutor(Strings.def(charset, Const.UTF_8));
             executor.connect();
             log.info("sftp传输文件-初始化完毕, 准备处理传输 fileToken: {}", fileToken);
-            // 处理
-            this.handler();
+            // 检查是否可以用文件系统传输
+            if (this.checkUseFsCopy()) {
+                // 直接拷贝
+                this.usingFsCopy();
+            } else {
+                // 处理
+                this.handler();
+            }
             log.info("sftp传输文件-传输完毕 fileToken: {}", fileToken);
         } catch (Exception e) {
             log.error("sftp传输文件-出现异常 fileToken: {}, e: {}, message: {}", fileToken, e.getClass().getName(), e.getMessage());
@@ -111,12 +117,35 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     protected abstract void handler();
 
     /**
+     * 检查是否可以使用fileSystem 拷贝文件
+     *
+     * @return 是否可用
+     */
+    protected boolean checkUseFsCopy() {
+        // 创建一个临时文件
+        String checkPath = Files1.getPath(MachineEnvAttr.TEMP_PATH.getValue() + "/" + UUIds.random32() + ".ck");
+        File checkFile = new File(checkPath);
+        Files1.touch(checkFile);
+        checkFile.deleteOnExit();
+        // 查询远程机器是否有此文件 如果有则证明传输机器和宿主机是同一台
+        boolean exist = executor.getFile(checkFile.getAbsolutePath()) != null;
+        Files1.delete(checkFile);
+        return exist;
+    }
+
+    /**
+     * 使用fileSystem 拷贝文件
+     */
+    protected abstract void usingFsCopy();
+
+    /**
      * 初始化进度条
      */
-    protected void initProgress(ByteTransferProgress progress) {
-        this.progress = progress.computeRate()
-                .rateAcceptor(this::transferAccept)
-                .callback(this::transferDoneCallback);
+    protected void initProgress(ByteTransferRateProgress progress) {
+        this.progress = progress;
+        progress.computeRate();
+        progress.rateAcceptor(this::transferAccept);
+        progress.callback(this::transferDoneCallback);
     }
 
     /**
@@ -124,7 +153,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      *
      * @param progress progress
      */
-    protected void transferAccept(ByteTransferProgress progress) {
+    protected void transferAccept(ByteTransferRateProgress progress) {
         try {
             if (progress.isDone()) {
                 return;
@@ -135,10 +164,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             // debug
             // log.info(transferCurrent + " " + progressRate + "% " + transferRate + "/s");
             // notify progress
-            notifyProgress.setCurrent(transferCurrent);
-            notifyProgress.setProgress(progressRate);
-            notifyProgress.setRate(transferRate);
-            this.notifyProgress();
+            this.notifyProgress(transferRate, transferCurrent, progressRate);
         } catch (Exception e) {
             log.error("sftp-传输信息回调异常 fileToken: {}, digest: {}", fileToken, Exceptions.getDigest(e));
             e.printStackTrace();
@@ -148,11 +174,10 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     /**
      * 传输完成回调
      *
-     * @param progress progress
+     * @param pro progress
      */
-    protected void transferDoneCallback(ByteTransferProgress progress) {
+    protected void transferDoneCallback(ByteTransferProgress pro) {
         try {
-
             FileTransferLogDO update = new FileTransferLogDO();
             update.setId(record.getId());
             if (progress.isError()) {
@@ -163,11 +188,8 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             } else {
                 String transferCurrent = Files1.getSize(progress.getCurrent());
                 String transferRate = Files1.getSize(progress.getNowRate());
-                notifyProgress.setCurrent(transferCurrent);
-                notifyProgress.setProgress(100 + "");
-                notifyProgress.setRate(transferRate);
                 // notify progress
-                this.notifyProgress();
+                this.notifyProgress(transferRate, transferCurrent, "100");
                 // notify status
                 this.updateStatusAndNotify(SftpTransferStatus.FINISH.getStatus(), 100D, progress.getEnd());
             }
@@ -205,28 +227,21 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
         update.setNowProgress(progress);
         update.setCurrentSize(currentSize);
         int effect = fileTransferLogDAO.updateById(update);
-        log.info("sftp传输文件-更新状态 id: {}, fileToken: {}, status: {}, progress: {}, currentSize: {}, effect: {}",
-                id, fileToken, status, progress, currentSize, effect);
+        log.info("sftp传输文件-更新状态 fileToken: {}, status: {}, progress: {}, currentSize: {}, effect: {}", fileToken, status, progress, currentSize, effect);
         // notify status
-        this.notifyChangeStatus(status);
+        transferProcessorManager.notifySessionStatusEvent(userId, machineId, fileToken, status);
     }
 
     /**
      * 通知进度
+     *
+     * @param rate     速度
+     * @param current  当前位置
+     * @param progress 进度
      */
-    protected void notifyProgress() {
-        notifyBody.setType(SftpNotifyType.PROGRESS.getType());
-        notifyBody.setBody(Jsons.toJsonWriteNull(notifyProgress));
-        transferProcessorManager.notifySession(record.getUserId(), record.getMachineId(), notifyBody);
-    }
-
-    /**
-     * 通知更新状态
-     */
-    protected void notifyChangeStatus(Integer status) {
-        notifyBody.setType(SftpNotifyType.CHANGE_STATUS.getType());
-        notifyBody.setBody(status);
-        transferProcessorManager.notifySession(record.getUserId(), record.getMachineId(), notifyBody);
+    protected void notifyProgress(String rate, String current, String progress) {
+        FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(rate, current, progress);
+        transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
     }
 
     /**
