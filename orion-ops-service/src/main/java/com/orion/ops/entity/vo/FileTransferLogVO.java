@@ -53,7 +53,7 @@ public class FileTransferLogVO {
     private Double progress;
 
     /**
-     * 传输状态 10未开始 20进行中 30已暂停 40已完成 50传输异常
+     * 传输状态 10未开始 20进行中 30已暂停 40已完成 50已取消 60传输异常
      *
      * @see com.orion.ops.consts.sftp.SftpTransferStatus
      */

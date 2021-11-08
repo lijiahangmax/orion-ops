@@ -3,6 +3,7 @@ package com.orion.ops.runner;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
+import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,14 @@ public class CleanTransferStatusRunner implements CommandLineRunner {
         fileTransferLogDAO.selectList(wrapper).forEach(c -> {
             FileTransferLogDO update = new FileTransferLogDO();
             update.setId(c.getId());
-            update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+            SftpTransferType transferType = SftpTransferType.of(c.getTransferType());
+            if (SftpTransferType.PACKAGE.equals(transferType)) {
+                // 打包设置为取消
+                update.setTransferStatus(SftpTransferStatus.CANCEL.getStatus());
+            } else {
+                // 其他设置为暂停
+                update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+            }
             fileTransferLogDAO.updateById(update);
             log.info("重置传输状态-重置 {}", c.getId());
         });

@@ -1,10 +1,11 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.json.Jsons;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2021/6/26 14:56
  */
+@Slf4j
 @Component
 public class TransferProcessorManager {
 
@@ -106,7 +108,6 @@ public class TransferProcessorManager {
         sessionIds.removeIf(s -> s.equals(id));
     }
 
-    @SneakyThrows
     public void notifySession(Long userId, Long machineId, FileTransferNotifyDTO notify) {
         List<String> sessionIds = userMachineSessionMapping.get(this.getUserMachine(userId, machineId));
         if (Lists.isEmpty(sessionIds)) {
@@ -118,7 +119,12 @@ public class TransferProcessorManager {
                 continue;
             }
             // 通知
-            session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
+            try {
+                session.sendMessage(new TextMessage(Jsons.toJsonWriteNull(notify)));
+            } catch (Exception e) {
+                log.error("通知session失败 userId: {}, machineId: {} sessionId: {}, e: {}", userId, machineId, session, Exceptions.getDigest(e));
+                e.printStackTrace();
+            }
         }
     }
 

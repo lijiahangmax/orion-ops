@@ -102,6 +102,16 @@ public class PathBuilders {
     }
 
     /**
+     * 获取 sftp upload 文件路径
+     *
+     * @param fileToken fileToken
+     * @return path
+     */
+    public static String getSftpUploadFilePath(String fileToken) {
+        return Const.UPLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX;
+    }
+
+    /**
      * 获取 sftp download 文件路径
      *
      * @param fileToken fileToken
@@ -112,13 +122,13 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 sftp upload 文件路径
+     * 获取 sftp package 文件路径
      *
      * @param fileToken fileToken
      * @return path
      */
-    public static String getSftpUploadFilePath(String fileToken) {
-        return Const.UPLOAD_DIR + "/" + fileToken + Const.SWAP_FILE_SUFFIX;
+    public static String getSftpPackageFilePath(String fileToken) {
+        return Const.PACKAGE_DIR + "/" + fileToken + Const.SUFFIX_ZIP;
     }
 
     /**
