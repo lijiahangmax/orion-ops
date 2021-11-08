@@ -8,6 +8,7 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpNotifyType;
+import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
@@ -21,6 +22,7 @@ import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
+import com.orion.ops.handler.sftp.impl.PackageFileProcessor;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
@@ -269,11 +271,6 @@ public class SftpServiceImpl implements SftpService {
             uploadFiles.add(upload);
         }
         uploadFiles.forEach(fileTransferLogDAO::insert);
-        // 提交上传进程
-        String charset = this.getSftpCharset(machineId);
-        for (FileTransferLogDO uploadFile : uploadFiles) {
-            IFileTransferProcessor.of(uploadFile, charset).exec();
-        }
         // 通知添加
         for (FileTransferLogDO uploadFile : uploadFiles) {
             FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
@@ -281,6 +278,11 @@ public class SftpServiceImpl implements SftpService {
             notify.setFileToken(uploadFile.getFileToken());
             notify.setBody(Jsons.toJsonWriteNull(Converts.to(uploadFile, FileTransferLogVO.class)));
             transferProcessorManager.notifySession(userId, machineId, notify);
+        }
+        // 提交上传任务
+        String charset = this.getSftpCharset(machineId);
+        for (FileTransferLogDO uploadFile : uploadFiles) {
+            IFileTransferProcessor.of(uploadFile, charset).exec();
         }
     }
 
@@ -295,7 +297,6 @@ public class SftpServiceImpl implements SftpService {
         Function<SftpFile, FileTransferLogDO> convert = file -> {
             // 本地保存路径
             String fileToken = ObjectIds.next();
-            String localPath = PathBuilders.getSftpDownloadFilePath(fileToken);
             // 设置传输信息
             FileTransferLogDO download = new FileTransferLogDO();
             download.setUserId(userId);
@@ -304,7 +305,7 @@ public class SftpServiceImpl implements SftpService {
             download.setTransferType(SftpTransferType.DOWNLOAD.getType());
             download.setMachineId(machineId);
             download.setRemoteFile(file.getPath());
-            download.setLocalFile(localPath);
+            download.setLocalFile(PathBuilders.getSftpDownloadFilePath(fileToken));
             download.setCurrentSize(0L);
             download.setFileSize(file.getSize());
             download.setNowProgress(0D);
@@ -325,11 +326,6 @@ public class SftpServiceImpl implements SftpService {
             }
         }
         downloadFiles.forEach(fileTransferLogDAO::insert);
-        // 提交上传进程
-        String charset = this.getSftpCharset(machineId);
-        for (FileTransferLogDO downloadFile : downloadFiles) {
-            IFileTransferProcessor.of(downloadFile, charset).exec();
-        }
         // 通知添加
         for (FileTransferLogDO downloadFile : downloadFiles) {
             FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
@@ -337,6 +333,11 @@ public class SftpServiceImpl implements SftpService {
             notify.setFileToken(downloadFile.getFileToken());
             notify.setBody(Jsons.toJsonWriteNull(Converts.to(downloadFile, FileTransferLogVO.class)));
             transferProcessorManager.notifySession(userId, machineId, notify);
+        }
+        // 提交下载任务
+        String charset = this.getSftpCharset(machineId);
+        for (FileTransferLogDO downloadFile : downloadFiles) {
+            IFileTransferProcessor.of(downloadFile, charset).exec();
         }
     }
 
@@ -355,16 +356,22 @@ public class SftpServiceImpl implements SftpService {
             // 执行器不为空则终止
             processor.stop();
         } else {
-            // 修改状态为暂停
+            Integer changeStatus;
+            if (SftpTransferType.PACKAGE.getType().equals(transferLog.getTransferType())) {
+                changeStatus = SftpTransferStatus.CANCEL.getStatus();
+            } else {
+                changeStatus = SftpTransferStatus.PAUSE.getStatus();
+            }
+            // 修改状态
             FileTransferLogDO update = new FileTransferLogDO();
             update.setId(transferLog.getId());
-            update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+            update.setTransferStatus(changeStatus);
             fileTransferLogDAO.updateById(update);
             // 通知状态
             FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
             notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
             notify.setFileToken(transferLog.getFileToken());
-            notify.setBody(SftpTransferStatus.PAUSE.getStatus());
+            notify.setBody(changeStatus);
             transferProcessorManager.notifySession(transferLog.getUserId(), transferLog.getMachineId(), notify);
         }
     }
@@ -422,7 +429,8 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
                 .eq(FileTransferLogDO::getShowType, Const.ENABLE)
-                .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus());
+                .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus())
+                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
         // 修改状态为暂停
         for (FileTransferLogDO transferLog : transferLogs) {
@@ -456,7 +464,8 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
                 .eq(FileTransferLogDO::getShowType, Const.ENABLE)
-                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.PAUSE.getStatus());
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.PAUSE.getStatus())
+                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
         this.transferResumeRetryAll(transferLogs, machineId);
     }
@@ -469,7 +478,8 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
                 .eq(FileTransferLogDO::getShowType, Const.ENABLE)
-                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.ERROR.getStatus());
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.ERROR.getStatus())
+                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
         this.transferResumeRetryAll(transferLogs, machineId);
     }
@@ -504,18 +514,6 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public List<FileTransferLogVO> transferList(Long machineId) {
-        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
-                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
-                .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
-                .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType())
-                .orderByDesc(FileTransferLogDO::getId);
-        List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
-        return Converts.toList(logList, FileTransferLogVO.class);
-    }
-
-    @Override
     public void transferRemove(String fileToken) {
         // 获取请求文件
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
@@ -535,6 +533,21 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
+    public List<FileTransferLogVO> transferList(Long machineId) {
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, Currents.getUserId())
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
+                .in(FileTransferLogDO::getTransferType,
+                        SftpTransferType.UPLOAD.getType(),
+                        SftpTransferType.DOWNLOAD.getType(),
+                        SftpTransferType.PACKAGE.getType())
+                .orderByDesc(FileTransferLogDO::getId);
+        List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
+        return Converts.toList(logList, FileTransferLogVO.class);
+    }
+
+    @Override
     public Integer transferClear(Long machineId) {
         FileTransferLogDO update = new FileTransferLogDO();
         update.setShowType(Const.DISABLE);
@@ -543,6 +556,66 @@ public class SftpServiceImpl implements SftpService {
                 .eq(FileTransferLogDO::getMachineId, machineId)
                 .ne(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
         return fileTransferLogDAO.update(update, wrapper);
+    }
+
+    @Override
+    public void transferPackage(String sessionToken, SftpPackageType packageType) {
+        UserDTO user = Currents.getUser();
+        Long userId = user.getId();
+        // 获取token信息
+        Long machineId = this.getMachineId(sessionToken);
+        // 查询要打包的文件
+        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getUserId, userId)
+                .eq(FileTransferLogDO::getMachineId, machineId)
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.FINISH.getStatus())
+                .eq(FileTransferLogDO::getShowType, Const.ENABLE);
+        switch (packageType) {
+            case UPLOAD:
+                wrapper.eq(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType());
+                break;
+            case DOWNLOAD:
+                wrapper.eq(FileTransferLogDO::getTransferType, SftpTransferType.DOWNLOAD.getType());
+                break;
+            case ALL:
+                wrapper.in(FileTransferLogDO::getTransferType,
+                        SftpTransferType.UPLOAD.getType(),
+                        SftpTransferType.DOWNLOAD.getType());
+                break;
+            default:
+                break;
+        }
+        wrapper.orderByDesc(FileTransferLogDO::getId);
+        List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
+        Valid.notEmpty(logList, MessageConst.TRANSFER_ITEM_EMPTY);
+        Valid.isTrue(logList.size() != 1, MessageConst.TRANSFER_ITEM_SIZE_1);
+        // 文件名称
+        String fileName = Files1.getFileName(logList.get(0).getRemoteFile()) + "等" + logList.size() + "个文件.zip";
+        String fileToken = ObjectIds.next();
+        // 文件大小
+        long fileSize = logList.stream().mapToLong(FileTransferLogDO::getFileSize).sum();
+        // 插入传输记录
+        FileTransferLogDO packageRecord = new FileTransferLogDO();
+        packageRecord.setUserId(userId);
+        packageRecord.setUserName(user.getUsername());
+        packageRecord.setFileToken(fileToken);
+        packageRecord.setTransferType(SftpTransferType.PACKAGE.getType());
+        packageRecord.setMachineId(machineId);
+        packageRecord.setRemoteFile(fileName);
+        packageRecord.setLocalFile(PathBuilders.getSftpPackageFilePath(fileToken));
+        packageRecord.setCurrentSize(0L);
+        packageRecord.setFileSize(fileSize);
+        packageRecord.setNowProgress(0D);
+        packageRecord.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+        fileTransferLogDAO.insert(packageRecord);
+        // 通知
+        FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
+        notify.setType(SftpNotifyType.ADD.getType());
+        notify.setFileToken(packageRecord.getFileToken());
+        notify.setBody(Jsons.toJsonWriteNull(Converts.to(packageRecord, FileTransferLogVO.class)));
+        transferProcessorManager.notifySession(userId, machineId, notify);
+        // 提交打包任务
+        new PackageFileProcessor(packageRecord, logList).exec();
     }
 
     @Override
@@ -582,7 +655,7 @@ public class SftpServiceImpl implements SftpService {
     @Override
     public Long[] getTokenInfo(String sessionToken) {
         Valid.notBlank(sessionToken, MessageConst.TOKEN_EMPTY);
-        String key = Strings.format(KeyConst.SFTP_SESSION, sessionToken);
+        String key = Strings.format(KeyConst.SFTP_SESSION_TOKEN, sessionToken);
         String value = redisTemplate.opsForValue().get(key);
         Valid.notBlank(value, MessageConst.SESSION_EXPIRE);
         return Arrays1.mapper(Objects.requireNonNull(value).split("_"), Long[]::new, Long::valueOf);
@@ -599,7 +672,7 @@ public class SftpServiceImpl implements SftpService {
         // 生成token
         String sessionToken = UUIds.random15();
         // 设置缓存
-        String key = Strings.format(KeyConst.SFTP_SESSION, sessionToken);
+        String key = Strings.format(KeyConst.SFTP_SESSION_TOKEN, sessionToken);
         redisTemplate.opsForValue().set(key, userId + "_" + machineId, KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
         return sessionToken;
     }

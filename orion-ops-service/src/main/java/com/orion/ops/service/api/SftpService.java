@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
@@ -205,6 +206,14 @@ public interface SftpService {
      * @return effect
      */
     Integer transferClear(Long machineId);
+
+    /**
+     * 传输打包 全部已完成未删除的文件
+     *
+     * @param sessionToken sessionToken
+     * @param packageType  packageType
+     */
+    void transferPackage(String sessionToken, SftpPackageType packageType);
 
     /**
      * 获取sftp下载文件本地路径
