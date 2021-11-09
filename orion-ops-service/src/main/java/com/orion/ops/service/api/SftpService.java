@@ -6,7 +6,6 @@ import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
-import com.orion.remote.channel.sftp.SftpExecutor;
 
 import java.util.List;
 
@@ -222,14 +221,6 @@ public interface SftpService {
      * @return FileTransferLogDO
      */
     FileTransferLogDO getDownloadFilePath(Long id);
-
-    /**
-     * 通过token获取 SftpExecutor
-     *
-     * @param sessionToken sessionToken
-     * @return SftpExecutor
-     */
-    SftpExecutor getBasicExecutorByToken(String sessionToken);
 
     /**
      * 获取机器id

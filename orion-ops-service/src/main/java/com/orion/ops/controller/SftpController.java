@@ -57,7 +57,10 @@ public class SftpController {
         return sftpService.list(request);
     }
 
-    @RequestMapping("/listDir")
+    /**
+     * 文件夹列表
+     */
+    @RequestMapping("/list-dir")
     public FileListVO listDir(@RequestBody FileListRequest request) {
         Valid.checkNormalize(request.getPath());
         return sftpService.listDir(request);
