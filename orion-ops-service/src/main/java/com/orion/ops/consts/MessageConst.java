@@ -22,7 +22,7 @@ public class MessageConst {
 
     public static final String INVALID_PARAM = "非法参数";
 
-    public static final String SFTP_OPERATOR_ERROR = "操作异常";
+    public static final String SFTP_OPERATOR_ERROR = "操作失败";
 
     public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
 
