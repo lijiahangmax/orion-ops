@@ -23,8 +23,8 @@ import java.io.File;
 @Slf4j
 public class DownloadFileProcessor extends FileTransferProcessor {
 
-    public DownloadFileProcessor(FileTransferLogDO record, String charset) {
-        super(record, charset);
+    public DownloadFileProcessor(FileTransferLogDO record) {
+        super(record);
     }
 
     @Override

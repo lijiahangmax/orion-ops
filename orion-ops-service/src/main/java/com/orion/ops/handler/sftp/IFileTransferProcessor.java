@@ -21,14 +21,13 @@ public interface IFileTransferProcessor extends Runnable, Stoppable, Executable 
     /**
      * 获取执行processor
      *
-     * @param record  record
-     * @param charset charset
+     * @param record record
      * @return IFileTransferProcessor
      */
-    static IFileTransferProcessor of(FileTransferLogDO record, String charset) {
+    static IFileTransferProcessor of(FileTransferLogDO record) {
         return Selector.<SftpTransferType, IFileTransferProcessor>of(SftpTransferType.of(record.getTransferType()))
-                .test(Branches.eq(SftpTransferType.UPLOAD).then(new UploadFileProcessor(record, charset)))
-                .test(Branches.eq(SftpTransferType.DOWNLOAD).then(new DownloadFileProcessor(record, charset)))
+                .test(Branches.eq(SftpTransferType.UPLOAD).then(new UploadFileProcessor(record)))
+                .test(Branches.eq(SftpTransferType.DOWNLOAD).then(new DownloadFileProcessor(record)))
                 .get();
     }
 

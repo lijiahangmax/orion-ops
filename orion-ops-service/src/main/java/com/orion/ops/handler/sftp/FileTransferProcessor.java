@@ -7,6 +7,7 @@ import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
@@ -14,7 +15,6 @@ import com.orion.spring.SpringHolder;
 import com.orion.support.progress.ByteTransferProgress;
 import com.orion.support.progress.ByteTransferRateProgress;
 import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.math.Numbers;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +33,11 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     protected static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
 
+    protected static MachineEnvService machineEnvService = SpringHolder.getBean("machineEnvService");
+
     protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean("fileTransferLogDAO");
 
     protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean("transferProcessorManager");
-
-    private String charset;
 
     protected SessionStore sessionStore;
 
@@ -55,9 +55,8 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
     protected volatile boolean userCancel;
 
-    public FileTransferProcessor(FileTransferLogDO record, String charset) {
+    public FileTransferProcessor(FileTransferLogDO record) {
         this.record = record;
-        this.charset = charset;
         this.fileToken = record.getFileToken();
         this.userId = record.getUserId();
         this.machineId = record.getMachineId();
@@ -77,7 +76,8 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             this.updateStatusAndNotify(SftpTransferStatus.RUNNABLE.getStatus());
             // 打开连接
             this.sessionStore = machineInfoService.openSessionStore(machineId);
-            this.executor = sessionStore.getSftpExecutor(Strings.def(charset, Const.UTF_8));
+            String charset = machineEnvService.getSftpCharset(machineId);
+            this.executor = sessionStore.getSftpExecutor(charset);
             executor.connect();
             log.info("sftp传输文件-初始化完毕, 准备处理传输 fileToken: {}", fileToken);
             // 检查是否可以用文件系统传输

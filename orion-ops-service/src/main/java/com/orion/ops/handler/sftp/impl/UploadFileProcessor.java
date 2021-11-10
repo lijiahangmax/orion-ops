@@ -23,8 +23,8 @@ import java.io.File;
 @Slf4j
 public class UploadFileProcessor extends FileTransferProcessor {
 
-    public UploadFileProcessor(FileTransferLogDO record, String charset) {
-        super(record, charset);
+    public UploadFileProcessor(FileTransferLogDO record) {
+        super(record);
     }
 
     @Override
