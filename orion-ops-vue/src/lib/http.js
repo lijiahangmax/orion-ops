@@ -14,7 +14,13 @@ const defaultConfig = {
   // 是否需要登陆
   auth: true,
   // 超时时间
-  timeout: 10000
+  timeout: 10000,
+  // 请求头
+  contentType: 'application/json',
+  // 跳过响应拦截器异常处理提示
+  skipErrorMessage: false,
+  // 跳过响应拦截器
+  skipRespInterceptor: false
 }
 
 /**
@@ -73,6 +79,8 @@ function fillDefaultConfig(config) {
 $http.interceptors.request.use(
   config => {
     const loginToken = $storage.get($storage.keys.LOGIN_TOKEN)
+    // 设置 'Content-Type
+    config.headers['Content-Type'] = config.contentType
     // 登陆判断
     if (config.auth && !loginToken) {
       throw new RequestError(700, '用户未登录')
@@ -89,10 +97,17 @@ $http.interceptors.request.use(
  */
 $http.interceptors.response.use(
   resp => {
+    // 跳过响应拦截器
+    if (resp.config.skipRespInterceptor) {
+      return resp.data
+    }
+    const skipErrorMessage = resp.config.skipErrorMessage
     // 判断data
     var respData = resp.data
     if (!respData || !respData.code) {
-      $message.warning('请求无效')
+      if (!skipErrorMessage) {
+        $message.warning('请求无效')
+      }
       return Promise.reject(resp)
     }
     // 判断code
@@ -107,13 +122,21 @@ $http.interceptors.response.use(
         router.push({ path: '/login' })
         return Promise.reject(respData)
       case 500:
-        $message.error(respData.msg)
+        if (!skipErrorMessage) {
+          $message.error(respData.msg)
+        }
         return Promise.reject(respData)
       default:
-        $message.warning(respData.msg)
+        if (!skipErrorMessage) {
+          $message.warning(respData.msg)
+        }
         return Promise.reject(respData)
     }
   }, err => {
+    // 跳过响应拦截器
+    if (err.config.skipRespInterceptor) {
+      return Promise.reject(err)
+    }
     let rejectWrapper
     if (err instanceof RequestError) {
       // 自定义error
@@ -137,7 +160,9 @@ $http.interceptors.response.use(
         }
       }
     }
-    rejectWrapper.tips()
+    if (!err.config.skipErrorMessage) {
+      rejectWrapper.tips()
+    }
     return Promise.reject(rejectWrapper)
   }
 )

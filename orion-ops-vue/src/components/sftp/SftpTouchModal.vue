@@ -77,9 +77,9 @@ export default {
           parentPath = this.homePath
           break
         default:
-          parentPath = '/'
+          parentPath = ''
       }
-      this.realPath = parentPath + '/' + this.path
+      this.realPath = this.$utils.getPath(parentPath + '/' + this.path)
       // 创建
       const data = {
         sessionToken: this.sessionToken,
@@ -105,7 +105,6 @@ export default {
     close() {
       this.visible = false
       this.loading = false
-      this.sessionToken = null
       this.currentPath = null
       this.homePath = null
       this.parentType = 'current'

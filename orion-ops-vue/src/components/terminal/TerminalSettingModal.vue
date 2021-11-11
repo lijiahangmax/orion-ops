@@ -31,7 +31,7 @@
         <a-form-item label="启用webGL加速">
           <a-tooltip>
             <template slot="title">
-              启用webGL加速(如果可用)<br>
+              启用webGL加速 (如果可用)<br>
               ⚠试验性功能, 可能不稳定
             </template>
             <a-switch v-decorator="decorators.enableWebGL"/>

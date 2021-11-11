@@ -14,21 +14,21 @@
                   @closeLoading="closeLoading"
                   @terminalStatusChange="terminalStatusChange"/>
     <!-- sftp侧栏 -->
-    <MachineSftp ref="machineSftp" :machineId="machineId"/>
+    <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId"/>
   </div>
 </template>
 
 <script>
 import TerminalHeader from '@/components/terminal/TerminalHeader'
 import TerminalMain from '@/components/terminal/TerminalMain'
-import MachineSftp from '@/components/sftp/MachineSftp'
+import MachineSftpDrawer from '@/components/sftp/MachineSftpDrawer'
 
 export default {
   name: 'MachineTerminal',
   components: {
     TerminalHeader,
     TerminalMain,
-    MachineSftp
+    MachineSftpDrawer
   },
   data: function() {
     return {
@@ -60,7 +60,7 @@ export default {
       this.machine.status = status
     },
     openSftp() {
-      this.$refs.machineSftp.visible = true
+      this.$refs.machineSftpDrawer.visible = true
     },
     async getAccessToken() {
       this.loading = this.$message.loading('建立连接中...', 10)

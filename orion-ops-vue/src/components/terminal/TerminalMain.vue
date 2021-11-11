@@ -404,8 +404,8 @@ export default {
     }
   },
   watch: {
-    status: function() {
-      this.$emit('terminalStatusChange', this.status)
+    status(e) {
+      this.$emit('terminalStatusChange', e)
     }
   },
   methods: {

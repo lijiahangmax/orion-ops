@@ -1,12 +1,12 @@
 <template>
   <a-layout id="common-layout">
-    <a-layout-sider v-model="collapsed" :trigger="null" :style="this.style.sider">
+    <a-layout-sider v-model="collapsed" :trigger="null" :style="style.sider">
       <!--  <div class="logo"/> -->
       <Menu/>
     </a-layout-sider>
     <a-layout>
       <Header @changeFoldStatus="collapsed = !collapsed"/>
-      <a-layout-content :style="this.style.content">
+      <a-layout-content :style="style.content">
         <router-view/>
       </a-layout-content>
     </a-layout>
