@@ -65,7 +65,14 @@ const $api = {
    * 修改密码
    */
   resetPassword: param => {
-    return $http.$post('/auth/reset', param)
+    return $http.$post('/auth/reset', param, { skipErrorMessage: true })
+  },
+
+  /**
+   * 获取菜单
+   */
+  getMenu: () => {
+    return $http.$post('/common/menu')
   },
 
   /**
@@ -135,21 +142,21 @@ const $api = {
    * 测试机器ping
    */
   machineTestPing: param => {
-    return $http.$post('/machine/test/ping', param)
+    return $http.$post('/machine/test/ping', param, { skipErrorMessage: true })
   },
 
   /**
    * 测试机器连接
    */
   machineTestConnect: param => {
-    return $http.$post('/machine/test/connect', param)
+    return $http.$post('/machine/test/connect', param, { skipErrorMessage: true })
   },
 
   /**
    * 获取终端访问信息
    */
   accessTerminal: param => {
-    return $http.$post('/terminal/access', param)
+    return $http.$post('/terminal/access', param, { skipErrorMessage: true })
   },
 
   /**
@@ -170,14 +177,14 @@ const $api = {
    * 修改机器终端配置
    */
   updateTerminalSetting: param => {
-    return $http.$post('/terminal/update', param)
+    return $http.$post('/terminal/update', param, { skipErrorMessage: true })
   },
 
   /**
    * sftp 打开连接
    */
   sftpOpen: param => {
-    return $http.$post('/sftp/open', param)
+    return $http.$post('/sftp/open', param, { skipErrorMessage: true })
   },
 
   /**
@@ -188,24 +195,31 @@ const $api = {
   },
 
   /**
+   * sftp 文件夹列表
+   */
+  sftpListDir: param => {
+    return $http.$post('/sftp/list-dir', param)
+  },
+
+  /**
    * sftp 创建目录
    */
   sftpMkdir: param => {
-    return $http.$post('/sftp/mkdir', param)
+    return $http.$post('/sftp/mkdir', param, { skipErrorMessage: true })
   },
 
   /**
    * sftp 创建文件
    */
   sftpTouch: param => {
-    return $http.$post('/sftp/touch', param)
+    return $http.$post('/sftp/touch', param, { skipErrorMessage: true })
   },
 
   /**
    * sftp 移动文件
    */
   sftpMove: param => {
-    return $http.$post('/sftp/move', param)
+    return $http.$post('/sftp/move', param, { skipErrorMessage: true })
   },
 
   /**
@@ -219,7 +233,7 @@ const $api = {
    * sftp 修改权限
    */
   sftpChmod: param => {
-    return $http.$post('/sftp/chmod', param)
+    return $http.$post('/sftp/chmod', param, { skipErrorMessage: true })
   },
 
   /**
@@ -273,7 +287,9 @@ const $api = {
    * sftp 下载文件
    */
   sftpDownloadExec: param => {
-    return $http.$post('/sftp/download/exec', param)
+    return $http.$post('/sftp/download/exec', param, {
+      timeout: 180000
+    })
   },
 
   /**
@@ -298,17 +314,37 @@ const $api = {
   },
 
   /**
+   * sftp 传输失败重试
+   */
+  sftpTransferRetry: param => {
+    return $http.$post(`/sftp/transfer/${param.fileToken}/retry`, param)
+  },
+
+  /**
    * sftp 传输暂停全部
    */
   sftpTransferPauseAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause/all`, param)
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause/all`, param, {
+      timeout: 180000
+    })
   },
 
   /**
    * sftp 传输恢复全部
    */
   sftpTransferResumeAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume/all`, param)
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume/all`, param, {
+      timeout: 180000
+    })
+  },
+
+  /**
+   * sftp 传输失败重试全部
+   */
+  sftpTransferRetryAll: param => {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/retry/all`, param, {
+      timeout: 180000
+    })
   },
 
   /**
@@ -323,6 +359,13 @@ const $api = {
    */
   sftpTransferClear: param => {
     return $http.$post(`/sftp/transfer/${param.sessionToken}/clear`, param)
+  },
+
+  /**
+   * sftp 传输打包
+   */
+  sftpTransferPackage: param => {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/${param.packageType}/package`, param)
   },
 
   /**
@@ -392,28 +435,28 @@ const $api = {
    *挂载秘钥
    */
   mountMachineKey: param => {
-    return $http.$post('/key/mount', param)
+    return $http.$post('/key/mount', param, { skipErrorMessage: true })
   },
 
   /**
    * 卸载秘钥
    */
   dumpMachineKey: param => {
-    return $http.$post('/key/dump', param)
+    return $http.$post('/key/dump', param, { skipErrorMessage: true })
   },
 
   /**
    * 挂载所有秘钥
    */
   mountAllMachineKey: () => {
-    return $http.$post('/key/mount-all')
+    return $http.$post('/key/mount-all', { skipErrorMessage: true })
   },
 
   /**
    * 卸载所有秘钥
    */
   dumpAllMachineKey: () => {
-    return $http.$post('/key/dump-all')
+    return $http.$post('/key/dump-all', { skipErrorMessage: true })
   },
 
   /**

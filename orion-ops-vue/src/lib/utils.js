@@ -218,6 +218,36 @@ function defineArrayKey(array) {
   }
 }
 
+/**
+ * 获取解析路径
+ */
+function getPathAnalysis(analysisPath, paths = []) {
+  const lastSymbol = analysisPath.lastIndexOf('/')
+  if (lastSymbol === -1) {
+    paths.unshift({
+      name: '/',
+      path: '/'
+    })
+    return paths
+  }
+  const name = analysisPath.substring(lastSymbol, analysisPath.length)
+  if (!isEmptyStr(name) && name !== '/') {
+    paths.unshift({
+      name: name.substring(1, name.length),
+      path: analysisPath
+    })
+  }
+  return getPathAnalysis(analysisPath.substring(0, lastSymbol), paths)
+}
+
+/**
+ * 替换路径
+ */
+function getPath(path) {
+  return path.replace(new RegExp('\\\\+', 'g'), '/')
+    .replace(new RegExp('/+', 'g'), '/')
+}
+
 export default {
   isEmptyStr,
   copyToClipboard,
@@ -234,5 +264,7 @@ export default {
   formatNumber,
   isNumber,
   replaceNumber,
-  defineArrayKey
+  defineArrayKey,
+  getPathAnalysis,
+  getPath
 }
