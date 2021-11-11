@@ -1,0 +1,99 @@
+[
+  {
+    "name": "控制台",
+    "path": "/console",
+    "icon": "dashboard"
+  },
+  {
+    "name": "机器管理",
+    "icon": "desktop",
+    "children": [
+      {
+        "name": "机器列表",
+        "path": "/machine/list"
+      },
+      {
+        "name": "环境变量",
+        "path": "/machine/env"
+      },
+      {
+        "name": "机器秘钥",
+        "path": "/machine/key"
+      },
+      {
+        "name": "机器代理",
+        "path": "/machine/proxy"
+      }
+    ]
+  },
+  {
+    "name": "执行管理",
+    "icon": "apartment",
+    "children": [
+      {
+        "name": "批量执行",
+        "path": "/batch/exec"
+      },
+      {
+        "name": "日志面板",
+        "path": "/log/view"
+      }
+    ]
+  },
+  {
+    "name": "应用管理",
+    "icon": "appstore",
+    "children": [
+      {
+        "name": "应用列表",
+        "path": "/app/list"
+      },
+      {
+        "name": "环境管理",
+        "path": "/app/profile"
+      },
+      {
+        "name": "环境变量",
+        "path": "/app/env"
+      }
+    ]
+  },
+  {
+    "name": "CI/CD",
+    "icon": "deployment-unit",
+    "children": [
+      {
+        "name": "发布配置",
+        "path": "/release/config"
+      },
+      {
+        "name": "发布单",
+        "path": "/release/bill"
+      }
+    ]
+  },
+  {
+    "name": "用户中心",
+    "icon": "user",
+    "children": [
+      {
+        "name": "用户列表",
+        "path": "/user/list"
+      },
+      {
+        "name": "个人信息",
+        "path": "/user/detail"
+      }
+    ]
+  },
+  {
+    "name": "设置",
+    "icon": "control",
+    "children": [
+      {
+        "name": "模板配置",
+        "path": "/template/list"
+      }
+    ]
+  }
+]
