@@ -1,7 +1,7 @@
 <template>
   <div class="machine-list-container">
-    <!-- 条件 -->
-    <div class="machine-columns-search">
+    <!-- 条件列 -->
+    <div class="table-search-columns">
       <a-form-model class="machine-info-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
@@ -19,7 +19,7 @@
               <a-input v-model="query.host"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="3">
+          <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
                 <a-select-option :value="status.value" v-for="status in $enum.MACHINE_STATUS" :key="status.value">
@@ -28,48 +28,60 @@
               </a-select>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
-            <a-form-model-item>
-              <a-button-group>
-                <a-button type="primary" @click="getList({})" icon="search">查询</a-button>
-                <a-button @click="resetForm" icon="reload">重置</a-button>
-              </a-button-group>
-            </a-form-model-item>
-          </a-col>
         </a-row>
       </a-form-model>
     </div>
     <!-- 工具栏 -->
-    <div class="machine-tools-bar">
-      <a-button type="primary" icon="plus" @click="openAdd">新建</a-button>
-      <a-button type="primary" icon="build" v-show="selectedRowKeys.length" @click="batchStatus(1)">启用</a-button>
-      <a-button type="primary" icon="fork" v-show="selectedRowKeys.length" @click="batchStatus(2)">停用</a-button>
-      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
+    <div class="table-tools-bar">
+      <!-- 左侧 -->
+      <div class="tools-fixed-left">
+        <span class="table-title">机器列表</span>
+        <a-button-group class="mr8">
+          <a-button type="primary" icon="build" v-show="selectedRowKeys.length" @click="batchStatus(1)">启用</a-button>
+          <a-button type="primary" icon="fork" v-show="selectedRowKeys.length" @click="batchStatus(2)">停用</a-button>
+          <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
+        </a-button-group>
+      </div>
+      <!-- 右侧 -->
+      <div class="tools-fixed-right">
+        <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
+        <a-divider type="vertical"/>
+        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+      </div>
     </div>
     <!-- 表格 -->
-    <div class="machine-list-table">
+    <div class="table-main-container">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                :rowSelection="rowSelection"
+               :loading="loading"
                rowKey="id"
                @change="getList"
-               :loading="loading"
                size="middle">
+        <!-- 名称 -->
+        <span slot="name" slot-scope="record">
+          {{ record.name }}
+          <a-tag v-if="record.id === 1" color="#5C7CFA">
+            宿主机
+          </a-tag>
+        </span>
+        <!-- tag -->
         <a slot="tag" slot-scope="record">
           <a-tag v-if="record.tag" color="#20C997">
             {{ record.tag }}
           </a-tag>
-          <a-tag v-if="record.id === 1" color="#5C7CFA">
-            宿主机
-          </a-tag>
         </a>
+        <!-- 主机 -->
         <a slot="host" slot-scope="record" @click="copyHost(record.host)">
           {{ record.host }}
         </a>
+        <!-- 端口 -->
         <a slot="sshPort" slot-scope="record" @click="copySshCommand(record)">
           {{ record.sshPort }}
         </a>
+        <!-- 状态 -->
         <a slot="status" slot-scope="record">
           <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
                         ok-text="确定"
@@ -81,6 +93,7 @@
               :text="$enum.valueOf($enum.MACHINE_STATUS, record.status).label"/>
           </a-popconfirm>
         </a>
+        <!-- 更多 -->
         <span slot="action" slot-scope="record">
           <a @click="openDetail(record)">详情</a>
           <a-divider type="vertical"/>
@@ -139,9 +152,9 @@ const columns = [
   },
   {
     title: '名称',
-    dataIndex: 'name',
     key: 'name',
-    width: 150,
+    width: 200,
+    scopedSlots: { customRender: 'name' },
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
@@ -279,8 +292,7 @@ export default {
       query: {
         name: null,
         tag: null,
-        host: null,
-        status: null
+        host: null
       },
       pagination: {
         current: 1,
@@ -298,6 +310,7 @@ export default {
   computed: {
     rowSelection() {
       return {
+        selectedRowKeys: this.selectedRowKeys,
         onChange: e => {
           this.selectedRowKeys = e
         },
@@ -406,18 +419,6 @@ export default {
 </script>
 
 <style scoped>
-
-.machine-columns-search {
-  margin: 12px 12px 0 12px;
-}
-
-.machine-tools-bar {
-  margin-bottom: 12px;
-}
-
-.machine-tools-bar > button {
-  margin-right: 8px;
-}
 
 .machine-info-search-form /deep/ .ant-form-item {
   display: flex;

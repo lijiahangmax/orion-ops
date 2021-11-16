@@ -49,8 +49,7 @@ export default {
   overflow: hidden;
 
   #common-content {
-    padding: 12px;
-    background: #FFF;
+    padding: 18px;
     overflow: auto;
     flex: auto;
   }
