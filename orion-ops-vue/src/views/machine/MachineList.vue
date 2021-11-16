@@ -19,7 +19,7 @@
               <a-input v-model="query.host"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="5">
+          <a-col :span="3">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
                 <a-select-option :value="status.value" v-for="status in $enum.MACHINE_STATUS" :key="status.value">
@@ -88,7 +88,7 @@
           <a-divider v-if="record.status === 1" type="vertical"/>
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down"/></a>
-            <a-menu slot="overlay" @click="menuHandler($event,record)">
+            <a-menu slot="overlay" @click="menuHandler($event, record)">
               <a-menu-item key="update">
                 编辑
               </a-menu-item>
@@ -97,6 +97,9 @@
               </a-menu-item>
               <a-menu-item key="copy">
                 复制
+              </a-menu-item>
+              <a-menu-item key="sftp" v-if="record.status === 1">
+                sftp
               </a-menu-item>
               <a-menu-item key="ping" v-if="record.status === 1">
                 ping
@@ -219,6 +222,9 @@ const moreMenuHandler = {
         })
       }
     })
+  },
+  sftp(record) {
+    this.$router.push({ path: `/machine/sftp/${record.id}` })
   },
   ping(record) {
     const ping = this.$message.loading(`ping ${record.host}`, 10)

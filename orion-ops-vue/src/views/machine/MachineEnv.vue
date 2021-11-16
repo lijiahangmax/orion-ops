@@ -4,18 +4,29 @@
     <div class="machine-env-machine-container">
       <!-- 机器头 -->
       <div class="machine-env-machine-header">
-        <a-page-header
-          title="机器列表"
-          @back="() => {}">
-          <a-icon v-if="!redirectMachineId" slot="backIcon" type="desktop" @click="getMachines"/>
-          <a-icon v-else slot="backIcon" type="arrow-left" @click="backHistory"/>
+        <a-page-header @back="() => {}">
+          <span slot="title"
+                class="ant-page-header-heading-title pointer"
+                title="刷新"
+                @click="getMachines">机器列表</span>
+          <a-icon v-if="!redirectMachineId"
+                  slot="backIcon"
+                  type="desktop"
+                  title="刷新"
+                  @click="getMachines"/>
+          <a-icon v-else
+                  slot="backIcon"
+                  type="arrow-left"
+                  title="返回"
+                  @click="backHistory"/>
         </a-page-header>
       </div>
       <!-- 机器菜单 -->
       <a-spin :spinning="machineLoading">
         <div class="machine-env-machine-list">
           <a-menu mode="inline" :defaultSelectedKeys="defaultSelectedMachineIds">
-            <a-menu-item v-for="machine in machineList" :key="machine.id" @click="chooseMachine(machine.id)">
+            <a-menu-item v-for="machine in machineList" :key="machine.id" :title="machine.host" @click="chooseMachine(machine.id)">
+              <a-icon type="desktop"/>
               {{ machine.name }}
             </a-menu-item>
           </a-menu>
@@ -134,6 +145,7 @@ const columns = [
     key: 'key',
     scopedSlots: { customRender: 'key' },
     width: 200,
+    ellipsis: true,
     sorter: (a, b) => a.key.localeCompare(b.key)
   },
   {
@@ -141,6 +153,7 @@ const columns = [
     key: 'value',
     scopedSlots: { customRender: 'value' },
     width: 250,
+    ellipsis: true,
     sorter: (a, b) => a.value.localeCompare(b.value)
   },
   {
@@ -221,7 +234,13 @@ export default {
     async getMachines() {
       this.machineLoading = true
       const machines = await this.$api.getMachineList({ limit: 10000 })
-      this.machineList = machines.data.rows
+      this.machineList = machines.data.rows.map(i => {
+        return {
+          id: i.id,
+          name: i.name,
+          host: i.host
+        }
+      })
       this.machineLoading = false
     },
     chooseMachine(id) {
@@ -324,6 +343,16 @@ export default {
 .machine-env-container {
   display: flex;
   justify-content: flex-start;
+  width: 100%;
+
+  .machine-env-machine-container {
+    width: 15%;
+  }
+
+  .machine-env-machine-env-container {
+    width: 85%;
+  }
+
 }
 
 .machine-env-machine-list {
@@ -341,10 +370,6 @@ export default {
 
 .machine-env-machine-list, .machine-env-machine-list ul {
   background-color: #f8f9fa;
-}
-
-.machine-env-machine-env-container {
-  width: 100%;
 }
 
 .machine-env-machine-env-search-form /deep/ .ant-form-item {

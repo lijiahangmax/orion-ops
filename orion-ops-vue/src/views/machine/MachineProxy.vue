@@ -1,7 +1,7 @@
 <template>
   <div class="machine-proxy-container">
     <!-- 搜索列 -->
-    <div class="machine-proxy-column">
+    <div class="machine-proxy-columns">
       <a-form-model class="machine-proxy-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
@@ -19,7 +19,7 @@
               <a-input v-model="query.username"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="5">
+          <a-col :span="4">
             <a-form-model-item label="代理类型" prop="type">
               <a-select v-model="query.type" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_PROXY_TYPE" :key="type.value">
@@ -62,7 +62,9 @@
           </a>
         </div>
         <!-- 类型 -->
-        <a-tag slot="type" slot-scope="record" :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
+        <a-tag slot="type" slot-scope="record"
+               style="margin: 0"
+               :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
           {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).label }}
         </a-tag>
         <!-- 操作 -->
@@ -237,7 +239,7 @@ export default {
 
 <style scoped>
 
-.machine-proxy-column {
+.machine-proxy-columns {
   margin: 12px 12px 0 12px;
 }
 

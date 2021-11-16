@@ -14,7 +14,7 @@
               <a-input v-model="query.description"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="5">
+          <a-col :span="4">
             <a-form-model-item label="挂载状态" prop="mountStatus">
               <a-select v-model="query.mountStatus" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_KEY_MOUNT_STATUS" :key="type.value">
@@ -81,12 +81,11 @@
           <!-- 可操作 -->
           <a-popconfirm v-else
                         :title="record.mountStatus === 2 ?
-                        '是否卸载当前秘钥? 可能会导致机器无法连接!' :
-                        '是否挂载当前秘钥?'"
+                        '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
                         ok-text="确定"
                         cancel-text="取消"
                         @confirm="changeMountStatus(record.id, record.mountStatus)">
-            <a-tag :style="{cursor: 'pointer'}"
+            <a-tag style="margin: 0;cursor: pointer"
                    :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
               {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
             </a-tag>
