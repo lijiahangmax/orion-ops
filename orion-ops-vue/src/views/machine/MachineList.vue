@@ -36,10 +36,11 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">机器列表</span>
-        <a-button-group class="mr8">
-          <a-button type="primary" icon="build" v-show="selectedRowKeys.length" @click="batchStatus(1)">启用</a-button>
-          <a-button type="primary" icon="fork" v-show="selectedRowKeys.length" @click="batchStatus(2)">停用</a-button>
-          <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <a-button-group class="ml8" v-show="selectedRowKeys.length">
+          <a-button type="primary" icon="build" @click="batchStatus(1)">启用</a-button>
+          <a-button type="primary" icon="fork" @click="batchStatus(2)">停用</a-button>
+          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
         </a-button-group>
       </div>
       <!-- 右侧 -->
@@ -292,7 +293,8 @@ export default {
       query: {
         name: null,
         tag: null,
-        host: null
+        host: null,
+        status: undefined
       },
       pagination: {
         current: 1,
@@ -419,13 +421,5 @@ export default {
 </script>
 
 <style scoped>
-
-.machine-info-search-form /deep/ .ant-form-item {
-  display: flex;
-}
-
-.machine-info-search-form /deep/ .ant-form-item-control-wrapper {
-  flex: 0.8;
-}
 
 </style>

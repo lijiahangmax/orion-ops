@@ -7,16 +7,18 @@
 </template>
 
 <script>
-  import '../src/css/common.less'
-  import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+import '../src/css/common.less'
+import '../src/css/layout.less'
+import '../src/css/table.less'
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 
-  export default {
-    name: 'App',
-    data: function() {
-      return {
-        locale: zhCN
-      }
+export default {
+  name: 'App',
+  data: function() {
+    return {
+      locale: zhCN
     }
   }
+}
 
 </script>

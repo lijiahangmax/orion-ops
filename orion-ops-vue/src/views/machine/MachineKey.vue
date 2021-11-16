@@ -1,7 +1,7 @@
 <template>
   <div class="machine-key-container">
     <!-- 搜索框 -->
-    <div class="machine-key-search">
+    <div class="table-search-columns">
       <a-form-model class="machine-key-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
@@ -14,7 +14,7 @@
               <a-input v-model="query.description"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
+          <a-col :span="5">
             <a-form-model-item label="挂载状态" prop="mountStatus">
               <a-select v-model="query.mountStatus" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_KEY_MOUNT_STATUS" :key="type.value">
@@ -23,30 +23,37 @@
               </a-select>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
-            <a-form-model-item>
-              <a-button-group>
-                <a-button type="primary" @click="getList({})" icon="search">查询</a-button>
-                <a-button @click="resetForm" icon="reload">重置</a-button>
-              </a-button-group>
-            </a-form-model-item>
-          </a-col>
         </a-row>
       </a-form-model>
     </div>
     <!-- 工具栏 -->
-    <div class="machine-key-tools-bar">
-      <a-button type="primary" icon="plus" @click="add">新建</a-button>
-      <a-button type="primary" icon="safety" @click="tempMount">临时挂载</a-button>
-      <a-button type="primary" icon="apartment" @click="mountAll">挂载全部</a-button>
-      <a-button type="danger" icon="gateway" style="margin-right: 0" @click="dumpAll">卸载全部</a-button>
-      <a-divider type="vertical" v-show="selectedRowKeys.length"/>
-      <a-button type="primary" icon="pull-request" v-show="selectedRowKeys.length" @click="batchMount()">挂载</a-button>
-      <a-button type="danger" icon="poweroff" v-show="selectedRowKeys.length" @click="batchDump()">卸载</a-button>
-      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
+    <div class="table-tools-bar">
+      <!-- 左侧 -->
+      <div class="tools-fixed-left">
+        <span class="table-title">代理列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <a-button-group class="ml8" v-show="selectedRowKeys.length">
+          <a-button type="primary" icon="pull-request" @click="batchMount()">挂载</a-button>
+          <a-button type="danger" icon="poweroff" @click="batchDump()">卸载</a-button>
+          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+        </a-button-group>
+      </div>
+      <!-- 右侧 -->
+      <div class="tools-fixed-right">
+        <a-button-group class="mr8">
+          <a-button type="primary" @click="tempMount">临时挂载</a-button>
+          <a-button type="primary" @click="mountAll">挂载全部</a-button>
+          <a-button type="primary" @click="dumpAll">卸载全部</a-button>
+        </a-button-group>
+        <a-divider type="vertical"/>
+        <a-button class="mx8" type="primary" icon="plus" @click="add">新建</a-button>
+        <a-divider type="vertical"/>
+        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+      </div>
     </div>
     <!-- 表格 -->
-    <div class="machine-key-table">
+    <div class="table-main-container">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
@@ -187,7 +194,7 @@ export default {
       query: {
         name: null,
         description: null,
-        mountStatus: null
+        mountStatus: undefined
       },
       rows: [],
       pagination: {
@@ -392,25 +399,5 @@ export default {
 </script>
 
 <style scoped>
-
-.machine-key-tools-bar {
-  margin-bottom: 12px;
-}
-
-.machine-key-tools-bar > button {
-  margin-right: 8px;
-}
-
-.machine-key-search {
-  margin: 12px 12px 0 12px;
-}
-
-.machine-key-search-form /deep/ .ant-form-item {
-  display: flex;
-}
-
-.machine-key-search-form /deep/ .ant-form-item-control-wrapper {
-  flex: 0.8;
-}
 
 </style>

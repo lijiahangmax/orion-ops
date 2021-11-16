@@ -1,7 +1,7 @@
 <template>
   <div class="machine-proxy-container">
     <!-- 搜索列 -->
-    <div class="machine-proxy-columns">
+    <div class="table-search-columns">
       <a-form-model class="machine-proxy-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
@@ -19,7 +19,7 @@
               <a-input v-model="query.username"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
+          <a-col :span="5">
             <a-form-model-item label="代理类型" prop="type">
               <a-select v-model="query.type" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_PROXY_TYPE" :key="type.value">
@@ -28,24 +28,29 @@
               </a-select>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
-            <a-form-model-item>
-              <a-button-group>
-                <a-button type="primary" @click="getList({})" icon="search">查询</a-button>
-                <a-button @click="resetForm" icon="reload">重置</a-button>
-              </a-button-group>
-            </a-form-model-item>
-          </a-col>
         </a-row>
       </a-form-model>
     </div>
     <!-- 工具栏 -->
-    <div class="machine-proxy-tools-bar">
-      <a-button type="primary" icon="plus" @click="add">新建</a-button>
-      <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
+    <div class="table-tools-bar">
+      <!-- 左侧 -->
+      <div class="tools-fixed-left">
+        <span class="table-title">代理列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <a-button-group class="ml8" v-show="selectedRowKeys.length">
+          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+        </a-button-group>
+      </div>
+      <!-- 右侧 -->
+      <div class="tools-fixed-right">
+        <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
+        <a-divider type="vertical"/>
+        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+      </div>
     </div>
     <!-- 表格 -->
-    <div class="machine-proxy-table">
+    <div class="table-main-container">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
@@ -62,9 +67,7 @@
           </a>
         </div>
         <!-- 类型 -->
-        <a-tag slot="type" slot-scope="record"
-               style="margin: 0"
-               :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
+        <a-tag slot="type" slot-scope="record" :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
           {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).label }}
         </a-tag>
         <!-- 操作 -->
@@ -158,7 +161,7 @@ export default {
         host: null,
         port: null,
         username: null,
-        type: null
+        type: undefined
       },
       rows: [],
       pagination: {
@@ -234,29 +237,8 @@ export default {
     this.getList({})
   }
 }
-
 </script>
 
 <style scoped>
-
-.machine-proxy-columns {
-  margin: 12px 12px 0 12px;
-}
-
-.machine-proxy-tools-bar {
-  margin-bottom: 12px;
-}
-
-.machine-proxy-tools-bar > button {
-  margin-right: 8px;
-}
-
-.machine-proxy-search-form /deep/ .ant-form-item {
-  display: flex;
-}
-
-.machine-proxy-search-form /deep/ .ant-form-item-control-wrapper {
-  flex: 0.8;
-}
 
 </style>
