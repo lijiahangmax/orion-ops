@@ -36,15 +36,9 @@
     <!-- 环境变量容器 -->
     <div class="machine-env-machine-env-container">
       <!-- 环境变量筛选 -->
-      <div class="machine-env-machine-env-search">
+      <div class="table-search-columns">
         <a-form-model class="machine-env-machine-env-search-form" ref="query" :model="query">
           <a-row>
-            <a-col :span="5">
-              <a-form-model-item class="env-tools-bar">
-                <a-button type="primary" @click="add" icon="plus">添加</a-button>
-                <a-button type="danger" icon="delete" v-show="selectedRowKeys.length" @click="batchRemove()">删除</a-button>
-              </a-form-model-item>
-            </a-col>
             <a-col :span="6">
               <a-form-model-item label="key" prop="key">
                 <a-input v-model="query.key"/>
@@ -55,19 +49,36 @@
                 <a-input v-model="query.value"/>
               </a-form-model-item>
             </a-col>
-            <a-col :span="4">
-              <a-form-model-item>
-                <a-button-group>
-                  <a-button type="primary" icon="search" @click="getMachineEnv({})">查询</a-button>
-                  <a-button icon="reload" @click="resetForm">重置</a-button>
-                </a-button-group>
+            <a-col :span="6">
+              <a-form-model-item label="描述" prop="description">
+                <a-input v-model="query.description"/>
               </a-form-model-item>
             </a-col>
           </a-row>
         </a-form-model>
       </div>
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">环境变量</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <a-button-group class="ml8" v-show="selectedRowKeys.length">
+            <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+          </a-button-group>
+          <!-- 筛选 -->
+
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">添加</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getMachineEnv({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
       <!-- 环境变量表格 -->
-      <div class="machine-env-machine-env-table">
+      <div class="table-main-container">
         <a-table :columns="columns"
                  :dataSource="rows"
                  :pagination="pagination"
@@ -195,7 +206,8 @@ export default {
       query: {
         machineId: null,
         key: null,
-        value: null
+        value: null,
+        description: null
       },
       pagination: {
         current: 1,
@@ -219,6 +231,7 @@ export default {
   computed: {
     rowSelection() {
       return {
+        selectedRowKeys: this.selectedRowKeys,
         onChange: e => {
           this.selectedRowKeys = e
         },
@@ -346,11 +359,15 @@ export default {
   width: 100%;
 
   .machine-env-machine-container {
-    width: 15%;
+    width: 216px;
+    padding: 0 8px;
+    margin-right: 16px;
+    background-color: #FFF;
+    border-radius: 4px;
   }
 
   .machine-env-machine-env-container {
-    width: 85%;
+    width: calc(100% - 222px)
   }
 
 }
@@ -358,30 +375,14 @@ export default {
 .machine-env-machine-list {
   width: 200px;
   min-height: 25vh;
-  max-height: 75vh;
+  max-height: calc(100vh - 164px);
   border-radius: 5px;
   overflow-y: auto;
   margin-right: 20px;
 }
 
-.machine-env-machine-env-search {
-  margin: 20px 0 0 5px;
-}
-
 .machine-env-machine-list, .machine-env-machine-list ul {
-  background-color: #f8f9fa;
-}
-
-.machine-env-machine-env-search-form /deep/ .ant-form-item {
-  display: flex;
-}
-
-.machine-env-machine-env-search-form /deep/ .ant-form-item-control-wrapper {
-  flex: 0.8;
-}
-
-.env-tools-bar /deep/ button {
-  margin-left: 8px;
+  background-color: #F8F9FA;
 }
 
 </style>

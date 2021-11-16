@@ -30,7 +30,7 @@
     <div class="table-tools-bar">
       <!-- 左侧 -->
       <div class="tools-fixed-left">
-        <span class="table-title">代理列表</span>
+        <span class="table-title">机器秘钥</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
         <a-button-group class="ml8" v-show="selectedRowKeys.length">
           <a-button type="primary" icon="pull-request" @click="batchMount()">挂载</a-button>

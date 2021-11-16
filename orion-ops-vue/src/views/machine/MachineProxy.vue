@@ -20,6 +20,11 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
+            <a-form-model-item label="描述" prop="description">
+              <a-input v-model="query.description"/>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4">
             <a-form-model-item label="代理类型" prop="type">
               <a-select v-model="query.type" placeholder="全部" allowClear>
                 <a-select-option :value="type.value" v-for="type in $enum.MACHINE_PROXY_TYPE" :key="type.value">
@@ -161,6 +166,7 @@ export default {
         host: null,
         port: null,
         username: null,
+        description: null,
         type: undefined
       },
       rows: [],

@@ -20,6 +20,11 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
+            <a-form-model-item label="描述" prop="description">
+              <a-input v-model="query.description"/>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
                 <a-select-option :value="status.value" v-for="status in $enum.MACHINE_STATUS" :key="status.value">
@@ -294,7 +299,8 @@ export default {
         name: null,
         tag: null,
         host: null,
-        status: undefined
+        status: undefined,
+        description: null
       },
       pagination: {
         current: 1,
