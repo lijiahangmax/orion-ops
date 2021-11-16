@@ -1,12 +1,11 @@
 <template>
   <a-layout-header class="header-main">
-    <a-icon
-      class="fold-trigger"
-      :type="fold ? 'menu-fold' : 'menu-unfold'"
-      @click="changeFold()"
-    />
-    <div>
+    <!-- 折叠 -->
+    <a-icon class="fold-trigger" :type="fold ? 'menu-fold' : 'menu-unfold'" @click="changeFold"/>
+    <div class="header-fixed-right">
+      <!-- 环境选择 -->
       <HeaderProfileSelect style="margin-right: 20px"/>
+      <!-- 用户下拉 -->
       <HeaderUser style="margin-right: 15px"/>
     </div>
   </a-layout-header>
@@ -14,51 +13,53 @@
 
 <script>
 
-  import HeaderProfileSelect from './HeaderProfileSelect'
-  import HeaderUser from './HeaderUser'
+import HeaderProfileSelect from './HeaderProfileSelect'
+import HeaderUser from './HeaderUser'
 
-  export default {
-    name: 'Header',
-    components: {
-      HeaderProfileSelect,
-      HeaderUser
-    },
-    data: function() {
-      return {
-        fold: false,
-        size: 200,
-        end: 'end'
-      }
-    },
-    methods: {
-      changeFold() {
-        this.fold = !this.fold
-        this.$emit('changeFoldStatus')
-      }
+export default {
+  name: 'Header',
+  components: {
+    HeaderProfileSelect,
+    HeaderUser
+  },
+  data: function() {
+    return {
+      fold: false
+    }
+  },
+  methods: {
+    changeFold() {
+      this.fold = !this.fold
+      this.$emit('changeFoldStatus')
     }
   }
+}
 </script>
 
 <style scoped>
 
-  .fold-trigger {
-    font-size: 18px;
-    line-height: 64px;
-    padding: 0 24px;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
+.header-main {
+  background: #FFF;
+  padding-left: 0;
+  display: flex;
+  justify-content: space-between;
+}
 
-  .fold-trigger :hover {
-    color: #1890ff;
-  }
+.fold-trigger {
+  font-size: 18px;
+  line-height: 48px;
+  padding: 2px 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
 
-  .header-main {
-    background: #FFF;
-    padding-left: 0;
-    padding-right: 20px;
-    display: flex;
-    justify-content: space-between;
-  }
+.fold-trigger :hover {
+  color: #1890ff;
+}
+
+.header-fixed-right {
+  display: flex;
+  align-items: center;
+}
 
 </style>
