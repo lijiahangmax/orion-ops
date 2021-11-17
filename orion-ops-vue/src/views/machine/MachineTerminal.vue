@@ -1,113 +1,108 @@
 <template>
-  <div id="terminal-container">
-    <!-- 头部 -->
-    <a-affix :offset-top="0">
-      <TerminalHeader :machineId="machineId"
-                      :machine="machine"
-                      @inputCommand='inputCommand'
-                      @disconnect='disconnect'
-                      @openSftp="openSftp"/>
-    </a-affix>
-    <!-- terminal主体 -->
-    <TerminalMain ref="terminalMain"
-                  :machineId="machineId"
-                  @closeLoading="closeLoading"
-                  @terminalStatusChange="terminalStatusChange"/>
-    <!-- sftp侧栏 -->
-    <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId"/>
-  </div>
+  <a-layout id="terminal-layout-container">
+    <!-- 机器列表 -->
+    <MachineListMenu ref="machineList"
+                     :selectedMachine="selectedMachine"
+                     :hideBack="true"
+                     :query="{status: $enum.MACHINE_STATUS.ENABLE.value}"
+                     @chooseMachine="addTerminal"/>
+    <!-- main -->
+    <a-layout>
+      <a-layout-content id="terminal-content-fixed-right">
+        <a-tabs v-model="activeKey" :hide-add="true" type="editable-card" @edit="removeTab" :tabBarStyle="{margin: 0}">
+          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key" :tab="machineTab.title">
+            <!-- 终端 -->
+            <TerminalXterm :ref="'terminal' + machineTab.key" :machineId="machineTab.machineId"/>
+          </a-tab-pane>
+        </a-tabs>
+      </a-layout-content>
+    </a-layout>
+  </a-layout>
 </template>
 
 <script>
-import TerminalHeader from '@/components/terminal/TerminalHeader'
-import TerminalMain from '@/components/terminal/TerminalMain'
-import MachineSftpDrawer from '@/components/sftp/MachineSftpDrawer'
+import MachineListMenu from '@/components/machine/MachineListMenu'
+import TerminalXterm from '@/components/terminal/TerminalXterm'
 
 export default {
   name: 'MachineTerminal',
   components: {
-    TerminalHeader,
-    TerminalMain,
-    MachineSftpDrawer
+    MachineListMenu,
+    TerminalXterm
   },
-  data: function() {
+  data() {
     return {
-      machineId: null,
-      loading: null,
-      machine: {
-        status: 0,
-        machineId: null,
-        host: null,
-        port: null,
-        username: null,
-        machineName: null
-      }
+      activeKey: null,
+      machineTabs: [],
+      newTabIndex: 0,
+      selectedMachine: []
     }
   },
   methods: {
-    closeLoading() {
-      if (this.loading) {
-        this.loading()
+    addTerminal(id) {
+      const filterMachines = this.$refs.machineList.list.filter(m => m.id === id)
+      if (filterMachines.length) {
+        this.activeKey = this.newTabIndex++
+        this.machineTabs.push({
+          key: this.activeKey,
+          title: filterMachines[0].name,
+          machineId: id
+        })
       }
     },
-    inputCommand(e) {
-      this.$refs.terminalMain.writerCommand(e)
-    },
-    disconnect(e) {
-      this.$refs.terminalMain.disconnect(e)
-    },
-    terminalStatusChange(status) {
-      this.machine.status = status
-    },
-    openSftp() {
-      this.$refs.machineSftpDrawer.visible = true
-    },
-    async getAccessToken() {
-      this.loading = this.$message.loading('建立连接中...', 10)
-      try {
-        const { data } = await this.$api.accessTerminal({ machineId: this.machineId })
-        // 初始化数据
-        this.machine.host = data.host
-        this.machine.port = data.port
-        this.machine.username = data.username
-        this.machine.machineName = data.machineName
-        document.title = `${data.machineName} | ${data.host}`
-
-        // 初始化terminal
-        const options = {
-          backgroundColor: data.backgroundColor,
-          fontColor: data.fontColor,
-          fontSize: data.fontSize
+    removeTab(targetKey) {
+      let activeKey = this.activeKey
+      let lastIndex
+      this.machineTabs.forEach((machineTab, i) => {
+        if (machineTab.key === targetKey) {
+          lastIndex = i - 1
         }
-        const setting = {
-          accessToken: data.accessToken,
-          enableWebLink: data.enableWebLink,
-          enableWebGL: data.enableWebGL
-        }
-        this.$refs.terminalMain.initTerminal(options, setting)
-      } catch (e) {
-        this.loading()
-        this.$message.error('初始化失败')
-        this.machine.status = this.$enum.TERMINAL_STATUS.ERROR.value
+      })
+      const $ref = this.$refs['terminal' + targetKey]
+      if ($ref && $ref.length) {
+        $ref[0].disconnect()
+        $ref[0].dispose()
       }
+      // TODO font family
+      // TODO 无机器承载页面
+      // TODO 机器菜单过滤失效
+      const machineTabs = this.machineTabs.filter(machineTab => machineTab.key !== targetKey)
+      if (machineTabs.length && activeKey === targetKey) {
+        if (lastIndex >= 0) {
+          activeKey = machineTabs[lastIndex].key
+        } else {
+          activeKey = machineTabs[0].key
+        }
+      }
+      this.machineTabs = machineTabs
+      this.activeKey = activeKey
     }
   },
   created() {
     if (this.$route.params.id) {
-      this.machineId = parseInt(this.$route.params.id)
+      this.selectedMachine.push(parseInt(this.$route.params.id))
+    }
+    window.onbeforeunload = function() {
+      return confirm('系统可能不会保存您所做的更改')
     }
   },
-  mounted() {
-    if (!this.machineId) {
-      this.$message.error('参数错误')
-      return
+  async mounted() {
+    await this.$refs.machineList.getMachineList()
+    if (this.selectedMachine.length) {
+      this.addTerminal(this.selectedMachine[0])
     }
-    this.machine.machineId = this.machineId
-    this.getAccessToken()
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+#terminal-layout-container {
+  height: 100vh;
+}
+
+#terminal-content-fixed-right {
+  background-color: #FFF;
+}
 
 </style>

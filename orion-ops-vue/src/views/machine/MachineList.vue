@@ -50,6 +50,9 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <a target="_blank" href="#/machine/terminal">
+          <a-button class="mr8" type="primary" icon="desktop">Terminal</a-button>
+        </a>
         <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
@@ -255,11 +258,10 @@ const moreMenuHandler = {
         } else {
           this.$message.error(`无法访问 ${record.host}`)
         }
-      })
-      .catch(() => {
-        ping()
-        this.$message.error(`无法访问 ${record.host}`)
-      })
+      }).catch(() => {
+      ping()
+      this.$message.error(`无法访问 ${record.host}`)
+    })
   },
   connect(record) {
     const ssh = `${record.username}@${record.host}:${record.sshPort}`
@@ -272,11 +274,10 @@ const moreMenuHandler = {
         } else {
           this.$message.error(`无法连接 ${ssh}`)
         }
-      })
-      .catch(() => {
-        connecting()
-        this.$message.error(`无法连接 ${ssh}`)
-      })
+      }).catch(() => {
+      connecting()
+      this.$message.error(`无法连接 ${ssh}`)
+    })
   },
   openEnv(record) {
     this.$router.push({
