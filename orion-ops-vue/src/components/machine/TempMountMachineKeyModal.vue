@@ -24,94 +24,94 @@
 </template>
 
 <script>
-  const layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 17 }
-  }
+const layout = {
+  labelCol: { span: 5 },
+  wrapperCol: { span: 17 }
+}
 
-  function getDecorators() {
-    return {
-      file: ['file', {
-        rules: [{
-          validator: this.validateFile
-        }]
-      }],
-      password: ['password', {
-        rules: [{
-          required: true,
-          max: 128,
-          message: '密码必须小于等于128位'
-        }]
+function getDecorators() {
+  return {
+    file: ['file', {
+      rules: [{
+        validator: this.validateFile
       }]
-    }
+    }],
+    password: ['password', {
+      rules: [{
+        required: true,
+        max: 128,
+        message: '密码长度必须小于等于128位'
+      }]
+    }]
   }
+}
 
-  export default {
-    name: 'TempMountMachineKeyModal',
-    data: function() {
-      return {
-        visible: false,
-        loading: false,
-        layout,
-        fileList: [],
-        decorators: getDecorators.call(this),
-        form: this.$form.createForm(this)
+export default {
+  name: 'TempMountMachineKeyModal',
+  data: function() {
+    return {
+      visible: false,
+      loading: false,
+      layout,
+      fileList: [],
+      decorators: getDecorators.call(this),
+      form: this.$form.createForm(this)
+    }
+  },
+  methods: {
+    add() {
+      this.form.resetFields()
+      this.visible = true
+    },
+    selectFile(e) {
+      this.fileList = [e]
+      return false
+    },
+    validateFile(rule, value, callback) {
+      if (!this.fileList.length) {
+        callback(new Error('请选择秘钥文件'))
+      } else {
+        callback()
       }
     },
-    methods: {
-      add() {
-        this.form.resetFields()
-        this.visible = true
-      },
-      selectFile(e) {
-        this.fileList = [e]
-        return false
-      },
-      validateFile(rule, value, callback) {
-        if (!this.fileList.length) {
-          callback(new Error('请选择秘钥文件'))
-        } else {
-          callback()
+    check() {
+      this.loading = true
+      this.form.validateFields((err, values) => {
+        if (err) {
+          this.loading = false
+          return
         }
-      },
-      check() {
-        this.loading = true
-        this.form.validateFields((err, values) => {
-          if (err) {
-            this.loading = false
-            return
-          }
-          this.submit(values)
-        })
-      },
-      async submit(values) {
-        // 读取文件
-        let fileBase64
-        if (this.fileList.length) {
-          fileBase64 = await this.$utils.readFileBase64(this.fileList[0])
-          fileBase64 = this.$utils.getBase64Data(fileBase64)
-        }
-        let res
-        try {
-          res = await this.$api.tempMountMachineKey({
-            ...values,
-            file: fileBase64
-          })
-          this.$message.success('挂载成功')
-          this.$emit('mounted', res.data)
-          this.close()
-        } catch (e) {
-          // ignore
-        }
-        this.loading = false
-      },
-      close() {
-        this.visible = false
-        this.loading = false
-        this.fileList = []
+        this.submit(values)
+      })
+    },
+    async submit(values) {
+      // 读取文件
+      let fileBase64
+      if (this.fileList.length) {
+        fileBase64 = await this.$utils.readFileBase64(this.fileList[0])
+        fileBase64 = this.$utils.getBase64Data(fileBase64)
       }
+      let res
+      try {
+        res = await this.$api.tempMountMachineKey({
+          ...values,
+          file: fileBase64
+        })
+        this.$message.success('挂载成功')
+        this.$emit('mounted', res.data)
+        this.close()
+      } catch (e) {
+        // ignore
+      }
+      this.loading = false
+    },
+    close() {
+      this.visible = false
+      this.loading = false
+      this.fileList = []
     }
   }
+}
 </script>
 
 <style scoped>

@@ -6,6 +6,7 @@
     :visible="visible"
     :afterVisibleChange="changeVisibleAfter"
     :zIndex="800"
+    :bodyStyle="{padding: 0}"
     @close="visible = !visible">
     <!-- 标题 -->
     <div class="sftp-drawer-title" slot="title">
@@ -62,7 +63,7 @@ export default {
 .sftp-drawer-title {
   margin: 0;
   color: rgba(0, 0, 0, .85);
-  font-weight: 500;
+  font-weight: 50;
   font-size: 16px;
   line-height: 22px;
   display: flex;

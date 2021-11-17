@@ -66,8 +66,6 @@
           <a-button-group class="ml8" v-show="selectedRowKeys.length">
             <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
           </a-button-group>
-          <!-- 筛选 -->
-
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">

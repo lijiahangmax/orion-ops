@@ -38,7 +38,7 @@ function getDecorators() {
         message: '请输入key'
       }, {
         max: 128,
-        message: 'key必须小于等于128位'
+        message: 'key长度必须小于等于128位'
       }]
     }],
     value: ['value', {
@@ -47,13 +47,13 @@ function getDecorators() {
         message: '请输入value'
       }, {
         max: 512,
-        message: 'value必须小于等于512位'
+        message: 'value长度必须小于等于512位'
       }]
     }],
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述必须小于等于64位'
+        message: '描述长度必须小于等于64位'
       }]
     }]
   }

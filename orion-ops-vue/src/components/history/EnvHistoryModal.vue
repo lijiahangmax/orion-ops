@@ -25,7 +25,9 @@
           <span>{{ record.afterValue }}</span>
         </div>
         <!-- 类型 -->
-        <a-tag slot="type" slot-scope="record" :color="$enum.valueOf($enum.HISTORY_VALUE_TYPE, record.type).color">
+        <a-tag slot="type" slot-scope="record"
+               style="margin: 0"
+               :color="$enum.valueOf($enum.HISTORY_VALUE_TYPE, record.type).color">
           {{ $enum.valueOf($enum.HISTORY_VALUE_TYPE, record.type).label }}
         </a-tag>
         <!-- 修改时间 -->
@@ -75,6 +77,7 @@ const columns = [
     key: 'beforeValue',
     scopedSlots: { customRender: 'beforeValue' },
     width: 200,
+    ellipsis: true,
     sorter: (a, b) => a.beforeValue.localeCompare(b.beforeValue)
   },
   {
@@ -82,6 +85,7 @@ const columns = [
     key: 'afterValue',
     scopedSlots: { customRender: 'afterValue' },
     width: 200,
+    ellipsis: true,
     sorter: (a, b) => a.afterValue.localeCompare(b.afterValue)
   },
   {

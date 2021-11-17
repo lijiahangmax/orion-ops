@@ -3,9 +3,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'TemplateList'
-  }
+export default {
+  name: 'TemplateList'
+}
 </script>
 
 <style scoped>

@@ -46,7 +46,7 @@ function getDecorators() {
         message: '请输入秘钥名称'
       }, {
         max: 32,
-        message: '秘钥名称必须小于等于32位'
+        message: '秘钥名称长度必须小于等于32位'
       }]
     }],
     file: ['file', {
@@ -57,7 +57,7 @@ function getDecorators() {
     password: ['password', {
       rules: [{
         max: 128,
-        message: '密码必须小于等于128位'
+        message: '密码长度必须小于等于128位'
       }, {
         validator: this.validatePassword
       }]
@@ -65,7 +65,7 @@ function getDecorators() {
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述必须小于等于64位'
+        message: '描述长度必须小于等于64位'
       }]
     }]
   }

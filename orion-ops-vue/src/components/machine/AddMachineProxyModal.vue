@@ -67,7 +67,7 @@ function getDecorators() {
     username: ['username', {
       rules: [{
         max: 128,
-        message: '用户名必须小于等于128位'
+        message: '用户名长度必须小于等于128位'
       }, {
         validator: this.validateUsername
       }]
@@ -75,7 +75,7 @@ function getDecorators() {
     password: ['password', {
       rules: [{
         max: 128,
-        message: '密码必须小于等于128位'
+        message: '密码长度必须小于等于128位'
       }, {
         validator: this.validatePassword
       }]
@@ -89,7 +89,7 @@ function getDecorators() {
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述必须小于等于64位'
+        message: '描述长度必须小于等于64位'
       }]
     }]
   }
