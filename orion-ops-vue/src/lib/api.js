@@ -83,6 +83,13 @@ const $api = {
   },
 
   /**
+   * 获取用户列表
+   */
+  getUserList: param => {
+    return $http.$post('/user/list', param)
+  },
+
+  /**
    * 获取用户详情
    */
   getUserDetail: param => {
@@ -513,6 +520,34 @@ const $api = {
    */
   rollbackHistoryValue: param => {
     return $http.$post('/history-value/rollback', param)
+  },
+
+  /**
+   * 执行提交
+   */
+  submitExecTask: param => {
+    return $http.$post('/exec/submit', param)
+  },
+
+  /**
+   * 执行列表
+   */
+  getExecList: param => {
+    return $http.$post('/exec/list', param)
+  },
+
+  /**
+   * 执行详情
+   */
+  getExecDetail: param => {
+    return $http.$post('/exec/detail', param)
+  },
+
+  /**
+   * 执行停止
+   */
+  terminatedExecTask: param => {
+    return $http.$post('/exec/terminated', param)
   }
 
 }

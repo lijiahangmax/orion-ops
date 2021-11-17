@@ -29,18 +29,9 @@ router.beforeEach((to, from, next) => {
     return
   }
   // 校验管理员
-  if (to.meta.requireAdmin) {
-    var isAdmin
-    try {
-      const user = JSON.parse($storage.get($storage.keys.USER))
-      isAdmin = user.roleType === 10
-    } catch (e) {
-      isAdmin = false
-    }
-    if (!isAdmin) {
-      router.push({ path: '/404' })
-      return
-    }
+  if (to.meta.requireAdmin && !Vue.prototype.$isAdmin()) {
+    router.push({ path: '/404' })
+    return
   }
   // 设置标题
   if (to.meta.title) {
@@ -49,9 +40,23 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
+/**
+ * 复制
+ */
 Vue.prototype.$copy = function(value, tips = '已复制') {
   if ($utils.copyToClipboard(value) && tips) {
     this.$message.success(tips)
+  }
+}
+
+/**
+ * 是否是管理员
+ */
+Vue.prototype.$isAdmin = function() {
+  try {
+    return JSON.parse($storage.get($storage.keys.USER)).roleType === 10
+  } catch (e) {
+    return false
   }
 }
 

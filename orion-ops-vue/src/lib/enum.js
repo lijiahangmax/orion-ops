@@ -63,7 +63,7 @@ const $enum = {
   WS_PROTOCOL: {
     ACK: {
       value: '010',
-      label: 'akc'
+      label: 'ack'
     },
     CONNECTED: {
       value: '015',
@@ -273,10 +273,46 @@ const $enum = {
       label: '已完成',
       color: '#51CF66'
     },
-    ERROR: {
+    CANCEL: {
       value: 50,
+      label: '已取消',
+      color: '#868E96'
+    },
+    ERROR: {
+      value: 60,
       label: '失败',
       color: '#F03E3E'
+    }
+  },
+
+  /**
+   * 批量执行
+   */
+  BATCH_EXEC_STATUS: {
+    WAITING: {
+      value: 10,
+      label: '未开始',
+      color: '#FF922B'
+    },
+    RUNNABLE: {
+      value: 20,
+      label: '执行中',
+      color: '#51cf66'
+    },
+    COMPLETE: {
+      value: 30,
+      label: '执行完成',
+      color: '#4C6EF5'
+    },
+    EXCEPTION: {
+      value: 40,
+      label: '执行异常',
+      color: '#F03E3E'
+    },
+    TERMINATED: {
+      value: 50,
+      label: '执行终止',
+      color: '#868E96'
     }
   }
 

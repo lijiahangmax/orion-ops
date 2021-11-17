@@ -22,13 +22,22 @@ const routes = [
     component: Login
   },
   {
-    path: '/machine/terminal/:id',
+    path: '/machine/terminal/:id?',
     name: 'terminal',
     meta: {
       requireAuth: true,
       title: 'terminal'
     },
     component: () => import('../views/machine/MachineTerminal')
+  },
+  {
+    path: '/machine/sftp/:id?',
+    name: 'sftp',
+    meta: {
+      requireAuth: true,
+      title: '文件管理器'
+    },
+    component: () => import('../views/machine/MachineSftp')
   },
   {
     path: '/',
@@ -95,13 +104,22 @@ const routes = [
         component: () => import('../views/machine/MachineProxy')
       },
       {
-        path: '/batch/exec',
-        name: 'batchExec',
+        path: '/batch/exec/list',
+        name: 'BatchExecList',
         meta: {
           requireAuth: true,
           title: '批量执行'
         },
-        component: () => import('../views/exec/BatchExec')
+        component: () => import('../views/exec/BatchExecList')
+      },
+      {
+        path: '/batch/exec/add',
+        name: 'BatchExecAdd',
+        meta: {
+          requireAuth: true,
+          title: '批量执行'
+        },
+        component: () => import('../views/exec/AddBatchExecTask')
       },
       {
         path: '/log/view',

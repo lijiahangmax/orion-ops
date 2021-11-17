@@ -10,6 +10,7 @@
 import '../src/css/common.less'
 import '../src/css/layout.less'
 import '../src/css/table.less'
+import '../src/css/component.less'
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 
 export default {
