@@ -83,19 +83,19 @@ export default {
         this.machine.port = data.port
         this.machine.username = data.username
         this.machine.machineName = data.machineName
-        document.title = `${data.machineName} | ${data.host}`
-
-        // 初始化terminal
+        // terminal选项
         const options = {
           backgroundColor: data.backgroundColor,
           fontColor: data.fontColor,
           fontSize: data.fontSize
         }
+        // terminal设置
         const setting = {
           accessToken: data.accessToken,
           enableWebLink: data.enableWebLink,
           enableWebGL: data.enableWebGL
         }
+        // 初始化terminal
         this.$refs.terminalMain.initTerminal(options, setting)
       } catch (e) {
         this.loading()

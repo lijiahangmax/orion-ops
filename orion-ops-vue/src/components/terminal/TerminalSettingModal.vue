@@ -19,6 +19,9 @@
         <a-form-item label="字体大小">
           <a-input v-decorator="decorators.fontSize" type="number"/>
         </a-form-item>
+        <a-form-item label="字体名称">
+          <a-input v-decorator="decorators.fontFamily"/>
+        </a-form-item>
         <a-form-item label="字体颜色">
           <a-input v-decorator="decorators.fontColor" type="color"/>
         </a-form-item>
@@ -66,6 +69,15 @@ function getDecorators() {
         //   return Number(value)
         // },
         validator: this.validateFontSize
+      }]
+    }],
+    fontFamily: ['fontFamily', {
+      rules: [{
+        required: true,
+        message: '请输入字体名称'
+      }, {
+        max: 32,
+        message: '字体名称长度必须小于等于32位'
       }]
     }],
     fontColor: ['fontColor', {
@@ -135,7 +147,7 @@ export default {
       try {
         const { data } = await this.$api.getTerminalSetting({ machineId: this.machineId })
         this.id = data.id
-        this.setting = pick(Object.assign({}, data), 'terminalType', 'fontSize', 'fontColor', 'backgroundColor')
+        this.setting = pick(Object.assign({}, data), 'terminalType', 'fontSize', 'fontFamily', 'fontColor', 'backgroundColor')
         this.setting.enableWebLink = data.enableWebLink === 1
         this.setting.enableWebGL = data.enableWebGL === 1
         this.$nextTick(() => {
@@ -162,6 +174,7 @@ export default {
           id: this.id,
           terminalType: values.terminalType,
           fontSize: values.fontSize,
+          fontFamily: values.fontFamily,
           fontColor: values.fontColor,
           backgroundColor: values.backgroundColor,
           enableWebLink: values.enableWebLink ? 1 : 2,

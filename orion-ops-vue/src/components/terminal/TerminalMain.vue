@@ -391,15 +391,14 @@ export default {
         enableWebGL: 2
       },
       options: {
-        // rendererType: 'dom',
-        fontFamily: 'courier-new, courier, monospace',
-        lineHeight: 1.14,
         cols: 180,
         rows: 36,
         cursorStyle: 'bar',
         cursorBlink: true,
         fastScrollModifier: 'shift',
+        lineHeight: 1.14,
         fontSize: 14,
+        fontFamily: 'courier-new, courier, monospace',
         theme: {
           foreground: '#FFFFFF',
           background: '#212529'
@@ -414,9 +413,10 @@ export default {
   },
   methods: {
     initTerminal(options, setting) {
-      this.options.fontSize = options.fontSize
-      this.options.theme.foreground = options.fontColor
-      this.options.theme.background = options.backgroundColor
+      this.options.fontSize = options.fontSize || this.options.fontSize
+      this.options.fontFamily = options.fontFamily || this.options.fontFamily
+      this.options.theme.foreground = options.fontColor || this.options.theme.foreground
+      this.options.theme.background = options.backgroundColor || this.options.theme.background
       this.options.rows = this.getRows()
       this.setting.accessToken = setting.accessToken
       this.setting.enableWebLink = setting.enableWebLink

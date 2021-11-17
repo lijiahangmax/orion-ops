@@ -8,13 +8,23 @@
                      @chooseMachine="addTerminal"/>
     <!-- main -->
     <a-layout>
-      <a-layout-content id="terminal-content-fixed-right">
-        <a-tabs v-model="activeKey" :hide-add="true" type="editable-card" @edit="removeTab" :tabBarStyle="{margin: 0}">
-          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key" :tab="machineTab.title">
+      <a-layout-content id="terminal-content-fixed-right" :style="{'overflow': machineTabs.length ? 'auto' : 'hidden'}">
+        <!-- tabs -->
+        <a-tabs v-model="activeKey"
+                v-if="machineTabs.length"
+                :hide-add="true"
+                type="editable-card"
+                @edit="removeTab"
+                :tabBarStyle="{margin: 0}">
+          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key" :tab="machineTab.name">
             <!-- 终端 -->
             <TerminalXterm :ref="'terminal' + machineTab.key" :machineId="machineTab.machineId"/>
           </a-tab-pane>
         </a-tabs>
+        <!-- 无终端承载页 -->
+        <div v-else>
+          <TerminalBanner/>
+        </div>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -23,12 +33,14 @@
 <script>
 import MachineListMenu from '@/components/machine/MachineListMenu'
 import TerminalXterm from '@/components/terminal/TerminalXterm'
+import TerminalBanner from '@/components/terminal/TerminalBanner'
 
 export default {
   name: 'MachineTerminal',
   components: {
     MachineListMenu,
-    TerminalXterm
+    TerminalXterm,
+    TerminalBanner
   },
   data() {
     return {
@@ -38,6 +50,18 @@ export default {
       selectedMachine: []
     }
   },
+  watch: {
+    activeKey(k) {
+      if (k === null) {
+        document.title = 'terminal'
+        return
+      }
+      const machineTabs = this.machineTabs.filter(machineTab => machineTab.key === k)
+      if (machineTabs.length) {
+        document.title = `${machineTabs[0].name} | ${machineTabs[0].host}`
+      }
+    }
+  },
   methods: {
     addTerminal(id) {
       const filterMachines = this.$refs.machineList.list.filter(m => m.id === id)
@@ -45,7 +69,8 @@ export default {
         this.activeKey = this.newTabIndex++
         this.machineTabs.push({
           key: this.activeKey,
-          title: filterMachines[0].name,
+          name: filterMachines[0].name,
+          host: filterMachines[0].host,
           machineId: id
         })
       }
@@ -63,9 +88,6 @@ export default {
         $ref[0].disconnect()
         $ref[0].dispose()
       }
-      // TODO font family
-      // TODO 无机器承载页面
-      // TODO 机器菜单过滤失效
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key !== targetKey)
       if (machineTabs.length && activeKey === targetKey) {
         if (lastIndex >= 0) {
@@ -73,6 +95,9 @@ export default {
         } else {
           activeKey = machineTabs[0].key
         }
+      }
+      if (!machineTabs.length) {
+        activeKey = null
       }
       this.machineTabs = machineTabs
       this.activeKey = activeKey
