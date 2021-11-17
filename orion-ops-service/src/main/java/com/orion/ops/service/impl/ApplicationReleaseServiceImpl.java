@@ -138,7 +138,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             throw Exceptions.argument(MessageConst.STATUS_UNABLE_ROLLBACK_RELEASE);
         }
         // 检查快照产物
-        String distSnapshotPath = MachineEnvAttr.DIST_PATH.getValue() + rollbackRelease.getDistSnapshotPath();
+        String distSnapshotPath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), rollbackRelease.getDistSnapshotPath());
         Valid.isTrue(Files1.isFile(distSnapshotPath), MessageConst.FILE_ABSENT_UNABLE_ROLLBACK_RELEASE);
         // 复制
         return this.copyReleaseBill(rollbackRelease, true);
@@ -270,7 +270,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             releaseMachine.setLogPath(PathBuilders.getReleaseTargetMachineLogPath(releaseBill.getId(), machineId));
             // 获取机器分发路径
             String distPathEnv = machineEnvService.getMachineEnv(machineId, MachineEnvAttr.DIST_PATH.getKey());
-            String distPath = Files1.getPath(distPathEnv + "/" + Files1.getFileName(releaseBill.getDistPath()));
+            String distPath = Files1.getPath(distPathEnv, Files1.getFileName(releaseBill.getDistPath()));
             releaseMachine.setDistPath(distPath);
             list.add(releaseMachine);
         }
@@ -352,7 +352,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             copyRelease.setReleaseTitle(sourceRelease.getReleaseTitle() + " - " + Const.ROLLBACK);
             copyRelease.setReleaseType(ReleaseType.ROLLBACK.getType());
             copyRelease.setRollbackReleaseId(sourceReleaseId);
-            copyRelease.setDistPath(MachineEnvAttr.DIST_PATH.getValue() + sourceRelease.getDistSnapshotPath());
+            copyRelease.setDistPath(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), sourceRelease.getDistSnapshotPath()));
         } else {
             copyRelease.setReleaseTitle(sourceRelease.getReleaseTitle() + " - " + Const.COPY);
             copyRelease.setReleaseType(ReleaseType.NORMAL.getType());

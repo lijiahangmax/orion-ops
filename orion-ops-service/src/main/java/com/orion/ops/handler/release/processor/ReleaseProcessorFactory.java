@@ -18,6 +18,7 @@ import com.orion.utils.Strings;
 import com.orion.utils.Valid;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -89,12 +90,12 @@ public class ReleaseProcessorFactory {
         hint.setBranchName(releaseBill.getBranchName());
         hint.setCommitId(releaseBill.getCommitId());
         hint.setDistPath(releaseBill.getDistPath());
-        hint.setDistSnapshotPath(MachineEnvAttr.DIST_PATH.getValue() + releaseBill.getDistSnapshotPath());
+        hint.setDistSnapshotPath(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), releaseBill.getDistSnapshotPath()));
         hint.setReleaseUserId(releaseBill.getReleaseUserId());
         hint.setReleaseUserName(releaseBill.getReleaseUserName());
         String logPath = releaseBill.getLogPath();
         if (!Strings.isBlank(logPath)) {
-            hint.setHostLogPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
+            hint.setHostLogPath(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), logPath));
         }
         hint.setSessionHolder(Maps.newMap());
         return hint;
@@ -112,7 +113,7 @@ public class ReleaseProcessorFactory {
                     ReleaseMachineHint hint = new ReleaseMachineHint();
                     hint.setId(s.getId());
                     hint.setMachineId(s.getMachineId());
-                    hint.setLogPath(MachineEnvAttr.LOG_PATH.getValue() + s.getLogPath());
+                    hint.setLogPath(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s.getLogPath()));
                     hint.setDistPath(s.getDistPath());
                     return hint;
                 }).collect(Collectors.toList());
@@ -206,7 +207,7 @@ public class ReleaseProcessorFactory {
         hint.setCommand(action.getActionCommand());
         String logPath = action.getLogPath();
         if (!Strings.isBlank(logPath)) {
-            hint.setLogPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
+            hint.setLogPath(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), logPath));
         }
         return hint;
     }

@@ -31,13 +31,13 @@ import java.io.File;
 @Slf4j
 public abstract class FileTransferProcessor implements IFileTransferProcessor {
 
-    protected static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
+    protected static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    protected static MachineEnvService machineEnvService = SpringHolder.getBean("machineEnvService");
+    protected static MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
 
-    protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean("fileTransferLogDAO");
+    protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean(FileTransferLogDAO.class);
 
-    protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean("transferProcessorManager");
+    protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean(TransferProcessorManager.class);
 
     protected SessionStore sessionStore;
 
@@ -123,7 +123,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      */
     protected boolean checkUseFsCopy() {
         // 创建一个临时文件
-        String checkPath = Files1.getPath(MachineEnvAttr.TEMP_PATH.getValue() + "/" + UUIds.random32() + ".ck");
+        String checkPath = Files1.getPath(MachineEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
         File checkFile = new File(checkPath);
         Files1.touch(checkFile);
         checkFile.deleteOnExit();

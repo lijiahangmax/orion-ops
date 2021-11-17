@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class ReleaseConnectActionHandler extends AbstractReleaseActionHandler {
 
-    private static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
+    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
     public ReleaseConnectActionHandler(ReleaseHint hint, ReleaseActionHint action) {
         super(hint, action);

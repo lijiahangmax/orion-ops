@@ -35,7 +35,7 @@ import java.io.InputStreamReader;
 @Slf4j
 public class ExecTailFileHandler implements ITailHandler {
 
-    protected static MachineInfoService machineInfoService = SpringHolder.getBean("machineInfoService");
+    protected static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
     @Getter
     private String token;

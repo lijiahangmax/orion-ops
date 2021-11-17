@@ -97,7 +97,7 @@ public interface MachineKeyService {
      * @return 实际路径
      */
     static String getKeyPath(String path) {
-        return Files1.getPath(MachineEnvAttr.KEY_PATH.getValue() + path);
+        return Files1.getPath(MachineEnvAttr.KEY_PATH.getValue(), path);
     }
 
 }

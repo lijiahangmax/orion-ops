@@ -41,7 +41,7 @@ import java.io.OutputStream;
 @Slf4j
 public class TerminalOperateHandler implements IOperateHandler {
 
-    private static final MachineTerminalService machineTerminalService = SpringHolder.getBean("machineTerminalService");
+    private static final MachineTerminalService machineTerminalService = SpringHolder.getBean(MachineTerminalService.class);
 
     @Getter
     private String token;
@@ -96,7 +96,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         executor.terminalType(hint.getTerminalType());
         executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
         String logPath = PathBuilders.getTerminalLogPath(hint.getUserId());
-        String realLogPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + logPath);
+        String realLogPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), logPath);
         this.logStream = Files1.openOutputStreamSafe(realLogPath);
         log.info("terminal 开始记录用户操作日志: {} {}", token, logPath);
         // 记录日志

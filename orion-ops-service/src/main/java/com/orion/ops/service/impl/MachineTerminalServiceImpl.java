@@ -90,7 +90,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setEnableWebGL(config.getEnableWebGL());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        redisTemplate.opsForValue().set(cacheKey, machineId + "", KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(cacheKey, machineId + Strings.EMPTY, KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         log.info("用户获取terminal uid: {} machineId: {} token: {}", userId, machineId, token);
         return access;
     }

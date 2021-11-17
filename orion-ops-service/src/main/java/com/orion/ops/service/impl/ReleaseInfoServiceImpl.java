@@ -207,7 +207,7 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
         return Optional.ofNullable(releaseBillDAO.selectById(id))
                 .map(ReleaseBillDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 
@@ -216,7 +216,7 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
         return Optional.ofNullable(releaseMachineDAO.selectById(id))
                 .map(ReleaseMachineDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 
@@ -232,7 +232,7 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
             if (Strings.isBlank(path)) {
                 return Strings.EMPTY;
             }
-            File file = new File(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue() + "/" + path));
+            File file = new File(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), path));
             // 文件不存在
             if (!Files1.isFile(file)) {
                 return Strings.EMPTY;

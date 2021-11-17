@@ -65,6 +65,11 @@ public class TerminalAccessVO {
     private Integer fontSize;
 
     /**
+     * 字体名称
+     */
+    private String fontFamily;
+
+    /**
      * 访问token
      */
     private String accessToken;

@@ -166,7 +166,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
                 .map(MachineTerminalLogDO::getOperateLogFile)
                 .filter(Strings::isNotBlank)
-                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 
