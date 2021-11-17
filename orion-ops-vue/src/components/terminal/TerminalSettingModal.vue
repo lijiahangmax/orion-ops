@@ -113,8 +113,8 @@ export default {
       } else if (parseFloat(value) !== parseInt(value)) {
         callback(new Error('字体必须为整数'))
       } else {
-        if (value < 8 || value > 32) {
-          callback(new Error('字体大小必须在8-32之间'))
+        if (value < 12 || value > 24) {
+          callback(new Error('字体大小必须在12-24之间'))
         } else {
           callback()
         }
@@ -167,7 +167,7 @@ export default {
           enableWebLink: values.enableWebLink ? 1 : 2,
           enableWebGL: values.enableWebGL ? 1 : 2
         })
-        this.$message.success('配置修改成功, 刷新页面生效')
+        this.$message.success('配置修改成功, 重新连接后后生效')
         this.close()
       } catch (e) {
         this.$message.error('配置修改失败')

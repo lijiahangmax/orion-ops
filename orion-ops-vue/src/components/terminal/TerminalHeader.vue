@@ -13,7 +13,10 @@
         </div>
         <!-- 命令输入框 -->
         <div class="terminal-command-input">
-          <a-input-search placeholder="command" v-model="commandInput" @search="inputCommand">
+          <a-input-search placeholder="command"
+                          :disabled="machine.status !== $enum.TERMINAL_STATUS.CONNECTED.value"
+                          v-model="commandInput"
+                          @search="inputCommand">
             <a-icon type="forward" slot="enterButton"/>
           </a-input-search>
         </div>
@@ -59,7 +62,7 @@
     <div class="terminal-header-event-container">
       <!-- 设置模态框 -->
       <div id="terminal-settings-modal">
-        <TerminalSettingModal ref="settingModal" :machineId="machine.machineId"/>
+        <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
       </div>
     </div>
   </div>
@@ -71,6 +74,7 @@ import TerminalSettingModal from './TerminalSettingModal'
 export default {
   name: 'TerminalHeader',
   props: {
+    machineId: Number,
     machine: Object
   },
   components: {
@@ -108,7 +112,7 @@ export default {
       if (this.machine.status === this.$enum.TERMINAL_STATUS.CONNECTED.value) {
         this.$emit('disconnect')
       } else {
-        location.reload()
+        this.$emit('reload')
       }
     },
     fullscreen() {
@@ -136,7 +140,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #D0EBFF;
+  background-color: #f1f3f5;
 }
 
 .terminal-command-input {

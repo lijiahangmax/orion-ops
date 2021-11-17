@@ -283,6 +283,7 @@ const terminalOperator = {
   },
   disconnect() {
     console.log('disconnect')
+    this.pingThread && clearInterval(this.pingThread)
     this.client.send(JSON.stringify({
       operate: 'disconnect',
       body: {}
@@ -390,6 +391,9 @@ export default {
         enableWebGL: 2
       },
       options: {
+        // rendererType: 'dom',
+        fontFamily: 'courier-new, courier, monospace',
+        lineHeight: 1.14,
         cols: 180,
         rows: 36,
         cursorStyle: 'bar',
@@ -420,7 +424,7 @@ export default {
       initTerminal.call(this)
     },
     getRows() {
-      return parseInt((document.body.clientHeight - 42) / (this.options.fontSize + 2))
+      return parseInt((document.body.clientHeight - 82) / (this.options.fontSize * 1.114 * 1.14))
     },
     windowChange() {
       this.plugin.fit.fit()
@@ -431,7 +435,7 @@ export default {
     openRightMenu(e) {
       if (e.button === 2) {
         this.$refs.rightMenuTrigger.click()
-        this.$refs.rightMenu.style.top = (e.offsetY + 30) + 'px'
+        this.$refs.rightMenu.style.top = (e.offsetY + 80) + 'px'
         this.$refs.rightMenu.style.left = (e.offsetX + 10) + 'px'
         this.$refs.rightMenu.style.display = 'block'
       } else {
@@ -491,7 +495,7 @@ export default {
 
 #search-card {
   position: fixed;
-  top: 50px;
+  top: 94px;
   right: 20px;
   z-index: 200;
   width: 290px;
