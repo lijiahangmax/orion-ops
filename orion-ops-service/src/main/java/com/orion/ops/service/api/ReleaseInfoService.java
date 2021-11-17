@@ -8,6 +8,7 @@ import com.orion.ops.entity.domain.ReleaseMachineDO;
 import com.orion.ops.entity.request.ApplicationReleaseBillRequest;
 import com.orion.ops.entity.vo.ReleaseBillDetailVO;
 import com.orion.ops.entity.vo.ReleaseBillListVO;
+import com.orion.utils.io.Files1;
 
 import java.util.List;
 
@@ -136,7 +137,7 @@ public interface ReleaseInfoService {
         if (path == null) {
             return null;
         }
-        return MachineEnvAttr.DIST_PATH.getValue() + path;
+        return Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), path);
     }
 
 }

@@ -36,7 +36,7 @@
     "children": [
       {
         "name": "批量执行",
-        "path": "/batch/exec"
+        "path": "/batch/exec/list"
       },
       {
         "name": "日志面板",

@@ -190,7 +190,7 @@ public class SftpController {
             request.setMachineId(machineId);
             request.setFileToken(fileToken);
             request.setLocalPath(localPath);
-            request.setRemotePath(Files1.getPath(remotePath + "/" + file.getOriginalFilename()));
+            request.setRemotePath(Files1.getPath(remotePath, file.getOriginalFilename()));
             request.setSize(file.getSize());
             requestFiles.add(request);
         }

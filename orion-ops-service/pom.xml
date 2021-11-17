@@ -172,7 +172,7 @@
                 <configuration>
                     <mainClass>com.orion.ops.OrionOpsServiceApplication</mainClass>
                     <layout>ZIP</layout>
-                    <!-- 注释后和依赖包一起打包 取消注释则不打包依赖-->
+                    <!-- 注释后和依赖包一起打包 取消注释则不打包依赖 -->
                     <includes>
                         <include>
                             <groupId>nothing</groupId>
