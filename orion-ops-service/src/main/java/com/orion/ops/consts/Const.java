@@ -62,6 +62,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String LOGIN_TOKEN_ENC_KEY = "LoginToken";
 
+    public static final int EXEC_COMMAND_OMIT = 60;
+
     public static final int TAIL_OFFSET_LINE = 300;
 
     public static final Long HOST_MACHINE_ID = 1L;

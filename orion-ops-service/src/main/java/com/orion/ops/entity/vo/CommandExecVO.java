@@ -64,6 +64,11 @@ public class CommandExecVO {
     private Long machineId;
 
     /**
+     * 执行机器名称
+     */
+    private String machineName;
+
+    /**
      * 执行机器主机
      */
     private String machineHost;
@@ -77,11 +82,6 @@ public class CommandExecVO {
      * 执行命令
      */
     private String command;
-
-    /**
-     * 日志路径
-     */
-    private String logPath;
 
     /**
      * 执行开始时间
@@ -108,11 +108,22 @@ public class CommandExecVO {
      */
     private Long used;
 
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 创建时间
+     */
+    private String createTimeAgo;
+
     static {
         TypeStore.STORE.register(CommandExecDO.class, CommandExecVO.class, p -> {
             CommandExecVO vo = new CommandExecVO();
             Date startDate = p.getStartDate();
             Date endDate = p.getEndDate();
+            Date createTime = p.getCreateTime();
             vo.setId(p.getId());
             vo.setUserId(p.getUserId());
             vo.setUsername(p.getUserName());
@@ -123,11 +134,12 @@ public class CommandExecVO {
             vo.setExitCode(p.getExitCode());
             vo.setCommand(p.getExecCommand());
             vo.setDescription(p.getDescription());
-            vo.setLogPath(p.getLogPath());
             vo.setStartDate(startDate);
             vo.setEndDate(endDate);
+            vo.setCreateTime(createTime);
             Optional.ofNullable(startDate).map(Dates::ago).ifPresent(vo::setStartDateAgo);
             Optional.ofNullable(endDate).map(Dates::ago).ifPresent(vo::setEndDateAgo);
+            Optional.ofNullable(createTime).map(Dates::ago).ifPresent(vo::setCreateTimeAgo);
             Optional.ofNullable(endDate).map(Date::getTime)
                     .map(e -> e - Objects.requireNonNull(startDate).getTime())
                     .ifPresent(vo::setUsed);

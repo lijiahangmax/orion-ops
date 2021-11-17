@@ -27,4 +27,5 @@ public class RedisSerializeConfig {
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
+
 }

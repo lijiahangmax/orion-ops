@@ -62,6 +62,8 @@ public class MessageConst {
 
     public static final String EXEC_TASK_ABSENT = "未查询到任务信息";
 
+    public static final String EXEC_TASK_THREAD_ABSENT = "未查询到任务进程";
+
     public static final String TEMPLATE_ABSENT = "未查询到模板信息";
 
     public static final String HISTORY_VALUE_ABSENT = "未查询到历史值信息";
