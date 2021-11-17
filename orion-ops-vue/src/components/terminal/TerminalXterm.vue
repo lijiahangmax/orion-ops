@@ -87,7 +87,8 @@ export default {
         const options = {
           backgroundColor: data.backgroundColor,
           fontColor: data.fontColor,
-          fontSize: data.fontSize
+          fontSize: data.fontSize,
+          fontFamily: data.fontFamily
         }
         // terminal设置
         const setting = {
