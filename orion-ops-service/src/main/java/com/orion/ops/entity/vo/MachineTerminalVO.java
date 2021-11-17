@@ -55,6 +55,13 @@ public class MachineTerminalVO {
     private Integer fontSize;
 
     /**
+     * 字体名称
+     *
+     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_FAMILY
+     */
+    private String fontFamily;
+
+    /**
      * 是否开启url link 1开启 2关闭
      *
      * @see com.orion.ops.consts.Const#ENABLE
@@ -89,6 +96,7 @@ public class MachineTerminalVO {
             vo.setBackgroundColor(p.getBackgroundColor());
             vo.setFontColor(p.getFontColor());
             vo.setFontSize(p.getFontSize());
+            vo.setFontFamily(p.getFontFamily());
             vo.setEnableWebLink(p.getEnableWebLink());
             vo.setEnableWebGL(p.getEnableWebGL());
             vo.setCreateTime(p.getCreateTime());

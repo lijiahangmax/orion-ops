@@ -160,6 +160,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .like(Strings.isNotBlank(request.getKey()), MachineEnvDO::getAttrKey, request.getKey())
                 .like(Strings.isNotBlank(request.getValue()), MachineEnvDO::getAttrValue, request.getValue())
+                .like(Strings.isNotBlank(request.getDescription()), MachineEnvDO::getDescription, request.getDescription())
                 .eq(MachineEnvDO::getMachineId, request.getMachineId())
                 .orderByDesc(MachineEnvDO::getUpdateTime);
         return DataQuery.of(machineEnvDAO)

@@ -45,6 +45,11 @@ public class MachineTerminalRequest {
     private Integer fontSize;
 
     /**
+     * 字体名称
+     */
+    private String fontFamily;
+
+    /**
      * 是否开启url link 1开启 2关闭
      *
      * @see com.orion.ops.consts.Const#ENABLE

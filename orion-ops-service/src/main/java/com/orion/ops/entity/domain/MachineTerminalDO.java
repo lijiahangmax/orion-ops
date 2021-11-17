@@ -70,6 +70,14 @@ public class MachineTerminalDO implements Serializable {
     private Integer fontSize;
 
     /**
+     * 字体名称
+     *
+     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_FAMILY
+     */
+    @TableField("font_family")
+    private String fontFamily;
+
+    /**
      * 是否开启url link 1开启 2关闭
      *
      * @see com.orion.ops.consts.Const#ENABLE

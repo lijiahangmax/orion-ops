@@ -39,4 +39,9 @@ public class TerminalConst {
      */
     public static final int FONT_SIZE = 14;
 
+    /**
+     * 默认字体名称
+     */
+    public static final String FONT_FAMILY = "courier-new, courier, monospace";
+
 }

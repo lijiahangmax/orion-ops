@@ -84,6 +84,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setTerminalType(config.getTerminalType());
         access.setBackgroundColor(config.getBackgroundColor());
         access.setFontSize(config.getFontSize());
+        access.setFontFamily(config.getFontFamily());
         access.setFontColor(config.getFontColor());
         access.setEnableWebLink(config.getEnableWebLink());
         access.setEnableWebGL(config.getEnableWebGL());
@@ -105,6 +106,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
             insert.setBackgroundColor(TerminalConst.BACKGROUND_COLOR);
             insert.setFontColor(TerminalConst.FONT_COLOR);
             insert.setFontSize(TerminalConst.FONT_SIZE);
+            insert.setFontFamily(TerminalConst.FONT_FAMILY);
             insert.setEnableWebLink(Const.DISABLE);
             insert.setEnableWebGL(Const.DISABLE);
             machineTerminalDAO.insert(insert);
@@ -119,6 +121,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setId(request.getId());
         update.setTerminalType(request.getTerminalType());
         update.setFontSize(request.getFontSize());
+        update.setFontFamily(request.getFontFamily());
         update.setFontColor(request.getFontColor());
         update.setBackgroundColor(request.getBackgroundColor());
         update.setUpdateTime(new Date());
