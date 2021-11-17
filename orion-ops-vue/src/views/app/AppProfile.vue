@@ -3,9 +3,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'AppProfile'
-  }
+export default {
+  name: 'AppProfile'
+}
 </script>
 
 <style scoped>

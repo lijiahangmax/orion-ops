@@ -159,7 +159,7 @@ const columns = [
     key: 'createTime',
     sorter: (a, b) => a.createTime - b.createTime,
     scopedSlots: { customRender: 'createTime' },
-    width: 180
+    width: 150
   },
   {
     title: '描述',

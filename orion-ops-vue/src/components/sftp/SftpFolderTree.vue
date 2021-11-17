@@ -6,6 +6,7 @@
       :tree-data="treeData"
       :expandedKeys.sync="expandedKeys"
       :load-data="onLoadData"
+      :selectedKeys="selectedKeys"
       @select="redirect">
       <!-- 右键菜单 -->
       <template #title="{ key: treeKey, title }">
@@ -49,6 +50,7 @@ export default {
   data() {
     return {
       reloading: false,
+      selectedKeys: [],
       treeData: [
         {
           title: '/',
@@ -97,6 +99,7 @@ export default {
       })
     },
     redirect(selectedKeys, info) {
+      this.selectedKeys = selectedKeys
       if (selectedKeys.length && selectedKeys[0]) {
         this.$emit('redirect', selectedKeys[0])
       }

@@ -19,6 +19,7 @@ export default {
       cursorStyle: 'bar',
       cursorBlink: true,
       fontSize: 14,
+      fontFamily: 'courier-new, courier, monospace',
       theme: {
         foreground: '#FFFFFF',
         background: '#212529'

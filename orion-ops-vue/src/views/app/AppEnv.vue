@@ -3,9 +3,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'AppEnv'
-  }
+export default {
+  name: 'AppEnv'
+}
 </script>
 
 <style scoped>

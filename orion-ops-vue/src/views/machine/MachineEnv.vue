@@ -153,7 +153,7 @@ const columns = [
     title: 'key',
     key: 'key',
     scopedSlots: { customRender: 'key' },
-    width: 200,
+    width: 180,
     ellipsis: true,
     sorter: (a, b) => a.key.localeCompare(b.key)
   },
@@ -161,7 +161,7 @@ const columns = [
     title: 'value',
     key: 'value',
     scopedSlots: { customRender: 'value' },
-    width: 250,
+    width: 220,
     ellipsis: true,
     sorter: (a, b) => a.value.localeCompare(b.value)
   },
@@ -170,13 +170,13 @@ const columns = [
     dataIndex: 'description',
     key: 'description',
     ellipsis: true,
-    width: 250
+    width: 180
   },
   {
     title: '修改时间',
     key: 'updateTime',
     scopedSlots: { customRender: 'updateTime' },
-    sorter: (a, b) => a.updateTime.localeCompare(b.updateTime),
+    sorter: (a, b) => a.updateTime - b.updateTime,
     width: 150
   },
   {
@@ -373,7 +373,7 @@ export default {
 .machine-env-machine-list {
   width: 200px;
   min-height: 25vh;
-  max-height: calc(100vh - 164px);
+  max-height: calc(100vh - 164px - 12px);
   border-radius: 5px;
   overflow-y: auto;
   margin-right: 20px;

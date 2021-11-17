@@ -2,21 +2,21 @@
   <div class="sftp-container">
     <div class="sftp-main-container">
       <!-- 左侧主体 -->
-      <div id="sftp-left-fixed" v-if="leftFolderVisible && sessionToken"
-           :style="{width: leftFolderVisible ? '16%' : '0px'}">
+      <div id="sftp-left-fixed" v-if="leftFolderVisible" :style="{width: leftFolderVisible ? '16%' : '0px'}">
         <!-- 左侧地址输入框 -->
         <div class="sftp-left-top-redirector">
           <a-input ref="redirectPathInput" v-model="redirectPath" placeholder="路径" @pressEnter="redirectDirectory"/>
         </div>
         <!-- 左侧文件夹树 -->
         <div class="sftp-folder-left-fixed">
-          <SftpFolderTree v-if="leftFolderVisible && sessionToken"
+          <SftpFolderTree ref="folderTree"
+                          v-if="leftFolderVisible && sessionToken"
                           :sessionToken="sessionToken"
                           @redirect="listFiles"/>
         </div>
       </div>
       <!-- 右侧主体 -->
-      <div class="sftp-body-container" :style="{width: leftFolderVisible? '83.3%' : '100%'}">
+      <div class="sftp-body-container" :style="{width: leftFolderVisible ? '83.3%' : '100%'}">
         <!-- 头部 -->
         <div class="sftp-header">
           <div class="sftp-bar-left">
@@ -324,11 +324,15 @@ export default {
           this.$message.error('加载sftp失败')
         })
     },
+    cleanChooseTree() {
+      if (this.$refs.folderTree) {
+        this.$refs.folderTree.selectedKeys = []
+      }
+    },
     changeToken(session) {
       this.home = session.home
       this.path = session.path
       this.sessionToken = session.sessionToken
-      console.log(session)
       this.listFiles()
     },
     changeFolderVisible(visible) {
@@ -494,17 +498,27 @@ export default {
 .sftp-main-container {
   display: flex;
   justify-content: flex-end;
-}
 
-.sftp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  .sftp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .sftp-body-container {
+    background-color: #FFF;
+    padding: 12px;
+    margin-left: 4px;
+    border-radius: 4px;
+  }
 }
 
 #sftp-left-fixed {
   margin-right: 0.7%;
+  padding: 12px;
+  background-color: #FFF;
+  border-radius: 4px;
 
   .sftp-left-top-redirector {
     width: 95%;
@@ -513,7 +527,7 @@ export default {
   .sftp-folder-left-fixed {
     overflow: auto;
     min-height: 25vh;
-    max-height: 75vh;
+    max-height: calc(100vh - 130px);
   }
 }
 
@@ -529,6 +543,10 @@ export default {
     cursor: pointer;
   }
 
+  .sftp-home:hover {
+    color: #1C7ED6;
+  }
+
   .sftp-navigator-paths {
     display: flex;
     flex-wrap: wrap;
@@ -538,12 +556,26 @@ export default {
     margin: 0 5px;
     color: #1C7ED6;
   }
+
+  .path-item {
+    display: flex;
+  }
 }
 
 .sftp-tools-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .sftp-tools-hide-switch {
+    margin-right: 12px;
+    width: 140px;
+  }
+
+  .text {
+    color: #868e96;
+    font-size: 13px;
+  }
 }
 
 .file-name-cols {
@@ -554,24 +586,6 @@ export default {
 .file-name-cols-icon {
   font-size: 16px;
   padding-right: 8px;
-}
-
-.sftp-tools-bar .text {
-  color: #868e96;
-  font-size: 13px;
-}
-
-.sftp-tools-hide-switch {
-  margin-right: 12px;
-  width: 140px;
-}
-
-.sftp-home :hover {
-  color: #1C7ED6;
-}
-
-.path-item {
-  display: flex;
 }
 
 </style>
