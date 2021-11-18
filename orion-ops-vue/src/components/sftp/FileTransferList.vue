@@ -2,10 +2,16 @@
   <div class="transfer-list-container">
     <!-- 工具栏 -->
     <div class="transfer-list-bar">
+      <a-icon type="reload" title="刷新" @click="getTransferList"/>
       <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
       <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
-      <a-icon type="reload" title="刷新" @click="getTransferList"/>
-      <a-icon type="file-zip" title="打包下载" @click="getTransferList"/>
+      <a-icon type="sync" title="重试所有" @click="retryAll"/>
+      <a-popconfirm placement="bottomRight" ok-text="确定" cancel-text="取消" @confirm="transferPackage">
+        <template slot="title">
+          是否要打包传输所有下载的文件?
+        </template>
+        <a-icon type="file-zip" title="打包下载"/>
+      </a-popconfirm>
       <a-icon type="delete" title="清空" @click="clearAll"/>
     </div>
     <div class="transfer-list-items" v-if="transferList.length === 0">
@@ -31,14 +37,21 @@
           <!-- 10未开始 -->
           <div class="transfer-list-item-status" v-if="item.status === 10">
             <a-tooltip :title="`等待 0KB / ${item.size}`">
-              <a-progress :percent="item.progress"/>
+              <a-progress :percent="item.progress" :showInfo="false"/>
             </a-tooltip>
           </div>
           <!-- 20进行中 -->
           <div class="transfer-list-item-status" v-if="item.status === 20">
-            <a-tooltip :title="`${item.rate || '0KB'}/s | ${item.current} / ${item.size}`">
-              <a-progress :percent="item.progress" status="active"/>
-            </a-tooltip>
+            <template v-if="item.type === 40">
+              <a-tooltip :title="`${item.current} / ${item.size}`">
+                <a-progress :percent="item.progress" status="active"/>
+              </a-tooltip>
+            </template>
+            <template v-else>
+              <a-tooltip :title="`${item.rate || '0KB'}/s | ${item.current} / ${item.size}`">
+                <a-progress :percent="item.progress" status="active"/>
+              </a-tooltip>
+            </template>
           </div>
           <!-- 30已暂停 -->
           <div class="transfer-list-item-status" v-if="item.status === 30">
@@ -52,20 +65,28 @@
               <a-progress :percent="item.progress" :showInfo="false"/>
             </a-tooltip>
           </div>
-          <!-- 50传输异常 -->
+          <!-- 50已取消 -->
           <div class="transfer-list-item-status" v-if="item.status === 50">
+            <a-tooltip :title="`已取消`">
+              <a-progress :percent="item.progress" :showInfo="false"/>
+            </a-tooltip>
+          </div>
+          <!-- 60传输异常 -->
+          <div class="transfer-list-item-status" v-if="item.status === 60">
             <a-tooltip :title="`失败 ${item.current}/ ${item.size}`">
               <a-progress :percent="item.progress" status="exception" :showInfo="false"/>
             </a-tooltip>
           </div>
           <!-- 按钮 -->
           <div class="transfer-list-item-action">
-            <a-icon title="暂停" v-if="item.status === 10 || item.status === 20" type="pause-circle" @click="pause(item.fileToken)"/>
+            <a-icon title="暂停" v-if="(item.status === 10 || item.status === 20) && item.type !== 40" type="pause-circle" @click="pause(item.fileToken)"/>
+            <a-icon title="取消" v-if="(item.status === 10 || item.status === 20) && item.type === 40" type="stop" @click="pause(item.fileToken)"/>
             <a-icon title="开始" v-if="item.status === 30" type="play-circle" @click="resume(item.fileToken)"/>
             <a-icon title="获取下载链接" v-if="item.status === 40 && !item.downloadUrl" type="link" @click="loadDownload(item)"/>
-            <a v-if="item.status === 40 && item.downloadUrl" @click="clearDownloadUrl(item)" :href="item.downloadUrl">
+            <a v-if="item.status === 40 && item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">
               <a-icon title="下载" type="download"/>
             </a>
+            <a-icon title="重试" v-if="item.status === 60 && item.type !== 40" type="sync" @click="retry(item.fileToken)"/>
             <a-icon title="删除" type="close-circle" @click="remove(item.fileToken)"/>
           </div>
         </div>
@@ -148,11 +169,23 @@ export default {
     resume(fileToken) {
       this.$api.sftpTransferResume({ fileToken })
     },
+    retry(fileToken) {
+      this.$api.sftpTransferRetry({ fileToken })
+    },
     pauseAll() {
       this.$api.sftpTransferPauseAll({ sessionToken: this.sessionToken })
     },
     resumeAll() {
       this.$api.sftpTransferResumeAll({ sessionToken: this.sessionToken })
+    },
+    retryAll() {
+      this.$api.sftpTransferRetryAll({ sessionToken: this.sessionToken })
+    },
+    transferPackage() {
+      this.$api.sftpTransferPackage({
+        sessionToken: this.sessionToken,
+        packageType: 2
+      })
     },
     remove(fileToken) {
       this.$api.sftpTransferRemove({ fileToken })
@@ -173,8 +206,10 @@ export default {
       this.$forceUpdate()
     },
     clearDownloadUrl(item) {
-      item.downloadUrl = null
-      this.$forceUpdate()
+      setTimeout(() => {
+        item.downloadUrl = null
+        this.$forceUpdate()
+      })
     }
   },
   mounted() {
