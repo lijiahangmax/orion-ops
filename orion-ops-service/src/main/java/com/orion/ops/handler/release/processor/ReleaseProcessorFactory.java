@@ -61,8 +61,10 @@ public class ReleaseProcessorFactory {
         List<ReleaseTargetStageHandler> targetStages = this.buildReleaseTargetActionList(hint, machines, actions);
         // 处理器选择
         return Selector.<ReleaseType, IReleaseProcessor>of(ReleaseType.of(hint.getType()))
-                .test(Branches.eq(ReleaseType.NORMAL).then(s -> new NormalReleaseProcessor(hint, hostActionHandler, targetStages)))
-                .test(Branches.eq(ReleaseType.ROLLBACK).then(s -> new RollbackReleaseProcessor(hint, hostActionHandler, targetStages)))
+                .test(Branches.eq(ReleaseType.NORMAL)
+                        .then(s -> new NormalReleaseProcessor(hint, hostActionHandler, targetStages)))
+                .test(Branches.eq(ReleaseType.ROLLBACK)
+                        .then(s -> new RollbackReleaseProcessor(hint, hostActionHandler, targetStages)))
                 .orThrow(() -> Exceptions.argument(MessageConst.UNKNOWN_RELEASE_TYPE));
     }
 
@@ -132,10 +134,14 @@ public class ReleaseProcessorFactory {
                 .map(a -> {
                     ReleaseActionHint actionHint = this.buildActionHint(a);
                     return Selector.<ActionType, IReleaseActionHandler>of(ActionType.of(a.getActionType(), false))
-                            .test(Branches.eq(ActionType.CONNECT).then(s -> new ReleaseConnectActionHandler(hint, actionHint)))
-                            .test(Branches.eq(ActionType.CHECKOUT).then(s -> new ReleaseCheckoutActionHandler(hint, actionHint)))
-                            .test(Branches.eq(ActionType.TRANSFER).then(s -> new ReleaseTransferActionHandler(hint, actionHint)))
-                            .test(Branches.eq(ActionType.HOST_COMMAND).then(s -> new ReleaseCommandActionHandler(hint, actionHint)))
+                            .test(Branches.eq(ActionType.CONNECT)
+                                    .then(s -> new ReleaseConnectActionHandler(hint, actionHint)))
+                            .test(Branches.eq(ActionType.CHECKOUT)
+                                    .then(s -> new ReleaseCheckoutActionHandler(hint, actionHint)))
+                            .test(Branches.eq(ActionType.TRANSFER)
+                                    .then(s -> new ReleaseTransferActionHandler(hint, actionHint)))
+                            .test(Branches.eq(ActionType.HOST_COMMAND)
+                                    .then(s -> new ReleaseCommandActionHandler(hint, actionHint)))
                             .orElse(null);
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -183,7 +189,8 @@ public class ReleaseProcessorFactory {
                 .map(a -> {
                     ReleaseActionHint actionHint = this.buildActionHint(a);
                     return Selector.<ActionType, IReleaseActionHandler>of(ActionType.of(a.getActionType(), false))
-                            .test(Branches.eq(ActionType.TARGET_COMMAND).then(s -> new ReleaseTargetCommandActionHandler(hint, machineHint, actionHint)))
+                            .test(Branches.eq(ActionType.TARGET_COMMAND)
+                                    .then(s -> new ReleaseTargetCommandActionHandler(hint, machineHint, actionHint)))
                             .orElse(null);
                 }).filter(Objects::nonNull)
                 .collect(Collectors.toList());

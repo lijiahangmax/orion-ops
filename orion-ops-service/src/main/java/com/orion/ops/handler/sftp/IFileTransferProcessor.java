@@ -6,7 +6,10 @@ import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
+import com.orion.ops.handler.sftp.hint.FilePackageHint;
+import com.orion.ops.handler.sftp.hint.FileTransferHint;
 import com.orion.ops.handler.sftp.impl.DownloadFileProcessor;
+import com.orion.ops.handler.sftp.impl.PackageFileProcessor;
 import com.orion.ops.handler.sftp.impl.UploadFileProcessor;
 
 /**
@@ -21,13 +24,18 @@ public interface IFileTransferProcessor extends Runnable, Stoppable, Executable 
     /**
      * 获取执行processor
      *
-     * @param record record
+     * @param hint hint
      * @return IFileTransferProcessor
      */
-    static IFileTransferProcessor of(FileTransferLogDO record) {
-        return Selector.<SftpTransferType, IFileTransferProcessor>of(SftpTransferType.of(record.getTransferType()))
-                .test(Branches.eq(SftpTransferType.UPLOAD).then(new UploadFileProcessor(record)))
-                .test(Branches.eq(SftpTransferType.DOWNLOAD).then(new DownloadFileProcessor(record)))
+    static IFileTransferProcessor of(FileTransferHint hint) {
+        FileTransferLogDO record = hint.getRecord();
+        return Selector.<SftpTransferType, IFileTransferProcessor>of(hint.getType())
+                .test(Branches.eq(SftpTransferType.UPLOAD)
+                        .then(() -> new UploadFileProcessor(record)))
+                .test(Branches.eq(SftpTransferType.DOWNLOAD)
+                        .then(() -> new DownloadFileProcessor(record)))
+                .test(Branches.eq(SftpTransferType.PACKAGE)
+                        .then(() -> new PackageFileProcessor(record, ((FilePackageHint) hint).getFileList())))
                 .get();
     }
 

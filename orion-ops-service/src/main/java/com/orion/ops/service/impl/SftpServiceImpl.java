@@ -21,7 +21,7 @@ import com.orion.ops.entity.vo.sftp.FileOpenVO;
 import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.SftpBasicExecutorHolder;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
-import com.orion.ops.handler.sftp.impl.PackageFileProcessor;
+import com.orion.ops.handler.sftp.hint.FileTransferHint;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
@@ -209,7 +209,7 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             return request.getNames().stream()
                     .filter(Strings::isNotBlank)
-                    .filter(s -> executor.isExist(Files1.getPath(request.getPath() + "/" + s)))
+                    .filter(s -> executor.isExist(Files1.getPath(request.getPath(), s)))
                     .collect(Collectors.toList());
         }
     }
@@ -267,7 +267,7 @@ public class SftpServiceImpl implements SftpService {
         }
         // 提交上传任务
         for (FileTransferLogDO uploadFile : uploadFiles) {
-            IFileTransferProcessor.of(uploadFile).exec();
+            IFileTransferProcessor.of(FileTransferHint.transfer(uploadFile)).exec();
         }
     }
 
@@ -317,7 +317,7 @@ public class SftpServiceImpl implements SftpService {
         }
         // 提交下载任务
         for (FileTransferLogDO downloadFile : downloadFiles) {
-            IFileTransferProcessor.of(downloadFile).exec();
+            IFileTransferProcessor.of(FileTransferHint.transfer(downloadFile)).exec();
         }
     }
 
@@ -389,7 +389,7 @@ public class SftpServiceImpl implements SftpService {
         // 通知状态
         transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());
         // 提交下载
-        IFileTransferProcessor.of(transferLog).exec();
+        IFileTransferProcessor.of(FileTransferHint.transfer(transferLog)).exec();
     }
 
     @Override
@@ -467,7 +467,7 @@ public class SftpServiceImpl implements SftpService {
         }
         // 提交传输
         for (FileTransferLogDO transferLog : transferLogs) {
-            IFileTransferProcessor.of(transferLog).exec();
+            IFileTransferProcessor.of(FileTransferHint.transfer(transferLog)).exec();
         }
     }
 
@@ -569,7 +569,7 @@ public class SftpServiceImpl implements SftpService {
         // 通知添加
         transferProcessorManager.notifySessionAddEvent(userId, machineId, packageRecord.getFileToken(), packageRecord);
         // 提交打包任务
-        new PackageFileProcessor(packageRecord, logList).exec();
+        IFileTransferProcessor.of(FileTransferHint.packaged(packageRecord, logList)).exec();
     }
 
     @Override
@@ -583,7 +583,7 @@ public class SftpServiceImpl implements SftpService {
         if (transferLog == null) {
             return null;
         }
-        transferLog.setLocalFile(MachineEnvAttr.SWAP_PATH.getValue() + transferLog.getLocalFile());
+        transferLog.setLocalFile(Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile()));
         return transferLog;
     }
 

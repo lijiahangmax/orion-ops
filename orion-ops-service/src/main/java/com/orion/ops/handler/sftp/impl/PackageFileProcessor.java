@@ -39,9 +39,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class PackageFileProcessor implements IFileTransferProcessor {
 
-    protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean("fileTransferLogDAO");
+    protected static FileTransferLogDAO fileTransferLogDAO = SpringHolder.getBean(FileTransferLogDAO.class);
 
-    protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean("transferProcessorManager");
+    protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean(TransferProcessorManager.class);
 
     /**
      * 打包文件
@@ -96,7 +96,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
     @Override
     public void exec() {
         String localFile = packageFile.getLocalFile();
-        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
+        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件打包-提交任务 fileToken: {} machineId: {}, local: {}, remote: {}, record: {}, fileList: {}",
                 fileToken, machineId, localAbsolutePath, packageFile.getRemoteFile(),
                 JSON.toJSONString(packageFile), JSON.toJSONString(fileList));
@@ -117,7 +117,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
             this.updateStatus(SftpTransferStatus.RUNNABLE);
             // 初始化压缩器
             this.compressor = CompressTypeEnum.ZIP.compressor().get();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + fileTransferLog.getLocalFile());
+            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileTransferLog.getLocalFile());
             compressor.setAbsoluteCompressPath(localAbsolutePath);
             compressor.compressNotify(this::notifyProgress);
             // 添加压缩文件
@@ -168,7 +168,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (int i = 0; i < fileList.size(); i++) {
             FileTransferLogDO fileLog = fileList.get(i);
             String remoteFile = fileLog.getRemoteFile();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + fileLog.getLocalFile());
+            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
             if (!Files1.isFile(new File(localAbsolutePath))) {
                 continue;
             }
@@ -193,7 +193,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (FileTransferLogDO fileLog : fileList) {
             String remoteFile = fileLog.getRemoteFile();
             String label = SftpTransferType.of(fileLog.getTransferType()).getLabel();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + fileLog.getLocalFile());
+            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
             String status = Files1.isFile(localAbsolutePath) ? "成功" : "未找到文件";
             // 添加raw
             compressFileRaw.add(remoteFile + " " + label + " " + status);

@@ -30,7 +30,7 @@ public class UploadFileProcessor extends FileTransferProcessor {
     @Override
     public void exec() {
         String localFile = record.getLocalFile();
-        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
+        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件上传-提交任务 fileToken: {}, machineId: {}, local: {}, remote: {}, record: {}",
                 fileToken, machineId, localAbsolutePath, record.getRemoteFile(), JSON.toJSONString(record));
         Threads.start(this, SchedulerPools.SFTP_UPLOAD_SCHEDULER);
@@ -40,7 +40,7 @@ public class UploadFileProcessor extends FileTransferProcessor {
     protected void handler() {
         String remoteFile = record.getRemoteFile();
         String localFile = record.getLocalFile();
-        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
+        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件上传-开始传输 fileToken: {}, machineId: {}, local: {}, remote: {}",
                 fileToken, machineId, localAbsolutePath, remoteFile);
         SftpUpload upload = executor.upload(remoteFile, localAbsolutePath);
@@ -52,7 +52,7 @@ public class UploadFileProcessor extends FileTransferProcessor {
     public void usingFsCopy() {
         String remoteFile = record.getRemoteFile();
         String localFile = record.getLocalFile();
-        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue() + "/" + localFile);
+        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件上传-使用FSC fileToken: {}, machineId: {}, local: {}, remote: {}",
                 fileToken, machineId, localAbsolutePath, remoteFile);
         // 复制
