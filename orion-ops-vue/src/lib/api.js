@@ -188,6 +188,27 @@ const $api = {
   },
 
   /**
+   * 终端日志列表
+   */
+  terminalLogList: param => {
+    return $http.$post('/terminal/log/list', param)
+  },
+
+  /**
+   * 终端会话列表
+   */
+  terminalSessionList: param => {
+    return $http.$post('/terminal/manager/session/list', param)
+  },
+
+  /**
+   * 强制下线终端
+   */
+  terminalOffline: param => {
+    return $http.$post('/terminal/manager/offline', param)
+  },
+
+  /**
    * sftp 打开连接
    */
   sftpOpen: param => {
@@ -541,6 +562,13 @@ const $api = {
    */
   getExecDetail: param => {
     return $http.$post('/exec/detail', param)
+  },
+
+  /**
+   * 执行输入
+   */
+  writeExecTask: param => {
+    return $http.$post('/exec/write', param)
   },
 
   /**

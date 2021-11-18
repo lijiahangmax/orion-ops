@@ -95,6 +95,15 @@ const routes = [
         component: () => import('../views/machine/MachineTerminalSession')
       },
       {
+        path: '/terminal/logs',
+        name: 'terminalLogs',
+        meta: {
+          requireAuth: true,
+          title: '终端日志'
+        },
+        component: () => import('../views/machine/MachineTerminalLogs')
+      },
+      {
         path: '/machine/proxy',
         name: 'MachineProxy',
         meta: {
