@@ -29,6 +29,11 @@ public class MachineTerminalManagerVO {
     private Long userId;
 
     /**
+     * username
+     */
+    private String userName;
+
+    /**
      * 连接时间
      */
     private Date connectedTime;
@@ -44,9 +49,14 @@ public class MachineTerminalManagerVO {
     private Long machineId;
 
     /**
-     * 连接主机
+     * 机器名称
      */
-    private String host;
+    private String machineName;
+
+    /**
+     * 机器host
+     */
+    private String machineHost;
 
     /**
      * logId
@@ -57,12 +67,14 @@ public class MachineTerminalManagerVO {
         TypeStore.STORE.register(TerminalConnectHint.class, MachineTerminalManagerVO.class, p -> {
             MachineTerminalManagerVO vo = new MachineTerminalManagerVO();
             vo.setUserId(p.getUserId());
+            vo.setUserName(p.getUsername());
             vo.setMachineId(p.getMachineId());
-            vo.setHost(p.getMachineHost());
+            vo.setMachineName(p.getMachineName());
+            vo.setMachineHost(p.getMachineHost());
             vo.setLogId(p.getLogId());
             vo.setConnectedTime(p.getConnectedTime());
             Optional.ofNullable(p.getConnectedTime())
-                    .map(Dates::ago)
+                    .map(d -> Dates.ago(d, false))
                     .ifPresent(vo::setConnectedTimeAgo);
             return vo;
         });

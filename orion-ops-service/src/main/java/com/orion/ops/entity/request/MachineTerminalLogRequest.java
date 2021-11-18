@@ -33,6 +33,11 @@ public class MachineTerminalLogRequest extends PageRequest {
     private Integer machineId;
 
     /**
+     * 机器名称
+     */
+    private String machineName;
+
+    /**
      * 机器host
      */
     private String machineHost;

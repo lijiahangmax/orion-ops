@@ -12,6 +12,7 @@ import com.orion.utils.convert.Converts;
 import com.orion.utils.time.DateRanges;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +48,11 @@ public class TerminalSessionManager {
                         .filter(Strings::isNotBlank)
                         .map(t -> s.getToken().contains(t))
                         .orElse(true))
-                .filter(s -> Optional.ofNullable(request.getHost())
+                .filter(s -> Optional.ofNullable(request.getMachineName())
+                        .filter(Strings::isNotBlank)
+                        .map(t -> s.getHint().getMachineName().contains(t))
+                        .orElse(true))
+                .filter(s -> Optional.ofNullable(request.getMachineHost())
                         .filter(Strings::isNotBlank)
                         .map(t -> s.getHint().getMachineHost().contains(t))
                         .orElse(true))
@@ -67,7 +72,9 @@ public class TerminalSessionManager {
                     MachineTerminalManagerVO vo = Converts.to(s.getHint(), MachineTerminalManagerVO.class);
                     vo.setToken(s.getToken());
                     return vo;
-                }).collect(Collectors.toList());
+                })
+                .sorted(Comparator.comparing(MachineTerminalManagerVO::getConnectedTime).reversed())
+                .collect(Collectors.toList());
         List<MachineTerminalManagerVO> page = Lists.newLimitList(sessionList)
                 .limit(request.getLimit())
                 .page(request.getPage());

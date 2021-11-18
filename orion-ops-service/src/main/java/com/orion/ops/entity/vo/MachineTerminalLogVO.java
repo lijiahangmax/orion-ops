@@ -39,6 +39,11 @@ public class MachineTerminalLogVO {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    private String machineName;
+
+    /**
      * 机器host
      */
     private String machineHost;
@@ -87,12 +92,17 @@ public class MachineTerminalLogVO {
             vo.setUserId(p.getUserId());
             vo.setUsername(p.getUsername());
             vo.setMachineId(p.getMachineId());
+            vo.setMachineName(p.getMachineName());
             vo.setMachineHost(p.getMachineHost());
             vo.setAccessToken(p.getAccessToken());
             vo.setConnectedTime(p.getConnectedTime());
             vo.setDisconnectedTime(p.getDisconnectedTime());
-            Optional.ofNullable(p.getConnectedTime()).map(Dates::ago).ifPresent(vo::setConnectedTimeAgo);
-            Optional.ofNullable(p.getDisconnectedTime()).map(Dates::ago).ifPresent(vo::setDisconnectedTimeAgo);
+            Optional.ofNullable(p.getConnectedTime())
+                    .map(d -> Dates.ago(d, false))
+                    .ifPresent(vo::setConnectedTimeAgo);
+            Optional.ofNullable(p.getDisconnectedTime())
+                    .map(d -> Dates.ago(d, false))
+                    .ifPresent(vo::setDisconnectedTimeAgo);
             vo.setCloseCode(p.getCloseCode());
             vo.setCreateTime(p.getCreateTime());
             return vo;

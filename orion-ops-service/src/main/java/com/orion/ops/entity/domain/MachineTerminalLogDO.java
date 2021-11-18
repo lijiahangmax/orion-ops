@@ -50,6 +50,12 @@ public class MachineTerminalLogDO implements Serializable {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    @TableField("machine_name")
+    private String machineName;
+
+    /**
      * 机器host
      */
     @TableField("machine_host")

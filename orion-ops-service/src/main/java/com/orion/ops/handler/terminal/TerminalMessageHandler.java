@@ -5,6 +5,7 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.consts.ws.WsProtocol;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
 import com.orion.ops.entity.dto.TerminalDataTransferDTO;
@@ -204,28 +205,34 @@ public class TerminalMessageHandler implements WebSocketHandler {
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());
             return;
         }
+        // 获取机器信息
+        MachineInfoDO machine = machineInfoService.selectById(machineId);
+        if (machine == null) {
+            log.info("terminal 建立连接拒绝-未查询到机器信息 token: {}, machineId: {}", token, machineId);
+            session.close(WsCloseCode.INVALID_MACHINE.close());
+            return;
+        }
         // 删除token
         redisTemplate.delete(tokenKey);
         session.getAttributes().put(CONNECTED_KEY, 1);
-
         // 建立连接
         SessionStore sessionStore;
         try {
             // 打开session
-            sessionStore = machineInfoService.openSessionStore(machineId);
+            sessionStore = machineInfoService.openSessionStore(machine);
         } catch (Exception e) {
             WebSockets.openSessionStoreThrowClose(session, e);
             log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, machineId: {}, e: {}", tokenUserId, machineId, e);
             return;
         }
         // 配置
-        String host = sessionStore.getHost();
         TerminalConnectHint hint = new TerminalConnectHint();
         String terminalType = machineTerminalService.getMachineConfig(machineId).getTerminalType();
         hint.setUserId(tokenUserId);
         hint.setUsername(userDTO.getUsername());
         hint.setMachineId(machineId);
-        hint.setMachineHost(host);
+        hint.setMachineName(machine.getMachineName());
+        hint.setMachineHost(machine.getMachineHost());
         hint.setCols(connectInfo.getCols());
         hint.setRows(connectInfo.getRows());
         hint.setWidth(connectInfo.getWidth());
@@ -239,7 +246,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             log.info("terminal 建立连接成功-打开shell成功 token: {}", terminalHandler.getToken());
         } catch (Exception e) {
             session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.close());
-            log.error("terminal 建立连接失败-打开shell失败 host: {}, uid: {}, {}", host, tokenUserId, e);
+            log.error("terminal 建立连接失败-打开shell失败 machineId: {}, uid: {}, {}", machineId, tokenUserId, e);
             return;
         }
         terminalSessionManager.addSession(token, terminalHandler);

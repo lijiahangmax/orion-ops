@@ -105,6 +105,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         logEntity.setUserId(hint.getUserId());
         logEntity.setUsername(hint.getUsername());
         logEntity.setMachineId(hint.getMachineId());
+        logEntity.setMachineName(hint.getMachineName());
         logEntity.setMachineHost(hint.getMachineHost());
         logEntity.setConnectedTime(hint.getConnectedTime());
         logEntity.setOperateLogFile(logPath);

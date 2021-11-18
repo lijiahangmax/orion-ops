@@ -55,6 +55,11 @@ public class TerminalConnectHint {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    private String machineName;
+
+    /**
      * 机器host
      */
     private String machineHost;

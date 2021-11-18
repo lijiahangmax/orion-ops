@@ -8,6 +8,7 @@
         <result column="user_id" property="userId"/>
         <result column="username" property="username"/>
         <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
         <result column="machine_host" property="machineHost"/>
         <result column="access_token" property="accessToken"/>
         <result column="connected_time" property="connectedTime"/>
@@ -20,7 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, username, machine_id, machine_host, access_token, connected_time, disconnected_time, close_code, operate_log_file, create_time, update_time
+        id, user_id, username, machine_id, machine_name, machine_host, access_token, connected_time, disconnected_time, close_code, operate_log_file, create_time, update_time
     </sql>
 
 </mapper>

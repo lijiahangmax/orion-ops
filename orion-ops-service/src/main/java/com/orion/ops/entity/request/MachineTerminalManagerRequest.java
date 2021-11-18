@@ -43,8 +43,13 @@ public class MachineTerminalManagerRequest extends PageRequest {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    private String machineName;
+
+    /**
      * 连接主机
      */
-    private String host;
+    private String machineHost;
 
 }

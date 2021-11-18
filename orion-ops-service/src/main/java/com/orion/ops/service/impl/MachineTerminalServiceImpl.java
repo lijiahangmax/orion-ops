@@ -151,6 +151,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
                 .like(Strings.isNotBlank(request.getAccessToken()), MachineTerminalLogDO::getAccessToken, request.getAccessToken())
                 .like(Strings.isNotBlank(request.getMachineHost()), MachineTerminalLogDO::getMachineHost, request.getMachineHost())
+                .like(Strings.isNotBlank(request.getMachineName()), MachineTerminalLogDO::getMachineName, request.getMachineName())
                 .like(Objects.nonNull(request.getUserId()), MachineTerminalLogDO::getUserId, request.getUserId())
                 .eq(Objects.nonNull(request.getMachineId()), MachineTerminalLogDO::getMachineId, request.getMachineId())
                 .eq(Objects.nonNull(request.getCloseCode()), MachineTerminalLogDO::getCloseCode, request.getCloseCode())
