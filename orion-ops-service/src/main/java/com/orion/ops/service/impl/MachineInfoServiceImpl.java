@@ -218,16 +218,16 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Override
     public SessionStore openSessionStore(Long id) {
-        MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
-        if (!Const.ENABLE.equals(machine.getMachineStatus())) {
-            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
-        }
-        return this.openSessionStore(machine);
+        return this.openSessionStore(Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE));
     }
 
     @Override
     public SessionStore openSessionStore(MachineInfoDO machine) {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        // 检查状态
+        if (!Const.ENABLE.equals(machine.getMachineStatus())) {
+            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
+        }
         Exception ex = null;
         String msg = MessageConst.CONN_EXCEPTION_MESSAGE;
         for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {

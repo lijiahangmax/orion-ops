@@ -23,6 +23,10 @@
       {
         "name": "机器代理",
         "path": "/machine/proxy"
+      },
+      {
+        "name": "终端日志",
+        "path": "/terminal/logs"
       }
     ]
   },

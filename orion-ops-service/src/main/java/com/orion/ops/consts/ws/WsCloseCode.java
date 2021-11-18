@@ -46,9 +46,14 @@ public enum WsCloseCode {
     VALID(4150, WsCloseReason.AUTHENTICATION_FAILURE),
 
     /**
+     * 机器不合法
+     */
+    INVALID_MACHINE(4200, WsCloseReason.CLOSED_CONNECTION),
+
+    /**
      * 连接远程服务器失败
      */
-    CONNECTED_FAILURE(4200, WsCloseReason.REMOTE_SERVER_UNREACHABLE),
+    CONNECTED_FAILURE(4202, WsCloseReason.REMOTE_SERVER_UNREACHABLE),
 
     /**
      * 远程服务器认证失败

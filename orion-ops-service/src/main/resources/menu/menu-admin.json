@@ -25,6 +25,10 @@
         "path": "/machine/proxy"
       },
       {
+        "name": "终端日志",
+        "path": "/terminal/logs"
+      },
+      {
         "name": "终端控制",
         "path": "/terminal/session"
       }
