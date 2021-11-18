@@ -42,11 +42,11 @@
       <div class="tools-fixed-left">
         <span class="table-title">机器列表</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <a-button-group class="ml8" v-show="selectedRowKeys.length">
-          <a-button type="primary" icon="build" @click="batchStatus(1)">启用</a-button>
-          <a-button type="primary" icon="fork" @click="batchStatus(2)">停用</a-button>
-          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
-        </a-button-group>
+        <div v-show="selectedRowKeys.length">
+          <a-button class="ml8" type="primary" icon="build" @click="batchStatus(1)">启用</a-button>
+          <a-button class="ml8" type="primary" icon="fork" @click="batchStatus(2)">停用</a-button>
+          <a-button class="ml8" type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">

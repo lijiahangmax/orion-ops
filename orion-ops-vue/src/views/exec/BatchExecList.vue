@@ -43,7 +43,6 @@
         </a-row>
       </a-form-model>
     </div>
-
     <!-- 工具栏 -->
     <div class="table-tools-bar">
       <!-- 左侧 -->
@@ -52,13 +51,12 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary">批量执行</a-button>
+        <a-button class="ml16 mr8" type="primary" @click="add">批量执行</a-button>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
     </div>
-
     <!-- 表格 -->
     <div class="table-main-container">
       <a-table :columns="columns"
@@ -164,7 +162,8 @@ const columns = [
     key: 'exitCode',
     width: 100,
     align: 'center',
-    scopedSlots: { customRender: 'exitCode' }
+    scopedSlots: { customRender: 'exitCode' },
+    sorter: (a, b) => a.exitCode - b.exitCode
   },
   {
     title: '执行用户',
@@ -179,7 +178,7 @@ const columns = [
     key: 'createTime',
     width: 150,
     ellipsis: true,
-    sorter: (a, b) => a.createTime.localeCompare(b.createTime),
+    sorter: (a, b) => a.createTime - b.createTime,
     scopedSlots: { customRender: 'createTime' }
   },
   {
@@ -199,7 +198,7 @@ const columns = [
 ]
 
 export default {
-  name: 'BatchExec',
+  name: 'BatchExecList',
   components: {
     MachineSelector,
     UserSelector
@@ -246,6 +245,7 @@ export default {
       })
     },
     add() {
+      this.$router.push({ path: '/batch/exec/add' })
     },
     detail(record) {
     },
@@ -278,14 +278,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.exec-tools-container {
-  margin-bottom: 12px;
-}
-
-.exec-tools-container > button {
-  margin-right: 8px;
-}
 
 /deep/ .ant-row {
   margin: 0;

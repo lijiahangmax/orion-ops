@@ -32,19 +32,17 @@
       <div class="tools-fixed-left">
         <span class="table-title">机器秘钥</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <a-button-group class="ml8" v-show="selectedRowKeys.length">
-          <a-button type="primary" icon="pull-request" @click="batchMount()">挂载</a-button>
-          <a-button type="danger" icon="poweroff" @click="batchDump()">卸载</a-button>
-          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
-        </a-button-group>
+        <div v-show="selectedRowKeys.length">
+          <a-button class="ml8" type="primary" icon="pull-request" @click="batchMount()">挂载</a-button>
+          <a-button class="ml8" type="danger" icon="poweroff" @click="batchDump()">卸载</a-button>
+          <a-button class="ml8" type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
-        <a-button-group class="mr8">
-          <a-button type="primary" @click="tempMount">临时挂载</a-button>
-          <a-button type="primary" @click="mountAll">挂载全部</a-button>
-          <a-button type="primary" @click="dumpAll">卸载全部</a-button>
-        </a-button-group>
+        <a-button class="mr8" type="primary" @click="tempMount">临时挂载</a-button>
+        <a-button class="mr8" type="primary" @click="mountAll">挂载全部</a-button>
+        <a-button class="mr8" type="primary" @click="dumpAll">卸载全部</a-button>
         <a-divider type="vertical"/>
         <a-button class="mx8" type="primary" icon="plus" @click="add">新建</a-button>
         <a-divider type="vertical"/>
@@ -65,7 +63,7 @@
         <!-- 秘钥路径 -->
         <div slot="path" slot-scope="record">
           <a @click="loadDownloadUrl(record)">{{ record.path }}</a>
-          <a v-if="record.downloadUrl" :href="record.downloadUrl" @click="clearDownloadUrl(record)" style="margin-left: 10px">
+          <a v-if="record.downloadUrl" target="_blank" :href="record.downloadUrl" @click="clearDownloadUrl(record)" style="margin-left: 10px">
             <a-icon type="download"/>
           </a>
         </div>
@@ -247,7 +245,9 @@ export default {
       }
     },
     clearDownloadUrl(record) {
-      record.downloadUrl = null
+      setTimeout(() => {
+        record.downloadUrl = null
+      })
     },
     changeMountStatus(id, status) {
       if (status === 2) {
