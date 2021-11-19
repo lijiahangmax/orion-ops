@@ -44,7 +44,7 @@
       },
       {
         "name": "日志面板",
-        "path": "/log/view"
+        "path": "/log/list"
       }
     ]
   },

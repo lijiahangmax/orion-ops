@@ -37,7 +37,7 @@ public class CleanCommandStatusRunner implements CommandLineRunner {
             CommandExecDO update = new CommandExecDO();
             update.setId(c.getId());
             update.setEndDate(new Date());
-            update.setExecStatus(Const.TERMINATED_EXIT_CODE);
+            update.setExitCode(Const.TERMINATED_EXIT_CODE);
             update.setExecStatus(ExecStatus.TERMINATED.getStatus());
             commandExecDAO.updateById(update);
             log.info("重置命令执行状态-重置 {}", c.getId());
