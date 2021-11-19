@@ -93,7 +93,7 @@
     </div>
     <!-- 事件 -->
     <div class="machine-proxy-event">
-      <AddMachineProxyModal ref="addModal" @added="getList({})" @updated="getList()"/>
+      <AddMachineProxyModal ref="addModal" @added="getList({})" @updated="getList({})"/>
     </div>
   </div>
 </template>
@@ -207,7 +207,7 @@ export default {
         idList: [id]
       }).then(() => {
         this.$message.success('删除成功')
-        this.getList()
+        this.getList({})
       })
     },
     batchRemove() {
@@ -222,7 +222,7 @@ export default {
             idList: this.selectedRowKeys
           }).then(() => {
             this.$message.success('删除成功')
-            this.getList()
+            this.getList({})
           })
           this.selectedRowKeys = []
         }

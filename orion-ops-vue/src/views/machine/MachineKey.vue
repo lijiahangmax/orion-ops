@@ -116,7 +116,7 @@
     <!-- 事件 -->
     <div class="machine-key-event">
       <!-- 新建模态框 -->
-      <AddMachineKeyModal ref="addModal" @added="getList({})" @updated="getList()"/>
+      <AddMachineKeyModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 临时挂载模态框 -->
       <TempMountMachineKeyModal ref="tempMountModal"/>
     </div>
@@ -352,7 +352,7 @@ export default {
         idList: [id]
       }).then(() => {
         this.$message.success('删除成功')
-        this.getList()
+        this.getList({})
       })
     },
     batchRemove() {
@@ -367,7 +367,7 @@ export default {
             idList: this.selectedRowKeys
           }).then(() => {
             this.$message.success('删除成功')
-            this.getList()
+            this.getList({})
           })
           this.selectedRowKeys = []
         }

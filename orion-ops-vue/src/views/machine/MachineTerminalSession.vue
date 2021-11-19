@@ -60,7 +60,6 @@
         </span>
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
-          <!-- 详情 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
           <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
           <a-divider type="vertical"/>

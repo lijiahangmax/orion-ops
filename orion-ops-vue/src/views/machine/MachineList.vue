@@ -140,7 +140,7 @@
     <!-- 事件 -->
     <div class="machine-event">
       <!-- 添加模态框 -->
-      <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
+      <AddMachineModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
     </div>
@@ -224,7 +224,7 @@ const moreMenuHandler = {
           idList: [record.id]
         }).then(() => {
           this.$message.success('删除成功')
-          this.getList()
+          this.getList({})
         })
       }
     })
@@ -410,7 +410,7 @@ export default {
             idList: this.selectedRowKeys
           }).then(() => {
             this.$message.success('删除成功')
-            this.getList()
+            this.getList({})
           })
           this.selectedRowKeys = []
         }

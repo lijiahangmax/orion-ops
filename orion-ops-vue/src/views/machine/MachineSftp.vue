@@ -1,7 +1,10 @@
 <template>
   <a-layout id="sftp-layout-container">
     <!-- 机器列表 -->
-    <MachineListMenu ref="machineList" :selectedMachine="selectedMachine" @chooseMachine="changeSftpMain"/>
+    <MachineListMenu ref="machineList"
+                     :selectedMachine="selectedMachine"
+                     :query="{status: $enum.MACHINE_STATUS.ENABLE.value}"
+                     @chooseMachine="changeSftpMain"/>
     <!-- main -->
     <a-layout>
       <a-layout-content id="sftp-content-fixed-right">

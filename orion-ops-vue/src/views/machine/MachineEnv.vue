@@ -288,7 +288,7 @@ export default {
         idList: [id]
       }).then(() => {
         this.$message.success('删除成功')
-        this.getMachineEnv()
+        this.getMachineEnv({})
       })
     },
     batchRemove() {
@@ -303,7 +303,7 @@ export default {
             idList: this.selectedRowKeys
           }).then(() => {
             this.$message.success('删除成功')
-            this.getMachineEnv()
+            this.getMachineEnv({})
           })
           this.selectedRowKeys = []
         }
