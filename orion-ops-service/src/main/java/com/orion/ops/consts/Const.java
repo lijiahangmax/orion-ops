@@ -62,7 +62,9 @@ public class Const extends com.orion.constant.Const {
 
     public static final String LOGIN_TOKEN_ENC_KEY = "LoginToken";
 
-    public static final int EXEC_COMMAND_OMIT = 60;
+    public static final int EXEC_COMMAND_OMIT = 80;
+
+    public static final int TEMPLATE_OMIT = 80;
 
     public static final int TAIL_OFFSET_LINE = 300;
 
@@ -95,6 +97,8 @@ public class Const extends com.orion.constant.Const {
     public static final String CONNECT = "建立连接";
 
     public static final String COMPRESS_LIST_FILE = "压缩清单.txt";
+
+    public static final Integer TERMINATED_EXIT_CODE = -1;
 
     /**
      * 不安全的文件夹

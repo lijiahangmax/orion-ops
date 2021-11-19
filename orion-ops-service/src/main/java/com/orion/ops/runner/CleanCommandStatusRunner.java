@@ -1,6 +1,7 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
@@ -36,7 +37,7 @@ public class CleanCommandStatusRunner implements CommandLineRunner {
             CommandExecDO update = new CommandExecDO();
             update.setId(c.getId());
             update.setEndDate(new Date());
-            update.setExecStatus(-1);
+            update.setExecStatus(Const.TERMINATED_EXIT_CODE);
             update.setExecStatus(ExecStatus.TERMINATED.getStatus());
             commandExecDAO.updateById(update);
             log.info("重置命令执行状态-重置 {}", c.getId());

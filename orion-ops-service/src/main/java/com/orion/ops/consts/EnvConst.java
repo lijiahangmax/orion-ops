@@ -14,7 +14,7 @@ public class EnvConst {
 
     // -------------------- symbol --------------------
 
-    public static final String SYMBOL = "$";
+    public static final String SYMBOL = "@";
 
     // -------------------- prefix --------------------
 

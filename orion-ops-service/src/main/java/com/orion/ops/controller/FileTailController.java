@@ -41,6 +41,7 @@ public class FileTailController {
     @IgnoreWrapper
     public HttpWrapper<FileTailVO> getToken(@RequestBody FileTailRequest request) {
         Valid.notNull(FileTailType.of(request.getType()));
+        Valid.notNull(request.getRelId());
         return fileTailService.getTailToken(request);
     }
 

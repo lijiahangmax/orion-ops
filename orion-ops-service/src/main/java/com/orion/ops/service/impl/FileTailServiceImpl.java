@@ -63,11 +63,11 @@ public class FileTailServiceImpl implements FileTailService {
     @Override
     public HttpWrapper<FileTailVO> getTailToken(FileTailRequest request) {
         Long relId = request.getRelId();
-        Valid.notNull(relId);
+        FileTailType tailType = FileTailType.of(request.getType());
         FileTailVO res = null;
         String path = null;
         // 获取日志路径
-        switch (FileTailType.of(request.getType())) {
+        switch (tailType) {
             case EXEC_LOG:
                 // 执行日志
                 path = commandExecService.getExecLogFilePath(relId);
@@ -118,6 +118,10 @@ public class FileTailServiceImpl implements FileTailService {
         tail.setMode(machineEnvService.getMachineTailMode(Const.HOST_MACHINE_ID));
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
+        // 不返回文件路径
+        if (!FileTailType.TAIL_LIST.equals(tailType)) {
+            res.setPath(null);
+        }
         return HttpWrapper.<FileTailVO>ok().data(res);
     }
 

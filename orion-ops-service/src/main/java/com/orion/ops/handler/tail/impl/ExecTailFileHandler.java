@@ -116,7 +116,7 @@ public class ExecTailFileHandler implements ITailHandler {
      */
     @SneakyThrows
     private void handler(InputStream inputStream) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_4);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_8);
         String line;
         while ((line = reader.readLine()) != null) {
             session.sendMessage(new TextMessage(line));
