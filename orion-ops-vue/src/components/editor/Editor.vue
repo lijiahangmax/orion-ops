@@ -2,10 +2,10 @@
   <ace ref="editor"
        :value="value"
        :lang="lang"
+       :width="width === 0 ? '100%' : width"
        :height="height === 0 ? '100%' : height"
        :theme="theme"
        :options="options"
-       width="100%"
        @init="initEditor"
        v-bind="config">
   </ace>
@@ -24,6 +24,10 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    width: {
+      type: Number,
+      default: 0
     },
     height: {
       type: Number,

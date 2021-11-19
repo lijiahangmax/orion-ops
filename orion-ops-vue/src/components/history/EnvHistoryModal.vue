@@ -141,7 +141,7 @@ export default {
     }
   },
   watch: {
-    'env.valueId': function(e) {
+    'env.valueId'(e) {
       if (e) {
         this.getList({})
       }
