@@ -1,10 +1,10 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecVO;
+import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import com.orion.ops.service.api.CommandExecService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 批量执行controller
@@ -32,7 +33,7 @@ public class CommandExecController {
      * 提交批量执行任务
      */
     @RequestMapping("/submit")
-    public HttpWrapper<?> submitTask(@RequestBody CommandExecRequest request) {
+    public List<CommandTaskSubmitVO> submitTask(@RequestBody CommandExecRequest request) {
         Valid.notBlank(request.getCommand());
         Valid.notEmpty(request.getMachineIdList());
         request.setRelId(null);
@@ -54,6 +55,16 @@ public class CommandExecController {
     public CommandExecVO detail(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandExecService.execDetail(id);
+    }
+
+    /**
+     * 写入命令
+     */
+    @RequestMapping("/write")
+    public void write(@RequestBody CommandExecRequest request) {
+        Long id = Valid.notNull(request.getId());
+        String command = Valid.notBlank(request.getCommand());
+        commandExecService.writeCommand(id, command);
     }
 
     /**

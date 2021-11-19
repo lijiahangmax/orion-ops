@@ -3,7 +3,6 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.MessageConst;
@@ -14,8 +13,10 @@ import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecVO;
+import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.exec.ExecSessionHolder;
 import com.orion.ops.handler.exec.IExecHandler;
@@ -24,19 +25,21 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.remote.channel.SessionStore;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
-import com.orion.utils.io.Streams;
+import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 /**
+ * 命令执行服务
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/4 18:00
@@ -60,45 +63,56 @@ public class CommandExecServiceImpl implements CommandExecService {
     private ExecSessionHolder execSessionHolder;
 
     @Override
-    public HttpWrapper<Map<String, Long>> batchSubmitTask(CommandExecRequest request) {
-        Valid.notBlank(request.getCommand());
+    public List<CommandTaskSubmitVO> batchSubmitTask(CommandExecRequest request) {
+        UserDTO user = Currents.getUser();
         List<Long> machineIdList = request.getMachineIdList();
-        Map<Long, MachineInfoDO> machineCache = Maps.newMap();
-        // 检查是否有运行中的任务
-        Long userId = Currents.getUserId();
+        // 查询机器信息
+        Map<Long, MachineInfoDO> machineStore = Maps.newMap();
         for (Long mid : machineIdList) {
             MachineInfoDO machine = machineInfoService.selectById(mid);
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-            machineCache.put(machine.getId(), machine);
-            LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
-                    .eq(CommandExecDO::getExecType, ExecType.BATCH_EXEC.getType())
-                    .eq(CommandExecDO::getUserId, userId)
-                    .eq(CommandExecDO::getMachineId, mid)
-                    .in(CommandExecDO::getExecStatus, ExecStatus.WAITING.getStatus(), ExecStatus.RUNNABLE.getStatus());
-            Integer task = commandExecDAO.selectCount(wrapper);
-            if (task.compareTo(0) > 0) {
-                return HttpWrapper.error(machine.getMachineHost() + " " + MessageConst.EXEC_TASK_RUNNABLE_PRESENT);
-            }
+            machineStore.put(machine.getId(), machine);
         }
-        // 建立连接
-        Map<Long, SessionStore> sessionStoreMap = Maps.newLinkedMap();
+        // 批量执行命令
+        List<CommandTaskSubmitVO> list = Lists.newList();
         for (Long mid : machineIdList) {
-            try {
-                SessionStore session = machineInfoService.openSessionStore(mid);
-                sessionStoreMap.put(mid, session);
-            } catch (Exception e) {
-                e.printStackTrace();
-                sessionStoreMap.values().forEach(Streams::close);
-                throw e;
-            }
+            MachineInfoDO machine = machineStore.get(mid);
+            // 插入执行命令
+            CommandExecDO record = new CommandExecDO();
+            record.setUserId(user.getId());
+            record.setUserName(user.getUsername());
+            record.setMachineId(mid);
+            record.setExecType(ExecType.BATCH_EXEC.getType());
+            record.setExecStatus(ExecStatus.WAITING.getStatus());
+            record.setDescription(request.getDescription());
+            // 替换命令
+            Map<String, String> env = machineEnvService.getFullMachineEnv(mid, EnvConst.ENV_PREFIX);
+            record.setExecCommand(Strings.format(request.getCommand(), EnvConst.SYMBOL, env));
+            commandExecDAO.insert(record);
+            // 设置日志路径
+            String logPath = PathBuilders.getExecLogPath(Const.COMMAND_LOG_DIR, record.getId(), machine.getId());
+            CommandExecDO update = new CommandExecDO();
+            update.setId(record.getId());
+            update.setLogPath(logPath);
+            record.setLogPath(logPath);
+            commandExecDAO.updateById(update);
+            // 设置执行参数
+            ExecHint hint = new ExecHint();
+            hint.setExecType(ExecType.BATCH_EXEC);
+            hint.setRecord(record);
+            hint.setMachineId(mid);
+            hint.setMachine(machine);
+            // 提交执行任务
+            IExecHandler.with(hint).exec();
+            // 返回
+            CommandTaskSubmitVO submitVO = new CommandTaskSubmitVO();
+            submitVO.setExecId(record.getId());
+            submitVO.setMachineId(mid);
+            submitVO.setMachineName(machine.getMachineName());
+            submitVO.setMachineHost(machine.getMachineHost());
+            list.add(submitVO);
         }
-        // 执行命令
-        Map<Long, Long> tailToken = this.executeBatchCommand(request, sessionStoreMap, machineCache);
-        Map<String, Long> result = Maps.newLinkedMap();
-        tailToken.forEach((k, v) -> {
-            result.put(k + "", v);
-        });
-        return HttpWrapper.ok(result);
+        return list;
     }
 
     @Override
@@ -121,6 +135,7 @@ public class CommandExecServiceImpl implements CommandExecService {
                 .eq(Objects.nonNull(request.getType()), CommandExecDO::getExecType, request.getType())
                 .eq(Objects.nonNull(request.getExitCode()), CommandExecDO::getExitCode, request.getExitCode())
                 .eq(Objects.nonNull(request.getMachineId()), CommandExecDO::getMachineId, request.getMachineId())
+                .like(Strings.isNotBlank(request.getCommand()), CommandExecDO::getExecCommand, request.getCommand())
                 .like(Strings.isNotBlank(request.getDescription()), CommandExecDO::getDescription, request.getDescription())
                 .in(Lists.isNotEmpty(request.getMachineIdList()), CommandExecDO::getMachineId, request.getMachineIdList())
                 .orderByDesc(CommandExecDO::getId);
@@ -129,7 +144,7 @@ public class CommandExecServiceImpl implements CommandExecService {
                 .page(request)
                 .dataGrid(CommandExecVO.class);
         if (!dataGrid.isEmpty()) {
-            this.assembleExecData(dataGrid.getRows());
+            this.assembleExecData(dataGrid.getRows(), request.isOmitCommand());
         }
         return dataGrid;
     }
@@ -139,8 +154,21 @@ public class CommandExecServiceImpl implements CommandExecService {
         CommandExecDO execDO = this.selectById(id);
         Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
         CommandExecVO execVO = Converts.to(execDO, CommandExecVO.class);
-        this.assembleExecData(Collections.singletonList(execVO));
+        this.assembleExecData(Collections.singletonList(execVO), false);
         return execVO;
+    }
+
+    @Override
+    public void writeCommand(Long id, String command) {
+        CommandExecDO execDO = this.selectById(id);
+        Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
+        if (!execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
+            return;
+        }
+        // 获取任务信息
+        IExecHandler session = execSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.EXEC_TASK_THREAD_ABSENT);
+        session.write(command + Const.LF);
     }
 
     @Override
@@ -148,22 +176,18 @@ public class CommandExecServiceImpl implements CommandExecService {
         CommandExecDO execDO = this.selectById(id);
         Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
         int effect = 0;
-        if (execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
-                || execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
-            // 停止任务
-            Optional.ofNullable(execSessionHolder.getSession(id)).ifPresent(IExecHandler::close);
-            execDO = this.selectById(id);
+        if (!execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
+                && !execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
+            return effect;
         }
-        // 停止任务再次查询
-        if (execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
-                || execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
-            // 更新状态
-            CommandExecDO updateStatus = new CommandExecDO();
-            updateStatus.setId(id);
-            updateStatus.setExitCode(-1);
-            updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
-            effect += commandExecDAO.updateById(updateStatus);
-        }
+        // 获取任务并停止
+        Optional.ofNullable(execSessionHolder.getSession(id)).ifPresent(IExecHandler::close);
+        // 更新状态
+        CommandExecDO updateStatus = new CommandExecDO();
+        updateStatus.setId(id);
+        updateStatus.setExitCode(Const.TERMINATED_EXIT_CODE);
+        updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
+        effect += commandExecDAO.updateById(updateStatus);
         return effect;
     }
 
@@ -188,62 +212,30 @@ public class CommandExecServiceImpl implements CommandExecService {
         return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
                 .map(CommandExecDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> MachineEnvAttr.LOG_PATH.getValue() + s)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 
     /**
      * 填充组装数据
      *
-     * @param execList execList
+     * @param execList    execList
+     * @param omitCommand 省略命令
      */
-    private void assembleExecData(List<CommandExecVO> execList) {
+    private void assembleExecData(List<CommandExecVO> execList, boolean omitCommand) {
         Map<Long, MachineInfoDO> machineCache = Maps.newMap();
         for (CommandExecVO exec : execList) {
+            if (omitCommand) {
+                // 命令省略
+                exec.setCommand(Strings.omit(exec.getCommand(), Const.EXEC_COMMAND_OMIT));
+            }
+            // 查询机器信息
             Optional.ofNullable(machineCache.computeIfAbsent(exec.getMachineId(), machineInfoDAO::selectById))
-                    .ifPresent(m -> exec.setMachineHost(m.getMachineHost()));
+                    .ifPresent(m -> {
+                        exec.setMachineName(m.getMachineName());
+                        exec.setMachineHost(m.getMachineHost());
+                    });
         }
-    }
-
-    /**
-     * 执行命令
-     *
-     * @param request         request
-     * @param sessionStoreMap sessions
-     * @param machineCache    machineCache
-     * @return key: mid, value: execId
-     */
-    private Map<Long, Long> executeBatchCommand(CommandExecRequest request, Map<Long, SessionStore> sessionStoreMap, Map<Long, MachineInfoDO> machineCache) {
-        Map<Long, Long> execResult = Maps.newLinkedMap();
-        sessionStoreMap.forEach((machineId, session) -> {
-            ExecHint hint = new ExecHint();
-            hint.setExecType(ExecType.BATCH_EXEC);
-            hint.setRelId(request.getRelId());
-            hint.setMachineId(machineId);
-            hint.setSession(session);
-            hint.setDescription(request.getDescription());
-            // 设置命令
-            MachineInfoDO machine = machineCache.get(machineId);
-            hint.setMachine(machine);
-            hint.setCommand(this.replaceCommand(machine, request.getCommand()));
-            // 提交执行
-            IExecHandler handler = IExecHandler.with(hint);
-            Long eid = handler.submit(hint);
-            execResult.put(machineId, eid);
-        });
-        return execResult;
-    }
-
-    /**
-     * 替换命令占位符
-     *
-     * @param machine machine
-     * @param command command
-     * @return replaced command
-     */
-    private String replaceCommand(MachineInfoDO machine, String command) {
-        Map<String, String> env = machineEnvService.getFullMachineEnv(machine.getId(), EnvConst.ENV_PREFIX);
-        return Strings.format(command, EnvConst.SYMBOL, env);
     }
 
 }

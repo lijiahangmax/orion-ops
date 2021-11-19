@@ -1,13 +1,13 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecVO;
+import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 命令执行接口
@@ -22,9 +22,9 @@ public interface CommandExecService {
      * 提交命令
      *
      * @param request request
-     * @return key: machineId taskId
+     * @return tasks
      */
-    HttpWrapper<Map<String, Long>> batchSubmitTask(CommandExecRequest request);
+    List<CommandTaskSubmitVO> batchSubmitTask(CommandExecRequest request);
 
     /**
      * 命令执行列表
@@ -41,6 +41,14 @@ public interface CommandExecService {
      * @return detail
      */
     CommandExecVO execDetail(Long id);
+
+    /**
+     * 写入命令
+     *
+     * @param id      id
+     * @param command command
+     */
+    void writeCommand(Long id, String command);
 
     /**
      * 终止任务

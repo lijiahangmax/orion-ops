@@ -3,12 +3,10 @@ package com.orion.ops.handler.exec.impl;
 import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.handler.exec.AbstractExecHandler;
 import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
-import com.orion.ops.utils.PathBuilders;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
@@ -31,9 +29,7 @@ import java.util.Date;
 @Slf4j
 public class CommandExecHandler extends AbstractExecHandler {
 
-    protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean("tailSessionHolder");
-
-    protected String logPathSuffix;
+    protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
 
     protected String logPath;
 
@@ -41,46 +37,52 @@ public class CommandExecHandler extends AbstractExecHandler {
 
     public CommandExecHandler(ExecHint hint) {
         super(hint);
-        this.logPathSuffix = Const.COMMAND_LOG_DIR;
     }
 
     @Override
-    protected void openComputed() {
-        this.getLogPath();
+    public void exec() {
+        super.exec();
+        this.logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), record.getLogPath());
+        Files1.touch(logPath);
+    }
+
+    @Override
+    protected void openLogger() {
+        // 打开日志流
         log.info("execHandler-打开日志流 {} {}", execId, logPath);
         File logFile = new File(logPath);
         this.logOutputStream = Files1.openOutputStreamFastSafe(logFile);
-        this.logOpenComputed();
+        this.writeExecLogHeader();
     }
 
     /**
      * 日志初始化完毕 写入数据
      */
-    protected void logOpenComputed() {
+    protected void writeExecLogHeader() {
         try {
             StringBuilder sb = new StringBuilder()
                     .append("# 准备执行命令\n")
                     .append("@ssh: ").append(machine.getUsername()).append("@")
                     .append(machine.getMachineHost()).append(":")
                     .append(machine.getSshPort()).append(Letters.LF)
-                    .append("执行用户: ").append(hint.getUserId()).append(Letters.TAB)
-                    .append(hint.getUsername()).append(Letters.LF)
+                    .append("执行用户: ").append(record.getUserId()).append(Letters.TAB)
+                    .append(record.getUserName()).append(Letters.LF)
                     .append("执行任务: ").append(execId).append(Letters.TAB)
                     .append(hint.getExecType().name()).append(Letters.LF)
                     .append("执行机器: ").append(hint.getMachineId()).append(Letters.TAB)
                     .append(machine.getMachineName()).append(Letters.LF)
-                    .append("开始时间: ").append(Dates.format(hint.getStartDate(), Dates.YMD_HMS)).append(Letters.LF);
-            Long relId = hint.getRelId();
+                    .append("开始时间: ").append(Dates.format(record.getStartDate(), Dates.YMD_HMS)).append(Letters.LF);
+            Long relId = record.getRelId();
             if (relId != null) {
                 sb.append("relId: ").append(relId).append(Letters.LF);
             }
-            String description = hint.getDescription();
+            String description = record.getDescription();
             if (!Strings.isBlank(description)) {
                 sb.append("描述: ").append(description).append(Letters.LF);
             }
             sb.append(Letters.LF)
-                    .append("# 命令\n")
-                    .append(hint.getCommand()).append(Letters.LF)
+                    .append("# 执行命令\n")
+                    .append(record.getExecCommand())
                     .append(Letters.LF)
                     .append("# 开始执行\n");
             logOutputStream.write(Strings.bytes(sb.toString()));
@@ -91,20 +93,8 @@ public class CommandExecHandler extends AbstractExecHandler {
         }
     }
 
-    /**
-     * 获取日志目录
-     */
-    protected void getLogPath() {
-        String generatorLogPath = PathBuilders.getExecLogPath(logPathSuffix, execId, hint.getMachineId());
-        this.logPath = MachineEnvAttr.LOG_PATH.getValue() + generatorLogPath;
-        CommandExecDO update = new CommandExecDO();
-        update.setId(execId);
-        update.setLogPath(generatorLogPath);
-        commandExecDAO.updateById(update);
-    }
-
     @Override
-    protected void processStandardOutputStream(InputStream in) {
+    protected void processCommandOutputStream(InputStream in) {
         try {
             Streams.transfer(in, logOutputStream);
         } catch (IOException ex) {
@@ -117,14 +107,14 @@ public class CommandExecHandler extends AbstractExecHandler {
     protected void callback(BaseRemoteExecutor executor) {
         super.callback(executor);
         Date endDate = new Date();
-        String interval = Dates.interval(endDate, hint.getStartDate(), "d", "h", "m", "s");
+        String interval = Dates.interval(endDate, record.getStartDate(), "d", "h", "m", "s");
         StringBuilder sb = new StringBuilder()
                 .append(Letters.LF)
                 .append("# 命令执行完毕\n")
-                .append("exit code: ").append(hint.getExitCode()).append(Letters.LF)
+                .append("exit code: ").append(record.getExitCode()).append(Letters.LF)
                 .append("结束时间: ").append(Dates.format(endDate, Dates.YMD_HMS))
                 .append("; used ").append(interval).append(" (")
-                .append(endDate.getTime() - hint.getStartDate().getTime())
+                .append(endDate.getTime() - record.getStartDate().getTime())
                 .append(" ms)\n");
         try {
             logOutputStream.write(Strings.bytes(sb.toString()));
@@ -155,15 +145,17 @@ public class CommandExecHandler extends AbstractExecHandler {
     public void close() {
         super.close();
         Streams.close(logOutputStream);
-        // 关闭正在tail的日志
-        try {
-            Threads.sleep(Const.MS_S_3);
-            tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath)
-                    .forEach(ITailHandler::close);
-        } catch (Exception e) {
-            log.error("execHandler-关闭tail失败 {} {}", execId, e);
-            e.printStackTrace();
-        }
+        // 异步关闭正在tail的日志
+        Threads.start(() -> {
+            try {
+                Threads.sleep(Const.MS_S_10);
+                tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath)
+                        .forEach(ITailHandler::close);
+            } catch (Exception e) {
+                log.error("execHandler-关闭tail失败 {} {}", execId, e);
+                e.printStackTrace();
+            }
+        });
     }
 
 }

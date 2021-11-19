@@ -76,4 +76,9 @@ public class CommandExecRequest extends PageRequest {
      */
     private String description;
 
+    /**
+     * 是否省略命令
+     */
+    private boolean omitCommand;
+
 }
