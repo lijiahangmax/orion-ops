@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.CommandTemplateDAO;
 import com.orion.ops.entity.domain.CommandTemplateDO;
@@ -63,12 +64,21 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
         LambdaQueryWrapper<CommandTemplateDO> wrapper = new LambdaQueryWrapper<CommandTemplateDO>()
                 .eq(Objects.nonNull(request.getId()), CommandTemplateDO::getId, request.getId())
                 .like(Strings.isNotBlank(request.getName()), CommandTemplateDO::getTemplateName, request.getName())
+                .like(Strings.isNotBlank(request.getValue()), CommandTemplateDO::getTemplateValue, request.getValue())
                 .like(Strings.isNotBlank(request.getDescription()), CommandTemplateDO::getDescription, request.getDescription())
                 .orderByDesc(CommandTemplateDO::getId);
-        return DataQuery.of(commandTemplateDAO)
+        // 查询列表
+        DataGrid<CommandTemplateVO> dataGrid = DataQuery.of(commandTemplateDAO)
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(CommandTemplateVO.class);
+        // 省略模板
+        dataGrid.forEach(t -> {
+            if (request.isOmitValue()) {
+                t.setValue(Strings.omit(t.getValue(), Const.TEMPLATE_OMIT));
+            }
+        });
+        return dataGrid;
     }
 
     @Override

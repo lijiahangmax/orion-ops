@@ -35,4 +35,9 @@ public class CommandTemplateRequest extends PageRequest {
      */
     private String description;
 
+    /**
+     * 是否省略值
+     */
+    private boolean omitValue;
+
 }

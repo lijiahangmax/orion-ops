@@ -1,5 +1,6 @@
 package com.orion.ops.handler.exec;
 
+import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;
 import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
@@ -13,15 +14,14 @@ import com.orion.ops.handler.exec.impl.CommandExecHandler;
  * @version 1.0.0
  * @since 2021/6/4 22:54
  */
-public interface IExecHandler extends Runnable, SafeCloseable {
+public interface IExecHandler extends Runnable, Executable, SafeCloseable {
 
     /**
-     * 提交任务
+     * 写入
      *
-     * @param hint hint
-     * @return execId
+     * @param out out
      */
-    Long submit(ExecHint hint);
+    void write(String out);
 
     /**
      * 获取实际执行 handler
@@ -31,7 +31,8 @@ public interface IExecHandler extends Runnable, SafeCloseable {
      */
     static IExecHandler with(ExecHint hint) {
         return Selector.<ExecType, IExecHandler>of(hint.getExecType())
-                .test(Branches.eq(ExecType.BATCH_EXEC).then(new CommandExecHandler(hint)))
+                .test(Branches.eq(ExecType.BATCH_EXEC)
+                        .then(() -> new CommandExecHandler(hint)))
                 .get();
     }
 

@@ -1,20 +1,17 @@
 package com.orion.ops.handler.exec;
 
-import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.Valid;
+import com.orion.ops.service.api.MachineInfoService;
+import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Streams;
-import com.orion.utils.time.Dates;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,48 +28,60 @@ import java.util.Date;
 @Slf4j
 public abstract class AbstractExecHandler implements IExecHandler {
 
-    protected static CommandExecDAO commandExecDAO = SpringHolder.getBean("commandExecDAO");
+    protected static CommandExecDAO commandExecDAO = SpringHolder.getBean(CommandExecDAO.class);
 
-    protected static ExecSessionHolder execSessionHolder = SpringHolder.getBean("execSessionHolder");
+    protected static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    @Getter
+    protected static ExecSessionHolder execSessionHolder = SpringHolder.getBean(ExecSessionHolder.class);
+
     protected ExecHint hint;
 
-    @Getter
     protected Long execId;
+
+    protected CommandExecDO record;
+
+    protected MachineInfoDO machine;
+
+    protected SessionStore sessionStore;
 
     @Getter
     protected CommandExecutor executor;
 
-    protected MachineInfoDO machine;
+    protected int exitCode;
 
     protected AbstractExecHandler(ExecHint hint) {
         this.hint = hint;
-        this.valid();
+        this.record = hint.getRecord();
+        this.execId = record.getId();
+        this.machine = hint.getMachine();
     }
 
     @Override
-    public Long submit(ExecHint hint) {
-        log.info("execHandler-执行命令开始 machineId: {}, type: {}, startDate: {}", hint.getMachineId(), hint.getExecType(), Dates.current(Dates.YMD_HMSS));
-        this.machine = hint.getMachine();
-        this.insertRecord();
+    public void exec() {
+        log.info("execHandler-执行命令-提交 machineId: {}, type: {}, command: {}", hint.getMachineId(), hint.getExecType(), record.getExecCommand());
         Threads.start(this, SchedulerPools.EXEC_SCHEDULER);
-        return execId;
     }
 
     @Override
     public void run() {
+        // 检查状态
+        CommandExecDO current = commandExecDAO.selectById(execId);
+        if (!ExecStatus.WAITING.getStatus().equals(current.getExecStatus())) {
+            return;
+        }
         try {
-            // 打开commandExecutor
-            this.executor = hint.getSession().getCommandExecutor(hint.getCommand());
-            execSessionHolder.addSession(execId, this);
+            // 更新状态
             this.updateStatus(ExecStatus.RUNNABLE);
-            this.openComputed();
-
+            // 打开日志
+            this.openLogger();
+            // 打开executor
+            this.sessionStore = machineInfoService.openSessionStore(machine);
+            this.executor = sessionStore.getCommandExecutor(record.getExecCommand());
+            execSessionHolder.addSession(execId, this);
             // 开始执行
             executor.inherit()
                     .sync()
-                    .streamHandler(this::processStandardOutputStream)
+                    .streamHandler(this::processCommandOutputStream)
                     .callback(this::callback)
                     .connect()
                     .exec();
@@ -84,17 +93,22 @@ public abstract class AbstractExecHandler implements IExecHandler {
         }
     }
 
+    @Override
+    public void write(String out) {
+        executor.write(out);
+    }
+
     /**
-     * 命令打开完成
+     * 打开日志
      */
-    protected abstract void openComputed();
+    protected abstract void openLogger();
 
     /**
      * 处理命令输出
      *
      * @param in in
      */
-    protected abstract void processStandardOutputStream(InputStream in);
+    protected abstract void processCommandOutputStream(InputStream in);
 
     /**
      * 完成回调
@@ -102,15 +116,9 @@ public abstract class AbstractExecHandler implements IExecHandler {
      * @param executor executor
      */
     protected void callback(BaseRemoteExecutor executor) {
-        int exitCode = ((CommandExecutor) executor).getExitCode();
-        hint.setExitCode(exitCode);
+        this.exitCode = ((CommandExecutor) executor).getExitCode();
         log.info("execHandler-执行命令完成回调 execId: {} code: {}", execId, exitCode);
-        CommandExecDO updateStatus = new CommandExecDO();
-        updateStatus.setId(execId);
-        updateStatus.setExitCode(exitCode);
-        updateStatus.setEndDate(new Date());
-        updateStatus.setExecStatus(ExecStatus.COMPLETE.getStatus());
-        commandExecDAO.updateById(updateStatus);
+        this.updateStatus(ExecStatus.COMPLETE);
     }
 
     /**
@@ -125,49 +133,24 @@ public abstract class AbstractExecHandler implements IExecHandler {
     }
 
     /**
-     * 参数合法校验
-     */
-    protected void valid() {
-        Valid.notNull(hint.getExecType());
-        Valid.notNull(hint.getMachineId());
-        Valid.notBlank(hint.getCommand());
-        Valid.notNull(hint.getSession());
-    }
-
-    /**
-     * 插入执行到库
-     */
-    protected void insertRecord() {
-        Date startDate = new Date();
-        UserDTO user = Currents.getUser();
-        CommandExecDO insert = new CommandExecDO();
-        insert.setUserId(user.getId());
-        insert.setUserName(user.getUsername());
-        insert.setRelId(hint.getRelId());
-        insert.setExecType(hint.getExecType().getType());
-        insert.setExecCommand(hint.getCommand());
-        insert.setDescription(hint.getDescription());
-        insert.setMachineId(hint.getMachineId());
-        insert.setExecStatus(ExecStatus.WAITING.getStatus());
-        insert.setStartDate(startDate);
-        hint.setUserId(user.getId());
-        hint.setUsername(user.getUsername());
-        hint.setStartDate(startDate);
-        commandExecDAO.insert(insert);
-        this.execId = insert.getId();
-        log.info("execHandler-执行命令插入 {}", JSON.toJSONString(insert));
-    }
-
-    /**
      * 更新状态
      *
      * @param status status
      */
     protected void updateStatus(ExecStatus status) {
-        CommandExecDO updateStatus = new CommandExecDO();
-        updateStatus.setId(execId);
-        updateStatus.setExecStatus(status.getStatus());
-        int effect = commandExecDAO.updateById(updateStatus);
+        CommandExecDO update = new CommandExecDO();
+        update.setId(execId);
+        update.setExecStatus(status.getStatus());
+        record.setExecStatus(status.getStatus());
+        if (ExecStatus.RUNNABLE.equals(status)) {
+            Date startDate = new Date();
+            update.setStartDate(startDate);
+            record.setStartDate(startDate);
+        } else if (ExecStatus.COMPLETE.equals(status)) {
+            update.setExitCode(exitCode);
+            record.setExitCode(exitCode);
+        }
+        int effect = commandExecDAO.updateById(update);
         log.info("execHandler-更新状态 id: {}, status: {}, effect: {}", execId, status, effect);
     }
 
@@ -175,15 +158,15 @@ public abstract class AbstractExecHandler implements IExecHandler {
     public void close() {
         Date endDate = new Date();
         // 更新执行时间
-        CommandExecDO updateStatus = new CommandExecDO();
-        updateStatus.setId(execId);
-        updateStatus.setEndDate(endDate);
-        commandExecDAO.updateById(updateStatus);
-        log.info("execHandler-关闭 id: {}, exitCode: {} endDate: {}; used {} ms", execId, hint.getExitCode(),
-                Dates.format(endDate, Dates.YMD_HMSS), endDate.getTime() - hint.getStartDate().getTime());
+        CommandExecDO update = new CommandExecDO();
+        update.setId(execId);
+        update.setEndDate(endDate);
+        commandExecDAO.updateById(update);
+        log.info("execHandler-关闭 id: {}, status: {}, exitCode: {} used {} ms", execId, record.getExecStatus(),
+                exitCode, endDate.getTime() - record.getStartDate().getTime());
         // 释放资源
         Streams.close(executor);
-        Streams.close(hint.getSession());
+        Streams.close(sessionStore);
         execSessionHolder.removeSession(execId);
     }
 
