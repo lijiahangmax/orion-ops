@@ -17,6 +17,13 @@ const $ws = {
    */
   sftpNotify: param => {
     return `ws://${$http.BASE_HOST}/orion/keep-alive/sftp/notify/${param}`
+  },
+
+  /**
+   * 文件tail
+   */
+  fileTail: param => {
+    return `ws://${$http.BASE_HOST}/orion/keep-alive/tail/${param}`
   }
 
 }
@@ -576,6 +583,76 @@ const $api = {
    */
   terminatedExecTask: param => {
     return $http.$post('/exec/terminated', param)
+  },
+
+  /**
+   * 新增模板
+   */
+  addTemplate: param => {
+    return $http.$post('/template/add', param)
+  },
+
+  /**
+   * 修改模板
+   */
+  updateTemplate: param => {
+    return $http.$post('/template/update', param)
+  },
+
+  /**
+   * 模板列表
+   */
+  getTemplateList: param => {
+    return $http.$post('/template/list', param)
+  },
+
+  /**
+   * 模板详情
+   */
+  getTemplateDetail: param => {
+    return $http.$post('/template/detail', param)
+  },
+
+  /**
+   * 删除模板
+   */
+  deleteTemplate: param => {
+    return $http.$post('/template/delete', param)
+  },
+
+  /**
+   * 获取 tail token
+   */
+  getTailToken: param => {
+    return $http.$post('/file-tail/token', param)
+  },
+
+  /**
+   * 添加 tail 文件
+   */
+  addTailFile: param => {
+    return $http.$post('/file-tail/add', param)
+  },
+
+  /**
+   * 修改 tail 文件
+   */
+  updateTailFile: param => {
+    return $http.$post('/file-tail/update', param)
+  },
+
+  /**
+   * 获取 tail 文件列表
+   */
+  getTailList: param => {
+    return $http.$post('/file-tail/list', param)
+  },
+
+  /**
+   * 获取 tail 机器默认配置
+   */
+  getTailConfig: param => {
+    return $http.$post('/file-tail/config', param)
   }
 
 }
