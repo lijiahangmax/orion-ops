@@ -27,7 +27,12 @@ export default {
   props: {
     selectedMachine: Array,
     hideBack: Boolean,
-    query: Object
+    query: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   data() {
     return {

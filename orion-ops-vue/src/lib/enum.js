@@ -314,6 +314,32 @@ const $enum = {
       label: '执行终止',
       color: '#868E96'
     }
+  },
+
+  /**
+   * 日志 tail 状态
+   */
+  LOG_TAIL_STATUS: {
+    WAITING: {
+      value: 10,
+      label: '等待',
+      status: 'warning'
+    },
+    RUNNABLE: {
+      value: 20,
+      label: '正常',
+      status: 'processing'
+    },
+    ERROR: {
+      value: 30,
+      label: '错误',
+      status: 'error'
+    },
+    CLOSE: {
+      value: 40,
+      label: '关闭',
+      status: 'default'
+    }
   }
 
 }
