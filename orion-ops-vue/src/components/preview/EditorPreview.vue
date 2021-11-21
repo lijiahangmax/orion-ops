@@ -11,7 +11,7 @@
     </div>
     <!-- 页脚 -->
     <div slot="footer">
-      <a-button @click="() => visible = false">关闭</a-button>
+      <a-button @click="close">关闭</a-button>
     </div>
   </a-modal>
 </template>
@@ -34,6 +34,10 @@ export default {
     preview(value) {
       this.visible = true
       this.value = value
+    },
+    close() {
+      this.visible = false
+      this.value = null
     }
   }
 }

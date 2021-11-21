@@ -1,7 +1,7 @@
 <template>
   <a-select v-model="id"
             :disabled="disabled"
-            placeholder="全部"
+            :placeholder="placeholder"
             @change="$emit('change', id)"
             allowClear>
     <a-select-option v-for="machine in machineList"
@@ -19,6 +19,14 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    placeholder: {
+      type: String,
+      default: '全部'
+    },
+    value: {
+      type: Number,
+      default: undefined
     }
   },
   data() {
@@ -28,8 +36,8 @@ export default {
     }
   },
   watch: {
-    id(e) {
-      this.$emit('change', e)
+    value(e) {
+      this.id = e
     }
   },
   methods: {

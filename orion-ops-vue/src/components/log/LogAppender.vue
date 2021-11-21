@@ -11,9 +11,16 @@
         <!-- 复制 -->
         <a-button :size="size" class="mr4" type="primary" icon="copy" @click="copy">复制</a-button>
         <!-- 清空 -->
-        <a-button :size="size" class="mr8" type="default" icon="delete" @click="clear">清空</a-button>
+        <a-button :size="size" class="mr4" type="default" icon="delete" @click="clear">清空</a-button>
+        <!-- 下载 -->
+        <div v-if="visibleDownload">
+          <a-button :size="size" v-if="!downloadUrl" type="default" icon="link" @click="loadDownloadUrl">获取下载链接</a-button>
+          <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
+            <a-button :size="size" type="default" icon="download">下载</a-button>
+          </a>
+        </div>
         <!-- 固定日志 -->
-        <span class="log-fixed-label">固定: </span>
+        <span class="log-fixed-label ml8">固定: </span>
         <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
         <!-- 状态 可关闭 -->
         <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
@@ -40,6 +47,9 @@
 </template>
 
 <script>
+
+import _enum from '@/lib/enum'
+
 export default {
   name: 'LogAppender',
   props: {
@@ -48,13 +58,22 @@ export default {
       type: Object,
       default: () => {
         return {
-          height: 'calc(100% - 40px)'
+          height: '100%'
         }
       }
     },
     size: {
       config: String,
       default: 'small'
+    },
+    relId: Number,
+    visibleDownload: {
+      config: Boolean,
+      default: true
+    },
+    downloadType: {
+      config: Number,
+      default: _enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value
     }
   },
   data() {
@@ -62,13 +81,14 @@ export default {
       client: null,
       fixedLog: false,
       status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
-      scroll: 0
+      scroll: 0,
+      downloadUrl: null
     }
   },
   methods: {
     openTail(data) {
       // 打开websocket
-      this.client = new WebSocket(this.$api.fileTail(data.token))
+      this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
         this.status = this.$enum.LOG_TAIL_STATUS.RUNNABLE.value
       }
@@ -77,6 +97,7 @@ export default {
       }
       this.client.onclose = () => {
         this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
+        this.$emit('close')
       }
       this.client.onmessage = event => {
         let msg
@@ -99,7 +120,9 @@ export default {
       this.scroll = 0
     },
     close() {
-      this.client.close()
+      if (this.client) {
+        this.client.close()
+      }
     },
     storeScroll() {
       this.scroll = this.$refs.logContainer.scrollTop
@@ -110,6 +133,22 @@ export default {
       } else {
         this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
       }
+    },
+    async loadDownloadUrl() {
+      try {
+        const downloadUrl = await this.$api.getFileDownloadToken({
+          type: this.downloadType,
+          id: this.relId
+        })
+        this.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
+      } catch (e) {
+        // ignore
+      }
+    },
+    clearDownloadUrl() {
+      setTimeout(() => {
+        this.downloadUrl = null
+      })
     }
   },
   mounted() {
@@ -132,7 +171,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  padding: 4px 0;
+  padding: 6px 4px;
 
   .log-tools-fixed-left {
     width: 50%;

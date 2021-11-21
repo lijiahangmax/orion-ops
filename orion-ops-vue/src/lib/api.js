@@ -9,21 +9,21 @@ const $ws = {
    * 机器终端
    */
   terminal: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/machine/terminal/${param}`
+    return `ws://${$http.BASE_HOST}/orion/keep-alive/machine/terminal/${param.token}`
   },
 
   /**
    * sftp传输列表
    */
   sftpNotify: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/sftp/notify/${param}`
+    return `ws://${$http.BASE_HOST}/orion/keep-alive/sftp/notify/${param.token}`
   },
 
   /**
    * 文件tail
    */
   fileTail: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/tail/${param}`
+    return `ws://${$http.BASE_HOST}/orion/keep-alive/tail/${param.token}`
   }
 
 }
@@ -642,6 +642,13 @@ const $api = {
   },
 
   /**
+   * 删除 tail 文件
+   */
+  deleteTailFile: param => {
+    return $http.$post('/file-tail/delete', param)
+  },
+
+  /**
    * 获取 tail 文件列表
    */
   getTailList: param => {
@@ -652,7 +659,7 @@ const $api = {
    * 获取 tail 机器默认配置
    */
   getTailConfig: param => {
-    return $http.$post('/file-tail/config', param)
+    return $http.$post('/file-tail/config', param, { skipErrorMessage: true })
   }
 
 }
