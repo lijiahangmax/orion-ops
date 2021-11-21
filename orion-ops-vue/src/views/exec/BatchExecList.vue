@@ -5,7 +5,7 @@
       <a-form-model ref="query" :model="query">
         <a-row>
           <a-col :span="5">
-            <a-form-model-item label="主机" prop="host">
+            <a-form-model-item label="主机" prop="machine">
               <MachineSelector ref="machineSelector" @change="machineId => query.machineId = machineId"/>
             </a-form-model-item>
           </a-col>
@@ -51,7 +51,9 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary" @click="add">批量执行</a-button>
+        <a target="_blank" href="#/batch/exec/add">
+          <a-button class="ml16 mr8" type="primary" icon="code">批量执行</a-button>
+        </a>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
@@ -65,6 +67,7 @@
                rowKey="id"
                @change="getList"
                :loading="loading"
+               :scroll="{x: '100%'}"
                size="middle">
         <!-- 主机 -->
         <div slot="machine" slot-scope="record">
@@ -75,6 +78,10 @@
             <span>{{ record.machineName }}</span>
           </a-tooltip>
         </div>
+        <!-- 命令 -->
+        <span class="pointer" slot="command" slot-scope="record" title="预览" @click="previewEditor(record.command)">
+            {{ record.command }}
+        </span>
         <!-- 状态 -->
         <a-tag slot="status" slot-scope="record"
                style="margin: 0"
@@ -86,6 +93,10 @@
               :style="{'color': record.exitCode === 0 ? '#4263EB' : '#E03131'}">
             {{ record.exitCode }}
         </span>
+        <!-- 描述 -->
+        <span class="pointer" slot="description" slot-scope="record" @click="previewText(record.description)">
+            {{ record.description }}
+        </span>
         <!-- 创建时间 -->
         <span slot="createTime" slot-scope="record">
           {{
@@ -95,13 +106,19 @@
             })
           }}
         </span>
+        <!-- 日志 -->
+        <div slot="log" slot-scope="record">
+          <!-- 日志面板 -->
+          <a target="_blank" :href="`#/batch/exec/log/view/${record.id}/${record.status}`">日志面板</a>
+          <a-divider type="vertical"/>
+          <!-- 下载 -->
+          <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
+          <a v-else @click="loadDownloadUrl(record)">获取链接</a>
+        </div>
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 详情 -->
           <a @click="detail(record.id)">详情</a>
-          <a-divider type="vertical"/>
-          <!-- 日志 -->
-          <a @click="openLogView(record.id)">日志</a>
           <a-divider v-if="record.status === 20" type="vertical"/>
           <!-- 终止 -->
           <a-popconfirm v-if="record.status === 20"
@@ -115,6 +132,15 @@
         </div>
       </a-table>
     </div>
+    <!-- 表格 -->
+    <div class="exec-event-container">
+      <!-- 编辑器预览 -->
+      <EditorPreview ref="previewEditor"/>
+      <!-- 文本预览 -->
+      <TextPreview ref="previewText"/>
+      <!-- 详情 -->
+      <ExecTaskDetailModal ref="detail"/>
+    </div>
   </div>
 </template>
 
@@ -123,6 +149,9 @@
 import _utils from '@/lib/utils'
 import MachineSelector from '@/components/machine/MachineSelector'
 import UserSelector from '@/components/user/UserSelector'
+import EditorPreview from '@/components/preview/EditorPreview'
+import TextPreview from '@/components/preview/TextPreview'
+import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 
 /**
  * 列
@@ -145,10 +174,10 @@ const columns = [
   },
   {
     title: '命令',
-    dataIndex: 'command',
     key: 'command',
     ellipsis: true,
-    width: 400
+    scopedSlots: { customRender: 'command' },
+    width: 250
   },
   {
     title: '状态',
@@ -183,15 +212,23 @@ const columns = [
   },
   {
     title: '描述',
-    dataIndex: 'description',
     key: 'description',
+    scopedSlots: { customRender: 'description' },
     ellipsis: true
+  },
+  {
+    title: '日志',
+    key: 'log',
+    fixed: 'right',
+    width: 145,
+    scopedSlots: { customRender: 'log' },
+    align: 'center'
   },
   {
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 140,
+    width: 100,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
@@ -201,7 +238,10 @@ export default {
   name: 'BatchExecList',
   components: {
     MachineSelector,
-    UserSelector
+    UserSelector,
+    EditorPreview,
+    TextPreview,
+    ExecTaskDetailModal
   },
   data: function() {
     return {
@@ -219,7 +259,7 @@ export default {
         pageSize: 10,
         total: 0,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       },
       loading: false,
@@ -237,6 +277,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
+        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows
         this.pagination = pagination
         this.loading = false
@@ -244,14 +285,22 @@ export default {
         this.loading = false
       })
     },
-    add() {
-      this.$router.push({ path: '/batch/exec/add' })
+    detail(id) {
+      this.$refs.detail.open(id)
     },
-    detail(record) {
+    previewEditor(value) {
+      this.$refs.previewEditor.preview(value)
     },
-    openLogView(record) {
+    previewText(value) {
+      this.$refs.previewText.preview(value)
     },
-    terminated(record) {
+    terminated(execId) {
+      this.$api.terminatedExecTask({
+        id: execId
+      }).then(() => {
+        this.$message.success('已终止')
+        this.getList({})
+      })
     },
     resetForm() {
       this.$refs.query.resetFields()
@@ -261,6 +310,22 @@ export default {
       this.query.userId = undefined
       this.query.status = undefined
       this.getList({})
+    },
+    async loadDownloadUrl(record) {
+      try {
+        const downloadUrl = await this.$api.getFileDownloadToken({
+          type: this.$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value,
+          id: record.id
+        })
+        record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
+      } catch (e) {
+        // ignore
+      }
+    },
+    clearDownloadUrl(record) {
+      setTimeout(() => {
+        record.downloadUrl = null
+      })
     }
   },
   filters: {
