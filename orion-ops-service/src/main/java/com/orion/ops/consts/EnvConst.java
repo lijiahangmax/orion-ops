@@ -48,4 +48,20 @@ public class EnvConst {
 
     public static final String PROFILE_TAG = "profile_tag";
 
+    // -------------------- tail --------------------
+
+    public static final String OFFSET = "offset";
+
+    public static final String FILE = "file";
+
+    /**
+     * 获取替换变量
+     *
+     * @param name name
+     * @return command
+     */
+    public static String getReplaceVariable(String name) {
+        return SYMBOL + "{" + name + "}";
+    }
+
 }

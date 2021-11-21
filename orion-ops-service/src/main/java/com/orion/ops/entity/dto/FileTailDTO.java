@@ -51,4 +51,9 @@ public class FileTailDTO {
      */
     private String charset;
 
+    /**
+     * tail 命令
+     */
+    private String command;
+
 }

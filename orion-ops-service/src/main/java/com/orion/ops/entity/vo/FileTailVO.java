@@ -3,7 +3,10 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 文件tail 返回
@@ -64,6 +67,21 @@ public class FileTailVO {
      */
     private String charset;
 
+    /**
+     * tail 命令
+     */
+    private String command;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
+     * 更新时间
+     */
+    private String updateTimeAgo;
+
     static {
         TypeStore.STORE.register(FileTailListDO.class, FileTailVO.class, p -> {
             FileTailVO vo = new FileTailVO();
@@ -73,6 +91,9 @@ public class FileTailVO {
             vo.setPath(p.getFilePath());
             vo.setOffset(p.getFileOffset());
             vo.setCharset(p.getFileCharset());
+            vo.setCommand(p.getTailCommand());
+            vo.setUpdateTime(p.getUpdateTime());
+            vo.setUpdateTimeAgo(Dates.ago(p.getUpdateTime(), false));
             return vo;
         });
 
@@ -82,6 +103,7 @@ public class FileTailVO {
             dto.setFilePath(p.getPath());
             dto.setOffset(p.getOffset());
             dto.setCharset(p.getCharset());
+            dto.setCommand(p.getCommand());
             return dto;
         });
     }

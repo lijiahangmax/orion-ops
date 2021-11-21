@@ -1,5 +1,7 @@
 package com.orion.ops.consts.command;
 
+import com.orion.ops.consts.EnvConst;
+
 /**
  * 命令常量
  *
@@ -12,6 +14,8 @@ public class CommandConst {
     private CommandConst() {
     }
 
-    public static final String TAIL_FILE = "tail -f -n {} {}";
+    public static final String TAIL_FILE_DEFAULT = "tail -f -n "
+            + EnvConst.getReplaceVariable(EnvConst.OFFSET)
+            + " " + EnvConst.getReplaceVariable(EnvConst.FILE);
 
 }

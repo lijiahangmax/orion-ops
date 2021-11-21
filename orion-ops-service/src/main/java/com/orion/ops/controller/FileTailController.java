@@ -1,8 +1,6 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.entity.request.FileTailRequest;
@@ -35,18 +33,17 @@ public class FileTailController {
     private FileTailService fileTailService;
 
     /**
-     * tail文件 检查文件存在以及权限
+     * 获取 tail 文件 token 检查文件存在以及权限
      */
     @RequestMapping("/token")
-    @IgnoreWrapper
-    public HttpWrapper<FileTailVO> getToken(@RequestBody FileTailRequest request) {
-        Valid.notNull(FileTailType.of(request.getType()));
-        Valid.notNull(request.getRelId());
-        return fileTailService.getTailToken(request);
+    public FileTailVO getToken(@RequestBody FileTailRequest request) {
+        FileTailType type = Valid.notNull(FileTailType.of(request.getType()));
+        Long relId = Valid.notNull(request.getRelId());
+        return fileTailService.getTailToken(type, relId);
     }
 
     /**
-     * 添加tail文件
+     * 添加 tail 文件
      */
     @RequestMapping("/add")
     public Long addTailFile(@RequestBody FileTailRequest request) {
@@ -61,7 +58,7 @@ public class FileTailController {
     }
 
     /**
-     * 修改tail文件
+     * 修改 tail 文件
      */
     @RequestMapping("/update")
     public Integer updateTailFile(@RequestBody FileTailRequest request) {
@@ -76,7 +73,16 @@ public class FileTailController {
     }
 
     /**
-     * tail文件列表
+     * 删除 tail 文件
+     */
+    @RequestMapping("/delete")
+    public Integer deleteTailFile(@RequestBody FileTailRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return fileTailService.deleteTailFile(id);
+    }
+
+    /**
+     * tail 文件列表
      */
     @RequestMapping("/list")
     public DataGrid<FileTailVO> tailFileList(@RequestBody FileTailRequest request) {

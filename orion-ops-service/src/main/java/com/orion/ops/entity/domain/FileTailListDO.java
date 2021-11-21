@@ -62,6 +62,12 @@ public class FileTailListDO implements Serializable {
     private Integer fileOffset;
 
     /**
+     * tail 命令
+     */
+    @TableField("tail_command")
+    private String tailCommand;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

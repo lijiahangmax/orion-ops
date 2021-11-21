@@ -26,4 +26,11 @@ public class FileTailConfigVO {
      */
     private String charset;
 
+    /**
+     * command
+     *
+     * @see com.orion.ops.consts.command.CommandConst#TAIL_FILE_DEFAULT
+     */
+    private String command;
+
 }

@@ -50,6 +50,11 @@ public class FileTailRequest extends PageRequest {
     private String charset;
 
     /**
+     * tail 命令
+     */
+    private String command;
+
+    /**
      * relId
      */
     private Long relId;
