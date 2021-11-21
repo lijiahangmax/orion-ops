@@ -6,10 +6,11 @@
       <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
       <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
       <a-icon type="sync" title="重试所有" @click="retryAll"/>
-      <a-popconfirm placement="bottomRight" ok-text="确定" cancel-text="取消" @confirm="transferPackage">
-        <template slot="title">
-          是否要打包传输所有下载的文件?
-        </template>
+      <a-popconfirm placement="bottomRight"
+                    title="是否要打包传输所有下载的文件?"
+                    ok-text="确定"
+                    cancel-text="取消"
+                    @confirm="transferPackage">
         <a-icon type="file-zip" title="打包下载"/>
       </a-popconfirm>
       <a-icon type="delete" title="清空" @click="clearAll"/>
@@ -101,7 +102,7 @@
  * 打开sftp通知
  */
 function openSftpNotify() {
-  this.notifyClient = new WebSocket(this.$api.sftpNotify(this.sessionToken))
+  this.notifyClient = new WebSocket(this.$api.sftpNotify({ token: this.sessionToken }))
   this.notifyClient.onopen = () => {
     // 打开连接发送当前登录token
     setTimeout(() => {
@@ -199,7 +200,7 @@ export default {
     },
     async loadDownload(item) {
       const downloadUrl = await this.$api.getFileDownloadToken({
-        type: 40,
+        type: this.$enum.FILE_DOWNLOAD_TYPE.SFTP_DOWNLOAD.value,
         id: item.id
       })
       item.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })

@@ -10,7 +10,7 @@
           <a-icon type="reload"/>
         </div>
       </div>
-      <!-- 列表菜单 -->
+      <!-- 机器列表菜单 -->
       <a-menu theme="dark" mode="inline" :defaultSelectedKeys="selectedMachine">
         <a-menu-item v-for="item of list" :key="item.id" :title="item.host" @click="$emit('chooseMachine', item.id)">
           <a-icon type="desktop"/>

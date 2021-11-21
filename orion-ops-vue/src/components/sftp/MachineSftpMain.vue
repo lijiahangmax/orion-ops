@@ -48,12 +48,11 @@
                 <a-button :disabled="!sessionToken || selectedRowKeys.length === 0"
                           @click="batchRemove" title="批量删除" icon="delete"/>
                 <a-popconfirm :disabled="!sessionToken || selectedRowKeys.length === 0"
+                              :title="`是否下载当前选中的 ${selectedRowKeys.length} 个文件?`"
                               placement="bottomRight"
-                              ok-text="确定" cancel-text="取消"
+                              ok-text="确定"
+                              cancel-text="取消"
                               @confirm="batchDownload">
-                  <template slot="title">
-                    是否下载当前选中的 {{ selectedRowKeys.length }} 个文件?
-                  </template>
                   <a-button :disabled="!sessionToken || selectedRowKeys.length === 0" title="批量下载" icon="cloud-download"/>
                 </a-popconfirm>
                 <a-button :disabled="!sessionToken" @click="$copy(path)" title="复制路径" icon="link"/>
@@ -139,10 +138,12 @@
               </a>
               <a-divider type="vertical"/>
               <!-- 下载 -->
-              <a-popconfirm v-if="record.isDir" placement="bottomRight" ok-text="确定" cancel-text="取消" @confirm="download">
-                <template slot="title">
-                  确定要下载当前文件夹?
-                </template>
+              <a-popconfirm v-if="record.isDir"
+                            title="确定要下载当前文件夹?"
+                            placement="bottomRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="download">
                 <a title="下载">
                   <a-icon type="cloud-download"/>
                 </a>
@@ -277,7 +278,7 @@ export default {
         current: 1,
         pageSize: 12,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       }
     }

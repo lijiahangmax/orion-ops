@@ -13,6 +13,10 @@ VueRouter.prototype.push = function push(location) {
 
 const routes = [
   {
+    path: '/',
+    redirect: '/console'
+  },
+  {
     path: '/login',
     name: 'login',
     meta: {
@@ -40,8 +44,31 @@ const routes = [
     component: () => import('../views/machine/MachineSftp')
   },
   {
-    path: '/',
-    redirect: '/console'
+    path: '/batch/exec/add',
+    name: 'BatchExecAdd',
+    meta: {
+      requireAuth: true,
+      title: '批量执行'
+    },
+    component: () => import('../views/exec/AddBatchExecTask')
+  },
+  {
+    path: '/batch/exec/log/view/:id/:status',
+    name: 'ExecLoggerView',
+    meta: {
+      requireAuth: true,
+      title: '执行日志'
+    },
+    component: () => import('../views/exec/ExecLoggerView')
+  },
+  {
+    path: '/log/view/:id?',
+    name: 'loggerView',
+    meta: {
+      requireAuth: true,
+      title: '日志面板'
+    },
+    component: () => import('../views/log/LoggerView')
   },
   {
     path: '',
@@ -122,22 +149,13 @@ const routes = [
         component: () => import('../views/exec/BatchExecList')
       },
       {
-        path: '/batch/exec/add',
-        name: 'BatchExecAdd',
+        path: '/log/list',
+        name: 'loggerList',
         meta: {
           requireAuth: true,
-          title: '批量执行'
+          title: '日志列表'
         },
-        component: () => import('../views/exec/AddBatchExecTask')
-      },
-      {
-        path: '/log/view',
-        name: 'loggerView',
-        meta: {
-          requireAuth: true,
-          title: '日志面板'
-        },
-        component: () => import('../views/exec/LoggerView')
+        component: () => import('../views/log/LoggerList')
       },
       {
         path: '/app/list',

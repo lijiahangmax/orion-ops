@@ -123,7 +123,7 @@ function initTerminal() {
   }
 
   // 打开websocket
-  this.client = new WebSocket(this.$api.terminal(this.setting.accessToken))
+  this.client = new WebSocket(this.$api.terminal({ token: this.setting.accessToken }))
   this.client.onopen = event => {
     clientHandler.onopen.call(this, event)
   }
