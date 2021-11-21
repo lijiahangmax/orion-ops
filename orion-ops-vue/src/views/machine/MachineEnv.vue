@@ -84,20 +84,21 @@
                  :loading="loading"
                  rowKey="id"
                  @change="getMachineEnv"
+                 :scroll="{x: '100%'}"
                  size="middle">
           <!-- key -->
           <div slot="key" slot-scope="record">
             <a class="copy-icon-left" @click="$copy(record.key)">
               <a-icon type="copy"/>
             </a>
-            <span :title="record.key">{{ record.key }}</span>
+            <span class="pointer" title="预览" @click="preview(record.key)">{{ record.key }}</span>
           </div>
           <!-- value -->
-          <div slot="value" :title="record.value" slot-scope="record">
+          <div slot="value" slot-scope="record">
             <a class="copy-icon-left" @click="$copy(record.value)">
               <a-icon type="copy"/>
             </a>
-            <span :title="record.value">{{ record.value }}</span>
+            <span class="pointer" title="预览" @click="preview(record.value)">{{ record.value }}</span>
           </div>
           <!-- 修改时间 -->
           <span slot="updateTime" slot-scope="record">
@@ -131,7 +132,9 @@
       <!-- 添加模态框 -->
       <AddMachineEnvModal ref="addModal" @added="getMachineEnv({})" @updated="getMachineEnv({})"/>
       <!-- 历史模态框 -->
-      <EnvHistoryModal ref="historyModal" :env="historyEnv" @rollback="getMachineEnv()"/>
+      <EnvHistoryModal ref="historyModal" @rollback="getMachineEnv()"/>
+      <!-- 预览框 -->
+      <TextPreview ref="preview"/>
     </div>
   </div>
 </template>
@@ -140,6 +143,7 @@
 import _utils from '@/lib/utils'
 import AddMachineEnvModal from '@/components/machine/AddMachineEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
+import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [
   {
@@ -192,7 +196,8 @@ export default {
   name: 'MachineEnv',
   components: {
     AddMachineEnvModal,
-    EnvHistoryModal
+    EnvHistoryModal,
+    TextPreview
   },
   data: function() {
     return {
@@ -212,18 +217,13 @@ export default {
         pageSize: 10,
         total: 0,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       },
       loading: false,
       selectedRowKeys: [],
       columns,
-      currentRecord: {},
-      historyEnv: {
-        key: null,
-        valueId: null,
-        valueType: 10
-      }
+      currentRecord: {}
     }
   },
   computed: {
@@ -309,10 +309,15 @@ export default {
         }
       })
     },
+    preview(value) {
+      this.$refs.preview.preview(value)
+    },
     history(record) {
-      this.$refs.historyModal.visible = true
-      this.historyEnv.key = record.key
-      this.historyEnv.valueId = record.id
+      this.$refs.historyModal.open({
+        key: record.key,
+        valueId: record.id,
+        valueType: this.$enum.HISTORY_VALUE_TYPE.MACHINE_ENV.value
+      })
     },
     resetForm() {
       this.$refs.query.resetFields()

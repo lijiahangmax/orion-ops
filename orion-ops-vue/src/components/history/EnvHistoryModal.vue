@@ -1,8 +1,10 @@
 <template>
   <a-modal v-model="visible"
            :width="'80%'"
+           :dialogStyle="{top: '48px'}"
            @cancel="close">
-    <div>
+    <!-- 历史值表格 -->
+    <div class="history-value-table">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
@@ -15,20 +17,20 @@
           <a class="copy-icon-left" v-if="record.beforeValue" @click="$copy(record.beforeValue)">
             <a-icon type="copy"/>
           </a>
-          <span>{{ record.beforeValue }}</span>
+          <span class="pointer" title="预览" @click="preview(record.beforeValue)">{{ record.beforeValue }}</span>
         </div>
         <!-- afterValue -->
         <div slot="afterValue" slot-scope="record">
           <a class="copy-icon-left" @click="$copy(record.afterValue)">
             <a-icon type="copy"/>
           </a>
-          <span>{{ record.afterValue }}</span>
+          <span class="pointer" title="预览" @click="preview(record.afterValue)">{{ record.afterValue }}</span>
         </div>
         <!-- 类型 -->
         <a-tag slot="type" slot-scope="record"
                style="margin: 0"
-               :color="$enum.valueOf($enum.HISTORY_VALUE_TYPE, record.type).color">
-          {{ $enum.valueOf($enum.HISTORY_VALUE_TYPE, record.type).label }}
+               :color="$enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).color">
+          {{ $enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).label }}
         </a-tag>
         <!-- 修改时间 -->
         <div slot="createTime" slot-scope="record">
@@ -47,6 +49,11 @@
         </div>
       </a-table>
     </div>
+    <!-- 历史值表格 -->
+    <div class="history-event">
+      <!-- 预览框 -->
+      <TextPreview ref="preview"/>
+    </div>
     <!-- 头部 -->
     <div slot="title">
       <span>历史记录</span>
@@ -63,6 +70,7 @@
 <script>
 
 import _utils from '@/lib/utils'
+import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [
   {
@@ -121,33 +129,32 @@ const columns = [
 
 export default {
   name: 'EnvHistoryModal',
-  props: {
-    env: Object
+  components: {
+    TextPreview
   },
   data: function() {
     return {
-      visible: false,
       loading: false,
+      visible: false,
+      env: {},
       rows: [],
       pagination: {
         current: 1,
         pageSize: 10,
         total: 0,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       },
       columns
     }
   },
-  watch: {
-    'env.valueId'(e) {
-      if (e) {
-        this.getList({})
-      }
-    }
-  },
   methods: {
+    open(env) {
+      this.env = env
+      this.visible = true
+      this.getList({})
+    },
     getList(page = this.pagination) {
       this.loading = true
       this.$api.getHistoryValueList({
@@ -175,19 +182,27 @@ export default {
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
+          this.loading = true
           this.$api.rollbackHistoryValue({
             id: record.id
           }).then(() => {
+            this.loading = false
             this.$message.success('已回滚')
             this.getList({})
             this.$emit('rollback', record.id, updateValue)
+          }).catch(() => {
+            this.loading = false
           })
         }
       })
     },
+    preview(value) {
+      this.$refs.preview.preview(value)
+    },
     close() {
+      this.loading = false
       this.visible = false
-      this.env.valueId = null
+      this.env = {}
     }
   },
   filters: {
