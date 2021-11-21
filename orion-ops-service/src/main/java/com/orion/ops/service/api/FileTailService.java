@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;
@@ -16,15 +16,16 @@ import com.orion.ops.entity.vo.FileTailVO;
 public interface FileTailService {
 
     /**
-     * tail文件 检查文件是否存在
+     * 获取 tail 文件 token 检查文件是否存在
      *
-     * @param request request
+     * @param type  type
+     * @param relId relId
      * @return FileTailVO
      */
-    HttpWrapper<FileTailVO> getTailToken(FileTailRequest request);
+    FileTailVO getTailToken(FileTailType type, Long relId);
 
     /**
-     * 添加 tail文件
+     * 添加 tail 文件
      *
      * @param request request
      * @return id
@@ -32,12 +33,20 @@ public interface FileTailService {
     Long insertTailFile(FileTailRequest request);
 
     /**
-     * 修改 tail文件
+     * 修改 tail 文件
      *
      * @param request request
      * @return effect
      */
     Integer updateTailFile(FileTailRequest request);
+
+    /**
+     * 删除 tail 文件
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer deleteTailFile(Long id);
 
     /**
      * tail 列表
@@ -46,14 +55,6 @@ public interface FileTailService {
      * @return dataGrid
      */
     DataGrid<FileTailVO> tailFileList(FileTailRequest request);
-
-    /**
-     * tail 详情
-     *
-     * @param id id
-     * @return vo
-     */
-    FileTailVO getTailDetail(Long id);
 
     /**
      * 更新 更新时间

@@ -18,6 +18,11 @@ public class TailFileHint {
     private String sessionId;
 
     /**
+     * token
+     */
+    private String token;
+
+    /**
      * 文件
      */
     private String path;
@@ -36,5 +41,10 @@ public class TailFileHint {
      * 编码格式
      */
     private String charset;
+
+    /**
+     * tail 命令
+     */
+    private String command;
 
 }

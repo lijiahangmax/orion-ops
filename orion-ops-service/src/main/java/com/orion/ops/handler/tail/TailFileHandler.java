@@ -5,8 +5,6 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.entity.dto.FileTailDTO;
-import com.orion.ops.handler.tail.impl.ExecTailFileHandler;
-import com.orion.ops.handler.tail.impl.TrackerTailFileHandler;
 import com.orion.utils.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -58,7 +56,7 @@ public class TailFileHandler implements WebSocketHandler {
         redisTemplate.delete(tokenKey);
         // token绑定
         redisTemplate.opsForValue().set(bindKey, id, KeyConst.FILE_TAIL_BIND_EXPIRE, TimeUnit.SECONDS);
-        log.info("tail 建立ws连接 token: {}, id: {}", token, id);
+        log.info("tail 建立ws连接 token: {}, id: {}, fileTail: {}", token, id, JSON.toJSONString(fileTail));
         // 打开日志流
         try {
             this.openTailHandler(session, token, Objects.requireNonNull(fileTail));
@@ -114,20 +112,15 @@ public class TailFileHandler implements WebSocketHandler {
         String id = session.getId();
         TailFileHint hint = new TailFileHint();
         hint.setSessionId(id);
+        hint.setToken(token);
         hint.setMachineId(fileTail.getMachineId());
         hint.setPath(fileTail.getFilePath());
         hint.setOffset(fileTail.getOffset());
         hint.setCharset(fileTail.getCharset());
+        hint.setCommand(fileTail.getCommand());
         FileTailMode mode = FileTailMode.of(fileTail.getMode());
         log.info("tail 打开处理器-开始 token: {}, id: {}, mode: {}, hint: {}", token, id, mode, JSON.toJSONString(hint));
-        ITailHandler handler;
-        if (FileTailMode.TRACKER.equals(mode)) {
-            handler = new TrackerTailFileHandler(token, session, hint);
-        } else if (FileTailMode.TAIL.equals(mode)) {
-            handler = new ExecTailFileHandler(token, session, hint);
-        } else {
-            return;
-        }
+        ITailHandler handler = ITailHandler.with(mode, hint, session);
         tailSessionHolder.addSession(token, handler);
         handler.start();
     }
