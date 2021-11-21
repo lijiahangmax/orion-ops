@@ -308,7 +308,7 @@ export default {
         pageSize: 10,
         total: 0,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       },
       columns,

@@ -210,6 +210,20 @@ const $enum = {
    * 历史值类型
    */
   HISTORY_VALUE_TYPE: {
+    MACHINE_ENV: {
+      value: 10,
+      label: '机器环境变量'
+    },
+    APP_ENV: {
+      value: 20,
+      label: '应用环境变量'
+    }
+  },
+
+  /**
+   * 历史值操作类型
+   */
+  HISTORY_VALUE_OPTION_TYPE: {
     INSERT: {
       value: 1,
       label: '新增',
@@ -339,6 +353,40 @@ const $enum = {
       value: 40,
       label: '关闭',
       status: 'default'
+    }
+  },
+
+  /**
+   * 文件下载类型
+   */
+  FILE_DOWNLOAD_TYPE: {
+    SECRET_KEY: {
+      value: 10,
+      label: '秘钥'
+    },
+    TERMINAL_LOG: {
+      value: 20,
+      label: '终端日志'
+    },
+    EXEC_LOG: {
+      value: 30,
+      label: '命令执行日志'
+    },
+    SFTP_DOWNLOAD: {
+      value: 40,
+      label: 'sftp下载文件'
+    },
+    RELEASE_HOST_LOG: {
+      value: 50,
+      label: '上线单宿主机日志'
+    },
+    RELEASE_STAGE_LOG: {
+      value: 60,
+      label: '上线单目标机器日志'
+    },
+    RELEASE_SNAPSHOT: {
+      value: 70,
+      label: '上线单快照文件'
     }
   }
 

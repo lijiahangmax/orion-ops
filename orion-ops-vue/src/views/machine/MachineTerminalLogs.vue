@@ -166,7 +166,7 @@ export default {
         pageSize: 10,
         total: 0,
         showTotal: function(total) {
-          return `共 ${total}条`
+          return `共 ${total} 条`
         }
       },
       loading: false,
@@ -203,7 +203,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: 20,
+          type: this.$enum.FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
