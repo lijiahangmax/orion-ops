@@ -3,7 +3,6 @@ package com.orion.ops.handler.tail.impl;
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailFileHint;
@@ -13,7 +12,6 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Strings;
 import com.orion.utils.io.Streams;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -56,10 +54,10 @@ public class ExecTailFileHandler implements ITailHandler {
 
     private volatile boolean close;
 
-    public ExecTailFileHandler(String token, WebSocketSession session, TailFileHint hint) {
-        this.token = token;
-        this.session = session;
+    public ExecTailFileHandler(TailFileHint hint, WebSocketSession session) {
+        this.token = hint.getToken();
         this.hint = hint;
+        this.session = session;
         log.info("tail EXEC_TAIL 监听文件初始化 token: {}, hint: {}", token, JSON.toJSONString(hint));
     }
 
@@ -68,15 +66,14 @@ public class ExecTailFileHandler implements ITailHandler {
         try {
             // 打开session
             this.sessionStore = machineInfoService.openSessionStore(hint.getMachineId());
-            log.error("tail 建立连接成功machineId: {}", hint.getMachineId());
+            log.info("tail 建立连接成功 machineId: {}", hint.getMachineId());
         } catch (Exception e) {
             WebSockets.openSessionStoreThrowClose(session, e);
             log.error("tail 建立连接失败-连接远程服务器失败 e: {}, machineId: {}", e, hint.getMachineId());
             return;
         }
         // 打开 command
-        String command = Strings.format(CommandConst.TAIL_FILE, hint.getOffset(), hint.getPath());
-        this.executor = sessionStore.getCommandExecutor(command);
+        this.executor = sessionStore.getCommandExecutor(hint.getCommand());
         executor.inherit()
                 .scheduler(SchedulerPools.TAIL_SCHEDULER)
                 .callback(this::callback)
