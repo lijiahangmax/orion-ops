@@ -1,7 +1,6 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
@@ -9,7 +8,9 @@ import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.service.api.UserService;
+import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Objects1;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,7 +53,7 @@ public class UserController {
      */
     @RequestMapping("/add")
     @RequireRole(RoleType.ADMINISTRATOR)
-    public Wrapper<Long> addUser(@RequestBody UserInfoRequest request) {
+    public Long addUser(@RequestBody UserInfoRequest request) {
         this.check(request);
         Valid.notBlank(request.getPassword());
         request.setId(null);
@@ -63,11 +64,12 @@ public class UserController {
      * 修改信息
      */
     @RequestMapping("/update")
-    public Wrapper<Integer> update(@RequestBody UserInfoRequest request) {
+    public Integer update(@RequestBody UserInfoRequest request) {
         Integer roleType = request.getRole();
         if (roleType != null) {
             Valid.notNull(RoleType.of(roleType));
         }
+        request.setId(Objects1.def(request.getId(), Currents::getUserId));
         return userService.updateUser(request);
     }
 
@@ -85,7 +87,7 @@ public class UserController {
      */
     @RequestMapping("/delete")
     @RequireRole(RoleType.ADMINISTRATOR)
-    public Wrapper<Integer> delete(@RequestBody UserInfoRequest request) {
+    public Integer delete(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIdList());
         return userService.deleteUser(request);
     }
@@ -95,7 +97,7 @@ public class UserController {
      */
     @RequestMapping("/status")
     @RequireRole(RoleType.ADMINISTRATOR)
-    public Wrapper<Integer> status(@RequestBody UserInfoRequest request) {
+    public Integer status(@RequestBody UserInfoRequest request) {
         Valid.notEmpty(request.getIdList());
         Valid.in(Valid.notNull(request.getStatus()), Const.ENABLE, Const.DISABLE);
         return userService.updateStatus(request);

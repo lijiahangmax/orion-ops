@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.*;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -13,10 +15,10 @@ import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.*;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
-import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,6 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
                 .eq(Objects.nonNull(request.getId()), UserInfoDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getRole()), UserInfoDO::getRoleType, request.getRole())
-                .ne(!Currents.isAdministrator(), UserInfoDO::getRoleType, RoleType.ADMINISTRATOR.getType())
                 .eq(Objects.nonNull(request.getStatus()), UserInfoDO::getUserStatus, request.getStatus())
                 .like(Strings.isNotBlank(request.getUsername()), UserInfoDO::getUsername, request.getUsername())
                 .like(Strings.isNotBlank(request.getNickname()), UserInfoDO::getNickname, request.getNickname())
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public UserInfoVO userDetail(UserInfoRequest request) {
         Long id = Objects1.def(request.getId(), Currents::getUserId);
         UserInfoDO user = userInfoDAO.selectById(id);
-        Valid.notNull(user, "未查询到用户信息");
+        Valid.notNull(user, MessageConst.UNKNOWN_USER);
         UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
         if (AvatarPicHolder.isExist(user.getAvatarPic())) {
             userVo.setAvatar(AvatarPicHolder.getBase64(user.getAvatarPic()));
@@ -76,18 +76,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpWrapper<Long> addUser(UserInfoRequest request) {
+    public Long addUser(UserInfoRequest request) {
         // 用户名重复检查
         LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
                 .eq(UserInfoDO::getUsername, request.getUsername());
         UserInfoDO query = userInfoDAO.selectOne(wrapper);
         if (query != null) {
-            return HttpWrapper.error("用户名已存在");
-        }
-        // 角色判断
-        RoleType role = RoleType.of(request.getRole());
-        if (RoleType.ADMINISTRATOR.equals(role)) {
-            return HttpWrapper.error("不支持创建该角色");
+            throw Exceptions.httpWrapper(HttpWrapper.error(MessageConst.USERNAME_PRESENT));
         }
         // 密码
         String salt = UUIds.random19();
@@ -111,25 +106,18 @@ public class UserServiceImpl implements UserService {
         update.setAvatarPic(avatar);
         update.setUpdateTime(new Date());
         userInfoDAO.updateById(update);
-        return HttpWrapper.ok(userId);
+        return userId;
     }
 
     @Override
-    public HttpWrapper<Integer> updateUser(UserInfoRequest request) {
+    public Integer updateUser(UserInfoRequest request) {
         Long userId = Currents.getUserId();
-        Long updateId;
-        boolean updateCurrent = true;
-        if (request.getId() != null) {
-            updateId = request.getId();
-            updateCurrent = updateId.equals(userId);
-        } else {
-            updateId = userId;
-        }
+        Long updateId = request.getId();
+        final boolean updateCurrent = updateId.equals(userId);
         // 查询用户信息
         UserInfoDO userInfo = userInfoDAO.selectById(updateId);
-        if (userInfo == null) {
-            return HttpWrapper.error("未查询到用户信息");
-        }
+        Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
+        // 设置更新信息
         UserInfoDO update = new UserInfoDO();
         update.setId(updateId);
         update.setNickname(request.getNickname());
@@ -137,64 +125,55 @@ public class UserServiceImpl implements UserService {
         update.setContactEmail(request.getEmail());
         update.setUserStatus(request.getStatus());
         update.setUpdateTime(new Date());
-        RoleType roleType = RoleType.of(request.getRole());
-        if (!updateCurrent) {
-            if (!Currents.isAdministrator()) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
-            if (roleType != null) {
-                if (RoleType.ADMINISTRATOR.equals(roleType)) {
-                    return HttpWrapper.of(ResultCode.NO_PERMISSION);
-                }
-                update.setRoleType(roleType.getType());
-            }
+        if (!updateCurrent && Currents.isAdministrator()) {
+            update.setRoleType(request.getRole());
         }
         int effect = userInfoDAO.updateById(update);
-        // 更新token
+        // 更新缓存
         String cacheKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, updateId);
         String tokenValue = redisTemplate.opsForValue().get(cacheKey);
         if (Strings.isEmpty(tokenValue)) {
-            return HttpWrapper.ok(effect);
+            return effect;
         }
         UserDTO userDTO = JSON.parseObject(tokenValue, UserDTO.class);
-        Optional.ofNullable(roleType)
-                .map(RoleType::getType)
+        Optional.ofNullable(update.getRoleType())
                 .ifPresent(userDTO::setRoleType);
         Optional.ofNullable(request.getNickname())
                 .filter(Strings::isNotBlank)
                 .ifPresent(userDTO::setNickname);
         redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
-        return HttpWrapper.ok(effect);
+        return effect;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public HttpWrapper<Integer> deleteUser(UserInfoRequest request) {
-        List<Long> idList = Lists.newList();
-        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
-        if (!check.isOk()) {
-            return check;
+    public Integer deleteUser(UserInfoRequest request) {
+        Long userId = Currents.getUserId();
+        // 删除检查
+        for (Long id : request.getIdList()) {
+            Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
         }
+        // 删除
         int effect = 0;
-        for (Long id : idList) {
+        for (Long id : request.getIdList()) {
             effect += userInfoDAO.deleteById(id);
             redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
         }
-        return HttpWrapper.ok(effect);
+        return effect;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public HttpWrapper<Integer> updateStatus(UserInfoRequest request) {
-        List<Long> idList = Lists.newList();
-        HttpWrapper<Integer> check = this.updateOrDeleteCheck(request, idList);
-        if (!check.isOk()) {
-            return check;
+    public Integer updateStatus(UserInfoRequest request) {
+        Long userId = Currents.getUserId();
+        // 更新检查
+        for (Long id : request.getIdList()) {
+            Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
         }
         Integer status = request.getStatus();
         boolean disable = Const.DISABLE.equals(status);
         int effect = 0;
-        for (Long id : idList) {
+        for (Long id : request.getIdList()) {
             UserInfoDO update = new UserInfoDO();
             update.setId(id);
             update.setUserStatus(status);
@@ -204,7 +183,7 @@ public class UserServiceImpl implements UserService {
                 redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
             }
         }
-        return HttpWrapper.ok(effect);
+        return effect;
     }
 
     @Override
@@ -227,31 +206,6 @@ public class UserServiceImpl implements UserService {
         update.setAvatarPic(url);
         update.setUpdateTime(new Date());
         return userInfoDAO.updateById(update);
-    }
-
-    /**
-     * 修改或删除前检查
-     */
-    private HttpWrapper<Integer> updateOrDeleteCheck(UserInfoRequest request, List<Long> idList) {
-        Long userId = Currents.getUserId();
-        for (Long id : request.getIdList()) {
-            if (id == null) {
-                return HttpWrapper.error(MessageConst.ABSENT_PARAM);
-            }
-            if (userId.equals(id)) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
-            UserInfoDO user = userInfoDAO.selectById(id);
-            if (user == null) {
-                return HttpWrapper.error("未查询到用户信息");
-            }
-            RoleType role = RoleType.of(user.getRoleType());
-            if (RoleType.ADMINISTRATOR.equals(role)) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
-            idList.add(id);
-        }
-        return HttpWrapper.ok();
     }
 
 }

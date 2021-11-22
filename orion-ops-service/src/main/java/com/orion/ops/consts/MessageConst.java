@@ -34,7 +34,21 @@ public class MessageConst {
 
     public static final String INTERRUPT_ERROR = "操作中断";
 
+    public static final String USERNAME_PASSWORD_ERROR = "用户名或密码错误";
+
+    public static final String USER_DISABLED = "用户已被禁用";
+
+    public static final String UNKNOWN_USER = "未查询到用户信息";
+
+    public static final String USERNAME_PRESENT = "用户名已存在";
+
+    public static final String BEFORE_PASSWORD_EMPTY = "原密码为空";
+
+    public static final String BEFORE_PASSWORD_ERROR = "原密码错误";
+
     public static final String UNSAFE_OPERATOR = "不安全的操作";
+
+    public static final String UNSUPPORTED_OPERATOR = "不支持的操作";
 
     public static final String ENCRYPT_ERROR = "数据加密异常";
 

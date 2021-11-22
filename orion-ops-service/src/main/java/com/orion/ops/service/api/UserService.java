@@ -1,7 +1,6 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
 
@@ -36,7 +35,7 @@ public interface UserService {
      * @param request request
      * @return userId
      */
-    HttpWrapper<Long> addUser(UserInfoRequest request);
+    Long addUser(UserInfoRequest request);
 
     /**
      * 更新用户
@@ -44,7 +43,7 @@ public interface UserService {
      * @param request request
      * @return effect
      */
-    HttpWrapper<Integer> updateUser(UserInfoRequest request);
+    Integer updateUser(UserInfoRequest request);
 
     /**
      * 删除用户
@@ -52,7 +51,7 @@ public interface UserService {
      * @param request request
      * @return effect
      */
-    HttpWrapper<Integer> deleteUser(UserInfoRequest request);
+    Integer deleteUser(UserInfoRequest request);
 
     /**
      * 更新用户状态
@@ -60,7 +59,7 @@ public interface UserService {
      * @param request request
      * @return effect
      */
-    HttpWrapper<Integer> updateStatus(UserInfoRequest request);
+    Integer updateStatus(UserInfoRequest request);
 
     /**
      * 更新头像
