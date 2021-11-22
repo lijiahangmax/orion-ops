@@ -1,7 +1,6 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.lang.wrapper.Wrapper;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
@@ -10,9 +9,11 @@ import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.service.api.PassportService;
+import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.CookiesExt;
 import com.orion.utils.Booleans;
+import com.orion.utils.Objects1;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,20 +41,16 @@ public class AuthenticateController {
      */
     @RequestMapping("/login")
     @IgnoreAuth
-    public Wrapper<UserLoginVO> login(@RequestBody UserLoginRequest request, HttpServletResponse response) {
+    public UserLoginVO login(@RequestBody UserLoginRequest request, HttpServletResponse response) {
         String username = Valid.notBlank(request.getUsername()).trim();
         String password = Valid.notBlank(request.getPassword()).trim();
         request.setUsername(username);
         request.setPassword(password);
-        HttpWrapper<UserLoginVO> res = passportService.login(request);
-        // 登录失败
-        if (!res.isOk()) {
-            return HttpWrapper.error(res.getMsg());
-        }
-        // 登录成功
-        UserLoginVO data = res.getData();
+        // 登录
+        UserLoginVO data = passportService.login(request);
+        // 设置cookie
         CookiesExt.set(response, Const.LOGIN_TOKEN, data.getToken(), KeyConst.LOGIN_TOKEN_EXPIRE);
-        return HttpWrapper.ok(data);
+        return data;
     }
 
     /**
@@ -61,7 +58,7 @@ public class AuthenticateController {
      */
     @RequestMapping("/logout")
     @IgnoreAuth
-    public Wrapper<?> logout(HttpServletResponse response) {
+    public HttpWrapper<?> logout(HttpServletResponse response) {
         passportService.logout();
         CookiesExt.delete(response, Const.LOGIN_TOKEN);
         return HttpWrapper.ok();
@@ -71,14 +68,12 @@ public class AuthenticateController {
      * 重置密码
      */
     @RequestMapping("/reset")
-    public Wrapper<?> resetPassword(@RequestBody UserResetRequest request, HttpServletResponse response) {
+    public HttpWrapper<?> resetPassword(@RequestBody UserResetRequest request, HttpServletResponse response) {
         String password = Valid.notBlank(request.getPassword()).trim();
+        request.setUserId(Objects1.def(request.getUserId(), Currents::getUserId));
         request.setPassword(password);
-        HttpWrapper<Boolean> res = passportService.resetPassword(request);
-        if (!res.isOk()) {
-            return res;
-        }
-        if (Booleans.isTrue(res.getData())) {
+        Boolean res = passportService.resetPassword(request);
+        if (Booleans.isTrue(res)) {
             CookiesExt.delete(response, Const.LOGIN_TOKEN);
         }
         return HttpWrapper.ok();

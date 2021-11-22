@@ -13,9 +13,15 @@ import lombok.Data;
 public class UserResetRequest {
 
     /**
-     * 账号
+     * 用户id
      */
-    private String username;
+    private Long userId;
+
+    /**
+     * 原密码
+     */
+    private String beforePassword;
+
 
     /**
      * 密码

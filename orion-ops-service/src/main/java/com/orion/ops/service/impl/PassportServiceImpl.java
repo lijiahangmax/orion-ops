@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -16,7 +16,9 @@ import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.AvatarPicHolder;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -42,23 +44,18 @@ public class PassportServiceImpl implements PassportService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public HttpWrapper<UserLoginVO> login(UserLoginRequest request) {
+    public UserLoginVO login(UserLoginRequest request) {
+        // 查询用户
         LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
-                .eq(UserInfoDO::getUsername, request.getUsername());
+                .eq(UserInfoDO::getUsername, request.getUsername())
+                .last(Const.LIMIT_1);
         UserInfoDO userInfo = userInfoDAO.selectOne(query);
-        // 未找到用户
-        if (userInfo == null) {
-            return HttpWrapper.error("用户名或密码错误");
-        }
+        Valid.notNull(userInfo, MessageConst.USERNAME_PASSWORD_ERROR);
         // 检查密码
         boolean validPassword = ValueMix.validPassword(request.getPassword(), userInfo.getSalt(), userInfo.getPassword());
         // 密码错误
-        if (!validPassword) {
-            return HttpWrapper.error("用户名或密码错误");
-        }
-        if (Const.DISABLE.equals(userInfo.getUserStatus())) {
-            return HttpWrapper.error("用户已被禁用");
-        }
+        Valid.isTrue(validPassword, MessageConst.USERNAME_PASSWORD_ERROR);
+        Valid.isTrue(Const.ENABLE.equals(userInfo.getUserStatus()), MessageConst.USER_DISABLED);
         Long userId = userInfo.getId();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
@@ -90,7 +87,7 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setUsername(userInfo.getUsername());
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
-        return HttpWrapper.ok(loginInfo);
+        return loginInfo;
     }
 
     @Override
@@ -103,39 +100,24 @@ public class PassportServiceImpl implements PassportService {
     }
 
     @Override
-    public HttpWrapper<Boolean> resetPassword(UserResetRequest request) {
-        String username = request.getUsername();
-        boolean updateCurrent = Strings.isBlank(username);
+    public Boolean resetPassword(UserResetRequest request) {
         UserDTO current = Currents.getUser();
-        if (!updateCurrent && current.getUsername().equals(username.trim())) {
-            updateCurrent = true;
+        Long updateUserId = request.getUserId();
+        final boolean isAdmin = Currents.isAdministrator();
+        final boolean updateCurrent = current.getId().equals(updateUserId);
+        // 检查权限
+        if (!updateCurrent && !isAdmin) {
+            throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.NO_PERMISSION));
         }
+        // 查询更新用户
+        UserInfoDO userInfo = userInfoDAO.selectById(updateUserId);
+        Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
+        // 检查原密码是否正确
         if (updateCurrent) {
-            username = current.getUsername();
-        } else {
-            username = username.trim();
-            // 检查权限
-            if (!Currents.isAdministrator()) {
-                return HttpWrapper.of(ResultCode.NO_PERMISSION);
-            }
+            String beforePassword = Valid.notBlank(request.getBeforePassword(), MessageConst.BEFORE_PASSWORD_EMPTY);
+            String validBeforePassword = ValueMix.encPassword(beforePassword, userInfo.getSalt());
+            Valid.isTrue(validBeforePassword.equals(userInfo.getPassword()), MessageConst.BEFORE_PASSWORD_ERROR);
         }
-        // 查询用户
-        LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
-                .eq(UserInfoDO::getUsername, username);
-        UserInfoDO userInfo = userInfoDAO.selectOne(query);
-        if (userInfo == null) {
-            return HttpWrapper.error("未查询到用户信息");
-        }
-        RoleType updateRoleType = RoleType.of(userInfo.getRoleType());
-        // 检查是否是管理员更新密码
-        if (!updateCurrent && !Currents.isAdministrator()) {
-            return HttpWrapper.of(ResultCode.NO_PERMISSION);
-        }
-        // 检查是否更新的是管理员的密码
-        if (RoleType.ADMINISTRATOR.equals(updateRoleType) && !updateCurrent) {
-            return HttpWrapper.of(ResultCode.NO_PERMISSION);
-        }
-
         // 修改密码
         String newPassword = ValueMix.encPassword(request.getPassword(), userInfo.getSalt());
         UserInfoDO updateUser = new UserInfoDO();
@@ -146,7 +128,7 @@ public class PassportServiceImpl implements PassportService {
         userInfoDAO.updateById(updateUser);
         // 删除token
         redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
-        return HttpWrapper.ok(updateCurrent);
+        return updateCurrent;
     }
 
     @Override

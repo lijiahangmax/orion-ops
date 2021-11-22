@@ -21,7 +21,7 @@ public interface PassportService {
      * @param request request
      * @return wrapper
      */
-    HttpWrapper<UserLoginVO> login(UserLoginRequest request);
+    UserLoginVO login(UserLoginRequest request);
 
     /**
      * 登出
@@ -34,7 +34,7 @@ public interface PassportService {
      * @param request request
      * @return 是否需要删除cookie
      */
-    HttpWrapper<Boolean> resetPassword(UserResetRequest request);
+    Boolean resetPassword(UserResetRequest request);
 
     /**
      * 通过token获取用户 所有通过token查用户都要用此方法
