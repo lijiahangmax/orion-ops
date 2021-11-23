@@ -45,7 +45,11 @@ router.beforeEach((to, from, next) => {
  */
 Vue.prototype.$copy = function(value, tips = '已复制') {
   if ($utils.copyToClipboard(value) && tips) {
-    this.$message.success(tips)
+    if (tips === true) {
+      this.$message.success(value + ' 已复制')
+    } else {
+      this.$message.success(tips)
+    }
   }
 }
 
@@ -55,6 +59,17 @@ Vue.prototype.$copy = function(value, tips = '已复制') {
 Vue.prototype.$isAdmin = function() {
   try {
     return JSON.parse($storage.get($storage.keys.USER)).roleType === 10
+  } catch (e) {
+    return false
+  }
+}
+
+/**
+ * 获取当前userId
+ */
+Vue.prototype.$getUserId = function() {
+  try {
+    return JSON.parse($storage.get($storage.keys.USER)).userId
   } catch (e) {
     return false
   }

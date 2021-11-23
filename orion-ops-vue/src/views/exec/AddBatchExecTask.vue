@@ -7,7 +7,7 @@
         <div class="machine-field-container">
           <span class="machine-field-label">执行机器:</span>
           <div class="machine-field-input">
-            <MachineMultiSelector ref="machineSelector" :disabled="isRun" :query="{status: $enum.MACHINE_STATUS.ENABLE.value}"/>
+            <MachineMultiSelector ref="machineSelector" :disabled="isRun" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"/>
           </div>
         </div>
         <!-- 状态 -->
