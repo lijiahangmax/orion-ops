@@ -60,7 +60,7 @@ export default {
       menuItemHandler[key].call(this)
     },
     openResetModel() {
-      this.$refs.resetModel.showModal()
+      this.$refs.resetModel.open()
     },
     resetSuccess() {
       this.$storage.clear()

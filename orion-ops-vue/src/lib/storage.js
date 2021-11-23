@@ -5,7 +5,7 @@ const $storage = {
   keys: {
     LOGIN_TOKEN: 'O-Login-Token',
     USER: 'User',
-    CURRENT_PROFILE: 'activeProfile'
+    ACTIVE_PROFILE: 'activeProfile'
   },
 
   /**

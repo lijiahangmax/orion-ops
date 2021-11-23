@@ -26,7 +26,7 @@ export default {
   methods: {
     chooseProfile({ key }) {
       this.currentProfile = key
-      this.$storage.set(this.$storage.keys.CURRENT_PROFILE, key)
+      this.$storage.set(this.$storage.keys.ACTIVE_PROFILE, key)
     }
   },
   mounted() {
@@ -42,10 +42,10 @@ export default {
       })
       .then(() => {
         if (!this.profileList) {
-          this.$storage.remove(this.$storage.keys.CURRENT_PROFILE)
+          this.$storage.remove(this.$storage.keys.ACTIVE_PROFILE)
           return
         }
-        let storageProfile = this.$storage.get(this.$storage.keys.CURRENT_PROFILE)
+        let storageProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
         if (this.$utils.isEmptyStr(storageProfile)) {
           storageProfile = this.profileList[0].tag
         } else {
@@ -59,7 +59,7 @@ export default {
             storageProfile = this.profileList[0].tag
           }
         }
-        this.$storage.set(this.$storage.keys.CURRENT_PROFILE, storageProfile)
+        this.$storage.set(this.$storage.keys.ACTIVE_PROFILE, storageProfile)
         this.currentProfile = storageProfile
       })
   }
