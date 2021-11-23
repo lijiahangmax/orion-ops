@@ -6,7 +6,7 @@
             @click="changeFold"/>
     <div class="header-fixed-right">
       <!-- 环境选择 -->
-      <HeaderProfileSelect id="header-profile-selector" class="header-block-container"/>
+      <HeaderProfileSelect v-if="profileSelectorVisible" id="header-profile-selector" class="header-block-container"/>
       <!-- 用户下拉 -->
       <HeaderUser id="header-user" class="header-block-container"/>
     </div>
@@ -26,14 +26,33 @@ export default {
   },
   data: function() {
     return {
-      fold: false
+      fold: false,
+      profileSelectorVisible: false,
+      visiblePath: ['/app/env', '/app/list']
+    }
+  },
+  watch: {
+    $route(e) {
+      this.checkProfileSelectorVisible(e)
     }
   },
   methods: {
     changeFold() {
       this.fold = !this.fold
       this.$emit('changeFoldStatus')
+    },
+    checkProfileSelectorVisible(e = this.$route) {
+      for (const path of this.visiblePath) {
+        if (path === e.path) {
+          this.profileSelectorVisible = true
+          return
+        }
+      }
+      this.profileSelectorVisible = false
     }
+  },
+  created() {
+    this.checkProfileSelectorVisible()
   }
 }
 </script>
