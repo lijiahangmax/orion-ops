@@ -83,9 +83,12 @@ export default {
       this.title = '新增模板'
       this.initRecord({})
     },
-    update(row) {
+    update(id) {
       this.title = '修改模板'
-      this.initRecord(row)
+      this.$api.getTemplateDetail({ id })
+        .then(({ data }) => {
+          this.initRecord(data)
+        })
     },
     initRecord(row) {
       this.form.resetFields()
