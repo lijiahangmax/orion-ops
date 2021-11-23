@@ -28,8 +28,8 @@
           <a-descriptions-item label="状态" :span="1">
             <a-badge
               v-if="detail.status"
-              :status='$enum.valueOf($enum.MACHINE_STATUS, detail.status)["badge-status"]'
-              :text="$enum.valueOf($enum.MACHINE_STATUS, detail.status).label"/>
+              :status='$enum.valueOf($enum.ENABLE_STATUS, detail.status)["badge-status"]'
+              :text="$enum.valueOf($enum.ENABLE_STATUS, detail.status).label"/>
           </a-descriptions-item>
           <a-descriptions-item label="描述" :span="3">
             {{ detail.description }}
@@ -80,10 +80,10 @@ export default {
   methods: {
     open(id) {
       this.loading = true
-      this.visible = true
       this.$api.getMachineDetail({ id })
         .then(({ data }) => {
           this.loading = false
+          this.visible = true
           this.detail = data
         })
         .catch(() => {

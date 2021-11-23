@@ -98,7 +98,7 @@ export default {
     .machine-tools-item:hover {
       color: hsla(0, 0%, 100%, .2);
       background-color: #1890ff;
-      color: #fff;
+      color: #FFF;
     }
   }
 }

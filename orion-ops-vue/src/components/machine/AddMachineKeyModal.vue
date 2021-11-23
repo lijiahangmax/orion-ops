@@ -95,9 +95,12 @@ export default {
       this.title = '新增秘钥'
       this.initRecord({})
     },
-    update(row) {
+    update(id) {
       this.title = '修改秘钥'
-      this.initRecord(row)
+      this.$api.getMachineKeyDetail({ id })
+        .then(({ data }) => {
+          this.initRecord(data)
+        })
     },
     initRecord(row) {
       this.form.resetFields()

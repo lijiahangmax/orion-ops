@@ -41,6 +41,7 @@
                :pagination="pagination"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
         <!-- 主机 -->

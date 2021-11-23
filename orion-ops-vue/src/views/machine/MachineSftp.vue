@@ -3,7 +3,7 @@
     <!-- 机器列表 -->
     <MachineListMenu ref="machineList"
                      :selectedMachine="selectedMachine"
-                     :query="{status: $enum.MACHINE_STATUS.ENABLE.value}"
+                     :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
                      @chooseMachine="changeSftpMain"/>
     <!-- main -->
     <a-layout>

@@ -4,7 +4,7 @@
     <MachineListMenu ref="machineList"
                      :selectedMachine="selectedMachine"
                      :hideBack="true"
-                     :query="{status: $enum.MACHINE_STATUS.ENABLE.value}"
+                     :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
                      @chooseMachine="addTerminal"/>
     <!-- main -->
     <a-layout>

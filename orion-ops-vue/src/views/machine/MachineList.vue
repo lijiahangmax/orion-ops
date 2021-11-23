@@ -27,7 +27,7 @@
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.value" v-for="status in $enum.MACHINE_STATUS" :key="status.value">
+                <a-select-option :value="status.value" v-for="status in $enum.ENABLE_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -66,6 +66,7 @@
                :pagination="pagination"
                :rowSelection="rowSelection"
                :loading="loading"
+               :scroll="{x: '100%'}"
                rowKey="id"
                @change="getList"
                size="middle">
@@ -83,28 +84,34 @@
           </a-tag>
         </a>
         <!-- 主机 -->
-        <a slot="host" slot-scope="record" @click="copyHost(record.host)">
+        <a slot="host" slot-scope="record" @click="$copy(record.host, true)">
           {{ record.host }}
         </a>
         <!-- 端口 -->
-        <a slot="sshPort" slot-scope="record" @click="copySshCommand(record)">
+        <a slot="sshPort" slot-scope="record" @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
           {{ record.sshPort }}
         </a>
         <!-- 状态 -->
-        <a slot="status" slot-scope="record">
+        <a v-if="record.id !== 1" slot="status" slot-scope="record">
           <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
                         ok-text="确定"
                         cancel-text="取消"
                         @confirm="changeStatus(record)">
             <a-badge
               v-if="record.status"
-              :status='$enum.valueOf($enum.MACHINE_STATUS, record.status)["badge-status"]'
-              :text="$enum.valueOf($enum.MACHINE_STATUS, record.status).label"/>
+              :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+              :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
           </a-popconfirm>
         </a>
+        <span v-else slot="status" slot-scope="record">
+            <a-badge
+              v-if="record.status"
+              :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+              :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+        </span>
         <!-- 更多 -->
         <span slot="action" slot-scope="record">
-          <a @click="openDetail(record)">详情</a>
+          <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <a v-if="record.status === 1" target="_blank" :href="`#/machine/terminal/${record.id}`">Terminal</a>
           <a-divider v-if="record.status === 1" type="vertical"/>
@@ -350,18 +357,11 @@ export default {
         this.loading = false
       })
     },
-    copyHost(host) {
-      this.$copy(host, `${host} 已复制`)
-    },
-    copySshCommand(record) {
-      const command = this.$utils.getSshCommand(record.username, record.host, record.sshPort)
-      this.$copy(command, `${command} 已复制`)
-    },
     openAdd() {
       this.$refs.addModal.add()
     },
-    openDetail(record) {
-      this.$refs.detailModal.open(record.id)
+    openDetail(id) {
+      this.$refs.detailModal.open(id)
     },
     menuHandler({ key }, record) {
       moreMenuHandler[key].call(this, record)

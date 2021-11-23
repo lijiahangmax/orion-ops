@@ -62,6 +62,7 @@
                :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
         <!-- 主机 -->
@@ -78,7 +79,7 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 修改 -->
-          <a @click="update(record)">修改</a>
+          <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm title="确认删除当前代理?"
@@ -231,8 +232,8 @@ export default {
     add() {
       this.$refs.addModal.add()
     },
-    update(record) {
-      this.$refs.addModal.update(record)
+    update(id) {
+      this.$refs.addModal.update(id)
     },
     resetForm() {
       this.$refs.query.resetFields()

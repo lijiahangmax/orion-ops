@@ -111,7 +111,7 @@
           </span>
           <!-- 操作 -->
           <div slot="action" slot-scope="record">
-            <a @click="update(record)">修改</a>
+            <a @click="update(record.id)">修改</a>
             <a-divider type="vertical"/>
             <a @click="history(record)">历史</a>
             <a-divider v-if="record.forbidDelete === 1" type="vertical"/>
@@ -280,8 +280,8 @@ export default {
     add() {
       this.$refs.addModal.add(this.query.machineId)
     },
-    update(record) {
-      this.$refs.addModal.update(record)
+    update(id) {
+      this.$refs.addModal.update(id)
     },
     remove(id) {
       this.$api.deleteMachineEnv({

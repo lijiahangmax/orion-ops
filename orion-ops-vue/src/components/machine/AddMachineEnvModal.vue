@@ -80,9 +80,12 @@ export default {
       this.machineId = machineId
       this.initRecord({})
     },
-    update(row) {
+    update(id) {
       this.title = '修改变量'
-      this.initRecord(row)
+      this.$api.getMachineEnvDetail({ id })
+        .then(({ data }) => {
+          this.initRecord(data)
+        })
     },
     initRecord(row) {
       this.form.resetFields()

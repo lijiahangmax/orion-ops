@@ -57,6 +57,7 @@
                :pagination="pagination"
                :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
                :loading="loading"
+               :scroll="{x: '100%'}"
                rowKey="id"
                @change="getList"
                size="middle">
@@ -100,7 +101,7 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 修改 -->
-          <a @click="update(record)">修改</a>
+          <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm title="确认删除当前秘钥?"
@@ -379,8 +380,8 @@ export default {
     add() {
       this.$refs.addModal.add()
     },
-    update(record) {
-      this.$refs.addModal.update(record)
+    update(id) {
+      this.$refs.addModal.update(id)
     }
   },
   filters: {
