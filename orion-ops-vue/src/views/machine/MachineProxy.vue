@@ -55,7 +55,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
@@ -150,7 +150,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 160,
+    width: 120,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }

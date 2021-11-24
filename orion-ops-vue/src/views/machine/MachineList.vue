@@ -60,15 +60,15 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                :rowSelection="rowSelection"
-               :loading="loading"
-               :scroll="{x: '100%'}"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
+               :loading="loading"
                size="middle">
         <!-- 名称 -->
         <span slot="name" slot-scope="record">
@@ -210,7 +210,7 @@ const columns = [
     title: '操作',
     key: 'operation',
     fixed: 'right',
-    width: 230,
+    width: 190,
     scopedSlots: { customRender: 'action' }
   }
 ]

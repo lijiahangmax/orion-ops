@@ -30,12 +30,13 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                rowKey="token"
                @change="getList"
+               :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
         <!-- 连接时间 -->
@@ -122,7 +123,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 140,
+    fixed: 'right',
+    width: 170,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }

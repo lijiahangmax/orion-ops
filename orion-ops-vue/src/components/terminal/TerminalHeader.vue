@@ -31,7 +31,7 @@
           </template>
           <a-badge :count="this.statusLabel" :number-style="{
                 backgroundColor: this.statusColor,
-                cursor:'pointer',
+                cursor: 'pointer',
                 boxShadow: '0 0 0 1px #D9D9D9 inset',
                 'margin-right': '15px'}"/>
         </a-popconfirm>
@@ -140,7 +140,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f1f3f5;
+  background-color: #E9ECEF;
 }
 
 .terminal-command-input {

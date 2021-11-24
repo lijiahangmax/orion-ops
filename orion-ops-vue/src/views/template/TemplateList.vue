@@ -37,12 +37,13 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
@@ -61,7 +62,7 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 修改 -->
-          <a @click="update(record)">修改</a>
+          <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm title="确认删除当前模板?"
@@ -122,8 +123,7 @@ const columns = [
     dataIndex: 'description',
     key: 'description',
     width: 140,
-    ellipsis: true,
-    sorter: (a, b) => a.description.localeCompare(b.description)
+    ellipsis: true
   },
   {
     title: '创建人',
@@ -143,7 +143,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 80,
+    fixed: 'right',
+    width: 120,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
@@ -200,8 +201,8 @@ export default {
     add() {
       this.$refs.addModal.add()
     },
-    update(record) {
-      this.$refs.addModal.update(record)
+    update(id) {
+      this.$refs.addModal.update(id)
     },
     remove(id) {
       this.$api.deleteTemplate({ id })

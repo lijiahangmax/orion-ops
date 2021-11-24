@@ -51,15 +51,15 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
-               :loading="loading"
-               :scroll="{x: '100%'}"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
+               :loading="loading"
                size="middle">
         <!-- 秘钥路径 -->
         <div slot="path" slot-scope="record">
@@ -176,7 +176,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 160,
+    width: 120,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }

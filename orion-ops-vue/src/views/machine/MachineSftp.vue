@@ -111,7 +111,7 @@ export default {
   padding: 18px;
 
   #sftp-breadcrumb {
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
     background-color: #FFF;
     padding: 8px;
     border-radius: 4px;
