@@ -72,7 +72,13 @@ export default {
       require('brace/ext/language_tools')
       // 设置语言
       require('brace/mode/sh')
+      require('brace/mode/xml')
+      require('brace/mode/json')
+      require('brace/mode/properties')
       require('brace/snippets/sh')
+      require('brace/snippets/xml')
+      require('brace/snippets/json')
+      require('brace/snippets/properties')
       // 设置主题
       // 浅色 iplastic sqlserver tomorrow xcode
       // 深色 dracula gruvbox idle_fingers merbivore terminal tomorrow_night_bright
@@ -84,6 +90,9 @@ export default {
     },
     getValue() {
       return this.$refs.editor.editor.getValue()
+    },
+    setValue(value) {
+      return this.$refs.editor.editor.setValue(value)
     }
   }
 }

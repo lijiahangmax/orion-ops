@@ -62,43 +62,69 @@
         <!-- 左侧 -->
         <div class="tools-fixed-left">
           <span class="table-title">环境变量</span>
+          <a-divider type="vertical"/>
+          <!-- 视图 -->
+          <div class="mx8">
+            <a-radio-group v-model="viewType" buttonStyle="solid">
+              <a-radio-button v-for="view in $enum.VIEW_TYPE"
+                              :key="view.value"
+                              :value="view.value"
+                              @click="changeView(view)">
+                {{ view.name }}
+              </a-radio-button>
+            </a-radio-group>
+          </div>
           <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-          <a-button-group class="ml8" v-show="selectedRowKeys.length">
-            <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
-          </a-button-group>
+          <!-- 删除 -->
+          <a-button class="ml8" v-show="selectedRowKeys.length"
+                    type="danger"
+                    icon="delete"
+                    @click="batchRemove()">
+            删除
+          </a-button>
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">
-          <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">添加</a-button>
+          <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
+                    type="primary"
+                    icon="sync"
+                    @click="add">
+            保存
+          </a-button>
+          <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
+          <a-button class="mx8" type="primary" icon="plus" @click="add">添加</a-button>
           <a-divider type="vertical"/>
           <a-icon type="search" class="tools-icon" title="查询" @click="getMachineEnv({})"/>
           <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
       <!-- 环境变量表格 -->
-      <div class="table-main-container">
+      <div class="table-main-container table-scroll-x-auto" v-if="viewType === $enum.VIEW_TYPE.TABLE.value">
         <a-table :columns="columns"
                  :dataSource="rows"
                  :pagination="pagination"
                  :rowSelection="rowSelection"
-                 :loading="loading"
                  rowKey="id"
                  @change="getMachineEnv"
                  :scroll="{x: '100%'}"
+                 :loading="loading"
                  size="middle">
           <!-- key -->
-          <div slot="key" slot-scope="record">
+          <div slot="key" slot-scope="record" class="auto-ellipsis">
             <a class="copy-icon-left" @click="$copy(record.key)">
               <a-icon type="copy"/>
             </a>
-            <span class="pointer" title="预览" @click="preview(record.key)">{{ record.key }}</span>
+            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
+              {{ record.key }}</span>
           </div>
           <!-- value -->
-          <div slot="value" slot-scope="record">
+          <div slot="value" slot-scope="record" class="auto-ellipsis">
             <a class="copy-icon-left" @click="$copy(record.value)">
               <a-icon type="copy"/>
             </a>
-            <span class="pointer" title="预览" @click="preview(record.value)">{{ record.value }}</span>
+            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
+              {{ record.value }}
+            </span>
           </div>
           <!-- 修改时间 -->
           <span slot="updateTime" slot-scope="record">
@@ -126,6 +152,12 @@
           </div>
         </a-table>
       </div>
+      <!-- 环境变量视图 -->
+      <div class="table-main-container env-editor-container" v-else>
+        <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
+          <Editor ref="editor" :value="viewValue" :lang="viewLang"/>
+        </a-spin>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="machine-env-event-container">
@@ -140,7 +172,10 @@
 </template>
 
 <script>
+
 import _utils from '@/lib/utils'
+import _$enum from '@/lib/enum'
+import Editor from '@/components/editor/Editor'
 import AddMachineEnvModal from '@/components/machine/AddMachineEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
@@ -197,7 +232,8 @@ export default {
   components: {
     AddMachineEnvModal,
     EnvHistoryModal,
-    TextPreview
+    TextPreview,
+    Editor
   },
   data: function() {
     return {
@@ -223,7 +259,9 @@ export default {
       loading: false,
       selectedRowKeys: [],
       columns,
-      currentRecord: {}
+      viewType: _$enum.VIEW_TYPE.TABLE.value,
+      viewLang: null,
+      viewValue: null
     }
   },
   computed: {
@@ -259,23 +297,46 @@ export default {
       this.pagination.current = 1
       this.getMachineEnv()
     },
+    changeView(view) {
+      this.viewLang = view.lang
+      this.viewType = view.value
+      // 表格
+      if (this.viewType === this.$enum.VIEW_TYPE.TABLE.value) {
+        this.viewValue = null
+        return
+      }
+      this.getMachineEnv({})
+    },
     getMachineEnv(page = this.pagination) {
       this.loading = true
-      this.$api.getMachineEnvList({
-        ...this.query,
-        page: page.current,
-        limit: page.pageSize
-      }).then(({ data }) => {
-        const pagination = { ...this.pagination }
-        pagination.total = data.total
-        pagination.current = data.page
-        this.rows = data.rows
-        this.pagination = pagination
-        this.loading = false
-        this.selectedRowKeys = []
-      }).catch(() => {
-        this.loading = false
-      })
+      if (this.viewType === this.$enum.VIEW_TYPE.TABLE.value) {
+        this.$api.getMachineEnvList({
+          ...this.query,
+          page: page.current,
+          limit: page.pageSize
+        }).then(({ data }) => {
+          const pagination = { ...this.pagination }
+          pagination.total = data.total
+          pagination.current = data.page
+          this.rows = data.rows
+          this.pagination = pagination
+          this.loading = false
+          this.selectedRowKeys = []
+        }).catch(() => {
+          this.loading = false
+        })
+      } else {
+        // 其他
+        this.$api.getMachineEnvView({
+          ...this.query,
+          viewType: this.viewType
+        }).then(({ data }) => {
+          this.viewValue = data
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      }
     },
     add() {
       this.$refs.addModal.add(this.query.machineId)
@@ -363,7 +424,7 @@ export default {
 
   .machine-env-machine-container {
     width: 216px;
-    padding: 0 8px;
+    padding: 0 8px 8px 8px;
     margin-right: 16px;
     background-color: #FFF;
     border-radius: 4px;
@@ -373,19 +434,32 @@ export default {
     width: calc(100% - 222px)
   }
 
+  .env-editor-container {
+    height: calc(100% - 150px);
+    padding-bottom: 8px;
+  }
+
 }
 
 .machine-env-machine-list {
   width: 200px;
   min-height: 25vh;
-  max-height: calc(100vh - 164px - 12px);
+  max-height: 740px;
   border-radius: 5px;
   overflow-y: auto;
   margin-right: 20px;
 }
 
-.machine-env-machine-list, .machine-env-machine-list ul {
-  background-color: #F8F9FA;
+.machine-env-machine-list ul {
+  background-color: #FFF;
+}
+
+.machine-env-machine-list::-webkit-scrollbar-track {
+  background: #FFF;
+}
+
+.editor-spin /deep/ .ant-spin-container {
+  height: 100%;
 }
 
 </style>

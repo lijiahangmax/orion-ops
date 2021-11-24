@@ -23,7 +23,7 @@ const $enum = {
         return val
       }
     }
-    return null
+    return {}
   },
 
   /**
@@ -133,9 +133,9 @@ const $enum = {
   },
 
   /**
-   * 机器状态
+   * 启用状态
    */
-  MACHINE_STATUS: {
+  ENABLE_STATUS: {
     ENABLE: {
       value: 1,
       label: '启用',
@@ -145,6 +145,22 @@ const $enum = {
       value: 2,
       label: '停用',
       'badge-status': 'default'
+    }
+  },
+
+  /**
+   * 应用环境审核状态
+   */
+  PROFILE_AUDIT_STATUS: {
+    ENABLE: {
+      value: 1,
+      label: '需要审核',
+      color: '#228BE6'
+    },
+    DISABLE: {
+      value: 2,
+      label: '无需审核',
+      color: '#40C057'
     }
   },
 
@@ -171,17 +187,17 @@ const $enum = {
     HTTP: {
       value: 1,
       label: 'http',
-      color: '#228be6'
+      color: '#228BE6'
     },
     SOCKET4: {
       value: 2,
       label: 'socket4',
-      color: '#1098ad'
+      color: '#1098AD'
     },
     SOCKET5: {
       value: 3,
       label: 'socket5',
-      color: '#0ca678'
+      color: '#0CA678'
     }
   },
 
@@ -387,6 +403,50 @@ const $enum = {
     RELEASE_SNAPSHOT: {
       value: 70,
       label: '上线单快照文件'
+    }
+  },
+
+  /**
+   * 角色类型
+   */
+  ROLE_TYPE: {
+    ADMINISTRATOR: {
+      value: 10,
+      label: '管理员'
+    },
+    DEVELOPER: {
+      value: 20,
+      label: '开发'
+    },
+    OPERATION: {
+      value: 30,
+      label: '运维'
+    }
+  },
+
+  /**
+   * 视图类型
+   */
+  VIEW_TYPE: {
+    TABLE: {
+      value: 0,
+      name: '表格',
+      lang: null
+    },
+    XML: {
+      value: 10,
+      name: 'xml',
+      lang: 'xml'
+    },
+    JSON: {
+      value: 20,
+      name: 'json',
+      lang: 'json'
+    },
+    PROPERTIES: {
+      value: 30,
+      name: 'properties',
+      lang: 'properties'
     }
   }
 
