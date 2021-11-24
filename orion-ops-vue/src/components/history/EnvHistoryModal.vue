@@ -1,30 +1,36 @@
 <template>
   <a-modal v-model="visible"
-           :width="'80%'"
-           :dialogStyle="{top: '48px'}"
+           :width="1000"
+           :dialogStyle="{top: '16px'}"
+           :bodyStyle="{padding: '8px'}"
            @cancel="close">
     <!-- 历史值表格 -->
-    <div class="history-value-table">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
-               :loading="loading"
                rowKey="id"
                @change="getList"
-               size="small">
+               :scroll="{x: '100%'}"
+               :loading="loading"
+               size="middle">
         <!-- beforeValue -->
-        <div slot="beforeValue" slot-scope="record">
+        <div slot="beforeValue" slot-scope="record" class="auto-ellipsis">
           <a class="copy-icon-left" v-if="record.beforeValue" @click="$copy(record.beforeValue)">
             <a-icon type="copy"/>
           </a>
-          <span class="pointer" title="预览" @click="preview(record.beforeValue)">{{ record.beforeValue }}</span>
+          <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.beforeValue)">
+            {{ record.beforeValue }}
+          </span>
         </div>
         <!-- afterValue -->
-        <div slot="afterValue" slot-scope="record">
+        <div slot="afterValue" slot-scope="record" class="auto-ellipsis">
           <a class="copy-icon-left" @click="$copy(record.afterValue)">
             <a-icon type="copy"/>
           </a>
-          <span class="pointer" title="预览" @click="preview(record.afterValue)">{{ record.afterValue }}</span>
+          <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.afterValue)">
+            {{ record.afterValue }}
+          </span>
         </div>
         <!-- 类型 -->
         <a-tag slot="type" slot-scope="record"
@@ -40,8 +46,7 @@
                 pattern: 'yyyy-MM-dd HH:mm:ss'
               })
             }}</span>
-          |
-          <span>{{ record.createTimeAgo }}</span>
+          ({{ record.createTimeAgo }})
         </div>
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
@@ -86,7 +91,7 @@ const columns = [
     scopedSlots: { customRender: 'beforeValue' },
     width: 200,
     ellipsis: true,
-    sorter: (a, b) => a.beforeValue.localeCompare(b.beforeValue)
+    sorter: (a, b) => (a.beforeValue || '').localeCompare(b.beforeValue || '')
   },
   {
     title: 'afterValue',
@@ -94,7 +99,7 @@ const columns = [
     scopedSlots: { customRender: 'afterValue' },
     width: 200,
     ellipsis: true,
-    sorter: (a, b) => a.afterValue.localeCompare(b.afterValue)
+    sorter: (a, b) => (a.afterValue || '').localeCompare(b.afterValue || '')
   },
   {
     title: '类型',
@@ -115,13 +120,13 @@ const columns = [
     key: 'createTime',
     scopedSlots: { customRender: 'createTime' },
     sorter: (a, b) => a.createTime - b.createTime,
-    width: 150,
+    width: 220,
     align: 'center'
   },
   {
     title: '操作',
     key: 'action',
-    width: 80,
+    width: 90,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
