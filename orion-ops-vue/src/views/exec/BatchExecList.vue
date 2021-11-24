@@ -60,14 +60,14 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
                @change="getList"
-               :loading="loading"
                :scroll="{x: '100%'}"
+               :loading="loading"
                size="middle">
         <!-- 主机 -->
         <div slot="machine" slot-scope="record">
@@ -184,7 +184,8 @@ const columns = [
     key: 'status',
     width: 100,
     align: 'center',
-    scopedSlots: { customRender: 'status' }
+    scopedSlots: { customRender: 'status' },
+    sorter: (a, b) => a.status - b.status
   },
   {
     title: '退出码',

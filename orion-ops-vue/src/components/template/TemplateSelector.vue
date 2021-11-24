@@ -24,12 +24,13 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
                @change="getList"
+               :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
@@ -84,13 +85,13 @@ const columns = [
     dataIndex: 'description',
     key: 'description',
     width: 140,
-    ellipsis: true,
-    sorter: (a, b) => a.description.localeCompare(b.description)
+    ellipsis: true
   },
   {
     title: '操作',
     key: 'action',
     width: 60,
+    fixed: 'right',
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }

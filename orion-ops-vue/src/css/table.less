@@ -17,7 +17,7 @@
 
 .table-tools-bar {
   background-color: #FFF;
-  padding: 8px;
+  padding: 8px 12px;
   height: 56px;
   border-radius: 4px 4px 0 0;
   display: flex;
@@ -60,3 +60,20 @@
   border-radius: 0 0 4px 4px;
 }
 
+.table-main-container.table-scroll-x-auto {
+  .ant-table-body-inner, .ant-table-body, .ant-table-header {
+    overflow-x: auto !important;
+  }
+}
+
+.table-main-container.table-scroll-y-auto {
+  .ant-table-body-inner, .ant-table-body, .ant-table-header {
+    overflow-y: auto !important;
+  }
+}
+
+.table-main-container.table-scroll-auto {
+  .ant-table-body-inner, .ant-table-body, .ant-table-header {
+    overflow: auto !important;
+  }
+}

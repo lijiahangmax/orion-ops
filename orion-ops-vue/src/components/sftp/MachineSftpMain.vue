@@ -18,7 +18,7 @@
       <!-- 右侧主体 -->
       <div class="sftp-body-container" :style="{width: leftFolderVisible ? '83.3%' : '100%'}">
         <!-- 头部 -->
-        <div class="sftp-header">
+        <div class="table-tools-bar">
           <div class="sftp-bar-left">
             <!-- home -->
             <div class="sftp-home">
@@ -76,23 +76,25 @@
           </div>
         </div>
         <!-- 文件列表 -->
-        <div class="sftp-file-list-container">
+        <div class="table-main-container table-scroll-x-auto">
           <a-table :columns="columns"
                    :dataSource="files"
                    :pagination="pagination"
                    :rowSelection="rowSelection"
-                   :loading="loading"
-                   @change="changePage"
                    rowKey="path"
+                   @change="changePage"
+                   :scroll="{x: '100%'}"
+                   :loading="loading"
                    size="small">
             <!-- 名称 -->
             <div slot="name" slot-scope="record" class="file-name-cols">
               <!-- 图标 -->
               <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
                       :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).title"
-                      class="file-name-cols-icon"/>
+                      class="file-name-cols-icon pointer"
+                      @click="$copy(record.name)"/>
               <!-- 名称 -->
-              <a v-if="record.isDir" @click="listFiles(record.path)">{{ record.name }}</a>
+              <a v-if="record.isDir" @click="listFiles(record.path)" :title="record.name">{{ record.name }}</a>
               <span v-else>{{ record.name }}</span>
             </div>
             <!-- 名称筛选图标 -->
@@ -201,6 +203,7 @@ const fileListColumns = function() {
       title: '名称',
       key: 'name',
       width: 330,
+      ellipsis: true,
       scopedSlots: {
         customRender: 'name',
         filterDropdown: 'nameFilterDropdown',
@@ -220,26 +223,27 @@ const fileListColumns = function() {
       title: '大小',
       dataIndex: 'size',
       key: 'size',
-      width: 60,
+      width: 100,
       sorter: (a, b) => a.sizeByte - b.sizeByte
     },
     {
       title: '属性',
       dataIndex: 'attr',
       key: 'attr',
-      width: 70
+      width: 100
     },
     {
       title: '修改时间',
       key: 'modifyTime',
-      width: 110,
+      width: 150,
       scopedSlots: { customRender: 'modifyTime' },
       sorter: (a, b) => a.modifyTime - b.modifyTime
     },
     {
       title: '操作',
       key: 'operation',
-      width: 120,
+      width: 160,
+      fixed: 'right',
       scopedSlots: { customRender: 'action' }
     }
   ]
@@ -290,7 +294,7 @@ export default {
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
-        columnWidth: '25px',
+        columnWidth: '30px',
         onChange: (keys, rows) => {
           this.selectedRowKeys = keys
           this.selectedRows = rows
@@ -509,7 +513,7 @@ export default {
 
   .sftp-body-container {
     background-color: #FFF;
-    padding: 12px;
+    padding: 0 4px 4px 4px;;
     margin-left: 4px;
     border-radius: 4px;
   }
@@ -517,7 +521,7 @@ export default {
 
 #sftp-left-fixed {
   margin-right: 0.7%;
-  padding: 12px;
+  padding: 12px 4px 12px 12px;
   background-color: #FFF;
   border-radius: 4px;
 
@@ -529,6 +533,7 @@ export default {
     overflow: auto;
     min-height: 25vh;
     max-height: calc(100vh - 130px);
+    margin-top: 4px;
   }
 }
 

@@ -45,14 +45,14 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
                @change="getList"
-               :loading="loading"
                :scroll="{x: '100%'}"
+               :loading="loading"
                size="middle">
         <!-- 主机 -->
         <div slot="machine" slot-scope="record">
@@ -140,7 +140,7 @@ const columns = [
     key: 'name',
     dataIndex: 'name',
     ellipsis: true,
-    width: 150,
+    width: 160,
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
@@ -148,7 +148,7 @@ const columns = [
     key: 'path',
     ellipsis: true,
     scopedSlots: { customRender: 'path' },
-    width: 220,
+    width: 270,
     sorter: (a, b) => a.path.localeCompare(b.path)
   },
   {
@@ -156,13 +156,13 @@ const columns = [
     key: 'command',
     ellipsis: true,
     scopedSlots: { customRender: 'command' },
-    width: 220
+    width: 230
   },
   {
     title: '偏移量(行)',
     key: 'offset',
     dataIndex: 'offset',
-    width: 100,
+    width: 110,
     sorter: (a, b) => a.offset - b.offset
   },
   {
@@ -184,7 +184,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 180,
+    width: 170,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
