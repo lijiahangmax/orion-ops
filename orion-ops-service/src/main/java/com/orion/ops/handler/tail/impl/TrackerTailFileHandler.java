@@ -46,10 +46,10 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
 
     private volatile boolean close;
 
-    public TrackerTailFileHandler(String token, WebSocketSession session, TailFileHint hint) {
-        this.token = token;
-        this.session = session;
+    public TrackerTailFileHandler(TailFileHint hint, WebSocketSession session) {
+        this.token = hint.getToken();
         this.hint = hint;
+        this.session = session;
         log.info("tail TRACKER 监听文件初始化 token: {}, hint: {}", token, JSON.toJSONString(hint));
     }
 

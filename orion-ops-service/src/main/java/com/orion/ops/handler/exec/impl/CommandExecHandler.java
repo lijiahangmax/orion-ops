@@ -82,7 +82,7 @@ public class CommandExecHandler extends AbstractExecHandler {
             }
             sb.append(Letters.LF)
                     .append("# 执行命令\n")
-                    .append(record.getExecCommand())
+                    .append(record.getExecCommand()).append(Letters.LF)
                     .append(Letters.LF)
                     .append("# 开始执行\n");
             logOutputStream.write(Strings.bytes(sb.toString()));
