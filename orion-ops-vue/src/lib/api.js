@@ -72,7 +72,7 @@ const $api = {
    * 修改密码
    */
   resetPassword: param => {
-    return $http.$post('/auth/reset', param, { skipErrorMessage: true })
+    return $http.$post('/auth/reset', param)
   },
 
   /**
@@ -80,13 +80,6 @@ const $api = {
    */
   getMenu: () => {
     return $http.$post('/common/menu')
-  },
-
-  /**
-   * 环境列表
-   */
-  getProfileList: param => {
-    return $http.$post('/app-profile/list', param)
   },
 
   /**
@@ -101,6 +94,43 @@ const $api = {
    */
   getUserDetail: param => {
     return $http.$post('/user/detail', param)
+  },
+
+  /**
+   * 新增用户
+   */
+  addUser: param => {
+    return $http.$post('/user/add', param)
+  },
+
+  /**
+   * 更新用户
+   */
+  updateUser: param => {
+    return $http.$post('/user/update', param)
+  },
+
+  /**
+   * 更新用户
+   */
+  updateAvatar: param => {
+    return $http.$post('/user/update/avatar', param, {
+      timeout: 60000
+    })
+  },
+
+  /**
+   * 删除用户
+   */
+  deleteUser: param => {
+    return $http.$post('/user/delete', param)
+  },
+
+  /**
+   * 更新用户
+   */
+  updateUserStatus: param => {
+    return $http.$post('/user/status', param)
   },
 
   /**
@@ -432,6 +462,13 @@ const $api = {
   },
 
   /**
+   * 机器代理详情
+   */
+  getMachineProxyDetail: param => {
+    return $http.$post('/proxy/detail', param)
+  },
+
+  /**
    * 删除机器代理
    */
   deleteMachineProxy: param => {
@@ -464,6 +501,13 @@ const $api = {
    */
   getMachineKeyList: param => {
     return $http.$post('/key/list', param)
+  },
+
+  /**
+   * 查询秘钥详情
+   */
+  getMachineKeyDetail: param => {
+    return $http.$post('/key/detail', param)
   },
 
   /**
@@ -527,6 +571,13 @@ const $api = {
    */
   getMachineEnvList: param => {
     return $http.$post('/env/list', param)
+  },
+
+  /**
+   * 获取机器环境变量详情
+   */
+  getMachineEnvDetail: param => {
+    return $http.$post('/env/detail', param)
   },
 
   /**
@@ -656,10 +707,101 @@ const $api = {
   },
 
   /**
+   * 获取 tail 详情
+   */
+  getTailDetail: param => {
+    return $http.$post('/file-tail/detail', param)
+  },
+
+  /**
    * 获取 tail 机器默认配置
    */
   getTailConfig: param => {
     return $http.$post('/file-tail/config', param, { skipErrorMessage: true })
+  },
+
+  /**
+   * 应用环境列表
+   */
+  getProfileList: param => {
+    return $http.$post('/app-profile/list', param)
+  },
+
+  /**
+   * 应用环境详情
+   */
+  getProfileDetail: param => {
+    return $http.$post('/app-profile/detail', param)
+  },
+
+  /**
+   * 添加应用环境
+   */
+  addProfile: param => {
+    return $http.$post('/app-profile/add', param)
+  },
+
+  /**
+   * 修改应用环境
+   */
+  updateProfile: param => {
+    return $http.$post('/app-profile/update', param)
+  },
+
+  /**
+   * 删除应用环境
+   */
+  deleteProfile: param => {
+    return $http.$post('/app-profile/delete', param)
+  },
+
+  /**
+   * 添加应用环境变量
+   */
+  addAppEnv: param => {
+    return $http.$post('/app-env/add', param)
+  },
+
+  /**
+   * 删除应用环境变量
+   */
+  deleteAppEnv: param => {
+    return $http.$post('/app-env/delete', param)
+  },
+
+  /**
+   * 修改应用环境变量
+   */
+  updateAppEnv: param => {
+    return $http.$post('/app-env/update', param)
+  },
+
+  /**
+   * 应用环境变量列表
+   */
+  getAppEnvList: param => {
+    return $http.$post('/app-env/list', param)
+  },
+
+  /**
+   * 应用环境变量详情
+   */
+  getAppEnvDetail: param => {
+    return $http.$post('/app-env/detail', param)
+  },
+
+  /**
+   * 应用环境变量视图
+   */
+  getAppEnvView: param => {
+    return $http.$post('/app-env/view', param)
+  },
+
+  /**
+   * 获取应用列表
+   */
+  getAppList: param => {
+    return $http.$post('/app-info/list', param)
   }
 
 }
