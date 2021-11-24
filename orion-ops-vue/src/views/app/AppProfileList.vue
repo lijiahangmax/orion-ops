@@ -37,7 +37,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container">
+    <div class="table-main-container table-scroll-x-auto">
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
@@ -119,7 +119,7 @@ const columns = [
     ellipsis: true,
     scopedSlots: { customRender: 'releaseAudit' },
     align: 'center',
-    width: 100,
+    width: 120,
     sorter: (a, b) => a.releaseAudit - b.releaseAudit
   },
   {
@@ -134,7 +134,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 180,
+    width: 140,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
