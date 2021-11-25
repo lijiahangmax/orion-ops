@@ -17,24 +17,9 @@ import java.util.Map;
 public enum EnvViewType {
 
     /**
-     * xml
-     */
-    XML(10) {
-        @Override
-        public String toValue(Map<String, String> value) {
-            return AttrConverts.toXml(value);
-        }
-
-        @Override
-        public MutableLinkedHashMap<String, String> toMap(String value) {
-            return AttrConverts.fromXml(value);
-        }
-    },
-
-    /**
      * json
      */
-    JSON(20) {
+    JSON(10) {
         @Override
         public String toValue(Map<String, String> value) {
             return AttrConverts.toJson(value);
@@ -47,9 +32,39 @@ public enum EnvViewType {
     },
 
     /**
+     * xml
+     */
+    XML(20) {
+        @Override
+        public String toValue(Map<String, String> value) {
+            return AttrConverts.toXml(value);
+        }
+
+        @Override
+        public MutableLinkedHashMap<String, String> toMap(String value) {
+            return AttrConverts.fromXml(value);
+        }
+    },
+
+    /**
+     * yml
+     */
+    YML(30) {
+        @Override
+        public String toValue(Map<String, String> value) {
+            return AttrConverts.toYml(value);
+        }
+
+        @Override
+        public MutableLinkedHashMap<String, String> toMap(String value) {
+            return AttrConverts.fromYml(value);
+        }
+    },
+
+    /**
      * properties
      */
-    PROPERTIES(30) {
+    PROPERTIES(40) {
         @Override
         public String toValue(Map<String, String> value) {
             return AttrConverts.toProperties(value);

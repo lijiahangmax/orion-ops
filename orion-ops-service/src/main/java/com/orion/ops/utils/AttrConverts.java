@@ -4,14 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.orion.lang.collect.MutableArrayList;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.ops.consts.Const;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
-import com.orion.utils.ext.dom.DomBuilder;
-import com.orion.utils.ext.dom.DomElement;
-import com.orion.utils.ext.dom.DomExt;
-import com.orion.utils.ext.dom.DomSupport;
+import com.orion.utils.ext.dom.*;
+import org.dom4j.io.OutputFormat;
+import org.ho.yaml.Yaml;
 
 import java.util.Map;
 
@@ -24,26 +24,13 @@ import java.util.Map;
  */
 public class AttrConverts {
 
-    private AttrConverts() {
-    }
+    private static final String XML_ROOT_TAG = "root";
 
-    /**
-     * env -> xml
-     *
-     * @param attrs env
-     * @return xml
-     */
-    public static String toXml(Map<String, String> attrs) {
-        DomBuilder builder = DomBuilder.create();
-        DomElement root = builder.createRootElement("env");
-        attrs.forEach((k, v) -> {
-            DomElement child = new DomElement(k, v);
-            if (DomSupport.isEscape(v)) {
-                child.cdata();
-            }
-            root.addChildNode(child);
-        });
-        return builder.build().getFormatXml();
+    private static final String XML_NODE_TAG = "env";
+
+    private static final String XML_NODE_KEY_ATTR = "key";
+
+    private AttrConverts() {
     }
 
     /**
@@ -54,6 +41,41 @@ public class AttrConverts {
      */
     public static String toJson(Map<String, String> attrs) {
         return JSON.toJSONString(attrs, SerializerFeature.PrettyFormat);
+    }
+
+    /**
+     * env -> xml
+     *
+     * @param attrs env
+     * @return xml
+     */
+    public static String toXml(Map<String, String> attrs) {
+        DomBuilder builder = DomBuilder.create();
+        DomElement root = builder.createRootElement(XML_ROOT_TAG);
+        attrs.forEach((k, v) -> {
+            DomElement child = new DomElement(XML_NODE_TAG, v);
+            child.addAttributes(XML_NODE_KEY_ATTR, k);
+            if (DomSupport.isEscape(v)) {
+                child.cdata();
+            }
+            root.addChildNode(child);
+        });
+        builder.build();
+        OutputFormat format = new OutputFormat(Const.SPACE_4, true);
+        format.setExpandEmptyElements(true);
+        // 隐藏头
+        format.setSuppressDeclaration(true);
+        return DomSupport.format(builder.getDocument(), format).substring(1);
+    }
+
+    /**
+     * env -> yml
+     *
+     * @param attrs env
+     * @return yml
+     */
+    public static String toYml(Map<String, String> attrs) {
+        return Yaml.dump(attrs).substring(30);
     }
 
     /**
@@ -71,20 +93,6 @@ public class AttrConverts {
     }
 
     /**
-     * xml -> env
-     *
-     * @param xml xml
-     * @return env
-     */
-    public static MutableLinkedHashMap<String, String> fromXml(String xml) {
-        MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
-        DomExt.of(xml).toDomNode().forEach((k, v) -> {
-            map.put(k, v.getStringValue());
-        });
-        return map;
-    }
-
-    /**
      * json -> env
      *
      * @param json xml
@@ -95,6 +103,40 @@ public class AttrConverts {
         JSONObject res = JSON.parseObject(json, Feature.OrderedField);
         res.forEach((k, v) -> map.put(k, v + Strings.EMPTY));
         return map;
+    }
+
+    /**
+     * xml -> env
+     *
+     * @param xml xml
+     * @return env
+     */
+    public static MutableLinkedHashMap<String, String> fromXml(String xml) {
+        MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
+        MutableArrayList<DomNode> list = DomExt.of(xml).toDomNode().get(XML_NODE_TAG).getListValue();
+        list.forEach(e -> {
+            Map<String, String> attr = e.getAttr();
+            if (Maps.isEmpty(attr)) {
+                return;
+            }
+            String key = attr.get(XML_NODE_KEY_ATTR);
+            if (Strings.isBlank(key)) {
+                return;
+            }
+            map.put(key, e.getStringValue());
+        });
+        return map;
+    }
+
+    /**
+     * yml -> env
+     *
+     * @param yml yml
+     * @return env
+     */
+    @SuppressWarnings("unchecked")
+    public static MutableLinkedHashMap<String, String> fromYml(String yml) {
+        return Yaml.loadType(yml, MutableLinkedHashMap.class);
     }
 
     /**
