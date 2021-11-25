@@ -64,8 +64,17 @@ public class ApplicationProfileController {
      * 环境列表
      */
     @RequestMapping("/list")
-    public List<ApplicationProfileVO> listProfile(@RequestBody ApplicationProfileRequest request) {
-        return applicationProfileService.listProfile(request);
+    public List<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
+        return applicationProfileService.listProfiles(request);
+    }
+
+    /**
+     * 环境详情
+     */
+    @RequestMapping("/detail")
+    public ApplicationProfileVO getProfile(@RequestBody ApplicationProfileRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationProfileService.getProfile(id);
     }
 
 }

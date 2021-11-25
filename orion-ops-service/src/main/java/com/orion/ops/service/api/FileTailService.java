@@ -57,6 +57,14 @@ public interface FileTailService {
     DataGrid<FileTailVO> tailFileList(FileTailRequest request);
 
     /**
+     * tail 详情
+     *
+     * @param id id
+     * @return row
+     */
+    FileTailVO tailFileDetail(Long id);
+
+    /**
      * 更新 更新时间
      *
      * @param id id

@@ -90,6 +90,15 @@ public class FileTailController {
     }
 
     /**
+     * tail 文件详情
+     */
+    @RequestMapping("/detail")
+    public FileTailVO tailFileDetail(@RequestBody FileTailRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return fileTailService.tailFileDetail(id);
+    }
+
+    /**
      * 获取机器默认配置
      */
     @RequestMapping("/config")

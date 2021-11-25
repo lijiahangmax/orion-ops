@@ -91,12 +91,20 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     }
 
     @Override
-    public List<ApplicationProfileVO> listProfile(ApplicationProfileRequest request) {
+    public List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
                 .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
-                .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag());
+                .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag())
+                .like(!Strings.isBlank(request.getDescription()), ApplicationProfileDO::getDescription, request.getDescription());
         List<ApplicationProfileDO> profileList = applicationProfileDAO.selectList(wrapper);
         return Converts.toList(profileList, ApplicationProfileVO.class);
+    }
+
+    @Override
+    public ApplicationProfileVO getProfile(Long id) {
+        ApplicationProfileDO profile = applicationProfileDAO.selectById(id);
+        Valid.notNull(profile, MessageConst.UNKNOWN_DATA);
+        return Converts.to(profile, ApplicationProfileVO.class);
     }
 
     /**

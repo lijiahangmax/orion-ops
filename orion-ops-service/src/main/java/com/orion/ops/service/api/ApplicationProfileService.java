@@ -44,6 +44,14 @@ public interface ApplicationProfileService {
      * @param request request
      * @return rows
      */
-    List<ApplicationProfileVO> listProfile(ApplicationProfileRequest request);
+    List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request);
+
+    /**
+     * 环境详情
+     *
+     * @param id id
+     * @return rows
+     */
+    ApplicationProfileVO getProfile(Long id);
 
 }
