@@ -32,6 +32,14 @@ public interface MachineProxyService {
     DataGrid<MachineProxyVO> listProxy(MachineProxyRequest request);
 
     /**
+     * 查询详情
+     *
+     * @param id id
+     * @return row
+     */
+    MachineProxyVO getProxyDetail(Long id);
+
+    /**
      * 删除代理
      *
      * @param idList idList

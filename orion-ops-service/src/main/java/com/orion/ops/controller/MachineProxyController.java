@@ -62,6 +62,15 @@ public class MachineProxyController {
     }
 
     /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public MachineProxyVO detail(@RequestBody MachineProxyRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return machineProxyService.getProxyDetail(id);
+    }
+
+    /**
      * 删除
      */
     @RequestMapping("/delete")

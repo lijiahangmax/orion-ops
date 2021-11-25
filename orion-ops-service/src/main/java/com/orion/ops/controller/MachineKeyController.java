@@ -87,6 +87,15 @@ public class MachineKeyController {
     }
 
     /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public MachineSecretKeyVO getKeyDetail(@RequestBody MachineKeyRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return machineKeyService.getKeyDetail(id);
+    }
+
+    /**
      * 挂载秘钥
      */
     @RequestMapping("/mount")

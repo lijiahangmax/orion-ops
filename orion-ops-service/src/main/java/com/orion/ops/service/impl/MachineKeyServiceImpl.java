@@ -5,6 +5,7 @@ import com.orion.id.ObjectIds;
 import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MountKeyStatus;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
@@ -18,6 +19,7 @@ import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
+import com.orion.utils.convert.Converts;
 import com.orion.utils.io.FileWriters;
 import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
@@ -148,8 +150,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             List<String> loadKeys = SessionHolder.getLoadKeys();
             for (MachineSecretKeyVO row : dataGrid.getRows()) {
                 String path = row.getPath();
-                File file = new File(MachineKeyService.getKeyPath(path));
-                boolean isFile = Files1.isFile(file);
+                boolean isFile = Files1.isFile(new File(MachineKeyService.getKeyPath(path)));
                 if (isFile) {
                     boolean match = loadKeys.stream().anyMatch(key -> key.endsWith(path));
                     if (match) {
@@ -175,6 +176,22 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             newDataGrid.setLimit(limit);
             return newDataGrid;
         }
+    }
+
+    @Override
+    public MachineSecretKeyVO getKeyDetail(Long id) {
+        MachineSecretKeyDO key = machineSecretKeyDAO.selectById(id);
+        Valid.notNull(key, MessageConst.UNKNOWN_DATA);
+        MachineSecretKeyVO vo = Converts.to(key, MachineSecretKeyVO.class);
+        // 设置挂载状态
+        String path = vo.getPath();
+        boolean isFile = Files1.isFile(new File(MachineKeyService.getKeyPath(path)));
+        if (isFile) {
+            vo.setMountStatus(this.getMountStatus(path));
+        } else {
+            vo.setMountStatus(MountKeyStatus.NOT_FOUND.getStatus());
+        }
+        return vo;
     }
 
     @Override

@@ -37,7 +37,7 @@ public interface MachineKeyService {
     Integer updateSecretKey(MachineKeyRequest request);
 
     /**
-     * 删除key
+     * 删除 key
      *
      * @param idList idList
      * @return effect
@@ -45,7 +45,7 @@ public interface MachineKeyService {
     Integer removeSecretKey(List<Long> idList);
 
     /**
-     * 通过id查询key
+     * 通过 id 查询 key
      *
      * @param id id
      * @return key
@@ -53,12 +53,20 @@ public interface MachineKeyService {
     MachineSecretKeyDO getKeyById(Long id);
 
     /**
-     * 查询keys
+     * 查询秘钥列表
      *
      * @param request request
      * @return dataGrid
      */
     DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request);
+
+    /**
+     * 查询秘钥详情
+     *
+     * @param id id
+     * @return row
+     */
+    MachineSecretKeyVO getKeyDetail(Long id);
 
     /**
      * 挂载秘钥
