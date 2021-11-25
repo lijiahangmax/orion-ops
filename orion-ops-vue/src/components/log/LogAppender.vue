@@ -106,7 +106,10 @@ export default {
         } else {
           msg = ' '
         }
-        this.$refs.logContainer.innerHTML += `<pre class="log-line">${msg}</pre>`
+        const pre = document.createElement('pre')
+        pre.className = 'log-line'
+        pre.innerText = msg
+        this.$refs.logContainer.appendChild(pre)
         if (!this.fixedLog) {
           this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
         }
@@ -171,7 +174,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  padding: 6px 4px;
+  padding: 6px 0;
 
   .log-tools-fixed-left {
     width: 50%;
