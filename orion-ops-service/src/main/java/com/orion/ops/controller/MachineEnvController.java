@@ -1,13 +1,17 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvViewType;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
+import com.orion.utils.collect.Maps;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 环境变量
@@ -81,6 +84,8 @@ public class MachineEnvController {
     //   private Long targetMachineId;
     // }
 
+    // save merge diff
+
     /**
      * 列表
      */
@@ -88,6 +93,15 @@ public class MachineEnvController {
     public DataGrid<MachineEnvVO> list(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getMachineId());
         return machineEnvService.listEnv(request);
+    }
+
+    /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public MachineEnvVO detail(@RequestBody MachineEnvRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return machineEnvService.getEnv(id);
     }
 
     /**
@@ -99,9 +113,26 @@ public class MachineEnvController {
         EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
         request.setLimit(Const.N_100000);
         // 查询列表
-        Map<String, String> envs = machineEnvService.listEnv(request).stream()
-                .collect(Collectors.toMap(MachineEnvVO::getKey, MachineEnvVO::getValue));
-        return viewType.toValue(envs);
+        Map<String, String> env = Maps.newLinkedMap();
+        machineEnvService.listEnv(request).forEach(e -> env.put(e.getKey(), e.getValue()));
+        return viewType.toValue(env);
+    }
+
+    /**
+     * 视图保存
+     */
+    @RequestMapping("/view/save")
+    public Integer viewSave(@RequestBody MachineEnvRequest request) {
+        Long machineId = Valid.notNull(request.getMachineId());
+        String value = Valid.notBlank(request.getValue());
+        EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
+        try {
+            MutableLinkedHashMap<String, String> result = viewType.toMap(value);
+            machineEnvService.batchAddEnv(machineId, result);
+            return result.size();
+        } catch (Exception e) {
+            throw Exceptions.argument(MessageConst.PARSE_ERROR, e);
+        }
     }
 
 }

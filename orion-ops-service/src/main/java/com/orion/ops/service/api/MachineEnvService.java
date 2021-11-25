@@ -6,6 +6,7 @@ import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 环境变量服务
@@ -23,6 +24,14 @@ public interface MachineEnvService {
      * @return id
      */
     Long addEnv(MachineEnvRequest request);
+
+    /**
+     * 批量添加
+     *
+     * @param machineId machineId
+     * @param env       env
+     */
+    void batchAddEnv(Long machineId, Map<String, String> env);
 
     /**
      * 修改 变量
@@ -53,9 +62,17 @@ public interface MachineEnvService {
      * 列表
      *
      * @param request request
-     * @return effect
+     * @return rows
      */
     DataGrid<MachineEnvVO> listEnv(MachineEnvRequest request);
+
+    /**
+     * 详情
+     *
+     * @param id id
+     * @return row
+     */
+    MachineEnvVO getEnv(Long id);
 
     /**
      * 获取机器变量

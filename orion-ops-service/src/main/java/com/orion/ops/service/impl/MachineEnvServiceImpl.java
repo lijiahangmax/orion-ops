@@ -20,15 +20,18 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -51,6 +54,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     private HistoryValueService historyValueService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addEnv(MachineEnvRequest request) {
         // 查询
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
@@ -76,6 +80,19 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         Long id = insert.getId();
         historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.ADD, null, request.getValue());
         return id;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAddEnv(Long machineId, Map<String, String> env) {
+        MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
+        env.forEach((k, v) -> {
+            MachineEnvRequest request = new MachineEnvRequest();
+            request.setMachineId(machineId);
+            request.setKey(k);
+            request.setValue(v);
+            self.addEnv(request);
+        });
     }
 
     @Override
@@ -167,6 +184,13 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(MachineEnvVO.class);
+    }
+
+    @Override
+    public MachineEnvVO getEnv(Long id) {
+        MachineEnvDO env = machineEnvDAO.selectById(id);
+        Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+        return Converts.to(env, MachineEnvVO.class);
     }
 
     @Override

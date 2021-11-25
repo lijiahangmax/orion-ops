@@ -8,6 +8,7 @@ import com.orion.lang.collect.MutableArrayList;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.ops.consts.Const;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.ext.dom.*;
 import org.dom4j.io.OutputFormat;
@@ -113,7 +114,14 @@ public class AttrConverts {
      */
     public static MutableLinkedHashMap<String, String> fromXml(String xml) {
         MutableLinkedHashMap<String, String> map = Maps.newMutableLinkedMap();
-        MutableArrayList<DomNode> list = DomExt.of(xml).toDomNode().get(XML_NODE_TAG).getListValue();
+        DomNode domNode = DomExt.of(xml).toDomNode().get(XML_NODE_TAG);
+        MutableArrayList<DomNode> list;
+        if (domNode.getValueClass() == String.class) {
+            list = Lists.newMutableList();
+            list.add(domNode);
+        } else {
+            list = domNode.getListValue();
+        }
         list.forEach(e -> {
             Map<String, String> attr = e.getAttr();
             if (Maps.isEmpty(attr)) {
