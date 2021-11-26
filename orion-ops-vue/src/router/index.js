@@ -94,7 +94,7 @@ const routes = [
         component: () => import('../views/machine/MachineList')
       },
       {
-        path: '/machine/env',
+        path: '/machine/env/:id?',
         name: 'machineEnv',
         meta: {
           requireAuth: true,
@@ -168,15 +168,15 @@ const routes = [
       },
       {
         path: '/app/profile',
-        name: 'appProfile',
+        name: 'appProfileList',
         meta: {
           requireAuth: true,
           title: '环境管理'
         },
-        component: () => import('../views/app/AppProfile')
+        component: () => import('../views/app/AppProfileList')
       },
       {
-        path: '/app/env',
+        path: '/app/env/:id?',
         name: 'appEnv',
         meta: {
           requireAuth: true,

@@ -288,8 +288,7 @@ const moreMenuHandler = {
   },
   openEnv(record) {
     this.$router.push({
-      path: '/machine/env',
-      query: { machineId: record.id }
+      path: `/machine/env/${record.id}`
     })
   }
 }
