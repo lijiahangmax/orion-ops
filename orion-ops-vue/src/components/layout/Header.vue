@@ -6,7 +6,10 @@
             @click="changeFold"/>
     <div class="header-fixed-right">
       <!-- 环境选择 -->
-      <HeaderProfileSelect v-if="profileSelectorVisible" id="header-profile-selector" class="header-block-container"/>
+      <HeaderProfileSelect id="header-profile-selector"
+                           class="header-block-container"
+                           v-if="profileSelectorVisible"
+                           @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
       <!-- 用户下拉 -->
       <HeaderUser id="header-user" class="header-block-container"/>
     </div>

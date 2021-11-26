@@ -1,13 +1,19 @@
 <template>
   <a-layout id="common-layout">
+    <!-- 左侧 -->
     <a-layout-sider id="common-sider" v-model="collapsed" :trigger="null">
       <!--  <div class="logo"/> -->
+      <!-- 左侧菜单 -->
       <Menu/>
     </a-layout-sider>
     <a-layout id="common-right">
-      <Header id="common-header" @changeFoldStatus="collapsed = !collapsed"/>
+      <!-- 头部菜单 -->
+      <Header id="common-header"
+              @changeFoldStatus="collapsed = !collapsed"
+              @chooseProfile="chooseProfile"/>
+      <!-- 主体部分 -->
       <a-layout-content id="common-content">
-        <router-view/>
+        <router-view ref="route"/>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -25,6 +31,11 @@ export default {
   data() {
     return {
       collapsed: false
+    }
+  },
+  methods: {
+    chooseProfile(e) {
+      this.$refs.route.chooseProfile && this.$refs.route.chooseProfile(e)
     }
   }
 }

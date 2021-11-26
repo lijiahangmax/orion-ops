@@ -25,6 +25,7 @@ export default {
     chooseProfile({ key }) {
       this.currentProfile = JSON.parse(key)
       this.$storage.set(this.$storage.keys.ACTIVE_PROFILE, key)
+      this.$emit('chooseProfile', this.currentProfile)
     }
   },
   mounted() {
