@@ -433,18 +433,23 @@ const $enum = {
       name: '表格',
       lang: null
     },
-    XML: {
-      value: 10,
-      name: 'xml',
-      lang: 'xml'
-    },
     JSON: {
-      value: 20,
+      value: 10,
       name: 'json',
       lang: 'json'
     },
-    PROPERTIES: {
+    XML: {
+      value: 20,
+      name: 'xml',
+      lang: 'xml'
+    },
+    YML: {
       value: 30,
+      name: 'yml',
+      lang: 'yaml'
+    },
+    PROPERTIES: {
+      value: 40,
       name: 'properties',
       lang: 'properties'
     }

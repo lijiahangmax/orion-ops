@@ -72,12 +72,14 @@ export default {
       require('brace/ext/language_tools')
       // 设置语言
       require('brace/mode/sh')
-      require('brace/mode/xml')
       require('brace/mode/json')
+      require('brace/mode/xml')
+      require('brace/mode/yaml')
       require('brace/mode/properties')
       require('brace/snippets/sh')
-      require('brace/snippets/xml')
       require('brace/snippets/json')
+      require('brace/snippets/xml')
+      require('brace/snippets/yaml')
       require('brace/snippets/properties')
       // 设置主题
       // 浅色 iplastic sqlserver tomorrow xcode
