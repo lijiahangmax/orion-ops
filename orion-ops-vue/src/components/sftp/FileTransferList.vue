@@ -2,18 +2,30 @@
   <div class="transfer-list-container">
     <!-- 工具栏 -->
     <div class="transfer-list-bar">
-      <a-icon type="reload" title="刷新" @click="getTransferList"/>
-      <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
-      <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
-      <a-icon type="sync" title="重试所有" @click="retryAll"/>
+      <div class="transfer-list-action">
+        <a-icon type="reload" title="刷新" @click="getTransferList"/>
+      </div>
+      <div class="transfer-list-action">
+        <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
+      </div>
+      <div class="transfer-list-action">
+        <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
+      </div>
+      <div class="transfer-list-action">
+        <a-icon type="sync" title="重试所有" @click="retryAll"/>
+      </div>
       <a-popconfirm placement="bottomRight"
                     title="是否要打包传输所有下载的文件?"
                     ok-text="确定"
                     cancel-text="取消"
                     @confirm="transferPackage">
-        <a-icon type="file-zip" title="打包下载"/>
+        <div class="transfer-list-action">
+          <a-icon type="file-zip" title="打包下载"/>
+        </div>
       </a-popconfirm>
-      <a-icon type="delete" title="清空" @click="clearAll"/>
+      <div class="transfer-list-action">
+        <a-icon type="delete" title="清空" @click="clearAll"/>
+      </div>
     </div>
     <div class="transfer-list-items" v-if="transferList.length === 0">
       <!-- 空数据 -->
@@ -23,15 +35,15 @@
       <!-- 文件行 -->
       <div v-for="item in transferList" :key="item.fileToken" class="transfer-list-item">
         <!-- 文件名称 -->
-        <div class="transfer-list-item-name">
+        <div class="transfer-list-item-name auto-ellipsis-item">
           <span :title="item.remoteFile">{{ item.remoteFile }}</span>
         </div>
         <div class="transfer-list-item-body">
           <!-- 类型 -->
           <div class="transfer-list-item-type">
             <a-tag
-              :color="$enum.valueOf($enum.SFTP_TRANSFER_STATUS,item.status).color"
-              :title="$enum.valueOf($enum.SFTP_TRANSFER_STATUS,item.status).label">
+              :color="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).color"
+              :title="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).label">
               {{ $enum.valueOf($enum.SFTP_TRANSFER_TYPE, item.type).label }}
             </a-tag>
           </div>
@@ -227,38 +239,50 @@ export default {
 .transfer-list-bar {
   display: flex;
   justify-content: flex-end;
-  padding-right: 10px;
   margin: 0 6px 6px 0;
   background-color: #F8F9FA;
-  padding: 5px;
-  border-radius: 5px;
-}
+  padding: 4px;
+  border-radius: 4px;
 
-.transfer-list-bar i {
-  font-size: 20px;
-  margin-left: 5px;
-  cursor: pointer;
-  color: #1C7ED6;
+  .transfer-list-action {
+    display: flex;
+    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 0 2px;
+    padding: 4px;
+    font-size: 20px;
+    color: #1C7ED6;
+  }
+
+  .transfer-list-action:hover {
+    color: hsla(0, 0%, 100%, .2);
+    background-color: #1C7ED6;
+    color: #FFF;
+  }
 }
 
 .transfer-list-items {
   width: 350px;
-  height: 245px;
+  min-height: 245px;
+  max-height: 284px;
   overflow-y: auto;
-}
 
-.transfer-list-item {
-  display: flex;
-  word-break: break-all;
-  flex-wrap: wrap;
-  flex-direction: column;
-  padding: 0 0 10px 5px;
-  box-shadow: 0 8px 8px #F8F9FA;
-}
+  .transfer-list-item {
+    padding: 0 0 10px 5px;
+    box-shadow: 0 8px 8px #F8F9FA;
+    margin: 2px 0;
+  }
 
-.transfer-list-item:hover {
-  background-color: #D0EBFF;
-  border-radius: 5px;
+  .transfer-list-item:hover {
+    background-color: #D0EBFF;
+    border-radius: 5px;
+  }
+
+  .transfer-list-item-name {
+    width: 100%;
+    padding: 4px 0;
+  }
 }
 
 .transfer-list-item-body {
@@ -266,28 +290,29 @@ export default {
   align-items: center;
   font-size: 18px;
   height: 30px;
-}
 
-.transfer-list-item-body i {
-  cursor: pointer;
-  margin-left: 3px;
-  color: #5C7CFA;
-}
+  i {
+    cursor: pointer;
+    margin-left: 3px;
+    color: #5C7CFA;
+  }
 
-.transfer-list-item-body i:hover {
-  color: #1C7ED6;
-}
+  i:hover {
+    color: #4263eb;
+  }
 
-.transfer-list-item-type {
-  margin-top: 5px;
-}
+  .transfer-list-item-type {
+    margin-top: 5px;
+  }
 
-.transfer-list-item-status {
-  width: 67%;
-}
+  .transfer-list-item-status {
+    width: 67%;
+  }
 
-.transfer-list-item-action {
-  margin: 5px 0 0 15px;
+  .transfer-list-item-action {
+    margin: 5px 0 0 15px;
+  }
+
 }
 
 </style>

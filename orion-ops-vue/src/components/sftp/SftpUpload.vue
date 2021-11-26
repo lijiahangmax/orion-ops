@@ -29,7 +29,7 @@
       </div>
       <!-- 文件列表 -->
       <div class="upload-file-list">
-        <a-upload :fileList="fileList" :remove="removeFile"></a-upload>
+        <a-upload :fileList="fileList" :remove="removeFile"/>
       </div>
     </div>
   </a-spin>
@@ -194,8 +194,9 @@ export default {
 }
 
 .upload-file-list {
-  min-height: 50px;
-  max-height: 165px;
+  margin-top: 6px;
+  min-height: 90px;
+  max-height: 205px;
   overflow-y: auto;
 }
 
