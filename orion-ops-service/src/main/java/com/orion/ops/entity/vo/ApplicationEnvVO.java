@@ -6,6 +6,8 @@ import com.orion.ops.entity.domain.ApplicationEnvDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 应用环境变量
  *
@@ -49,6 +51,16 @@ public class ApplicationEnvVO {
      */
     private Integer forbidDelete;
 
+    /**
+     * 描述
+     */
+    private String description;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
     static {
         TypeStore.STORE.register(ApplicationEnvDO.class, ApplicationEnvVO.class, p -> {
             ApplicationEnvVO vo = new ApplicationEnvVO();
@@ -57,6 +69,8 @@ public class ApplicationEnvVO {
             vo.setProfileId(p.getProfileId());
             vo.setKey(p.getAttrKey());
             vo.setValue(p.getAttrValue());
+            vo.setDescription(p.getDescription());
+            vo.setUpdateTime(p.getUpdateTime());
             Integer forbidDelete = ApplicationEnvAttr.of(p.getAttrKey()) == null ? Const.FORBID_DELETE_CAN : Const.FORBID_DELETE_NOT;
             vo.setForbidDelete(forbidDelete);
             return vo;

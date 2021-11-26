@@ -17,15 +17,18 @@ import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -52,6 +55,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     private HistoryValueService historyValueService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long addAppEnv(ApplicationEnvRequest request) {
         // 数据检查
         Long appId = request.getAppId();
@@ -85,6 +89,20 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         Long id = insert.getId();
         historyValueService.addHistory(id, HistoryValueType.APP_ENV, Const.ADD, null, request.getValue());
         return id;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAddAppEnv(Long appId, Long profileId, Map<String, String> env) {
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        env.forEach((k, v) -> {
+            ApplicationEnvRequest request = new ApplicationEnvRequest();
+            request.setAppId(appId);
+            request.setProfileId(profileId);
+            request.setKey(k);
+            request.setValue(v);
+            self.addAppEnv(request);
+        });
     }
 
     @Override
@@ -126,6 +144,8 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     public DataGrid<ApplicationEnvVO> listAppEnv(ApplicationEnvRequest request) {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .like(Strings.isNotBlank(request.getKey()), ApplicationEnvDO::getAttrKey, request.getKey())
+                .like(Strings.isNotBlank(request.getValue()), ApplicationEnvDO::getAttrValue, request.getValue())
+                .like(Strings.isNotBlank(request.getDescription()), ApplicationEnvDO::getDescription, request.getDescription())
                 .eq(ApplicationEnvDO::getAppId, request.getAppId())
                 .eq(ApplicationEnvDO::getProfileId, request.getProfileId())
                 .orderByAsc(ApplicationEnvDO::getId);
@@ -133,6 +153,13 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(ApplicationEnvVO.class);
+    }
+
+    @Override
+    public ApplicationEnvVO getAppEnvDetail(Long id) {
+        ApplicationEnvDO env = applicationEnvDAO.selectById(id);
+        Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+        return Converts.to(env, ApplicationEnvVO.class);
     }
 
     @Override

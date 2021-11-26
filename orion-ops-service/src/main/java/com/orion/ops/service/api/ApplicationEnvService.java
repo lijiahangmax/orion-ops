@@ -6,6 +6,7 @@ import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 应用环境api
@@ -25,6 +26,15 @@ public interface ApplicationEnvService {
     Long addAppEnv(ApplicationEnvRequest request);
 
     /**
+     * 批量添加应用变量
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @param env       env
+     */
+    void batchAddAppEnv(Long appId, Long profileId, Map<String, String> env);
+
+    /**
      * 删除应用变量
      *
      * @param idList idList
@@ -41,12 +51,20 @@ public interface ApplicationEnvService {
     Integer updateAppEnv(ApplicationEnvRequest request);
 
     /**
-     * 应用环境列表
+     * 应用环境变量列表
      *
      * @param request request
      * @return rows
      */
     DataGrid<ApplicationEnvVO> listAppEnv(ApplicationEnvRequest request);
+
+    /**
+     * 应用环境变量详情
+     *
+     * @param id id
+     * @return row
+     */
+    ApplicationEnvVO getAppEnvDetail(Long id);
 
     /**
      * 获取环境变量值
