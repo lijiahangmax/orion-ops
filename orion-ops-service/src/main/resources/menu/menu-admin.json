@@ -63,6 +63,10 @@
       {
         "name": "环境变量",
         "path": "/app/env"
+      },
+      {
+        "name": "版本仓库",
+        "path": "/app/vcs"
       }
     ]
   },
