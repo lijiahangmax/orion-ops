@@ -40,7 +40,7 @@ function getDecorators() {
       rules: [{
         required: true,
         max: 128,
-        message: '密码长度必须小于等于128位'
+        message: '密码长度不能大于128位'
       }]
     }]
   }

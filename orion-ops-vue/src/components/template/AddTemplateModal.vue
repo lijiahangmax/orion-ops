@@ -39,7 +39,7 @@ function getDecorators() {
         message: '请输入模板名称'
       }, {
         max: 32,
-        message: '模板名称长度必须小于等于32位'
+        message: '模板名称长度不能大于32位'
       }]
     }],
     value: ['value', {
@@ -49,13 +49,13 @@ function getDecorators() {
         message: '请输入模板内容'
       }, {
         max: 2048,
-        message: '模板内容长度必须小于等于2048位'
+        message: '模板内容长度不能大于2048位'
       }]
     }],
     description: ['description', {
       rules: [{
         max: 64,
-        message: '模板描述长度必须小于等于64位'
+        message: '模板描述长度不能大于64位'
       }]
     }]
   }

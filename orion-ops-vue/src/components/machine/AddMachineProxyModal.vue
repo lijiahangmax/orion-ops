@@ -52,7 +52,7 @@ function getDecorators() {
         message: '请输入主机'
       }, {
         max: 32,
-        message: '主机长度必须小于等于32位'
+        message: '主机长度不能大于32位'
       }]
     }],
     port: ['port', {
@@ -67,7 +67,7 @@ function getDecorators() {
     username: ['username', {
       rules: [{
         max: 128,
-        message: '用户名长度必须小于等于128位'
+        message: '用户名长度不能大于128位'
       }, {
         validator: this.validateUsername
       }]
@@ -75,7 +75,7 @@ function getDecorators() {
     password: ['password', {
       rules: [{
         max: 128,
-        message: '密码长度必须小于等于128位'
+        message: '密码长度不能大于128位'
       }, {
         validator: this.validatePassword
       }]
@@ -89,7 +89,7 @@ function getDecorators() {
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述长度必须小于等于64位'
+        message: '描述长度不能大于64位'
       }]
     }]
   }

@@ -14,7 +14,7 @@
           <a-input v-decorator="decorators.value"/>
         </a-form-item>
         <a-form-item label="描述">
-          <a-input v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description"/>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -38,7 +38,7 @@ function getDecorators() {
         message: '请输入key'
       }, {
         max: 128,
-        message: 'key长度必须小于等于128位'
+        message: 'key长度不能大于128位'
       }]
     }],
     value: ['value', {
@@ -47,13 +47,13 @@ function getDecorators() {
         message: '请输入value'
       }, {
         max: 512,
-        message: 'value长度必须小于等于512位'
+        message: 'value长度不能大于512位'
       }]
     }],
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述长度必须小于等于64位'
+        message: '描述长度不能大于64位'
       }]
     }]
   }

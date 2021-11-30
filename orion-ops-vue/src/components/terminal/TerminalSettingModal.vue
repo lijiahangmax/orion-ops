@@ -77,7 +77,7 @@ function getDecorators() {
         message: '请输入字体名称'
       }, {
         max: 64,
-        message: '字体名称长度必须小于等于64位'
+        message: '字体名称长度不能大于64位'
       }]
     }],
     fontColor: ['fontColor', {

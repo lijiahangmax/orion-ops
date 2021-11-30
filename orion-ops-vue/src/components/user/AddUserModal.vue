@@ -51,7 +51,7 @@ function getDecorators() {
         message: '请输入用户名'
       }, {
         max: 32,
-        message: '用户名长度必须小于等于32位'
+        message: '用户名长度不能大于32位'
       }]
     }],
     nickname: ['nickname', {
@@ -60,7 +60,7 @@ function getDecorators() {
         message: '请输入昵称'
       }, {
         max: 32,
-        message: '昵称长度必须小于等于32位'
+        message: '昵称长度不能大于32位'
       }]
     }],
     password: ['password', {

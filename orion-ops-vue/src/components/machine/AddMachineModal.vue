@@ -95,7 +95,7 @@ function getDecorators() {
         message: '请输入名称'
       }, {
         max: 32,
-        message: '名称长度必须小于等于32位'
+        message: '名称长度不能大于32位'
       }]
     }],
     tag: ['tag', {
@@ -104,7 +104,7 @@ function getDecorators() {
         message: '请输入tag'
       }, {
         max: 32,
-        message: 'tag长度必须小于等于32位'
+        message: 'tag长度不能大于32位'
       }]
     }],
     username: ['username', {
@@ -130,7 +130,7 @@ function getDecorators() {
     password: ['password', {
       rules: [{
         max: 128,
-        message: '密码长度必须小于等于128位'
+        message: '密码长度不能大于128位'
       }, {
         validator: this.validatePassword
       }]
@@ -139,7 +139,7 @@ function getDecorators() {
     description: ['description', {
       rules: [{
         max: 64,
-        message: '描述长度必须小于等于64位'
+        message: '描述长度不能大于64位'
       }]
     }]
   }
@@ -169,7 +169,7 @@ export default {
       if (!value) {
         callback(new Error('请输入用户名'))
       } else if (value.length > 32) {
-        callback(new Error('用户名长度必须小于等于32位'))
+        callback(new Error('用户名长度不能大于32位'))
       } else {
         callback()
       }
@@ -178,7 +178,7 @@ export default {
       if (!value) {
         callback(new Error('请输入主机'))
       } else if (value.length > 32) {
-        callback(new Error('主机长度必须小于等于32位'))
+        callback(new Error('主机长度不能大于32位'))
       } else {
         callback()
       }
