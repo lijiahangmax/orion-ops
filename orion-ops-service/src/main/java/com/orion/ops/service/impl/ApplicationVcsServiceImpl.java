@@ -134,15 +134,27 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 查询数据
         ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
+        // 判断状态
+        if (VcsStatus.INITIALIZING.getStatus().equals(vcs.getVcsStatus())) {
+            throw Exceptions.runtime(MessageConst.VCS_INITIALIZING);
+        } else if (VcsStatus.OK.getStatus().equals(vcs.getVcsStatus())) {
+            throw Exceptions.runtime(MessageConst.VCS_INITIALIZED);
+        }
+        // 修改状态
+        ApplicationVcsDO update = new ApplicationVcsDO();
+        update.setId(id);
+        update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
+        applicationVcsDAO.updateById(update);
+        // 初始化
         Exception ex = null;
         Gits gits = null;
         try {
-            // clone
+            // 设置地址
             File cloneFile = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
             if (cloneFile.isDirectory()) {
                 throw Exceptions.argument(MessageConst.VCS_PATH_PRESENT, Exceptions.runtime(cloneFile.getAbsolutePath()));
             }
-            // 初始化git
+            // clone
             if (vcs.getVscUsername() == null) {
                 gits = Gits.clone(vcs.getVscUrl(), cloneFile);
             } else {
@@ -156,14 +168,12 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             Streams.close(gits);
         }
         // 修改状态
-        ApplicationVcsDO entity = new ApplicationVcsDO();
-        entity.setId(id);
         if (ex == null) {
-            entity.setVcsStatus(VcsStatus.OK.getStatus());
+            update.setVcsStatus(VcsStatus.OK.getStatus());
         } else {
-            entity.setVcsStatus(VcsStatus.ERROR.getStatus());
+            update.setVcsStatus(VcsStatus.ERROR.getStatus());
         }
-        applicationVcsDAO.updateById(entity);
+        applicationVcsDAO.updateById(update);
         if (ex != null) {
             throw Exceptions.argument(MessageConst.VCS_INIT_ERROR, ex);
         }

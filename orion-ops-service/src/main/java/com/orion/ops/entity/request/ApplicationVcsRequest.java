@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
+import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * app 版本控制请求
@@ -10,17 +12,57 @@ import lombok.Data;
  * @since 2021/7/12 18:36
  */
 @Data
-public class ApplicationVcsRequest {
+@EqualsAndHashCode(callSuper = true)
+public class ApplicationVcsRequest extends PageRequest {
 
     /**
-     * 应用id
+     * id
      */
-    private Long appId;
+    private Long id;
 
     /**
-     * 环境id
+     * url
      */
-    private Long profileId;
+    private String url;
+
+    /**
+     * name
+     */
+    private String name;
+
+    /**
+     * 描述
+     */
+    private String description;
+
+    /**
+     * 类型 1git
+     *
+     * @see com.orion.ops.consts.app.VcsType
+     */
+    private Integer type;
+
+    /**
+     * 状态 10未初始化 20初始化中 30正常 40失败
+     *
+     * @see com.orion.ops.consts.app.VcsStatus
+     */
+    private Integer status;
+
+    /**
+     * 用户名
+     */
+    private String username;
+
+    /**
+     * 密码
+     */
+    private String password;
+
+    /**
+     * token
+     */
+    private String token;
 
     /**
      * 分支名称

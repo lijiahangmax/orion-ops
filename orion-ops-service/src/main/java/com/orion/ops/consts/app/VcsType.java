@@ -17,18 +17,18 @@ public enum VcsType {
     /**
      * git
      */
-    GIT("GIT"),
+    GIT(1),
 
     ;
 
-    private final String type;
+    private final Integer type;
 
-    public static VcsType of(String type) {
+    public static VcsType of(Integer type) {
         if (type == null) {
             return null;
         }
         for (VcsType value : values()) {
-            if (value.type.equalsIgnoreCase(type)) {
+            if (value.type.equals(type)) {
                 return value;
             }
         }

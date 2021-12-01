@@ -45,6 +45,8 @@ public class ApplicationVcsDO implements Serializable {
 
     /**
      * 类型 1git
+     *
+     * @see com.orion.ops.consts.app.VcsType
      */
     @TableField("vcs_type")
     private Integer vcsType;
@@ -74,7 +76,7 @@ public class ApplicationVcsDO implements Serializable {
     private String vcsAccessToken;
 
     /**
-     * 状态 10未初始化 20正常 30失败
+     * 状态 10未初始化 20初始化中 30正常 40失败
      *
      * @see com.orion.ops.consts.app.VcsStatus
      */
