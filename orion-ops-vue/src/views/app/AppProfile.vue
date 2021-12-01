@@ -141,7 +141,7 @@ const columns = [
 ]
 
 export default {
-  name: 'AppProfileList',
+  name: 'AppProfile',
   components: {
     AddAppProfileModal
   },
