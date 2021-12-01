@@ -88,7 +88,8 @@
           <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
                     type="primary"
                     icon="sync"
-                    @click="add">
+                    :disabled="loading"
+                    @click="save">
             保存
           </a-button>
           <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
@@ -303,7 +304,6 @@ export default {
       // 表格
       if (this.viewType === this.$enum.VIEW_TYPE.TABLE.value) {
         this.viewValue = null
-        return
       }
       this.getMachineEnv({})
     },
@@ -337,6 +337,26 @@ export default {
           this.loading = false
         })
       }
+    },
+    save() {
+      const value = this.$refs.editor.getValue()
+      if (!value || !value.trim().length) {
+        this.$message.warn('请输入内容')
+        return
+      }
+      this.loading = true
+      this.$api.saveMachineEnvView({
+        machineId: this.query.machineId,
+        viewType: this.viewType,
+        value
+      }).then(({ data }) => {
+        this.loading = false
+        this.$message.info(`保存成功 ${data} 条数据`)
+        this.getMachineEnv({})
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('解析失败, 请检查内容')
+      })
     },
     add() {
       this.$refs.addModal.add(this.query.machineId)
@@ -389,8 +409,8 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.machineId) {
-      this.redirectMachineId = parseInt(this.$route.query.machineId)
+    if (this.$route.params.id) {
+      this.redirectMachineId = parseInt(this.$route.params.id)
     }
   },
   async mounted() {
@@ -400,6 +420,9 @@ export default {
       chooseId = this.redirectMachineId
     } else if (this.machineList.length) {
       chooseId = this.machineList[0].id
+    } else {
+      this.$message.warning('请先维护机器')
+      return
     }
     this.chooseMachine(chooseId)
     this.defaultSelectedMachineIds.push(chooseId)

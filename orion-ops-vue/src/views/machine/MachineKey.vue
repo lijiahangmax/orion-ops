@@ -63,8 +63,13 @@
                size="middle">
         <!-- 秘钥路径 -->
         <div slot="path" slot-scope="record">
-          <a @click="loadDownloadUrl(record)">{{ record.path }}</a>
-          <a v-if="record.downloadUrl" target="_blank" :href="record.downloadUrl" @click="clearDownloadUrl(record)" style="margin-left: 10px">
+          <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
+          <a v-if="record.downloadUrl"
+             target="_blank"
+             title="下载"
+             style="margin-left: 10px"
+             :href="record.downloadUrl"
+             @click="clearDownloadUrl(record)">
             <a-icon type="download"/>
           </a>
         </div>
@@ -145,6 +150,7 @@ const columns = [
     dataIndex: 'name',
     key: 'name',
     width: 200,
+    ellipsis: true,
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
@@ -164,6 +170,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
+    ellipsis: true,
     width: 200
   },
   {

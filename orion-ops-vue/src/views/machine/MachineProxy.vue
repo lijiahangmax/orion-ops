@@ -131,8 +131,7 @@ const columns = [
     title: '代理用户',
     dataIndex: 'username',
     key: 'username',
-    width: 200,
-    sorter: (a, b) => a.host.localeCompare(b.host)
+    width: 200
   },
   {
     title: '代理类型',

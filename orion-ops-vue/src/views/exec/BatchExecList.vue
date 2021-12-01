@@ -120,7 +120,7 @@
           <!-- 详情 -->
           <a @click="detail(record.id)">详情</a>
           <a-divider v-if="record.status === 20" type="vertical"/>
-          <!-- 终止 -->
+          <!-- 停止 -->
           <a-popconfirm v-if="record.status === 20"
                         title="确认停止当前任务?"
                         placement="topRight"
@@ -129,6 +129,17 @@
                         @confirm="terminated(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
+          <a-divider type="vertical"/>
+          <!-- 再次执行 -->
+          <a-popconfirm v-if="record.status === 20"
+                        title="当前任务未执行完毕, 确定再次执行?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="redo(record)">
+            <span class="span-blue pointer">再次执行</span>
+          </a-popconfirm>
+          <a @click="redo(record)" v-else>再次执行</a>
         </div>
       </a-table>
     </div>
@@ -229,7 +240,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 100,
+    width: 165,
     scopedSlots: { customRender: 'action' },
     align: 'center'
   }
@@ -294,6 +305,16 @@ export default {
     },
     previewText(value) {
       this.$refs.previewText.preview(value)
+    },
+    redo(record) {
+      this.$api.submitExecTask({
+        machineIdList: [record.machineId],
+        command: record.command,
+        description: record.description
+      }).then(() => {
+        this.$message.success('已执行')
+        this.getList({})
+      })
     },
     terminated(execId) {
       this.$api.terminatedExecTask({

@@ -170,6 +170,7 @@ const columns = [
     title: '名称',
     key: 'name',
     width: 200,
+    ellipsis: true,
     scopedSlots: { customRender: 'name' },
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
@@ -204,6 +205,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
+    ellipsis: true,
     width: 200
   },
   {

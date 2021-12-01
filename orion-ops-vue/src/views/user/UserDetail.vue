@@ -69,7 +69,7 @@ function getUserBasicDecorators() {
         message: '请输入昵称'
       }, {
         max: 32,
-        message: '昵称长度必须小于等于32位'
+        message: '昵称长度不能大于32位'
       }]
     }],
     phone: ['phone', {
