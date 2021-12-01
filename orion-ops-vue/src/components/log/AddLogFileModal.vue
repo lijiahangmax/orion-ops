@@ -51,7 +51,7 @@ function getDecorators() {
         message: '请输入名称'
       }, {
         max: 64,
-        message: '名称长度必须小于等于64位'
+        message: '名称长度不能大于64位'
       }]
     }],
     machineId: ['machineId', {
@@ -66,7 +66,7 @@ function getDecorators() {
         message: '请输入文件路径'
       }, {
         max: 512,
-        message: '文件路径长度必须小于等于512位'
+        message: '文件路径长度不能大于512位'
       }]
     }],
     command: ['command', {
@@ -75,7 +75,7 @@ function getDecorators() {
         message: '请输入命令'
       }, {
         max: 1024,
-        message: '命令长度必须小于等于1024位'
+        message: '命令长度不能大于1024位'
       }]
     }],
     offset: ['offset', {
@@ -92,7 +92,7 @@ function getDecorators() {
         message: '请输入文件编码'
       }, {
         max: 16,
-        message: '文件编码长度必须小于等于16位'
+        message: '文件编码长度不能大于16位'
       }]
     }]
   }

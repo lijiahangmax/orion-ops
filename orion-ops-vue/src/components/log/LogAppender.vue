@@ -4,7 +4,7 @@
     <div class="log-tools">
       <!-- 左侧工具 -->
       <div class="log-tools-fixed-left">
-        <slot name="left-tools"></slot>
+        <slot name="left-tools"/>
       </div>
       <!-- 右侧工具 -->
       <div class="log-tools-fixed-right">

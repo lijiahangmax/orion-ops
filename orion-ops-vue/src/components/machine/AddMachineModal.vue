@@ -44,8 +44,8 @@
                 </a-form-item>
               </a-form-item>
               <a-form-item label="代理">
-                <a-select placeholder="请选择" v-decorator="decorators.proxyId" style="width: 60%" allowClear>
-                  <a-select-option :value="proxy.id" v-for="proxy in proxyList" :key="proxy.id">
+                <a-select class="proxy-selector" placeholder="请选择" v-decorator="decorators.proxyId" style="width: 75%" allowClear>
+                  <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
                     <div class="proxy-select-option">
                       <span>{{ proxy.host }}:{{ proxy.port }}</span>
                       <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).color">
@@ -54,10 +54,9 @@
                     </div>
                   </a-select-option>
                 </a-select>
-                <a class="reload-proxy" @click="getProxyList">
+                <a class="reload-proxy" title="刷新" @click="getProxyList">
                   <a-icon type="reload"/>
                 </a>
-                <a class="add-proxy" @click="addProxy">添加代理</a>
               </a-form-item>
               <a-form-item label="描述">
                 <a-textarea v-decorator="decorators.description"/>
@@ -71,15 +70,12 @@
     <div class="machine-add-modal-event-container">
       <!-- 添加秘钥 -->
       <AddMachineKeyModal ref="addKeyModal"/>
-      <!-- 添加代理 -->
-      <AddMachineProxyModal ref="addProxyModal" @added="addProxyCallBack"/>
     </div>
   </div>
 </template>
 
 <script>
 import AddMachineKeyModal from '../machine/AddMachineKeyModal'
-import AddMachineProxyModal from '../machine/AddMachineProxyModal'
 import { pick } from 'lodash'
 
 const layout = {
@@ -148,8 +144,7 @@ function getDecorators() {
 export default {
   name: 'AddMachineModal',
   components: {
-    AddMachineKeyModal,
-    AddMachineProxyModal
+    AddMachineKeyModal
   },
   data: function() {
     return {
@@ -215,6 +210,9 @@ export default {
       this.form.resetFields()
       this.visible = true
       this.id = row.id
+      if (!row.proxyId) {
+        row.proxyId = undefined
+      }
       this.record = pick(Object.assign({}, row), 'name', 'tag', 'username', 'host',
         'sshPort', 'authType', 'proxyId', 'description')
       this.$nextTick(() => {
@@ -224,14 +222,6 @@ export default {
     addKey() {
       this.$refs.addKeyModal.setMask(false)
       this.$refs.addKeyModal.add()
-    },
-    addProxy() {
-      this.$refs.addProxyModal.setMask(false)
-      this.$refs.addProxyModal.add()
-    },
-    addProxyCallBack(id) {
-      this.form.proxyId = id
-      this.getProxyList()
     },
     getProxyList() {
       this.$api.getMachineProxyList({ limit: 10000 })
@@ -281,7 +271,7 @@ export default {
     }
   },
   mounted() {
-    this.getProxyList({})
+    this.getProxyList()
   }
 }
 </script>
@@ -305,6 +295,10 @@ export default {
 
 .machine-info-form {
   margin-top: 15px;
+}
+
+.proxy-selector /deep/ .ant-select-selection-selected-value {
+  width: 100%;
 }
 
 </style>

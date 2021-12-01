@@ -21,7 +21,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="描述">
-          <a-input v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description"/>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -45,7 +45,7 @@ function getDecorators() {
         message: '请输入环境名称'
       }, {
         max: 32,
-        message: '环境名称长度必须小于等于32位'
+        message: '环境名称长度不能大于32位'
       }]
     }],
     tag: ['tag', {
@@ -54,7 +54,7 @@ function getDecorators() {
         message: '请输入tag'
       }, {
         max: 32,
-        message: 'tag长度必须小于等于32位'
+        message: 'tag长度不能大于32位'
       }]
     }],
     releaseAudit: ['releaseAudit', {

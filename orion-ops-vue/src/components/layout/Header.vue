@@ -46,7 +46,7 @@ export default {
     },
     checkProfileSelectorVisible(e = this.$route) {
       for (const path of this.visiblePath) {
-        if (path === e.path) {
+        if (e.path.startsWith(path)) {
           this.profileSelectorVisible = true
           return
         }
