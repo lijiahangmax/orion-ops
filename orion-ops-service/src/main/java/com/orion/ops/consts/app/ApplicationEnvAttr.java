@@ -15,26 +15,14 @@ import java.util.Arrays;
 public enum ApplicationEnvAttr {
 
     /**
-     * 版本控制根目录
+     * 构建产物路径
      */
-    VCS_ROOT_PATH("版本控制根目录 (.git)"),
+    BUNDLE_PATH("构建产物路径 (绝对/相对)"),
 
     /**
-     * 应用代码目录
+     * 构建序列号
      */
-    VCS_CODE_PATH("应用代码目录"),
-
-    /**
-     * 版本管理工具 git
-     *
-     * @see VcsType
-     */
-    VCS_TYPE("版本管理工具"),
-
-    /**
-     * 构建产物文件路径
-     */
-    DIST_PATH("构建产物文件路径"),
+    BUILD_SEQ("构建序列号 (自增)"),
 
     ;
 

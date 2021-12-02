@@ -26,7 +26,7 @@ public class MessageConst {
 
     public static final String SFTP_OPERATOR_ERROR = "操作失败";
 
-    public static final String VCS_OPERATOR_ERROR = "无法版本控制信息";
+    public static final String VCS_OPERATOR_ERROR = "版本控制仓库操作执行失败";
 
     public static final String TASK_ERROR = "任务执行异常";
 
@@ -122,21 +122,9 @@ public class MessageConst {
 
     public static final String APP_PROFILE_NOT_CONFIGURED = "应用环境还未配置";
 
-    public static final String CODE_PATH_ABSENT = "代码目录不存在";
-
-    public static final String VCS_ROOT_PATH_ABSENT = "版本控制根目录不存在";
-
-    public static final String VCS_ROOT_PATH_UNCONNECTED = "无法连接版本控制根目录";
-
     public static final String CHECKOUT_ACTION_PRESENT = "检出操作只能有一个";
 
     public static final String TRANSFER_ACTION_PRESENT = "传输操作只能有一个";
-
-    public static final String CHECKOUT_ACTION_ABSENT = "必须得有检出操作";
-
-    public static final String TRANSFER_ACTION_WRONG_STEP = "传输操作必须要在检出操作之后";
-
-    public static final String HOST_ACTION_WRONG_STEP = "部署步骤需要遵循先宿主机再目标机器的原则";
 
     public static final String ADD_SECRET_KEY_ERROR = "添加秘钥失败";
 
@@ -154,9 +142,9 @@ public class MessageConst {
 
     public static final String AUDIT_NO_REQUIRED = "无需审核";
 
-    public static final String RELEASE_BILL_ABSENT = "上线单不存在";
+    public static final String RELEASE_BILL_ABSENT = "发布单不存在";
 
-    public static final String RELEASE_MACHINE_ABSENT = "上线单机器不存在";
+    public static final String RELEASE_MACHINE_ABSENT = "发布单机器不存在";
 
     public static final String UNKNOWN_RELEASE_TYPE = "未知的发布类型";
 
@@ -166,6 +154,22 @@ public class MessageConst {
 
     public static final String FILE_ABSENT_UNABLE_ROLLBACK_RELEASE = "产物快照丢失无法回滚";
 
-    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行上线单";
+    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行发布单";
+
+    public static final String UNSUPPORTED_VCS_TYPE = "不支持的仓库类型";
+
+    public static final String VCS_INIT_ERROR = "仓库初始化失败";
+
+    public static final String VCS_PATH_PRESENT = "仓库目录已存在";
+
+    public static final String VCS_PATH_ABSENT = "仓库目录不存在";
+
+    public static final String VCS_UNINITIALIZED = "仓库未初始化";
+
+    public static final String VCS_UNABLE_CONNECT = "无法连接到远程仓库";
+
+    public static final String VCS_INITIALIZED = "远程仓库已初始化完成";
+
+    public static final String VCS_INITIALIZING = "远程仓库初始化中";
 
 }

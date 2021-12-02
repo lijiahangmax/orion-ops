@@ -2,6 +2,8 @@ package com.orion.ops.entity.request;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * app配置同步请求
  *
@@ -25,6 +27,6 @@ public class ApplicationSyncConfigRequest {
     /**
      * 需要同步到的环境id
      */
-    private Long syncProfileId;
+    private List<Long> targetProfileIdList;
 
 }

@@ -192,11 +192,11 @@ public class FileTailServiceImpl implements FileTailService {
                 path = commandExecService.getExecLogFilePath(relId);
                 break;
             case RELEASE_HOST:
-                // 上线单 宿主机步骤
+                // 发布单 宿主机步骤
                 path = releaseInfoService.getReleaseHostLogPath(relId);
                 break;
             case RELEASE_STAGE:
-                // 上线单 目标机器步骤
+                // 发布单 目标机器步骤
                 path = releaseInfoService.getReleaseStageLogPath(relId);
                 break;
             default:

@@ -92,7 +92,7 @@ public class SchedulerPools {
             .build();
 
     /**
-     * 上线单 主线程操作线程池
+     * 发布单 主线程操作线程池
      */
     public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-main-thread-")
@@ -104,14 +104,14 @@ public class SchedulerPools {
             .build();
 
     /**
-     * 上线单 目标机器操作线程池
+     * 发布单 目标机器操作线程池
      */
     public static final ExecutorService RELEASE_TARGET_STAGE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-target-stage-thread-")
-            .setCorePoolSize(12)
-            .setMaxPoolSize(12)
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setWorkQueue(new SynchronousQueue<>())
             .setAllowCoreThreadTimeOut(true)
             .build();
 

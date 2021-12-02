@@ -30,6 +30,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SWAP_PATH = "swap";
 
+    public static final String VCS_PATH = "vcs";
+
     public static final String TERMINAL_LOG_DIR = "/terminal";
 
     public static final String RELEASE_LOG_DIR = "/release";
@@ -51,6 +53,8 @@ public class Const extends com.orion.constant.Const {
     public static final String DOWNLOAD_DIR = "/download";
 
     public static final String PACKAGE_DIR = "/package";
+
+    public static final String VCS_INIT_DIR = "/init";
 
     public static final String ROOT = "root";
 
@@ -88,7 +92,7 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer UPDATE = 2;
 
-    public static final Integer VCS_COMMIT_LIMIT = 15;
+    public static final Integer VCS_COMMIT_LIMIT = 30;
 
     public static final String COPY = "Copy";
 

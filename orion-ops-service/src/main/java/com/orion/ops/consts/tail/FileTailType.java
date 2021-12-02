@@ -25,12 +25,12 @@ public enum FileTailType {
     TAIL_LIST(20),
 
     /**
-     * 上线单 宿主机步骤
+     * 发布单 宿主机步骤
      */
     RELEASE_HOST(30),
 
     /**
-     * 上线单 目标机器步骤
+     * 发布单 目标机器步骤
      */
     RELEASE_STAGE(40),
 

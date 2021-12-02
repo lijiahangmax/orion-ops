@@ -83,17 +83,17 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 }
                 break;
             case RELEASE_HOST_LOG:
-                // 上线单宿主机日志
+                // 发布单宿主机日志
                 path = releaseInfoService.getReleaseHostLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case RELEASE_STAGE_LOG:
-                // 上线单目标机器日志
+                // 发布单目标机器日志
                 path = releaseInfoService.getReleaseStageLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case RELEASE_SNAPSHOT:
-                // 上线单产物快照
+                // 发布单产物快照
                 ReleaseBillDO releaseBill = releaseInfoService.getReleaseBill(id);
                 if (releaseBill != null) {
                     path = releaseInfoService.getDistSnapshotFilePath(releaseBill.getDistSnapshotPath());

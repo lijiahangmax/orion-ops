@@ -6,7 +6,7 @@ import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
-import com.orion.ops.service.api.ApplicationDeployActionService;
+import com.orion.ops.service.api.ApplicationActionService;
 import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.ApplicationProfileService;
@@ -41,7 +41,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     private ApplicationEnvService applicationEnvService;
 
     @Resource
-    private ApplicationDeployActionService applicationDeployActionService;
+    private ApplicationActionService applicationActionService;
 
     @Override
     public Long addProfile(ApplicationProfileRequest request) {
@@ -85,8 +85,8 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(null, id);
         // 删除环境机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(null, id);
-        // 删除环境部署步骤
-        effect += applicationDeployActionService.deleteAppActionByAppProfileId(null, id);
+        // 删除环境发布步骤
+        effect += applicationActionService.deleteAppActionByAppProfileId(null, id);
         return effect;
     }
 

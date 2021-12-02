@@ -1,74 +1,119 @@
 package com.orion.ops.consts.app;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 命令块类型
+ * 操作类型
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/6 18:57
  */
-@AllArgsConstructor
 @Getter
 public enum ActionType {
 
     /**
-     * 建立连接
+     * 构建-初始化
      */
-    CONNECT(10, false),
+    BUILD_INITIAL(110, StageType.BUILD),
 
     /**
-     * 检出代码
+     * 构建-检出代码
      */
-    CHECKOUT(20, true),
+    BUILD_CHECKOUT(120, StageType.BUILD),
 
     /**
-     * 传输产物
+     * 构建-主机命令
      */
-    TRANSFER(30, true),
+    BUILD_HOST_COMMAND(130, StageType.BUILD),
 
     /**
-     * 主机命令
+     * 发布-初始化
      */
-    HOST_COMMAND(40, true),
+    RELEASE_INITIAL(210, StageType.RELEASE),
 
     /**
-     * 目标机器命令
+     * 发布-传输产物
      */
-    TARGET_COMMAND(50, true),
+    RELEASE_TRANSFER(220, StageType.RELEASE),
+
+    /**
+     * 发布-目标机器命令
+     */
+    RELEASE_TARGET_COMMAND(230, StageType.RELEASE),
 
     ;
 
     private final Integer type;
 
-    private final boolean client;
+    private final StageType stage;
 
-    public static ActionType of(Integer type, boolean client) {
+    private final Integer stageType;
+
+    ActionType(Integer type, StageType stage) {
+        this.type = type;
+        this.stage = stage;
+        this.stageType = stage.getType();
+    }
+
+    public static ActionType of(Integer type) {
         if (type == null) {
             return null;
         }
         for (ActionType value : values()) {
             if (value.type.equals(type)) {
-                if (!client) {
-                    return value;
-                } else if (value.client) {
-                    return value;
-                }
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public static ActionType of(Integer type, Integer stageType) {
+        if (type == null) {
+            return null;
+        }
+        for (ActionType value : values()) {
+            if (value.type.equals(type) && value.stageType.equals(stageType)) {
+                return value;
             }
         }
         return null;
     }
 
     /**
-     * 检查是否是宿主机命令
+     * 是否是构建action
      *
      * @param type type
-     * @return ignore
+     * @return res
      */
-    public static boolean isHost(Integer type) {
-        return !TARGET_COMMAND.type.equals(type);
+    public static boolean isBuildAction(Integer type) {
+        if (type == null) {
+            return false;
+        }
+        for (ActionType value : values()) {
+            if (value.type.equals(type)) {
+                return StageType.BUILD.equals(value.stage);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否是发布action
+     *
+     * @param type type
+     * @return res
+     */
+    public static boolean isReleaseAction(Integer type) {
+        if (type == null) {
+            return false;
+        }
+        for (ActionType value : values()) {
+            if (value.type.equals(type)) {
+                return StageType.RELEASE.equals(value.stage);
+            }
+        }
+        return false;
     }
 
 }
