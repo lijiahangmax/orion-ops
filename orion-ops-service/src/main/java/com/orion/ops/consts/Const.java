@@ -86,13 +86,17 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer CONFIGURED = 1;
 
+    public static final Integer NOT_DELETED = 1;
+
+    public static final Integer IS_DELETED = 2;
+
+    public static final Integer IS_SYSTEM = 1;
+
+    public static final Integer NOT_SYSTEM = 2;
+
     public static final Integer NOT_CONFIGURED = 2;
 
-    public static final Integer ADD = 1;
-
-    public static final Integer UPDATE = 2;
-
-    public static final Integer VCS_COMMIT_LIMIT = 30;
+    public static final Integer VCS_COMMIT_LIMIT = 50;
 
     public static final String COPY = "Copy";
 

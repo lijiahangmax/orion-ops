@@ -23,10 +23,9 @@ public class HistoryValueVO {
     private Long id;
 
     /**
-     * 操作类型 1新增 2修改
+     * 操作类型 1新增 2修改 3删除
      *
-     * @see com.orion.ops.consts.Const#ADD
-     * @see com.orion.ops.consts.Const#UPDATE
+     * @see com.orion.ops.consts.HistoryOperator
      */
     private Integer type;
 

@@ -38,10 +38,9 @@ public class HistoryValueSnapshotDO implements Serializable {
     private Long valueId;
 
     /**
-     * 操作类型 1新增 2修改
+     * 操作类型 1新增 2修改 3删除
      *
-     * @see com.orion.ops.consts.Const#ADD
-     * @see com.orion.ops.consts.Const#UPDATE
+     * @see com.orion.ops.consts.HistoryOperator
      */
     @TableField("operator_type")
     private Integer operatorType;

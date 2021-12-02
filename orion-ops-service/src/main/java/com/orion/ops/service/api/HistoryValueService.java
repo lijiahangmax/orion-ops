@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.HistoryOperator;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.entity.request.HistoryValueRequest;
 import com.orion.ops.entity.vo.HistoryValueVO;
@@ -23,7 +24,7 @@ public interface HistoryValueService {
      * @param beforeValue  beforeValue
      * @param afterValue   afterValue
      */
-    void addHistory(Long valueId, HistoryValueType valueType, Integer operatorType, String beforeValue, String afterValue);
+    void addHistory(Long valueId, HistoryValueType valueType, HistoryOperator operatorType, String beforeValue, String afterValue);
 
     /**
      * 值列表
@@ -37,8 +38,7 @@ public interface HistoryValueService {
      * 回滚
      *
      * @param id id
-     * @return effect
      */
-    Integer rollback(Long id);
+    void rollback(Long id);
 
 }

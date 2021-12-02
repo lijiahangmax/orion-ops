@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.entity.request.HistoryValueRequest;
@@ -42,9 +43,10 @@ public class HistoryValueController {
      * 回滚
      */
     @RequestMapping("/rollback")
-    public Integer rollback(@RequestBody HistoryValueRequest request) {
+    public HttpWrapper<?> rollback(@RequestBody HistoryValueRequest request) {
         Long id = Valid.notNull(request.getId());
-        return historyValueService.rollback(id);
+        historyValueService.rollback(id);
+        return HttpWrapper.ok();
     }
 
 }
