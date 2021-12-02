@@ -36,9 +36,9 @@ public class ApplicationInfoRequest extends PageRequest {
     private String tag;
 
     /**
-     * 排序
+     * 版本控制id
      */
-    private Integer sort;
+    private Long vcsId;
 
     /**
      * 描述
@@ -52,5 +52,10 @@ public class ApplicationInfoRequest extends PageRequest {
      * @see com.orion.ops.consts.Const#DECREMENT
      */
     private Integer sortAdjust;
+
+    /**
+     * 机器id
+     */
+    private Long machineId;
 
 }

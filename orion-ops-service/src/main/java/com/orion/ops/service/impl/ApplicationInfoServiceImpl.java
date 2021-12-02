@@ -1,36 +1,35 @@
 package com.orion.ops.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.dao.ApplicationDeployActionDAO;
+import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationInfoDAO;
-import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
+import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.*;
-import com.orion.ops.entity.request.*;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
+import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
-import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
-import com.orion.vcs.git.Gits;
-import com.orion.vcs.git.info.BranchInfo;
-import com.orion.vcs.git.info.LogInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +46,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationMachineDAO applicationMachineDAO;
+    private ApplicationVcsDAO applicationVcsDAO;
 
     @Resource
     private ApplicationMachineService applicationMachineService;
@@ -62,13 +61,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private MachineInfoService machineInfoService;
 
     @Resource
-    private ApplicationDeployActionDAO applicationDeployActionDAO;
-
-    @Resource
-    private ApplicationDeployActionService applicationDeployActionService;
-
-    @Resource
-    private ReleaseInfoService releaseInfoService;
+    private ApplicationActionService applicationActionService;
 
     @Override
     public Long insertApp(ApplicationInfoRequest request) {
@@ -80,8 +73,17 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationInfoDO insert = new ApplicationInfoDO();
         insert.setAppName(name);
         insert.setAppTag(request.getTag());
-        insert.setAppSort(request.getSort());
+        insert.setVcsId(request.getVcsId());
         insert.setDescription(request.getDescription());
+        // 获取排序
+        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .orderByDesc(ApplicationInfoDO::getAppSort)
+                .last(Const.LIMIT_1);
+        Integer sort = Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
+                .map(ApplicationInfoDO::getAppSort)
+                .map(s -> s + Const.N_10)
+                .orElse(Const.N_10);
+        insert.setAppSort(sort);
         applicationInfoDAO.insert(insert);
         return insert.getId();
     }
@@ -97,21 +99,21 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         update.setId(id);
         update.setAppName(name);
         update.setAppTag(request.getTag());
-        update.setAppSort(request.getSort());
+        update.setVcsId(request.getVcsId());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         return applicationInfoDAO.updateById(update);
     }
 
     @Override
-    public Integer updateAppSort(Long id, boolean incr) {
+    public Integer updateAppSort(Long id, boolean increment) {
         // 查询原来的排序
         ApplicationInfoDO app = applicationInfoDAO.selectById(id);
         Valid.notNull(app, MessageConst.APP_ABSENT);
         Integer beforeSort = app.getAppSort();
         // 查询下一个排序
         LambdaQueryWrapper<ApplicationInfoDO> wrapper;
-        if (incr) {
+        if (increment) {
             wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
                     .ne(ApplicationInfoDO::getId, id)
                     .le(ApplicationInfoDO::getAppSort, beforeSort)
@@ -137,7 +139,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 更新
         Integer afterSort = swapApp.getAppSort();
         if (afterSort.equals(beforeSort)) {
-            if (incr) {
+            if (increment) {
                 afterSort -= 1;
             } else {
                 afterSort += 1;
@@ -159,8 +161,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(id, null);
         // 删除机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(id, null);
-        // 删除部署步骤
-        effect += applicationDeployActionService.deleteAppActionByAppProfileId(id, null);
+        // 删除发布步骤
+        effect += applicationActionService.deleteAppActionByAppProfileId(id, null);
         return effect;
     }
 
@@ -169,6 +171,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
                 .like(!Strings.isBlank(request.getName()), ApplicationInfoDO::getAppName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationInfoDO::getAppTag, request.getTag())
+                .like(!Strings.isBlank(request.getDescription()), ApplicationInfoDO::getDescription, request.getDescription())
                 .orderByAsc(ApplicationInfoDO::getAppSort)
                 .orderByAsc(ApplicationInfoDO::getId);
         // 查询应用
@@ -176,17 +179,34 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(ApplicationInfoVO.class);
-        if (appList.isEmpty() || request.getProfileId() == null) {
+        // 设置版本仓库id
+        for (ApplicationInfoVO app : appList) {
+            // 查询版本控制名称
+            Optional.ofNullable(app.getVcsId())
+                    .map(applicationVcsDAO::selectById)
+                    .map(ApplicationVcsDO::getVcsName)
+                    .ifPresent(app::setVcsName);
+        }
+        Long profileId = request.getProfileId();
+        if (appList.isEmpty() || profileId == null) {
             return appList;
         }
-        // 查询机器
+        // 设置配置状态
         for (ApplicationInfoVO app : appList) {
-            Integer machineCount = applicationMachineService.selectAppProfileMachineCount(app.getId(), request.getProfileId());
-            app.setMachineCount(machineCount);
-            if (machineCount == 0) {
-                app.setIsConfig(Const.NOT_CONFIGURED);
+            app.setIsConfig(this.checkAppConfig(app.getId(), profileId) ? Const.CONFIGURED : Const.NOT_CONFIGURED);
+        }
+        // 查询机器
+        Map<Long, MachineInfoDO> machineCache = Maps.newMap();
+        for (ApplicationInfoVO app : appList) {
+            List<Long> machineIdList = applicationMachineService.selectAppProfileMachineIdList(app.getId(), profileId);
+            if (machineIdList.size() == 0) {
+                app.setMachines(Lists.empty());
             } else {
-                app.setIsConfig(Const.CONFIGURED);
+                List<MachineInfoVO> machines = machineIdList.stream()
+                        .map(machineId -> machineCache.computeIfAbsent(machineId, m -> machineInfoService.selectById(m)))
+                        .map(p -> Converts.to(p, MachineInfoVO.class))
+                        .collect(Collectors.toList());
+                app.setMachines(machines);
             }
         }
         return appList;
@@ -197,30 +217,38 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询应用
         ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
         Valid.notNull(app, MessageConst.APP_ABSENT);
+        ApplicationDetailVO detail = Converts.to(app, ApplicationDetailVO.class);
+        // 查询vcs
+        Optional.ofNullable(app.getVcsId())
+                .map(applicationVcsDAO::selectById)
+                .map(ApplicationVcsDO::getVcsName)
+                .ifPresent(detail::setVcsName);
+        // 没传环境id直接返回
+        if (profileId == null) {
+            return detail;
+        }
         // 查询环境
         ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
         Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
         // 查询环境变量
-        String vcsRootPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
-        String vcsCodePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_CODE_PATH.getKey());
-        String vcsType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_TYPE.getKey());
-        String distPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.DIST_PATH.getKey());
-        // 查询机器
+        String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        // 查询发布机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
-        // 查询部署流程
-        List<ApplicationDeployActionVO> actions = applicationDeployActionService.getDeployActions(appId, profileId);
+        // 查询发布流程
+        List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId);
         // 组装数据
-        ApplicationDetailVO detail = Converts.to(app, ApplicationDetailVO.class);
-        detail.setProfileId(profile.getId());
-        detail.setProfileName(profile.getProfileName());
-        detail.setProfileTag(profile.getProfileTag());
-        detail.setVcsRootPath(vcsRootPath);
-        detail.setVcsCodePath(vcsCodePath);
-        detail.setVcsType(vcsType);
-        detail.setDistPath(distPath);
-        detail.setMachineCount(machines.size());
-        detail.setMachines(machines);
-        detail.setActions(actions);
+        detail.setBundlePath(bundlePath);
+        detail.setReleaseMachines(machines);
+        List<ApplicationActionVO> buildActions = actions.stream()
+                .filter(s -> ActionType.isBuildAction(s.getActionType()))
+                .map(s -> Converts.to(s, ApplicationActionVO.class))
+                .collect(Collectors.toList());
+        List<ApplicationActionVO> releaseActions = actions.stream()
+                .filter(s -> ActionType.isReleaseAction(s.getActionType()))
+                .map(s -> Converts.to(s, ApplicationActionVO.class))
+                .collect(Collectors.toList());
+        detail.setBuildActions(buildActions);
+        detail.setReleaseActions(releaseActions);
         return detail;
     }
 
@@ -229,37 +257,38 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public void configAppProfile(ApplicationConfigRequest request) {
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
-        // 检查代码仓库是否正确
-        this.checkVcsLocalPath(request.getEnv());
         // 查询应用和环境
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
-        // 配置环境变量
-        this.configAppEnv(request.getEnv(), appId, profileId);
-        // 配置机器
-        applicationMachineService.deleteAppMachineByAppProfileId(appId, profileId);
-        this.configAppMachines(request.getMachineIdList(), appId, profileId);
-        // 配置部署
-        applicationDeployActionService.deleteAppActionByAppProfileId(appId, profileId);
-        this.configAppDeployAction(request.getActions(), appId, profileId);
+        StageType stageType = StageType.of(request.getStageType());
+        if (StageType.BUILD.equals(stageType)) {
+            // 配置环境变量
+            applicationEnvService.configAppEnv(request);
+        } else if (StageType.RELEASE.equals(stageType)) {
+            // 配置机器
+            applicationMachineService.configAppMachines(request);
+        }
+        // 配置发布
+        applicationActionService.configAppAction(request);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId) {
+    public void syncAppProfileConfig(Long appId, Long profileId, List<Long> targetProfileIdList) {
         // 查询应用和环境
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
-        Valid.notNull(applicationProfileDAO.selectById(syncProfileId), MessageConst.PROFILE_ABSENT);
         // 检查环境是否已配置
         boolean isConfig = this.checkAppConfig(appId, profileId);
         Valid.isTrue(isConfig, MessageConst.APP_PROFILE_NOT_CONFIGURED);
-        // 同步环境变量
-        applicationEnvService.syncAppProfileEnv(appId, profileId, syncProfileId);
-        // 同步机器
-        applicationMachineService.syncAppProfileMachine(appId, profileId, syncProfileId);
-        // 同步部署步骤
-        applicationDeployActionService.syncAppProfileAction(appId, profileId, syncProfileId);
+        for (Long targetProfileId : targetProfileIdList) {
+            // 同步环境变量
+            applicationEnvService.syncAppProfileEnv(appId, profileId, targetProfileId);
+            // 同步机器
+            applicationMachineService.syncAppProfileMachine(appId, profileId, targetProfileId);
+            // 同步发布步骤
+            applicationActionService.syncAppProfileAction(appId, profileId, targetProfileId);
+        }
     }
 
     @Override
@@ -277,83 +306,14 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         applicationEnvService.copyAppEnv(appId, targetAppId);
         // 复制机器
         applicationMachineService.copyAppMachine(appId, targetAppId);
-        // 复制部署步骤
-        applicationDeployActionService.copyAppAction(appId, targetAppId);
+        // 复制发布步骤
+        applicationActionService.copyAppAction(appId, targetAppId);
     }
 
     @Override
     public boolean checkAppConfig(Long appId, Long profileId) {
-        return applicationDeployActionService.selectAppProfileActionCount(appId, profileId) > 0;
-    }
-
-    @Override
-    public ApplicationVcsInfoVO getVcsInfo(Long appId, Long profileId) {
-        // 查询上线单
-        ReleaseBillDO lastRelease = releaseInfoService.getLastReleaseBill(appId, profileId);
-        // 查询vcs路径
-        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
-        // 获取vcs实例
-        try (Gits git = Gits.of(new File(path))) {
-            ApplicationVcsInfoVO vcsInfo = new ApplicationVcsInfoVO();
-            ApplicationVcsBranchVO branch;
-            // 获取分支列表
-            List<ApplicationVcsBranchVO> branches = Converts.toList(git.branchList(), ApplicationVcsBranchVO.class);
-            if (lastRelease != null) {
-                branch = branches.stream()
-                        .filter(s -> s.getName().equals(lastRelease.getBranchName()))
-                        .findFirst()
-                        .orElseGet(() -> branches.get(0));
-            } else {
-                branch = branches.get(0);
-            }
-            branch.setIsDefault(Const.IS_DEFAULT);
-            // 获取commit
-            List<LogInfo> logList = git.logList(branch.getName(), Const.VCS_COMMIT_LIMIT);
-            vcsInfo.setBranches(branches);
-            vcsInfo.setCommits(Converts.toList(logList, ApplicationVcsCommitVO.class));
-            return vcsInfo;
-        }
-    }
-
-    @Override
-    public List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId) {
-        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
-        try (Gits git = Gits.of(new File(path))) {
-            // 查询分支信息
-            List<BranchInfo> branchList = git.branchList();
-            return Converts.toList(branchList, ApplicationVcsBranchVO.class);
-        }
-    }
-
-    @Override
-    public List<ApplicationVcsCommitVO> getVcsCommitList(Long appId, Long profileId, String branchName) {
-        String path = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
-        try (Gits git = Gits.of(new File(path))) {
-            // 查询提交信息
-            List<LogInfo> logList = git.logList(branchName, Const.VCS_COMMIT_LIMIT);
-            return Converts.toList(logList, ApplicationVcsCommitVO.class);
-        }
-    }
-
-    /**
-     * 检查app 版本控制工具路径
-     *
-     * @param env env
-     */
-    private void checkVcsLocalPath(ApplicationConfigEnvRequest env) {
-        boolean codePathPresent = Files1.isDirectory(env.getVcsCodePath());
-        Valid.isTrue(codePathPresent, MessageConst.CODE_PATH_ABSENT);
-        File rootPath = new File(env.getVcsRootPath());
-        boolean rootPathPresent = Files1.isDirectory(rootPath);
-        Valid.isTrue(rootPathPresent, MessageConst.VCS_ROOT_PATH_ABSENT);
-        Gits git = null;
-        try {
-            git = Gits.of(rootPath);
-        } catch (Exception e) {
-            throw Exceptions.invalidArgument(MessageConst.VCS_ROOT_PATH_UNCONNECTED, e);
-        } finally {
-            Streams.close(git);
-        }
+        return applicationActionService.getAppProfileActionCount(appId, profileId, StageType.BUILD.getType()) > 0
+                && applicationActionService.getAppProfileActionCount(appId, profileId, StageType.RELEASE.getType()) > 0;
     }
 
     /**
@@ -368,87 +328,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .eq(ApplicationInfoDO::getAppName, name);
         boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
-    }
-
-    /**
-     * 配置app环境
-     *
-     * @param env       env
-     * @param appId     appId
-     * @param profileId profileId
-     */
-    private void configAppEnv(ApplicationConfigEnvRequest env, Long appId, Long profileId) {
-        // 版本控制根目录
-        ApplicationEnvRequest vcsRootPath = new ApplicationEnvRequest();
-        vcsRootPath.setKey(ApplicationEnvAttr.VCS_ROOT_PATH.getKey());
-        vcsRootPath.setValue(env.getVcsRootPath());
-        vcsRootPath.setDescription(ApplicationEnvAttr.VCS_ROOT_PATH.getDescription());
-        // 应用代码目录
-        ApplicationEnvRequest vcsCodePath = new ApplicationEnvRequest();
-        vcsCodePath.setKey(ApplicationEnvAttr.VCS_CODE_PATH.getKey());
-        vcsCodePath.setValue(env.getVcsCodePath());
-        vcsCodePath.setDescription(ApplicationEnvAttr.VCS_CODE_PATH.getDescription());
-        // 版本管理工具
-        ApplicationEnvRequest vcsType = new ApplicationEnvRequest();
-        vcsType.setKey(ApplicationEnvAttr.VCS_TYPE.getKey());
-        vcsType.setValue(env.getVcsType());
-        vcsType.setDescription(ApplicationEnvAttr.VCS_TYPE.getDescription());
-        // 构建产物目录
-        ApplicationEnvRequest distPath = new ApplicationEnvRequest();
-        distPath.setKey(ApplicationEnvAttr.DIST_PATH.getKey());
-        distPath.setValue(env.getDistPath());
-        distPath.setDescription(ApplicationEnvAttr.DIST_PATH.getDescription());
-        // reduce
-        List<ApplicationEnvRequest> envs = Lists.of(vcsRootPath, vcsCodePath, vcsType, distPath);
-        envs.forEach(e -> {
-            e.setAppId(appId);
-            e.setProfileId(profileId);
-        });
-        envs.forEach(applicationEnvService::addAppEnv);
-    }
-
-    /**
-     * 配置app机器
-     *
-     * @param machineIdList 机器列表
-     * @param appId         appId
-     * @param profileId     profileId
-     */
-    private void configAppMachines(List<Long> machineIdList, Long appId, Long profileId) {
-        List<ApplicationMachineDO> list = machineIdList.stream()
-                .map(i -> {
-                    ApplicationMachineDO machine = new ApplicationMachineDO();
-                    machine.setAppId(appId);
-                    machine.setProfileId(profileId);
-                    machine.setMachineId(i);
-                    return machine;
-                }).collect(Collectors.toList());
-        // 检查
-        for (Long machineId : machineIdList) {
-            MachineInfoDO machine = machineInfoService.selectById(machineId);
-            Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-        }
-        list.forEach(applicationMachineDAO::insert);
-    }
-
-    /**
-     * 配置app部署步骤
-     *
-     * @param actions   actions
-     * @param appId     appId
-     * @param profileId profileId
-     */
-    private void configAppDeployAction(List<ApplicationConfigDeployActionRequest> actions, Long appId, Long profileId) {
-        // 新增
-        for (ApplicationConfigDeployActionRequest action : actions) {
-            ApplicationDeployActionDO entity = new ApplicationDeployActionDO();
-            entity.setAppId(appId);
-            entity.setProfileId(profileId);
-            entity.setActionType(action.getType());
-            entity.setActionName(action.getName());
-            entity.setActionCommand(action.getCommand());
-            applicationDeployActionDAO.insert(entity);
-        }
     }
 
 }

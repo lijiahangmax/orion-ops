@@ -6,10 +6,15 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.VcsType;
-import com.orion.ops.entity.request.*;
-import com.orion.ops.entity.vo.*;
+import com.orion.ops.consts.app.StageType;
+import com.orion.ops.entity.request.ApplicationConfigActionRequest;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
+import com.orion.ops.entity.request.ApplicationInfoRequest;
+import com.orion.ops.entity.request.ApplicationSyncConfigRequest;
+import com.orion.ops.entity.vo.ApplicationDetailVO;
+import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.service.api.ApplicationInfoService;
+import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,14 +39,15 @@ public class ApplicationInfoController {
     @Resource
     private ApplicationInfoService applicationService;
 
+    @Resource
+    private ApplicationMachineService applicationMachineService;
+
     /**
      * 添加应用
      */
     @RequestMapping("/add")
     public Long insertApp(@RequestBody ApplicationInfoRequest request) {
-        Valid.notNull(request.getName());
-        Valid.notNull(request.getTag());
-        Valid.notNull(request.getSort());
+        Valid.allNotBlank(request.getName(), request.getTag());
         return applicationService.insertApp(request);
     }
 
@@ -87,8 +93,7 @@ public class ApplicationInfoController {
     @RequestMapping("/detail")
     public ApplicationDetailVO appDetail(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        return applicationService.getAppDetail(appId, profileId);
+        return applicationService.getAppDetail(appId, request.getProfileId());
     }
 
     /**
@@ -98,13 +103,7 @@ public class ApplicationInfoController {
     public HttpWrapper<?> configApp(@RequestBody ApplicationConfigRequest request) {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
-        Valid.notNull(request.getEnv());
-        Valid.notBlank(request.getEnv().getVcsCodePath());
-        Valid.notBlank(request.getEnv().getVcsRootPath());
-        Valid.notNull(VcsType.of(request.getEnv().getVcsType()));
-        Valid.notBlank(request.getEnv().getDistPath());
-        Valid.notEmpty(request.getMachineIdList());
-        this.checkActionType(Valid.notEmpty(request.getActions()));
+        this.checkConfig(request);
         applicationService.configAppProfile(request);
         return HttpWrapper.ok();
     }
@@ -116,8 +115,8 @@ public class ApplicationInfoController {
     public HttpWrapper<?> syncAppConfig(@RequestBody ApplicationSyncConfigRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
-        Long syncProfileId = Valid.notNull(request.getSyncProfileId());
-        applicationService.syncAppProfileConfig(appId, profileId, syncProfileId);
+        List<Long> targetProfileList = Valid.notEmpty(request.getTargetProfileIdList());
+        applicationService.syncAppProfileConfig(appId, profileId, targetProfileList);
         return HttpWrapper.ok();
     }
 
@@ -132,92 +131,64 @@ public class ApplicationInfoController {
     }
 
     /**
-     * 获取版本信息
+     * 删除发布机器
      */
-    @RequestMapping("/vcs/info")
-    public ApplicationVcsInfoVO getVcsDefaultInfo(@RequestBody ApplicationVcsRequest request) {
-        Long appId = Valid.notNull(request.getAppId());
+    @RequestMapping("/delete/machine")
+    public Integer deleteAppMachine(@RequestBody ApplicationInfoRequest request) {
+        Long appId = Valid.notNull(request.getId());
         Long profileId = Valid.notNull(request.getProfileId());
-        return applicationService.getVcsInfo(appId, profileId);
+        Long machineId = Valid.notNull(request.getMachineId());
+        return applicationMachineService.deleteAppMachineByAppProfileMachineId(appId, profileId, machineId);
     }
 
     /**
-     * 获取分支列表
-     */
-    @RequestMapping("/vcs/branch")
-    public List<ApplicationVcsBranchVO> getBranchList(@RequestBody ApplicationVcsRequest request) {
-        Long appId = Valid.notNull(request.getAppId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        return applicationService.getVcsBranchList(appId, profileId);
-    }
-
-    /**
-     * 获取提交列表
-     */
-    @RequestMapping("/vcs/commit")
-    public List<ApplicationVcsCommitVO> getCommitList(@RequestBody ApplicationVcsRequest request) {
-        Long appId = Valid.notNull(request.getAppId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        String branchName = Valid.notBlank(request.getBranchName());
-        return applicationService.getVcsCommitList(appId, profileId, branchName);
-    }
-
-    /**
-     * 检查配置步骤的合法性
+     * 检查配置
      *
-     * @param actions actions
+     * @param request request
      */
-    private void checkActionType(List<ApplicationConfigDeployActionRequest> actions) {
-        // 检查参数
-        for (ApplicationConfigDeployActionRequest action : actions) {
+    private void checkConfig(ApplicationConfigRequest request) {
+        StageType stageType = Valid.notNull(StageType.of(request.getStageType()));
+        List<ApplicationConfigActionRequest> actions;
+        if (StageType.BUILD.equals(stageType)) {
+            // 构建检查产物路径
+            Valid.notNull(request.getEnv());
+            Valid.notBlank(request.getEnv().getBundlePath());
+            // 检查操作
+            actions = Valid.notEmpty(request.getBuildActions());
+        } else if (StageType.RELEASE.equals(stageType)) {
+            // 发布检查机器id
+            Valid.notEmpty(request.getMachineIdList());
+            // 检查操作
+            actions = Valid.notEmpty(request.getReleaseActions());
+        } else {
+            throw Exceptions.unsupported();
+        }
+        // 检查操作
+        for (ApplicationConfigActionRequest action : actions) {
             Valid.notBlank(action.getName());
-            ActionType actionType = Valid.notNull(ActionType.of(action.getType(), true));
-            Valid.isTrue(!ActionType.CONNECT.equals(actionType));
-            if (ActionType.HOST_COMMAND.equals(actionType)
-                    || ActionType.TARGET_COMMAND.equals(actionType)) {
+            ActionType actionType = Valid.notNull(ActionType.of(action.getType(), stageType.getType()));
+            // 检查命令
+            if (ActionType.BUILD_HOST_COMMAND.equals(actionType)
+                    || ActionType.RELEASE_TARGET_COMMAND.equals(actionType)) {
                 Valid.notBlank(action.getCommand());
             }
         }
-        // 检查单一操作
-        int checkoutIndex = -1;
-        int transferIndex = -1;
-        for (int i = 0; i < actions.size(); i++) {
-            ActionType type = ActionType.of(actions.get(i).getType(), true);
-            if (ActionType.CHECKOUT.equals(type)) {
-                if (checkoutIndex == -1) {
-                    checkoutIndex = i;
-                } else {
-                    throw Exceptions.invalidArgument(MessageConst.CHECKOUT_ACTION_PRESENT);
-                }
-            } else if (ActionType.TRANSFER.equals(type)) {
-                if (transferIndex == -1) {
-                    transferIndex = i;
-                } else {
-                    throw Exceptions.invalidArgument(MessageConst.TRANSFER_ACTION_PRESENT);
-                }
-            }
-        }
-        // 检查传输和检出的时序
-        if (checkoutIndex == -1) {
-            throw Exceptions.invalidArgument(MessageConst.CHECKOUT_ACTION_ABSENT);
-        }
-        if (transferIndex != -1 && transferIndex < checkoutIndex) {
-            throw Exceptions.invalidArgument(MessageConst.TRANSFER_ACTION_WRONG_STEP);
-        }
-        // 检查先宿主再目标
-        int lastTargetCommand = -1;
-        for (int i = 0; i < actions.size(); i++) {
-            ActionType type = ActionType.of(actions.get(i).getType(), true);
-            if (ActionType.HOST_COMMAND.equals(type)
-                    || ActionType.CHECKOUT.equals(type)
-                    || ActionType.TRANSFER.equals(type)) {
-                if (lastTargetCommand != -1) {
-                    throw Exceptions.invalidArgument(MessageConst.HOST_ACTION_WRONG_STEP);
-                }
-            } else if (ActionType.TARGET_COMMAND.equals(type)) {
-                lastTargetCommand = i;
-            }
-        }
+        // 检查检出操作唯一性
+        int checkoutActionCount = actions.stream()
+                .map(ApplicationConfigActionRequest::getType)
+                .map(ActionType::of)
+                .filter(ActionType.BUILD_CHECKOUT::equals)
+                .mapToInt(s -> Const.N_1)
+                .sum();
+        Valid.lte(checkoutActionCount, 1, MessageConst.CHECKOUT_ACTION_PRESENT);
+        // 检查传输操作唯一性
+        int transferActionCount = actions.stream()
+                .map(ApplicationConfigActionRequest::getType)
+                .map(ActionType::of)
+                .filter(ActionType.RELEASE_TRANSFER::equals)
+                .mapToInt(s -> Const.N_1)
+                .sum();
+        Valid.lte(transferActionCount, 1, MessageConst.TRANSFER_ACTION_PRESENT);
     }
 
 }

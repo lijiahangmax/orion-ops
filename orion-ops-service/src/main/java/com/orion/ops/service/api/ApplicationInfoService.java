@@ -3,7 +3,8 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
-import com.orion.ops.entity.vo.*;
+import com.orion.ops.entity.vo.ApplicationDetailVO;
+import com.orion.ops.entity.vo.ApplicationInfoVO;
 
 import java.util.List;
 
@@ -35,11 +36,11 @@ public interface ApplicationInfoService {
     /**
      * 更新排序
      *
-     * @param id   id
-     * @param incr 是否为上调
+     * @param id        id
+     * @param increment 是否为上调
      * @return effect
      */
-    Integer updateAppSort(Long id, boolean incr);
+    Integer updateAppSort(Long id, boolean increment);
 
     /**
      * 删除应用
@@ -76,11 +77,11 @@ public interface ApplicationInfoService {
     /**
      * 同步app环境
      *
-     * @param appId         appId
-     * @param profileId     profileId
-     * @param syncProfileId 需要同步的profileId
+     * @param appId             appId
+     * @param profileId         profileId
+     * @param targetProfileList targetProfileList
      */
-    void syncAppProfileConfig(Long appId, Long profileId, Long syncProfileId);
+    void syncAppProfileConfig(Long appId, Long profileId, List<Long> targetProfileList);
 
     /**
      * 复制app
@@ -97,33 +98,5 @@ public interface ApplicationInfoService {
      * @return 检测app是否已经配置
      */
     boolean checkAppConfig(Long appId, Long profileId);
-
-    /**
-     * 获取版本信息列表
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @return 分支信息
-     */
-    ApplicationVcsInfoVO getVcsInfo(Long appId, Long profileId);
-
-    /**
-     * 获取分支列表
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @return 分支信息
-     */
-    List<ApplicationVcsBranchVO> getVcsBranchList(Long appId, Long profileId);
-
-    /**
-     * 获取提交列表
-     *
-     * @param appId      appId
-     * @param profileId  profileId
-     * @param branchName 分支名称
-     * @return log
-     */
-    List<ApplicationVcsCommitVO> getVcsCommitList(Long appId, Long profileId, String branchName);
 
 }

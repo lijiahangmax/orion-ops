@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -48,6 +45,12 @@ public class ApplicationInfoDO implements Serializable {
      */
     @TableField("app_sort")
     private Integer appSort;
+
+    /**
+     * 版本控制id
+     */
+    @TableField(value = "vcs_id", updateStrategy = FieldStrategy.IGNORED)
+    private Long vcsId;
 
     /**
      * 描述

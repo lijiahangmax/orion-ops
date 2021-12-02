@@ -4,6 +4,8 @@ import com.orion.ops.entity.domain.ApplicationInfoDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 应用信息
  *
@@ -35,6 +37,16 @@ public class ApplicationInfoVO {
     private Integer sort;
 
     /**
+     * 版本控制id
+     */
+    private Long vcsId;
+
+    /**
+     * 版本控制名称
+     */
+    private String vcsName;
+
+    /**
      * 描述
      */
     private String description;
@@ -49,9 +61,9 @@ public class ApplicationInfoVO {
     private Integer isConfig;
 
     /**
-     * 机器数量
+     * 机器
      */
-    private Integer machineCount;
+    private List<MachineInfoVO> machines;
 
     static {
         TypeStore.STORE.register(ApplicationInfoDO.class, ApplicationInfoVO.class, p -> {
@@ -60,6 +72,7 @@ public class ApplicationInfoVO {
             vo.setName(p.getAppName());
             vo.setTag(p.getAppTag());
             vo.setSort(p.getAppSort());
+            vo.setVcsId(p.getVcsId());
             vo.setDescription(p.getDescription());
             return vo;
         });
