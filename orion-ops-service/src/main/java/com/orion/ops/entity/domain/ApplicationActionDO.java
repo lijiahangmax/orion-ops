@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.orion.ops.consts.app.StageType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,8 +21,8 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("application_deploy_action")
-public class ApplicationDeployActionDO implements Serializable {
+@TableName("application_action")
+public class ApplicationActionDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -51,9 +52,19 @@ public class ApplicationDeployActionDO implements Serializable {
 
     /**
      * 类型
+     *
+     * @see com.orion.ops.consts.app.ActionType
      */
     @TableField("action_type")
     private Integer actionType;
+
+    /**
+     * 阶段类型
+     *
+     * @see StageType
+     */
+    @TableField("stage_type")
+    private Integer stageType;
 
     /**
      * 执行命令

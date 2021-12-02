@@ -1,28 +1,23 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationDeployActionDO;
+import com.orion.ops.entity.domain.ApplicationActionDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 /**
- * app部署操作
+ * app操作
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/8 18:23
  */
 @Data
-public class ApplicationDeployActionVO {
+public class ApplicationActionVO {
 
     /**
      * id
      */
     private Long id;
-
-    /**
-     * 步骤
-     */
-    private Integer step;
 
     /**
      * 名称
@@ -42,8 +37,8 @@ public class ApplicationDeployActionVO {
     private String command;
 
     static {
-        TypeStore.STORE.register(ApplicationDeployActionDO.class, ApplicationDeployActionVO.class, p -> {
-            ApplicationDeployActionVO vo = new ApplicationDeployActionVO();
+        TypeStore.STORE.register(ApplicationActionDO.class, ApplicationActionVO.class, p -> {
+            ApplicationActionVO vo = new ApplicationActionVO();
             vo.setId(p.getId());
             vo.setName(p.getActionName());
             vo.setType(p.getActionType());
