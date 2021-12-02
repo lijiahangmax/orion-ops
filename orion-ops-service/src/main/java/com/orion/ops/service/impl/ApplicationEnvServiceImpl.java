@@ -7,6 +7,8 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
+import com.orion.ops.consts.app.ReleaseSerialType;
+import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
@@ -21,6 +23,7 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
@@ -197,28 +200,55 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     @Transactional(rollbackFor = Exception.class)
     public void configAppEnv(ApplicationConfigRequest request) {
         ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        StageType stageType = StageType.of(request.getStageType());
+        List<ApplicationEnvRequest> list = Lists.newList();
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
-        ApplicationConfigEnvRequest env = request.getEnv();
+        ApplicationConfigEnvRequest requestEnv = request.getEnv();
         // 构建产物目录
-        ApplicationEnvRequest bundlePath = new ApplicationEnvRequest();
-        bundlePath.setAppId(appId);
-        bundlePath.setProfileId(profileId);
-        bundlePath.setKey(ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        bundlePath.setValue(env.getBundlePath());
-        bundlePath.setDescription(ApplicationEnvAttr.BUNDLE_PATH.getDescription());
-        self.addAppEnv(bundlePath);
-        // 检查是否有构建序列
-        String buildSeqValue = self.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
-        if (buildSeqValue == null) {
-            // 构建序列
-            ApplicationEnvRequest buildSeq = new ApplicationEnvRequest();
-            buildSeq.setAppId(appId);
-            buildSeq.setProfileId(profileId);
-            buildSeq.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
-            buildSeq.setValue(0 + Strings.EMPTY);
-            buildSeq.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
-            self.addAppEnv(buildSeq);
+        String bundlePath = requestEnv.getBundlePath();
+        if (!Strings.isBlank(bundlePath)) {
+            ApplicationEnvRequest bundlePathEnv = new ApplicationEnvRequest();
+            bundlePathEnv.setKey(ApplicationEnvAttr.BUNDLE_PATH.getKey());
+            bundlePathEnv.setValue(bundlePath);
+            bundlePathEnv.setDescription(ApplicationEnvAttr.BUNDLE_PATH.getDescription());
+            list.add(bundlePathEnv);
+        }
+        // 产物传输目录
+        String transferPath = requestEnv.getTransferPath();
+        if (!Strings.isBlank(transferPath)) {
+            ApplicationEnvRequest transferPathEnv = new ApplicationEnvRequest();
+            transferPathEnv.setKey(ApplicationEnvAttr.TRANSFER_PATH.getKey());
+            transferPathEnv.setValue(transferPath);
+            transferPathEnv.setDescription(ApplicationEnvAttr.TRANSFER_PATH.getDescription());
+            list.add(transferPathEnv);
+        }
+        // 发布序列
+        Integer releaseSerial = requestEnv.getReleaseSerial();
+        if (releaseSerial != null) {
+            ApplicationEnvRequest releaseSerialEnv = new ApplicationEnvRequest();
+            releaseSerialEnv.setKey(ApplicationEnvAttr.RELEASE_SERIAL.getKey());
+            releaseSerialEnv.setValue(ReleaseSerialType.of(releaseSerial).getKey());
+            releaseSerialEnv.setDescription(ApplicationEnvAttr.RELEASE_SERIAL.getDescription());
+            list.add(releaseSerialEnv);
+        }
+        // 构建检查是否有构建序列
+        if (StageType.BUILD.equals(stageType)) {
+            String buildSeqValue = self.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
+            if (buildSeqValue == null) {
+                // 构建序列
+                ApplicationEnvRequest buildSeq = new ApplicationEnvRequest();
+                buildSeq.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
+                buildSeq.setValue(0 + Strings.EMPTY);
+                buildSeq.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
+                list.add(buildSeq);
+            }
+        }
+        // 添加环境变量
+        for (ApplicationEnvRequest env : list) {
+            env.setAppId(appId);
+            env.setProfileId(profileId);
+            self.addAppEnv(env);
         }
     }
 

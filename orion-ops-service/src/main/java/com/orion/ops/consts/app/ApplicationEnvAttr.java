@@ -17,12 +17,24 @@ public enum ApplicationEnvAttr {
     /**
      * 构建产物路径
      */
-    BUNDLE_PATH("构建产物路径 (绝对/相对)"),
+    BUNDLE_PATH("主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"),
+
+    /**
+     * 产物传输路径
+     */
+    TRANSFER_PATH("产物传输绝对路径"),
 
     /**
      * 构建序列号
      */
     BUILD_SEQ("构建序列号 (自增)"),
+
+    /**
+     * 发布序列方式
+     *
+     * @see ReleaseSerialType
+     */
+    RELEASE_SERIAL("发布序列方式 (serial/parallel)"),
 
     ;
 

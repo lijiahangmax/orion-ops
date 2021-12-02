@@ -7,6 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
+import com.orion.ops.consts.app.ReleaseSerialType;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
@@ -232,12 +233,16 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
         // 查询环境变量
         String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        String transferPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_PATH.getKey());
+        String releaseSerial = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.RELEASE_SERIAL.getKey());
         // 查询发布机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询发布流程
         List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId);
         // 组装数据
         detail.setBundlePath(bundlePath);
+        detail.setTransferPath(transferPath);
+        detail.setReleaseSerial(ReleaseSerialType.of(releaseSerial).getType());
         detail.setReleaseMachines(machines);
         List<ApplicationActionVO> buildActions = actions.stream()
                 .filter(s -> ActionType.isBuildAction(s.getActionType()))
@@ -261,13 +266,12 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         StageType stageType = StageType.of(request.getStageType());
-        if (StageType.BUILD.equals(stageType)) {
-            // 配置环境变量
-            applicationEnvService.configAppEnv(request);
-        } else if (StageType.RELEASE.equals(stageType)) {
+        if (StageType.RELEASE.equals(stageType)) {
             // 配置机器
             applicationMachineService.configAppMachines(request);
         }
+        // 配置环境变量
+        applicationEnvService.configAppEnv(request);
         // 配置发布
         applicationActionService.configAppAction(request);
     }

@@ -13,8 +13,20 @@ import lombok.Data;
 public class ApplicationConfigEnvRequest {
 
     /**
-     * 构建产物目录
+     * 构建产物路径
      */
     private String bundlePath;
+
+    /**
+     * 产物传输绝对路径
+     */
+    private String transferPath;
+
+    /**
+     * 发布序列 10串行 20并行
+     *
+     * @see com.orion.ops.consts.app.ReleaseSerialType
+     */
+    private Integer releaseSerial;
 
 }

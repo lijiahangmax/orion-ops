@@ -52,6 +52,18 @@ public class ApplicationDetailVO {
     private String bundlePath;
 
     /**
+     * 产物传输目录
+     */
+    private String transferPath;
+
+    /**
+     * 发布序列 10串行 20并行
+     *
+     * @see com.orion.ops.consts.app.ReleaseSerialType
+     */
+    private Integer releaseSerial;
+
+    /**
      * 构建步骤
      */
     private List<ApplicationActionVO> buildActions;

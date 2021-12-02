@@ -20,9 +20,9 @@ public class KeyConst {
     public static final String LOGIN_TOKEN_KEY = "auth:info:{}";
 
     /**
-     * 1 day
+     * 3 day
      */
-    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24;
+    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24 * 3;
 
     /**
      * terminal访问token

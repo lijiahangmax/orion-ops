@@ -7,10 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.StageType;
-import com.orion.ops.entity.request.ApplicationConfigActionRequest;
-import com.orion.ops.entity.request.ApplicationConfigRequest;
-import com.orion.ops.entity.request.ApplicationInfoRequest;
-import com.orion.ops.entity.request.ApplicationSyncConfigRequest;
+import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
 import com.orion.ops.service.api.ApplicationInfoService;
@@ -149,13 +146,15 @@ public class ApplicationInfoController {
     private void checkConfig(ApplicationConfigRequest request) {
         StageType stageType = Valid.notNull(StageType.of(request.getStageType()));
         List<ApplicationConfigActionRequest> actions;
+        ApplicationConfigEnvRequest env = Valid.notNull(request.getEnv());
         if (StageType.BUILD.equals(stageType)) {
             // 构建检查产物路径
-            Valid.notNull(request.getEnv());
-            Valid.notBlank(request.getEnv().getBundlePath());
+            Valid.notBlank(env.getBundlePath());
             // 检查操作
             actions = Valid.notEmpty(request.getBuildActions());
         } else if (StageType.RELEASE.equals(stageType)) {
+            // 发布序列
+            Valid.notNull(env.getReleaseSerial());
             // 发布检查机器id
             Valid.notEmpty(request.getMachineIdList());
             // 检查操作
@@ -189,6 +188,10 @@ public class ApplicationInfoController {
                 .mapToInt(s -> Const.N_1)
                 .sum();
         Valid.lte(transferActionCount, 1, MessageConst.TRANSFER_ACTION_PRESENT);
+        if (transferActionCount != 0) {
+            // 传输目录
+            Valid.notBlank(env.getTransferPath());
+        }
     }
 
 }
