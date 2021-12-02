@@ -8,6 +8,7 @@ import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.machine.MachineTargetEnvAttr;
 import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
@@ -238,7 +239,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     @Override
     public void initEnv(Long machineId) {
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-        List<String> keys = MachineEnvAttr.getTargetKeys();
+        List<String> keys = MachineTargetEnvAttr.getKeys();
         String home = PathBuilders.getEnvPath(machine.getUsername());
         for (String key : keys) {
             MachineEnvDO env = new MachineEnvDO();

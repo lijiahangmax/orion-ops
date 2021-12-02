@@ -79,9 +79,9 @@ public class HostMachineInitialize implements CommandLineRunner {
         log.info("初始化宿主机环境-开始");
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, Const.HOST_MACHINE_ID);
-        List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
-        for (String key : MachineEnvAttr.getHostKeys()) {
-            MachineEnvDO env = envs.stream()
+        List<MachineEnvDO> envList = machineEnvDAO.selectList(wrapper);
+        for (String key : MachineEnvAttr.getKeys()) {
+            MachineEnvDO env = envList.stream()
                     .filter(s -> s.getAttrKey().equals(key))
                     .findFirst()
                     .orElse(null);
@@ -118,6 +118,8 @@ public class HostMachineInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.TEMP_PATH);
             case SWAP_PATH:
                 return createOrionOpsPath(Const.SWAP_PATH);
+            case VCS_PATH:
+                return createOrionOpsPath(Const.VCS_PATH);
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
             case TAIL_OFFSET:

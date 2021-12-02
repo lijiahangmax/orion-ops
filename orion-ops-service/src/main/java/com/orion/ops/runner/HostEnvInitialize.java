@@ -33,8 +33,8 @@ public class HostEnvInitialize implements CommandLineRunner {
         log.info("宿主机基础环境初始化-开始");
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, Const.HOST_MACHINE_ID);
-        List<MachineEnvDO> envs = machineEnvDAO.selectList(wrapper);
-        for (MachineEnvDO env : envs) {
+        List<MachineEnvDO> envList = machineEnvDAO.selectList(wrapper);
+        for (MachineEnvDO env : envList) {
             MachineEnvAttr attr = MachineEnvAttr.of(env.getAttrKey());
             if (attr != null) {
                 attr.setValue(env.getAttrValue());
