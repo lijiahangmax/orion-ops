@@ -59,4 +59,9 @@ public class ApplicationEnvRequest extends PageRequest {
      */
     private Integer viewType;
 
+    /**
+     * 目标环境id
+     */
+    private List<Long> targetProfileIdList;
+
 }

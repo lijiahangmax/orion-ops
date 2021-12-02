@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvViewType;
@@ -85,6 +86,18 @@ public class ApplicationEnvController {
         Long id = Valid.notNull(request.getId());
         return applicationEnvService.getAppEnvDetail(id);
     }
+
+    /**
+     * 同步应用环境变量到其他环境
+     */
+    @RequestMapping("/sync")
+    public HttpWrapper<?> syncAppEnv(@RequestBody ApplicationEnvRequest request) {
+        Long id = Valid.notNull(request.getId());
+        List<Long> targetProfileIdList = Valid.notEmpty(request.getTargetProfileIdList());
+        applicationEnvService.syncAppEnv(id, targetProfileIdList);
+        return HttpWrapper.ok();
+    }
+
 
     /**
      * 视图

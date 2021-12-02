@@ -71,12 +71,12 @@
     "icon": "deployment-unit",
     "children": [
       {
-        "name": "发布配置",
-        "path": "/release/config"
+        "name": "应用构建",
+        "path": "/app/build"
       },
       {
-        "name": "发布单",
-        "path": "/release/bill"
+        "name": "应用发布",
+        "path": "/app/release"
       }
     ]
   },

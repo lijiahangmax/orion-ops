@@ -166,6 +166,25 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppEnv(Long id, List<Long> targetProfileIdList) {
+        // 查询数据
+        ApplicationEnvDO env = applicationEnvDAO.selectById(id);
+        Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+        // 同步
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        for (Long profileId : targetProfileIdList) {
+            ApplicationEnvRequest request = new ApplicationEnvRequest();
+            request.setAppId(env.getAppId());
+            request.setProfileId(profileId);
+            request.setKey(env.getAttrKey());
+            request.setValue(env.getAttrValue());
+            request.setDescription(env.getDescription());
+            self.addAppEnv(request);
+        }
+    }
+
+    @Override
     public String getAppEnvValue(Long appId, Long profileId, String key) {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)

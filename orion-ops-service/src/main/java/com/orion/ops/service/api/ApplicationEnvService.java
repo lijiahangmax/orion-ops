@@ -68,6 +68,14 @@ public interface ApplicationEnvService {
     ApplicationEnvVO getAppEnvDetail(Long id);
 
     /**
+     * 同步应用环境变量到其他环境
+     *
+     * @param id                  id
+     * @param targetProfileIdList 环境id
+     */
+    void syncAppEnv(Long id, List<Long> targetProfileIdList);
+
+    /**
      * 获取环境变量值
      *
      * @param appId     appId
