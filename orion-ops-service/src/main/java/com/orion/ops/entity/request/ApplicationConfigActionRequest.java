@@ -3,14 +3,14 @@ package com.orion.ops.entity.request;
 import lombok.Data;
 
 /**
- * app 配置部署操作请求
+ * app 配置发布操作请求
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/7 19:00
  */
 @Data
-public class ApplicationConfigDeployActionRequest {
+public class ApplicationConfigActionRequest {
 
     /**
      * 名称

@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
 
 import java.util.List;
@@ -33,6 +34,15 @@ public interface ApplicationMachineService {
     List<Long> getAppProfileMachineIdList(Long appId, Long profileId);
 
     /**
+     * 获取应用环境的机器数量
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return count
+     */
+    Integer getAppProfileMachineCount(Long appId, Long profileId);
+
+    /**
      * 获取应用环境的机器
      *
      * @param appId     appId
@@ -59,13 +69,30 @@ public interface ApplicationMachineService {
     Integer deleteAppMachineByAppProfileId(Long appId, Long profileId);
 
     /**
-     * 通过 appId profileId 查询应用机器数量
+     * 通过 appId profileId machineId 删除应用机器
      *
      * @param appId     appId
      * @param profileId profileId
-     * @return count
+     * @param machineId machineId
+     * @return effect
      */
-    Integer selectAppProfileMachineCount(Long appId, Long profileId);
+    Integer deleteAppMachineByAppProfileMachineId(Long appId, Long profileId, Long machineId);
+
+    /**
+     * 通过 appId profileId 查询应用机器id列表
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 机器id列表
+     */
+    List<Long> selectAppProfileMachineIdList(Long appId, Long profileId);
+
+    /**
+     * 配置app机器
+     *
+     * @param request request
+     */
+    void configAppMachines(ApplicationConfigRequest request);
 
     /**
      * 同步 app 机器

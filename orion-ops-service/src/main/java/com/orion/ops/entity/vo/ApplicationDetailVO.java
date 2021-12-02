@@ -37,54 +37,34 @@ public class ApplicationDetailVO {
     private String description;
 
     /**
-     * 机器数量
+     * 版本控制id
      */
-    private Integer machineCount;
+    private Long vcsId;
 
     /**
-     * 环境id
+     * 版本控制名称
      */
-    private Long profileId;
-
-    /**
-     * 环境名称
-     */
-    private String profileName;
-
-    /**
-     * 环境tag
-     */
-    private String profileTag;
-
-    /**
-     * 版本控制根目录
-     */
-    private String vcsRootPath;
-
-    /**
-     * 代码目录
-     */
-    private String vcsCodePath;
-
-    /**
-     * 版本管理工具
-     */
-    private String vcsType;
+    private String vcsName;
 
     /**
      * 构建产物目录
      */
-    private String distPath;
+    private String bundlePath;
+
+    /**
+     * 构建步骤
+     */
+    private List<ApplicationActionVO> buildActions;
 
     /**
      * 关联机器
      */
-    private List<ApplicationMachineVO> machines;
+    private List<ApplicationMachineVO> releaseMachines;
 
     /**
-     * 部署步骤
+     * 发布步骤
      */
-    private List<ApplicationDeployActionVO> actions;
+    private List<ApplicationActionVO> releaseActions;
 
     static {
         TypeStore.STORE.register(ApplicationInfoDO.class, ApplicationDetailVO.class, p -> {
@@ -93,6 +73,7 @@ public class ApplicationDetailVO {
             vo.setName(p.getAppName());
             vo.setTag(p.getAppTag());
             vo.setDescription(p.getDescription());
+            vo.setVcsId(p.getVcsId());
             return vo;
         });
     }

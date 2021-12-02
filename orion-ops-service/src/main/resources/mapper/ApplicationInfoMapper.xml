@@ -8,6 +8,7 @@
         <result column="app_name" property="appName"/>
         <result column="app_tag" property="appTag"/>
         <result column="app_sort" property="appSort"/>
+        <result column="vcs_id" property="vcsId"/>
         <result column="description" property="description"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -15,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_name, app_tag, app_sort, description, create_time, update_time
+        id, app_name, app_tag, app_sort, vcs_id, description, create_time, update_time
     </sql>
 
 </mapper>

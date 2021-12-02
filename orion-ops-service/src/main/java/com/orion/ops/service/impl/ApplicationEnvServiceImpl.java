@@ -11,6 +11,8 @@ import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
+import com.orion.ops.entity.request.ApplicationConfigEnvRequest;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
 import com.orion.ops.service.api.ApplicationEnvService;
@@ -18,7 +20,6 @@ import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
@@ -30,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * app环境 实现
@@ -186,41 +186,65 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     }
 
     @Override
-    public Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId, Object... envKeys) {
+    public Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(appId != null, ApplicationEnvDO::getAppId, appId)
-                .eq(profileId != null, ApplicationEnvDO::getProfileId, profileId)
-                .in(!Arrays1.isEmpty(envKeys), ApplicationEnvDO::getAttrKey, envKeys);
+                .eq(profileId != null, ApplicationEnvDO::getProfileId, profileId);
         return applicationEnvDAO.delete(wrapper);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncAppProfileEnv(Long appId, Long profileId, Long syncProfileId) {
+    public void configAppEnv(ApplicationConfigRequest request) {
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        Long appId = request.getAppId();
+        Long profileId = request.getProfileId();
+        ApplicationConfigEnvRequest env = request.getEnv();
+        // 构建产物目录
+        ApplicationEnvRequest bundlePath = new ApplicationEnvRequest();
+        bundlePath.setAppId(appId);
+        bundlePath.setProfileId(profileId);
+        bundlePath.setKey(ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        bundlePath.setValue(env.getBundlePath());
+        bundlePath.setDescription(ApplicationEnvAttr.BUNDLE_PATH.getDescription());
+        self.addAppEnv(bundlePath);
+        // 检查是否有构建序列
+        String buildSeqValue = self.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
+        if (buildSeqValue == null) {
+            // 构建序列
+            ApplicationEnvRequest buildSeq = new ApplicationEnvRequest();
+            buildSeq.setAppId(appId);
+            buildSeq.setProfileId(profileId);
+            buildSeq.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
+            buildSeq.setValue(0 + Strings.EMPTY);
+            buildSeq.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
+            self.addAppEnv(buildSeq);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppProfileEnv(Long appId, Long profileId, Long targetProfileId) {
+        // 删除
+        LambdaQueryWrapper<ApplicationEnvDO> deleteWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                .eq(ApplicationEnvDO::getAppId, appId)
+                .eq(ApplicationEnvDO::getProfileId, targetProfileId);
+        applicationEnvDAO.delete(deleteWrapper);
         // 查询
-        LambdaQueryWrapper<ApplicationEnvDO> querySourceWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+        LambdaQueryWrapper<ApplicationEnvDO> queryWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
                 .eq(ApplicationEnvDO::getProfileId, profileId);
-        List<ApplicationEnvDO> sourceEnvs = applicationEnvDAO.selectList(querySourceWrapper);
-        // 更新
-        for (ApplicationEnvDO sourceEnv : sourceEnvs) {
+        List<ApplicationEnvDO> sourceEnvList = applicationEnvDAO.selectList(queryWrapper);
+        // 插入
+        for (ApplicationEnvDO sourceEnv : sourceEnvList) {
             ApplicationEnvRequest update = new ApplicationEnvRequest();
             update.setAppId(appId);
-            update.setProfileId(syncProfileId);
+            update.setProfileId(targetProfileId);
             update.setKey(sourceEnv.getAttrKey());
             update.setValue(sourceEnv.getAttrValue());
             update.setDescription(sourceEnv.getDescription());
             this.addAppEnv(update);
         }
-        // 删除
-        List<String> sourceKeys = sourceEnvs.stream()
-                .map(ApplicationEnvDO::getAttrKey)
-                .collect(Collectors.toList());
-        LambdaQueryWrapper<ApplicationEnvDO> deleteWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getProfileId, syncProfileId)
-                .notIn(ApplicationEnvDO::getAttrKey, sourceKeys);
-        applicationEnvDAO.delete(deleteWrapper);
     }
 
     @Override
@@ -228,14 +252,14 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     public void copyAppEnv(Long appId, Long targetAppId) {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId);
-        List<ApplicationEnvDO> envs = applicationEnvDAO.selectList(wrapper);
-        envs.forEach(s -> {
-            s.setId(null);
-            s.setAppId(targetAppId);
-            s.setCreateTime(null);
-            s.setUpdateTime(null);
-        });
-        envs.forEach(applicationEnvDAO::insert);
+        List<ApplicationEnvDO> envList = applicationEnvDAO.selectList(wrapper);
+        for (ApplicationEnvDO env : envList) {
+            env.setId(null);
+            env.setAppId(targetAppId);
+            env.setCreateTime(null);
+            env.setUpdateTime(null);
+            applicationEnvDAO.insert(env);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
 
@@ -90,10 +91,16 @@ public interface ApplicationEnvService {
      *
      * @param appId     appId
      * @param profileId profileId
-     * @param envKey    key
      * @return effect
      */
-    Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId, Object... envKey);
+    Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId);
+
+    /**
+     * 配置app环境
+     *
+     * @param request request
+     */
+    void configAppEnv(ApplicationConfigRequest request);
 
     /**
      * 同步app环境变量

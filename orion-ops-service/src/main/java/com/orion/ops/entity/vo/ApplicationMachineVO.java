@@ -35,7 +35,7 @@ public class ApplicationMachineVO {
     private String machineHost;
 
     /**
-     * 当前版本上线单id
+     * 当前版本发布单id
      */
     private Long releaseId;
 

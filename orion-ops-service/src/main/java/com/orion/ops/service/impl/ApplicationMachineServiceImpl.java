@@ -1,13 +1,17 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.entity.domain.ApplicationMachineDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.ReleaseInfoService;
+import com.orion.ops.utils.Valid;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +62,14 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
+    public Integer getAppProfileMachineCount(Long appId, Long profileId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getMachineId, profileId);
+        return applicationMachineDAO.selectCount(wrapper);
+    }
+
+    @Override
     public List<ApplicationMachineVO> getAppProfileMachineList(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
@@ -98,20 +110,55 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
-    public Integer selectAppProfileMachineCount(Long appId, Long profileId) {
+    public Integer deleteAppMachineByAppProfileMachineId(Long appId, Long profileId, Long machineId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, profileId)
+                .eq(ApplicationMachineDO::getMachineId, machineId);
+        return applicationMachineDAO.delete(wrapper);
+    }
+
+    @Override
+    public List<Long> selectAppProfileMachineIdList(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
                 .eq(ApplicationMachineDO::getProfileId, profileId);
-        return applicationMachineDAO.selectCount(wrapper);
+        return applicationMachineDAO.selectList(wrapper)
+                .stream()
+                .map(ApplicationMachineDO::getMachineId)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncAppProfileMachine(Long appId, Long profileId, Long syncProfileId) {
+    public void configAppMachines(ApplicationConfigRequest request) {
+        Long appId = request.getAppId();
+        Long profileId = request.getProfileId();
+        List<Long> machineIdList = request.getMachineIdList();
+        // 检查
+        for (Long machineId : machineIdList) {
+            MachineInfoDO machine = machineInfoService.selectById(machineId);
+            Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        }
+        // 删除
+        SpringHolder.getBean(ApplicationMachineService.class).deleteAppMachineByAppProfileId(appId, profileId);
+        // 添加
+        for (Long machineId : machineIdList) {
+            ApplicationMachineDO machine = new ApplicationMachineDO();
+            machine.setAppId(appId);
+            machine.setProfileId(profileId);
+            machine.setMachineId(machineId);
+            applicationMachineDAO.insert(machine);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncAppProfileMachine(Long appId, Long profileId, Long targetProfileId) {
         // 删除
         LambdaQueryWrapper<ApplicationMachineDO> deleteWrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
-                .eq(ApplicationMachineDO::getProfileId, syncProfileId);
+                .eq(ApplicationMachineDO::getProfileId, targetProfileId);
         applicationMachineDAO.delete(deleteWrapper);
         // 查询
         LambdaQueryWrapper<ApplicationMachineDO> queryWrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
@@ -121,9 +168,9 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
         // 新增
         for (ApplicationMachineDO machine : machines) {
             machine.setId(null);
+            machine.setProfileId(targetProfileId);
             machine.setCreateTime(null);
             machine.setUpdateTime(null);
-            machine.setProfileId(syncProfileId);
             applicationMachineDAO.insert(machine);
         }
     }
@@ -131,16 +178,18 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void copyAppMachine(Long appId, Long targetAppId) {
+        // 查询
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId);
         List<ApplicationMachineDO> machines = applicationMachineDAO.selectList(wrapper);
-        machines.forEach(s -> {
-            s.setId(null);
-            s.setAppId(targetAppId);
-            s.setCreateTime(null);
-            s.setUpdateTime(null);
-        });
-        machines.forEach(applicationMachineDAO::insert);
+        // 新增
+        for (ApplicationMachineDO machine : machines) {
+            machine.setId(null);
+            machine.setAppId(targetAppId);
+            machine.setCreateTime(null);
+            machine.setUpdateTime(null);
+            applicationMachineDAO.insert(machine);
+        }
     }
 
     @Override
