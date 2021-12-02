@@ -8,6 +8,7 @@
         <result column="machine_id" property="machineId"/>
         <result column="attr_key" property="attrKey"/>
         <result column="attr_value" property="attrValue"/>
+        <result column="deleted" property="deleted"/>
         <result column="description" property="description"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -15,7 +16,21 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, machine_id, attr_key, attr_value, description, create_time, update_time
+        id, machine_id, attr_key, attr_value, deleted, description, create_time, update_time
     </sql>
+
+    <select id="selectOneRel" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM machine_env
+        WHERE machine_id = #{machineId}
+        AND attr_key = #{key}
+    </select>
+
+    <update id="setDeleted">
+        UPDATE machine_env
+        SET deleted = #{deleted}
+        WHERE id = #{id}
+    </update>
 
 </mapper>

@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 
@@ -18,7 +19,7 @@ import java.util.Map;
 public interface MachineEnvService {
 
     /**
-     * 添加 变量
+     * 添加变量
      *
      * @param request request
      * @return id
@@ -26,20 +27,21 @@ public interface MachineEnvService {
     Long addEnv(MachineEnvRequest request);
 
     /**
-     * 批量添加
-     *
-     * @param machineId machineId
-     * @param env       env
-     */
-    void batchAddEnv(Long machineId, Map<String, String> env);
-
-    /**
-     * 修改 变量
+     * 修改变量
      *
      * @param request request
      * @return effect
      */
     Integer updateEnv(MachineEnvRequest request);
+
+    /**
+     * 修改变量
+     *
+     * @param before  before
+     * @param request request
+     * @return effect
+     */
+    Integer updateEnv(MachineEnvDO before, MachineEnvRequest request);
 
     /**
      * 通过id删除
@@ -48,6 +50,14 @@ public interface MachineEnvService {
      * @return effect
      */
     Integer deleteEnv(List<Long> idList);
+
+    /**
+     * 批量添加
+     *
+     * @param machineId machineId
+     * @param env       env
+     */
+    void saveEnv(Long machineId, Map<String, String> env);
 
     /**
      * 合并属性

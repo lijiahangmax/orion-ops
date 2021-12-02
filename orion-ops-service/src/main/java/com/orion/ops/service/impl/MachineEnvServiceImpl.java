@@ -3,10 +3,7 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnvConst;
-import com.orion.ops.consts.HistoryValueType;
-import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.machine.MachineTargetEnvAttr;
 import com.orion.ops.consts.tail.FileTailMode;
@@ -58,42 +55,26 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     @Transactional(rollbackFor = Exception.class)
     public Long addEnv(MachineEnvRequest request) {
         // 查询
-        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                .eq(MachineEnvDO::getMachineId, request.getMachineId())
-                .eq(MachineEnvDO::getAttrKey, request.getKey())
-                .last(Const.LIMIT_1);
-        MachineEnvDO env = machineEnvDAO.selectOne(wrapper);
+        Long machineId = request.getMachineId();
+        String key = request.getKey();
+        // 重复检查
+        MachineEnvDO env = machineEnvDAO.selectOneRel(machineId, key);
+        // 修改
         if (env != null) {
-            // 修改
-            Long id = env.getId();
-            request.setId(id);
-            this.updateEnv(request);
-            return id;
+            SpringHolder.getBean(MachineEnvService.class).updateEnv(env, request);
+            return env.getId();
         }
         // 新增
         MachineEnvDO insert = new MachineEnvDO();
-        insert.setMachineId(request.getMachineId());
-        insert.setAttrKey(request.getKey().trim());
+        insert.setMachineId(machineId);
+        insert.setAttrKey(key);
         insert.setAttrValue(request.getValue());
         insert.setDescription(request.getDescription());
         machineEnvDAO.insert(insert);
         // 插入历史值
         Long id = insert.getId();
-        historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.ADD, null, request.getValue());
+        historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.ADD, null, request.getValue());
         return id;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void batchAddEnv(Long machineId, Map<String, String> env) {
-        MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
-        env.forEach((k, v) -> {
-            MachineEnvRequest request = new MachineEnvRequest();
-            request.setMachineId(machineId);
-            request.setKey(k);
-            request.setValue(v);
-            self.addEnv(request);
-        });
     }
 
     @Override
@@ -102,13 +83,25 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         Long id = request.getId();
         MachineEnvDO before = machineEnvDAO.selectById(id);
         Valid.notNull(before, MessageConst.ENV_ABSENT);
+        return SpringHolder.getBean(MachineEnvService.class).updateEnv(before, request);
+    }
+
+    @Override
+    public Integer updateEnv(MachineEnvDO before, MachineEnvRequest request) {
         // 检查是否修改了值
+        Long id = before.getId();
         String beforeValue = before.getAttrValue();
         String afterValue = request.getValue();
-        if (afterValue != null && !afterValue.equals(beforeValue)) {
-            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, Const.UPDATE, beforeValue, afterValue);
+        if (Const.IS_DELETED.equals(before.getDeleted())) {
+            // 设置新增历史值
+            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.ADD, null, afterValue);
+            // 恢复
+            machineEnvDAO.setDeleted(id, Const.NOT_DELETED);
+        } else if (afterValue != null && !afterValue.equals(beforeValue)) {
+            // 检查是否修改了值 增加历史值
+            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.UPDATE, beforeValue, afterValue);
         }
-        // 判断是否是宿主机系统环境变量
+        // 判断是否是宿主机系统环境变量 同步更新对象
         if (Const.HOST_MACHINE_ID.equals(before.getMachineId())) {
             MachineEnvAttr env = MachineEnvAttr.of(before.getAttrKey());
             if (env != null) {
@@ -129,13 +122,30 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     public Integer deleteEnv(List<Long> idList) {
         int effect = 0;
         for (Long id : idList) {
+            // 获取元数据
             MachineEnvDO env = machineEnvDAO.selectById(id);
             Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
             Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            // 删除
             effect += machineEnvDAO.deleteById(id);
+            // 插入历史值
+            historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.DELETE, env.getAttrValue(), null);
         }
         return effect;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveEnv(Long machineId, Map<String, String> env) {
+        MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
+        env.forEach((k, v) -> {
+            MachineEnvRequest request = new MachineEnvRequest();
+            request.setMachineId(machineId);
+            request.setKey(k);
+            request.setValue(v);
+            self.addEnv(request);
+        });
     }
 
     @Override

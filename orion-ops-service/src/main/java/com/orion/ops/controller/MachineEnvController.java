@@ -128,7 +128,7 @@ public class MachineEnvController {
         EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
         try {
             MutableLinkedHashMap<String, String> result = viewType.toMap(value);
-            machineEnvService.batchAddEnv(machineId, result);
+            machineEnvService.saveEnv(machineId, result);
             return result.size();
         } catch (Exception e) {
             throw Exceptions.argument(MessageConst.PARSE_ERROR, e);
