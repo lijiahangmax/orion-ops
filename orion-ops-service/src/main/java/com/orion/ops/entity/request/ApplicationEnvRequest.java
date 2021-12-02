@@ -64,4 +64,12 @@ public class ApplicationEnvRequest extends PageRequest {
      */
     private List<Long> targetProfileIdList;
 
+    /**
+     * 是否为系统变量 1是 2否
+     *
+     * @see com.orion.ops.consts.Const#IS_SYSTEM
+     * @see com.orion.ops.consts.Const#NOT_SYSTEM
+     */
+    private Integer systemEnv;
+
 }

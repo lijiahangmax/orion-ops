@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -56,6 +53,24 @@ public class ApplicationEnvDO implements Serializable {
     private String attrValue;
 
     /**
+     * 是否为系统变量 1是 2否
+     *
+     * @see com.orion.ops.consts.Const#IS_SYSTEM
+     * @see com.orion.ops.consts.Const#NOT_SYSTEM
+     */
+    @TableField("system_env")
+    private Integer systemEnv;
+
+    @TableLogic
+    private Integer deleted;
+
+    /**
+     * 描述
+     */
+    @TableField("description")
+    private String description;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")
@@ -66,11 +81,5 @@ public class ApplicationEnvDO implements Serializable {
      */
     @TableField("update_time")
     private Date updateTime;
-
-    /**
-     * 描述
-     */
-    @TableField("description")
-    private String description;
 
 }

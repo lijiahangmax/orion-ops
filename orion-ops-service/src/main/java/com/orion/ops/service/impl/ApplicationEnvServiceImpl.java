@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.HistoryOperator;
 import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
@@ -67,58 +68,51 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         // 重复检查
-        LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getProfileId, profileId)
-                .eq(ApplicationEnvDO::getAttrKey, key)
-                .last(Const.LIMIT_1);
-        ApplicationEnvDO env = applicationEnvDAO.selectOne(wrapper);
+        ApplicationEnvDO env = applicationEnvDAO.selectOneRel(appId, profileId, key);
+        // 修改
         if (env != null) {
-            // 修改
-            Long id = env.getId();
-            request.setId(id);
-            this.updateAppEnv(request);
-            return id;
+            SpringHolder.getBean(ApplicationEnvService.class).updateAppEnv(env, request);
+            return env.getId();
         }
         // 新增
         ApplicationEnvDO insert = new ApplicationEnvDO();
         insert.setAppId(appId);
         insert.setProfileId(profileId);
-        insert.setAttrKey(key.trim());
+        insert.setAttrKey(key);
         insert.setAttrValue(request.getValue());
         insert.setDescription(request.getDescription());
+        insert.setSystemEnv(request.getSystemEnv());
         applicationEnvDAO.insert(insert);
         // 插入历史值
         Long id = insert.getId();
-        historyValueService.addHistory(id, HistoryValueType.APP_ENV, Const.ADD, null, request.getValue());
+        historyValueService.addHistory(id, HistoryValueType.APP_ENV, HistoryOperator.ADD, null, request.getValue());
         return id;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchAddAppEnv(Long appId, Long profileId, Map<String, String> env) {
-        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
-        env.forEach((k, v) -> {
-            ApplicationEnvRequest request = new ApplicationEnvRequest();
-            request.setAppId(appId);
-            request.setProfileId(profileId);
-            request.setKey(k);
-            request.setValue(v);
-            self.addAppEnv(request);
-        });
+    public Integer updateAppEnv(ApplicationEnvRequest request) {
+        // 查询
+        ApplicationEnvDO before = applicationEnvDAO.selectById(request.getId());
+        Valid.notNull(before, MessageConst.ENV_ABSENT);
+        return SpringHolder.getBean(ApplicationEnvService.class).updateAppEnv(before, request);
     }
 
     @Override
-    public Integer updateAppEnv(ApplicationEnvRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateAppEnv(ApplicationEnvDO before, ApplicationEnvRequest request) {
         // 查询
-        Long id = request.getId();
-        ApplicationEnvDO before = applicationEnvDAO.selectById(id);
-        Valid.notNull(before, MessageConst.ENV_ABSENT);
-        // 检查是否修改了值
+        Long id = before.getId();
         String beforeValue = before.getAttrValue();
         String afterValue = request.getValue();
-        if (afterValue != null && !afterValue.equals(beforeValue)) {
-            historyValueService.addHistory(id, HistoryValueType.APP_ENV, Const.UPDATE, beforeValue, afterValue);
+        if (Const.IS_DELETED.equals(before.getDeleted())) {
+            // 设置新增历史值
+            historyValueService.addHistory(id, HistoryValueType.APP_ENV, HistoryOperator.ADD, null, afterValue);
+            // 恢复
+            applicationEnvDAO.setDeleted(id, Const.NOT_DELETED);
+        } else if (afterValue != null && !afterValue.equals(beforeValue)) {
+            // 检查是否修改了值 增加历史值
+            historyValueService.addHistory(id, HistoryValueType.APP_ENV, HistoryOperator.UPDATE, beforeValue, afterValue);
         }
         // 更新
         ApplicationEnvDO update = new ApplicationEnvDO();
@@ -134,13 +128,31 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     public Integer deleteAppEnv(List<Long> idList) {
         int effect = 0;
         for (Long id : idList) {
+            // 获取元数据
             ApplicationEnvDO env = applicationEnvDAO.selectById(id);
             Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
             Valid.isTrue(ApplicationEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            // 删除
             effect += applicationEnvDAO.deleteById(id);
+            // 插入历史值
+            historyValueService.addHistory(id, HistoryValueType.APP_ENV, HistoryOperator.DELETE, env.getAttrValue(), null);
         }
         return effect;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveEnv(Long appId, Long profileId, Map<String, String> env) {
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        env.forEach((k, v) -> {
+            ApplicationEnvRequest request = new ApplicationEnvRequest();
+            request.setAppId(appId);
+            request.setProfileId(profileId);
+            request.setKey(k);
+            request.setValue(v);
+            self.addAppEnv(request);
+        });
     }
 
     @Override
@@ -151,6 +163,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
                 .like(Strings.isNotBlank(request.getDescription()), ApplicationEnvDO::getDescription, request.getDescription())
                 .eq(ApplicationEnvDO::getAppId, request.getAppId())
                 .eq(ApplicationEnvDO::getProfileId, request.getProfileId())
+                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
                 .orderByAsc(ApplicationEnvDO::getId);
         return DataQuery.of(applicationEnvDAO)
                 .page(request)
@@ -260,6 +273,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
                 buildSeq.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
                 buildSeq.setValue(0 + Strings.EMPTY);
                 buildSeq.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
+                buildSeq.setSystemEnv(Const.IS_SYSTEM);
                 list.add(buildSeq);
             }
         }

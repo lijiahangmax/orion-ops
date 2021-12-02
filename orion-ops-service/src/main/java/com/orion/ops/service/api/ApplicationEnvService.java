@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.domain.ApplicationEnvDO;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
@@ -27,13 +28,21 @@ public interface ApplicationEnvService {
     Long addAppEnv(ApplicationEnvRequest request);
 
     /**
-     * 批量添加应用变量
+     * 更新应用变量
      *
-     * @param appId     appId
-     * @param profileId profileId
-     * @param env       env
+     * @param request request
+     * @return effect
      */
-    void batchAddAppEnv(Long appId, Long profileId, Map<String, String> env);
+    Integer updateAppEnv(ApplicationEnvRequest request);
+
+    /**
+     * 更新应用变量
+     *
+     * @param before 数据
+     * @param update update
+     * @return effect
+     */
+    Integer updateAppEnv(ApplicationEnvDO before, ApplicationEnvRequest update);
 
     /**
      * 删除应用变量
@@ -44,12 +53,13 @@ public interface ApplicationEnvService {
     Integer deleteAppEnv(List<Long> idList);
 
     /**
-     * 更新应用变量
+     * 保存应用变量
      *
-     * @param request request
-     * @return effect
+     * @param appId     appId
+     * @param profileId profileId
+     * @param env       env
      */
-    Integer updateAppEnv(ApplicationEnvRequest request);
+    void saveEnv(Long appId, Long profileId, Map<String, String> env);
 
     /**
      * 应用环境变量列表

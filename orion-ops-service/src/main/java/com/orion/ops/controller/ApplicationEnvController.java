@@ -125,7 +125,7 @@ public class ApplicationEnvController {
         String value = Valid.notBlank(request.getValue());
         try {
             MutableLinkedHashMap<String, String> result = viewType.toMap(value);
-            applicationEnvService.batchAddAppEnv(appId, profileId, result);
+            applicationEnvService.saveEnv(appId, profileId, result);
             return result.size();
         } catch (Exception e) {
             throw Exceptions.argument(MessageConst.PARSE_ERROR, e);
