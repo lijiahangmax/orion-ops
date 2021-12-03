@@ -93,11 +93,12 @@ public class ApplicationEnvController {
     @RequestMapping("/sync")
     public HttpWrapper<?> syncAppEnv(@RequestBody ApplicationEnvRequest request) {
         Long id = Valid.notNull(request.getId());
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
         List<Long> targetProfileIdList = Valid.notEmpty(request.getTargetProfileIdList());
-        applicationEnvService.syncAppEnv(id, targetProfileIdList);
+        applicationEnvService.syncAppEnv(id, appId, profileId, targetProfileIdList);
         return HttpWrapper.ok();
     }
-
 
     /**
      * 视图

@@ -81,9 +81,11 @@ public interface ApplicationEnvService {
      * 同步应用环境变量到其他环境
      *
      * @param id                  id
-     * @param targetProfileIdList 环境id
+     * @param appId               appId
+     * @param profileId           profileId
+     * @param targetProfileIdList 同步环境id
      */
-    void syncAppEnv(Long id, List<Long> targetProfileIdList);
+    void syncAppEnv(Long id, Long appId, Long profileId, List<Long> targetProfileIdList);
 
     /**
      * 获取环境变量值

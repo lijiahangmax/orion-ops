@@ -164,7 +164,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
                 .eq(ApplicationEnvDO::getAppId, request.getAppId())
                 .eq(ApplicationEnvDO::getProfileId, request.getProfileId())
                 .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
-                .orderByAsc(ApplicationEnvDO::getId);
+                .orderByDesc(ApplicationEnvDO::getUpdateTime);
         return DataQuery.of(applicationEnvDAO)
                 .page(request)
                 .wrapper(wrapper)
@@ -180,20 +180,34 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncAppEnv(Long id, List<Long> targetProfileIdList) {
-        // 查询数据
-        ApplicationEnvDO env = applicationEnvDAO.selectById(id);
-        Valid.notNull(env, MessageConst.UNKNOWN_DATA);
-        // 同步
+    public void syncAppEnv(Long id, Long appId, Long profileId, List<Long> targetProfileIdList) {
         ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
-        for (Long profileId : targetProfileIdList) {
-            ApplicationEnvRequest request = new ApplicationEnvRequest();
-            request.setAppId(env.getAppId());
-            request.setProfileId(profileId);
-            request.setKey(env.getAttrKey());
-            request.setValue(env.getAttrValue());
-            request.setDescription(env.getDescription());
-            self.addAppEnv(request);
+        List<ApplicationEnvDO> envList;
+        if (Const.N_N_L_1.equals(id)) {
+            // 全量同步
+            LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                    .eq(ApplicationEnvDO::getAppId, appId)
+                    .eq(ApplicationEnvDO::getProfileId, profileId)
+                    .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
+                    .orderByAsc(ApplicationEnvDO::getUpdateTime);
+            envList = applicationEnvDAO.selectList(wrapper);
+        } else {
+            // 查询数据
+            ApplicationEnvDO env = applicationEnvDAO.selectById(id);
+            Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+            envList = Lists.singleton(env);
+        }
+        // 同步
+        for (ApplicationEnvDO syncEnv : envList) {
+            for (Long targetProfileId : targetProfileIdList) {
+                ApplicationEnvRequest request = new ApplicationEnvRequest();
+                request.setAppId(syncEnv.getAppId());
+                request.setProfileId(targetProfileId);
+                request.setKey(syncEnv.getAttrKey());
+                request.setValue(syncEnv.getAttrValue());
+                request.setDescription(syncEnv.getDescription());
+                self.addAppEnv(request);
+            }
         }
     }
 
