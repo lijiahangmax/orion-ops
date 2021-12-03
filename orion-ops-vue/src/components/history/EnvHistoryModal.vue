@@ -179,7 +179,14 @@ export default {
       })
     },
     rollback(record) {
-      const updateValue = record.beforeValue || record.afterValue
+      var updateValue
+      switch (record.type) {
+        case this.$enum.HISTORY_VALUE_OPTION_TYPE.INSERT.value:
+          updateValue = record.afterValue
+          break
+        default:
+          updateValue = record.beforeValue
+      }
       this.$confirm({
         title: '确认回滚',
         content: `是否回滚值为 ${updateValue}`,

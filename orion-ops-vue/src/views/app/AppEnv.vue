@@ -93,7 +93,11 @@
             保存
           </a-button>
           <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
-          <a-button class="mx8" type="primary" icon="plus" @click="add">添加</a-button>
+          <AppProfileChecker ref="profileChecker-1">
+            <a-button slot="trigger" class="mx8" type="primary" icon="sync">同步</a-button>
+            <a-button type="primary" size="small" slot="footer" @click="syncEnv(-1)">确定</a-button>
+          </AppProfileChecker>
+          <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
           <a-divider type="vertical"/>
           <a-icon type="search" class="tools-icon" title="查询" @click="getAppEnv({})"/>
           <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
@@ -140,6 +144,11 @@
           <div slot="action" slot-scope="record">
             <a @click="update(record.id)">修改</a>
             <a-divider type="vertical"/>
+            <AppProfileChecker :ref="'profileChecker' + record.id">
+              <a slot="trigger">同步</a>
+              <a-button type="primary" size="small" slot="footer" @click="syncEnv(record.id)">确定</a-button>
+            </AppProfileChecker>
+            <a-divider type="vertical"/>
             <a @click="history(record)">历史</a>
             <a-divider v-if="record.forbidDelete === 1" type="vertical"/>
             <a-popconfirm v-if="record.forbidDelete === 1"
@@ -180,6 +189,7 @@ import Editor from '@/components/editor/Editor'
 import AddAppEnvModal from '@/components/app/AddAppEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
+import AppProfileChecker from '@/components/app/AppProfileChecker'
 
 const columns = [
   {
@@ -223,7 +233,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 140,
+    width: 180,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -234,7 +244,8 @@ export default {
     AddAppEnvModal,
     EnvHistoryModal,
     TextPreview,
-    Editor
+    Editor,
+    AppProfileChecker
   },
   data: function() {
     return {
@@ -404,6 +415,28 @@ export default {
         key: record.key,
         valueId: record.id,
         valueType: this.$enum.HISTORY_VALUE_TYPE.APP_ENV.value
+      })
+    },
+    syncEnv(id) {
+      const ref = this.$refs['profileChecker' + id]
+      if (!ref.checkedList.length) {
+        this.$message.warning('请先选择同步的环境')
+        return
+      }
+      const targetProfileIdList = ref.checkedList
+      ref.checkedList = []
+      ref.hide()
+      // 同步
+      if (id === -1) {
+        this.$message.success('已提交同步请求')
+      }
+      this.$api.syncAppEnv({
+        id,
+        appId: this.query.appId,
+        profileId: this.query.profileId,
+        targetProfileIdList
+      }).then(() => {
+        this.$message.success('同步成功')
       })
     },
     resetForm() {
