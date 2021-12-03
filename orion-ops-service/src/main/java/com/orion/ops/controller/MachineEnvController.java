@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvViewType;
@@ -84,7 +85,7 @@ public class MachineEnvController {
     //   private Long targetMachineId;
     // }
 
-    // save merge diff
+    // merge diff
 
     /**
      * 列表
@@ -101,7 +102,19 @@ public class MachineEnvController {
     @RequestMapping("/detail")
     public MachineEnvVO detail(@RequestBody MachineEnvRequest request) {
         Long id = Valid.notNull(request.getId());
-        return machineEnvService.getEnv(id);
+        return machineEnvService.getEnvDetail(id);
+    }
+
+    /**
+     * 同步
+     */
+    @RequestMapping("/sync")
+    public HttpWrapper<?> sync(@RequestBody MachineEnvRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long machineId = Valid.notNull(request.getMachineId());
+        List<Long> targetMachineIdList = Valid.notEmpty(request.getTargetMachineIdList());
+        machineEnvService.syncMachineEnv(id, machineId, targetMachineIdList);
+        return HttpWrapper.ok();
     }
 
     /**

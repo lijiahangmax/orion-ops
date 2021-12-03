@@ -82,7 +82,16 @@ public interface MachineEnvService {
      * @param id id
      * @return row
      */
-    MachineEnvVO getEnv(Long id);
+    MachineEnvVO getEnvDetail(Long id);
+
+    /**
+     * 同步机器属性
+     *
+     * @param id                  id
+     * @param machineId           machineId
+     * @param targetMachineIdList targetMachineIdList
+     */
+    void syncMachineEnv(Long id, Long machineId, List<Long> targetMachineIdList);
 
     /**
      * 获取机器变量

@@ -78,17 +78,11 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SECRET_KEY_SUFFIX = "_id_rsa";
 
+    public static final Long N_N_L_1 = -1L;
+
     public static final Integer IS_DEFAULT = 1;
 
-    public static final Integer INCREMENT = 1;
-
-    public static final Integer DECREMENT = 2;
-
     public static final Integer CONFIGURED = 1;
-
-    public static final Integer NOT_DELETED = 1;
-
-    public static final Integer IS_DELETED = 2;
 
     public static final Integer IS_SYSTEM = 1;
 

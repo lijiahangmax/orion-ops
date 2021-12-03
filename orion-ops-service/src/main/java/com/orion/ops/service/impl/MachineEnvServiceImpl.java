@@ -21,6 +21,7 @@ import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
@@ -198,10 +199,40 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
-    public MachineEnvVO getEnv(Long id) {
+    public MachineEnvVO getEnvDetail(Long id) {
         MachineEnvDO env = machineEnvDAO.selectById(id);
         Valid.notNull(env, MessageConst.UNKNOWN_DATA);
         return Converts.to(env, MachineEnvVO.class);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncMachineEnv(Long id, Long machineId, List<Long> targetMachineIdList) {
+        MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
+        List<MachineEnvDO> envList;
+        if (Const.N_N_L_1.equals(id)) {
+            // 全量同步
+            LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                    .eq(MachineEnvDO::getMachineId, machineId)
+                    .orderByAsc(MachineEnvDO::getUpdateTime);
+            envList = machineEnvDAO.selectList(wrapper);
+        } else {
+            // 查询数据
+            MachineEnvDO env = machineEnvDAO.selectById(id);
+            Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+            envList = Lists.singleton(env);
+        }
+        // 同步
+        for (Long targetMachineId : targetMachineIdList) {
+            for (MachineEnvDO syncEnv : envList) {
+                MachineEnvRequest request = new MachineEnvRequest();
+                request.setMachineId(targetMachineId);
+                request.setKey(syncEnv.getAttrKey());
+                request.setValue(syncEnv.getAttrValue());
+                request.setDescription(syncEnv.getDescription());
+                self.addEnv(request);
+            }
+        }
     }
 
     @Override

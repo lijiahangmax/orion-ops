@@ -54,4 +54,9 @@ public class MachineEnvRequest extends PageRequest {
      */
     private Integer viewType;
 
+    /**
+     * 目标机器id
+     */
+    private List<Long> targetMachineIdList;
+
 }
