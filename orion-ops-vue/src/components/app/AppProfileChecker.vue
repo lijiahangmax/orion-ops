@@ -53,7 +53,7 @@ export default {
     return {
       visible: false,
       init: false,
-      indeterminate: true,
+      indeterminate: false,
       checkAll: false,
       loading: false,
       checkedList: [],

@@ -23,6 +23,12 @@ export default {
         return {}
       }
     },
+    defaultValue: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -57,6 +63,11 @@ export default {
           host: row.host
         })
       }
+    }
+  },
+  mounted() {
+    if (this.defaultValue) {
+      this.value = this.defaultValue
     }
   }
 }
