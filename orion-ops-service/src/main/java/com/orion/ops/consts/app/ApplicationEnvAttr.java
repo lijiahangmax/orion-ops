@@ -1,5 +1,8 @@
 package com.orion.ops.consts.app;
 
+import com.orion.ops.consts.Const;
+import com.orion.ops.entity.domain.ApplicationEnvDO;
+import com.orion.utils.Strings;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -25,16 +28,26 @@ public enum ApplicationEnvAttr {
     TRANSFER_PATH("产物传输绝对路径"),
 
     /**
-     * 构建序列号
-     */
-    BUILD_SEQ("构建序列号 (自增)"),
-
-    /**
      * 发布序列方式
      *
      * @see ReleaseSerialType
      */
     RELEASE_SERIAL("发布序列方式 (serial/parallel)"),
+
+    /**
+     * 构建序列号
+     */
+    BUILD_SEQ("构建序列号 (自增)") {
+        @Override
+        public ApplicationEnvDO getInitEnv() {
+            ApplicationEnvDO buildSeq = new ApplicationEnvDO();
+            buildSeq.setAttrKey(BUILD_SEQ.getKey());
+            buildSeq.setAttrValue(Const.N_0 + Strings.EMPTY);
+            buildSeq.setDescription(BUILD_SEQ.getDescription());
+            buildSeq.setSystemEnv(Const.IS_SYSTEM);
+            return buildSeq;
+        }
+    },
 
     ;
 
@@ -61,6 +74,15 @@ public enum ApplicationEnvAttr {
                 .filter(a -> a.key.equals(key))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * 获取初始化的对象
+     *
+     * @return env
+     */
+    public ApplicationEnvDO getInitEnv() {
+        throw new UnsupportedOperationException();
     }
 
 }

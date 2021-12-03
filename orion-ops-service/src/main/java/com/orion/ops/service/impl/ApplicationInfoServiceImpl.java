@@ -18,6 +18,7 @@ import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
@@ -76,15 +77,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         insert.setAppTag(request.getTag());
         insert.setVcsId(request.getVcsId());
         insert.setDescription(request.getDescription());
-        // 获取排序
-        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
-                .orderByDesc(ApplicationInfoDO::getAppSort)
-                .last(Const.LIMIT_1);
-        Integer sort = Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
-                .map(ApplicationInfoDO::getAppSort)
-                .map(s -> s + Const.N_10)
-                .orElse(Const.N_10);
-        insert.setAppSort(sort);
+        insert.setAppSort(this.getNextSort());
         applicationInfoDAO.insert(insert);
         return insert.getId();
     }
@@ -301,7 +294,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询app
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         app.setId(null);
-        app.setAppName(app.getAppName() + " - " + Const.COPY);
+        app.setAppName(app.getAppName() + Utils.getCopySuffix());
+        app.setAppSort(this.getNextSort());
         app.setCreateTime(null);
         app.setUpdateTime(null);
         applicationInfoDAO.insert(app);
@@ -332,6 +326,21 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .eq(ApplicationInfoDO::getAppName, name);
         boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    }
+
+    /**
+     * 获取下一个排序
+     *
+     * @return sort
+     */
+    private Integer getNextSort() {
+        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .orderByDesc(ApplicationInfoDO::getAppSort)
+                .last(Const.LIMIT_1);
+        return Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
+                .map(ApplicationInfoDO::getAppSort)
+                .map(s -> s + Const.N_10)
+                .orElse(Const.N_10);
     }
 
 }

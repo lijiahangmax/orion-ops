@@ -23,6 +23,7 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.ValueMix;
 import com.orion.process.Processes;
 import com.orion.remote.channel.SessionHolder;
@@ -176,7 +177,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
-        machine.setMachineName(machine.getMachineName() + " - " + Const.COPY);
+        machine.setMachineName(machine.getMachineName() + Utils.getCopySuffix());
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量

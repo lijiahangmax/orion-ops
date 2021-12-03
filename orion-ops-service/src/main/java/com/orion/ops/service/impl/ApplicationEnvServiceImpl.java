@@ -31,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * app环境 实现
@@ -280,16 +277,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         }
         // 构建检查是否有构建序列
         if (StageType.BUILD.equals(stageType)) {
-            String buildSeqValue = self.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
-            if (buildSeqValue == null) {
-                // 构建序列
-                ApplicationEnvRequest buildSeq = new ApplicationEnvRequest();
-                buildSeq.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
-                buildSeq.setValue(0 + Strings.EMPTY);
-                buildSeq.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
-                buildSeq.setSystemEnv(Const.IS_SYSTEM);
-                list.add(buildSeq);
-            }
+            this.checkInitSystemEnv(appId, profileId).forEach(applicationEnvDAO::insert);
         }
         // 添加环境变量
         for (ApplicationEnvRequest env : list) {
@@ -302,15 +290,11 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileEnv(Long appId, Long profileId, Long targetProfileId) {
-        // 删除
-        LambdaQueryWrapper<ApplicationEnvDO> deleteWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getProfileId, targetProfileId);
-        applicationEnvDAO.delete(deleteWrapper);
         // 查询
         LambdaQueryWrapper<ApplicationEnvDO> queryWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getProfileId, profileId);
+                .eq(ApplicationEnvDO::getProfileId, profileId)
+                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM);
         List<ApplicationEnvDO> sourceEnvList = applicationEnvDAO.selectList(queryWrapper);
         // 插入
         for (ApplicationEnvDO sourceEnv : sourceEnvList) {
@@ -322,14 +306,19 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             update.setDescription(sourceEnv.getDescription());
             this.addAppEnv(update);
         }
+        // 初始化系统变量
+        this.checkInitSystemEnv(appId, targetProfileId).forEach(applicationEnvDAO::insert);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void copyAppEnv(Long appId, Long targetAppId) {
+        // 查询
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                .eq(ApplicationEnvDO::getAppId, appId);
+                .eq(ApplicationEnvDO::getAppId, appId)
+                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM);
         List<ApplicationEnvDO> envList = applicationEnvDAO.selectList(wrapper);
+        // 插入
         for (ApplicationEnvDO env : envList) {
             env.setId(null);
             env.setAppId(targetAppId);
@@ -337,6 +326,52 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             env.setUpdateTime(null);
             applicationEnvDAO.insert(env);
         }
+        // 初始化系统变量
+        envList.stream()
+                .map(ApplicationEnvDO::getProfileId)
+                .distinct()
+                .map(profileId -> this.checkInitSystemEnv(targetAppId, profileId))
+                .flatMap(Collection::stream)
+                .forEach(applicationEnvDAO::insert);
+    }
+
+    @Override
+    public Integer getBuildSeq(Long appId, Long profileId) {
+        // 构建序号
+        String buildSeqValue = this.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
+        if (!Strings.isBlank(buildSeqValue)) {
+            if (Strings.isInteger(buildSeqValue)) {
+                return Integer.valueOf(buildSeqValue);
+            } else {
+                return Const.N_0;
+            }
+        }
+        // 插入构建序列
+        ApplicationEnvDO buildSeq = ApplicationEnvAttr.BUILD_SEQ.getInitEnv();
+        buildSeq.setAppId(appId);
+        buildSeq.setProfileId(profileId);
+        applicationEnvDAO.insert(buildSeq);
+        return Const.N_0;
+    }
+
+    /**
+     * 检查并初始化系统变量
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return addList
+     */
+    private List<ApplicationEnvDO> checkInitSystemEnv(Long appId, Long profileId) {
+        List<ApplicationEnvDO> list = Lists.newList();
+        String buildSeqValue = this.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
+        if (buildSeqValue == null) {
+            // 构建序列
+            ApplicationEnvDO buildSeq = ApplicationEnvAttr.BUILD_SEQ.getInitEnv();
+            buildSeq.setAppId(appId);
+            buildSeq.setProfileId(profileId);
+            list.add(buildSeq);
+        }
+        return list;
     }
 
 }

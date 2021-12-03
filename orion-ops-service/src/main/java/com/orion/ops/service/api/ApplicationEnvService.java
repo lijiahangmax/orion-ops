@@ -139,4 +139,13 @@ public interface ApplicationEnvService {
      */
     void copyAppEnv(Long appId, Long targetAppId);
 
+    /**
+     * 获取构建seq
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return seq
+     */
+    Integer getBuildSeq(Long appId, Long profileId);
+
 }
