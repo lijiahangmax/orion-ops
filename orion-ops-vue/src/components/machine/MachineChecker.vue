@@ -150,6 +150,11 @@ export default {
         }
       }
       return false
+    },
+    clear() {
+      this.checkedList = []
+      this.checkAll = false
+      this.indeterminate = false
     }
   }
 }

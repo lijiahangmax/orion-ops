@@ -113,6 +113,11 @@ export default {
         return JSON.parse(activeProfile).id === id
       }
       return false
+    },
+    clear() {
+      this.checkedList = []
+      this.checkAll = false
+      this.indeterminate = false
     }
   }
 }

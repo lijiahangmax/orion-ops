@@ -424,7 +424,7 @@ export default {
         return
       }
       const targetProfileIdList = ref.checkedList
-      ref.checkedList = []
+      ref.clear()
       ref.hide()
       // 同步
       if (id === -1) {
