@@ -6,8 +6,12 @@
         <!-- 执行机器 -->
         <div class="machine-field-container">
           <span class="machine-field-label">执行机器:</span>
-          <div class="machine-field-input">
-            <MachineMultiSelector ref="machineSelector" :disabled="isRun" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"/>
+          <div class="machine-checker-wrapper">
+            <MachineChecker ref="machineChecker"
+                            :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+              <a slot="trigger" :disabled="isRun">已选择 {{ selectedMachines.length }} 台机器</a>
+              <a-button type="primary" size="small" slot="footer" @click="chooseMachines">确定</a-button>
+            </MachineChecker>
           </div>
         </div>
         <!-- 状态 -->
@@ -101,7 +105,7 @@
 </template>
 
 <script>
-import MachineMultiSelector from '@/components/machine/MachineMultiSelector'
+import MachineChecker from '@/components/machine/MachineChecker'
 import TemplateSelector from '@/components/template/TemplateSelector'
 import LogAppender from '@/components/log/LogAppender'
 import Editor from '@/components/editor/Editor'
@@ -109,7 +113,7 @@ import Editor from '@/components/editor/Editor'
 export default {
   name: 'AddBatchExecTask.vue',
   components: {
-    MachineMultiSelector,
+    MachineChecker,
     TemplateSelector,
     LogAppender,
     Editor
@@ -118,6 +122,7 @@ export default {
     return {
       command: null,
       description: null,
+      selectedMachines: [],
       activeTab: 0,
       isRun: false,
       execMachines: [],
@@ -140,9 +145,17 @@ export default {
     }
   },
   methods: {
+    chooseMachines() {
+      const ref = this.$refs.machineChecker
+      if (!ref.checkedList.length) {
+        this.$message.warning('请选择执行的机器')
+        return
+      }
+      this.selectedMachines = ref.checkedList
+      ref.hide()
+    },
     exec() {
-      const machineIds = this.$refs.machineSelector.value
-      if (!machineIds.length) {
+      if (!this.selectedMachines.length) {
         this.$message.warn('请选择执行机器')
         return
       }
@@ -153,7 +166,7 @@ export default {
       }
       this.isRun = true
       this.$api.submitExecTask({
-        machineIdList: machineIds,
+        machineIdList: this.selectedMachines,
         command: command,
         description: this.description
       }).then(({ data }) => {
@@ -167,6 +180,8 @@ export default {
       this.execMachines.forEach(m => {
         this.$refs['appender' + m.execId][0].close()
       })
+      this.$refs.machineChecker.clear()
+      this.selectedMachines = []
       this.activeTab = 0
       this.isRun = false
       this.execMachines = []
@@ -249,6 +264,11 @@ export default {
         font-weight: 600;
         width: 65px;
         margin: 4px 8px;
+      }
+
+      .machine-checker-wrapper {
+        display: flex;
+        align-items: center;
       }
 
       .machine-field-input {
