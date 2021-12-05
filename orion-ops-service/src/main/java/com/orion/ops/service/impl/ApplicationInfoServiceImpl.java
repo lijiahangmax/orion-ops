@@ -231,7 +231,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询发布机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询发布流程
-        List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId);
+        List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId, null);
         // 组装数据
         detail.setBundlePath(bundlePath);
         detail.setTransferPath(transferPath);

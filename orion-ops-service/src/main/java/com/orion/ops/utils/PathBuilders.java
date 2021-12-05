@@ -40,10 +40,47 @@ public class PathBuilders {
      * @return path
      */
     public static String getExecLogPath(String suffix, Long execId, Long machineId) {
-        return Const.EXEC_LOG_DIR + suffix
+        return Const.EXEC_DIR + suffix
                 + "/" + execId
                 + "_" + machineId
                 + "_" + Dates.current(Dates.YMD_HMS2)
+                + "." + Const.SUFFIX_LOG;
+    }
+
+    /**
+     * 获取 build 产物文件目录
+     *
+     * @param buildId buildId
+     * @return path
+     */
+    public static String getBuildDistPath(Long buildId) {
+        return Const.BUILD_DIR + "/" + buildId;
+    }
+
+    /**
+     * 获取 build 日志文件
+     *
+     * @param buildId buildId
+     * @return path
+     */
+    public static String getBuildLogPath(Long buildId) {
+        return Const.BUILD_DIR
+                + "/" + buildId
+                + "/" + Const.BUILD
+                + "." + Const.SUFFIX_LOG;
+    }
+
+    /**
+     * 获取 buildAction 日志文件
+     *
+     * @param buildId buildId
+     * @return path
+     */
+    public static String getBuildActionLogPath(Long buildId, Long actionId) {
+        return Const.BUILD_DIR
+                + "/" + buildId
+                + "/" + Const.ACTION
+                + "_" + actionId
                 + "." + Const.SUFFIX_LOG;
     }
 
@@ -54,9 +91,9 @@ public class PathBuilders {
      * @return path
      */
     public static String getReleaseHostLogPath(Long releaseId) {
-        return Const.RELEASE_LOG_DIR
+        return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_HOST_LOG_PREFIX
+                + Const.RELEASE_HOST_PREFIX
                 + "." + Const.SUFFIX_LOG;
     }
 
@@ -68,9 +105,9 @@ public class PathBuilders {
      * @return path
      */
     public static String getReleaseTargetMachineLogPath(Long releaseId, Long machineId) {
-        return Const.RELEASE_LOG_DIR
+        return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_TARGET_LOG_PREFIX
+                + Const.RELEASE_TARGET_PREFIX
                 + "_" + machineId
                 + "." + Const.SUFFIX_LOG;
     }
@@ -83,9 +120,9 @@ public class PathBuilders {
      * @return path
      */
     public static String getReleaseActionLogPath(Long releaseId, Long id) {
-        return Const.RELEASE_LOG_DIR
+        return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_ACTION_LOG_PREFIX
+                + Const.RELEASE_ACTION_PREFIX
                 + "_" + id
                 + "." + Const.SUFFIX_LOG;
     }

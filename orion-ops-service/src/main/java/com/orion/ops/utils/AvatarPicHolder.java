@@ -43,7 +43,7 @@ public class AvatarPicHolder {
      * @return path
      */
     public static String getPicPath(Long uid, String suffix) {
-        return Const.AVATAR_PIC_DIR + "/" + uid + "." + suffix;
+        return Const.AVATAR_DIR + "/" + uid + "." + suffix;
     }
 
     /**

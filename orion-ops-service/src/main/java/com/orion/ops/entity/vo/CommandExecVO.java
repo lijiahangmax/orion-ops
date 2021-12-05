@@ -6,7 +6,6 @@ import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -140,9 +139,9 @@ public class CommandExecVO {
             Optional.ofNullable(startDate).map(Dates::ago).ifPresent(vo::setStartDateAgo);
             Optional.ofNullable(endDate).map(Dates::ago).ifPresent(vo::setEndDateAgo);
             Optional.ofNullable(createTime).map(Dates::ago).ifPresent(vo::setCreateTimeAgo);
-            Optional.ofNullable(endDate).map(Date::getTime)
-                    .map(e -> e - Objects.requireNonNull(startDate).getTime())
-                    .ifPresent(vo::setUsed);
+            if (startDate != null && endDate != null) {
+                vo.setUsed(endDate.getTime() - startDate.getTime());
+            }
             return vo;
         });
     }

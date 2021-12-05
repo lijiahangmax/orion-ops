@@ -34,19 +34,21 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TERMINAL_LOG_DIR = "/terminal";
 
-    public static final String RELEASE_LOG_DIR = "/release";
+    public static final String BUILD_DIR = "/build";
 
-    public static final String RELEASE_HOST_LOG_PREFIX = "/host";
+    public static final String RELEASE_DIR = "/release";
 
-    public static final String RELEASE_TARGET_LOG_PREFIX = "/target";
+    public static final String RELEASE_HOST_PREFIX = "/host";
 
-    public static final String RELEASE_ACTION_LOG_PREFIX = "/action";
+    public static final String RELEASE_TARGET_PREFIX = "/target";
 
-    public static final String EXEC_LOG_DIR = "/exec";
+    public static final String RELEASE_ACTION_PREFIX = "/action";
 
-    public static final String COMMAND_LOG_DIR = "/command";
+    public static final String EXEC_DIR = "/exec";
 
-    public static final String AVATAR_PIC_DIR = "/avatar";
+    public static final String COMMAND_DIR = "/command";
+
+    public static final String AVATAR_DIR = "/avatar";
 
     public static final String UPLOAD_DIR = "/upload";
 
@@ -54,7 +56,11 @@ public class Const extends com.orion.constant.Const {
 
     public static final String PACKAGE_DIR = "/package";
 
-    public static final String VCS_INIT_DIR = "/init";
+    public static final String BUILD = "build";
+
+    public static final String RELEASE = "release";
+
+    public static final String ACTION = "action";
 
     public static final String ROOT = "root";
 

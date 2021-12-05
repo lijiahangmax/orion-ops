@@ -258,12 +258,10 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId, String prefix) {
-        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         // 查询机器
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-        if (machine == null) {
-            return env;
-        }
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.MACHINE_NAME, machine.getMachineName());
         env.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
         env.put(EnvConst.MACHINE_HOST, machine.getMachineHost());

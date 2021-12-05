@@ -90,7 +90,7 @@ public class CommandExecServiceImpl implements CommandExecService {
             record.setExecCommand(Strings.format(request.getCommand(), EnvConst.SYMBOL, env));
             commandExecDAO.insert(record);
             // 设置日志路径
-            String logPath = PathBuilders.getExecLogPath(Const.COMMAND_LOG_DIR, record.getId(), machine.getId());
+            String logPath = PathBuilders.getExecLogPath(Const.COMMAND_DIR, record.getId(), machine.getId());
             CommandExecDO update = new CommandExecDO();
             update.setId(record.getId());
             update.setLogPath(logPath);

@@ -145,12 +145,14 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setId(id);
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
+        // 删除
+        File cloneFile = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+        Files1.delete(cloneFile);
         // 初始化
         Exception ex = null;
         Gits gits = null;
         try {
             // 设置地址
-            File cloneFile = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
             if (cloneFile.isDirectory()) {
                 throw Exceptions.argument(MessageConst.VCS_PATH_PRESENT, Exceptions.runtime(cloneFile.getAbsolutePath()));
             }
