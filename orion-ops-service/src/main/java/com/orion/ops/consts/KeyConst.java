@@ -13,7 +13,7 @@ public class KeyConst {
     }
 
     /**
-     * 登陆token
+     * 登陆 token
      * <p>
      * auth:login:{id}
      */
@@ -25,7 +25,7 @@ public class KeyConst {
     public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24 * 3;
 
     /**
-     * terminal访问token
+     * terminal 访问 token
      * <p>
      * terminal:access:{token}
      */
@@ -37,7 +37,7 @@ public class KeyConst {
     public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 5;
 
     /**
-     * terminal绑定token
+     * terminal 绑定 token
      * <p>
      * terminal:bind:{token}
      */
@@ -49,7 +49,7 @@ public class KeyConst {
     public static final int TERMINAL_BIND_EXPIRE = 60 * 60 * 6;
 
     /**
-     * 文件tail访问token
+     * 文件 tail 访问 token
      * <p>
      * file:tail:access{token}
      */
@@ -61,7 +61,7 @@ public class KeyConst {
     public static final int FILE_TAIL_ACCESS_EXPIRE = 60 * 5;
 
     /**
-     * 文件tail绑定token
+     * 文件 tail 绑定 token
      * <p>
      * file:tail:bind:{id}
      */
@@ -73,7 +73,7 @@ public class KeyConst {
     public static final int FILE_TAIL_BIND_EXPIRE = 60 * 60 * 6;
 
     /**
-     * 文件下载token
+     * 文件下载 token
      * <p>
      * file:download:{token}
      */
@@ -85,7 +85,7 @@ public class KeyConst {
     public static final int FILE_DOWNLOAD_EXPIRE = 60 * 5;
 
     /**
-     * sftp会话token
+     * sftp 会话 token
      * <p>
      * "sftp:session:{token}
      */
@@ -97,7 +97,7 @@ public class KeyConst {
     public static final int SFTP_SESSION_EXPIRE = 60 * 60 * 12;
 
     /**
-     * sftp上传请求token
+     * sftp 上传请求 token
      * <p>
      * "sftp:upload:{token}
      */
@@ -107,5 +107,17 @@ public class KeyConst {
      * 5 h
      */
     public static final int SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE = 60 * 60 * 5;
+
+    /**
+     * build 状态
+     * <p>
+     * "app:build:status:{buildId}
+     */
+    public static final String APP_BUILD_STATUS_KEY = "app:build:status:{}";
+
+    /**
+     * 2 h
+     */
+    public static final int APP_BUILD_STATUS_KEY_EXPIRE = 60 * 60 * 2;
 
 }
