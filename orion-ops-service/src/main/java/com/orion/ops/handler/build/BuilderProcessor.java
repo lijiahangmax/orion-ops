@@ -1,0 +1,342 @@
+package com.orion.ops.handler.build;
+
+import com.alibaba.fastjson.JSON;
+import com.orion.exception.LogException;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.SchedulerPools;
+import com.orion.ops.consts.app.ActionType;
+import com.orion.ops.consts.app.ApplicationEnvAttr;
+import com.orion.ops.consts.app.BuildStatus;
+import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.entity.domain.ApplicationBuildActionDO;
+import com.orion.ops.entity.domain.ApplicationBuildDO;
+import com.orion.ops.handler.build.handler.IBuildHandler;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
+import com.orion.ops.service.api.ApplicationBuildService;
+import com.orion.ops.service.api.ApplicationEnvService;
+import com.orion.ops.service.api.MachineInfoService;
+import com.orion.remote.channel.SessionStore;
+import com.orion.spring.SpringHolder;
+import com.orion.utils.Exceptions;
+import com.orion.utils.Strings;
+import com.orion.utils.Threads;
+import com.orion.utils.Valid;
+import com.orion.utils.collect.Lists;
+import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
+import com.orion.utils.time.Dates;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 构建执行器
+ *
+ * @author Jiahang Li
+ * @version 1.0.0
+ * @since 2021/12/5 22:14
+ */
+@Slf4j
+public class BuilderProcessor implements IBuilderProcessor {
+
+    private static ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
+
+    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
+
+    private static RedisTemplate<String, String> redisTemplate = SpringHolder.getBean("redisTemplate");
+
+    protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+
+    protected static ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
+
+    private Long buildId;
+
+    private ApplicationBuildDO record;
+
+    /**
+     * 处理器
+     */
+    private List<IBuildHandler> handlerList;
+
+    protected OutputStream logStream;
+
+    protected BuildStore store;
+
+    public BuilderProcessor(Long buildId) {
+        this.buildId = buildId;
+        this.store = new BuildStore();
+    }
+
+    @Override
+    public void exec() {
+        log.info("提交应用构建任务 buildId: {}", buildId);
+        Threads.start(this, SchedulerPools.APP_BUILD_SCHEDULER);
+    }
+
+    @Override
+    public void run() {
+        log.info("应用构建任务执行开始 buildId: {}", buildId);
+        // 查询构建信息
+        this.getBuildData();
+        Exception ex = null;
+        boolean isMainError = false;
+        try {
+            // 更新状态
+            this.updateStatus(BuildStatus.RUNNABLE);
+            // 打开日志
+            this.openLogger();
+            // 打开机器连接
+            this.openMachineSession();
+            // 执行
+            for (IBuildHandler handler : handlerList) {
+                if (ex == null) {
+                    try {
+                        // 执行
+                        handler.exec();
+                    } catch (Exception e) {
+                        ex = e;
+                    }
+                } else {
+                    // 跳过
+                    handler.skipped();
+                }
+            }
+            // 复制产物文件
+            if (ex == null) {
+                this.copyBundleFile();
+            }
+        } catch (Exception e) {
+            // 异常
+            ex = e;
+            isMainError = true;
+            log.error("应用构建任务执行失败 buildId: {}", buildId, e);
+        }
+        // 更新状态
+        this.updateStatus(ex == null ? BuildStatus.FINISH : BuildStatus.FAILURE);
+        // 拼接日志
+        this.appendFinishedLog(ex, isMainError);
+        // 关闭
+        Streams.close(this);
+    }
+
+    @Override
+    public void terminated() {
+
+    }
+
+    /**
+     * 获取构建数据
+     */
+    private void getBuildData() {
+        // 查询build
+        this.record = applicationBuildService.selectById(buildId);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        Valid.isTrue(BuildStatus.WAIT.getStatus().equals(record.getBuildStatus()), MessageConst.INVALID_STATUS);
+        log.info("应用构建器-获取数据-build buildId: {}, record: {}", buildId, JSON.toJSONString(record));
+        // 查询action
+        List<ApplicationBuildActionDO> actions = applicationBuildService.selectActionById(buildId);
+        Valid.notEmpty(actions, MessageConst.UNKNOWN_DATA);
+        log.info("应用构建器-获取数据-action buildId: {}, actions: {}", buildId, JSON.toJSONString(actions));
+        // 插入store
+        store.setBuildRecord(record);
+        actions.forEach(action -> store.getActions().put(action.getId(), action));
+        store.getStatus().setStatus(record.getBuildStatus());
+        actions.forEach(action -> store.getStatus().getActionStatus().put(action.getId(), action.getRunStatus()));
+        // 创建handler
+        this.handlerList = IBuildHandler.createHandler(actions, store);
+        // 设置状态同步器
+        store.setSyncStatus(this::syncBuildStatus);
+    }
+
+    /**
+     * 打开日志
+     */
+    private void openLogger() {
+        String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), record.getLogPath());
+        log.info("应用构建器-打开日志 buildId: {}, path: {}", buildId, logPath);
+        File logFile = new File(logPath);
+        Files1.touch(logFile);
+        this.logStream = Files1.openOutputStreamFastSafe(logFile);
+        store.setMainLogStream(logStream);
+        store.setMainLogPath(logPath);
+        // 拼接开始日志
+        this.appendStartedLog();
+    }
+
+    /**
+     * 打开session
+     */
+    private void openMachineSession() {
+        boolean hasCommand = store.getActions().values().stream()
+                .map(ApplicationBuildActionDO::getActionType)
+                .anyMatch(ActionType.BUILD_HOST_COMMAND.getType()::equals);
+        if (!hasCommand) {
+            return;
+        }
+        // 打开session
+        SessionStore sessionStore = machineInfoService.openSessionStore(Const.HOST_MACHINE_ID);
+        store.setSessionStore(sessionStore);
+    }
+
+    /**
+     * 同步状态
+     */
+    private void syncBuildStatus() {
+        String key = Strings.format(KeyConst.APP_BUILD_STATUS_KEY, buildId);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(store.getStatus()), KeyConst.APP_BUILD_STATUS_KEY_EXPIRE, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 更新状态
+     *
+     * @param status status
+     */
+    private void updateStatus(BuildStatus status) {
+        ApplicationBuildDO update = new ApplicationBuildDO();
+        update.setId(buildId);
+        update.setBuildStatus(status.getStatus());
+        record.setBuildStatus(status.getStatus());
+        switch (status) {
+            case RUNNABLE:
+                update.setBuildStartTime(new Date());
+                record.setBuildStartTime(update.getBuildStartTime());
+                break;
+            case FINISH:
+            case FAILURE:
+            case TERMINATED:
+                update.setBuildEndTime(new Date());
+                record.setBuildEndTime(update.getBuildEndTime());
+                break;
+            default:
+                break;
+        }
+        // 更新
+        applicationBuildService.updateById(update);
+        // 同步状态
+        this.syncBuildStatus();
+    }
+
+    /**
+     * 复制产物文件
+     */
+    private void copyBundleFile() {
+        // 查询应用产物目录
+        String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        if (!bundlePath.startsWith(Const.SLASH)) {
+            // 基于代码目录的相对路径
+            String vcsPath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), record.getVcsId() + Const.EMPTY);
+            bundlePath = Files1.getPath(vcsPath, bundlePath);
+        }
+        // 检查产物文件是否存在
+        File bundleFile = new File(bundlePath);
+        if (!bundleFile.exists()) {
+            throw Exceptions.log("构建产物文件不存在: " + bundlePath);
+        }
+        // 复制
+        String distPath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), record.getDistPath());
+        if (bundleFile.isFile()) {
+            Files1.copy(bundleFile, new File(distPath, bundleFile.getName()));
+        } else {
+            Files1.copyDir(bundleFile, new File(distPath), false);
+        }
+    }
+
+    /**
+     * 拼接开始日志
+     */
+    private void appendStartedLog() {
+        StringBuilder log = new StringBuilder()
+                .append("# 开始构建 构建序列: #").append(record.getBuildSeq()).append(Const.LF)
+                .append("# 构建应用: ").append(record.getAppName()).append(Const.TAB)
+                .append(record.getAppTag()).append(Const.LF)
+                .append("# 构建环境: ").append(record.getProfileName()).append(Const.TAB)
+                .append(record.getProfileTag()).append(Const.LF)
+                .append("# 执行用户: ").append(record.getCreateUserName()).append(Const.LF)
+                .append("# 开始时间: ").append(Dates.format(record.getBuildStartTime())).append(Const.LF);
+        if (!Strings.isBlank(record.getDescription())) {
+            log.append("# 执行描述: ").append(record.getDescription()).append(Const.LF);
+        }
+        if (!Strings.isBlank(record.getBranchName())) {
+            log.append("# branch: ").append(record.getBranchName()).append("/")
+                    .append(record.getCommitId()).append(Const.LF);
+        }
+        this.appendLog(log.toString());
+    }
+
+    /**
+     * 拼接完成日志
+     *
+     * @param ex          ex
+     * @param isMainError isMainError
+     */
+    private void appendFinishedLog(Exception ex, boolean isMainError) {
+        StringBuilder log = new StringBuilder();
+        if (ex != null) {
+            // 有异常
+            log.append("# 构建失败 结束时间: ").append(Dates.format(record.getBuildEndTime()))
+                    .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
+                    .append("ms\n");
+        } else {
+            // 无异常
+            log.append("# 构建完成 结束时间: ").append(Dates.format(record.getBuildEndTime()))
+                    .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
+                    .append("ms\n");
+        }
+        // 拼接日志
+        this.appendLog(log.toString());
+        // 拼接异常
+        if (ex != null && isMainError) {
+            if (ex instanceof LogException) {
+                this.appendLog(ex.getMessage() + Const.LF);
+            } else {
+                ex.printStackTrace(new PrintStream(logStream));
+            }
+        }
+    }
+
+    /**
+     * 拼接日志
+     *
+     * @param log log
+     */
+    @SneakyThrows
+    private void appendLog(String log) {
+        logStream.write(log.getBytes());
+    }
+
+    @Override
+    public void close() {
+        // 关闭日志流
+        Streams.close(logStream);
+        // 关闭handler
+        if (!Lists.isEmpty(handlerList)) {
+            for (IBuildHandler handler : handlerList) {
+                Streams.close(handler);
+            }
+        }
+        // 关闭session
+        Streams.close(store.getSessionStore());
+        // 异步关闭正在tail的日志
+        Threads.start(() -> {
+            try {
+                Threads.sleep(Const.MS_S_10);
+                tailSessionHolder.getSession(Const.HOST_MACHINE_ID, store.getMainLogPath()).forEach(ITailHandler::close);
+            } catch (Exception e) {
+                log.error("BuilderProcessor-关闭tail失败 {} {}", buildId, e);
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+}
