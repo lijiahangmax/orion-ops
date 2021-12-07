@@ -221,7 +221,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     public List<ApplicationVcsCommitVO> getVcsCommitList(Long id, String branchName) {
         // 打开git
         try (Gits gits = this.openGit(id)) {
-            gits.fetch();
+            gits.fetch(branchName.split("/")[0]);
             // 查询提交信息
             List<LogInfo> logList = gits.logList(branchName, Const.VCS_COMMIT_LIMIT);
             return Converts.toList(logList, ApplicationVcsCommitVO.class);

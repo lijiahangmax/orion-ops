@@ -85,9 +85,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
                     Optional.ofNullable(m.getReleaseId())
                             .map(releaseInfoService::getReleaseBill)
                             .ifPresent(r -> {
-                                machineVO.setReleaseId(r.getId());
-                                machineVO.setBranchName(r.getBranchName());
-                                machineVO.setCommitId(r.getCommitId());
+                                // todo 设置buildSeq
                             });
                     return machineVO;
                 })

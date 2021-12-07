@@ -15,11 +15,6 @@ import lombok.Data;
 public class ApplicationVcsBranchVO {
 
     /**
-     * id
-     */
-    private String id;
-
-    /**
      * 名称
      */
     private String name;
@@ -34,8 +29,7 @@ public class ApplicationVcsBranchVO {
     static {
         TypeStore.STORE.register(BranchInfo.class, ApplicationVcsBranchVO.class, p -> {
             ApplicationVcsBranchVO vo = new ApplicationVcsBranchVO();
-            vo.setId(p.getId());
-            vo.setName(p.getName());
+            vo.setName(p.toString());
             return vo;
         });
     }

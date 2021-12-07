@@ -28,9 +28,10 @@ public interface ApplicationActionService {
      *
      * @param appId     appId
      * @param profileId profileId
+     * @param stageType stageType
      * @return actions
      */
-    List<ApplicationActionDO> getAppProfileActions(Long appId, Long profileId);
+    List<ApplicationActionDO> getAppProfileActions(Long appId, Long profileId, Integer stageType);
 
     /**
      * 通过appId profileId查询操作步骤数量数量

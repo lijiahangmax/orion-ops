@@ -36,10 +36,12 @@ public class ApplicationActionServiceImpl implements ApplicationActionService {
     }
 
     @Override
-    public List<ApplicationActionDO> getAppProfileActions(Long appId, Long profileId) {
+    public List<ApplicationActionDO> getAppProfileActions(Long appId, Long profileId, Integer stageType) {
         LambdaQueryWrapper<ApplicationActionDO> wrapper = new LambdaQueryWrapper<ApplicationActionDO>()
                 .eq(ApplicationActionDO::getAppId, appId)
-                .eq(ApplicationActionDO::getProfileId, profileId);
+                .eq(ApplicationActionDO::getProfileId, profileId)
+                .eq(stageType != null, ApplicationActionDO::getStageType, stageType)
+                .orderByAsc(ApplicationActionDO::getId);
         return applicationActionDAO.selectList(wrapper);
     }
 
