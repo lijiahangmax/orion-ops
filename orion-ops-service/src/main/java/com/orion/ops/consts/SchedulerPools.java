@@ -92,6 +92,18 @@ public class SchedulerPools {
             .build();
 
     /**
+     * 应用构建线程池
+     */
+    public static final ExecutorService APP_BUILD_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("app-build-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+    /**
      * 发布单 主线程操作线程池
      */
     public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
@@ -122,6 +134,8 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(TAIL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_UPLOAD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_DOWNLOAD_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SFTP_PACKAGE_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(APP_BUILD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_TARGET_STAGE_SCHEDULER, Const.MS_S_3);
         });

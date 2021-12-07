@@ -40,7 +40,6 @@ public class TailSessionHolder {
     public void addSession(String token, ITailHandler session) {
         holder.put(token, session);
         fileTokenMapping.computeIfAbsent(session.getMachineId() + ":" + session.getFilePath(), s -> Lists.newList()).add(token);
-        System.out.println(1);
     }
 
     /**

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * app步骤执行状态
+ * 步骤执行状态
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -17,7 +17,7 @@ public enum ActionStatus {
     /**
      * 未开始
      */
-    WAIT_RUNNABLE(10),
+    WAIT(10),
 
     /**
      * 进行中
@@ -32,12 +32,17 @@ public enum ActionStatus {
     /**
      * 执行失败
      */
-    EXCEPTION(40),
+    FAILURE(40),
 
     /**
      * 已跳过
      */
     SKIPPED(50),
+
+    /**
+     * 已终止
+     */
+    TERMINATED(60),
 
     ;
 

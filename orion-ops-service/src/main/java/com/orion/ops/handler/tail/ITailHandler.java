@@ -38,7 +38,6 @@ public interface ITailHandler extends SafeCloseable {
      */
     String getFilePath();
 
-
     /**
      * 获取实际执行 handler
      *

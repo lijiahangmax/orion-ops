@@ -107,6 +107,15 @@ public interface ApplicationEnvService {
     MutableLinkedHashMap<String, String> getAppProfileEnv(Long appId, Long profileId);
 
     /**
+     * 获取应用环境变量 包含应用 环境
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return env
+     */
+    MutableLinkedHashMap<String, String> getAppProfileFullEnv(Long appId, Long profileId);
+
+    /**
      * 通过appId profileId 删除env
      *
      * @param appId     appId
@@ -146,6 +155,6 @@ public interface ApplicationEnvService {
      * @param profileId profileId
      * @return seq
      */
-    Integer getBuildSeq(Long appId, Long profileId);
+    Integer getBuildSeqAndIncrement(Long appId, Long profileId);
 
 }

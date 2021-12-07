@@ -149,8 +149,7 @@ public class CommandExecHandler extends AbstractExecHandler {
         Threads.start(() -> {
             try {
                 Threads.sleep(Const.MS_S_10);
-                tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath)
-                        .forEach(ITailHandler::close);
+                tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logPath).forEach(ITailHandler::close);
             } catch (Exception e) {
                 log.error("execHandler-关闭tail失败 {} {}", execId, e);
                 e.printStackTrace();

@@ -3,10 +3,7 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.HistoryOperator;
-import com.orion.ops.consts.HistoryValueType;
-import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.ReleaseSerialType;
 import com.orion.ops.consts.app.StageType;
@@ -14,6 +11,8 @@ import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
+import com.orion.ops.entity.domain.ApplicationInfoDO;
+import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.request.ApplicationConfigEnvRequest;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
@@ -232,6 +231,24 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     }
 
     @Override
+    public MutableLinkedHashMap<String, String> getAppProfileFullEnv(Long appId, Long profileId) {
+        // 查询应用环境
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        ApplicationProfileDO profile = Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
+        env.put(EnvConst.APP_NAME, app.getAppName());
+        env.put(EnvConst.APP_TAG, app.getAppTag());
+        env.put(EnvConst.PROFILE_NAME, profile.getProfileName());
+        env.put(EnvConst.PROFILE_TAG, profile.getProfileTag());
+        // 插入应用环境变量
+        Map<String, String> appProfileEnv = this.getAppProfileEnv(app.getId(), profile.getId());
+        appProfileEnv.forEach((k, v) -> {
+            env.put(EnvConst.APP_PREFIX + k, v);
+        });
+        return env;
+    }
+
+    @Override
     public Integer deleteAppProfileEnvByAppProfileId(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(appId != null, ApplicationEnvDO::getAppId, appId)
@@ -336,22 +353,30 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     }
 
     @Override
-    public Integer getBuildSeq(Long appId, Long profileId) {
+    public Integer getBuildSeqAndIncrement(Long appId, Long profileId) {
         // 构建序号
+        int seq;
         String buildSeqValue = this.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
         if (!Strings.isBlank(buildSeqValue)) {
             if (Strings.isInteger(buildSeqValue)) {
-                return Integer.valueOf(buildSeqValue);
+                seq = Integer.parseInt(buildSeqValue);
             } else {
-                return Const.N_0;
+                seq = Const.N_0;
             }
+        } else {
+            seq = Const.N_0;
         }
-        // 插入构建序列
-        ApplicationEnvDO buildSeq = ApplicationEnvAttr.BUILD_SEQ.getInitEnv();
-        buildSeq.setAppId(appId);
-        buildSeq.setProfileId(profileId);
-        applicationEnvDAO.insert(buildSeq);
-        return Const.N_0;
+        seq++;
+        // 修改构建序列
+        ApplicationEnvRequest update = new ApplicationEnvRequest();
+        update.setAppId(appId);
+        update.setProfileId(profileId);
+        update.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
+        update.setValue(seq + Const.EMPTY);
+        update.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
+        update.setSystemEnv(Const.IS_SYSTEM);
+        this.addAppEnv(update);
+        return seq;
     }
 
     /**

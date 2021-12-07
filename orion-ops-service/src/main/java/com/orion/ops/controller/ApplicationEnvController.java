@@ -36,7 +36,7 @@ public class ApplicationEnvController {
     @Resource
     private ApplicationEnvService applicationEnvService;
 
-    // merge diff sync
+    // merge diff
 
     /**
      * 添加应用变量

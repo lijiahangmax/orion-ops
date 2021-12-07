@@ -13,19 +13,14 @@ import lombok.Getter;
 public enum ActionType {
 
     /**
-     * 构建-初始化
-     */
-    BUILD_INITIAL(110, StageType.BUILD),
-
-    /**
      * 构建-检出代码
      */
-    BUILD_CHECKOUT(120, StageType.BUILD),
+    BUILD_CHECKOUT(110, StageType.BUILD),
 
     /**
      * 构建-主机命令
      */
-    BUILD_HOST_COMMAND(130, StageType.BUILD),
+    BUILD_HOST_COMMAND(120, StageType.BUILD),
 
     /**
      * 发布-初始化
