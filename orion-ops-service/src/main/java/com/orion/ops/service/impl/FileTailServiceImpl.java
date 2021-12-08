@@ -54,10 +54,13 @@ public class FileTailServiceImpl implements FileTailService {
     private CommandExecService commandExecService;
 
     @Resource
-    private FileTailListDAO fileTailListDAO;
+    private ApplicationBuildService applicationBuildService;
 
     @Resource
     private ReleaseInfoService releaseInfoService;
+
+    @Resource
+    private FileTailListDAO fileTailListDAO;
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -191,12 +194,12 @@ public class FileTailServiceImpl implements FileTailService {
                 // 执行日志
                 path = commandExecService.getExecLogFilePath(relId);
                 break;
-            case RELEASE_HOST:
-                // 发布单 宿主机步骤
-                path = releaseInfoService.getReleaseHostLogPath(relId);
+            case APP_BUILD_LOG:
+                // 应用构建 宿主机流程日志
+                path = applicationBuildService.getBuildLogPath(relId);
                 break;
-            case RELEASE_STAGE:
-                // 发布单 目标机器步骤
+            case APP_RELEASE_LOG:
+                // 应用发布 目标机器流程日志
                 path = releaseInfoService.getReleaseStageLogPath(relId);
                 break;
             default:
