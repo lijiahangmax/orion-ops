@@ -27,6 +27,8 @@ import com.orion.utils.Valid;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
+import com.orion.utils.io.compress.CompressTypeEnum;
+import com.orion.utils.io.compress.FileCompressor;
 import com.orion.utils.time.Dates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -229,6 +231,7 @@ public class BuilderProcessor implements IBuilderProcessor {
     /**
      * 复制产物文件
      */
+    @SneakyThrows
     private void copyBundleFile() {
         // 查询应用产物目录
         String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
@@ -240,14 +243,23 @@ public class BuilderProcessor implements IBuilderProcessor {
         // 检查产物文件是否存在
         File bundleFile = new File(bundlePath);
         if (!bundleFile.exists()) {
-            throw Exceptions.log("构建产物文件不存在: " + bundlePath);
+            throw Exceptions.log("***** 构建产物文件不存在: " + bundlePath);
         }
         // 复制
         String distPath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), record.getDistPath());
+        this.appendLog(Strings.format("\n***** 已生成产物文件 {}\n", distPath));
         if (bundleFile.isFile()) {
-            Files1.copy(bundleFile, new File(distPath, bundleFile.getName()));
+            Files1.copy(bundleFile, new File(distPath));
         } else {
+            // 复制文件夹
             Files1.copyDir(bundleFile, new File(distPath), false);
+            // 文件夹打包
+            String compressFile = distPath + "." + Const.SUFFIX_ZIP;
+            FileCompressor compressor = CompressTypeEnum.ZIP.compressor().get();
+            compressor.addFile(bundleFile);
+            compressor.setAbsoluteCompressPath(compressFile);
+            compressor.compress();
+            this.appendLog(Strings.format("***** 已生成压缩产物文件 {}\n", compressFile));
         }
     }
 
@@ -256,7 +268,7 @@ public class BuilderProcessor implements IBuilderProcessor {
      */
     private void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 开始构建 构建序列: #").append(record.getBuildSeq()).append(Const.LF)
+                .append("# 开始构建 #").append(record.getBuildSeq()).append(Const.LF)
                 .append("# 构建应用: ").append(record.getAppName()).append(Const.TAB)
                 .append(record.getAppTag()).append(Const.LF)
                 .append("# 构建环境: ").append(record.getProfileName()).append(Const.TAB)
@@ -267,8 +279,8 @@ public class BuilderProcessor implements IBuilderProcessor {
             log.append("# 执行描述: ").append(record.getDescription()).append(Const.LF);
         }
         if (!Strings.isBlank(record.getBranchName())) {
-            log.append("# branch: ").append(record.getBranchName()).append("/")
-                    .append(record.getCommitId()).append(Const.LF);
+            log.append("# branch: ").append(record.getBranchName()).append(Const.TAB)
+                    .append("commitId: ").append(record.getCommitId()).append(Const.LF);
         }
         this.appendLog(log.toString());
     }
