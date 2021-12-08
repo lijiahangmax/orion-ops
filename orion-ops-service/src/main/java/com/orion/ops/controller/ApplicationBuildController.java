@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 应用构建api
@@ -83,6 +85,15 @@ public class ApplicationBuildController {
         Long id = Valid.notNull(request.getId());
         applicationBuildService.rebuild(id);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 状态列表
+     */
+    @RequestMapping("/list/status")
+    public Map<String, Integer> getListStatus(@RequestBody ApplicationBuildRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return applicationBuildService.getBuildStatusList(idList);
     }
 
 }

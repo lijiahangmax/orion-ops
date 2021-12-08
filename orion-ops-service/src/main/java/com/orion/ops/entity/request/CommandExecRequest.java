@@ -23,6 +23,11 @@ public class CommandExecRequest extends PageRequest {
     private Long id;
 
     /**
+     * id
+     */
+    private List<Long> idList;
+
+    /**
      * 执行机器id
      */
     private Long machineId;

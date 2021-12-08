@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 批量执行controller
@@ -74,6 +75,15 @@ public class CommandExecController {
     public Integer terminated(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandExecService.terminatedExec(id);
+    }
+
+    /**
+     * 状态列表
+     */
+    @RequestMapping("/list/status")
+    public Map<String, Integer> getListStatus(@RequestBody CommandExecRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return commandExecService.getExecStatusList(idList);
     }
 
 }

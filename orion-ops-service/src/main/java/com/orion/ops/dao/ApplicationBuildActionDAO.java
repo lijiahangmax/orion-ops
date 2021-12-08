@@ -1,7 +1,10 @@
 package com.orion.ops.dao;
 
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.orion.ops.entity.domain.ApplicationBuildActionDO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,21 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2021-11-26
  */
 public interface ApplicationBuildActionDAO extends BaseMapper<ApplicationBuildActionDO> {
+
+    /**
+     * 通过 id 查询状态
+     *
+     * @param id id
+     * @return status
+     */
+    Integer selectStatusById(@Param("id") Long id);
+
+    /**
+     * 通过 buildId 查询 id
+     *
+     * @param buildId buildId
+     * @return id
+     */
+    List<Long> selectActionIdByBuildId(@Param("buildId") Long buildId);
 
 }

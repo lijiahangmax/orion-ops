@@ -8,6 +8,7 @@ import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 应用构建服务
@@ -63,6 +64,14 @@ public interface ApplicationBuildService {
      * @param id id
      */
     void rebuild(Long id);
+
+    /**
+     * 查询构建状态列表
+     *
+     * @param buildIdList id
+     * @return key: id  value: status
+     */
+    Map<String, Integer> getBuildStatusList(List<Long> buildIdList);
 
     /**
      * 通过id查询

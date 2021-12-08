@@ -192,6 +192,15 @@ public class CommandExecServiceImpl implements CommandExecService {
     }
 
     @Override
+    public Map<String, Integer> getExecStatusList(List<Long> execIdList) {
+        Map<String, Integer> statusMap = Maps.newLinkedMap();
+        for (Long execId : execIdList) {
+            statusMap.put(execId.toString(), commandExecDAO.selectStatusById(execId));
+        }
+        return statusMap;
+    }
+
+    @Override
     public CommandExecDO selectById(Long id) {
         if (Currents.isAdministrator()) {
             return commandExecDAO.selectById(id);

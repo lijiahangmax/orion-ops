@@ -24,4 +24,17 @@
         id, build_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, create_time, update_time
     </sql>
 
+    <select id="selectStatusById" resultType="java.lang.Integer">
+        SELECT run_status
+        FROM application_build_action
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectActionIdByBuildId" resultType="java.lang.Long">
+        SELECT id
+        FROM application_build_action
+        WHERE build_id = #{buildId}
+        ORDER BY id ASC
+    </select>
+
 </mapper>

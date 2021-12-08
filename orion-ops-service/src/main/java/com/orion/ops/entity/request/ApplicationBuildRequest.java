@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 应用构建请求
  *
@@ -18,6 +20,11 @@ public class ApplicationBuildRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id
+     */
+    private List<Long> idList;
 
     /**
      * 应用id

@@ -27,7 +27,6 @@ import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -66,9 +65,6 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Resource
     private MachineEnvService machineEnvService;
-
-    @Resource
-    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public Long submitBuildTask(ApplicationBuildRequest request) {
@@ -196,7 +192,19 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Override
     public ApplicationBuildStatusVO getBuildStatus(Long id) {
-        return null;
+        ApplicationBuildStatusVO status = new ApplicationBuildStatusVO();
+        // 查询构建状态
+        Integer buildStatus = applicationBuildDAO.selectStatusById(id);
+        Valid.notNull(buildStatus, MessageConst.UNKNOWN_DATA);
+        // 查询操作状态
+        List<Long> actionIdList = applicationBuildActionDAO.selectActionIdByBuildId(id);
+        Map<String, Integer> actionStatusMap = Maps.newLinkedMap();
+        for (Long actionId : actionIdList) {
+            actionStatusMap.put(actionId.toString(), applicationBuildActionDAO.selectStatusById(actionId));
+        }
+        status.setStatus(buildStatus);
+        status.setActionStatus(actionStatusMap);
+        return status;
     }
 
     @Override
@@ -207,6 +215,15 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     @Override
     public void rebuild(Long id) {
 
+    }
+
+    @Override
+    public Map<String, Integer> getBuildStatusList(List<Long> buildIdList) {
+        Map<String, Integer> statusMap = Maps.newLinkedMap();
+        for (Long buildId : buildIdList) {
+            statusMap.put(buildId.toString(), applicationBuildDAO.selectStatusById(buildId));
+        }
+        return statusMap;
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 命令执行接口
@@ -57,6 +58,14 @@ public interface CommandExecService {
      * @return effect
      */
     Integer terminatedExec(Long id);
+
+    /**
+     * 查询状态
+     *
+     * @param execIdList execIdList
+     * @return key: id  value: status
+     */
+    Map<String, Integer> getExecStatusList(List<Long> execIdList);
 
     /**
      * 通过id查询 execDO
