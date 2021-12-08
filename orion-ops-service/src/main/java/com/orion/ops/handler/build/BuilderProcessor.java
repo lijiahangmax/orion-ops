@@ -161,7 +161,7 @@ public class BuilderProcessor implements IBuilderProcessor {
         Files1.touch(logFile);
         this.logStream = Files1.openOutputStreamFastSafe(logFile);
         store.setMainLogStream(logStream);
-        store.setMainLogPath(logPath);
+        store.setMainLogPath(logFile.getAbsolutePath());
         // 拼接开始日志
         this.appendStartedLog();
     }

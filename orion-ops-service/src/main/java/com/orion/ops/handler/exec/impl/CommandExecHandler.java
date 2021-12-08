@@ -42,8 +42,9 @@ public class CommandExecHandler extends AbstractExecHandler {
     @Override
     public void exec() {
         super.exec();
-        this.logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), record.getLogPath());
-        Files1.touch(logPath);
+        File logFile = new File(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), record.getLogPath()));
+        Files1.touch(logFile);
+        this.logPath = logFile.getAbsolutePath();
     }
 
     @Override
