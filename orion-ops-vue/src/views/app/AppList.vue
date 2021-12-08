@@ -305,7 +305,7 @@ export default {
   methods: {
     chooseProfile(profile) {
       this.query.profileId = profile.id
-      this.getList()
+      this.getList({})
     },
     getList(page = this.pagination) {
       this.loading = true

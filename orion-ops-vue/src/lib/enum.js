@@ -171,12 +171,12 @@ const $enum = {
     PASSWORD: {
       value: 1,
       label: '密码认证',
-      color: '#845ef7'
+      color: '#845EF7'
     },
     KEY: {
       value: 2,
       label: '秘钥认证',
-      color: '#5c7cfa'
+      color: '#5C7CFA'
     }
   },
 
@@ -243,17 +243,17 @@ const $enum = {
     INSERT: {
       value: 1,
       label: '新增',
-      color: '#94d82d'
+      color: '#94D82D'
     },
     UPDATE: {
       value: 2,
       label: '修改',
-      color: '#4c6ef5'
+      color: '#4C6EF5'
     },
     DELETE: {
       value: 3,
       label: '删除',
-      color: '#ff922b'
+      color: '#FF922B'
     }
   },
 
@@ -392,17 +392,17 @@ const $enum = {
       value: 40,
       label: 'sftp下载文件'
     },
-    RELEASE_HOST_LOG: {
+    APP_BUILD_LOG: {
       value: 50,
-      label: '上线单宿主机日志'
+      label: '应用构建日志'
     },
-    RELEASE_STAGE_LOG: {
+    APP_BUILD_ACTION_LOG: {
       value: 60,
-      label: '上线单目标机器日志'
+      label: '应用构建操作日志'
     },
-    RELEASE_SNAPSHOT: {
+    APP_BUILD_BUNDLE: {
       value: 70,
-      label: '上线单快照文件'
+      label: '应用构建产物文件'
     }
   },
 
@@ -452,6 +452,161 @@ const $enum = {
       value: 40,
       name: 'properties',
       lang: 'properties'
+    }
+  },
+
+  /**
+   * 角色类型
+   */
+  VCS_STATUS: {
+    UNINITIALIZED: {
+      value: 10,
+      label: '未初始化',
+      color: '#CED4DA'
+    },
+    INITIALIZING: {
+      value: 20,
+      label: '未初始中',
+      color: '#51CF66'
+    },
+    OK: {
+      value: 30,
+      label: '正常',
+      color: '#228BE6'
+    },
+    ERROR: {
+      value: 40,
+      label: '失败',
+      color: '#FD7E14'
+    }
+  },
+
+  /**
+   * 配置类型
+   */
+  CONFIG_STATUS: {
+    CONFIGURED: {
+      value: 1,
+      label: '已配置',
+      color: '#4C6EF5'
+    },
+    NOT_CONFIGURED: {
+      value: 2,
+      label: '未配置',
+      color: '#DEE2E6'
+    }
+  },
+
+  /**
+   * 构建操作类型
+   */
+  BUILD_ACTION_TYPE: {
+    CHECKOUT: {
+      value: 110,
+      label: '检出'
+    },
+    HOST_COMMAND: {
+      value: 120,
+      label: '主机命令'
+    }
+  },
+
+  /**
+   * 发布操作类型
+   */
+  RELEASE_ACTION_TYPE: {
+    INITIAL: {
+      value: 210,
+      label: '初始化'
+    },
+    TRANSFER: {
+      value: 220,
+      label: '传输'
+    },
+    TARGET_COMMAND: {
+      value: 230,
+      label: '目标主机命令'
+    }
+  },
+
+  /**
+   * 发布序列类型
+   */
+  RELEASE_SERIAL_TYPE: {
+    SERIAL: {
+      value: 10,
+      label: '串行'
+    },
+    PARALLEL: {
+      value: 20,
+      label: '并行'
+    }
+  },
+
+  /**
+   * 构建状态
+   */
+  BUILD_STATUS: {
+    WAIT: {
+      value: 10,
+      color: '#DEE2E6',
+      label: '未开始'
+    },
+    RUNNABLE: {
+      value: 20,
+      color: '#51CF66',
+      label: '进行中'
+    },
+    FINISH: {
+      value: 30,
+      color: '#4C6EF5',
+      label: '已完成'
+    },
+    FAILURE: {
+      value: 40,
+      color: '#F03E3E',
+      label: '执行失败'
+    },
+    TERMINATED: {
+      value: 50,
+      color: '#FD7E14',
+      label: '已终止'
+    }
+  },
+
+  /**
+   * 操作状态
+   */
+  ACTION_STATUS: {
+    WAIT: {
+      value: 10,
+      color: '#DEE2E6',
+      label: '未开始'
+    },
+    RUNNABLE: {
+      value: 20,
+      color: '#51CF66',
+      label: '进行中'
+    },
+    FINISH: {
+      value: 30,
+      color: '#4C6EF5',
+      label: '已完成'
+    },
+    FAILURE: {
+      value: 40,
+      color: '#F03E3E',
+      label: '执行失败'
+    },
+    SKIPPED: {
+      value: 50,
+      color: '#FCC419',
+      label: '已跳过'
+    },
+    TERMINATED: {
+      value: 60,
+      color: '#FD7E14',
+      label: '已终止'
     }
   }
 
