@@ -181,14 +181,16 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
             case FINISH:
             case FAILURE:
                 update.setEndTime(new Date());
+                update.setExitCode(this.getExitCode());
                 action.setEndTime(update.getEndTime());
-                action.setExitCode(this.getExitCode());
+                action.setExitCode(update.getExitCode());
                 break;
             case TERMINATED:
                 if (action.getStartTime() != null) {
                     update.setEndTime(new Date());
+                    update.setExitCode(this.getExitCode());
                     action.setEndTime(update.getEndTime());
-                    action.setExitCode(this.getExitCode());
+                    action.setExitCode(update.getExitCode());
                 }
                 break;
             case SKIPPED:

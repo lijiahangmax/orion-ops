@@ -1,9 +1,10 @@
 package com.orion.ops.handler.build.handler;
 
 import com.orion.ops.handler.build.BuildStore;
+import com.orion.remote.ExitCode;
 import com.orion.remote.channel.ssh.CommandExecutor;
+import com.orion.utils.Exceptions;
 import com.orion.utils.io.Streams;
-import lombok.Getter;
 
 /**
  * 构建执行操作-主机命令
@@ -17,7 +18,6 @@ public class HostCommandBuildHandler extends AbstractBuildHandler {
 
     private CommandExecutor executor;
 
-    @Getter
     private Integer exitCode;
 
     public HostCommandBuildHandler(Long actionId, BuildStore store) {
@@ -34,6 +34,9 @@ public class HostCommandBuildHandler extends AbstractBuildHandler {
                 .connect()
                 .exec();
         this.exitCode = executor.getExitCode();
+        if (!ExitCode.SUCCESS.getCode().equals(this.exitCode)) {
+            throw Exceptions.log("*** 命令执行失败 exitCode: " + exitCode);
+        }
     }
 
     @Override
@@ -41,6 +44,11 @@ public class HostCommandBuildHandler extends AbstractBuildHandler {
         super.close();
         // 关闭executor
         Streams.close(executor);
+    }
+
+    @Override
+    public Integer getExitCode() {
+        return exitCode;
     }
 
 }
