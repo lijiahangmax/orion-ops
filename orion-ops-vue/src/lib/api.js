@@ -114,9 +114,7 @@ const $api = {
    * 更新用户
    */
   updateAvatar: param => {
-    return $http.$post('/user/update/avatar', param, {
-      timeout: 60000
-    })
+    return $http.$post('/user/update/avatar', param, { timeout: 60000 })
   },
 
   /**
@@ -588,6 +586,25 @@ const $api = {
   },
 
   /**
+   * 保存机器环境变量视图
+   */
+  saveMachineEnvView: param => {
+    return $http.$post('/env/view/save', param, {
+      skipErrorMessage: true,
+      timeout: 60000
+    })
+  },
+
+  /**
+   * 同步机器环境变量
+   */
+  syncMachineEnv: param => {
+    return $http.$post('/env/sync', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
    * 获取历史值列表
    */
   getHistoryValueList: param => {
@@ -756,21 +773,21 @@ const $api = {
   },
 
   /**
-   * 添加应用环境变量
+   * 添加应用变量
    */
   addAppEnv: param => {
     return $http.$post('/app-env/add', param)
   },
 
   /**
-   * 删除应用环境变量
+   * 删除应用变量
    */
   deleteAppEnv: param => {
     return $http.$post('/app-env/delete', param)
   },
 
   /**
-   * 修改应用环境变量
+   * 修改应用变量
    */
   updateAppEnv: param => {
     return $http.$post('/app-env/update', param)
@@ -791,6 +808,15 @@ const $api = {
   },
 
   /**
+   * 同步应用环境变量
+   */
+  syncAppEnv: param => {
+    return $http.$post('/app-env/sync', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
    * 应用环境变量视图
    */
   getAppEnvView: param => {
@@ -798,10 +824,196 @@ const $api = {
   },
 
   /**
-   * 获取应用列表
+   * 应用环境变量视图保存
+   */
+  saveAppEnvView: param => {
+    return $http.$post('/app-env/view/save', param, {
+      skipErrorMessage: true,
+      timeout: 60000
+    })
+  },
+
+  /**
+   * 添加应用版本仓库
+   */
+  addVcs: param => {
+    return $http.$post('/app-vcs/add', param)
+  },
+
+  /**
+   * 修改应用版本仓库
+   */
+  updateVcs: param => {
+    return $http.$post('/app-vcs/update', param)
+  },
+
+  /**
+   * 删除版本仓库
+   */
+  deleteVcs: param => {
+    return $http.$post('/app-vcs/delete', param)
+  },
+
+  /**
+   * 获取版本仓库列表
+   */
+  getVcsList: param => {
+    return $http.$post('/app-vcs/list', param)
+  },
+
+  /**
+   * 获取版本仓库详情
+   */
+  getVcsDetail: param => {
+    return $http.$post('/app-vcs/detail', param)
+  },
+
+  /**
+   * 初始化版本仓库
+   */
+  initVcs: param => {
+    return $http.$post('/app-vcs/init', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 获取版本仓库分支和提交记录信息
+   */
+  getVcsInfo: param => {
+    return $http.$post('/app-vcs/info', param)
+  },
+
+  /**
+   * 获取版本仓库分支列表
+   */
+  getVcsBranchList: param => {
+    return $http.$post('/app-vcs/branch', param)
+  },
+
+  /**
+   * 获取版本仓库提交列表
+   */
+  getVcsCommitList: param => {
+    return $http.$post('/app-vcs/commit', param)
+  },
+
+  /**
+   * 添加应用
+   */
+  addApp: param => {
+    return $http.$post('/app-info/add', param)
+  },
+
+  /**
+   * 更新应用
+   */
+  updateApp: param => {
+    return $http.$post('/app-info/update', param)
+  },
+
+  /**
+   * 更新应用排序
+   */
+  adjustAppSort: param => {
+    return $http.$post('/app-info/sort', param)
+  },
+
+  /**
+   * 删除应用
+   */
+  deleteApp: param => {
+    return $http.$post('/app-info/delete', param)
+  },
+
+  /**
+   * 应用列表
    */
   getAppList: param => {
     return $http.$post('/app-info/list', param)
+  },
+
+  /**
+   * 获取应用
+   */
+  getAppDetail: param => {
+    return $http.$post('/app-info/detail', param)
+  },
+
+  /**
+   * 配置应用
+   */
+  configApp: param => {
+    return $http.$post('/app-info/config', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 同步应用
+   */
+  syncApp: param => {
+    return $http.$post('/app-info/sync', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 复制应用
+   */
+  copyApp: param => {
+    return $http.$post('/app-info/copy', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 删除应用机器
+   */
+  deleteAppMachine: param => {
+    return $http.$post('/app-info/delete/machine', param)
+  },
+
+  /**
+   * 提交应用构建
+   */
+  submitAppBuild: param => {
+    return $http.$post('/app-build/submit', param)
+  },
+
+  /**
+   * 应用构建列表
+   */
+  getAppBuildList: param => {
+    return $http.$post('/app-build/list', param)
+  },
+
+  /**
+   * 应用构建详情
+   */
+  getAppBuildDetail: param => {
+    return $http.$post('/app-build/detail', param)
+  },
+
+  /**
+   * 获取应用构建状态
+   */
+  getAppBuildStatus: param => {
+    return $http.$post('/app-build/status', param)
+  },
+
+  /**
+   * 停止应用构建
+   */
+  terminatedAppBuild: param => {
+    return $http.$post('/app-build/terminated', param)
+  },
+
+  /**
+   * 重新构建应用
+   */
+  rebuildApp: param => {
+    return $http.$post('/app-build/rebuild', param)
   }
 
 }
