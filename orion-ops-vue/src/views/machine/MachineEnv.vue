@@ -87,7 +87,7 @@
         <div class="tools-fixed-right">
           <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
                     type="primary"
-                    icon="sync"
+                    icon="check"
                     :disabled="loading"
                     @click="save">
             保存

@@ -232,7 +232,7 @@ const columns = [
     title: '日志',
     key: 'log',
     fixed: 'right',
-    width: 145,
+    width: 160,
     scopedSlots: { customRender: 'log' },
     align: 'center'
   },

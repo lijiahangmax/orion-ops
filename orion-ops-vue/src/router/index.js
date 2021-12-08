@@ -167,13 +167,22 @@ const routes = [
         component: () => import('../views/app/AppList')
       },
       {
+        path: '/app/conf/:appId/:profileId',
+        name: 'appConfig',
+        meta: {
+          requireAuth: true,
+          title: '应用配置'
+        },
+        component: () => import('../views/app/AppConfig')
+      },
+      {
         path: '/app/profile',
-        name: 'appProfileList',
+        name: 'appProfile',
         meta: {
           requireAuth: true,
           title: '环境管理'
         },
-        component: () => import('../views/app/AppProfileList')
+        component: () => import('../views/app/AppProfile')
       },
       {
         path: '/app/env/:id?',
@@ -185,22 +194,31 @@ const routes = [
         component: () => import('../views/app/AppEnv')
       },
       {
-        path: '/release/config',
-        name: 'releaseConfig',
+        path: '/app/vcs',
+        name: 'appVcs',
         meta: {
           requireAuth: true,
-          title: '发布配置'
+          title: '版本仓库'
         },
-        component: () => import('../views/release/ReleaseConfig')
+        component: () => import('../views/app/AppVcs')
       },
       {
-        path: '/release/bill',
-        name: 'releaseBill',
+        path: '/app/build',
+        name: 'appBuild',
         meta: {
           requireAuth: true,
-          title: '发布单'
+          title: '应用构建'
         },
-        component: () => import('../views/release/ReleaseBill')
+        component: () => import('../views/app/AppBuild')
+      },
+      {
+        path: '/app/release',
+        name: 'appRelease',
+        meta: {
+          requireAuth: true,
+          title: '应用发布'
+        },
+        component: () => import('../views/app/AppRelease')
       },
       {
         path: '/user/list',

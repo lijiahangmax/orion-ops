@@ -31,7 +31,7 @@ export default {
     return {
       fold: false,
       profileSelectorVisible: false,
-      visiblePath: ['/app/env', '/app/list']
+      visiblePath: ['/console', '/app/env', '/app/list', '/app/build', '/app/release']
     }
   },
   watch: {
