@@ -3,7 +3,6 @@ package com.orion.ops.handler.build;
 import com.alibaba.fastjson.JSON;
 import com.orion.exception.LogException;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ActionType;
@@ -32,14 +31,12 @@ import com.orion.utils.io.compress.FileCompressor;
 import com.orion.utils.time.Dates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 构建执行器
@@ -54,8 +51,6 @@ public class BuilderProcessor implements IBuilderProcessor {
     private static ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
 
     private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
-
-    private static RedisTemplate<String, String> redisTemplate = SpringHolder.getBean("redisTemplate");
 
     protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
 
@@ -152,12 +147,8 @@ public class BuilderProcessor implements IBuilderProcessor {
         // 插入store
         store.setBuildRecord(record);
         actions.forEach(action -> store.getActions().put(action.getId(), action));
-        store.getStatus().setStatus(record.getBuildStatus());
-        actions.forEach(action -> store.getStatus().getActionStatus().put(action.getId(), action.getRunStatus()));
         // 创建handler
         this.handlerList = IBuildHandler.createHandler(actions, store);
-        // 设置状态同步器
-        store.setSyncStatus(this::syncBuildStatus);
     }
 
     /**
@@ -191,14 +182,6 @@ public class BuilderProcessor implements IBuilderProcessor {
     }
 
     /**
-     * 同步状态
-     */
-    private void syncBuildStatus() {
-        String key = Strings.format(KeyConst.APP_BUILD_STATUS_KEY, buildId);
-        redisTemplate.opsForValue().set(key, JSON.toJSONString(store.getStatus()), KeyConst.APP_BUILD_STATUS_KEY_EXPIRE, TimeUnit.SECONDS);
-    }
-
-    /**
      * 更新状态
      *
      * @param status status
@@ -224,8 +207,6 @@ public class BuilderProcessor implements IBuilderProcessor {
         }
         // 更新
         applicationBuildService.updateById(update);
-        // 同步状态
-        this.syncBuildStatus();
     }
 
     /**

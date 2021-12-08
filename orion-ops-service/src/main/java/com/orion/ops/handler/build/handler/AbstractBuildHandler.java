@@ -172,7 +172,6 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         update.setId(actionId);
         update.setRunStatus(status.getStatus());
         action.setRunStatus(status.getStatus());
-        store.getStatus().getActionStatus().put(actionId, status.getStatus());
         switch (status) {
             case RUNNABLE:
                 update.setStartTime(new Date());
@@ -199,8 +198,6 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         }
         // 更新状态
         applicationBuildService.updateActionById(update);
-        // 同步
-        store.getSyncStatus().exec();
     }
 
     @Override

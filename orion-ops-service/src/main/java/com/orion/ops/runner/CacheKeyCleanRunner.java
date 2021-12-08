@@ -46,9 +46,7 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 // sftp会话token
                 Strings.format(KeyConst.SFTP_SESSION_TOKEN, "*"),
                 // sftp上传请求token
-                Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*"),
-                // 构建状态key
-                Strings.format(KeyConst.APP_BUILD_STATUS_KEY, "*")
+                Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*")
         );
         // 查询删除缓存key
         scanKeys.stream().map(key -> RedisUtils.scanKeys(redisTemplate, key, Const.N_10000))

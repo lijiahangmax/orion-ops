@@ -48,6 +48,7 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
             update.setId(buildId);
             update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
             update.setBuildEndTime(new Date());
+            update.setUpdateTime(new Date());
             applicationBuildDAO.updateById(update);
             this.updateActionStatus(buildId);
             log.info("重置应用构建状态-执行 {}", buildId);
@@ -69,6 +70,7 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
         for (ApplicationBuildActionDO action : actions) {
             ActionStatus status = ActionStatus.of(action.getRunStatus());
             ApplicationBuildActionDO update = new ApplicationBuildActionDO();
+            update.setUpdateTime(new Date());
             update.setId(action.getId());
             switch (status) {
                 case WAIT:

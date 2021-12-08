@@ -108,16 +108,4 @@ public class KeyConst {
      */
     public static final int SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE = 60 * 60 * 5;
 
-    /**
-     * build 状态
-     * <p>
-     * "app:build:status:{buildId}
-     */
-    public static final String APP_BUILD_STATUS_KEY = "app:build:status:{}";
-
-    /**
-     * 2 h
-     */
-    public static final int APP_BUILD_STATUS_KEY_EXPIRE = 60 * 60 * 2;
-
 }
