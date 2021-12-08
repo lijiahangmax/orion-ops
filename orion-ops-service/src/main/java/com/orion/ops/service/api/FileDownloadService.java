@@ -1,6 +1,5 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 
@@ -20,7 +19,7 @@ public interface FileDownloadService {
      * @param type type
      * @return token
      */
-    HttpWrapper<String> getDownloadToken(Long id, FileDownloadType type);
+    String getDownloadToken(Long id, FileDownloadType type);
 
     /**
      * 通过token获取下载文件路径

@@ -1,6 +1,5 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.IgnoreWrapper;
 import com.orion.ops.annotation.RestWrapper;
@@ -45,8 +44,7 @@ public class FileDownloadController {
      * 下载文件 检查文件存在以及权限
      */
     @RequestMapping("/token")
-    @IgnoreWrapper
-    public HttpWrapper<String> getToken(@RequestBody FileDownloadRequest request) {
+    public String getToken(@RequestBody FileDownloadRequest request) {
         Long id = Valid.notNull(request.getId());
         FileDownloadType type = Valid.notNull(FileDownloadType.of(request.getType()));
         return fileDownloadService.getDownloadToken(id, type);

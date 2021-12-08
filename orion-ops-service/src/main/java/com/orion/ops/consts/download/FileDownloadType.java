@@ -35,19 +35,24 @@ public enum FileDownloadType {
     SFTP_DOWNLOAD(40),
 
     /**
-     * 发布单 宿主机日志
+     * 应用构建日志
      */
-    RELEASE_HOST_LOG(50),
+    APP_BUILD_LOG(50),
 
     /**
-     * 发布单 目标机器日志
+     * 应用构建操作日志
      */
-    RELEASE_STAGE_LOG(60),
+    APP_BUILD_ACTION_LOG(60),
 
     /**
-     * 发布单 快照文件
+     * 应用构建 产物文件
      */
-    RELEASE_SNAPSHOT(70),
+    APP_BUILD_BUNDLE(70),
+
+    /**
+     * 应用发布 目标机器日志
+     */
+    APP_RELEASE_MACHINE_LOG(80),
 
     ;
 

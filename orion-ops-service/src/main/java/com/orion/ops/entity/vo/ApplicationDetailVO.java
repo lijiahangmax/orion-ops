@@ -64,7 +64,7 @@ public class ApplicationDetailVO {
     private Integer releaseSerial;
 
     /**
-     * 构建步骤
+     * 构建流程
      */
     private List<ApplicationActionVO> buildActions;
 
@@ -74,7 +74,7 @@ public class ApplicationDetailVO {
     private List<ApplicationMachineVO> releaseMachines;
 
     /**
-     * 发布步骤
+     * 发布流程
      */
     private List<ApplicationActionVO> releaseActions;
 

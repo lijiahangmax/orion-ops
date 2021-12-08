@@ -27,4 +27,11 @@ public class FileDownloadDTO {
      */
     private Long userId;
 
+    /**
+     * type
+     *
+     * @see com.orion.ops.consts.download.FileDownloadType
+     */
+    private Integer type;
+
 }

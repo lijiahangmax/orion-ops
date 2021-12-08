@@ -14,10 +14,10 @@ import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
-import com.orion.ops.entity.domain.ReleaseBillDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,6 +45,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private CommandExecService commandExecService;
 
     @Resource
+    private ApplicationBuildService applicationBuildService;
+
+    @Resource
     private ReleaseInfoService releaseInfoService;
 
     @Resource
@@ -54,7 +57,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public HttpWrapper<String> getDownloadToken(Long id, FileDownloadType type) {
+    public String getDownloadToken(Long id, FileDownloadType type) {
         String path = null;
         String name = null;
         // 获取日志绝对路径
@@ -82,41 +85,47 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                     name = Files1.getFileName(transferLog.getRemoteFile());
                 }
                 break;
-            case RELEASE_HOST_LOG:
-                // 发布单宿主机日志
-                path = releaseInfoService.getReleaseHostLogPath(id);
+            case APP_BUILD_LOG:
+                // 应用构建日志
+                path = applicationBuildService.getBuildLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
-            case RELEASE_STAGE_LOG:
-                // 发布单目标机器日志
+            case APP_BUILD_ACTION_LOG:
+                // 应用构建操作日志
+                path = applicationBuildService.getBuildActionLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case APP_BUILD_BUNDLE:
+                // 应用构建 产物文件
+                path = applicationBuildService.getBuildDistPath(id);
+                // 如果是文件夹则获取压缩文件
+                if (path != null && Files1.isDirectory(path)) {
+                    path += "." + Const.SUFFIX_ZIP;
+                }
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case APP_RELEASE_MACHINE_LOG:
+                // 应用构建产物
                 path = releaseInfoService.getReleaseStageLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
-                break;
-            case RELEASE_SNAPSHOT:
-                // 发布单产物快照
-                ReleaseBillDO releaseBill = releaseInfoService.getReleaseBill(id);
-                if (releaseBill != null) {
-                    path = releaseInfoService.getDistSnapshotFilePath(releaseBill.getDistSnapshotPath());
-                    name = Optional.ofNullable(releaseBill.getDistPath()).map(Files1::getFileName)
-                            .map(n -> releaseBill.getId() + "_" + n).orElse(null);
-                }
                 break;
             default:
                 break;
         }
         // 检查文件是否存在
         if (path == null || !Files1.isFile(path)) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
+            throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.FILE_MISSING));
         }
         // 设置缓存
         FileDownloadDTO download = new FileDownloadDTO();
         download.setFilePath(path);
         download.setFileName(Strings.def(name, Const.UNKNOWN));
         download.setUserId(Currents.getUserId());
+        download.setType(type.getType());
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(download), KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
-        return HttpWrapper.<String>ok().data(token);
+        return token;
     }
 
     @Override

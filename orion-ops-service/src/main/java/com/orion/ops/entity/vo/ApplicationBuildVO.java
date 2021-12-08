@@ -57,7 +57,7 @@ public class ApplicationBuildVO {
     /**
      * 构建序列
      */
-    private Integer buildSeq;
+    private Integer seq;
 
     /**
      * 版本仓库id
@@ -151,7 +151,7 @@ public class ApplicationBuildVO {
             vo.setProfileId(p.getProfileId());
             vo.setProfileName(p.getProfileName());
             vo.setProfileTag(p.getProfileTag());
-            vo.setBuildSeq(p.getBuildSeq());
+            vo.setSeq(p.getBuildSeq());
             vo.setVcsId(p.getVcsId());
             vo.setBranchName(p.getBranchName());
             vo.setCommitId(p.getCommitId());

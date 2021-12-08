@@ -32,7 +32,7 @@ public class ApplicationBuildRequest extends PageRequest {
     /**
      * 构建序列
      */
-    private Integer buildSeq;
+    private Integer seq;
 
     /**
      * 构建分支

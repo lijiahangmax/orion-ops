@@ -94,9 +94,28 @@ public interface ApplicationBuildService {
      */
     void updateActionById(ApplicationBuildActionDO record);
 
-    // 下载
-    // tail
+    /**
+     * 获取构建日志路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getBuildLogPath(Long id);
 
-    // 清除状态runner
+    /**
+     * 获取构建操作日志路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getBuildActionLogPath(Long id);
+
+    /**
+     * 获取构建产物路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getBuildDistPath(Long id);
 
 }

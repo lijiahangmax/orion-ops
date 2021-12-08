@@ -5,10 +5,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.BuildStatus;
-import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.app.*;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
@@ -28,14 +26,12 @@ import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 构建服务
@@ -97,7 +93,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         buildTask.setAppTag(app.getAppTag());
         buildTask.setProfileId(profileId);
         buildTask.setProfileName(profile.getProfileName());
-        buildTask.setProfileTag(app.getAppTag());
+        buildTask.setProfileTag(profile.getProfileTag());
         buildTask.setBuildSeq(buildSeq);
         buildTask.setBranchName(request.getBranchName());
         buildTask.setCommitId(request.getCommitId());
@@ -110,7 +106,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Long buildId = buildTask.getId();
         // 设置目录信息
         buildTask.setLogPath(PathBuilders.getBuildLogPath(buildId));
-        buildTask.setDistPath(PathBuilders.getBuildDistPath(buildId));
+        String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        buildTask.setDistPath(PathBuilders.getBuildDistPath(buildId) + "/" + Files1.getFileName(bundlePath));
         // 更新构建信息
         applicationBuildDAO.updateById(buildTask);
         // 检查是否包含命令
@@ -152,11 +149,11 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .eq(ApplicationBuildDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getId()), ApplicationBuildDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getAppId()), ApplicationBuildDO::getAppId, request.getAppId())
-                .eq(Objects.nonNull(request.getBuildSeq()), ApplicationBuildDO::getBuildSeq, request.getBuildSeq())
+                .eq(Objects.nonNull(request.getSeq()), ApplicationBuildDO::getBuildSeq, request.getSeq())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationBuildDO::getBuildStatus, request.getStatus())
                 .eq(Const.ENABLE.equals(request.getOnlyMyself()), ApplicationBuildDO::getCreateUserId, Currents.getUserId())
                 .like(Strings.isNotBlank(request.getDescription()), ApplicationBuildDO::getDescription, request.getDescription())
-                .orderByDesc(ApplicationBuildDO::getId);
+                .orderByDesc(ApplicationBuildDO::getUpdateTime);
         // 查询列表
         DataGrid<ApplicationBuildVO> dataGrid = DataQuery.of(applicationBuildDAO)
                 .wrapper(wrapper)
@@ -164,7 +161,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .dataGrid(ApplicationBuildVO.class);
         // 查询版本信息
         Map<Long, ApplicationVcsDO> vcsCache = Maps.newMap();
-        for (ApplicationBuildVO row : dataGrid.getRows()) {
+        for (ApplicationBuildVO row : dataGrid) {
             Long vcsId = row.getVcsId();
             if (vcsId == null) {
                 continue;
@@ -227,12 +224,45 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Override
     public void updateById(ApplicationBuildDO record) {
+        if (record.getUpdateTime() == null) {
+            record.setUpdateTime(new Date());
+        }
         applicationBuildDAO.updateById(record);
     }
 
     @Override
     public void updateActionById(ApplicationBuildActionDO record) {
+        if (record.getUpdateTime() == null) {
+            record.setUpdateTime(new Date());
+        }
         applicationBuildActionDAO.updateById(record);
+    }
+
+    @Override
+    public String getBuildLogPath(Long id) {
+        return Optional.ofNullable(applicationBuildDAO.selectById(id))
+                .map(ApplicationBuildDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .orElse(null);
+    }
+
+    @Override
+    public String getBuildActionLogPath(Long id) {
+        return Optional.ofNullable(applicationBuildActionDAO.selectById(id))
+                .map(ApplicationBuildActionDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .orElse(null);
+    }
+
+    @Override
+    public String getBuildDistPath(Long id) {
+        return Optional.ofNullable(applicationBuildDAO.selectById(id))
+                .map(ApplicationBuildDO::getDistPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), s))
+                .orElse(null);
     }
 
 }
