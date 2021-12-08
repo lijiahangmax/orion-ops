@@ -25,6 +25,14 @@ public interface ApplicationBuildActionDAO extends BaseMapper<ApplicationBuildAc
     Integer selectStatusById(@Param("id") Long id);
 
     /**
+     * 通过 id 查询状态信息
+     *
+     * @param id id
+     * @return status
+     */
+    ApplicationBuildActionDO selectStatusInfoById(@Param("id") Long id);
+
+    /**
      * 通过 buildId 查询 id
      *
      * @param buildId buildId

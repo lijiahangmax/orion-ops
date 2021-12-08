@@ -11,6 +11,7 @@ import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
+import com.orion.ops.entity.vo.ApplicationBuildActionStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildActionVO;
 import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 构建服务
@@ -197,13 +199,12 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Integer buildStatus = applicationBuildDAO.selectStatusById(id);
         Valid.notNull(buildStatus, MessageConst.UNKNOWN_DATA);
         // 查询操作状态
-        List<Long> actionIdList = applicationBuildActionDAO.selectActionIdByBuildId(id);
-        Map<String, Integer> actionStatusMap = Maps.newLinkedMap();
-        for (Long actionId : actionIdList) {
-            actionStatusMap.put(actionId.toString(), applicationBuildActionDAO.selectStatusById(actionId));
-        }
+        List<ApplicationBuildActionStatusVO> actions = applicationBuildActionDAO.selectActionIdByBuildId(id).stream()
+                .map(s -> applicationBuildActionDAO.selectStatusInfoById(s))
+                .map(s -> Converts.to(s, ApplicationBuildActionStatusVO.class))
+                .collect(Collectors.toList());
         status.setStatus(buildStatus);
-        status.setActionStatus(actionStatusMap);
+        status.setActions(actions);
         return status;
     }
 
@@ -213,8 +214,18 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     }
 
     @Override
-    public void rebuild(Long id) {
-
+    public Long rebuild(Long id) {
+        // 查询构建
+        ApplicationBuildDO build = applicationBuildDAO.selectById(id);
+        Valid.notNull(build, MessageConst.UNKNOWN_DATA);
+        // 重新提交
+        ApplicationBuildRequest request = new ApplicationBuildRequest();
+        request.setAppId(build.getAppId());
+        request.setProfileId(build.getProfileId());
+        request.setBranchName(build.getBranchName());
+        request.setCommitId(build.getCommitId());
+        request.setDescription(build.getDescription());
+        return this.submitBuildTask(request);
     }
 
     @Override

@@ -58,4 +58,11 @@ public class ApplicationInfoRequest extends PageRequest {
      */
     private Long machineId;
 
+    /**
+     * 是否查询机器
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     */
+    private Integer queryMachine;
+
 }

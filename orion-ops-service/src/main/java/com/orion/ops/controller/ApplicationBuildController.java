@@ -81,10 +81,9 @@ public class ApplicationBuildController {
      * 重新构建
      */
     @RequestMapping("/rebuild")
-    public HttpWrapper<?> rebuild(@RequestBody ApplicationBuildRequest request) {
+    public Long rebuild(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationBuildService.rebuild(id);
-        return HttpWrapper.ok();
+        return applicationBuildService.rebuild(id);
     }
 
     /**

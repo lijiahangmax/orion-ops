@@ -37,4 +37,10 @@
         ORDER BY id ASC
     </select>
 
+    <select id="selectStatusInfoById" resultMap="BaseResultMap">
+        SELECT id, run_status, start_time, end_time
+        FROM application_build_action
+        WHERE id = #{id}
+    </select>
+
 </mapper>

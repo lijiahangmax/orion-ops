@@ -2,7 +2,7 @@ package com.orion.ops.entity.vo;
 
 import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 应用构建状态
@@ -15,16 +15,15 @@ import java.util.Map;
 public class ApplicationBuildStatusVO {
 
     /**
+     * 状态
+     *
      * @see com.orion.ops.consts.app.BuildStatus
      */
     private Integer status;
 
     /**
-     * key: action.id
-     * value: status
-     *
-     * @see com.orion.ops.consts.app.ActionStatus
+     * action
      */
-    private Map<String, Integer> actionStatus;
+    private List<ApplicationBuildActionStatusVO> actions;
 
 }

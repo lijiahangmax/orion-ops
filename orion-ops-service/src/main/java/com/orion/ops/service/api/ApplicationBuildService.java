@@ -62,8 +62,9 @@ public interface ApplicationBuildService {
      * 重新构建
      *
      * @param id id
+     * @return id
      */
-    void rebuild(Long id);
+    Long rebuild(Long id);
 
     /**
      * 查询构建状态列表
