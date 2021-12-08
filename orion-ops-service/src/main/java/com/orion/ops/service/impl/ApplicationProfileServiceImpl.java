@@ -85,7 +85,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(null, id);
         // 删除环境机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(null, id);
-        // 删除环境发布步骤
+        // 删除环境发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(null, id);
         return effect;
     }

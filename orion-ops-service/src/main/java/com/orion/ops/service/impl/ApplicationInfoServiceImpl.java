@@ -155,7 +155,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(id, null);
         // 删除机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(id, null);
-        // 删除发布步骤
+        // 删除发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(id, null);
         return effect;
     }
@@ -283,7 +283,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
             applicationEnvService.syncAppProfileEnv(appId, profileId, targetProfileId);
             // 同步机器
             applicationMachineService.syncAppProfileMachine(appId, profileId, targetProfileId);
-            // 同步发布步骤
+            // 同步发布流程
             applicationActionService.syncAppProfileAction(appId, profileId, targetProfileId);
         }
     }
@@ -304,7 +304,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         applicationEnvService.copyAppEnv(appId, targetAppId);
         // 复制机器
         applicationMachineService.copyAppMachine(appId, targetAppId);
-        // 复制发布步骤
+        // 复制发布流程
         applicationActionService.copyAppAction(appId, targetAppId);
     }
 

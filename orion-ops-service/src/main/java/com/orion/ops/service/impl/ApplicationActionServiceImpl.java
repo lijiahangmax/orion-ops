@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * app发布步骤实现
+ * app发布流程实现
  *
  * @author Jiahang Li
  * @version 1.0.0

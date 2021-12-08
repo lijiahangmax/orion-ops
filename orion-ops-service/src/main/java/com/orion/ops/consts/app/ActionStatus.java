@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 步骤执行状态
+ * 流程执行状态
  *
  * @author Jiahang Li
  * @version 1.0.0

@@ -144,7 +144,7 @@ public class MessageConst {
 
     public static final String RELEASE_BILL_ABSENT = "发布单不存在";
 
-    public static final String RELEASE_MACHINE_ABSENT = "发布单机器不存在";
+    public static final String RELEASE_MACHINE_ABSENT = "发布机器不存在";
 
     public static final String UNKNOWN_RELEASE_TYPE = "未知的发布类型";
 
@@ -154,7 +154,7 @@ public class MessageConst {
 
     public static final String FILE_ABSENT_UNABLE_ROLLBACK_RELEASE = "产物快照丢失无法回滚";
 
-    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行发布单";
+    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行发布操作";
 
     public static final String UNSUPPORTED_VCS_TYPE = "不支持的仓库类型";
 

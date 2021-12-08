@@ -48,7 +48,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 build 产物文件目录
+     * 获取应用构建产物文件目录
      *
      * @param buildId buildId
      * @return path
@@ -58,7 +58,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 build 日志文件
+     * 获取应用构建日志文件
      *
      * @param buildId buildId
      * @return path
@@ -71,7 +71,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 buildAction 日志文件
+     * 获取应用构建操作日志文件
      *
      * @param buildId buildId
      * @return path
@@ -85,7 +85,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 release 宿主机日志文件
+     * 获取应用发布宿主机日志文件
      *
      * @param releaseId releaseId
      * @return path
@@ -98,7 +98,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 release 目标机器日志文件
+     * 获取应用发布目标机器日志文件
      *
      * @param releaseId releaseId
      * @param machineId 目标机器
@@ -113,7 +113,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 release 操作步骤日志文件
+     * 获取应用发布操作日志文件
      *
      * @param releaseId releaseId
      * @param id        id

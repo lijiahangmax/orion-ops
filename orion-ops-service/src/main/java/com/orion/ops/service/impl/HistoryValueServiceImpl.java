@@ -53,6 +53,8 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         insert.setAfterValue(afterValue);
         insert.setUpdateUserId(user.getId());
         insert.setUpdateUserName(user.getUsername());
+        insert.setCreateTime(new Date());
+        insert.setUpdateTime(new Date());
         historyValueSnapshotDAO.insert(insert);
     }
 

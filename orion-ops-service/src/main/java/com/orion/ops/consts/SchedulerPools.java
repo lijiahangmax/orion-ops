@@ -104,7 +104,7 @@ public class SchedulerPools {
             .build();
 
     /**
-     * 发布单 主线程操作线程池
+     * 应用发布 主线程操作线程池
      */
     public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-main-thread-")
@@ -116,7 +116,7 @@ public class SchedulerPools {
             .build();
 
     /**
-     * 发布单 目标机器操作线程池
+     * 应用发布 目标机器操作线程池
      */
     public static final ExecutorService RELEASE_TARGET_STAGE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-target-stage-thread-")

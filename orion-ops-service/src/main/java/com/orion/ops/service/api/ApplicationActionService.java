@@ -6,7 +6,7 @@ import com.orion.ops.entity.request.ApplicationConfigRequest;
 import java.util.List;
 
 /**
- * app发布步骤接口
+ * app发布流程接口
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -15,7 +15,7 @@ import java.util.List;
 public interface ApplicationActionService {
 
     /**
-     * 删除发布步骤
+     * 删除发布流程
      *
      * @param appId     appId
      * @param profileId profileId
@@ -24,7 +24,7 @@ public interface ApplicationActionService {
     Integer deleteAppActionByAppProfileId(Long appId, Long profileId);
 
     /**
-     * 获取发布步骤
+     * 获取发布流程
      *
      * @param appId     appId
      * @param profileId profileId
@@ -34,7 +34,7 @@ public interface ApplicationActionService {
     List<ApplicationActionDO> getAppProfileActions(Long appId, Long profileId, Integer stageType);
 
     /**
-     * 通过appId profileId查询操作步骤数量数量
+     * 通过appId profileId查询操作流程数量数量
      *
      * @param appId     appId
      * @param profileId profileId
@@ -44,14 +44,14 @@ public interface ApplicationActionService {
     Integer getAppProfileActionCount(Long appId, Long profileId, Integer stageType);
 
     /**
-     * 配置app发布步骤
+     * 配置app发布流程
      *
      * @param request request
      */
     void configAppAction(ApplicationConfigRequest request);
 
     /**
-     * 同步app操作步骤
+     * 同步app操作流程
      *
      * @param appId         appId
      * @param profileId     profileId
@@ -60,7 +60,7 @@ public interface ApplicationActionService {
     void syncAppProfileAction(Long appId, Long profileId, Long syncProfileId);
 
     /**
-     * 复制发布步骤
+     * 复制发布流程
      *
      * @param appId       appId
      * @param targetAppId targetAppId
