@@ -133,7 +133,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 .terminal-header-main {
   height: 40px;
@@ -141,36 +141,38 @@ export default {
   align-items: center;
   justify-content: space-between;
   background-color: #E9ECEF;
-}
 
-.terminal-command-input {
-  width: 400px;
-  margin-left: 60px
-}
+  .terminal-header-fixed-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-.terminal-header-fixed-left {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+    .terminal-command-input {
+      width: 400px;
+      margin-left: 60px
+    }
+  }
 
-.terminal-header-fixed-right {
-  display: flex;
-  align-items: center;
-}
+  .terminal-header-fixed-right {
+    display: flex;
+    align-items: center;
 
-#sftp-trigger {
-  margin-right: 15px
-}
+    #sftp-trigger {
+      margin-right: 15px
+    }
 
-.trigger-icon {
-  cursor: pointer;
-  font-size: 22px;
-  margin-right: 15px;
-}
+    .trigger-icon {
+      cursor: pointer;
+      font-size: 22px;
+      margin-right: 15px;
+    }
 
-.trigger-icon :hover {
-  color: #1C7ED6;
+    .trigger-icon :hover {
+      color: #1C7ED6;
+    }
+
+  }
+
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="terminal-main">
+  <div class="terminal-main" :style="{background: this.options.theme.background}">
     <!-- terminal -->
     <div class="terminal-content">
       <div id="terminal" ref="terminal" @contextmenu.prevent="openRightMenu"></div>
@@ -103,7 +103,6 @@ function initTerminal() {
   this.plugin.fit = new FitAddon()
   this.term.loadAddon(this.plugin.fit)
   this.plugin.fit.fit()
-  this.options.cols = parseInt(this.term.cols)
   // 注册搜索组件
   this.plugin.search = new SearchAddon()
   this.term.loadAddon(this.plugin.search)
@@ -147,8 +146,6 @@ const terminalEventHandler = {
     if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
       return
     }
-    this.options.cols = cols
-    this.options.rows = rows
     terminalOperator.resize.call(this, cols, rows)
   },
   onKey(event) {
@@ -250,8 +247,8 @@ const terminalOperator = {
       operate: 'connect',
       body: {
         loginToken: this.$storage.get(this.$storage.keys.LOGIN_TOKEN),
-        cols: this.options.cols,
-        rows: this.options.rows,
+        cols: this.term.cols,
+        rows: this.term.rows,
         width: document.getElementById('terminal').offsetWidth,
         height: document.getElementById('terminal').offsetHeight
       }
@@ -391,12 +388,9 @@ export default {
         enableWebGL: 2
       },
       options: {
-        cols: 180,
-        rows: 36,
         cursorStyle: 'bar',
         cursorBlink: true,
         fastScrollModifier: 'shift',
-        lineHeight: 1.14,
         fontSize: 14,
         fontFamily: 'courier-new, courier, monospace',
         theme: {
@@ -417,20 +411,14 @@ export default {
       this.options.fontFamily = options.fontFamily || this.options.fontFamily
       this.options.theme.foreground = options.fontColor || this.options.theme.foreground
       this.options.theme.background = options.backgroundColor || this.options.theme.background
-      this.options.rows = this.getRows()
       this.setting.accessToken = setting.accessToken
       this.setting.enableWebLink = setting.enableWebLink
       this.setting.enableWebGL = setting.enableWebGL
       initTerminal.call(this)
     },
-    getRows() {
-      return parseInt((document.body.clientHeight - 82) / (this.options.fontSize * 1.114 * 1.14))
-    },
     windowChange() {
       this.plugin.fit.fit()
-      this.options.cols = parseInt(this.term.cols)
-      this.options.rows = this.getRows()
-      this.term.resize(this.options.cols, this.options.rows)
+      this.term.resize(this.term.cols, this.term.rows)
     },
     openRightMenu(e) {
       if (e.button === 2) {
@@ -481,12 +469,26 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+.terminal-main {
+  background: #212529;
+  height: calc(100vh - 81px);
+
+  .terminal-content {
+    height: 100%;
+
+    #terminal {
+      height: 100%;
+    }
+  }
+
+}
 
 #right-menu {
   position: absolute;
   z-index: 10;
-  color: #d0ebff
+  color: #D0EBFF;
 }
 
 .right-menu-item {
@@ -499,24 +501,24 @@ export default {
   right: 20px;
   z-index: 200;
   width: 290px;
-}
 
-#search-card .search-input {
-  width: 260px;
-}
+  .search-input {
+    width: 260px;
+  }
 
-.search-options {
-  margin: 12px 0;
-}
+  .search-options {
+    margin: 12px 0;
+  }
 
-.search-buttons {
-  margin-top: 5px;
-  display: flex;
-  justify-content: flex-end;
-}
+  .search-buttons {
+    margin-top: 5px;
+    display: flex;
+    justify-content: flex-end;
+  }
 
-.terminal-search-button {
-  margin-left: 10px;
+  .terminal-search-button {
+    margin-left: 10px;
+  }
 }
 
 </style>
