@@ -29,7 +29,6 @@
 
 <script>
 import { pick } from 'lodash'
-import { validatePort } from '@/lib/validate'
 
 const layout = {
   labelCol: { span: 5 },

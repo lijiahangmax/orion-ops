@@ -77,7 +77,7 @@
         </div>
         <!-- tag -->
         <span slot="tag" slot-scope="record" class="span-blue pointer">
-          <a-tag color="#5c7cfa">
+          <a-tag color="#5C7CFA">
           {{ record.tag }}
           </a-tag>
         </span>
@@ -92,6 +92,11 @@
             配置
           </a>
           <a-divider type="vertical"/>
+          <!-- 构建 -->
+          <a v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value" @click="buildApp(record.id)">
+            构建
+          </a>
+          <a-divider type="vertical" v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value"/>
           <!-- 同步 -->
           <AppProfileChecker :ref="'profileChecker' + record.id">
             <a slot="trigger">同步</a>
@@ -126,6 +131,8 @@
     <div class="app-info-event">
       <!-- 添加模态框 -->
       <AddAppModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 构建模态框 -->
+      <AppBuildModal ref="buildModal"/>
     </div>
   </div>
 </template>
@@ -133,6 +140,7 @@
 <script>
 import AddAppModal from '@/components/app/AddAppModal'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
+import AppBuildModal from '@/components/app/AppBuildModal'
 
 /**
  * 列
@@ -276,6 +284,7 @@ const moreMenuHandler = {
 export default {
   name: 'AppList',
   components: {
+    AppBuildModal,
     AddAppModal,
     AppProfileChecker
   },
@@ -286,7 +295,8 @@ export default {
         name: null,
         tag: null,
         username: null,
-        description: null
+        description: null,
+        queryMachine: 1
       },
       rows: [],
       pagination: {
@@ -355,6 +365,9 @@ export default {
     },
     update(id) {
       this.$refs.addModal.update(id)
+    },
+    buildApp(id) {
+      this.$refs.buildModal.openBuild(this.query.profileId, id)
     },
     sync(id) {
       const ref = this.$refs['profileChecker' + id]

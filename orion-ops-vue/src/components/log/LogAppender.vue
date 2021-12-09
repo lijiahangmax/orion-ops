@@ -1,44 +1,61 @@
 <template>
   <div class="logger-view-container">
     <!-- 工具 -->
-    <div class="log-tools">
+    <div class="log-tools" v-if="toolsProps.visible !== false">
       <!-- 左侧工具 -->
       <div class="log-tools-fixed-left">
-        <slot name="left-tools"/>
+        <slot name="left-tools" v-if="toolsProps.visibleLeft !== false"/>
       </div>
       <!-- 右侧工具 -->
-      <div class="log-tools-fixed-right">
+      <div class="log-tools-fixed-right" v-if="toolsProps.visibleRight !== false">
         <!-- 复制 -->
-        <a-button :size="size" class="mr4" type="primary" icon="copy" @click="copy">复制</a-button>
+        <a-button class="mr4"
+                  v-if="rightToolsProps.copy !== false"
+                  :size="size"
+                  type="primary"
+                  icon="copy"
+                  @click="copy">复制
+        </a-button>
         <!-- 清空 -->
-        <a-button :size="size" class="mr4" type="default" icon="delete" @click="clear">清空</a-button>
+        <a-button class="mr4"
+                  v-if="rightToolsProps.clean !== false"
+                  :size="size"
+                  type="default"
+                  icon="delete"
+                  @click="clear">清空
+        </a-button>
         <!-- 下载 -->
-        <div v-if="visibleDownload">
+        <div class="log-download-wrapper" v-if="rightToolsProps.download !== false">
           <a-button :size="size" v-if="!downloadUrl" type="default" icon="link" @click="loadDownloadUrl">获取下载链接</a-button>
           <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
             <a-button :size="size" type="default" icon="download">下载</a-button>
           </a>
         </div>
         <!-- 固定日志 -->
-        <span class="log-fixed-label ml8">固定: </span>
-        <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
-        <!-- 状态 可关闭 -->
-        <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
-          <a-popconfirm title="确认关闭当前日志连接?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="close">
-            <a-badge class="pointer"
-                     :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
+        <div class="log-fixed-wrapper" v-if="rightToolsProps.fixed !== false">
+          <span class="log-fixed-label ml8">固定: </span>
+          <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
+        </div>
+        <!-- 状态 -->
+        <div class="log-status-wrapper" v-if="rightToolsProps.status !== false">
+          <!-- 状态 可关闭 -->
+          <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
+            <a-popconfirm title="确认关闭当前日志连接?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="close">
+              <a-badge class="pointer"
+                       :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
+                       :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
+            </a-popconfirm>
+          </template>
+          <!-- 状态 其他 -->
+          <template v-else>
+            <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
                      :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
-          </a-popconfirm>
-        </template>
-        <!-- 状态 其他 -->
-        <template v-else>
-          <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
-                   :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
-        </template>
+          </template>
+        </div>
       </div>
     </div>
     <!-- 日志容器 -->
@@ -63,17 +80,35 @@ export default {
       }
     },
     size: {
-      config: String,
+      type: String,
       default: 'small'
     },
     relId: Number,
-    visibleDownload: {
-      config: Boolean,
-      default: true
-    },
     downloadType: {
-      config: Number,
+      type: Number,
       default: _enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value
+    },
+    toolsProps: {
+      type: Object,
+      default: () => {
+        return {
+          visible: true,
+          visibleLeft: true,
+          visibleRight: true
+        }
+      }
+    },
+    rightToolsProps: {
+      type: Object,
+      default: () => {
+        return {
+          copy: true,
+          clean: true,
+          fixed: true,
+          download: true,
+          status: true
+        }
+      }
     }
   },
   data() {
@@ -187,12 +222,17 @@ export default {
     justify-content: flex-end;
   }
 
-  .log-fixed-label {
-    margin-right: 4px;
-  }
+  .log-fixed-wrapper {
+    display: flex;
+    align-items: center;
 
-  .log-fixed-switch {
-    margin: 2px 12px 0 0;
+    .log-fixed-label {
+      margin-right: 4px;
+    }
+
+    .log-fixed-switch {
+      margin: 2px 12px 0 0;
+    }
   }
 
 }
