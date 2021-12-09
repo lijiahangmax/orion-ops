@@ -69,4 +69,14 @@ public class ApplicationVcsRequest extends PageRequest {
      */
     private String branchName;
 
+    /**
+     * 应用id
+     */
+    private Long appId;
+
+    /**
+     * 环境id
+     */
+    private Long profileId;
+
 }

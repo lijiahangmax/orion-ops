@@ -43,4 +43,19 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectLastBuildBranch" resultType="java.lang.String">
+        SELECT branch_name
+        FROM application_build
+        WHERE vcs_id = #{vcsId}
+        <if test="appId != null">
+            AND app_id = #{appId}
+        </if>
+        <if test="profileId != null">
+            AND profile_id = #{profileId}
+        </if>
+        AND branch_name IS NOT NULL
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
 </mapper>

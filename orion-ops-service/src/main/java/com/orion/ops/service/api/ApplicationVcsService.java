@@ -69,10 +69,10 @@ public interface ApplicationVcsService {
     /**
      * 获取版本信息列表
      *
-     * @param id id
+     * @param request request
      * @return 分支信息
      */
-    ApplicationVcsInfoVO getVcsInfo(Long id);
+    ApplicationVcsInfoVO getVcsInfo(ApplicationVcsRequest request);
 
     /**
      * 获取分支列表

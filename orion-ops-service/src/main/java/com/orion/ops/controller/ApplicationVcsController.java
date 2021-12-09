@@ -92,8 +92,8 @@ public class ApplicationVcsController {
      */
     @RequestMapping("/info")
     public ApplicationVcsInfoVO getVcsInfo(@RequestBody ApplicationVcsRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return applicationVcsService.getVcsInfo(id);
+        Valid.notNull(request.getId());
+        return applicationVcsService.getVcsInfo(request);
     }
 
     /**

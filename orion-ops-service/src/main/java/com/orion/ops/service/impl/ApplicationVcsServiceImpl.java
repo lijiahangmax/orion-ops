@@ -7,6 +7,7 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.dao.ApplicationBuildActionDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
@@ -47,6 +48,9 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
 
     @Resource
     private ApplicationVcsDAO applicationVcsDAO;
+
+    @Resource
+    private ApplicationBuildActionDAO applicationBuildActionDAO;
 
     @Override
     public Long addAppVcs(ApplicationVcsRequest request) {
@@ -182,24 +186,33 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public ApplicationVcsInfoVO getVcsInfo(Long id) {
+    public ApplicationVcsInfoVO getVcsInfo(ApplicationVcsRequest request) {
+        Long id = request.getId();
         // 打开git
         try (Gits gits = this.openGit(id)) {
             gits.fetch();
             ApplicationVcsInfoVO vcsInfo = new ApplicationVcsInfoVO();
-            ApplicationVcsBranchVO branch;
+            ApplicationVcsBranchVO defaultBranch;
             // 获取分支列表
             List<ApplicationVcsBranchVO> branches = Converts.toList(gits.branchList(), ApplicationVcsBranchVO.class);
-            // TODO 获取当前环境上次构建分支
-            branch = branches.get(branches.size() - 1);
-            branch.setIsDefault(Const.IS_DEFAULT);
+            // 获取当前环境上次构建分支
+            String lastBranchName = applicationBuildActionDAO.selectLastBuildBranch(request.getAppId(), request.getProfileId(), id);
+            if (lastBranchName != null) {
+                defaultBranch = branches.stream()
+                        .filter(s -> s.getName().equals(lastBranchName))
+                        .findFirst()
+                        .orElseGet(() -> branches.get(branches.size() - 1));
+            } else {
+                defaultBranch = branches.get(branches.size() - 1);
+            }
+            defaultBranch.setIsDefault(Const.IS_DEFAULT);
             vcsInfo.setBranches(branches);
             // 获取commit
             try {
-                List<LogInfo> logList = gits.logList(branch.getName(), Const.VCS_COMMIT_LIMIT);
+                List<LogInfo> logList = gits.logList(defaultBranch.getName(), Const.VCS_COMMIT_LIMIT);
                 vcsInfo.setCommits(Converts.toList(logList, ApplicationVcsCommitVO.class));
             } catch (Exception e) {
-                log.error("获取vcs-commit列表失败: id: {}, branch: {}, e: {}", id, branch.getName(), e);
+                log.error("获取vcs-commit列表失败: id: {}, branch: {}, e: {}", id, defaultBranch.getName(), e);
                 throw e;
             }
             return vcsInfo;
