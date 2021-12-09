@@ -654,6 +654,15 @@ const $api = {
   },
 
   /**
+   * 获取执行状态
+   */
+  getExecTaskStatus: param => {
+    return $http.$post('/exec/list/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
    * 新增模板
    */
   addTemplate: param => {
@@ -978,7 +987,9 @@ const $api = {
    * 提交应用构建
    */
   submitAppBuild: param => {
-    return $http.$post('/app-build/submit', param)
+    return $http.$post('/app-build/submit', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -1014,6 +1025,15 @@ const $api = {
    */
   rebuildApp: param => {
     return $http.$post('/app-build/rebuild', param)
+  },
+
+  /**
+   * 应用构建列表
+   */
+  getAppBuildStatusList: param => {
+    return $http.$post('/app-build/list/status', param, {
+      skipErrorMessage: true
+    })
   }
 
 }

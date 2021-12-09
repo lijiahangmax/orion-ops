@@ -348,6 +348,26 @@ export default {
       setTimeout(() => {
         record.downloadUrl = null
       })
+    },
+    pollStatus() {
+      if (!this.rows || !this.rows.length) {
+        return
+      }
+      const idList = this.rows.filter(r => r.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
+        r.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value)
+        .map(s => s.id)
+      if (!idList.length) {
+        return
+      }
+      this.$api.getExecTaskStatus({
+        idList
+      }).then(({ data }) => {
+        for (const id in data) {
+          this.rows.filter(s => s.id === parseInt(id)).forEach(s => {
+            s.status = data[id]
+          })
+        }
+      })
     }
   },
   filters: {
@@ -359,6 +379,9 @@ export default {
     }
   },
   mounted() {
+    // 设置轮询
+    setInterval(this.pollStatus, 5000)
+    // 查询列表
     this.getList({})
   }
 }
