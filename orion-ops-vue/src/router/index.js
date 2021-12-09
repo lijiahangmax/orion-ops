@@ -71,6 +71,15 @@ const routes = [
     component: () => import('../views/log/LoggerView')
   },
   {
+    path: '/app/build/log/view/:id',
+    name: 'AppBuildLogView',
+    meta: {
+      requireAuth: true,
+      title: '构建日志'
+    },
+    component: () => import('../views/app/AppBuildLogView')
+  },
+  {
     path: '',
     name: 'layout',
     component: Layout,
