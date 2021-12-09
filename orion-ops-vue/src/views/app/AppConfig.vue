@@ -4,23 +4,25 @@
       <!-- 基本配置 -->
       <a-tab-pane key="1" tab="基本配置">
         <div class="app-basic-form-wrapper">
-          <!-- 表单 -->
-          <AddAppForm ref="basicForm" :layout="{
+          <a-spin :spinning="loading">
+            <!-- 表单 -->
+            <AddAppForm ref="basicForm" :layout="{
             labelCol: { span: 5 },
             wrapperCol: { span: 19 }
           }"/>
-          <div class="app-basic-form-footer">
-            <a-button type="primary" @click="updateBasic">修改</a-button>
-          </div>
+            <div class="app-basic-form-footer">
+              <a-button type="primary" @click="updateBasic">修改</a-button>
+            </div>
+          </a-spin>
         </div>
       </a-tab-pane>
       <!-- 构建配置 -->
       <a-tab-pane key="2" tab="构建配置">
-        <AppBuildConfigForm :appId="appId" :profileId="profileId"/>
+        <AppBuildConfigForm :appId="appId" :profileId="profileId" :detail="detail"/>
       </a-tab-pane>
       <!-- 发布配置 -->
       <a-tab-pane key="3" tab="发布配置">
-        <AppReleaseConfigForm :appId="appId" :profileId="profileId"/>
+        <AppReleaseConfigForm :appId="appId" :profileId="profileId" :detail="detail"/>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -39,7 +41,9 @@ export default {
   data() {
     return {
       appId: null,
-      profileId: null
+      profileId: null,
+      loading: false,
+      detail: {}
     }
   },
   methods: {
@@ -52,7 +56,19 @@ export default {
     this.profileId = parseInt(this.$route.params.profileId)
   },
   mounted() {
-    this.$refs.basicForm && this.$refs.basicForm.update(this.appId)
+    // 加载数据
+    this.loading = true
+    this.$api.getAppDetail({
+      id: this.appId,
+      profileId: this.profileId
+    }).then(({ data }) => {
+      this.loading = false
+      this.detail = data
+      // 初始化表单
+      this.$refs.basicForm && this.$refs.basicForm.initRecord(data)
+    }).catch(() => {
+      this.loading = false
+    })
   }
 }
 </script>

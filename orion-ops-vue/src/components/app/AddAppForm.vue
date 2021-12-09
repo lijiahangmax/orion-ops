@@ -58,7 +58,7 @@ function getDecorators() {
 }
 
 export default {
-  name: 'AddAppModal',
+  name: 'AddAppForm',
   props: {
     layout: {
       type: Object,

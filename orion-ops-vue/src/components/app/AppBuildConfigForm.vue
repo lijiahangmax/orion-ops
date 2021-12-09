@@ -84,7 +84,8 @@ export default {
   name: 'AppBuildConfigForm',
   props: {
     appId: Number,
-    profileId: Number
+    profileId: Number,
+    detail: Object
   },
   components: {
     Editor
@@ -162,23 +163,18 @@ export default {
     }
   },
   mounted() {
-    this.$api.getAppDetail({
-      id: this.appId,
-      profileId: this.profileId
-    }).then(({ data }) => {
-      this.vcsId = data.vcsId
-      this.bundlePath = data.bundlePath
-      if (data.buildActions && data.buildActions.length) {
-        this.actions = data.buildActions.map(s => {
-          return {
-            visible: true,
-            name: s.name,
-            type: s.type,
-            command: s.command
-          }
-        })
-      }
-    })
+    this.vcsId = this.detail.vcsId
+    this.bundlePath = this.detail.bundlePath
+    if (this.detail.buildActions && this.detail.buildActions.length) {
+      this.actions = this.detail.buildActions.map(s => {
+        return {
+          visible: true,
+          name: s.name,
+          type: s.type,
+          command: s.command
+        }
+      })
+    }
   }
 }
 </script>

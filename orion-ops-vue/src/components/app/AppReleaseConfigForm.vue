@@ -93,7 +93,8 @@ export default {
   name: 'AppReleaseConfigForm',
   props: {
     appId: Number,
-    profileId: Number
+    profileId: Number,
+    detail: Object
   },
   components: {
     Editor,
@@ -185,26 +186,21 @@ export default {
     }
   },
   mounted() {
-    this.$api.getAppDetail({
-      id: this.appId,
-      profileId: this.profileId
-    }).then(({ data }) => {
-      this.transferPath = data.transferPath
-      this.releaseSerial = data.releaseSerial
-      if (data.releaseMachines && data.releaseMachines.length) {
-        this.machines = data.releaseMachines.map(s => s.machineId)
-      }
-      if (data.releaseActions && data.releaseActions.length) {
-        this.actions = data.releaseActions.map(s => {
-          return {
-            visible: true,
-            name: s.name,
-            type: s.type,
-            command: s.command
-          }
-        })
-      }
-    })
+    this.transferPath = this.detail.transferPath
+    this.releaseSerial = this.detail.releaseSerial
+    if (this.detail.releaseMachines && this.detail.releaseMachines.length) {
+      this.machines = this.detail.releaseMachines.map(s => s.machineId)
+    }
+    if (this.detail.releaseActions && this.detail.releaseActions.length) {
+      this.actions = this.detail.releaseActions.map(s => {
+        return {
+          visible: true,
+          name: s.name,
+          type: s.type,
+          command: s.command
+        }
+      })
+    }
   }
 }
 </script>
