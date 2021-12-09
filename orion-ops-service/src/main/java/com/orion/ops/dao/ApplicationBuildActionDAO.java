@@ -40,4 +40,14 @@ public interface ApplicationBuildActionDAO extends BaseMapper<ApplicationBuildAc
      */
     List<Long> selectActionIdByBuildId(@Param("buildId") Long buildId);
 
+    /**
+     * 查询上一次构建分支
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @param vcsId     vcsId
+     * @return branch
+     */
+    String selectLastBuildBranch(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("vcsId") Long vcsId);
+
 }

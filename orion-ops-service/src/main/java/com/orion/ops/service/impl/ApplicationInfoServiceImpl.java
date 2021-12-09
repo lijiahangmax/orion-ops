@@ -128,6 +128,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 交换
         ApplicationInfoDO updateSwap = new ApplicationInfoDO();
         updateSwap.setId(swapApp.getId());
+        updateSwap.setVcsId(swapApp.getVcsId());
         updateSwap.setAppSort(beforeSort);
         applicationInfoDAO.updateById(updateSwap);
         // 更新
@@ -141,6 +142,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         }
         ApplicationInfoDO updateTarget = new ApplicationInfoDO();
         updateTarget.setId(id);
+        updateTarget.setVcsId(app.getVcsId());
         updateTarget.setAppSort(afterSort);
         return applicationInfoDAO.updateById(updateTarget);
     }
@@ -190,17 +192,19 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
             app.setIsConfig(this.checkAppConfig(app.getId(), profileId) ? Const.CONFIGURED : Const.NOT_CONFIGURED);
         }
         // 查询机器
-        Map<Long, MachineInfoDO> machineCache = Maps.newMap();
-        for (ApplicationInfoVO app : appList) {
-            List<Long> machineIdList = applicationMachineService.selectAppProfileMachineIdList(app.getId(), profileId);
-            if (machineIdList.size() == 0) {
-                app.setMachines(Lists.empty());
-            } else {
-                List<MachineInfoVO> machines = machineIdList.stream()
-                        .map(machineId -> machineCache.computeIfAbsent(machineId, m -> machineInfoService.selectById(m)))
-                        .map(p -> Converts.to(p, MachineInfoVO.class))
-                        .collect(Collectors.toList());
-                app.setMachines(machines);
+        if (Const.ENABLE.equals(request.getQueryMachine())) {
+            Map<Long, MachineInfoDO> machineCache = Maps.newMap();
+            for (ApplicationInfoVO app : appList) {
+                List<Long> machineIdList = applicationMachineService.selectAppProfileMachineIdList(app.getId(), profileId);
+                if (machineIdList.size() == 0) {
+                    app.setMachines(Lists.empty());
+                } else {
+                    List<MachineInfoVO> machines = machineIdList.stream()
+                            .map(machineId -> machineCache.computeIfAbsent(machineId, m -> machineInfoService.selectById(m)))
+                            .map(p -> Converts.to(p, MachineInfoVO.class))
+                            .collect(Collectors.toList());
+                    app.setMachines(machines);
+                }
             }
         }
         return appList;

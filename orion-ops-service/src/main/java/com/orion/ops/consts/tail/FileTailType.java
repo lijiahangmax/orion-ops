@@ -25,7 +25,7 @@ public enum FileTailType {
     TAIL_LIST(20),
 
     /**
-     * 应用构建 宿主机流程日志
+     * 应用构建日志
      */
     APP_BUILD_LOG(30),
 
