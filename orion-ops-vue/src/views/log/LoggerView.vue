@@ -40,31 +40,35 @@
               <div class="file-log-view">
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
-                             :visibleDownload="false"
+                             :rightToolsProps="{download: false}"
                              :relId="selectedTailFile.id"
                              :appendStyle="{height: 'calc(100vh - 99px)'}"
-                             :config="{type: 20, relId: selectedTailFile.id}">
+                             :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: selectedTailFile.id}">
                   <!-- 左侧工具栏 -->
                   <div class="appender-left-tools" slot="left-tools">
                     <!-- 信息 -->
                     <a-breadcrumb>
                       <a-breadcrumb-item>
-                        <a-tag color="#7950F2" style="margin: 0">
+                        <a-tag color="#7950F2" style="margin: 0; max-width: calc(17% - 19px)">
                           {{ selectedTailFile.machineName }}
                         </a-tag>
                       </a-breadcrumb-item>
                       <a-breadcrumb-item>
-                        <a-tag color="#5C7CFA" style="margin: 0">
+                        <a-tag color="#5C7CFA" style="margin: 0; max-width: calc(17% - 19px)">
                           {{ selectedTailFile.machineHost }}
                         </a-tag>
                       </a-breadcrumb-item>
                       <a-breadcrumb-item>
-                        <a-tag color="#15AABF" style="margin: 0">
+                        <a-tag color="#15AABF" style="margin: 0; max-width: calc(17% - 19px)">
                           {{ selectedTailFile.name }}
                         </a-tag>
                       </a-breadcrumb-item>
                       <a-breadcrumb-item>
-                        <a-tag color="#40C057" style="margin: 0">
+                        <a-tag class="pointer"
+                               color="#40C057"
+                               style="margin: 0; max-width: calc(47% - 19px)"
+                               @click="$copy(selectedTailFile.path)"
+                               :title="selectedTailFile.path">
                           {{ selectedTailFile.path }}
                         </a-tag>
                       </a-breadcrumb-item>

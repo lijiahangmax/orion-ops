@@ -347,6 +347,24 @@ const $enum = {
   },
 
   /**
+   * 文件 tail 类型
+   */
+  FILE_TAIL_TYPE: {
+    EXEC_LOG: {
+      value: 10,
+      label: '命令执行日志'
+    },
+    TAIL_LIST: {
+      value: 20,
+      label: 'tail 列表'
+    },
+    APP_BUILD_LOG: {
+      value: 30,
+      label: '应用构建日志'
+    }
+  },
+
+  /**
    * 日志 tail 状态
    */
   LOG_TAIL_STATUS: {
@@ -550,27 +568,32 @@ const $enum = {
     WAIT: {
       value: 10,
       color: '#DEE2E6',
-      label: '未开始'
+      label: '未开始',
+      stepStatus: 'wait'
     },
     RUNNABLE: {
       value: 20,
       color: '#51CF66',
-      label: '进行中'
+      label: '进行中',
+      stepStatus: 'process'
     },
     FINISH: {
       value: 30,
       color: '#4C6EF5',
-      label: '已完成'
+      label: '已完成',
+      stepStatus: 'finish'
     },
     FAILURE: {
       value: 40,
       color: '#F03E3E',
-      label: '执行失败'
+      label: '执行失败',
+      stepStatus: 'error'
     },
     TERMINATED: {
       value: 50,
       color: '#FD7E14',
-      label: '已终止'
+      label: '已终止',
+      stepStatus: 'finish'
     }
   },
 

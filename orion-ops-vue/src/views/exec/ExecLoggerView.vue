@@ -4,7 +4,7 @@
                  size="default"
                  :appendStyle="{height: 'calc(100% - 46px)'}"
                  :relId="execId"
-                 :config="{type: 10, relId: execId}">
+                 :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execId}">
       <!-- 左侧工具栏 -->
       <div class="appender-left-tools"
            v-if="$enum.BATCH_EXEC_STATUS.WAITING.value === status || $enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"

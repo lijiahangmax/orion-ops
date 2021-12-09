@@ -143,6 +143,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
+    width: 200,
     ellipsis: true
   },
   {

@@ -124,7 +124,6 @@ export default {
       })
     },
     async resetPassword(values) {
-      console.log(values)
       const updateData = {
         password: this.$utils.md5(values.password)
       }

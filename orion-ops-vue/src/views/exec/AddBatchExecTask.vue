@@ -68,7 +68,7 @@
               <LogAppender :ref="'appender' + execMachine.execId"
                            :relId="execMachine.execId"
                            :appendStyle="{height: 'calc(100vh - 132px)'}"
-                           :config="{type: 10, relId: execMachine.execId}">
+                           :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
                 <!-- 左侧工具栏 -->
                 <div class="appender-left-tools" slot="left-tools">
                   <!-- 命令输入 -->
