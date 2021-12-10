@@ -1,25 +1,45 @@
 <template>
-  <div class="login-box">
-    <a-form-model :model="form" :rules="rules" ref="form" class="login-form" @submit="handleLoginSubmit">
-      <!-- 用户名 -->
-      <a-form-model-item prop="username">
-        <a-input v-decorator="rules.username" v-model="form.username" placeholder="用户名">
-          <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
-        </a-input>
-      </a-form-model-item>
-      <!-- 密码 -->
-      <a-form-model-item prop="password">
-        <a-input-password v-decorator="rules.password" v-model="form.password" placeholder="密码">
-          <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
-        </a-input-password>
-      </a-form-model-item>
-      <!-- 按钮 -->
-      <a-form-model-item>
-        <a-button type="primary" :disabled="isSubmit" html-type="submit" class="login-form-submit-button">
-          登陆
-        </a-button>
-      </a-form-model-item>
-    </a-form-model>
+  <div class="login-container">
+    <div class="login-form-main">
+      <div class="login-form-wrapper">
+        <!-- 标题 -->
+        <h3 class="login-label">用户登录</h3>
+        <!-- 表单 -->
+        <a-form-model class="login-form"
+                      :model="form"
+                      :rules="rules"
+                      ref="form"
+                      @submit="handleLoginSubmit">
+          <!-- 用户名 -->
+          <a-form-model-item prop="username">
+            <a-input size="large"
+                     placeholder="用户名"
+                     v-decorator="rules.username"
+                     v-model="form.username"
+                     allowClear>
+              <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
+            </a-input>
+          </a-form-model-item>
+          <!-- 密码 -->
+          <a-form-model-item prop="password">
+            <a-input size="large"
+                     type="password"
+                     placeholder="密码"
+                     v-decorator="rules.password"
+                     v-model="form.password"
+                     allowClear>
+              <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
+            </a-input>
+          </a-form-model-item>
+          <!-- 按钮 -->
+          <a-form-model-item>
+            <a-button class="login-form-submit-button" type="primary" :disabled="isSubmit" html-type="submit">
+              登录
+            </a-button>
+          </a-form-model-item>
+        </a-form-model>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -85,27 +105,72 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@input_width: 320px;
 
-.login-box {
-  text-align: center !important;
+.login-container {
+  position: relative;
   height: 100vh;
-  width: 100%;
-  background: -webkit-linear-gradient(#c3fae8, #e5dbff);
-  background: -o-linear-gradient(#c3fae8, #e5dbff);
-  background: -moz-linear-gradient(#c3fae8, #e5dbff);
-  background: linear-gradient(#c3fae8, #e5dbff);
+  background: #F2F4F7;
+  border-top: 1px solid #F2F4F7;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  .login-form-main {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    margin: 0 auto;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+  }
 }
 
-.login-form {
-  text-align: left;
-  display: inline-block;
-  margin-top: 15%;
-  width: @input_width;
-}
+.login-form-wrapper {
+  padding: 32px 64px;
+  width: 450px;
+  height: 330px;
+  overflow: hidden;
+  box-shadow: 0 0 20px 0 #F1F3F5;
+  background: #FFFFFF;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  border-radius: 16px;
+  position: relative;
 
-.login-form-submit-button {
-  width: @input_width;
+  .login-label {
+    color: #181E33;
+    font-size: 20px;
+    margin-bottom: 24px;
+    font-weight: normal;
+  }
+
+  .login-form {
+    /deep/ .ant-form-item {
+      height: 44px;
+    }
+
+    .login-form-submit-button {
+      margin-top: 12px;
+      width: 100%;
+      height: 48px;
+      background-image: url('../assets/login-btn.png');
+      background-repeat: no-repeat;
+      background-position: 0 0;
+      background-size: cover;
+      font-size: 18px;
+      border: none;
+    }
+  }
 }
 
 </style>
