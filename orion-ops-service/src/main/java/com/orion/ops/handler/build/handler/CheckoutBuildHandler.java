@@ -39,9 +39,9 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
         String log = "*** 检出url: " + gits.getRemoteUrl() + "\t分支: " + fullBranchName + "\t提交: " + commitId + "\n";
         this.appendLog(log);
         // 执行操作
-        gits.clean().pull(remote, branchName)
-                .checkout(fullBranchName)
-                .reset(commitId);
+        gits.clean().pull(remote, branchName);
+        gits.checkout(fullBranchName);
+        gits.reset(commitId);
     }
 
     @Override

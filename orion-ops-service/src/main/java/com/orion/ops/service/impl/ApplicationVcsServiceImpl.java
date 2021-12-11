@@ -150,23 +150,23 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
         // 删除
-        File cloneFile = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
-        Files1.delete(cloneFile);
+        File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+        Files1.delete(clonePath);
         // 初始化
         Exception ex = null;
         Gits gits = null;
         try {
             // 设置地址
-            if (cloneFile.isDirectory()) {
-                throw Exceptions.argument(MessageConst.VCS_PATH_PRESENT, Exceptions.runtime(cloneFile.getAbsolutePath()));
+            if (clonePath.isDirectory()) {
+                throw Exceptions.argument(MessageConst.VCS_PATH_PRESENT, Exceptions.runtime(clonePath.getAbsolutePath()));
             }
             // clone
             if (vcs.getVscUsername() == null) {
-                gits = Gits.clone(vcs.getVscUrl(), cloneFile);
+                gits = Gits.clone(vcs.getVscUrl(), clonePath);
             } else {
                 String username = vcs.getVscUsername();
                 String password = ValueMix.decrypt(vcs.getVcsPassword());
-                gits = Gits.clone(vcs.getVscUrl(), cloneFile, username, password);
+                gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
             }
         } catch (Exception e) {
             ex = e;
@@ -177,6 +177,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         if (ex == null) {
             update.setVcsStatus(VcsStatus.OK.getStatus());
         } else {
+            Files1.delete(clonePath);
             update.setVcsStatus(VcsStatus.ERROR.getStatus());
         }
         applicationVcsDAO.updateById(update);

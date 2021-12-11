@@ -45,9 +45,9 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             // 删除文件夹
-            File path = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
-            Files1.delete(path);
-            log.info("重置版本仓库状态-重置 id: {}, path: {}", id, path);
+            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+            Files1.delete(clonePath);
+            log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }
         log.info("重置版本仓库状态-结束");
     }
