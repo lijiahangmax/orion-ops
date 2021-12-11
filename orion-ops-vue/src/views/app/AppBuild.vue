@@ -134,8 +134,8 @@ const columns = [
     key: 'sort',
     width: 90,
     align: 'center',
-    scopedSlots: { customRender: 'seq' },
-    sorter: (a, b) => a.seq - b.seq
+    sorter: (a, b) => a.seq - b.seq,
+    scopedSlots: { customRender: 'seq' }
   },
   {
     title: '应用名称',
@@ -156,17 +156,16 @@ const columns = [
     key: 'status',
     align: 'center',
     width: 120,
-    scopedSlots: { customRender: 'status' },
-    sorter: (a, b) => a.status - b.status
-
+    sorter: (a, b) => a.status - b.status,
+    scopedSlots: { customRender: 'status' }
   },
   {
     title: '构建人',
     key: 'createUserName',
     dataIndex: 'createUserName',
     ellipsis: true,
-    sorter: (a, b) => a.createUserName.localeCompare(b.createUserName),
-    width: 130
+    width: 130,
+    sorter: (a, b) => a.createUserName.localeCompare(b.createUserName)
   },
   {
     title: '构建时间',
@@ -189,8 +188,8 @@ const columns = [
     key: 'action',
     fixed: 'right',
     width: 230,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

@@ -96,17 +96,17 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '连接机器',
     key: 'machine',
     width: 180,
     ellipsis: true,
-    scopedSlots: { customRender: 'machine' },
-    sorter: (a, b) => a.machineName.localeCompare(b.machineName)
+    sorter: (a, b) => a.machineName.localeCompare(b.machineName),
+    scopedSlots: { customRender: 'machine' }
   },
   {
     title: '连接用户',
@@ -128,6 +128,7 @@ const columns = [
     key: 'connectedTime',
     width: 180,
     ellipsis: true,
+    align: 'center',
     sorter: (a, b) => a.connectedTime - b.connectedTime,
     scopedSlots: { customRender: 'connectedTime' }
   },
@@ -136,7 +137,8 @@ const columns = [
     key: 'disconnectedTime',
     width: 180,
     ellipsis: true,
-    sorter: (a, b) => a.disconnectedTime - b.disconnectedTime,
+    align: 'center',
+    sorter: (a, b) => (a.disconnectedTime || 0) - (b.disconnectedTime || 0),
     scopedSlots: { customRender: 'disconnectedTime' }
   },
   {
@@ -144,8 +146,8 @@ const columns = [
     key: 'action',
     width: 120,
     fixed: 'right',
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

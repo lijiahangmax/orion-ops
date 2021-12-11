@@ -98,9 +98,9 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '模板名称',
@@ -113,7 +113,7 @@ const columns = [
   {
     title: '模板内容',
     key: 'value',
-    width: 240,
+    width: 450,
     ellipsis: true,
     scopedSlots: { customRender: 'value' },
     sorter: (a, b) => a.value.localeCompare(b.value)
@@ -136,17 +136,18 @@ const columns = [
   {
     title: '修改时间',
     key: 'updateTime',
-    scopedSlots: { customRender: 'updateTime' },
+    width: 150,
+    align: 'center',
     sorter: (a, b) => a.updateTime - b.updateTime,
-    width: 150
+    scopedSlots: { customRender: 'updateTime' }
   },
   {
     title: '操作',
     key: 'action',
     fixed: 'right',
     width: 120,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

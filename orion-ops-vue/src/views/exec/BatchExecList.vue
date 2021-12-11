@@ -171,40 +171,40 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '执行机器',
     key: 'machine',
     width: 180,
     ellipsis: true,
-    scopedSlots: { customRender: 'machine' },
-    sorter: (a, b) => a.machineName.localeCompare(b.machineName)
+    sorter: (a, b) => a.machineName.localeCompare(b.machineName),
+    scopedSlots: { customRender: 'machine' }
   },
   {
     title: '命令',
     key: 'command',
     ellipsis: true,
-    scopedSlots: { customRender: 'command' },
-    width: 250
+    width: 250,
+    scopedSlots: { customRender: 'command' }
   },
   {
     title: '状态',
     key: 'status',
     width: 100,
     align: 'center',
-    scopedSlots: { customRender: 'status' },
-    sorter: (a, b) => a.status - b.status
+    sorter: (a, b) => a.status - b.status,
+    scopedSlots: { customRender: 'status' }
   },
   {
     title: '退出码',
     key: 'exitCode',
     width: 100,
     align: 'center',
-    scopedSlots: { customRender: 'exitCode' },
-    sorter: (a, b) => a.exitCode - b.exitCode
+    sorter: (a, b) => a.exitCode - b.exitCode,
+    scopedSlots: { customRender: 'exitCode' }
   },
   {
     title: '执行用户',
@@ -219,30 +219,31 @@ const columns = [
     key: 'createTime',
     width: 150,
     ellipsis: true,
+    align: 'center',
     sorter: (a, b) => a.createTime - b.createTime,
     scopedSlots: { customRender: 'createTime' }
   },
   {
     title: '描述',
     key: 'description',
-    scopedSlots: { customRender: 'description' },
-    ellipsis: true
+    ellipsis: true,
+    scopedSlots: { customRender: 'description' }
   },
   {
     title: '日志',
     key: 'log',
     fixed: 'right',
     width: 160,
-    scopedSlots: { customRender: 'log' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'log' }
   },
   {
     title: '操作',
     key: 'action',
     fixed: 'right',
     width: 165,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

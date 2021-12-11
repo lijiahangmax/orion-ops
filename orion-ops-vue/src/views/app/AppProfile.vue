@@ -93,9 +93,9 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '环境名称',
@@ -110,33 +110,33 @@ const columns = [
     key: 'tag',
     ellipsis: true,
     width: 150,
-    scopedSlots: { customRender: 'tag' },
-    sorter: (a, b) => a.tag.localeCompare(b.tag)
+    sorter: (a, b) => a.tag.localeCompare(b.tag),
+    scopedSlots: { customRender: 'tag' }
   },
   {
-    title: '是否需要审核',
+    title: '发布是否需要审核',
     key: 'releaseAudit',
     ellipsis: true,
-    scopedSlots: { customRender: 'releaseAudit' },
     align: 'center',
-    width: 120,
-    sorter: (a, b) => a.releaseAudit - b.releaseAudit
+    width: 140,
+    sorter: (a, b) => a.releaseAudit - b.releaseAudit,
+    scopedSlots: { customRender: 'releaseAudit' }
   },
   {
     title: '描述',
     key: 'description',
     dataIndex: 'description',
     ellipsis: true,
-    scopedSlots: { customRender: 'description' },
-    width: 220
+    width: 220,
+    scopedSlots: { customRender: 'description' }
   },
   {
     title: '操作',
     key: 'action',
     fixed: 'right',
     width: 140,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

@@ -172,9 +172,9 @@ const columns = [
     title: '是否已配置',
     key: 'config',
     width: 150,
-    scopedSlots: { customRender: 'config' },
     align: 'center',
-    sorter: (a, b) => a.isConfig - b.isConfig
+    sorter: (a, b) => a.isConfig - b.isConfig,
+    scopedSlots: { customRender: 'config' }
   },
   {
     title: '仓库名称',
@@ -194,8 +194,8 @@ const columns = [
     title: '操作',
     key: 'action',
     width: 220,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 
@@ -224,8 +224,8 @@ const innerColumns = [
     key: 'status',
     width: 80,
     align: 'center',
-    scopedSlots: { customRender: 'status' },
-    sorter: (a, b) => a.status - b.status
+    sorter: (a, b) => a.status - b.status,
+    scopedSlots: { customRender: 'status' }
   },
   {
     title: '操作',

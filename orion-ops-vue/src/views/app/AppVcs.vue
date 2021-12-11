@@ -104,9 +104,9 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '名称',
@@ -148,8 +148,8 @@ const columns = [
     key: 'action',
     fixed: 'right',
     width: 170,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

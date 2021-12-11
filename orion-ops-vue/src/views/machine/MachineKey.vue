@@ -141,9 +141,9 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '秘钥名称',
@@ -156,15 +156,14 @@ const columns = [
   {
     title: '秘钥路径',
     key: 'path',
-    scopedSlots: { customRender: 'path' },
-    width: 300
+    width: 240,
+    scopedSlots: { customRender: 'path' }
   },
   {
-    title: '创建时间',
-    key: 'createTime',
-    sorter: (a, b) => a.createTime - b.createTime,
-    scopedSlots: { customRender: 'createTime' },
-    width: 150
+    title: '挂载状态',
+    key: 'mountStatus',
+    width: 100,
+    scopedSlots: { customRender: 'mountStatus' }
   },
   {
     title: '描述',
@@ -174,18 +173,20 @@ const columns = [
     width: 200
   },
   {
-    title: '挂载状态',
-    key: 'mountStatus',
-    width: 100,
-    scopedSlots: { customRender: 'mountStatus' }
+    title: '创建时间',
+    key: 'createTime',
+    width: 150,
+    align: 'center',
+    sorter: (a, b) => a.createTime - b.createTime,
+    scopedSlots: { customRender: 'createTime' }
   },
   {
     title: '操作',
     key: 'action',
     fixed: 'right',
     width: 120,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

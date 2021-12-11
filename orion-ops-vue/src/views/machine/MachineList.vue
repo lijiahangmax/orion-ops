@@ -162,44 +162,44 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '名称',
     key: 'name',
     width: 200,
     ellipsis: true,
-    scopedSlots: { customRender: 'name' },
-    sorter: (a, b) => a.name.localeCompare(b.name)
+    sorter: (a, b) => a.name.localeCompare(b.name),
+    scopedSlots: { customRender: 'name' }
   },
   {
     title: 'tag',
     key: 'tag',
     width: 150,
-    scopedSlots: { customRender: 'tag' },
-    sorter: (a, b) => a.tag.localeCompare(b.tag)
+    sorter: (a, b) => a.tag.localeCompare(b.tag),
+    scopedSlots: { customRender: 'tag' }
   },
   {
     title: '主机',
     key: 'host',
     width: 180,
-    scopedSlots: { customRender: 'host' },
-    sorter: (a, b) => a.host.localeCompare(b.host)
+    sorter: (a, b) => a.host.localeCompare(b.host),
+    scopedSlots: { customRender: 'host' }
   },
   {
     title: '端口',
     key: 'sshPort',
     width: 80,
-    scopedSlots: { customRender: 'sshPort' },
-    sorter: (a, b) => a.sshPort - b.sshPort
+    sorter: (a, b) => a.sshPort - b.sshPort,
+    scopedSlots: { customRender: 'sshPort' }
   },
   {
     title: '状态',
     key: 'status',
-    scopedSlots: { customRender: 'status' },
-    width: 80
+    width: 80,
+    scopedSlots: { customRender: 'status' }
   },
   {
     title: '描述',

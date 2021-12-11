@@ -123,17 +123,17 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '机器',
     key: 'machine',
     width: 180,
     ellipsis: true,
-    scopedSlots: { customRender: 'machine' },
-    sorter: (a, b) => a.machineName.localeCompare(b.machineName)
+    sorter: (a, b) => a.machineName.localeCompare(b.machineName),
+    scopedSlots: { customRender: 'machine' }
   },
   {
     title: '名称',
@@ -147,16 +147,16 @@ const columns = [
     title: '路径',
     key: 'path',
     ellipsis: true,
-    scopedSlots: { customRender: 'path' },
     width: 270,
-    sorter: (a, b) => a.path.localeCompare(b.path)
+    sorter: (a, b) => a.path.localeCompare(b.path),
+    scopedSlots: { customRender: 'path' }
   },
   {
     title: '命令',
     key: 'command',
     ellipsis: true,
-    scopedSlots: { customRender: 'command' },
-    width: 230
+    width: 230,
+    scopedSlots: { customRender: 'command' }
   },
   {
     title: '偏移量(行)',
@@ -177,6 +177,7 @@ const columns = [
     key: 'updateTime',
     width: 150,
     ellipsis: true,
+    align: 'center',
     sorter: (a, b) => a.updateTime - b.updateTime,
     scopedSlots: { customRender: 'updateTime' }
   },
@@ -185,8 +186,8 @@ const columns = [
     key: 'action',
     fixed: 'right',
     width: 170,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

@@ -155,10 +155,6 @@ export default {
   }
 
   .login-form {
-    /deep/ .ant-form-item {
-      height: 44px;
-    }
-
     .login-form-submit-button {
       margin-top: 12px;
       width: 100%;

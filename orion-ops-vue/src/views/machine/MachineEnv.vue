@@ -195,25 +195,25 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: 'key',
     key: 'key',
-    scopedSlots: { customRender: 'key' },
     width: 180,
     ellipsis: true,
-    sorter: (a, b) => a.key.localeCompare(b.key)
+    sorter: (a, b) => a.key.localeCompare(b.key),
+    scopedSlots: { customRender: 'key' }
   },
   {
     title: 'value',
     key: 'value',
-    scopedSlots: { customRender: 'value' },
     width: 220,
     ellipsis: true,
-    sorter: (a, b) => a.value.localeCompare(b.value)
+    sorter: (a, b) => a.value.localeCompare(b.value),
+    scopedSlots: { customRender: 'value' }
   },
   {
     title: '描述',
@@ -225,9 +225,10 @@ const columns = [
   {
     title: '修改时间',
     key: 'updateTime',
-    scopedSlots: { customRender: 'updateTime' },
+    align: 'center',
+    width: 150,
     sorter: (a, b) => a.updateTime - b.updateTime,
-    width: 150
+    scopedSlots: { customRender: 'updateTime' }
   },
   {
     title: '操作',

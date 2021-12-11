@@ -236,8 +236,9 @@ const fileListColumns = function() {
       title: '修改时间',
       key: 'modifyTime',
       width: 150,
-      scopedSlots: { customRender: 'modifyTime' },
-      sorter: (a, b) => a.modifyTime - b.modifyTime
+      align: 'center',
+      sorter: (a, b) => a.modifyTime - b.modifyTime,
+      scopedSlots: { customRender: 'modifyTime' }
     },
     {
       title: '操作',

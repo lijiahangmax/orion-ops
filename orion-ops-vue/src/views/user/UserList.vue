@@ -162,38 +162,39 @@ function getColumns() {
     {
       title: '序号',
       key: 'seq',
-      customRender: (text, record, index) => `${index + 1}`,
       width: 65,
-      align: 'center'
+      align: 'center',
+      customRender: (text, record, index) => `${index + 1}`
     },
     {
       title: '用户名',
       key: 'username',
       width: 150,
       ellipsis: true,
-      scopedSlots: { customRender: 'username' },
-      sorter: (a, b) => a.username.localeCompare(b.username)
+      sorter: (a, b) => a.username.localeCompare(b.username),
+      scopedSlots: { customRender: 'username' }
     },
     {
       title: '昵称',
       key: 'nickname',
       ellipsis: true,
       width: 150,
-      scopedSlots: { customRender: 'nickname' },
-      sorter: (a, b) => a.nickname.localeCompare(b.nickname)
+      sorter: (a, b) => a.nickname.localeCompare(b.nickname),
+      scopedSlots: { customRender: 'nickname' }
     },
     {
       title: '联系电话',
       key: 'phone',
       ellipsis: true,
       width: 150,
+      align: 'center',
       scopedSlots: { customRender: 'phone' }
     },
     {
       title: '联系邮箱',
       key: 'email',
       ellipsis: true,
-      width: 150,
+      width: 200,
       scopedSlots: { customRender: 'email' }
     },
     {
@@ -201,22 +202,23 @@ function getColumns() {
       key: 'role',
       ellipsis: true,
       width: 100,
-      scopedSlots: { customRender: 'role' },
-      sorter: (a, b) => a.role > b.role
+      sorter: (a, b) => a.role > b.role,
+      scopedSlots: { customRender: 'role' }
     },
     {
       title: '状态',
       key: 'status',
       ellipsis: true,
       width: 100,
-      scopedSlots: { customRender: 'status' },
-      sorter: (a, b) => a.status > b.status
+      sorter: (a, b) => a.status > b.status,
+      scopedSlots: { customRender: 'status' }
     },
     {
       title: '最后登录时间',
       key: 'lastLoginTime',
       width: 200,
       ellipsis: true,
+      align: 'center',
       sorter: (a, b) => a.lastLoginTime - b.lastLoginTime,
       scopedSlots: { customRender: 'lastLoginTime' }
     }
@@ -227,8 +229,8 @@ function getColumns() {
       key: 'action',
       fixed: 'right',
       width: 220,
-      scopedSlots: { customRender: 'action' },
-      align: 'center'
+      align: 'center',
+      scopedSlots: { customRender: 'action' }
     })
   }
   return columns

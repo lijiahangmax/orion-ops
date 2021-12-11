@@ -1,10 +1,10 @@
 <template>
-  <p>ReleaseConfig</p>
+  <p>AppRelease</p>
 </template>
 
 <script>
 export default {
-  name: 'ReleaseConfig'
+  name: 'AppRelease'
 }
 </script>
 

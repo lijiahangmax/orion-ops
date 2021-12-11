@@ -109,16 +109,16 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '代理主机',
     key: 'host',
     width: 200,
-    scopedSlots: { customRender: 'host' },
-    sorter: (a, b) => a.host.localeCompare(b.host)
+    sorter: (a, b) => a.host.localeCompare(b.host),
+    scopedSlots: { customRender: 'host' }
   },
   {
     title: '代理端口',
@@ -151,8 +151,8 @@ const columns = [
     key: 'action',
     fixed: 'right',
     width: 120,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 
