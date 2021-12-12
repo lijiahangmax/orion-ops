@@ -1,16 +1,18 @@
 package com.orion.ops.entity.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * 机器连接
+ * terminal 连接参数
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/17 20:12
  */
 @Data
-public class TerminalConnectDTO {
+@EqualsAndHashCode(callSuper = true)
+public class TerminalConnectDTO extends TerminalSizeDTO {
 
     /**
      * 登陆token
@@ -18,23 +20,25 @@ public class TerminalConnectDTO {
     private String loginToken;
 
     /**
-     * 行数
+     * 解析body
+     * <p>
+     * .e.g cols|rows|width|height|loginToken
+     *
+     * @param body body
+     * @return connect
      */
-    private Integer rows;
-
-    /**
-     * 行字数
-     */
-    private Integer cols;
-
-    /**
-     * 宽px
-     */
-    private Integer width;
-
-    /**
-     * 高px
-     */
-    private Integer height;
+    public static TerminalConnectDTO parse(String body) {
+        String[] conf = body.split("\\|");
+        if (conf.length != 5) {
+            return null;
+        }
+        // 解析size
+        TerminalConnectDTO connect = parseSize(conf, TerminalConnectDTO::new);
+        if (connect == null) {
+            return null;
+        }
+        connect.setLoginToken(conf[4]);
+        return connect;
+    }
 
 }

@@ -17,46 +17,53 @@ public enum TerminalOperate {
     /**
      * 建立连接
      */
-    CONNECT("connect"),
+    CONNECT("05", true),
 
     /**
      * ping
      */
-    PING("ping"),
+    PING("10", false),
 
     /**
      * 更改大小
      */
-    RESIZE("resize"),
+    RESIZE("15", true),
 
     /**
      * 键入key
      */
-    KEY("key"),
+    KEY("20", true),
 
     /**
      * 键入命令
      */
-    COMMAND("command"),
+    COMMAND("25", true),
 
     /**
      * 中断 ctrl+c
      */
-    INTERRUPT("interrupt"),
+    INTERRUPT("30", false),
 
     /**
      * 挂起 ctrl+x
      */
-    HANGUP("hangup"),
+    HANGUP("35", false),
 
     /**
      * 关闭连接
      */
-    DISCONNECT("disconnect"),
+    DISCONNECT("40", false),
 
     ;
 
+    /**
+     * 前缀长度
+     */
+    public static final int PREFIX_SIZE = 2;
+
     private final String operate;
+
+    private final boolean hasBody;
 
     public static TerminalOperate of(String operate) {
         for (TerminalOperate value : values()) {

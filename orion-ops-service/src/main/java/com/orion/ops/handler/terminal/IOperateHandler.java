@@ -1,7 +1,6 @@
 package com.orion.ops.handler.terminal;
 
 import com.orion.ops.consts.terminal.TerminalOperate;
-import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.handler.terminal.manager.TerminalManagementHandler;
 
 /**
@@ -24,13 +23,13 @@ public interface IOperateHandler extends TerminalManagementHandler {
     void disconnect();
 
     /**
-     * 处理消息 (对外)
+     * 处理消息
      *
-     * @param data    data
      * @param operate 操作
+     * @param body    body
      * @throws Exception ex
      */
-    void handleMessage(TerminalDataTransferDTO data, TerminalOperate operate) throws Exception;
+    void handleMessage(TerminalOperate operate, String body) throws Exception;
 
     /**
      * 心跳是否结束

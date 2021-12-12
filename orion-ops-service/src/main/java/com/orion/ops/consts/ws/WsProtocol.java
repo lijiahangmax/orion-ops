@@ -61,7 +61,7 @@ public enum WsProtocol {
     /**
      * 分隔符
      */
-    public static final String S = "|";
+    public static final String SYMBOL = "|";
 
     public byte[] get() {
         return Strings.bytes(code);
@@ -76,7 +76,7 @@ public enum WsProtocol {
         Valid.notNull(body);
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         try {
-            o.write(Strings.bytes(code + S));
+            o.write(Strings.bytes(code + SYMBOL));
             o.write(body);
             return o.toByteArray();
         } catch (IOException e) {

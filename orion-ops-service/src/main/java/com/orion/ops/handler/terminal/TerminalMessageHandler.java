@@ -1,6 +1,6 @@
 package com.orion.ops.handler.terminal;
 
-import com.alibaba.fastjson.JSON;
+import com.orion.lang.wrapper.Tuple;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.terminal.TerminalOperate;
 import com.orion.ops.consts.ws.WsCloseCode;
@@ -8,7 +8,6 @@ import com.orion.ops.consts.ws.WsProtocol;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalConnectDTO;
-import com.orion.ops.entity.dto.TerminalDataTransferDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineInfoService;
@@ -72,33 +71,59 @@ public class TerminalMessageHandler implements WebSocketHandler {
         log.info("terminal 建立ws连接 token: {}, id: {}", token, id);
     }
 
+    /**
+     * 解析请求
+     * <p>
+     * .e.g xx
+     * .e.g xx|body
+     *
+     * @param payload payload
+     * @return operator, body
+     */
+    private static Tuple parsePayload(String payload) {
+        // 检查长度
+        if (payload.length() < TerminalOperate.PREFIX_SIZE) {
+            return null;
+        }
+        // 解析操作
+        TerminalOperate operate = TerminalOperate.of(payload.substring(0, TerminalOperate.PREFIX_SIZE));
+        if (operate == null) {
+            return null;
+        }
+        if (!operate.isHasBody()) {
+            return Tuple.of(operate, null);
+        }
+        // 检查是否有body
+        if (payload.length() < TerminalOperate.PREFIX_SIZE + 1) {
+            return null;
+        }
+        return Tuple.of(operate, payload.substring(TerminalOperate.PREFIX_SIZE + 1));
+    }
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+        if (!(message instanceof TextMessage)) {
+            return;
+        }
         String token = getToken(session);
         String id = session.getId();
-        TerminalDataTransferDTO data = null;
+        String payload = ((TextMessage) message).getPayload();
         try {
-            if (!(message instanceof TextMessage)) {
-                return;
-            }
-            String body = ((TextMessage) message).getPayload();
-            data = JSON.parseObject(body, TerminalDataTransferDTO.class);
-            if (data == null) {
+            // 解析请求
+            Tuple tuple = parsePayload(payload);
+            if (tuple == null) {
                 session.sendMessage(new TextMessage(WsProtocol.ILLEGAL_BODY.get()));
                 return;
             }
-            // 操作
-            TerminalOperate operate = TerminalOperate.of(data.getOperate());
-            if (operate == null) {
-                session.sendMessage(new TextMessage(WsProtocol.UNKNOWN_OPERATE.get()));
-                return;
-            }
+            TerminalOperate operate = tuple.get(0);
+            String body = tuple.get(1);
+            // 执行
             if (operate == TerminalOperate.CONNECT) {
                 // 建立连接
                 if (session.getAttributes().get(CONNECTED_KEY) != null) {
                     return;
                 }
-                this.connect(session, id, data, token);
+                this.connect(session, id, token, body);
                 return;
             }
             // 获取连接
@@ -112,9 +137,9 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 return;
             }
             // 操作
-            handler.handleMessage(data, operate);
+            handler.handleMessage(operate, body);
         } catch (Exception e) {
-            log.error("terminal 处理操作异常 token: {}, data: {}, e: {}", token, data, e);
+            log.error("terminal 处理操作异常 token: {}, payload: {}, e: {}", token, payload, e);
             e.printStackTrace();
             if (session.isOpen()) {
                 session.close(WsCloseCode.RUNTIME_EXCEPTION.close());
@@ -165,17 +190,15 @@ public class TerminalMessageHandler implements WebSocketHandler {
      * 建立连接
      *
      * @param session session
-     * @param data    data
+     * @param id      id
+     * @param token   token
+     * @param body    body
      */
-    private void connect(WebSocketSession session, String id, TerminalDataTransferDTO data, String token) throws IOException {
-        log.info("terminal 尝试建立连接 token: {}, id: {}, data: {}", token, id, JSON.toJSONString(data));
+    private void connect(WebSocketSession session, String id, String token, String body) throws IOException {
+        log.info("terminal 尝试建立连接 token: {}, id: {}, body: {}", token, id, body);
         // 检查参数
-        TerminalConnectDTO connectInfo = JSON.parseObject(data.getBody(), TerminalConnectDTO.class);
-        // 连接参数
-        String loginToken;
-        if (connectInfo == null || Strings.isBlank(loginToken = connectInfo.getLoginToken())
-                || connectInfo.getRows() == null || connectInfo.getCols() == null
-                || connectInfo.getWidth() == null || connectInfo.getHeight() == null) {
+        TerminalConnectDTO connectInfo = TerminalConnectDTO.parse(body);
+        if (connectInfo == null) {
             session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
             return;
         }
@@ -199,7 +222,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         // 检查操作用户
-        UserDTO userDTO = passportService.getUserByToken(loginToken);
+        UserDTO userDTO = passportService.getUserByToken(connectInfo.getLoginToken());
         if (userDTO == null || !tokenUserId.equals(userDTO.getId())) {
             log.info("terminal 建立连接拒绝-用户认证失败 token: {}", token);
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());

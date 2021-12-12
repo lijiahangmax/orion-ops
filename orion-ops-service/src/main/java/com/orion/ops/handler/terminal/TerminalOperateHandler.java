@@ -1,6 +1,5 @@
 package com.orion.ops.handler.terminal;
 
-import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.machine.MachineEnvAttr;
@@ -9,8 +8,7 @@ import com.orion.ops.consts.terminal.TerminalOperate;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.consts.ws.WsProtocol;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
-import com.orion.ops.entity.dto.TerminalConnectDTO;
-import com.orion.ops.entity.dto.TerminalDataTransferDTO;
+import com.orion.ops.entity.dto.TerminalSizeDTO;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.remote.channel.SessionStore;
@@ -172,13 +170,13 @@ public class TerminalOperateHandler implements IOperateHandler {
     }
 
     @Override
-    public void forcedOffline() throws Exception {
+    public void forcedOffline() {
         this.sendClose(WsCloseCode.FORCED_OFFLINE);
         log.info("terminal 管理员强制断连 {}", token);
     }
 
     @Override
-    public void heartDown() throws Exception {
+    public void heartDown() {
         this.sendClose(WsCloseCode.HEART_DOWN);
         log.info("terminal 心跳结束断连 {}", token);
     }
@@ -189,7 +187,7 @@ public class TerminalOperateHandler implements IOperateHandler {
     }
 
     @Override
-    public void handleMessage(TerminalDataTransferDTO data, TerminalOperate operate) throws Exception {
+    public void handleMessage(TerminalOperate operate, String body) throws Exception {
         if (close) {
             return;
         }
@@ -203,21 +201,20 @@ public class TerminalOperateHandler implements IOperateHandler {
                 log.info("terminal 用户主动断连 {}", token);
                 return;
             case RESIZE:
-                this.resize(data.getBody());
+                this.resize(body);
                 return;
             default:
-                this.handleData(data, operate);
+                this.handleWrite(operate, body);
         }
     }
 
     /**
-     * 处理用户操作
+     * 处理输入操作操作
      *
-     * @param data    data
      * @param operate 操作
+     * @param body    body
      */
-    private void handleData(TerminalDataTransferDTO data, TerminalOperate operate) throws IOException {
-        String body = data.getBody();
+    private void handleWrite(TerminalOperate operate, String body) throws IOException {
         if (body == null) {
             return;
         }
@@ -247,7 +244,7 @@ public class TerminalOperateHandler implements IOperateHandler {
      */
     private void resize(String body) throws IOException {
         // 检查参数
-        TerminalConnectDTO window = JSON.parseObject(body, TerminalConnectDTO.class);
+        TerminalSizeDTO window = TerminalSizeDTO.parse(body);
         if (window == null) {
             session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
             return;
