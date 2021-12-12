@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { debounce } from 'lodash'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
@@ -206,7 +207,7 @@ const clientHandler = {
     // 建立连接
     terminalOperator.connect.call(this)
     // 注册窗口大小监听器
-    window.addEventListener('resize', this.windowChange)
+    window.addEventListener('resize', this.debouncedWindowResize)
     // 注册心跳
     const _this = this
     this.pingThread = setInterval(function() {
@@ -229,7 +230,7 @@ const clientHandler = {
     this.status = this.$enum.TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\x1B[1;3;31m\r\n' + e.reason + '\x1B[0m')
     // 关闭窗口大小监听器
-    window.removeEventListener('resize', this.windowChange)
+    window.removeEventListener('resize', this.debouncedWindowResize)
     // 关闭心跳
     if (this.pingThread) {
       clearInterval(this.pingThread)
@@ -243,55 +244,40 @@ const clientHandler = {
 const terminalOperator = {
   connect() {
     console.log('connect')
-    this.client.send(JSON.stringify({
-      operate: 'connect',
-      body: {
-        loginToken: this.$storage.get(this.$storage.keys.LOGIN_TOKEN),
-        cols: this.term.cols,
-        rows: this.term.rows,
-        width: document.getElementById('terminal').offsetWidth,
-        height: document.getElementById('terminal').offsetHeight
-      }
-    }))
+    // xx|cols|rows|width|height|loginToken
+    const width = parseInt(document.getElementById('terminal').offsetWidth)
+    const height = parseInt(document.getElementById('terminal').offsetHeight)
+    const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
+    const body = `${this.$enum.TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
+    this.client.send(body)
+  },
+  resize(cols, rows) {
+    // 防抖
+    if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
+      return
+    }
+    console.log('resize', cols, rows)
+    // xx|cols|rows|width|height
+    const width = parseInt(document.getElementById('terminal').offsetWidth)
+    const height = parseInt(document.getElementById('terminal').offsetHeight)
+    const body = `${this.$enum.TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
+    this.client.send(body)
   },
   key(e) {
     if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
       return
     }
-    this.client.send(JSON.stringify({
-      operate: 'key',
-      body: e
-    }))
-  },
-  resize(cols, rows) {
-    if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
-      return
-    }
-    console.log('resize', cols, rows)
-    this.client.send(JSON.stringify({
-      operate: 'resize',
-      body: {
-        cols: cols,
-        rows: rows,
-        width: document.getElementById('terminal').offsetWidth,
-        height: document.getElementById('terminal').offsetHeight
-      }
-    }))
+    const body = `${this.$enum.TERMINAL_OPERATOR.KEY.value}|${e}`
+    this.client.send(body)
   },
   disconnect() {
     console.log('disconnect')
     this.pingThread && clearInterval(this.pingThread)
-    this.client.send(JSON.stringify({
-      operate: 'disconnect',
-      body: {}
-    }))
+    this.client.send(this.$enum.TERMINAL_OPERATOR.DISCONNECT.value)
   },
   ping() {
     console.log('ping')
-    this.client.send(JSON.stringify({
-      operate: 'ping',
-      body: {}
-    }))
+    this.client.send(this.$enum.TERMINAL_OPERATOR.PING.value)
   }
 }
 
@@ -397,7 +383,8 @@ export default {
           foreground: '#FFFFFF',
           background: '#212529'
         }
-      }
+      },
+      debouncedWindowResize: debounce(this.windowChange, 150)
     }
   },
   watch: {
