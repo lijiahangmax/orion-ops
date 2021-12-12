@@ -13,13 +13,11 @@ export default {
   },
   mounted() {
     const term = new Terminal({
-      lineHeight: 1.14,
       cols: 360,
       rows: 96,
       cursorStyle: 'bar',
       cursorBlink: true,
       fontSize: 14,
-      fontFamily: 'courier-new, courier, monospace',
       theme: {
         foreground: '#FFFFFF',
         background: '#212529'

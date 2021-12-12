@@ -27,6 +27,60 @@ const $enum = {
   },
 
   /**
+   * 终端操作
+   */
+  TERMINAL_OPERATOR: {
+    /**
+     * 建立连接
+     */
+    CONNECT: {
+      value: '05'
+    },
+    /**
+     * ping
+     */
+    PING: {
+      value: '10'
+    },
+    /**
+     * 更改大小
+     */
+    RESIZE: {
+      value: '15'
+    },
+    /**
+     * 键入key
+     */
+    KEY: {
+      value: '20'
+    },
+    /**
+     * 键入命令
+     */
+    COMMAND: {
+      value: '25'
+    },
+    /**
+     * 中断 ctrl+c
+     */
+    INTERRUPT: {
+      value: '30'
+    },
+    /**
+     *  挂起 ctrl+x
+     */
+    HANGUP: {
+      value: '35'
+    },
+    /**
+     * 关闭连接
+     */
+    DISCONNECT: {
+      value: '40'
+    }
+  },
+
+  /**
    * 终端状态
    */
   TERMINAL_STATUS: {

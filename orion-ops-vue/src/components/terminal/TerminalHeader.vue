@@ -4,15 +4,13 @@
       <!-- 左侧菜单 -->
       <div class="terminal-header-fixed-left">
         <!-- ssh信息 -->
-        <div>
-          <span style="margin-left: 10px; cursor: pointer" @click="copyHost">{{ machine.machineName }}</span>
-          <span style="margin: 0 5px">|</span>
-          <span style="margin-right: 10px; cursor: pointer" @click="copySshCommand">
-          {{ machine.username }}@{{ machine.host }}:{{ machine.port }}
+        <div class="terminal-ssh" title="复制ssh" @click="copySshCommand">
+          <span v-if="machine.username">
+              {{ machine.username }}@{{ machine.host }}:{{ machine.port }}
           </span>
         </div>
         <!-- 命令输入框 -->
-        <div class="terminal-command-input">
+        <div class="terminal-command-input-wrapper">
           <a-input-search placeholder="command"
                           :disabled="machine.status !== $enum.TERMINAL_STATUS.CONNECTED.value"
                           v-model="commandInput"
@@ -147,9 +145,15 @@ export default {
     align-items: center;
     justify-content: space-between;
 
-    .terminal-command-input {
+    .terminal-ssh {
+      min-width: 160px;
+      margin: 0 16px;
+      cursor: pointer;
+      color: #364FC7;
+    }
+
+    .terminal-command-input-wrapper {
       width: 400px;
-      margin-left: 60px
     }
   }
 
