@@ -12,6 +12,7 @@ import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
+import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
@@ -369,9 +370,39 @@ public class SftpServiceImpl implements SftpService {
         FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
         Long machineId = transferLog.getMachineId();
-        // 判断状态是否为暂停
+        // 判断状态是否为失败
         Valid.eq(SftpTransferStatus.ERROR.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
         this.transferResumeRetry(transferLog, machineId);
+    }
+
+    @Override
+    public void transferReDownload(String fileToken) {
+        // 获取请求文件
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
+        Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
+        Long machineId = transferLog.getMachineId();
+        // 暂停
+        IFileTransferProcessor processor = transferProcessorManager.getProcessor(transferLog.getFileToken());
+        if (processor != null) {
+            processor.stop();
+        }
+        // 删除本地文件
+        String loacalPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
+        Files1.delete(loacalPath);
+        // 修改进度
+        FileTransferLogDO update = new FileTransferLogDO();
+        update.setId(transferLog.getId());
+        update.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+        update.setNowProgress(0D);
+        update.setCurrentSize(0L);
+        fileTransferLogDAO.updateById(update);
+        // 通知进度
+        FileTransferNotifyDTO.FileTransferNotifyProgress progress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(transferLog.getFileSize()), "0");
+        transferProcessorManager.notifySessionProgressEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), progress);
+        // 通知状态
+        transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());
+        // 提交下载
+        IFileTransferProcessor.of(FileTransferHint.transfer(transferLog)).exec();
     }
 
     /**

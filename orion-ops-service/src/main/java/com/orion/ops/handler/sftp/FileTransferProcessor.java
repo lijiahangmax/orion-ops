@@ -61,9 +61,9 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     @Override
     public void run() {
         // 判断是否可以传输
-        FileTransferLogDO fileTransferLog = fileTransferLogDAO.selectById(record.getId());
-        if (Const.DISABLE.equals(fileTransferLog.getShowType())
-                || !SftpTransferStatus.WAIT.getStatus().equals(fileTransferLog.getTransferStatus())) {
+        this.record = fileTransferLogDAO.selectById(record.getId());
+        if (Const.DISABLE.equals(record.getShowType())
+                || !SftpTransferStatus.WAIT.getStatus().equals(record.getTransferStatus())) {
             return;
         }
         transferProcessorManager.addProcessor(fileToken, this);
