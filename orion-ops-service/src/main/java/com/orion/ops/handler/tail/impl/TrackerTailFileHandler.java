@@ -56,6 +56,7 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
     @Override
     public void start() {
         this.tracker = new DelayTracker(hint.getPath(), this);
+        tracker.delayMillis(Const.TRACKER_DELAY_MS);
         tracker.charset(hint.getCharset());
         tracker.offset(FileOffsetMode.LINE, hint.getOffset());
         tracker.notFoundMode(FileNotFoundMode.WAIT_COUNT, 10);

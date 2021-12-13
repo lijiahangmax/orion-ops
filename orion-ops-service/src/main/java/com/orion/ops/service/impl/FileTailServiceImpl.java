@@ -68,8 +68,8 @@ public class FileTailServiceImpl implements FileTailService {
     @Override
     public FileTailVO getTailToken(FileTailType type, Long relId) {
         FileTailVO res;
-        final boolean isLocal = !FileTailType.TAIL_LIST.equals(type);
         // 获取日志路径
+        final boolean isLocal = type.isLocal();
         if (isLocal) {
             String path = this.getTailFilePath(type, relId);
             res = new FileTailVO();

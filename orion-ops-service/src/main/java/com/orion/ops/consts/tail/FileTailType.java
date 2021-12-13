@@ -16,27 +16,38 @@ public enum FileTailType {
 
     /**
      * 命令执行日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    EXEC_LOG(10),
+    EXEC_LOG(10, true),
 
     /**
      * tail 列表
      */
-    TAIL_LIST(20),
+    TAIL_LIST(20, false),
 
     /**
      * 应用构建日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    APP_BUILD_LOG(30),
+    APP_BUILD_LOG(30, true),
 
     /**
      * 应用发布 目标机器流程日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    APP_RELEASE_LOG(40),
+    APP_RELEASE_LOG(40, true),
 
     ;
 
     private final Integer type;
+
+    /**
+     * 是否为本地文件
+     */
+    private final boolean isLocal;
 
     public static FileTailType of(Integer type) {
         if (type == null) {

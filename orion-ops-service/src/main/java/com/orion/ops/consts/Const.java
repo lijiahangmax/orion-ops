@@ -108,6 +108,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer TERMINATED_EXIT_CODE = -1;
 
+    public static final int TRACKER_DELAY_MS = 500;
+
     /**
      * 不安全的文件夹
      */
