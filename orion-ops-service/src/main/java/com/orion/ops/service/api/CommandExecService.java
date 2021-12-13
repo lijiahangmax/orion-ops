@@ -3,12 +3,12 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.request.CommandExecRequest;
+import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;
 import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 命令执行接口
@@ -63,9 +63,9 @@ public interface CommandExecService {
      * 查询状态
      *
      * @param execIdList execIdList
-     * @return key: id  value: status
+     * @return status
      */
-    Map<String, Integer> getExecStatusList(List<Long> execIdList);
+    List<CommandExecStatusVO> getExecStatusList(List<Long> execIdList);
 
     /**
      * 通过id查询 execDO

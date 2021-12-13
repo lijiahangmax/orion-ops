@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.CommandExecRequest;
+import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;
 import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import com.orion.ops.service.api.CommandExecService;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 批量执行controller
@@ -81,7 +81,7 @@ public class CommandExecController {
      * 状态列表
      */
     @RequestMapping("/list/status")
-    public Map<String, Integer> getListStatus(@RequestBody CommandExecRequest request) {
+    public List<CommandExecStatusVO> getListStatus(@RequestBody CommandExecRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return commandExecService.getExecStatusList(idList);
     }

@@ -26,8 +26,8 @@
         id, user_id, user_name, rel_id, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, create_time, update_time
     </sql>
 
-    <select id="selectStatusById" resultType="java.lang.Integer">
-        SELECT exec_status
+    <select id="selectStatusById" resultMap="BaseResultMap">
+        SELECT exec_status, exit_code, start_date, end_date
         FROM command_exec
         WHERE id = #{id}
     </select>

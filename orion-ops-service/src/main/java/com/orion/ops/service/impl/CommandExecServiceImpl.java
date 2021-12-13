@@ -15,6 +15,7 @@ import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.CommandExecRequest;
+import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;
 import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
 import com.orion.ops.handler.exec.ExecHint;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 命令执行服务
@@ -192,12 +194,26 @@ public class CommandExecServiceImpl implements CommandExecService {
     }
 
     @Override
-    public Map<String, Integer> getExecStatusList(List<Long> execIdList) {
-        Map<String, Integer> statusMap = Maps.newLinkedMap();
-        for (Long execId : execIdList) {
-            statusMap.put(execId.toString(), commandExecDAO.selectStatusById(execId));
-        }
-        return statusMap;
+    public List<CommandExecStatusVO> getExecStatusList(List<Long> execIdList) {
+        return execIdList.stream()
+                .map(id -> {
+                    // 查询状态
+                    CommandExecDO exec = commandExecDAO.selectStatusById(id);
+                    if (exec == null) {
+                        return null;
+                    }
+                    // 返回
+                    CommandExecStatusVO vo = new CommandExecStatusVO();
+                    vo.setId(id);
+                    vo.setExitCode(exec.getExitCode());
+                    vo.setStatus(exec.getExecStatus());
+                    if (exec.getStartDate() != null && exec.getEndDate() != null) {
+                        vo.setUsed(exec.getEndDate().getTime() - exec.getStartDate().getTime());
+                    }
+                    return vo;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -20,6 +20,6 @@ public interface CommandExecDAO extends BaseMapper<CommandExecDO> {
      * @param id id
      * @return status
      */
-    Integer selectStatusById(@Param("id") Long id);
+    CommandExecDO selectStatusById(@Param("id") Long id);
 
 }
