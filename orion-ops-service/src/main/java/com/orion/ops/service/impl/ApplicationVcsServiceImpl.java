@@ -8,6 +8,7 @@ import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationBuildActionDAO;
+import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
@@ -51,6 +52,9 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
 
     @Resource
     private ApplicationBuildActionDAO applicationBuildActionDAO;
+
+    @Resource
+    private ApplicationInfoDAO applicationInfoDAO;
 
     @Override
     public Long addAppVcs(ApplicationVcsRequest request) {
@@ -97,16 +101,21 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             update.setVcsPassword(password);
         }
         update.setVcsAccessToken(request.getToken());
-        // 如果修改了url则状态改为未初始化
         if (!beforeVcs.getVscUrl().equals(update.getVscUrl())) {
+            // 如果修改了url则状态改为未初始化
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            // 删除目录
+            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+            Files1.delete(clonePath);
         }
         return applicationVcsDAO.updateById(update);
     }
 
     @Override
     public Integer deleteAppVcs(Long id) {
-        // TODO APP引用检查
+        // 清空app引用
+        applicationInfoDAO.cleanVcsCount(id);
+        // 删除
         return applicationVcsDAO.deleteById(id);
     }
 

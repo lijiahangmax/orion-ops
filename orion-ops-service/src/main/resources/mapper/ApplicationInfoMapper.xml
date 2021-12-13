@@ -19,4 +19,16 @@
         id, app_name, app_tag, app_sort, vcs_id, description, create_time, update_time
     </sql>
 
+    <select id="selectVcsCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM application_info
+        WHERE vcs_id = #{vcsId}
+    </select>
+
+    <update id="cleanVcsCount">
+        UPDATE application_info
+        SET vcs_id = null
+        WHERE vcs_id = #{vcsId}
+    </update>
+
 </mapper>

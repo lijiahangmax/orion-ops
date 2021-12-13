@@ -116,7 +116,7 @@ public class BuilderProcessor implements IBuilderProcessor {
             // 异常
             ex = e;
             isMainError = true;
-            log.error("应用构建任务执行失败 buildId: {}", buildId, e);
+            log.error("应用构建任务执行失败 buildId: {}, e: {}", buildId, e);
         }
         // 更新状态
         this.updateStatus(ex == null ? BuildStatus.FINISH : BuildStatus.FAILURE);
