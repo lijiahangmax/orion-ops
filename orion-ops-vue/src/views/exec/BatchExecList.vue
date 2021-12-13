@@ -363,9 +363,9 @@ export default {
       this.$api.getExecTaskStatus({
         idList
       }).then(({ data }) => {
-        for (const id in data) {
-          this.rows.filter(s => s.id === parseInt(id)).forEach(s => {
-            s.status = data[id]
+        for (const status of data) {
+          this.rows.filter(s => s.id === status.id).forEach(s => {
+            s.status = status.status
           })
         }
       })

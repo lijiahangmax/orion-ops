@@ -60,7 +60,7 @@
                 type="editable-card"
                 @edit="removeTab"
                 :animated="false">
-          <a-tab-pane v-for="(execMachine, index) of execMachines"
+          <a-tab-pane v-for="execMachine of execMachines"
                       :key="execMachine.execId"
                       :forceRender="true"
                       :tab="execMachine.machineName">
@@ -74,16 +74,31 @@
                   <!-- 命令输入 -->
                   <a-input-search class="command-write-input"
                                   size="small"
-                                  v-model="commandWriter[index]"
+                                  v-model="execMachine.inputCommand"
                                   placeholder="输入"
-                                  @search="sendCommand(execMachine.execId, index)">
+                                  @search="sendCommand(execMachine)">
                     <a-icon type="forward" slot="enterButton"/>
                   </a-input-search>
+                  <!-- 状态 -->
+                  <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
+                    {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
+                  </a-tag>
+                  <!-- used -->
+                  <span v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status" title="用时">
+                    {{ execMachine.used }}ms
+                  </span>
+                  <!-- exitCode -->
+                  <span class="mx8" title="退出码"
+                        v-if="execMachine.exitCode !== null"
+                        :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
+                    {{ execMachine.exitCode }}
+                  </span>
                   <!-- 终止 -->
                   <a-button class="terminated-button"
+                            v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
                             size="small"
                             icon="close"
-                            @click="terminated(execMachine.execId)">
+                            @click="terminated(execMachine)">
                     终止
                   </a-button>
                 </div>
@@ -126,7 +141,7 @@ export default {
       activeTab: 0,
       isRun: false,
       execMachines: [],
-      commandWriter: {}
+      pollId: null
     }
   },
   watch: {
@@ -171,21 +186,51 @@ export default {
         description: this.description
       }).then(({ data }) => {
         this.activeTab = data[0].execId
-        data.forEach(i => this.execMachines.push(i))
+        for (const exec of data) {
+          exec.inputCommand = null
+          exec.status = this.$enum.BATCH_EXEC_STATUS.WAITING.value
+          exec.exitCode = null
+          exec.used = null
+        }
+        this.execMachines = data
+        // 轮询状态
+        this.pollId = setInterval(this.pollExecStatus, 1000)
       }).catch(() => {
         this.isRun = false
       })
     },
     resetTask() {
+      // 关闭轮询
+      if (this.pollId) {
+        clearInterval(this.pollId)
+      }
+      // 关闭日志
       this.execMachines.forEach(m => {
         this.$refs['appender' + m.execId][0].close()
       })
-      this.$refs.machineChecker.clear()
-      this.selectedMachines = []
       this.activeTab = 0
       this.isRun = false
       this.execMachines = []
-      this.commandWriter = {}
+    },
+    pollExecStatus() {
+      const idList = this.execMachines.filter(s => {
+        return s.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
+          s.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+      }).map(s => s.execId)
+      if (!idList.length) {
+        return
+      }
+      this.$api.getExecTaskStatus({
+        idList
+      }).then(({ data }) => {
+        for (const status of data) {
+          this.execMachines.filter(s => s.execId === status.id).forEach(s => {
+            s.status = status.status
+            s.exitCode = status.exitCode
+            s.used = status.used
+          })
+        }
+      })
     },
     openTemplate() {
       this.$refs.templateSelector.open()
@@ -194,20 +239,23 @@ export default {
       this.command = command
       this.$refs.templateSelector.close()
     },
-    sendCommand(execId, index) {
-      const command = this.commandWriter[index]
+    sendCommand(execMachine) {
+      const id = execMachine.execId
+      const command = execMachine.inputCommand
       if (!command) {
         return
       }
-      this.commandWriter[index] = ''
       this.$api.writeExecTask({
-        id: execId,
+        id,
         command
+      }).then(() => {
+        execMachine.inputCommand = null
       })
     },
-    terminated(execId) {
+    terminated(execMachine) {
+      execMachine.status = this.$enum.BATCH_EXEC_STATUS.TERMINATED.value
       this.$api.terminatedExecTask({
-        id: execId
+        id: execMachine.execId
       }).then(() => {
         this.$message.success('已终止')
       })
@@ -215,8 +263,8 @@ export default {
     removeTab(targetTab) {
       let activeTab = this.activeTab
       let lastIndex
-      this.execMachines.forEach((fileTab, i) => {
-        if (fileTab.execId === targetTab) {
+      this.execMachines.forEach((appenderTab, i) => {
+        if (appenderTab.execId === targetTab) {
           lastIndex = i - 1
         }
       })
@@ -328,10 +376,11 @@ export default {
 
   .appender-left-tools {
     display: flex;
+    align-items: center;
 
     .command-write-input {
       margin-right: 8px;
-      width: 70%;
+      width: 65%;
     }
   }
 
