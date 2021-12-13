@@ -75,7 +75,7 @@
             <div slot="title">
               <span style="display: block; word-break: break-all;">commitId: {{ record.commitId }}</span>
             </div>
-            <span class="span-blue pointer">
+            <span class="span-blue">
                #{{ record.commitId.substring(0, 7) }}
             </span>
           </a-tooltip>

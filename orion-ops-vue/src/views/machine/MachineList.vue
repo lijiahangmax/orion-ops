@@ -84,15 +84,17 @@
           </a-tag>
         </a>
         <!-- 主机 -->
-        <a slot="host" slot-scope="record" @click="$copy(record.host, true)">
+        <a slot="host" slot-scope="record" title="复制主机" @click="$copy(record.host, true)">
           {{ record.host }}
         </a>
         <!-- 端口 -->
-        <a slot="sshPort" slot-scope="record" @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
+        <a slot="sshPort" slot-scope="record"
+           title="复制ssh"
+           @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
           {{ record.sshPort }}
         </a>
         <!-- 状态 -->
-        <a v-if="record.id !== 1" slot="status" slot-scope="record">
+        <a v-if="record.id !== 1" slot="status" slot-scope="record" :title="record.status === 1 ? '停用机器' : '启用机器'">
           <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
                         ok-text="确定"
                         cancel-text="取消"
@@ -104,10 +106,9 @@
           </a-popconfirm>
         </a>
         <span v-else slot="status" slot-scope="record">
-            <a-badge
-              v-if="record.status"
-              :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
-              :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+            <a-badge v-if="record.status"
+                     :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+                     :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
         </span>
         <!-- 更多 -->
         <span slot="action" slot-scope="record">

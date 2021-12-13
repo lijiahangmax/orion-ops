@@ -77,19 +77,19 @@
                :loading="loading"
                size="middle">
         <!-- 用户名 -->
-        <div class="pointer" slot="username" slot-scope="record" @click="$copy(record.username)" title="点击复制">
+        <div class="pointer" slot="username" slot-scope="record" @click="$copy(record.username)" title="复制">
           <span>{{ record.username }}</span>
         </div>
         <!-- 昵称 -->
-        <span class="pointer" slot="nickname" slot-scope="record" @click="$copy(record.nickname)" title="点击复制">
+        <span class="pointer" slot="nickname" slot-scope="record" @click="$copy(record.nickname)" title="复制">
             {{ record.nickname }}
         </span>
         <!-- 手机号 -->
-        <span class="pointer" slot="phone" slot-scope="record" @click="$copy(record.phone)" title="点击复制">
+        <span class="pointer span-blue" slot="phone" slot-scope="record" @click="$copy(record.phone)" title="复制">
             {{ record.phone }}
         </span>
         <!-- 邮箱 -->
-        <span class="pointer" slot="email" slot-scope="record" @click="$copy(record.email)" title="点击复制">
+        <span class="pointer span-blue" slot="email" slot-scope="record" @click="$copy(record.email)" title="复制">
             {{ record.email }}
         </span>
         <!-- 角色 -->
@@ -219,7 +219,7 @@ function getColumns() {
       width: 200,
       ellipsis: true,
       align: 'center',
-      sorter: (a, b) => a.lastLoginTime - b.lastLoginTime,
+      sorter: (a, b) => (a.lastLoginTime || 0) - (b.lastLoginTime || 0),
       scopedSlots: { customRender: 'lastLoginTime' }
     }
   ]

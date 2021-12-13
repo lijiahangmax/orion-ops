@@ -68,7 +68,7 @@
         <!-- 主机 -->
         <div slot="host" slot-scope="record">
           <span>{{ record.host }}</span>
-          <a class="copy-icon-right" @click="$copy(record.host)">
+          <a class="copy-icon-right" title="复制" @click="$copy(record.host)">
             <a-icon type="copy"/>
           </a>
         </div>

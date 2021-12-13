@@ -61,7 +61,7 @@
                :loading="loading"
                size="middle">
         <!-- url -->
-        <span slot="url" slot-scope="record" class="span-blue pointer" @click="$copy(record.url)">
+        <span slot="url" slot-scope="record" class="span-blue pointer" title="预览" @click="$refs.preview.preview(record.url)">
           {{ record.url }}
         </span>
         <!-- 状态 -->
@@ -77,7 +77,7 @@
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
-          <a-popconfirm title="确认删除当前仓库?"
+          <a-popconfirm title="确认删除当前仓库? 将会清空所有应用的关联!"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
@@ -89,13 +89,17 @@
     </div>
     <!-- 事件 -->
     <div class="app-vcs-event">
+      <!-- 添加模态框 -->
       <AddAppVcsModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 预览框 -->
+      <TextPreview ref="preview"/>
     </div>
   </div>
 </template>
 
 <script>
 import AddAppVcsModal from '@/components/app/AddAppVcsModal'
+import TextPreview from '@/components/preview/TextPreview'
 
 /**
  * 列
@@ -156,6 +160,7 @@ const columns = [
 export default {
   name: 'AppVcs',
   components: {
+    TextPreview,
     AddAppVcsModal
   },
   data: function() {

@@ -73,6 +73,28 @@
             <a-icon type="download"/>
           </a>
         </div>
+        <!-- 挂载状态 -->
+        <div slot="mountStatus" slot-scope="record">
+          <!-- 未找到 -->
+          <div v-if="record.mountStatus === 1">
+            <a-tag :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
+              {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+            </a-tag>
+          </div>
+          <!-- 可操作 -->
+          <div v-else>
+            <a-popconfirm :title="record.mountStatus === 2 ? '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="changeMountStatus(record.id, record.mountStatus)">
+              <a-tag class="m0 pointer"
+                     :title="record.mountStatus === 2 ? '卸载秘钥' : '挂载秘钥'"
+                     :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
+                {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+              </a-tag>
+            </a-popconfirm>
+          </div>
+        </div>
         <!-- 创建时间 -->
         <span slot="createTime" slot-scope="record">
           {{
@@ -82,27 +104,6 @@
             })
           }}
         </span>
-        <!-- 挂载状态 -->
-        <div slot="mountStatus" slot-scope="record">
-          <!-- 未挂载 -->
-          <a-tag v-if="record.mountStatus === 1"
-                 :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-            {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
-          </a-tag>
-          <!-- 可操作 -->
-          <a-popconfirm v-else
-                        :title="record.mountStatus === 2 ?
-                        '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="changeMountStatus(record.id, record.mountStatus)">
-            <a-tag style="margin: 0;cursor: pointer"
-                   :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-              {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
-            </a-tag>
-          </a-popconfirm>
-        </div>
-
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 修改 -->
