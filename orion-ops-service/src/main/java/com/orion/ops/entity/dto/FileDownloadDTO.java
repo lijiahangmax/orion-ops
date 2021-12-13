@@ -34,4 +34,9 @@ public class FileDownloadDTO {
      */
     private Integer type;
 
+    /**
+     * 机器id
+     */
+    private Long machineId;
+
 }

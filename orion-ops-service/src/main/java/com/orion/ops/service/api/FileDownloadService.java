@@ -3,6 +3,9 @@ package com.orion.ops.service.api;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * 文件下载service
  *
@@ -28,5 +31,14 @@ public interface FileDownloadService {
      * @return path
      */
     FileDownloadDTO getPathByDownloadToken(String token);
+
+    /**
+     * 执行下载
+     *
+     * @param token    token
+     * @param response response
+     * @throws IOException IOException
+     */
+    void execDownload(String token, HttpServletResponse response) throws IOException;
 
 }

@@ -72,9 +72,7 @@ public class MessageConst {
 
     public static final String IO_EXCEPTION_MESSAGE = "网络异常";
 
-    public static final String CONN_EXCEPTION_MESSAGE = "建立连接失败";
-
-    public static final String EXEC_TASK_RUNNABLE_PRESENT = "有正在执行的任务";
+    public static final String UNCONNECTED = "未建立连接";
 
     public static final String EXEC_TASK_ABSENT = "未查询到任务信息";
 
@@ -85,8 +83,6 @@ public class MessageConst {
     public static final String HISTORY_VALUE_ABSENT = "未查询到历史值信息";
 
     public static final String METADATA_ABSENT = "元数据缺失";
-
-    public static final String ENV_PRESENT = "环境变量已存在";
 
     public static final String ENV_ABSENT = "环境变量不存在";
 
@@ -105,8 +101,6 @@ public class MessageConst {
     public static final String TRANSFER_ITEM_SIZE_1 = "请选择一个以上的传输对象";
 
     public static final String UNSELECTED_TRANSFER_LOG = "未找到传输对象";
-
-    public static final String UNSELECTED_TRANSFER_PROCESSOR = "未找到传输进程";
 
     public static final String FILE_TOO_LARGE = "文件过大";
 
@@ -155,8 +149,6 @@ public class MessageConst {
     public static final String FILE_ABSENT_UNABLE_ROLLBACK_RELEASE = "产物快照丢失无法回滚";
 
     public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行发布操作";
-
-    public static final String UNSUPPORTED_VCS_TYPE = "不支持的仓库类型";
 
     public static final String VCS_INIT_ERROR = "仓库初始化失败";
 

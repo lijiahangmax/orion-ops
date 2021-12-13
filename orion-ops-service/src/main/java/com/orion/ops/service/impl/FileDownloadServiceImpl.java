@@ -9,21 +9,30 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.download.FileDownloadType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
+import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
+import com.orion.ops.handler.sftp.direct.DirectDownloader;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
+import com.orion.servlet.web.Servlets;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +54,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private CommandExecService commandExecService;
 
     @Resource
+    private FileTailListDAO fileTailListDAO;
+
+    @Resource
     private ApplicationBuildService applicationBuildService;
 
     @Resource
@@ -60,6 +72,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     public String getDownloadToken(Long id, FileDownloadType type) {
         String path = null;
         String name = null;
+        Long machineId = Const.HOST_MACHINE_ID;
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
@@ -83,6 +96,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 if (transferLog != null) {
                     path = transferLog.getLocalFile();
                     name = Files1.getFileName(transferLog.getRemoteFile());
+                }
+                break;
+            case TAIL_LIST_FILE:
+                // tail 列表文件
+                FileTailListDO tailFile = fileTailListDAO.selectById(id);
+                if (tailFile != null) {
+                    path = tailFile.getFilePath();
+                    name = Files1.getFileName(path);
+                    machineId = tailFile.getMachineId();
                 }
                 break;
             case APP_BUILD_LOG:
@@ -113,7 +135,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 break;
         }
         // 检查文件是否存在
-        if (path == null || !Files1.isFile(path)) {
+        if (path == null || (type.isLocal() && !Files1.isFile(path))) {
             throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.FILE_MISSING));
         }
         // 设置缓存
@@ -122,6 +144,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         download.setFileName(Strings.def(name, Const.UNKNOWN));
         download.setUserId(Currents.getUserId());
         download.setType(type.getType());
+        download.setMachineId(machineId);
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(download), KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
@@ -144,6 +167,40 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         }
         redisTemplate.delete(key);
         return download;
+    }
+
+    @Override
+    public void execDownload(String token, HttpServletResponse response) throws IOException {
+        // 获取token信息
+        FileDownloadDTO downloadFile = this.getPathByDownloadToken(token);
+        if (downloadFile == null) {
+            throw Exceptions.notFound();
+        }
+        InputStream inputStream = null;
+        DirectDownloader downloader = null;
+        try {
+            // 获取类型
+            if (FileDownloadType.of(downloadFile.getType()).isLocal()) {
+                // 本地文件
+                File file = Optional.of(downloadFile)
+                        .map(FileDownloadDTO::getFilePath)
+                        .filter(Strings::isNotBlank)
+                        .map(File::new)
+                        .filter(Files1::isFile)
+                        .orElseThrow(Exceptions::notFound);
+                inputStream = Files1.openInputStreamFastSafe(file);
+            } else {
+                // 远程文件
+                downloader = new DirectDownloader(downloadFile.getMachineId());
+                inputStream = downloader.open().getFile(downloadFile.getFilePath());
+            }
+            // 返回
+            Servlets.transfer(response, inputStream, Strings.bytes(downloadFile.getFileName(), Const.UTF_8));
+        } finally {
+            Streams.close(inputStream);
+            Streams.close(downloader);
+        }
+
     }
 
     /**

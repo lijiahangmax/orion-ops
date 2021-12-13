@@ -1,8 +1,6 @@
 package com.orion.ops.handler.sftp;
 
-import com.orion.id.UUIds;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -18,8 +16,6 @@ import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
 import com.orion.utils.math.Numbers;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
 
 /**
  * sftp 传输文件基类
@@ -81,7 +77,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             executor.connect();
             log.info("sftp传输文件-初始化完毕, 准备处理传输 fileToken: {}", fileToken);
             // 检查是否可以用文件系统传输
-            if (this.checkUseFsCopy()) {
+            if (SftpSupport.checkUseFileSystem(executor)) {
                 // 直接拷贝
                 this.usingFsCopy();
             } else {
@@ -115,23 +111,6 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      * 处理操作
      */
     protected abstract void handler();
-
-    /**
-     * 检查是否可以使用fileSystem 拷贝文件
-     *
-     * @return 是否可用
-     */
-    protected boolean checkUseFsCopy() {
-        // 创建一个临时文件
-        String checkPath = Files1.getPath(MachineEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
-        File checkFile = new File(checkPath);
-        Files1.touch(checkFile);
-        checkFile.deleteOnExit();
-        // 查询远程机器是否有此文件 如果有则证明传输机器和宿主机是同一台
-        boolean exist = executor.getFile(checkFile.getAbsolutePath()) != null;
-        Files1.delete(checkFile);
-        return exist;
-    }
 
     /**
      * 使用fileSystem 拷贝文件

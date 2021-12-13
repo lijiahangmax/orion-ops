@@ -16,43 +16,64 @@ public enum FileDownloadType {
 
     /**
      * 秘钥
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#KEY_PATH
      */
-    SECRET_KEY(10),
+    SECRET_KEY(10, true),
 
     /**
      * terminal 日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    TERMINAL_LOG(20),
+    TERMINAL_LOG(20, true),
 
     /**
      * 命令 执行日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    EXEC_LOG(30),
+    EXEC_LOG(30, true),
 
     /**
      * sftp 下载文件
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#SWAP_PATH
      */
-    SFTP_DOWNLOAD(40),
+    SFTP_DOWNLOAD(40, true),
+
+    /**
+     * tail 列表文件
+     */
+    TAIL_LIST_FILE(50, false),
 
     /**
      * 应用构建日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    APP_BUILD_LOG(50),
+    APP_BUILD_LOG(60, true),
 
     /**
      * 应用构建操作日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    APP_BUILD_ACTION_LOG(60),
+    APP_BUILD_ACTION_LOG(70, true),
 
     /**
      * 应用构建 产物文件
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#DIST_PATH
      */
-    APP_BUILD_BUNDLE(70),
+    APP_BUILD_BUNDLE(80, true),
 
     /**
      * 应用发布 目标机器日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
-    APP_RELEASE_MACHINE_LOG(80),
+    APP_RELEASE_MACHINE_LOG(90, true),
 
     ;
 
@@ -60,6 +81,11 @@ public enum FileDownloadType {
      * 类型
      */
     private final Integer type;
+
+    /**
+     * 是否为本地文件
+     */
+    private final boolean isLocal;
 
     public static FileDownloadType of(Integer type) {
         if (type == null) {
