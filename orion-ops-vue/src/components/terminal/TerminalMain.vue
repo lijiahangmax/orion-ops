@@ -97,7 +97,7 @@ function initTerminal() {
   this.term.open(this.$refs.terminal)
   // 注册terminal事件
   this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
-  this.term.onKey(event => terminalEventHandler.onKey.call(this, event))
+  this.term.onData(event => terminalEventHandler.onData.call(this, event))
   terminalEventHandler.registerCustomerKey.call(this)
 
   // 注册自适应组件
@@ -144,14 +144,11 @@ function initTerminal() {
 const terminalEventHandler = {
   onResize(cols, rows) {
     // 调整大小
-    if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
-      return
-    }
     terminalOperator.resize.call(this, cols, rows)
   },
-  onKey(event) {
+  onData(event) {
     // 输入
-    terminalOperator.key.call(this, event.key)
+    terminalOperator.key.call(this, event)
   },
   registerCustomerKey() {
     // 注册自定义按键
