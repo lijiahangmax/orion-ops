@@ -8,11 +8,16 @@
           <a-input ref="redirectPathInput" v-model="redirectPath" placeholder="路径" @pressEnter="redirectDirectory"/>
         </div>
         <!-- 左侧文件夹树 -->
-        <div class="sftp-folder-left-fixed">
+        <div class="sftp-folder-left-fixed" @contextmenu.prevent>
+          <!-- 文件树 -->
           <SftpFolderTree ref="folderTree"
                           v-if="leftFolderVisible && sessionToken"
                           :sessionToken="sessionToken"
                           @redirect="listFiles"/>
+          <!-- 骨架屏 -->
+          <a-skeleton v-if="leftFolderVisible && !sessionToken && loading" active :paragraph="{rows: 12}"/>
+          <!-- 空数据 -->
+          <a-empty v-if="leftFolderVisible && !sessionToken && !loading" :image="emptyImage" style="margin-top: 50px;"/>
         </div>
       </div>
       <!-- 右侧主体 -->
@@ -22,7 +27,7 @@
           <div class="sftp-bar-left">
             <!-- home -->
             <div class="sftp-home">
-              <a-icon type="home" :title="home" @click="listFiles(home)"/>
+              <a-icon type="home" theme="twoTone" :title="home" @click="listFiles(home)"/>
             </div>
             <!-- 路径 -->
             <div class="sftp-navigator-paths">
@@ -30,7 +35,7 @@
                 <a-breadcrumb-item>
                   <div class="path-item">
                     <span v-if="index !== 0">/</span>
-                    <a class="sftp-navigator-paths-item" @click="listFiles(pathItem.path)">{{ pathItem.name }}</a>
+                    <a class="sftp-navigator-paths-item" @click="listFiles(pathItem.path)" :title="pathItem.path">{{ pathItem.name }}</a>
                   </div>
                 </a-breadcrumb-item>
               </a-breadcrumb>
@@ -39,7 +44,7 @@
           <div class="sftp-tools-bar">
             <!-- 显示隐藏 -->
             <div class="sftp-tools-hide-switch">
-              <span class="text">显示隐藏文件: </span>
+              <span class="text">显示隐藏文件 : </span>
               <a-switch :disabled="!sessionToken" v-model="showHideFile" @change="changeShowHideFile"/>
             </div>
             <!-- 工具栏 -->
@@ -87,16 +92,19 @@
                    :loading="loading"
                    size="small">
             <!-- 名称 -->
-            <div slot="name" slot-scope="record" class="file-name-cols">
+            <span slot="name" slot-scope="record" class="file-name-cols">
               <!-- 图标 -->
               <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
-                      :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).title"
+                      :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).label"
                       class="file-name-cols-icon pointer"
-                      @click="$copy(record.name)"/>
+                      @click="$copy(record.name, '已复制文件名称')"/>
               <!-- 名称 -->
-              <a v-if="record.isDir" @click="listFiles(record.path)" :title="record.name">{{ record.name }}</a>
-              <span v-else>{{ record.name }}</span>
-            </div>
+              <span v-if="record.isDir"
+                    class="span-blue pointer"
+                    :title="record.name"
+                    @click="listFiles(record.path)">{{ record.name }}</span>
+              <span v-else :title="record.name">{{ record.name }}</span>
+            </span>
             <!-- 名称筛选图标 -->
             <a-icon
               slot="nameFilterIcon"
@@ -135,7 +143,7 @@
             <!-- 操作 -->
             <div slot="action" slot-scope="record">
               <!-- 复制路径 -->
-              <a @click="$copy(record.path)" title="复制路径">
+              <a @click="$copy(record.path, '已复制文件路径')" title="复制路径">
                 <a-icon type="copy"/>
               </a>
               <a-divider type="vertical"/>
@@ -145,7 +153,7 @@
                             placement="bottomRight"
                             ok-text="确定"
                             cancel-text="取消"
-                            @confirm="download">
+                            @confirm="download(record)">
                 <a title="下载">
                   <a-icon type="cloud-download"/>
                 </a>
@@ -193,6 +201,7 @@ import SftpMoveModal from './SftpMoveModal'
 import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
 import SftpUpload from './SftpUpload'
+import { Empty } from 'ant-design-vue'
 
 /**
  * 表格列
@@ -279,6 +288,7 @@ export default {
       loading: false,
       nameSearchInput: null,
       uploadVisible: false,
+      emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
       pagination: {
         current: 1,
         pageSize: 12,
@@ -310,36 +320,50 @@ export default {
   },
   methods: {
     openSftp() {
+      // 清除数据
+      this.cleanData()
       // 初始化
       this.loading = true
-      this.$api.sftpOpen({ machineId: this.machineId })
-        .then(({ data }) => {
-          this.home = data.home
-          this.path = data.path
-          this.sessionToken = data.sessionToken
-          this.files = data.files
-          this.loading = false
-          this.$emit('opened', this.machineId, {
-            home: data.home,
-            path: data.path,
-            sessionToken: data.sessionToken
-          })
+      this.$api.sftpOpen({
+        machineId: this.machineId
+      }).then(({ data }) => {
+        this.home = data.home
+        this.path = data.path
+        this.sessionToken = data.sessionToken
+        this.files = data.files
+        this.loading = false
+        this.$emit('opened', this.machineId, {
+          home: data.home,
+          path: data.path,
+          sessionToken: data.sessionToken
         })
-        .catch(() => {
-          this.loading = false
-          this.$message.error('加载sftp失败')
-        })
-    },
-    cleanChooseTree() {
-      if (this.$refs.folderTree) {
-        this.$refs.folderTree.selectedKeys = []
-      }
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('加载sftp失败')
+      })
     },
     changeToken(session) {
+      this.cleanData()
       this.home = session.home
       this.path = session.path
       this.sessionToken = session.sessionToken
       this.listFiles()
+    },
+    cleanData() {
+      this.showHideFile = false
+      this.sessionToken = ''
+      this.home = ''
+      this.path = ''
+      this.files = []
+      this.redirectPath = ''
+      this.selectedRowKeys = []
+      this.selectedRows = []
+      this.loading = false
+      this.nameSearchInput = null
+      this.uploadVisible = false
+      this.pagination.current = 1
+      this.pagination.total = 0
+      this.$refs.folderTree && this.$refs.folderTree.clean()
     },
     changeFolderVisible(visible) {
       this.leftFolderVisible = visible
@@ -517,6 +541,11 @@ export default {
     padding: 0 4px 4px 4px;;
     margin-left: 4px;
     border-radius: 4px;
+
+    .file-name-cols-icon {
+      font-size: 16px;
+      padding-right: 8px;
+    }
   }
 }
 
@@ -550,10 +579,6 @@ export default {
     cursor: pointer;
   }
 
-  .sftp-home:hover {
-    color: #1C7ED6;
-  }
-
   .sftp-navigator-paths {
     display: flex;
     flex-wrap: wrap;
@@ -583,16 +608,6 @@ export default {
     color: #868e96;
     font-size: 13px;
   }
-}
-
-.file-name-cols {
-  display: flex;
-  align-items: center;
-}
-
-.file-name-cols-icon {
-  font-size: 16px;
-  padding-right: 8px;
 }
 
 </style>

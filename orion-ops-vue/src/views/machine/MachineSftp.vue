@@ -49,13 +49,7 @@ export default {
   data() {
     return {
       selectedMachine: [],
-      currentMachine: {
-        id: null,
-        tag: null,
-        name: null,
-        host: null
-      },
-      machineSessionToken: [],
+      currentMachine: {},
       machineId: null
     }
   },
@@ -63,26 +57,26 @@ export default {
     changeSftpMain(id) {
       const filterMachines = this.$refs.machineList.list.filter(m => m.id === id)
       if (filterMachines.length) {
-        const filterMachine = filterMachines[0]
-        this.currentMachine.id = filterMachine.id
-        this.currentMachine.tag = filterMachine.tag
-        this.currentMachine.name = filterMachine.name
-        this.currentMachine.host = filterMachine.host
+        this.currentMachine = filterMachines[0]
+      } else {
+        this.$message.error('未查询到机器信息')
+        return
       }
       this.machineId = id
-      const filterSessionList = this.machineSessionToken.filter(m => m.machineId === id)
-      if (filterSessionList.length) {
-        this.$refs.sftpMain.changeToken(filterSessionList[0].session)
-      } else {
-        this.$refs.sftpMain.openSftp()
-      }
-      this.$refs.sftpMain.cleanChooseTree()
+      setTimeout(() => {
+        const session = this.currentMachine.session
+        if (session) {
+          this.$refs.sftpMain.changeToken(session)
+        } else {
+          this.$refs.sftpMain.openSftp()
+        }
+      })
     },
     sftpOpened(machineId, session) {
-      this.machineSessionToken.push({
-        machineId,
-        session
-      })
+      const filterMachines = this.$refs.machineList.list.filter(m => m.id === machineId)
+      if (filterMachines.length) {
+        filterMachines[0].session = session
+      }
     }
   },
   created() {
@@ -95,6 +89,7 @@ export default {
   },
   async mounted() {
     await this.$refs.machineList.getMachineList()
+    this.$utils.defineArrayKey(this.$refs.machineList.list, 'session')
     this.changeSftpMain(this.machineId)
   }
 }
