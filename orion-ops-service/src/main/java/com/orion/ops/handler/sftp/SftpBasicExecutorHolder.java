@@ -48,7 +48,7 @@ public class SftpBasicExecutorHolder {
     private final Map<Long, Long> executorUsing = Maps.newCurrentHashMap();
 
     /**
-     * 获取sftp基本操作executor
+     * 获取 sftp 基本操作 executor
      *
      * @param sessionToken sessionToken
      * @return SftpExecutor
@@ -56,6 +56,16 @@ public class SftpBasicExecutorHolder {
     public SftpExecutor getBasicExecutor(String sessionToken) {
         // 获取executor
         Long machineId = sftpService.getMachineId(sessionToken);
+        return this.getBasicExecutor(machineId);
+    }
+
+    /**
+     * 获取 sftp 基本操作 executor
+     *
+     * @param machineId machineId
+     * @return SftpExecutor
+     */
+    public SftpExecutor getBasicExecutor(Long machineId) {
         SftpExecutor executor = basicExecutorHolder.get(machineId);
         if (executor != null) {
             if (!executor.isConnected()) {

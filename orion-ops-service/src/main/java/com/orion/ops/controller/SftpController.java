@@ -232,6 +232,14 @@ public class SftpController {
     }
 
     /**
+     * 重新上传
+     */
+    @RequestMapping("/transfer/{fileToken}/re/upload")
+    public void transferReUpload(@PathVariable("fileToken") String fileToken) {
+        sftpService.transferReUpload(fileToken);
+    }
+
+    /**
      * 重新下载
      */
     @RequestMapping("/transfer/{fileToken}/re/download")

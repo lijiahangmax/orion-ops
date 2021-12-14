@@ -98,8 +98,6 @@ public class MessageConst {
 
     public static final String TRANSFER_ITEM_EMPTY = "未找到可传输对象";
 
-    public static final String TRANSFER_ITEM_SIZE_1 = "请选择一个以上的传输对象";
-
     public static final String UNSELECTED_TRANSFER_LOG = "未找到传输对象";
 
     public static final String FILE_TOO_LARGE = "文件过大";

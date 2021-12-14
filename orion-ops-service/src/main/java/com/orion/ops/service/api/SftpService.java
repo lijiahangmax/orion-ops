@@ -163,6 +163,13 @@ public interface SftpService {
     void transferRetry(String fileToken);
 
     /**
+     * 重新上传
+     *
+     * @param fileToken fileToken
+     */
+    void transferReUpload(String fileToken);
+
+    /**
      * 重新下载
      *
      * @param fileToken fileToken

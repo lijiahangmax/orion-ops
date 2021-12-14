@@ -175,6 +175,9 @@ public class TransferProcessorManager {
             return;
         }
         for (String sessionId : sessionIds) {
+            if (sessionId == null) {
+                continue;
+            }
             WebSocketSession session = idMapping.get(sessionId);
             if (session == null || !session.isOpen()) {
                 continue;

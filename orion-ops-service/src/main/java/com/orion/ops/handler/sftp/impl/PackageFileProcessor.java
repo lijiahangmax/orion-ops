@@ -73,6 +73,11 @@ public class PackageFileProcessor implements IFileTransferProcessor {
      */
     private FileCompressor compressor;
 
+    /**
+     * 压缩文件路径
+     */
+    private String compressPath;
+
     private Long userId;
 
     private Long machineId;
@@ -96,9 +101,9 @@ public class PackageFileProcessor implements IFileTransferProcessor {
     @Override
     public void exec() {
         String localFile = packageFile.getLocalFile();
-        String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
+        this.compressPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件打包-提交任务 fileToken: {} machineId: {}, local: {}, remote: {}, record: {}, fileList: {}",
-                fileToken, machineId, localAbsolutePath, packageFile.getRemoteFile(),
+                fileToken, machineId, compressPath, packageFile.getRemoteFile(),
                 JSON.toJSONString(packageFile), JSON.toJSONString(fileList));
         Threads.start(this, SchedulerPools.SFTP_PACKAGE_SCHEDULER);
     }
@@ -117,8 +122,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
             this.updateStatus(SftpTransferStatus.RUNNABLE);
             // 初始化压缩器
             this.compressor = CompressTypeEnum.ZIP.compressor().get();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileTransferLog.getLocalFile());
-            compressor.setAbsoluteCompressPath(localAbsolutePath);
+            compressor.setAbsoluteCompressPath(compressPath);
             compressor.compressNotify(this::notifyProgress);
             // 添加压缩文件
             this.initCompressFiles();
@@ -168,8 +172,8 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (int i = 0; i < fileList.size(); i++) {
             FileTransferLogDO fileLog = fileList.get(i);
             String remoteFile = fileLog.getRemoteFile();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
-            if (!Files1.isFile(new File(localAbsolutePath))) {
+            String localFilePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
+            if (!Files1.isFile(new File(localFilePath))) {
                 continue;
             }
             // 添加mapping
@@ -180,7 +184,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
                 remoteFileName = remoteFile;
             }
             nameMapping.put(remoteFileName, fileLog);
-            compressor.addFile(remoteFileName, localAbsolutePath);
+            compressor.addFile(remoteFileName, localFilePath);
         }
     }
 
@@ -193,13 +197,13 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (FileTransferLogDO fileLog : fileList) {
             String remoteFile = fileLog.getRemoteFile();
             String label = SftpTransferType.of(fileLog.getTransferType()).getLabel();
-            String localAbsolutePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
-            String status = Files1.isFile(localAbsolutePath) ? "成功" : "未找到文件";
+            String localFilePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
+            String status = Files1.isFile(localFilePath) ? "成功" : "未找到文件";
             // 添加raw
-            compressFileRaw.add(remoteFile + " " + label + " " + status);
+            compressFileRaw.add(label + Const.SPACE + status + Const.SPACE + remoteFile);
         }
         // 设置文件清单文件
-        String compressRawListFile = String.join("\n", compressFileRaw) + "\n";
+        String compressRawListFile = String.join(Const.LF, compressFileRaw) + Const.LF;
         InputStream compressRawListStream = Streams.toInputStream(compressRawListFile);
         compressor.addFile(Const.COMPRESS_LIST_FILE, compressRawListStream);
     }
@@ -214,7 +218,14 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         update.setId(packageFile.getId());
         update.setTransferStatus(status.getStatus());
         if (SftpTransferStatus.FINISH.equals(status)) {
-            update.setCurrentSize(packageFile.getFileSize());
+            // 设置压缩文件实际大小
+            File compressFile = new File(compressPath);
+            if (Files1.isFile(compressFile)) {
+                update.setFileSize(compressFile.length());
+                update.setCurrentSize(compressFile.length());
+            } else {
+                update.setCurrentSize(packageFile.getFileSize());
+            }
             update.setNowProgress(100D);
         }
         int effect = fileTransferLogDAO.updateById(update);

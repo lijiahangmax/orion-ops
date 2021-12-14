@@ -375,36 +375,6 @@ public class SftpServiceImpl implements SftpService {
         this.transferResumeRetry(transferLog, machineId);
     }
 
-    @Override
-    public void transferReDownload(String fileToken) {
-        // 获取请求文件
-        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
-        Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
-        Long machineId = transferLog.getMachineId();
-        // 暂停
-        IFileTransferProcessor processor = transferProcessorManager.getProcessor(transferLog.getFileToken());
-        if (processor != null) {
-            processor.stop();
-        }
-        // 删除本地文件
-        String loacalPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
-        Files1.delete(loacalPath);
-        // 修改进度
-        FileTransferLogDO update = new FileTransferLogDO();
-        update.setId(transferLog.getId());
-        update.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
-        update.setNowProgress(0D);
-        update.setCurrentSize(0L);
-        fileTransferLogDAO.updateById(update);
-        // 通知进度
-        FileTransferNotifyDTO.FileTransferNotifyProgress progress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(transferLog.getFileSize()), "0");
-        transferProcessorManager.notifySessionProgressEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), progress);
-        // 通知状态
-        transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());
-        // 提交下载
-        IFileTransferProcessor.of(FileTransferHint.transfer(transferLog)).exec();
-    }
-
     /**
      * 传输恢复/传输重试
      *
@@ -417,6 +387,57 @@ public class SftpServiceImpl implements SftpService {
         update.setId(transferLog.getId());
         update.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
         fileTransferLogDAO.updateById(update);
+        // 通知状态
+        transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());
+        // 提交下载
+        IFileTransferProcessor.of(FileTransferHint.transfer(transferLog)).exec();
+    }
+
+    @Override
+    public void transferReUpload(String fileToken) {
+        this.transferReTransfer(fileToken, true);
+    }
+
+    @Override
+    public void transferReDownload(String fileToken) {
+        this.transferReTransfer(fileToken, false);
+    }
+
+    /**
+     * 重新传输
+     */
+    private void transferReTransfer(String fileToken, boolean isUpload) {
+        // 获取请求文件
+        FileTransferLogDO transferLog = this.getTransferLogByToken(fileToken);
+        Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
+        Long machineId = transferLog.getMachineId();
+        // 暂停
+        IFileTransferProcessor processor = transferProcessorManager.getProcessor(transferLog.getFileToken());
+        if (processor != null) {
+            processor.stop();
+        }
+        if (isUpload) {
+            // 删除远程文件
+            SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(machineId);
+            SftpFile file = executor.getFile(transferLog.getRemoteFile());
+            if (file != null) {
+                executor.rmFile(transferLog.getRemoteFile());
+            }
+        } else {
+            // 删除本地文件
+            String loacalPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
+            Files1.delete(loacalPath);
+        }
+        // 修改进度
+        FileTransferLogDO update = new FileTransferLogDO();
+        update.setId(transferLog.getId());
+        update.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+        update.setNowProgress(0D);
+        update.setCurrentSize(0L);
+        fileTransferLogDAO.updateById(update);
+        // 通知进度
+        FileTransferNotifyDTO.FileTransferNotifyProgress progress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(transferLog.getFileSize()), "0");
+        transferProcessorManager.notifySessionProgressEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), progress);
         // 通知状态
         transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());
         // 提交下载
@@ -569,7 +590,8 @@ public class SftpServiceImpl implements SftpService {
             case ALL:
                 wrapper.in(FileTransferLogDO::getTransferType,
                         SftpTransferType.UPLOAD.getType(),
-                        SftpTransferType.DOWNLOAD.getType());
+                        SftpTransferType.DOWNLOAD.getType(),
+                        SftpTransferType.PACKAGE.getType());
                 break;
             default:
                 break;
@@ -577,7 +599,6 @@ public class SftpServiceImpl implements SftpService {
         wrapper.orderByDesc(FileTransferLogDO::getId);
         List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
         Valid.notEmpty(logList, MessageConst.TRANSFER_ITEM_EMPTY);
-        Valid.isTrue(logList.size() != 1, MessageConst.TRANSFER_ITEM_SIZE_1);
         // 文件名称
         String fileName = Files1.getFileName(logList.get(0).getRemoteFile()) + "等" + logList.size() + "个文件.zip";
         String fileToken = ObjectIds.next();
