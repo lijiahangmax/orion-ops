@@ -1,20 +1,30 @@
 <template>
   <a-spin :spinning="reloading">
-    <a-tree
-      :show-line="false"
-      :show-icon="false"
-      :tree-data="treeData"
-      :expandedKeys.sync="expandedKeys"
-      :load-data="onLoadData"
-      :selectedKeys="selectedKeys"
-      @select="redirect">
+    <a-tree :show-line="false"
+            :show-icon="false"
+            :tree-data="treeData"
+            :expandedKeys.sync="expandedKeys"
+            :load-data="onLoadData"
+            :selectedKeys="selectedKeys"
+            @select="redirect">
       <!-- 右键菜单 -->
-      <template #title="{ key: treeKey, title }">
+      <template #title="{ key: treeKey, title, isSafe }">
         <a-dropdown :trigger="['contextmenu']">
-          <span>{{ title }}</span>
+          <span style="padding: 2px 6px">{{ title }}</span>
           <template #overlay>
-            <a-menu @click="({ key: menuKey }) => handlerTreeMenu(treeKey, menuKey)">
-              <a-menu-item key="reload">刷新</a-menu-item>
+            <a-menu @click="({ key: menuKey }) => handlerTreeMenu(treeKey, menuKey)" @contextmenu.prevent>
+              <a-menu-item class="folder-right-menu" key="reload">
+                <a-icon type="sync" class="mr4"/>
+                刷新
+              </a-menu-item>
+              <a-menu-item class="folder-right-menu" key="copyPath">
+                <a-icon type="copy" class="mr4"/>
+                复制路径
+              </a-menu-item>
+              <a-menu-item class="folder-right-menu" key="remove" v-if="isSafe">
+                <a-icon type="delete" class="mr4"/>
+                删除目录
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -24,6 +34,7 @@
 </template>
 
 <script>
+import _utils from '@/lib/utils'
 
 /**
  * 文件夹转树node
@@ -35,6 +46,7 @@ function filesToNodes(data) {
       children.push({
         title: file.name,
         key: file.path,
+        isSafe: file.isSafe,
         children: []
       })
     }
@@ -42,10 +54,72 @@ function filesToNodes(data) {
   return children
 }
 
+/**
+ * 菜单操作
+ */
+const folderRightMenuHandler = {
+  reload(path) {
+    // 刷新
+    this.reloadNode(path)
+  },
+  copyPath(path) {
+    // 复制路径
+    this.$copy(path)
+  },
+  remove(path) {
+    const last = path.lastIndexOf('/')
+    const parentPath = last === 0 ? '/' : path.substring(0, last)
+    this.$confirm({
+      title: '确认删除',
+      content: `是否删除文件夹 ${path}`,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: () => {
+        // 删除
+        this.$api.sftpRemove({
+          sessionToken: this.sessionToken,
+          paths: [path]
+        }).then(() => {
+          const parentNodeChildren = findNode(this.treeData, parentPath).children
+          for (let i = 0; i < parentNodeChildren.length; i++) {
+            if (parentNodeChildren[i].key === path) {
+              parentNodeChildren.splice(i, 1)
+            }
+          }
+        })
+      }
+    })
+  }
+}
+
+/**
+ * 查找节点
+ */
+function findNode(node, key) {
+  const keys = _utils.getPathAnalysis(key)
+  const length = keys.length
+  var curr = node[0]
+  for (let i = 1; i < length; i++) {
+    for (const child of curr.children) {
+      if (child.key === keys[i].path) {
+        curr = child
+        break
+      }
+    }
+  }
+  return curr
+}
+
 export default {
   name: 'SftpFolderTree',
   props: {
     sessionToken: String
+  },
+  watch: {
+    sessionToken(e) {
+      e && this.handlerTreeMenu('/', 'reload')
+    }
   },
   data() {
     return {
@@ -61,17 +135,9 @@ export default {
       expandedKeys: ['/']
     }
   },
-  watch: {
-    sessionToken(e) {
-      this.handlerTreeMenu('/', 'reload')
-    }
-  },
   methods: {
     handlerTreeMenu(treeKey, menuKey) {
-      if (menuKey === 'reload') {
-        // 刷新
-        this.reloadNode(treeKey)
-      }
+      folderRightMenuHandler[menuKey].call(this, treeKey)
     },
     reloadNode(key) {
       this.reloading = true
@@ -118,11 +184,28 @@ export default {
         treeNode.dataRef.children = filesToNodes(data)
         this.treeData = [...this.treeData]
       })
+    },
+    clean() {
+      this.reloading = false
+      this.selectedKeys = []
+      this.treeData = [{
+        title: '/',
+        key: '/',
+        children: null
+      }]
+      this.expandedKeys = ['/']
     }
   }
 }
 </script>
 
 <style scoped>
+.folder-right-menu {
+  padding: 6px 18px;
+}
+
+/deep/ .ant-tree-node-content-wrapper {
+  padding: 0 !important;
+}
 
 </style>
