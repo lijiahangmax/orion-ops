@@ -1,108 +1,156 @@
 <template>
-  <div class="transfer-list-container">
-    <!-- 工具栏 -->
-    <div class="transfer-list-bar">
-      <div class="transfer-list-action">
-        <a-icon type="reload" title="刷新" @click="getTransferList"/>
-      </div>
-      <div class="transfer-list-action">
-        <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
-      </div>
-      <div class="transfer-list-action">
-        <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
-      </div>
-      <div class="transfer-list-action">
-        <a-icon type="sync" title="重试所有" @click="retryAll"/>
-      </div>
-      <a-popconfirm placement="bottomRight"
-                    title="是否要打包传输所有下载的文件?"
-                    ok-text="确定"
-                    cancel-text="取消"
-                    @confirm="transferPackage">
+  <div ref="transferMain" @contextmenu.prevent>
+    <div class="transfer-list-container">
+      <!-- 工具栏 -->
+      <div class="transfer-list-bar" ref="transferListBar">
         <div class="transfer-list-action">
-          <a-icon type="file-zip" title="打包下载"/>
+          <a-icon type="sync" title="刷新" @click="getTransferList"/>
         </div>
-      </a-popconfirm>
-      <div class="transfer-list-action">
-        <a-icon type="delete" title="清空" @click="clearAll"/>
+        <div class="transfer-list-action">
+          <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
+        </div>
+        <div class="transfer-list-action">
+          <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
+        </div>
+        <div class="transfer-list-action">
+          <a-icon type="issues-close" title="重试所有" @click="retryAll"/>
+        </div>
+        <a-popconfirm placement="bottomRight"
+                      v-model="packageVisible"
+                      :getPopupContainer="() => $refs.transferListBar">
+          <div slot="title">
+            <!-- 标题 -->
+            <div class="transfer-popover-title-wrapper">
+              <span>是否要打包传输文件?</span>
+            </div>
+            <!-- 按钮 -->
+            <div class="transfer-popover-buttons-wrapper">
+              <a-button class="transfer-popover-button span-blue" size="small" @click="() => packageVisible = false">取消</a-button>
+              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(1)">仅上传</a-button>
+              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(2)">仅下载</a-button>
+              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(3)">所有</a-button>
+            </div>
+          </div>
+          <!-- 触发器 -->
+          <div class="transfer-list-action" @click="() => packageVisible = true">
+            <a-icon type="file-zip" title="打包传输"/>
+          </div>
+        </a-popconfirm>
+        <div class="transfer-list-action">
+          <a-icon type="delete" title="清空" @click="clearAll"/>
+        </div>
+      </div>
+      <!-- 传输列表 -->
+      <div class="transfer-list-items" v-if="transferList.length === 0">
+        <!-- 空数据 -->
+        <a-empty style="margin-top: 35px"/>
+      </div>
+      <div class="transfer-list-items" v-else>
+        <!-- 文件行 -->
+        <div class="transfer-list-item"
+             v-for="item in transferList"
+             :key="item.fileToken"
+             @contextmenu.prevent="openTransferRightMenu($event, item)">
+          <!-- 文件名称 -->
+          <div class="transfer-list-item-name auto-ellipsis-item">
+            <span :title="item.remoteFile">{{ item.remoteFile }}</span>
+          </div>
+          <div class="transfer-list-item-body">
+            <!-- 类型 -->
+            <div class="transfer-list-item-type">
+              <a-tag :color="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).color"
+                     :title="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).label">
+                {{ $enum.valueOf($enum.SFTP_TRANSFER_TYPE, item.type).label }}
+              </a-tag>
+            </div>
+            <!-- 状态进度条 -->
+            <div class="transfer-list-item-status">
+              <!-- 10未开始 -->
+              <template v-if="item.status === 10">
+                <a-tooltip :title="`等待 0KB / ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" :showInfo="false"/>
+                </a-tooltip>
+              </template>
+              <!-- 20进行中 -->
+              <template v-if="item.status === 20 && item.type === 40">
+                <a-tooltip :title="`${item.current} / ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" status="active"/>
+                </a-tooltip>
+              </template>
+              <template v-if="item.status === 20 && item.type !== 40">
+                <a-tooltip :title="`${item.rate || '0KB'}/s | ${item.current} / ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" status="active"/>
+                </a-tooltip>
+              </template>
+              <!-- 30已暂停 -->
+              <template v-if="item.status === 30">
+                <a-tooltip :title="`暂停 ${item.current} / ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" :showInfo="false"/>
+                </a-tooltip>
+              </template>
+              <!-- 40已完成 -->
+              <template class="transfer-list-item-status" v-if="item.status === 40">
+                <a-tooltip :title="`已完成 ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" :showInfo="false"/>
+                </a-tooltip>
+              </template>
+              <!-- 50已取消 -->
+              <template class="transfer-list-item-status" v-if="item.status === 50">
+                <a-tooltip :title="`已取消`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" :showInfo="false"/>
+                </a-tooltip>
+              </template>
+              <!-- 60传输异常 -->
+              <template class="transfer-list-item-status" v-if="item.status === 60">
+                <a-tooltip :title="`失败 ${item.current}/ ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                  <a-progress :percent="item.progress" status="exception" :showInfo="false"/>
+                </a-tooltip>
+              </template>
+            </div>
+            <!-- 按钮 -->
+            <div class="transfer-list-item-action">
+              <a-icon title="获取下载链接" v-if="item.status === 40 && !item.downloadUrl" type="link" @click="loadDownload(item)"/>
+              <a v-if="item.status === 40 && item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">
+                <a-icon title="下载" type="download"/>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="transfer-list-items" v-if="transferList.length === 0">
-      <!-- 空数据 -->
-      <a-empty style="margin-top: 35px"/>
-    </div>
-    <div class="transfer-list-items" v-else>
-      <!-- 文件行 -->
-      <div v-for="item in transferList" :key="item.fileToken" class="transfer-list-item">
-        <!-- 文件名称 -->
-        <div class="transfer-list-item-name auto-ellipsis-item">
-          <span :title="item.remoteFile">{{ item.remoteFile }}</span>
-        </div>
-        <div class="transfer-list-item-body">
-          <!-- 类型 -->
-          <div class="transfer-list-item-type">
-            <a-tag
-              :color="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).color"
-              :title="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).label">
-              {{ $enum.valueOf($enum.SFTP_TRANSFER_TYPE, item.type).label }}
-            </a-tag>
-          </div>
-          <!-- 10未开始 -->
-          <div class="transfer-list-item-status" v-if="item.status === 10">
-            <a-tooltip :title="`等待 0KB / ${item.size}`">
-              <a-progress :percent="item.progress" :showInfo="false"/>
-            </a-tooltip>
-          </div>
-          <!-- 20进行中 -->
-          <div class="transfer-list-item-status" v-if="item.status === 20">
-            <template v-if="item.type === 40">
-              <a-tooltip :title="`${item.current} / ${item.size}`">
-                <a-progress :percent="item.progress" status="active"/>
-              </a-tooltip>
-            </template>
-            <template v-else>
-              <a-tooltip :title="`${item.rate || '0KB'}/s | ${item.current} / ${item.size}`">
-                <a-progress :percent="item.progress" status="active"/>
-              </a-tooltip>
-            </template>
-          </div>
-          <!-- 30已暂停 -->
-          <div class="transfer-list-item-status" v-if="item.status === 30">
-            <a-tooltip :title="`暂停 ${item.current} / ${item.size}`">
-              <a-progress :percent="item.progress" :showInfo="false"/>
-            </a-tooltip>
-          </div>
-          <!-- 40已完成 -->
-          <div class="transfer-list-item-status" v-if="item.status === 40">
-            <a-tooltip :title="`已完成 ${item.size}`">
-              <a-progress :percent="item.progress" :showInfo="false"/>
-            </a-tooltip>
-          </div>
-          <!-- 50已取消 -->
-          <div class="transfer-list-item-status" v-if="item.status === 50">
-            <a-tooltip :title="`已取消`">
-              <a-progress :percent="item.progress" :showInfo="false"/>
-            </a-tooltip>
-          </div>
-          <!-- 60传输异常 -->
-          <div class="transfer-list-item-status" v-if="item.status === 60">
-            <a-tooltip :title="`失败 ${item.current}/ ${item.size}`">
-              <a-progress :percent="item.progress" status="exception" :showInfo="false"/>
-            </a-tooltip>
-          </div>
-          <!-- 按钮 -->
-          <div class="transfer-list-item-action">
-            <a-icon title="暂停" v-if="(item.status === 10 || item.status === 20) && item.type !== 40" type="pause-circle" @click="pause(item.fileToken)"/>
-            <a-icon title="取消" v-if="(item.status === 10 || item.status === 20) && item.type === 40" type="stop" @click="pause(item.fileToken)"/>
-            <a-icon title="开始" v-if="item.status === 30" type="play-circle" @click="resume(item.fileToken)"/>
-            <a-icon title="获取下载链接" v-if="item.status === 40 && !item.downloadUrl" type="link" @click="loadDownload(item)"/>
-            <a v-if="item.status === 40 && item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">
-              <a-icon title="下载" type="download"/>
-            </a>
-            <a-icon title="重试" v-if="item.status === 60 && item.type !== 40" type="sync" @click="retry(item.fileToken)"/>
-            <a-icon title="删除" type="close-circle" @click="remove(item.fileToken)"/>
-          </div>
-        </div>
+    <!-- 事件 -->
+    <div class="transfer-event-container">
+      <!-- 右键菜单 -->
+      <div id="transfer-right-menu" ref="transferRightMenu">
+        <a-dropdown :trigger="['click']">
+          <span ref="transferRightMenuTrigger"/>
+          <a-menu slot="overlay" v-if="curr" @click="clickTransferRightMenuItem">
+            <a-menu-item key="resumeFile" v-if="curr.status === 30">
+              <span class="transfer-right-menu-item"><a-icon type="play-circle"/>开始</span>
+            </a-menu-item>
+            <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type !== 40">
+              <span class="transfer-right-menu-item"><a-icon type="pause-circle"/>暂停</span>
+            </a-menu-item>
+            <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type === 40">
+              <span class="transfer-right-menu-item"><a-icon type="stop"/>取消</span>
+            </a-menu-item>
+            <a-menu-item key="retryFile" v-if="curr.status === 60 && curr.type !== 40">
+              <span class="transfer-right-menu-item"><a-icon type="sync"/>重试</span>
+            </a-menu-item>
+            <a-menu-item key="removeFile">
+              <span class="transfer-right-menu-item"><a-icon type="close-circle"/>删除</span>
+            </a-menu-item>
+            <a-menu-item key="reUploadFile" v-if="curr.type === 10">
+              <span class="transfer-right-menu-item"><a-icon type="redo"/>重新上传</span>
+            </a-menu-item>
+            <a-menu-item key="reDownloadFile" v-if="curr.type === 20">
+              <span class="transfer-right-menu-item"><a-icon type="redo"/>重新下载</span>
+            </a-menu-item>
+            <a-menu-item key="clearAllFile">
+              <span class="transfer-right-menu-item"><a-icon type="stop"/>清空所有</span>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </div>
     </div>
   </div>
@@ -152,6 +200,38 @@ function openSftpNotify() {
   }
 }
 
+/**
+ * 右键菜单操作
+ */
+const transferRightMenuHandler = {
+  resumeFile() {
+    this.$api.sftpTransferResume({ fileToken: this.curr.fileToken })
+  },
+  pauseFile() {
+    this.$api.sftpTransferPause({ fileToken: this.curr.fileToken })
+  },
+  retryFile() {
+    this.$api.sftpTransferRetry({ fileToken: this.curr.fileToken })
+  },
+  reUploadFile() {
+    this.$api.sftpTransferReUpload({ fileToken: this.curr.fileToken })
+  },
+  reDownloadFile() {
+    this.$api.sftpTransferReDownload({ fileToken: this.curr.fileToken })
+  },
+  removeFile() {
+    for (let i = 0; i < this.transferList.length; i++) {
+      if (this.transferList[i].fileToken === this.curr.fileToken) {
+        this.transferList.splice(i, 1)
+      }
+    }
+    this.$api.sftpTransferRemove({ fileToken: this.curr.fileToken })
+  },
+  clearAllFile() {
+    this.clearAll()
+  }
+}
+
 export default {
   name: 'FileTransferList',
   props: {
@@ -160,7 +240,9 @@ export default {
   data: function() {
     return {
       notifyClient: null,
-      transferList: []
+      transferList: [],
+      curr: null,
+      packageVisible: false
     }
   },
   methods: {
@@ -171,19 +253,12 @@ export default {
         })
     },
     clearAll() {
-      this.$api.sftpTransferClear({ sessionToken: this.sessionToken })
-        .then(() => {
-          this.getTransferList()
-        })
-    },
-    pause(fileToken) {
-      this.$api.sftpTransferPause({ fileToken })
-    },
-    resume(fileToken) {
-      this.$api.sftpTransferResume({ fileToken })
-    },
-    retry(fileToken) {
-      this.$api.sftpTransferRetry({ fileToken })
+      this.transferList = this.transferList.filter(s => s.status === 20)
+      this.$api.sftpTransferClear({
+        sessionToken: this.sessionToken
+      }).then(() => {
+        this.getTransferList()
+      })
     },
     pauseAll() {
       this.$api.sftpTransferPauseAll({ sessionToken: this.sessionToken })
@@ -194,21 +269,14 @@ export default {
     retryAll() {
       this.$api.sftpTransferRetryAll({ sessionToken: this.sessionToken })
     },
-    transferPackage() {
+    transferPackage(packageType) {
+      this.packageVisible = false
       this.$api.sftpTransferPackage({
         sessionToken: this.sessionToken,
-        packageType: 2
+        packageType
+      }).then(() => {
+        this.$message.success('已提交打包请求')
       })
-    },
-    remove(fileToken) {
-      this.$api.sftpTransferRemove({ fileToken })
-        .then(() => {
-          for (let i = 0; i < this.transferList.length; i++) {
-            if (this.transferList[i].fileToken === fileToken) {
-              this.transferList.splice(i, 1)
-            }
-          }
-        })
     },
     async loadDownload(item) {
       const downloadUrl = await this.$api.getFileDownloadToken({
@@ -223,6 +291,20 @@ export default {
         item.downloadUrl = null
         this.$forceUpdate()
       })
+    },
+    openTransferRightMenu(e, item) {
+      if (e.button === 2) {
+        this.curr = item
+        this.$refs.transferRightMenuTrigger.click()
+        this.$refs.transferRightMenu.style.left = (e.offsetX + 20) + 'px'
+        this.$refs.transferRightMenu.style.top = (e.y - 110) + 'px'
+        this.$refs.transferRightMenu.style.display = 'block'
+      } else {
+        this.$refs.transferRightMenu.style.display = 'none'
+      }
+    },
+    clickTransferRightMenuItem({ key }) {
+      transferRightMenuHandler[key].call(this)
     }
   },
   mounted() {
@@ -283,36 +365,74 @@ export default {
     width: 100%;
     padding: 4px 0;
   }
+
+  .transfer-list-item-body {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    height: 30px;
+
+    i {
+      cursor: pointer;
+      margin-left: 3px;
+      color: #5C7CFA;
+    }
+
+    i:hover {
+      color: #4263EB;
+    }
+
+    .transfer-list-item-type {
+      margin-top: 5px;
+    }
+
+    .transfer-list-item-status {
+      width: 75%;
+    }
+
+    .transfer-list-item-action {
+      margin: 5px 0 0 8px;
+    }
+  }
 }
 
-.transfer-list-item-body {
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  height: 30px;
+#transfer-right-menu {
+  position: absolute;
+  z-index: 10;
+  color: #D0EBFF;
 
-  i {
-    cursor: pointer;
-    margin-left: 3px;
-    color: #5C7CFA;
+  .transfer-right-menu-item {
+    padding: 0 14px;
+  }
+}
+
+.transfer-list-bar {
+  /deep/ .ant-popover-message {
+    padding: 0 !important;
   }
 
-  i:hover {
-    color: #4263eb;
+  /deep/ .ant-popover-buttons {
+    display: none !important;
   }
 
-  .transfer-list-item-type {
-    margin-top: 5px;
+  /deep/ .ant-popover-message-title {
+    padding-right: 8px;
+    margin-bottom: 4px;
   }
 
-  .transfer-list-item-status {
-    width: 67%;
+  .transfer-popover-title-wrapper {
+    display: block;
+    padding-top: 4px;
+    margin-bottom: 16px;
   }
 
-  .transfer-list-item-action {
-    margin: 5px 0 0 15px;
+  .transfer-popover-button {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 14px;
+    border-radius: 4px;
+    margin: 0 2.5px;
   }
-
 }
 
 </style>
