@@ -384,6 +384,20 @@ const $api = {
   },
 
   /**
+   * sftp 重新上传
+   */
+  sftpTransferReUpload: param => {
+    return $http.$post(`/sftp/transfer/${param.fileToken}/re/upload`, param)
+  },
+
+  /**
+   * sftp 重新下载
+   */
+  sftpTransferReDownload: param => {
+    return $http.$post(`/sftp/transfer/${param.fileToken}/re/download`, param)
+  },
+
+  /**
    * sftp 传输暂停全部
    */
   sftpTransferPauseAll: param => {
