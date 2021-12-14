@@ -73,8 +73,9 @@
                 <div class="appender-left-tools" slot="left-tools">
                   <!-- 命令输入 -->
                   <a-input-search class="command-write-input"
-                                  size="small"
+                                  v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
                                   v-model="execMachine.inputCommand"
+                                  size="small"
                                   placeholder="输入"
                                   @search="sendCommand(execMachine)">
                     <a-icon type="forward" slot="enterButton"/>
@@ -84,7 +85,8 @@
                     {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
                   </a-tag>
                   <!-- used -->
-                  <span v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status" title="用时">
+                  <span class="mx8" title="用时"
+                        v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
                     {{ execMachine.used }}ms
                   </span>
                   <!-- exitCode -->

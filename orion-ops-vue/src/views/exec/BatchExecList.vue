@@ -109,7 +109,7 @@
         <!-- 日志 -->
         <div slot="log" slot-scope="record">
           <!-- 日志面板 -->
-          <a target="_blank" :href="`#/batch/exec/log/view/${record.id}/${record.status}`">日志面板</a>
+          <a target="_blank" :href="`#/batch/exec/log/view/${record.id}`">日志面板</a>
           <a-divider type="vertical"/>
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>

@@ -16,7 +16,7 @@
     <!-- 应用选择 -->
     <div class="app-list" v-if="selectAppPage">
       <div v-if="loading">
-        <a-skeleton active :paragraph="{ rows: 6 }"/>
+        <a-skeleton active :paragraph="{rows: 6}"/>
       </div>
       <div class="app-item" v-for="app of appList" :key="app.id" @click="chooseApp(app)">
         <div class="app-name">

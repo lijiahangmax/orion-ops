@@ -464,16 +464,20 @@ const $enum = {
       value: 40,
       label: 'sftp下载文件'
     },
-    APP_BUILD_LOG: {
+    TAIL_LIST_FILE: {
       value: 50,
+      label: 'tail列表文件'
+    },
+    APP_BUILD_LOG: {
+      value: 60,
       label: '应用构建日志'
     },
     APP_BUILD_ACTION_LOG: {
-      value: 60,
+      value: 70,
       label: '应用构建操作日志'
     },
     APP_BUILD_BUNDLE: {
-      value: 70,
+      value: 80,
       label: '应用构建产物文件'
     }
   },

@@ -53,7 +53,7 @@ const routes = [
     component: () => import('../views/exec/AddBatchExecTask')
   },
   {
-    path: '/batch/exec/log/view/:id/:status',
+    path: '/batch/exec/log/view/:id',
     name: 'ExecLoggerView',
     meta: {
       requireAuth: true,

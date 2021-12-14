@@ -10,7 +10,7 @@
       <div id="right-menu" ref="rightMenu">
         <a-dropdown :trigger="['click']">
           <span ref="rightMenuTrigger" id="right-menu-trigger"></span>
-          <a-menu slot="overlay" @click="clickRightMenuItem">
+          <a-menu slot="overlay" @click="clickRightMenuItem" @contextmenu.prevent>
             <a-menu-item key="selectAll">
               <span class="right-menu-item"><a-icon type="profile"/>全选</span>
             </a-menu-item>
@@ -473,10 +473,10 @@ export default {
   position: absolute;
   z-index: 10;
   color: #D0EBFF;
-}
 
-.right-menu-item {
-  padding: 0 14px;
+  .right-menu-item {
+    padding: 0 14px;
+  }
 }
 
 #search-card {
