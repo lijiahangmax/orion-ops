@@ -20,11 +20,13 @@ public class EnvConst {
 
     public static final String ENV_PREFIX = "env.";
 
-    public static final String APP_PREFIX = "app.";
-
     public static final String MACHINE_PREFIX = "machine.";
 
-    // -------------------- const --------------------
+    public static final String APP_PREFIX = "app.";
+
+    public static final String BUILD_PREFIX = "build.";
+
+    // -------------------- machine --------------------
 
     public static final String MACHINE_NAME = "machine_name";
 
@@ -36,9 +38,7 @@ public class EnvConst {
 
     public static final String MACHINE_USERNAME = "machine_username";
 
-    public static final String DIST_PATH = "dist_path";
-
-    public static final String TARGET_DIST_PATH = "target_dist_path";
+    // -------------------- app --------------------
 
     public static final String APP_NAME = "app_name";
 
@@ -47,6 +47,18 @@ public class EnvConst {
     public static final String PROFILE_NAME = "profile_name";
 
     public static final String PROFILE_TAG = "profile_tag";
+
+    // -------------------- build --------------------
+
+    public static final String BUILD_SEQ = "build_seq";
+
+    public static final String VCS_HOME = "vcs_home";
+
+    // -------------------- release --------------------
+
+    public static final String DIST_PATH = "dist_path";
+
+    public static final String TARGET_DIST_PATH = "target_dist_path";
 
     // -------------------- tail --------------------
 

@@ -1,6 +1,7 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnvConst;
@@ -118,6 +119,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             env.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 查询机器环境变量
             env.putAll(machineEnvService.getFullMachineEnv(Const.HOST_MACHINE_ID, EnvConst.MACHINE_PREFIX));
+            // 添加构建环境变量
+            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId()));
         }
         // 设置action
         for (ApplicationActionDO action : actions) {
@@ -291,6 +294,29 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .filter(Strings::isNotBlank)
                 .map(s -> Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), s))
                 .orElse(null);
+    }
+
+    /**
+     * 获取构建环境变量
+     *
+     * @param buildId  buildId
+     * @param buildSeq buildSeq
+     * @param vcsId    vcsId
+     * @return env
+     */
+    private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq, Long vcsId) {
+        // 设置变量
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
+        env.put(EnvConst.BUILD_SEQ, buildId + Strings.EMPTY);
+        if (vcsId != null) {
+            env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildSeq));
+        }
+        // 设置前缀
+        MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();
+        env.forEach((k, v) -> {
+            fullEnv.put(EnvConst.BUILD_PREFIX + k, v);
+        });
+        return fullEnv;
     }
 
 }
