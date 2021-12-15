@@ -141,14 +141,18 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
     @Transactional(rollbackFor = Exception.class)
     public void saveEnv(Long appId, Long profileId, Map<String, String> env) {
         ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
-        env.forEach((k, v) -> {
+        // 倒排
+        List<Map.Entry<String, String>> entries = new ArrayList<>(env.entrySet());
+        for (int i = entries.size() - 1; i >= 0; i--) {
+            // 更新
+            Map.Entry<String, String> entry = entries.get(i);
             ApplicationEnvRequest request = new ApplicationEnvRequest();
             request.setAppId(appId);
             request.setProfileId(profileId);
-            request.setKey(k);
-            request.setValue(v);
+            request.setKey(entry.getKey());
+            request.setValue(entry.getValue());
             self.addAppEnv(request);
-        });
+        }
     }
 
     @Override
@@ -172,39 +176,6 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         ApplicationEnvDO env = applicationEnvDAO.selectById(id);
         Valid.notNull(env, MessageConst.UNKNOWN_DATA);
         return Converts.to(env, ApplicationEnvVO.class);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void syncAppEnv(Long id, Long appId, Long profileId, List<Long> targetProfileIdList) {
-        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
-        List<ApplicationEnvDO> envList;
-        if (Const.N_N_L_1.equals(id)) {
-            // 全量同步
-            LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                    .eq(ApplicationEnvDO::getAppId, appId)
-                    .eq(ApplicationEnvDO::getProfileId, profileId)
-                    .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
-                    .orderByAsc(ApplicationEnvDO::getUpdateTime);
-            envList = applicationEnvDAO.selectList(wrapper);
-        } else {
-            // 查询数据
-            ApplicationEnvDO env = applicationEnvDAO.selectById(id);
-            Valid.notNull(env, MessageConst.UNKNOWN_DATA);
-            envList = Lists.singleton(env);
-        }
-        // 同步
-        for (ApplicationEnvDO syncEnv : envList) {
-            for (Long targetProfileId : targetProfileIdList) {
-                ApplicationEnvRequest request = new ApplicationEnvRequest();
-                request.setAppId(syncEnv.getAppId());
-                request.setProfileId(targetProfileId);
-                request.setKey(syncEnv.getAttrKey());
-                request.setValue(syncEnv.getAttrValue());
-                request.setDescription(syncEnv.getDescription());
-                self.addAppEnv(request);
-            }
-        }
     }
 
     @Override
@@ -294,7 +265,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         }
         // 构建检查是否有构建序列
         if (StageType.BUILD.equals(stageType)) {
-            this.checkInitSystemEnv(appId, profileId).forEach(applicationEnvDAO::insert);
+            self.checkInitSystemEnv(appId, profileId);
         }
         // 添加环境变量
         for (ApplicationEnvRequest env : list) {
@@ -306,34 +277,50 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncAppProfileEnv(Long appId, Long profileId, Long targetProfileId) {
-        // 查询
-        LambdaQueryWrapper<ApplicationEnvDO> queryWrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
-                .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getProfileId, profileId)
-                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM);
-        List<ApplicationEnvDO> sourceEnvList = applicationEnvDAO.selectList(queryWrapper);
-        // 插入
-        for (ApplicationEnvDO sourceEnv : sourceEnvList) {
-            ApplicationEnvRequest update = new ApplicationEnvRequest();
-            update.setAppId(appId);
-            update.setProfileId(targetProfileId);
-            update.setKey(sourceEnv.getAttrKey());
-            update.setValue(sourceEnv.getAttrValue());
-            update.setDescription(sourceEnv.getDescription());
-            this.addAppEnv(update);
+    public void syncAppEnv(Long id, Long appId, Long profileId, List<Long> targetProfileIdList) {
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
+        List<ApplicationEnvDO> envList;
+        // 查询数据
+        if (Const.N_N_L_1.equals(id)) {
+            // 全量同步
+            LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
+                    .eq(ApplicationEnvDO::getAppId, appId)
+                    .eq(ApplicationEnvDO::getProfileId, profileId)
+                    .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
+                    .orderByAsc(ApplicationEnvDO::getUpdateTime);
+            envList = applicationEnvDAO.selectList(wrapper);
+        } else {
+            // 查询数据
+            ApplicationEnvDO env = applicationEnvDAO.selectById(id);
+            Valid.notNull(env, MessageConst.UNKNOWN_DATA);
+            envList = Lists.singleton(env);
         }
-        // 初始化系统变量
-        this.checkInitSystemEnv(appId, targetProfileId).forEach(applicationEnvDAO::insert);
+        // 同步数据
+        for (Long targetProfileId : targetProfileIdList) {
+            // 同步环境变量
+            for (ApplicationEnvDO syncEnv : envList) {
+                ApplicationEnvRequest request = new ApplicationEnvRequest();
+                request.setAppId(syncEnv.getAppId());
+                request.setProfileId(targetProfileId);
+                request.setKey(syncEnv.getAttrKey());
+                request.setValue(syncEnv.getAttrValue());
+                request.setDescription(syncEnv.getDescription());
+                self.addAppEnv(request);
+            }
+            // 初始化系统变量
+            self.checkInitSystemEnv(appId, targetProfileId);
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void copyAppEnv(Long appId, Long targetAppId) {
+        ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
         // 查询
         LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                 .eq(ApplicationEnvDO::getAppId, appId)
-                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM);
+                .eq(ApplicationEnvDO::getSystemEnv, Const.NOT_SYSTEM)
+                .orderByAsc(ApplicationEnvDO::getUpdateTime);
         List<ApplicationEnvDO> envList = applicationEnvDAO.selectList(wrapper);
         // 插入
         for (ApplicationEnvDO env : envList) {
@@ -342,14 +329,14 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             env.setCreateTime(null);
             env.setUpdateTime(null);
             applicationEnvDAO.insert(env);
+            // 插入历史值
+            historyValueService.addHistory(env.getId(), HistoryValueType.APP_ENV, HistoryOperator.ADD, null, env.getAttrValue());
         }
         // 初始化系统变量
         envList.stream()
                 .map(ApplicationEnvDO::getProfileId)
                 .distinct()
-                .map(profileId -> this.checkInitSystemEnv(targetAppId, profileId))
-                .flatMap(Collection::stream)
-                .forEach(applicationEnvDAO::insert);
+                .forEach(profileId -> self.checkInitSystemEnv(targetAppId, profileId));
     }
 
     @Override
@@ -379,14 +366,9 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         return seq;
     }
 
-    /**
-     * 检查并初始化系统变量
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @return addList
-     */
-    private List<ApplicationEnvDO> checkInitSystemEnv(Long appId, Long profileId) {
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkInitSystemEnv(Long appId, Long profileId) {
         List<ApplicationEnvDO> list = Lists.newList();
         String buildSeqValue = this.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUILD_SEQ.getKey());
         if (buildSeqValue == null) {
@@ -396,7 +378,8 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             buildSeq.setProfileId(profileId);
             list.add(buildSeq);
         }
-        return list;
+        // 插入
+        list.forEach(applicationEnvDAO::insert);
     }
 
 }
