@@ -1,11 +1,11 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -34,6 +34,17 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("重置版本仓库状态-开始");
+        // 清空初始化中的数据
+        this.cleanInitializing();
+        // 检查已初始化的数据
+        this.checkFinished();
+        log.info("重置版本仓库状态-结束");
+    }
+
+    /**
+     * 清空初始化中的数据
+     */
+    private void cleanInitializing() {
         LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
                 .eq(ApplicationVcsDO::getVcsStatus, VcsStatus.INITIALIZING.getStatus());
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
@@ -45,12 +56,33 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             // 删除文件夹
-            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
             Files1.delete(clonePath);
             log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }
-        log.info("重置版本仓库状态-结束");
     }
 
+    /**
+     * 检查已初始化的数据
+     */
+    private void checkFinished() {
+        LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
+                .eq(ApplicationVcsDO::getVcsStatus, VcsStatus.OK.getStatus());
+        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
+        for (ApplicationVcsDO vcs : vcsList) {
+            // 检查是否存在
+            Long id = vcs.getId();
+            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            if (Files1.isDirectory(clonePath)) {
+                continue;
+            }
+            // 更新状态
+            ApplicationVcsDO update = new ApplicationVcsDO();
+            update.setId(id);
+            update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            applicationVcsDAO.updateById(update);
+            log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
+        }
+    }
 
 }

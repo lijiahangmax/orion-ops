@@ -83,7 +83,17 @@ public class ApplicationVcsController {
     @RequestMapping("/init")
     public HttpWrapper<?> initVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationVcsService.initVcs(id);
+        applicationVcsService.initEventVcs(id, false);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 仓库重新初始化
+     */
+    @RequestMapping("/re/init")
+    public HttpWrapper<?> reInitVcs(@RequestBody ApplicationVcsRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationVcsService.initEventVcs(id, true);
         return HttpWrapper.ok();
     }
 

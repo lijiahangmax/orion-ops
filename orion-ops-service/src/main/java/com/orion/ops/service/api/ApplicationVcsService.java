@@ -60,11 +60,15 @@ public interface ApplicationVcsService {
     ApplicationVcsVO getAppVcsDetail(Long id);
 
     /**
-     * 仓库初始化
+     * 初始化 event 仓库
      *
-     * @param id id
+     * @param id       id
+     * @param isReInit 是否是重新初始化
+     * @see #getVcsInfo
+     * @see #getVcsBranchList
+     * @see #getVcsCommitList
      */
-    void initVcs(Long id);
+    void initEventVcs(Long id, boolean isReInit);
 
     /**
      * 获取版本信息列表
@@ -92,11 +96,11 @@ public interface ApplicationVcsService {
     List<ApplicationVcsCommitVO> getVcsCommitList(Long id, String branchName);
 
     /**
-     * 打开git
+     * 打开事件git
      *
      * @param id id
      * @return gits
      */
-    Gits openGit(Long id);
+    Gits openEventGit(Long id);
 
 }

@@ -105,7 +105,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 如果修改了url则状态改为未初始化
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             // 删除目录
-            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
             Files1.delete(clonePath);
         }
         return applicationVcsDAO.updateById(update);
@@ -143,15 +143,17 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public void initVcs(Long id) {
+    public void initEventVcs(Long id, boolean isReInit) {
         // 查询数据
         ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         // 判断状态
         if (VcsStatus.INITIALIZING.getStatus().equals(vcs.getVcsStatus())) {
             throw Exceptions.runtime(MessageConst.VCS_INITIALIZING);
-        } else if (VcsStatus.OK.getStatus().equals(vcs.getVcsStatus())) {
+        } else if (VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()) && !isReInit) {
             throw Exceptions.runtime(MessageConst.VCS_INITIALIZED);
+        } else if (!VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()) && isReInit) {
+            throw Exceptions.runtime(MessageConst.VCS_UNINITIALIZED);
         }
         // 修改状态
         ApplicationVcsDO update = new ApplicationVcsDO();
@@ -159,16 +161,12 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
         // 删除
-        File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+        File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
         Files1.delete(clonePath);
         // 初始化
         Exception ex = null;
         Gits gits = null;
         try {
-            // 设置地址
-            if (clonePath.isDirectory()) {
-                throw Exceptions.argument(MessageConst.VCS_PATH_PRESENT, Exceptions.runtime(clonePath.getAbsolutePath()));
-            }
             // clone
             if (vcs.getVscUsername() == null) {
                 gits = Gits.clone(vcs.getVscUrl(), clonePath);
@@ -199,7 +197,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     public ApplicationVcsInfoVO getVcsInfo(ApplicationVcsRequest request) {
         Long id = request.getId();
         // 打开git
-        try (Gits gits = this.openGit(id)) {
+        try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
             ApplicationVcsInfoVO vcsInfo = new ApplicationVcsInfoVO();
             ApplicationVcsBranchVO defaultBranch;
@@ -232,7 +230,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     @Override
     public List<ApplicationVcsBranchVO> getVcsBranchList(Long id) {
         // 打开git
-        try (Gits gits = this.openGit(id)) {
+        try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
             // 查询分支信息
             List<BranchInfo> branchList = gits.branchList();
@@ -243,7 +241,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     @Override
     public List<ApplicationVcsCommitVO> getVcsCommitList(Long id, String branchName) {
         // 打开git
-        try (Gits gits = this.openGit(id)) {
+        try (Gits gits = this.openEventGit(id)) {
             gits.fetch(branchName.split("/")[0]);
             // 查询提交信息
             List<LogInfo> logList = gits.logList(branchName, Const.VCS_COMMIT_LIMIT);
@@ -255,13 +253,13 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public Gits openGit(Long id) {
+    public Gits openEventGit(Long id) {
         // 查询数据
         ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         Valid.isTrue(VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
         // 获取仓库位置
-        File vcsPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Strings.EMPTY));
+        File vcsPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
         if (!vcsPath.isDirectory()) {
             // 修改状态为未初始化
             ApplicationVcsDO entity = new ApplicationVcsDO();
