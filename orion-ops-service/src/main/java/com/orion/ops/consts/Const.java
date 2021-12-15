@@ -56,6 +56,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String PACKAGE_DIR = "/package";
 
+    public static final String EVENT_DIR = "/event";
+
     public static final String BUILD = "build";
 
     public static final String RELEASE = "release";

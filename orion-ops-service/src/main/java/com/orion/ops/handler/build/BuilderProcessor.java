@@ -218,8 +218,7 @@ public class BuilderProcessor implements IBuilderProcessor {
         String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
         if (!bundlePath.startsWith(Const.SLASH)) {
             // 基于代码目录的相对路径
-            String vcsPath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), record.getVcsId() + Const.EMPTY);
-            bundlePath = Files1.getPath(vcsPath, bundlePath);
+            bundlePath = Files1.getPath(store.getVcsClonePath(), bundlePath);
         }
         // 检查产物文件是否存在
         File bundleFile = new File(bundlePath);

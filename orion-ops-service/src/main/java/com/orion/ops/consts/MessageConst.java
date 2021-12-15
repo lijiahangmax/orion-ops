@@ -150,16 +150,18 @@ public class MessageConst {
 
     public static final String VCS_INIT_ERROR = "仓库初始化失败";
 
-    public static final String VCS_PATH_PRESENT = "仓库目录已存在";
-
     public static final String VCS_PATH_ABSENT = "仓库目录不存在";
-
-    public static final String VCS_UNINITIALIZED = "仓库未初始化";
 
     public static final String VCS_UNABLE_CONNECT = "无法连接到远程仓库";
 
-    public static final String VCS_INITIALIZED = "远程仓库已初始化完成";
+    public static final String VCS_UNINITIALIZED = "仓库未初始化";
+
+    public static final String VCS_INITIALIZED = "远程仓库已初始化";
 
     public static final String VCS_INITIALIZING = "远程仓库初始化中";
+
+    public static final String CHECKOUT_ERROR = "git clone 检出失败";
+
+    public static final String RESET_ERROR = "git reset 操作失败";
 
 }

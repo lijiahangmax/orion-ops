@@ -1,10 +1,11 @@
 package com.orion.ops.handler.build;
 
-import com.orion.able.Executable;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.remote.channel.SessionStore;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.io.Files1;
 import lombok.Data;
 
 import java.io.OutputStream;
@@ -46,8 +47,18 @@ public class BuildStore {
      */
     private String mainLogPath;
 
+    /**
+     * vcs clone 路径
+     */
+    private String vcsClonePath;
+
     public BuildStore() {
         this.actions = Maps.newLinkedMap();
+    }
+
+    public void setBuildRecord(ApplicationBuildDO buildRecord) {
+        this.buildRecord = buildRecord;
+        this.vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), buildRecord.getVcsId() + "/" + buildRecord.getBuildSeq());
     }
 
 }
