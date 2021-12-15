@@ -6,6 +6,8 @@ import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.HistoryOperator;
+import com.orion.ops.consts.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.machine.MachineProperties;
@@ -18,10 +20,7 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
-import com.orion.ops.service.api.ApplicationMachineService;
-import com.orion.ops.service.api.MachineEnvService;
-import com.orion.ops.service.api.MachineInfoService;
-import com.orion.ops.service.api.MachineTerminalService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.ValueMix;
@@ -73,6 +72,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Resource
     private ApplicationMachineService applicationMachineService;
+
+    @Resource
+    private HistoryValueService historyValueService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -181,12 +183,17 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量
-        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>().eq(MachineEnvDO::getMachineId, id);
+        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
+                .eq(MachineEnvDO::getMachineId, id)
+                .orderByAsc(MachineEnvDO::getUpdateTime);
         machineEnvDAO.selectList(wrapper).forEach(e -> {
+            // 插入环境变量
             e.setMachineId(insertId);
             e.setCreateTime(null);
             e.setUpdateTime(null);
             machineEnvDAO.insert(e);
+            // 插入历史值
+            historyValueService.addHistory(e.getId(), HistoryValueType.MACHINE_ENV, HistoryOperator.ADD, null, e.getAttrValue());
         });
         return insertId;
     }
@@ -230,7 +237,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
         }
         Exception ex = null;
-        String msg = MessageConst.CONN_EXCEPTION_MESSAGE;
+        String msg = MessageConst.CONNECT_ERROR;
         for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {
             log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}, host: {}", (i + 1), machine.getId(), machine.getMachineHost());
             try {

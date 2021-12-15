@@ -28,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 环境变量服务
@@ -140,13 +137,17 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     @Transactional(rollbackFor = Exception.class)
     public void saveEnv(Long machineId, Map<String, String> env) {
         MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
-        env.forEach((k, v) -> {
+        // 倒排
+        List<Map.Entry<String, String>> entries = new ArrayList<>(env.entrySet());
+        for (int i = entries.size() - 1; i >= 0; i--) {
+            // 更新
+            Map.Entry<String, String> entry = entries.get(i);
             MachineEnvRequest request = new MachineEnvRequest();
             request.setMachineId(machineId);
-            request.setKey(k);
-            request.setValue(v);
+            request.setKey(entry.getKey());
+            request.setValue(entry.getValue());
             self.addEnv(request);
-        });
+        }
     }
 
     @Override
