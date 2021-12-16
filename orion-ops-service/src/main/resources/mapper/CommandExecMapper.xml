@@ -27,7 +27,7 @@
     </sql>
 
     <select id="selectStatusById" resultMap="BaseResultMap">
-        SELECT exec_status, exit_code, start_date, end_date
+        SELECT id, exec_status, exit_code, start_date, end_date
         FROM command_exec
         WHERE id = #{id}
     </select>

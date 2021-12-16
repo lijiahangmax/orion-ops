@@ -1,5 +1,8 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.entity.domain.CommandExecDO;
+import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
 
 /**
@@ -28,8 +31,27 @@ public class CommandExecStatusVO {
     private Integer status;
 
     /**
-     * 使用时间
+     * 使用时间 ms
      */
     private Long used;
+
+    /**
+     * 使用时间
+     */
+    private String keepTime;
+
+    static {
+        TypeStore.STORE.register(CommandExecDO.class, CommandExecStatusVO.class, p -> {
+            CommandExecStatusVO vo = new CommandExecStatusVO();
+            vo.setId(p.getId());
+            vo.setExitCode(p.getExitCode());
+            vo.setStatus(p.getExecStatus());
+            if (p.getStartDate() != null && p.getEndDate() != null) {
+                vo.setUsed(p.getEndDate().getTime() - p.getStartDate().getTime());
+                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
+            }
+            return vo;
+        });
+    }
 
 }

@@ -103,9 +103,14 @@ public class CommandExecVO {
     private String endDateAgo;
 
     /**
-     * 使用时间
+     * 使用时间 ms
      */
     private Long used;
+
+    /**
+     * 使用时间
+     */
+    private String keepTime;
 
     /**
      * 创建时间
@@ -141,6 +146,7 @@ public class CommandExecVO {
             Optional.ofNullable(createTime).map(Dates::ago).ifPresent(vo::setCreateTimeAgo);
             if (startDate != null && endDate != null) {
                 vo.setUsed(endDate.getTime() - startDate.getTime());
+                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
             }
             return vo;
         });

@@ -196,23 +196,9 @@ public class CommandExecServiceImpl implements CommandExecService {
     @Override
     public List<CommandExecStatusVO> getExecStatusList(List<Long> execIdList) {
         return execIdList.stream()
-                .map(id -> {
-                    // 查询状态
-                    CommandExecDO exec = commandExecDAO.selectStatusById(id);
-                    if (exec == null) {
-                        return null;
-                    }
-                    // 返回
-                    CommandExecStatusVO vo = new CommandExecStatusVO();
-                    vo.setId(id);
-                    vo.setExitCode(exec.getExitCode());
-                    vo.setStatus(exec.getExecStatus());
-                    if (exec.getStartDate() != null && exec.getEndDate() != null) {
-                        vo.setUsed(exec.getEndDate().getTime() - exec.getStartDate().getTime());
-                    }
-                    return vo;
-                })
+                .map(commandExecDAO::selectStatusById)
                 .filter(Objects::nonNull)
+                .map(s -> Converts.to(s, CommandExecStatusVO.class))
                 .collect(Collectors.toList());
     }
 
