@@ -54,6 +54,19 @@
           :columns="innerColumns"
           :dataSource="record.machines"
           :pagination="false">
+          <!-- 名称 -->
+          <span slot="name" slot-scope="machine">
+            {{ machine.name }}
+            <a-tag v-if="machine.id === 1" color="#5C7CFA">
+              宿主机
+            </a-tag>
+          </span>
+          <!-- tag -->
+          <span slot="tag" slot-scope="machine">
+            <a-tag v-if="machine.tag" color="#20C997">
+              {{ machine.tag }}
+            </a-tag>
+          </span>
           <!-- 状态 -->
           <span slot="status" slot-scope="machine">
             <a-badge
@@ -88,9 +101,9 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 配置 -->
-          <a target="_blank" :href="`#/app/conf/${record.id}/${query.profileId}`">
+          <span class="span-blue pointer" @click="toConfig(record.id)">
             配置
-          </a>
+          </span>
           <a-divider type="vertical"/>
           <!-- 构建 -->
           <a v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value" @click="buildApp(record.id)">
@@ -158,20 +171,17 @@ const columns = [
     key: 'name',
     dataIndex: 'name',
     ellipsis: true,
-    width: 250,
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
     title: 'tag',
     key: 'tag',
-    width: 130,
     scopedSlots: { customRender: 'tag' },
     sorter: (a, b) => a.tag.localeCompare(b.tag)
   },
   {
     title: '是否已配置',
     key: 'config',
-    width: 150,
     align: 'center',
     sorter: (a, b) => a.isConfig - b.isConfig,
     scopedSlots: { customRender: 'config' }
@@ -180,8 +190,7 @@ const columns = [
     title: '仓库名称',
     key: 'vcsName',
     dataIndex: 'vcsName',
-    ellipsis: true,
-    width: 150
+    ellipsis: true
   },
   {
     title: '描述',
@@ -194,7 +203,6 @@ const columns = [
     title: '操作',
     key: 'action',
     width: 220,
-    align: 'center',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -206,23 +214,27 @@ const innerColumns = [
   {
     title: '机器名称',
     key: 'name',
-    dataIndex: 'name',
     ellipsis: true,
-    width: 180,
-    sorter: (a, b) => a.name.localeCompare(b.name)
+    sorter: (a, b) => a.name.localeCompare(b.name),
+    scopedSlots: { customRender: 'name' }
+  },
+  {
+    title: 'tag',
+    key: 'tag',
+    sorter: (a, b) => a.tag.localeCompare(b.tag),
+    scopedSlots: { customRender: 'tag' }
   },
   {
     title: '机器主机',
     key: 'host',
     dataIndex: 'host',
     ellipsis: true,
-    width: 180,
     sorter: (a, b) => a.host.localeCompare(b.host)
   },
   {
     title: '状态',
     key: 'status',
-    width: 80,
+    width: 120,
     align: 'center',
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
@@ -230,7 +242,7 @@ const innerColumns = [
   {
     title: '操作',
     key: 'action',
-    width: 50,
+    width: 120,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -367,8 +379,10 @@ export default {
     add() {
       this.$refs.addModal.add()
     },
-    update(id) {
-      this.$refs.addModal.update(id)
+    toConfig(id) {
+      this.$router.push({
+        path: `/app/conf/${id}`
+      })
     },
     buildApp(id) {
       this.$refs.buildModal.openBuild(this.query.profileId, id)

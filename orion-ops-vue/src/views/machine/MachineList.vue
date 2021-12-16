@@ -78,11 +78,11 @@
           </a-tag>
         </span>
         <!-- tag -->
-        <a slot="tag" slot-scope="record">
+        <span slot="tag" slot-scope="record">
           <a-tag v-if="record.tag" color="#20C997">
             {{ record.tag }}
           </a-tag>
-        </a>
+        </span>
         <!-- 主机 -->
         <a slot="host" slot-scope="record" title="复制主机" @click="$copy(record.host, true)">
           {{ record.host }}

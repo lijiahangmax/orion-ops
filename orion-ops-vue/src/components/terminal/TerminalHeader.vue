@@ -169,12 +169,12 @@ export default {
       cursor: pointer;
       font-size: 22px;
       margin-right: 15px;
+      transition: color 0.3s;
     }
 
-    .trigger-icon :hover {
+    .trigger-icon:hover {
       color: #1C7ED6;
     }
-
   }
 
 }

@@ -107,7 +107,7 @@ const $enum = {
     ERROR: {
       value: 40,
       label: '错误',
-      color: '#e03131'
+      color: '#E03131'
     }
   },
 
@@ -262,17 +262,17 @@ const $enum = {
     NOT_FOUND: {
       value: 1,
       label: '未找到',
-      color: '#dee2e6'
+      color: '#DEE2E6'
     },
     MOUNTED: {
       value: 2,
       label: '已挂载',
-      color: '#4c6ef5'
+      color: '#4C6EF5'
     },
     C: {
       value: 3,
       label: '未挂载',
-      color: '#ff922b'
+      color: '#FF922B'
     }
   },
 

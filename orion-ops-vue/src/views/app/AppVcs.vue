@@ -72,7 +72,15 @@
         <div slot="action" slot-scope="record">
           <!-- 初始化 -->
           <a v-if="$enum.VCS_STATUS.UNINITIALIZED.value === record.status || $enum.VCS_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
-          <a v-else-if="$enum.VCS_STATUS.OK.value === record.status" @click="reInit(record)">重新初始化</a>
+          <a-popconfirm title="确定要重新初始化吗?"
+                        v-else-if="$enum.VCS_STATUS.OK.value === record.status"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
+                        @confirm="reInit(record)">
+            <span class="span-blue pointer">重新初始化</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="$enum.VCS_STATUS.UNINITIALIZED.value === record.status ||
                   $enum.VCS_STATUS.ERROR.value === record.status ||
                   $enum.VCS_STATUS.OK.value === record.status"/>

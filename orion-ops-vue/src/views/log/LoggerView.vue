@@ -243,7 +243,7 @@ export default {
 
     .log-list-tools-item:hover {
       color: hsla(0, 0%, 100%, .2);
-      background-color: #1890ff;
+      background-color: #1890FF;
       color: #FFF;
     }
   }

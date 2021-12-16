@@ -609,7 +609,7 @@ export default {
   }
 
   .text {
-    color: #868e96;
+    color: #868E96;
     font-size: 13px;
   }
 }
