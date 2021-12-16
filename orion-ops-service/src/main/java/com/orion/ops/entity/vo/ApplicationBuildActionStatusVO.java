@@ -2,12 +2,14 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
- * 应用构建操作状态
+ * 应用执行操作状态
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -27,9 +29,34 @@ public class ApplicationBuildActionStatusVO {
     private Integer status;
 
     /**
-     * used
+     * 执行开始时间
+     */
+    private Date startTime;
+
+    /**
+     * 执行开始时间
+     */
+    private String startTimeAgo;
+
+    /**
+     * 执行结束时间
+     */
+    private Date endTime;
+
+    /**
+     * 执行结束时间
+     */
+    private String endTimeAgo;
+
+    /**
+     * 使用时间 ms
      */
     private Long used;
+
+    /**
+     * 使用时间
+     */
+    private String keepTime;
 
     static {
         TypeStore.STORE.register(ApplicationBuildActionDO.class, ApplicationBuildActionStatusVO.class, p -> {
@@ -37,8 +64,13 @@ public class ApplicationBuildActionStatusVO {
             vo.setId(p.getId());
             vo.setStatus(p.getRunStatus());
             Date startTime = p.getStartTime(), endTime = p.getEndTime();
+            vo.setStartTime(startTime);
+            vo.setStartTimeAgo(Optional.ofNullable(startTime).map(Dates::ago).orElse(null));
+            vo.setEndTime(endTime);
+            vo.setEndTimeAgo(Optional.ofNullable(endTime).map(Dates::ago).orElse(null));
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
+                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
             }
             return vo;
         });

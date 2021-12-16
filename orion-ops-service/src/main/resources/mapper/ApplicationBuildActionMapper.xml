@@ -24,10 +24,34 @@
         id, build_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, create_time, update_time
     </sql>
 
+    <!-- 状态列 -->
+    <sql id="Base_Status_Columns">
+        SELECT id, run_status, start_time, end_time
+        FROM application_build_action
+    </sql>
+
     <select id="selectStatusById" resultType="java.lang.Integer">
         SELECT run_status
         FROM application_build_action
+        WHERE build_id = #{id}
+    </select>
+
+    <select id="selectStatusInfoByBuildId" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE build_id = #{buildId}
+    </select>
+
+    <select id="selectStatusInfoById" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
         WHERE id = #{id}
+    </select>
+
+    <select id="selectStatusInfoByIdList" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 
     <select id="selectActionIdByBuildId" resultType="java.lang.Long">
@@ -35,27 +59,6 @@
         FROM application_build_action
         WHERE build_id = #{buildId}
         ORDER BY id ASC
-    </select>
-
-    <select id="selectStatusInfoById" resultMap="BaseResultMap">
-        SELECT id, run_status, start_time, end_time
-        FROM application_build_action
-        WHERE id = #{id}
-    </select>
-
-    <select id="selectLastBuildBranch" resultType="java.lang.String">
-        SELECT branch_name
-        FROM application_build
-        WHERE vcs_id = #{vcsId}
-        <if test="appId != null">
-            AND app_id = #{appId}
-        </if>
-        <if test="profileId != null">
-            AND profile_id = #{profileId}
-        </if>
-        AND branch_name IS NOT NULL
-        ORDER BY id DESC
-        LIMIT 1
     </select>
 
 </mapper>

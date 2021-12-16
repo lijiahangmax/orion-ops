@@ -38,4 +38,34 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectStatusInfoById" resultMap="BaseResultMap">
+        SELECT id, build_status, build_start_time, build_end_time
+        FROM application_build
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectStatusInfoByIdList" resultMap="BaseResultMap">
+        SELECT id, build_status, build_start_time, build_end_time
+        FROM application_build
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectLastBuildBranch" resultType="java.lang.String">
+        SELECT branch_name
+        FROM application_build
+        WHERE vcs_id = #{vcsId}
+        <if test="appId != null">
+            AND app_id = #{appId}
+        </if>
+        <if test="profileId != null">
+            AND profile_id = #{profileId}
+        </if>
+        AND branch_name IS NOT NULL
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
 </mapper>

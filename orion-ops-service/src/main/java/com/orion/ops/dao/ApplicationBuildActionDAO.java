@@ -25,12 +25,28 @@ public interface ApplicationBuildActionDAO extends BaseMapper<ApplicationBuildAc
     Integer selectStatusById(@Param("id") Long id);
 
     /**
+     * 通过 buildId 查询状态信息
+     *
+     * @param buildId buildId
+     * @return rows
+     */
+    List<ApplicationBuildActionDO> selectStatusInfoByBuildId(@Param("buildId") Long buildId);
+
+    /**
      * 通过 id 查询状态信息
      *
      * @param id id
-     * @return status
+     * @return row
      */
     ApplicationBuildActionDO selectStatusInfoById(@Param("id") Long id);
+
+    /**
+     * 通过 id 查询状态信息
+     *
+     * @param idList idList
+     * @return rows
+     */
+    List<ApplicationBuildActionDO> selectStatusInfoByIdList(@Param("idList") List<Long> idList);
 
     /**
      * 通过 buildId 查询 id
@@ -39,15 +55,5 @@ public interface ApplicationBuildActionDAO extends BaseMapper<ApplicationBuildAc
      * @return id
      */
     List<Long> selectActionIdByBuildId(@Param("buildId") Long buildId);
-
-    /**
-     * 查询上一次构建分支
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @param vcsId     vcsId
-     * @return branch
-     */
-    String selectLastBuildBranch(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("vcsId") Long vcsId);
 
 }

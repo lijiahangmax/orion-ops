@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 构建服务
@@ -197,18 +196,21 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Override
     public ApplicationBuildStatusVO getBuildStatus(Long id) {
-        ApplicationBuildStatusVO status = new ApplicationBuildStatusVO();
         // 查询构建状态
-        Integer buildStatus = applicationBuildDAO.selectStatusById(id);
+        ApplicationBuildDO buildStatus = applicationBuildDAO.selectStatusInfoById(id);
         Valid.notNull(buildStatus, MessageConst.UNKNOWN_DATA);
+        ApplicationBuildStatusVO status = Converts.to(buildStatus, ApplicationBuildStatusVO.class);
         // 查询操作状态
-        List<ApplicationBuildActionStatusVO> actions = applicationBuildActionDAO.selectActionIdByBuildId(id).stream()
-                .map(s -> applicationBuildActionDAO.selectStatusInfoById(s))
-                .map(s -> Converts.to(s, ApplicationBuildActionStatusVO.class))
-                .collect(Collectors.toList());
-        status.setStatus(buildStatus);
+        List<ApplicationBuildActionDO> actionStatus = applicationBuildActionDAO.selectStatusInfoByBuildId(id);
+        List<ApplicationBuildActionStatusVO> actions = Converts.toList(actionStatus, ApplicationBuildActionStatusVO.class);
         status.setActions(actions);
         return status;
+    }
+
+    @Override
+    public List<ApplicationBuildStatusVO> getBuildStatusList(List<Long> buildIdList) {
+        List<ApplicationBuildDO> buildList = applicationBuildDAO.selectStatusInfoByIdList(buildIdList);
+        return Converts.toList(buildList, ApplicationBuildStatusVO.class);
     }
 
     @Override
@@ -229,15 +231,6 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         request.setCommitId(build.getCommitId());
         request.setDescription(build.getDescription());
         return this.submitBuildTask(request);
-    }
-
-    @Override
-    public Map<String, Integer> getBuildStatusList(List<Long> buildIdList) {
-        Map<String, Integer> statusMap = Maps.newLinkedMap();
-        for (Long buildId : buildIdList) {
-            statusMap.put(buildId.toString(), applicationBuildDAO.selectStatusById(buildId));
-        }
-        return statusMap;
     }
 
     @Override

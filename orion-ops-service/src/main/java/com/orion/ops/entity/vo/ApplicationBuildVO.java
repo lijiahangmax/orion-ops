@@ -122,9 +122,14 @@ public class ApplicationBuildVO {
     private String endTimeAgo;
 
     /**
-     * 使用时间
+     * 使用时间 ms
      */
     private Long used;
+
+    /**
+     * 使用时间
+     */
+    private String keepTime;
 
     /**
      * 创建时间
@@ -169,6 +174,7 @@ public class ApplicationBuildVO {
             vo.setEndTimeAgo(Optional.ofNullable(endTime).map(Dates::ago).orElse(null));
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
+                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
             }
             return vo;
         });

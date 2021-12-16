@@ -68,6 +68,15 @@ public class ApplicationBuildController {
     }
 
     /**
+     * 查询构建状态列表
+     */
+    @RequestMapping("/list/status")
+    public List<ApplicationBuildStatusVO> getListStatus(@RequestBody ApplicationBuildRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return applicationBuildService.getBuildStatusList(idList);
+    }
+
+    /**
      * 终止构建
      */
     @RequestMapping("/terminated")
@@ -84,15 +93,6 @@ public class ApplicationBuildController {
     public Long rebuild(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.rebuild(id);
-    }
-
-    /**
-     * 状态列表
-     */
-    @RequestMapping("/list/status")
-    public Map<String, Integer> getListStatus(@RequestBody ApplicationBuildRequest request) {
-        List<Long> idList = Valid.notEmpty(request.getIdList());
-        return applicationBuildService.getBuildStatusList(idList);
     }
 
 }
