@@ -231,16 +231,19 @@ export default {
           return
         }
       }
+      const building = this.$message.loading('正在提交构建请求...', 5)
       this.loading = true
       this.$api.submitAppBuild({
         appId: this.appId,
         profileId: this.profileId,
         ...this.submit
       }).then(() => {
+        building()
         this.$message.success('已开始构建')
         this.$emit('submit')
         this.close()
       }).catch(() => {
+        building()
         this.loading = false
       })
     },

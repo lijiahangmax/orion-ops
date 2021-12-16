@@ -71,18 +71,45 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 初始化 -->
-          <a v-if="$enum.VCS_STATUS.OK.value !== record.status" @click="init(record)">初始化</a>
-          <a-divider v-if="$enum.VCS_STATUS.OK.value !== record.status" type="vertical"/>
+          <a v-if="$enum.VCS_STATUS.UNINITIALIZED.value === record.status || $enum.VCS_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
+          <a v-else-if="$enum.VCS_STATUS.OK.value === record.status" @click="reInit(record)">重新初始化</a>
+          <a-divider type="vertical" v-if="$enum.VCS_STATUS.UNINITIALIZED.value === record.status ||
+                  $enum.VCS_STATUS.ERROR.value === record.status ||
+                  $enum.VCS_STATUS.OK.value === record.status"/>
           <!-- 修改 -->
-          <a @click="update(record.id)">修改</a>
+          <a-button style="padding: 0"
+                    type="link"
+                    :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
+                    @click="update(record.id)">
+            修改
+          </a-button>
           <a-divider type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm title="确认删除当前仓库? 将会清空所有应用的关联!"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
+                        :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
                         @confirm="remove(record.id)">
-            <span class="span-blue pointer">删除</span>
+            <a-button style="padding: 0"
+                      type="link"
+                      :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
+              删除
+            </a-button>
+          </a-popconfirm>
+          <a-divider type="vertical"/>
+          <!-- 清空 -->
+          <a-popconfirm title="确认要清空历史应用构建仓库?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
+                        @confirm="clean(record.id)">
+            <a-button style="padding: 0"
+                      type="link"
+                      :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
+              清空
+            </a-button>
           </a-popconfirm>
         </div>
       </a-table>
@@ -151,7 +178,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 170,
+    width: 240,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -211,6 +238,14 @@ export default {
         this.getList({})
       })
     },
+    clean(id) {
+      this.$message.success('已提交清空请求')
+      this.$api.cleanVcs({
+        id
+      }).then(() => {
+        this.$message.success('清空完毕')
+      })
+    },
     init(record) {
       this.$message.success('已提交初始化请求')
       record.status = this.$enum.VCS_STATUS.INITIALIZING.value
@@ -218,6 +253,18 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('初始化成功')
+        this.getList({})
+      }).catch(() => {
+        this.getList({})
+      })
+    },
+    reInit(record) {
+      this.$message.success('已提交重新初始化请求')
+      record.status = this.$enum.VCS_STATUS.INITIALIZING.value
+      this.$api.reInitVcs({
+        id: record.id
+      }).then(() => {
+        this.$message.success('重新初始化成功')
         this.getList({})
       }).catch(() => {
         this.getList({})

@@ -69,7 +69,7 @@
           <!-- 仓库 -->
           <span class="mr4" title="仓库">{{ record.vcsName }}</span>
           <!-- 分支 -->
-          <span class="mr4" v-if="record.branchName" title="分支"><a-icon type="branches"/>{{ record.branchName }}</span>
+          <span class="mr4" v-if="record.branchName" style="white-space: nowrap;" title="分支"><a-icon type="branches"/>{{ record.branchName }}</span>
           <!-- commitId -->
           <a-tooltip v-if="record.commitId">
             <div slot="title">
@@ -102,10 +102,22 @@
           <a target="_blank" :href="`#/app/build/log/view/${record.id}`">日志</a>
           <a-divider type="vertical"/>
           <!-- 重新构建 -->
-          <a @click="rebuild(record.id)">重新构建</a>
-          <!--          <a-divider type="vertical" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"/>-->
+          <a-popconfirm title="是否要重新构建?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="rebuild(record.id)">
+            <span class="span-blue pointer">重新构建</span>
+          </a-popconfirm>
+          <a-divider type="vertical" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"/>
           <!-- 停止 -->
-          <!--          <a target="_blank" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value">停止</a>-->
+          <a-popconfirm title="是否要停止构建?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="terminated(record.id)">
+            <span class="span-blue pointer" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value">停止</span>
+          </a-popconfirm>
         </div>
       </a-table>
     </div>
@@ -148,8 +160,15 @@ const columns = [
   {
     title: '仓库 / 版本',
     key: 'version',
-    width: 250,
+    width: 260,
     scopedSlots: { customRender: 'version' }
+  },
+  {
+    title: '持续时间',
+    key: 'keepTime',
+    dataIndex: 'keepTime',
+    width: 100,
+    sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
     title: '状态',
@@ -181,7 +200,7 @@ const columns = [
     dataIndex: 'description',
     key: 'description',
     ellipsis: true,
-    width: 180
+    width: 170
   },
   {
     title: '操作',
@@ -253,10 +272,18 @@ export default {
       this.$refs.detail.open(id)
     },
     rebuild(id) {
-      this.$api.rebuildApp({ id }).then(() => {
+      const rebuilding = this.$message.loading('正在提交构建请求...', 5)
+      this.$api.rebuildApp({
+        id
+      }).then(() => {
+        rebuilding()
         this.$message.success('已开始重新构建')
         this.getList({})
+      }).catch(() => {
+        rebuilding()
       })
+    },
+    terminated(id) {
     },
     resetForm() {
       this.$refs.query.resetFields()
@@ -279,9 +306,11 @@ export default {
       this.$api.getAppBuildStatusList({
         idList
       }).then(({ data }) => {
-        for (const id in data) {
-          this.rows.filter(s => s.id === parseInt(id)).forEach(s => {
-            s.status = data[id]
+        for (const build of data) {
+          this.rows.filter(s => s.id === parseInt(build.id)).forEach(s => {
+            s.status = build.status
+            s.keepTime = build.keepTime
+            s.used = build.used
           })
         }
       })

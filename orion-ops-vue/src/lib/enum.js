@@ -638,13 +638,13 @@ const $enum = {
     FINISH: {
       value: 30,
       color: '#4C6EF5',
-      label: '已完成',
+      label: '构建完成',
       stepStatus: 'finish'
     },
     FAILURE: {
       value: 40,
       color: '#F03E3E',
-      label: '执行失败',
+      label: '构建失败',
       stepStatus: 'error'
     },
     TERMINATED: {

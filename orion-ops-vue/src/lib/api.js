@@ -114,7 +114,9 @@ const $api = {
    * 更新用户
    */
   updateAvatar: param => {
-    return $http.$post('/user/update/avatar', param, { timeout: 60000 })
+    return $http.$post('/user/update/avatar', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -177,7 +179,9 @@ const $api = {
    * 复制机器
    */
   copyMachine: param => {
-    return $http.$post('/machine/copy', param)
+    return $http.$post('/machine/copy', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -568,7 +572,9 @@ const $api = {
    * 更新机器环境变量
    */
   updateMachineEnv: param => {
-    return $http.$post('/env/update', param)
+    return $http.$post('/env/update', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -605,7 +611,7 @@ const $api = {
   saveMachineEnvView: param => {
     return $http.$post('/env/view/save', param, {
       skipErrorMessage: true,
-      timeout: 60000
+      timeout: 600000
     })
   },
 
@@ -636,7 +642,9 @@ const $api = {
    * 执行提交
    */
   submitExecTask: param => {
-    return $http.$post('/exec/submit', param)
+    return $http.$post('/exec/submit', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -852,7 +860,7 @@ const $api = {
   saveAppEnvView: param => {
     return $http.$post('/app-env/view/save', param, {
       skipErrorMessage: true,
-      timeout: 60000
+      timeout: 600000
     })
   },
 
@@ -867,14 +875,18 @@ const $api = {
    * 修改应用版本仓库
    */
   updateVcs: param => {
-    return $http.$post('/app-vcs/update', param)
+    return $http.$post('/app-vcs/update', param, {
+      timeout: 600000
+    })
   },
 
   /**
    * 删除版本仓库
    */
   deleteVcs: param => {
-    return $http.$post('/app-vcs/delete', param)
+    return $http.$post('/app-vcs/delete', param, {
+      timeout: 600000
+    })
   },
 
   /**
@@ -896,6 +908,24 @@ const $api = {
    */
   initVcs: param => {
     return $http.$post('/app-vcs/init', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 重新初始化版本仓库
+   */
+  reInitVcs: param => {
+    return $http.$post('/app-vcs/re/init', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 清空
+   */
+  cleanVcs: param => {
+    return $http.$post('/app-vcs/clean', param, {
       timeout: 600000
     })
   },
@@ -1038,7 +1068,9 @@ const $api = {
    * 重新构建应用
    */
   rebuildApp: param => {
-    return $http.$post('/app-build/rebuild', param)
+    return $http.$post('/app-build/rebuild', param, {
+      timeout: 600000
+    })
   },
 
   /**

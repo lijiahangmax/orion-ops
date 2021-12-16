@@ -267,11 +267,15 @@ const moreMenuHandler = {
       okText: '复制',
       cancelText: '取消',
       onOk: () => {
+        const copyLoading = this.$message.loading('正在提交复制请求', 3)
         this.$api.copyApp({
           id: record.id
         }).then(() => {
+          copyLoading()
           this.$message.success('复制成功')
           this.getList()
+        }).catch(() => {
+          copyLoading()
         })
       }
     })
