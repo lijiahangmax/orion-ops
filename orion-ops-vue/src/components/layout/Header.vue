@@ -1,9 +1,20 @@
 <template>
   <a-layout-header class="header-main">
-    <!-- 折叠 -->
-    <a-icon class="fold-trigger header-block-container"
-            :type="fold ? 'menu-fold' : 'menu-unfold'"
-            @click="changeFold"/>
+    <!-- 头部左侧 -->
+    <div class="header-fixed-left">
+      <!-- 折叠 -->
+      <a-icon class="trigger-icon header-block-container"
+              :type="fold ? 'menu-unfold' : 'menu-fold'"
+              :title="fold ? '展开' : '折叠'"
+              @click="changeFold"/>
+      <!-- 返回 -->
+      <a-icon class="trigger-icon header-block-container"
+              title="返回"
+              type="arrow-left"
+              v-show="backVisible"
+              @click="back"/>
+    </div>
+    <!-- 头部右侧 -->
     <div class="header-fixed-right">
       <!-- 环境选择 -->
       <HeaderProfileSelect id="header-profile-selector"
@@ -31,12 +42,12 @@ export default {
     return {
       fold: false,
       profileSelectorVisible: false,
-      visiblePath: ['/console', '/app/env', '/app/list', '/app/build', '/app/release']
+      backVisible: false
     }
   },
   watch: {
     $route(e) {
-      this.checkProfileSelectorVisible(e)
+      this.checkVisible(e)
     }
   },
   methods: {
@@ -44,18 +55,16 @@ export default {
       this.fold = !this.fold
       this.$emit('changeFoldStatus')
     },
-    checkProfileSelectorVisible(e = this.$route) {
-      for (const path of this.visiblePath) {
-        if (e.path.startsWith(path)) {
-          this.profileSelectorVisible = true
-          return
-        }
-      }
-      this.profileSelectorVisible = false
+    back() {
+      this.$router.back(-1)
+    },
+    checkVisible(e = this.$route) {
+      this.profileSelectorVisible = e.meta.visibleProfile === true
+      this.backVisible = e.meta.visibleBack === true
     }
   },
   created() {
-    this.checkProfileSelectorVisible()
+    this.checkVisible()
   }
 }
 </script>
@@ -67,46 +76,49 @@ export default {
   padding-left: 0;
   display: flex;
   justify-content: space-between;
-}
 
-.fold-trigger {
-  font-size: 18px;
-  line-height: 48px;
-  padding: 2px 24px;
-  cursor: pointer;
-  transition: color 0.3s;
-}
+  .header-fixed-left {
+    display: flex;
 
-.fold-trigger :hover {
-  color: #1890ff;
-}
+    .trigger-icon {
+      font-size: 18px;
+      line-height: 48px;
+      padding: 2px 16px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
 
-.header-fixed-right {
-  display: flex;
-  align-items: center;
-}
-
-#header-profile-selector {
-  padding: 0 10px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  line-height: 18px;
-
-  /deep/ i {
-    padding-left: 4px;
-    margin-top: 4px;
+    .trigger-icon:hover {
+      color: #1890FF;
+    }
   }
 
-}
+  .header-fixed-right {
+    display: flex;
+    align-items: center;
 
-#header-user {
-  padding: 0 12px;
-  margin-right: 8px;
-  height: 48px;
-  display: flex;
-  align-items: center;
+    #header-profile-selector {
+      padding: 0 10px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      line-height: 18px;
+
+      /deep/ i {
+        padding-left: 4px;
+        margin-top: 4px;
+      }
+    }
+
+    #header-user {
+      padding: 0 12px;
+      margin-right: 8px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .header-block-container {
@@ -117,7 +129,7 @@ export default {
 .header-block-container:hover {
   color: hsla(0, 0%, 100%, .2);
   background-color: #E7F5FF;
-  color: #148eff;
+  color: #148EFF;
 }
 
 </style>

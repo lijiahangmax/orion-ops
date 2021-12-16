@@ -89,7 +89,8 @@ const routes = [
         name: 'console',
         meta: {
           requireAuth: true,
-          title: '控制台'
+          title: '控制台',
+          visibleProfile: true
         },
         component: () => import('../views/Console')
       },
@@ -107,7 +108,8 @@ const routes = [
         name: 'machineEnv',
         meta: {
           requireAuth: true,
-          title: '环境变量'
+          title: '环境变量',
+          visibleBack: true
         },
         component: () => import('../views/machine/MachineEnv')
       },
@@ -171,16 +173,19 @@ const routes = [
         name: 'appList',
         meta: {
           requireAuth: true,
-          title: '应用列表'
+          title: '应用列表',
+          visibleProfile: true
         },
         component: () => import('../views/app/AppList')
       },
       {
-        path: '/app/conf/:appId/:profileId',
+        path: '/app/conf/:appId',
         name: 'appConfig',
         meta: {
           requireAuth: true,
-          title: '应用配置'
+          title: '应用配置',
+          visibleProfile: true,
+          visibleBack: true
         },
         component: () => import('../views/app/AppConfig')
       },
@@ -198,7 +203,9 @@ const routes = [
         name: 'appEnv',
         meta: {
           requireAuth: true,
-          title: '环境变量'
+          title: '环境变量',
+          visibleProfile: true,
+          visibleBack: true
         },
         component: () => import('../views/app/AppEnv')
       },
@@ -216,7 +223,8 @@ const routes = [
         name: 'appBuild',
         meta: {
           requireAuth: true,
-          title: '应用构建'
+          title: '应用构建',
+          visibleProfile: true
         },
         component: () => import('../views/app/AppBuild')
       },
@@ -225,7 +233,8 @@ const routes = [
         name: 'appRelease',
         meta: {
           requireAuth: true,
-          title: '应用发布'
+          title: '应用发布',
+          visibleProfile: true
         },
         component: () => import('../views/app/AppRelease')
       },
@@ -261,7 +270,8 @@ const routes = [
         name: '404',
         meta: {
           requireAuth: true,
-          title: '404'
+          title: '404',
+          visibleBack: true
         },
         component: () => import('../views/404')
       }

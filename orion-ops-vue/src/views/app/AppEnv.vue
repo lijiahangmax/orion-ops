@@ -5,20 +5,8 @@
       <!-- 机器头 -->
       <div class="app-env-app-header">
         <a-page-header @back="() => {}">
-          <span slot="title"
-                class="ant-page-header-heading-title pointer"
-                title="刷新"
-                @click="getAppList">应用列表</span>
-          <a-icon v-if="!redirectAppId"
-                  slot="backIcon"
-                  type="appstore"
-                  title="刷新"
-                  @click="getAppList"/>
-          <a-icon v-else
-                  slot="backIcon"
-                  type="arrow-left"
-                  title="返回"
-                  @click="backHistory"/>
+          <span slot="title" class="ant-page-header-heading-title pointer">应用列表</span>
+          <a-icon slot="backIcon" type="appstore" title="刷新" @click="getAppList"/>
         </a-page-header>
       </div>
       <!-- 机器菜单 -->
@@ -447,9 +435,6 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getAppEnv({})
-    },
-    backHistory() {
-      this.$router.back(-1)
     }
   },
   created() {

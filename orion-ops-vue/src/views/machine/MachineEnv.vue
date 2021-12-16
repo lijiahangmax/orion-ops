@@ -5,20 +5,8 @@
       <!-- 机器头 -->
       <div class="machine-env-machine-header">
         <a-page-header @back="() => {}">
-          <span slot="title"
-                class="ant-page-header-heading-title pointer"
-                title="刷新"
-                @click="getMachines">机器列表</span>
-          <a-icon v-if="!redirectMachineId"
-                  slot="backIcon"
-                  type="desktop"
-                  title="刷新"
-                  @click="getMachines"/>
-          <a-icon v-else
-                  slot="backIcon"
-                  type="arrow-left"
-                  title="返回"
-                  @click="backHistory"/>
+          <span slot="title" class="ant-page-header-heading-title pointer">机器列表</span>
+          <a-icon slot="backIcon" type="desktop" title="刷新" @click="getMachines"/>
         </a-page-header>
       </div>
       <!-- 机器菜单 -->
@@ -440,9 +428,6 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getMachineEnv({})
-    },
-    backHistory() {
-      this.$router.back(-1)
     }
   },
   created() {
