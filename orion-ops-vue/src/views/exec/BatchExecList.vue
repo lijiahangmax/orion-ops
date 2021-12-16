@@ -131,15 +131,13 @@
           </a-popconfirm>
           <a-divider type="vertical"/>
           <!-- 再次执行 -->
-          <a-popconfirm v-if="record.status === 20"
-                        title="当前任务未执行完毕, 确定再次执行?"
+          <a-popconfirm :title="record.status === 20 ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
                         @confirm="redo(record)">
             <span class="span-blue pointer">再次执行</span>
           </a-popconfirm>
-          <a @click="redo(record)" v-else>再次执行</a>
         </div>
       </a-table>
     </div>
@@ -184,10 +182,10 @@ const columns = [
     scopedSlots: { customRender: 'machine' }
   },
   {
-    title: '命令',
+    title: '执行命令',
     key: 'command',
     ellipsis: true,
-    width: 250,
+    width: 260,
     scopedSlots: { customRender: 'command' }
   },
   {
@@ -205,6 +203,13 @@ const columns = [
     align: 'center',
     sorter: (a, b) => a.exitCode - b.exitCode,
     scopedSlots: { customRender: 'exitCode' }
+  },
+  {
+    title: '持续时间',
+    key: 'keepTime',
+    dataIndex: 'keepTime',
+    width: 100,
+    sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
   },
   {
     title: '执行用户',
@@ -227,6 +232,7 @@ const columns = [
     title: '描述',
     key: 'description',
     ellipsis: true,
+    width: 180,
     scopedSlots: { customRender: 'description' }
   },
   {
@@ -366,6 +372,9 @@ export default {
         for (const status of data) {
           this.rows.filter(s => s.id === status.id).forEach(s => {
             s.status = status.status
+            s.exitCode = status.exitCode
+            s.keepTime = status.keepTime
+            s.used = status.used
           })
         }
       })

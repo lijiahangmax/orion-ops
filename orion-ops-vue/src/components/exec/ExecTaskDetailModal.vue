@@ -55,7 +55,7 @@
             ({{ detail.endDateAgo }})
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.used" label="用时" :span="1">
-            {{ detail.used }}ms
+            {{ `${detail.keepTime} (${detail.used}ms)` }}
           </a-descriptions-item>
         </a-descriptions>
       </div>

@@ -87,7 +87,7 @@
                   <!-- used -->
                   <span class="mx8" title="用时"
                         v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
-                    {{ execMachine.used }}ms
+                    {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
                   </span>
                   <!-- exitCode -->
                   <span class="mx8" title="退出码"
@@ -230,6 +230,7 @@ export default {
             s.status = status.status
             s.exitCode = status.exitCode
             s.used = status.used
+            s.keepTime = status.keepTime
           })
         }
       })

@@ -23,7 +23,7 @@
         <!-- used -->
         <span class="mx8" title="用时"
               v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === status">
-          {{ used }}ms
+            {{ `${keepTime} (${used}ms)` }}
         </span>
         <!-- exitCode -->
         <span class="mx8" title="退出码"
@@ -56,6 +56,7 @@ export default {
       status: null,
       execId: null,
       command: null,
+      keepTime: null,
       used: null,
       exitCode: null,
       pollId: null
@@ -88,8 +89,9 @@ export default {
         if (data && data.length) {
           const status = data[0]
           this.status = status.status
-          this.used = status.used
           this.exitCode = status.exitCode
+          this.used = status.used
+          this.keepTime = status.keepTime
         }
       })
     },
