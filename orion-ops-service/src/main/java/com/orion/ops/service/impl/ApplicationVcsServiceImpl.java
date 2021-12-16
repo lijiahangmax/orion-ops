@@ -7,7 +7,7 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.dao.ApplicationBuildActionDAO;
+import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
@@ -20,6 +20,7 @@ import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
+import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.Converts;
@@ -30,11 +31,11 @@ import com.orion.vcs.git.info.BranchInfo;
 import com.orion.vcs.git.info.LogInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 应用仓库服务
@@ -51,7 +52,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     private ApplicationVcsDAO applicationVcsDAO;
 
     @Resource
-    private ApplicationBuildActionDAO applicationBuildActionDAO;
+    private ApplicationBuildDAO applicationBuildDAO;
 
     @Resource
     private ApplicationInfoDAO applicationInfoDAO;
@@ -204,7 +205,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 获取分支列表
             List<ApplicationVcsBranchVO> branches = Converts.toList(gits.branchList(), ApplicationVcsBranchVO.class);
             // 获取当前环境上次构建分支
-            String lastBranchName = applicationBuildActionDAO.selectLastBuildBranch(request.getAppId(), request.getProfileId(), id);
+            String lastBranchName = applicationBuildDAO.selectLastBuildBranch(request.getAppId(), request.getProfileId(), id);
             if (lastBranchName != null) {
                 defaultBranch = branches.stream()
                         .filter(s -> s.getName().equals(lastBranchName))
@@ -277,6 +278,47 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             return gits;
         } catch (Exception e) {
             throw Exceptions.runtime(MessageConst.VCS_UNABLE_CONNECT, e);
+        }
+    }
+
+    @Override
+    public void cleanBuildVcs(Long id) {
+        File rootPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EMPTY));
+        if (!Files1.isDirectory(rootPath)) {
+            return;
+        }
+        // 查询文件夹
+        File[] files = rootPath.listFiles(e -> !e.getName().equals(Const.EVENT)
+                && e.isDirectory()
+                && Strings.isInteger(e.getName()));
+        if (Arrays1.isEmpty(files)) {
+            return;
+        }
+        // 保留两个版本 防止清空正在进行中的构建任务
+        int length = files.length;
+        if (length <= 2) {
+            return;
+        }
+        Arrays.sort(files, Comparator.comparing(s -> Integer.parseInt(s.getName())));
+        for (int i = 0; i < length - 2; i++) {
+            Files1.delete(files[i]);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void syncVcsStatus() {
+        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(new LambdaQueryWrapper<>());
+        for (ApplicationVcsDO vcs : vcsList) {
+            Long id = vcs.getId();
+            File vcsPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            boolean isDir = Files1.isDirectory(vcsPath);
+            // 更新状态
+            ApplicationVcsDO update = new ApplicationVcsDO();
+            update.setId(id);
+            update.setVcsStatus(isDir ? VcsStatus.OK.getStatus() : VcsStatus.UNINITIALIZED.getStatus());
+            update.setUpdateTime(new Date());
+            applicationVcsDAO.updateById(update);
         }
     }
 

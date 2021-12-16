@@ -66,6 +66,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String ROOT = "root";
 
+    public static final String EVENT = "event";
+
     public static final Integer FORBID_DELETE_CAN = 1;
 
     public static final Integer FORBID_DELETE_NOT = 2;

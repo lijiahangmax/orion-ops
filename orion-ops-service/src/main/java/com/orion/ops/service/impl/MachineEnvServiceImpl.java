@@ -13,6 +13,7 @@ import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
+import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
@@ -48,6 +49,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Resource
     private HistoryValueService historyValueService;
+
+    @Resource
+    private ApplicationVcsService applicationVcsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -85,6 +89,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer updateEnv(MachineEnvDO before, MachineEnvRequest request) {
         // 检查是否修改了值
         Long id = before.getId();
@@ -104,6 +109,12 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             MachineEnvAttr env = MachineEnvAttr.of(before.getAttrKey());
             if (env != null) {
                 env.setValue(afterValue);
+                if (afterValue != null && !afterValue.equals(beforeValue)) {
+                    if (MachineEnvAttr.VCS_PATH.equals(env)) {
+                        // 如果修改的是 vcs 则修改 vcs 状态
+                        applicationVcsService.syncVcsStatus();
+                    }
+                }
             }
         }
         // 修改

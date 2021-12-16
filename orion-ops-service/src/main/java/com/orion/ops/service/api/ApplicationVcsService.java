@@ -103,4 +103,16 @@ public interface ApplicationVcsService {
      */
     Gits openEventGit(Long id);
 
+    /**
+     * 清空 vcs
+     *
+     * @param id id
+     */
+    void cleanBuildVcs(Long id);
+
+    /**
+     * 同步vcs状态
+     */
+    void syncVcsStatus();
+
 }

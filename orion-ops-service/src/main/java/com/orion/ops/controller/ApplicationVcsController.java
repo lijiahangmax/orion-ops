@@ -125,4 +125,14 @@ public class ApplicationVcsController {
         return applicationVcsService.getVcsCommitList(id, branchName);
     }
 
+    /**
+     * 清空应用构建历史版本
+     */
+    @RequestMapping("/clean")
+    public HttpWrapper<?> cleanBuildVcs(@RequestBody ApplicationVcsRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationVcsService.cleanBuildVcs(id);
+        return HttpWrapper.ok();
+    }
+
 }
