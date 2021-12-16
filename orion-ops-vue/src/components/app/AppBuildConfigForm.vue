@@ -1,6 +1,6 @@
 <template>
-  <a-spin :spinning="loading">
-    <div id="app-conf-container">
+  <div id="app-conf-container">
+    <a-spin :spinning="loading">
       <!-- 产物路径 -->
       <div id="app-bundle-wrapper">
       <span class="label">
@@ -67,8 +67,8 @@
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
       </div>
-    </div>
-  </a-spin>
+    </a-spin>
+  </div>
 </template>
 
 <script>
@@ -84,7 +84,7 @@ export default {
   name: 'AppBuildConfigForm',
   props: {
     appId: Number,
-    profileId: Number,
+    dataLoading: Boolean,
     detail: Object
   },
   components: {
@@ -98,13 +98,39 @@ export default {
   data() {
     return {
       loading: false,
+      profileId: null,
       vcsId: null,
       bundlePath: undefined,
       actions: [],
       editorConfig
     }
   },
+  watch: {
+    detail(e) {
+      this.initData(e)
+    },
+    dataLoading(e) {
+      this.loading = e
+    }
+  },
   methods: {
+    initData(detail) {
+      this.profileId = detail.profileId
+      this.vcsId = detail.vcsId
+      this.bundlePath = detail.bundlePath
+      if (detail.buildActions && detail.buildActions.length) {
+        this.actions = detail.buildActions.map(s => {
+          return {
+            visible: true,
+            name: s.name,
+            type: s.type,
+            command: s.command
+          }
+        })
+      } else {
+        this.actions = []
+      }
+    },
     addAction(type) {
       this.actions.push({
         type,
@@ -163,18 +189,7 @@ export default {
     }
   },
   mounted() {
-    this.vcsId = this.detail.vcsId
-    this.bundlePath = this.detail.bundlePath
-    if (this.detail.buildActions && this.detail.buildActions.length) {
-      this.actions = this.detail.buildActions.map(s => {
-        return {
-          visible: true,
-          name: s.name,
-          type: s.type,
-          command: s.command
-        }
-      })
-    }
+    this.initData(this.detail)
   }
 }
 </script>

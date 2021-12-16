@@ -7,9 +7,9 @@
           <a-spin :spinning="loading">
             <!-- 表单 -->
             <AddAppForm ref="basicForm" :layout="{
-            labelCol: { span: 5 },
-            wrapperCol: { span: 19 }
-          }"/>
+              labelCol: { span: 5 },
+              wrapperCol: { span: 19 }
+            }"/>
             <div class="app-basic-form-footer">
               <a-button type="primary" @click="updateBasic">修改</a-button>
             </div>
@@ -18,11 +18,11 @@
       </a-tab-pane>
       <!-- 构建配置 -->
       <a-tab-pane key="2" tab="构建配置">
-        <AppBuildConfigForm :appId="appId" :profileId="profileId" :detail="detail"/>
+        <AppBuildConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
       </a-tab-pane>
       <!-- 发布配置 -->
       <a-tab-pane key="3" tab="发布配置">
-        <AppReleaseConfigForm :appId="appId" :profileId="profileId" :detail="detail"/>
+        <AppReleaseConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -46,29 +46,43 @@ export default {
       detail: {}
     }
   },
+  watch: {
+    profileId() {
+      this.loadAppConfig()
+    }
+  },
   methods: {
+    chooseProfile({ id }) {
+      this.profileId = id
+    },
+    loadAppConfig() {
+      this.loading = true
+      this.$api.getAppDetail({
+        id: this.appId,
+        profileId: this.profileId
+      }).then(({ data }) => {
+        this.loading = false
+        data.profileId = this.profileId
+        this.detail = data
+        // 初始化表单
+        this.$refs.basicForm && this.$refs.basicForm.initRecord(data)
+      }).catch(() => {
+        this.loading = false
+      })
+    },
     updateBasic() {
       this.$refs.basicForm.check()
     }
   },
   created() {
     this.appId = parseInt(this.$route.params.appId)
-    this.profileId = parseInt(this.$route.params.profileId)
-  },
-  mounted() {
-    // 加载数据
-    this.loading = true
-    this.$api.getAppDetail({
-      id: this.appId,
-      profileId: this.profileId
-    }).then(({ data }) => {
-      this.loading = false
-      this.detail = data
-      // 初始化表单
-      this.$refs.basicForm && this.$refs.basicForm.initRecord(data)
-    }).catch(() => {
-      this.loading = false
-    })
+    // 读取当前环境
+    const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
+    if (!activeProfile) {
+      this.$message.warning('请先维护应用环境')
+      return
+    }
+    this.profileId = JSON.parse(activeProfile).id
   }
 }
 </script>

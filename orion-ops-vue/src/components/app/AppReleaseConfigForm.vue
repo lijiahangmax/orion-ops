@@ -1,6 +1,6 @@
 <template>
-  <a-spin :spinning="loading">
-    <div id="app-conf-container">
+  <div id="app-conf-container">
+    <a-spin :spinning="loading">
       <!-- 发布机器 -->
       <div id="app-machine-wrapper">
       <span class="label">
@@ -74,8 +74,8 @@
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
       </div>
-    </div>
-  </a-spin>
+    </a-spin>
+  </div>
 </template>
 
 <script>
@@ -93,7 +93,7 @@ export default {
   name: 'AppReleaseConfigForm',
   props: {
     appId: Number,
-    profileId: Number,
+    dataLoading: Boolean,
     detail: Object
   },
   components: {
@@ -108,6 +108,7 @@ export default {
   data() {
     return {
       loading: false,
+      profileId: null,
       transferPath: undefined,
       releaseSerial: _enum.RELEASE_SERIAL_TYPE.PARALLEL.value,
       machines: [],
@@ -115,7 +116,37 @@ export default {
       editorConfig
     }
   },
+  watch: {
+    detail(e) {
+      this.initData(e)
+    },
+    dataLoading(e) {
+      this.loading = e
+    }
+  },
   methods: {
+    initData(detail) {
+      this.profileId = detail.profileId
+      this.transferPath = detail.transferPath
+      this.releaseSerial = detail.releaseSerial
+      if (detail.releaseMachines && detail.releaseMachines.length) {
+        this.machines = detail.releaseMachines.map(s => s.machineId)
+      } else {
+        this.machines = []
+      }
+      if (detail.releaseActions && detail.releaseActions.length) {
+        this.actions = detail.releaseActions.map(s => {
+          return {
+            visible: true,
+            name: s.name,
+            type: s.type,
+            command: s.command
+          }
+        })
+      } else {
+        this.actions = []
+      }
+    },
     chooseMachines() {
       const ref = this.$refs.machineChecker
       this.machines = ref.checkedList
@@ -186,21 +217,7 @@ export default {
     }
   },
   mounted() {
-    this.transferPath = this.detail.transferPath
-    this.releaseSerial = this.detail.releaseSerial
-    if (this.detail.releaseMachines && this.detail.releaseMachines.length) {
-      this.machines = this.detail.releaseMachines.map(s => s.machineId)
-    }
-    if (this.detail.releaseActions && this.detail.releaseActions.length) {
-      this.actions = this.detail.releaseActions.map(s => {
-        return {
-          visible: true,
-          name: s.name,
-          type: s.type,
-          command: s.command
-        }
-      })
-    }
+    this.initData(this.detail)
   }
 }
 </script>
