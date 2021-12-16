@@ -72,11 +72,10 @@
                   <a-button :disabled="!sessionToken" title="上传" icon="cloud-upload"/>
                 </a-popover>
                 <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-transfer-list-popover">
-                  <FileTransferList slot="content" :sessionToken="sessionToken"/>
-                  <a-button :disabled="!sessionToken" title="传输列表" icon="unordered-list"/>
+                  <FileTransferList slot="content" ref="transferList" :sessionToken="sessionToken"/>
+                  <a-button :disabled="!sessionToken" title="传输列表" icon="unordered-list" @click="loadTransferList"/>
                 </a-popover>
               </a-button-group>
-              <a-input id="upload-file-input" type="file" style="display: none" @change="checkUploadFile($event)"/>
             </div>
           </div>
         </div>
@@ -110,7 +109,7 @@
               slot="nameFilterIcon"
               slot-scope="filtered"
               type="search"
-              :style="{ color: filtered ? '#108ee9' : undefined }"
+              :style="{ color: filtered ? '#108EE9' : undefined }"
             />
             <!-- 名称筛选输入框 -->
             <div slot="nameFilterDropdown"
@@ -510,6 +509,11 @@ export default {
         filePath: record.path,
         permission: record.permission
       })
+    },
+    loadTransferList() {
+      setTimeout(() => {
+        this.$refs.transferList.open()
+      })
     }
   },
   filters: {
@@ -574,9 +578,9 @@ export default {
   .sftp-home {
     display: flex;
     align-items: center;
-    margin-right: 8px;
     font-size: 22px;
     cursor: pointer;
+    margin: 0 8px 0 4px;
   }
 
   .sftp-navigator-paths {

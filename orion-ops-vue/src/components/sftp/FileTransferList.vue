@@ -170,7 +170,7 @@ function openSftpNotify() {
     }, 500)
   }
   this.notifyClient.onclose = e => {
-    console.log('sftpNotify已断开', e.code, e.reason)
+    console.log('sftp notify close', e.code, e.reason)
   }
   this.notifyClient.onmessage = msg => {
     const body = JSON.parse(msg.data)
@@ -239,13 +239,36 @@ export default {
   },
   data: function() {
     return {
+      init: false,
       notifyClient: null,
       transferList: [],
       curr: null,
       packageVisible: false
     }
   },
+  watch: {
+    sessionToken(e) {
+      this.close()
+    }
+  },
   methods: {
+    open() {
+      !this.init && this.initData()
+    },
+    initData() {
+      this.init = true
+      // 加载传输列表
+      this.getTransferList()
+      // 打开sftp通知
+      openSftpNotify.call(this)
+    },
+    close() {
+      this.init = false
+      this.curr = null
+      this.transferList = []
+      this.notifyClient && this.notifyClient.close()
+      this.notifyClient = null
+    },
     getTransferList() {
       this.$api.sftpTransferList({ sessionToken: this.sessionToken })
         .then(({ data }) => {
@@ -306,12 +329,6 @@ export default {
     clickTransferRightMenuItem({ key }) {
       transferRightMenuHandler[key].call(this)
     }
-  },
-  mounted() {
-    // 加载传输列表
-    this.getTransferList()
-    // 打开sftp通知
-    openSftpNotify.call(this)
   }
 }
 </script>

@@ -50,11 +50,15 @@ export default {
     return {
       selectedMachine: [],
       currentMachine: {},
+      initMachineId: null,
       machineId: null
     }
   },
   methods: {
     changeSftpMain(id) {
+      if (this.machineId === id) {
+        return
+      }
       const filterMachines = this.$refs.machineList.list.filter(m => m.id === id)
       if (filterMachines.length) {
         this.currentMachine = filterMachines[0]
@@ -81,16 +85,16 @@ export default {
   },
   created() {
     if (this.$route.params.id) {
-      this.machineId = parseInt(this.$route.params.id)
+      this.initMachineId = parseInt(this.$route.params.id)
     } else {
-      this.machineId = 1
+      this.initMachineId = 1
     }
-    this.selectedMachine = [this.machineId]
+    this.selectedMachine = [this.initMachineId]
   },
   async mounted() {
     await this.$refs.machineList.getMachineList()
     this.$utils.defineArrayKey(this.$refs.machineList.list, 'session')
-    this.changeSftpMain(this.machineId)
+    this.changeSftpMain(this.initMachineId)
   }
 }
 </script>
