@@ -35,135 +35,139 @@
     </div>
     <!-- 环境变量容器 -->
     <div class="machine-env-machine-env-container">
-      <!-- 环境变量筛选 -->
-      <div class="table-search-columns">
-        <a-form-model class="machine-env-machine-env-search-form" ref="query" :model="query">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="key" prop="key">
-                <a-input v-model="query.key"/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="value" prop="value">
-                <a-input v-model="query.value"/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="描述" prop="description">
-                <a-input v-model="query.description"/>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </div>
-      <!-- 工具栏 -->
-      <div class="table-tools-bar">
-        <!-- 左侧 -->
-        <div class="tools-fixed-left">
-          <span class="table-title">环境变量</span>
-          <a-divider type="vertical"/>
-          <!-- 视图 -->
-          <div class="mx8">
-            <a-radio-group v-model="viewType" buttonStyle="solid">
-              <a-radio-button v-for="view in $enum.VIEW_TYPE"
-                              :key="view.value"
-                              :value="view.value"
-                              @click="changeView(view)">
-                {{ view.name }}
-              </a-radio-button>
-            </a-radio-group>
+      <div class="machine-env-wrapper">
+        <!-- 环境变量筛选 -->
+        <div class="table-search-columns">
+          <a-form-model class="machine-env-machine-env-search-form" ref="query" :model="query">
+            <a-row>
+              <a-col :span="6">
+                <a-form-model-item label="key" prop="key">
+                  <a-input v-model="query.key"/>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="value" prop="value">
+                  <a-input v-model="query.value"/>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="描述" prop="description">
+                  <a-input v-model="query.description"/>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
+        </div>
+        <!-- 工具栏 -->
+        <div class="table-tools-bar">
+          <!-- 左侧 -->
+          <div class="tools-fixed-left">
+            <span class="table-title">环境变量</span>
+            <a-divider type="vertical"/>
+            <!-- 视图 -->
+            <div class="mx8">
+              <a-radio-group v-model="viewType" buttonStyle="solid">
+                <a-radio-button v-for="view in $enum.VIEW_TYPE"
+                                :key="view.value"
+                                :value="view.value"
+                                @click="changeView(view)">
+                  {{ view.name }}
+                </a-radio-button>
+              </a-radio-group>
+            </div>
+            <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+            <!-- 删除 -->
+            <a-button class="ml8" v-show="selectedRowKeys.length"
+                      type="danger"
+                      icon="delete"
+                      @click="batchRemove()">
+              删除
+            </a-button>
           </div>
-          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-          <!-- 删除 -->
-          <a-button class="ml8" v-show="selectedRowKeys.length"
-                    type="danger"
-                    icon="delete"
-                    @click="batchRemove()">
-            删除
-          </a-button>
+          <!-- 右侧 -->
+          <div class="tools-fixed-right">
+            <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
+                      type="primary"
+                      icon="check"
+                      :disabled="loading"
+                      @click="save">
+              保存
+            </a-button>
+            <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
+            <MachineChecker ref="machineChecker-1" :disableValue="[query.machineId]" placement="bottomRight">
+              <a-button slot="trigger" class="mx8" type="primary" icon="sync">同步</a-button>
+              <a-button type="primary" size="small" slot="footer" @click="syncEnv(-1)">确定</a-button>
+            </MachineChecker>
+            <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+            <a-divider type="vertical"/>
+            <a-icon type="search" class="tools-icon" title="查询" @click="getMachineEnv({})"/>
+            <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+          </div>
         </div>
-        <!-- 右侧 -->
-        <div class="tools-fixed-right">
-          <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
-                    type="primary"
-                    icon="check"
-                    :disabled="loading"
-                    @click="save">
-            保存
-          </a-button>
-          <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
-          <MachineChecker ref="machineChecker-1" :disableValue="[query.machineId]" placement="bottomRight">
-            <a-button slot="trigger" class="mx8" type="primary" icon="sync">同步</a-button>
-            <a-button type="primary" size="small" slot="footer" @click="syncEnv(-1)">确定</a-button>
-          </MachineChecker>
-          <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
-          <a-divider type="vertical"/>
-          <a-icon type="search" class="tools-icon" title="查询" @click="getMachineEnv({})"/>
-          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-        </div>
-      </div>
-      <!-- 环境变量表格 -->
-      <div class="table-main-container table-scroll-x-auto" v-if="viewType === $enum.VIEW_TYPE.TABLE.value">
-        <a-table :columns="columns"
-                 :dataSource="rows"
-                 :pagination="pagination"
-                 :rowSelection="rowSelection"
-                 rowKey="id"
-                 @change="getMachineEnv"
-                 :scroll="{x: '100%'}"
-                 :loading="loading"
-                 size="middle">
-          <!-- key -->
-          <div slot="key" slot-scope="record" class="auto-ellipsis">
-            <a class="copy-icon-left" @click="$copy(record.key)">
-              <a-icon type="copy"/>
-            </a>
-            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
+        <!-- 环境变量表格 -->
+        <div class="table-main-container table-scroll-x-auto"
+             style="border-radius: 4px 4px 0 0;"
+             v-if="viewType === $enum.VIEW_TYPE.TABLE.value">
+          <a-table :columns="columns"
+                   :dataSource="rows"
+                   :pagination="pagination"
+                   :rowSelection="rowSelection"
+                   rowKey="id"
+                   @change="getMachineEnv"
+                   :scroll="{x: '100%'}"
+                   :loading="loading"
+                   size="middle">
+            <!-- key -->
+            <div slot="key" slot-scope="record" class="auto-ellipsis">
+              <a class="copy-icon-left" @click="$copy(record.key)">
+                <a-icon type="copy"/>
+              </a>
+              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
               {{ record.key }}</span>
-          </div>
-          <!-- value -->
-          <div slot="value" slot-scope="record" class="auto-ellipsis">
-            <a class="copy-icon-left" @click="$copy(record.value)">
-              <a-icon type="copy"/>
-            </a>
-            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
+            </div>
+            <!-- value -->
+            <div slot="value" slot-scope="record" class="auto-ellipsis">
+              <a class="copy-icon-left" @click="$copy(record.value)">
+                <a-icon type="copy"/>
+              </a>
+              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
               {{ record.value }}
             </span>
-          </div>
-          <!-- 修改时间 -->
-          <span slot="updateTime" slot-scope="record">
+            </div>
+            <!-- 修改时间 -->
+            <span slot="updateTime" slot-scope="record">
               {{
-              record.updateTime | formatDate({
-                date: record.updateTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
+                record.updateTime | formatDate({
+                  date: record.updateTime,
+                  pattern: 'yyyy-MM-dd HH:mm:ss'
+                })
+              }}
           </span>
-          <!-- 操作 -->
-          <div slot="action" slot-scope="record">
-            <a @click="update(record.id)">修改</a>
-            <a-divider type="vertical"/>
-            <MachineChecker :ref="'machineChecker' + record.id" :disableValue="[query.machineId]" placement="bottomRight">
-              <a slot="trigger">同步</a>
-              <a-button type="primary" size="small" slot="footer" @click="syncEnv(record.id)">确定</a-button>
-            </MachineChecker>
-            <a-divider type="vertical"/>
-            <a @click="history(record)">历史</a>
-            <a-divider v-if="record.forbidDelete === 1" type="vertical"/>
-            <a-popconfirm v-if="record.forbidDelete === 1"
-                          placement="topRight"
-                          title="是否删除当前变量?"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="remove(record.id)">
-              <span class="span-blue pointer">删除</span>
-            </a-popconfirm>
-          </div>
-        </a-table>
+            <!-- 操作 -->
+            <div slot="action" slot-scope="record">
+              <a @click="update(record.id)">修改</a>
+              <a-divider type="vertical"/>
+              <MachineChecker :ref="'machineChecker' + record.id" :disableValue="[query.machineId]" placement="bottomRight">
+                <a slot="trigger">同步</a>
+                <a-button type="primary" size="small" slot="footer" @click="syncEnv(record.id)">确定</a-button>
+              </MachineChecker>
+              <a-divider type="vertical"/>
+              <a @click="history(record)">历史</a>
+              <a-divider v-if="record.forbidDelete === 1" type="vertical"/>
+              <a-popconfirm v-if="record.forbidDelete === 1"
+                            placement="topRight"
+                            title="是否删除当前变量?"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="remove(record.id)">
+                <span class="span-blue pointer">删除</span>
+              </a-popconfirm>
+            </div>
+          </a-table>
+        </div>
       </div>
       <!-- 环境变量视图 -->
-      <div class="table-main-container env-editor-container" v-else>
+      <div class="table-main-container env-editor-container" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value">
         <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
           <Editor ref="editor" :value="viewValue" :lang="viewLang"/>
         </a-spin>
@@ -487,31 +491,36 @@ export default {
   }
 
   .machine-env-machine-env-container {
-    width: calc(100% - 222px)
+    width: calc(100% - 222px);
+    min-height: calc(100vh - 84px);
+    background: #FFF;
+    border-radius: 4px;
+
+    .machine-env-wrapper {
+      background: #F0F2F5;
+    }
   }
 
   .env-editor-container {
     height: calc(100% - 150px);
     padding-bottom: 8px;
   }
-
 }
 
 .machine-env-machine-list {
   width: 200px;
-  min-height: 25vh;
-  max-height: 740px;
+  height: calc(100vh - 162px);
   border-radius: 5px;
   overflow-y: auto;
   margin-right: 20px;
-}
 
-.machine-env-machine-list ul {
-  background-color: #FFF;
-}
+  ul {
+    background-color: #FFF;
+  }
 
-.machine-env-machine-list::-webkit-scrollbar-track {
-  background: #FFF;
+  ::-webkit-scrollbar-track {
+    background: #FFF;
+  }
 }
 
 .editor-spin /deep/ .ant-spin-container {
