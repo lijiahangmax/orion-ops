@@ -16,6 +16,7 @@ import com.orion.ops.entity.vo.ApplicationBuildActionStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildActionVO;
 import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
+import com.orion.ops.handler.build.BuildSessionHolder;
 import com.orion.ops.handler.build.IBuilderProcessor;
 import com.orion.ops.service.api.ApplicationActionService;
 import com.orion.ops.service.api.ApplicationBuildService;
@@ -67,6 +68,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Resource
     private MachineEnvService machineEnvService;
+
+    @Resource
+    private BuildSessionHolder buildSessionHolder;
 
     @Override
     public Long submitBuildTask(ApplicationBuildRequest request) {
@@ -215,7 +219,41 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Override
     public void terminatedBuildTask(Long id) {
-
+        // 获取数据
+        ApplicationBuildDO build = applicationBuildDAO.selectById(id);
+        Valid.notNull(build, MessageConst.UNKNOWN_DATA);
+        // 检查状态
+        ApplicationBuildDO update;
+        switch (BuildStatus.of(build.getBuildStatus())) {
+            case WAIT:
+                // 修改状态
+                update = new ApplicationBuildDO();
+                update.setId(id);
+                update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
+                update.setBuildStartTime(new Date());
+                update.setBuildEndTime(update.getBuildStartTime());
+                applicationBuildDAO.updateById(update);
+                break;
+            case RUNNABLE:
+                // 获取实例
+                IBuilderProcessor session = buildSessionHolder.getSession(id);
+                if (session == null) {
+                    update = new ApplicationBuildDO();
+                    update.setId(id);
+                    update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
+                    update.setBuildEndTime(new Date());
+                    applicationBuildDAO.updateById(update);
+                } else {
+                    // 调用终止
+                    session.terminated();
+                }
+                break;
+            case FAILURE:
+            case FINISH:
+            case TERMINATED:
+            default:
+                break;
+        }
     }
 
     @Override

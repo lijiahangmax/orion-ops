@@ -5,6 +5,7 @@ import com.orion.exception.LogException;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
+import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
@@ -29,6 +30,7 @@ import com.orion.utils.io.Streams;
 import com.orion.utils.io.compress.CompressTypeEnum;
 import com.orion.utils.io.compress.FileCompressor;
 import com.orion.utils.time.Dates;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,10 +54,13 @@ public class BuilderProcessor implements IBuilderProcessor {
 
     private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    protected static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+    private static ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
 
-    protected static ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
+    private static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
 
+    private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
+
+    @Getter
     private Long buildId;
 
     private ApplicationBuildDO record;
@@ -65,9 +70,14 @@ public class BuilderProcessor implements IBuilderProcessor {
      */
     private List<IBuildHandler> handlerList;
 
-    protected OutputStream logStream;
+    private OutputStream logStream;
 
-    protected BuildStore store;
+    private BuildStore store;
+
+    /**
+     * 是否已终止
+     */
+    private volatile boolean terminated;
 
     public BuilderProcessor(Long buildId) {
         this.buildId = buildId;
@@ -85,9 +95,15 @@ public class BuilderProcessor implements IBuilderProcessor {
         log.info("应用构建任务执行开始 buildId: {}", buildId);
         // 查询构建信息
         this.getBuildData();
+        // 检查状态
+        if (!BuildStatus.WAIT.getStatus().equals(record.getBuildStatus())) {
+            return;
+        }
         Exception ex = null;
         boolean isMainError = false;
         try {
+            // 添加session
+            buildSessionHolder.addSession(this);
             // 更新状态
             this.updateStatus(BuildStatus.RUNNABLE);
             // 打开日志
@@ -96,12 +112,14 @@ public class BuilderProcessor implements IBuilderProcessor {
             this.openMachineSession();
             // 执行
             for (IBuildHandler handler : handlerList) {
-                if (ex == null) {
+                if (ex == null && !terminated) {
                     try {
                         // 执行
                         handler.exec();
                     } catch (Exception e) {
-                        ex = e;
+                        if (!terminated) {
+                            ex = e;
+                        }
                     }
                 } else {
                     // 跳过
@@ -109,7 +127,7 @@ public class BuilderProcessor implements IBuilderProcessor {
                 }
             }
             // 复制产物文件
-            if (ex == null) {
+            if (ex == null && !terminated) {
                 this.copyBundleFile();
             }
         } catch (Exception e) {
@@ -117,18 +135,32 @@ public class BuilderProcessor implements IBuilderProcessor {
             ex = e;
             isMainError = true;
             log.error("应用构建任务执行失败 buildId: {}, e: {}", buildId, e);
+        } finally {
+            // 移除session
+            buildSessionHolder.removeSession(this.buildId);
         }
         // 更新状态
-        this.updateStatus(ex == null ? BuildStatus.FINISH : BuildStatus.FAILURE);
-        // 拼接日志
-        this.appendFinishedLog(ex, isMainError);
+        if (terminated) {
+            this.updateStatus(BuildStatus.TERMINATED);
+            this.appendFinishedLog(null, false);
+        } else {
+            this.updateStatus(ex == null ? BuildStatus.FINISH : BuildStatus.FAILURE);
+            this.appendFinishedLog(ex, isMainError);
+        }
         // 关闭
         Streams.close(this);
     }
 
     @Override
     public void terminated() {
-
+        // 设置状态为已停止
+        this.terminated = true;
+        // 结束正在执行的action
+        for (IBuildHandler handler : handlerList) {
+            if (ActionStatus.RUNNABLE.equals(handler.getStatus())) {
+                handler.terminated();
+            }
+        }
     }
 
     /**
@@ -138,7 +170,6 @@ public class BuilderProcessor implements IBuilderProcessor {
         // 查询build
         this.record = applicationBuildService.selectById(buildId);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
-        Valid.isTrue(BuildStatus.WAIT.getStatus().equals(record.getBuildStatus()), MessageConst.INVALID_STATUS);
         log.info("应用构建器-获取数据-build buildId: {}, record: {}", buildId, JSON.toJSONString(record));
         // 查询action
         List<ApplicationBuildActionDO> actions = applicationBuildService.selectActionById(buildId);
@@ -280,9 +311,15 @@ public class BuilderProcessor implements IBuilderProcessor {
                     .append("ms\n");
         } else {
             // 无异常
-            log.append("# 构建完成 结束时间: ").append(Dates.format(record.getBuildEndTime()))
-                    .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
-                    .append("ms\n");
+            if (terminated) {
+                log.append("# 构建手动停止 结束时间: ").append(Dates.format(record.getBuildEndTime()))
+                        .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
+                        .append("ms\n");
+            } else {
+                log.append("# 构建完成 结束时间: ").append(Dates.format(record.getBuildEndTime()))
+                        .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
+                        .append("ms\n");
+            }
         }
         // 拼接日志
         this.appendLog(log.toString());

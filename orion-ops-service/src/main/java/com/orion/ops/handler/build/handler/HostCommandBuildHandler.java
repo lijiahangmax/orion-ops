@@ -40,8 +40,8 @@ public class HostCommandBuildHandler extends AbstractBuildHandler {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void terminated() {
+        super.terminated();
         // 关闭executor
         Streams.close(executor);
     }
@@ -49,6 +49,13 @@ public class HostCommandBuildHandler extends AbstractBuildHandler {
     @Override
     public Integer getExitCode() {
         return exitCode;
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        // 关闭executor
+        Streams.close(executor);
     }
 
 }

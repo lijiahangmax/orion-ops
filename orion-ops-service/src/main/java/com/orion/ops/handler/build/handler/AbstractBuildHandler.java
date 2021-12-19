@@ -13,6 +13,7 @@ import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,11 +43,15 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
 
     protected OutputAppender appender;
 
+    @Getter
+    protected volatile ActionStatus status;
+
     public AbstractBuildHandler(Long actionId, BuildStore store) {
         this.actionId = actionId;
         this.store = store;
         this.buildId = store.getBuildRecord().getId();
         this.action = store.getActions().get(actionId);
+        this.status = ActionStatus.WAIT;
     }
 
     @Override
@@ -64,12 +69,17 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
             log.error("应用构建action-异常: buildId: {}, actionId: {}", buildId, actionId, e);
             ex = e;
         }
-        // 修改状态
-        this.updateStatus(ex == null ? ActionStatus.FINISH : ActionStatus.FAILURE);
-        // 拼接日志
-        this.appendFinishedLog(ex);
-        if (ex != null) {
-            throw Exceptions.runtime(ex.getMessage(), ex);
+        if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
+            // 拼接日志
+            this.appendTerminatedLog();
+        } else {
+            // 修改状态
+            this.updateStatus(ex == null ? ActionStatus.FINISH : ActionStatus.FAILURE);
+            // 拼接日志
+            this.appendFinishedLog(ex);
+            if (ex != null) {
+                throw Exceptions.runtime(ex.getMessage(), ex);
+            }
         }
     }
 
@@ -127,7 +137,6 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
      *
      * @param ex ex
      */
-    @SneakyThrows
     private void appendFinishedLog(Exception ex) {
         StringBuilder log = new StringBuilder();
         if (ex != null) {
@@ -153,6 +162,18 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
     }
 
     /**
+     * 拼接停止日志
+     */
+    private void appendTerminatedLog() {
+        StringBuilder log = new StringBuilder()
+                .append("\n# 构建操作手动停止 ").append(action.getActionName())
+                .append(" used: ").append(action.getEndTime().getTime() - action.getStartTime().getTime())
+                .append("ms\n\n");
+        // 拼接日志
+        this.appendLog(log.toString());
+    }
+
+    /**
      * 拼接日志
      *
      * @param log log
@@ -172,6 +193,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         update.setId(actionId);
         update.setRunStatus(status.getStatus());
         action.setRunStatus(status.getStatus());
+        this.status = status;
         switch (status) {
             case RUNNABLE:
                 update.setStartTime(new Date());

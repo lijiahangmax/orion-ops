@@ -4,6 +4,7 @@ import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;
 import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
+import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.handler.build.BuildStore;
@@ -19,6 +20,14 @@ import java.util.stream.Collectors;
  * @since 2021/12/6 8:50
  */
 public interface IBuildHandler extends Executable, SafeCloseable {
+
+    /**
+     * 获取状态
+     *
+     * @return status
+     * @see ActionStatus
+     */
+    ActionStatus getStatus();
 
     /**
      * 跳过

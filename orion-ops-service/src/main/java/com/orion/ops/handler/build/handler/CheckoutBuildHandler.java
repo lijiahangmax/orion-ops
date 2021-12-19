@@ -1,6 +1,7 @@
 package com.orion.ops.handler.build.handler;
 
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
@@ -46,7 +47,7 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
         // 拼接日志
         String log = "*** 检出url: " + vcs.getVscUrl() + "\tremote: " + remote + "\t分支: " + branchName + "\t提交: " + commitId + "\n" +
                 "*** 检出目录: " + store.getVcsClonePath() + "\n" +
-                "*** 检出中... ...\n";
+                "*** 检出中...\n";
         this.appendLog(log);
         // clone
         try {
@@ -60,10 +61,14 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
                 clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(vcs.getVscUsername(), ValueMix.decrypt(vcs.getVcsPassword())));
             }
             this.git = clone.call();
+            this.appendLog("*** 检出完成\n");
         } catch (Exception e) {
             throw Exceptions.vcs(MessageConst.CHECKOUT_ERROR, e);
         }
-        this.appendLog("*** 检出完成\n");
+        // 已停止则关闭
+        if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
+            return;
+        }
         // reset
         try {
             git.reset().setMode(ResetCommand.ResetType.HARD)
@@ -72,6 +77,13 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
         } catch (Exception e) {
             throw Exceptions.vcs(MessageConst.RESET_ERROR, e);
         }
+    }
+
+    @Override
+    public void terminated() {
+        super.terminated();
+        // 关闭git
+        Streams.close(git);
     }
 
     @Override

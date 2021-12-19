@@ -13,6 +13,13 @@ import com.orion.able.SafeCloseable;
 public interface IBuilderProcessor extends Executable, Runnable, SafeCloseable {
 
     /**
+     * 获取id
+     *
+     * @return id
+     */
+    Long getBuildId();
+
+    /**
      * 终止
      */
     void terminated();
