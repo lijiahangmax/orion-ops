@@ -135,7 +135,11 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             MachineEnvDO env = machineEnvDAO.selectById(id);
             Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
-            Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            if (Const.HOST_MACHINE_ID.equals(env.getMachineId())) {
+                Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            } else {
+                Valid.isTrue(MachineTargetEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
+            }
             // 删除
             effect += machineEnvDAO.deleteById(id);
             // 插入历史值

@@ -28,7 +28,7 @@ public class TypeStoreRegisterRunner implements CommandLineRunner {
                 .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {
-                    log.info("register runner init class: {}", s);
+                    log.info("register type store class: {}", s);
                     Class.forName(s.getName());
                 }));
         log.info("注册vo转换器-结束");
