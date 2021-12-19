@@ -90,8 +90,9 @@ export default {
         } else if (value.trim().length > 32) {
           callback(new Error('密码长度不能大于32位'))
         } else {
-          this.form.validateFields(['conformPassword'], { force: true })
           callback()
+          this.form.validateFields(['conformPassword'], () => {
+          })
         }
       }
     },

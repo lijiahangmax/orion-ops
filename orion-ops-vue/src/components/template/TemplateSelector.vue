@@ -60,9 +60,9 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 65,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: '模板名称',
@@ -77,23 +77,23 @@ const columns = [
     key: 'value',
     width: 240,
     ellipsis: true,
-    scopedSlots: { customRender: 'value' },
-    sorter: (a, b) => a.value.localeCompare(b.value)
+    sorter: (a, b) => a.value.localeCompare(b.value),
+    scopedSlots: { customRender: 'value' }
   },
   {
     title: '模板描述',
-    dataIndex: 'description',
     key: 'description',
     width: 140,
-    ellipsis: true
+    ellipsis: true,
+    dataIndex: 'description'
   },
   {
     title: '操作',
     key: 'action',
     width: 60,
     fixed: 'right',
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

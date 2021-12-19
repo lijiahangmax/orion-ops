@@ -4,7 +4,7 @@
     <div class="machine-add-modal-container">
       <a-modal v-model="visible"
                :title="title"
-               :width="700"
+               :width="750"
                :zIndex="805"
                :okButtonProps="{props: {disabled: loading}}"
                :dialogStyle="{ top: '90px' }"
@@ -79,8 +79,8 @@ import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 import { pick } from 'lodash'
 
 const layout = {
-  labelCol: { span: 5 },
-  wrapperCol: { span: 15 }
+  labelCol: { span: 4 },
+  wrapperCol: { span: 16 }
 }
 
 function getDecorators() {
@@ -196,11 +196,11 @@ export default {
       }
     },
     add() {
-      this.title = '新增代理'
+      this.title = '新增机器'
       this.initRecord({})
     },
     update(id) {
-      this.title = '修改代理'
+      this.title = '修改机器'
       this.$api.getMachineDetail({ id })
         .then(({ data }) => {
           this.initRecord(data)

@@ -153,10 +153,11 @@ export default {
     update(id) {
       this.title = '修改日志文件'
       this.updateConfig = false
-      this.$api.getTailDetail({ id })
-        .then(({ data }) => {
-          this.initRecord(data)
-        })
+      this.$api.getTailDetail({
+        id
+      }).then(({ data }) => {
+        this.initRecord(data)
+      })
     },
     initRecord(row) {
       this.form.resetFields()

@@ -177,6 +177,7 @@ function openSftpNotify() {
     if (body.type === 10) {
       // 添加
       const file = JSON.parse(body.body)
+      file.downloadUrl = null
       this.transferList.unshift(file)
     } else if (body.type === 20) {
       // 速率
@@ -270,10 +271,12 @@ export default {
       this.notifyClient = null
     },
     getTransferList() {
-      this.$api.sftpTransferList({ sessionToken: this.sessionToken })
-        .then(({ data }) => {
-          this.transferList = data
-        })
+      this.$api.sftpTransferList({
+        sessionToken: this.sessionToken
+      }).then(({ data }) => {
+        this.$utils.defineArrayKey(data, 'downloadUrl')
+        this.transferList = data
+      })
     },
     clearAll() {
       this.transferList = this.transferList.filter(s => s.status === 20)
@@ -307,12 +310,10 @@ export default {
         id: item.id
       })
       item.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
-      this.$forceUpdate()
     },
     clearDownloadUrl(item) {
       setTimeout(() => {
         item.downloadUrl = null
-        this.$forceUpdate()
       })
     },
     openTransferRightMenu(e, item) {

@@ -30,7 +30,7 @@ const routes = [
     name: 'terminal',
     meta: {
       requireAuth: true,
-      title: 'terminal'
+      title: '终端'
     },
     component: () => import('../views/machine/MachineTerminal')
   },

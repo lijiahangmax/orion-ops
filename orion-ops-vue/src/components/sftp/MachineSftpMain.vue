@@ -223,7 +223,7 @@ const fileListColumns = function() {
         if (visible) {
           setTimeout(() => {
             this.nameSearchInput.focus()
-          }, 0)
+          })
         }
       }
     },
@@ -451,6 +451,7 @@ export default {
                 this.files.splice(i, 1)
               }
             }
+            this.pagination.total = this.pagination.total - 1
           })
         }
       })
@@ -483,6 +484,7 @@ export default {
                 }
               }
             }
+            this.pagination.total = this.pagination.total - this.selectedRowKeys.length
             this.selectedRowKeys = []
             this.selectedRows = []
           })

@@ -162,7 +162,7 @@ export default {
     },
     removeAction(index) {
       this.actions[index].visible = false
-      setTimeout(() => {
+      this.$nextTick(() => {
         this.actions.splice(index, 1)
       })
     },

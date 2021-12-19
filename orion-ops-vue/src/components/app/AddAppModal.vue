@@ -33,12 +33,16 @@ export default {
     add() {
       this.title = '添加应用'
       this.visible = true
-      setTimeout(() => this.$refs.from.add())
+      this.$nextTick(() => {
+        this.$refs.from.add()
+      })
     },
     update(id) {
       this.title = '修改应用'
       this.visible = true
-      setTimeout(() => this.$refs.from.update(id))
+      this.$nextTick(() => {
+        this.$refs.from.update(id)
+      })
     },
     check() {
       this.$refs.from.check()
