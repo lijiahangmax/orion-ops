@@ -5,7 +5,7 @@
       <!-- 机器头 -->
       <div class="machine-env-machine-header">
         <a-page-header @back="() => {}">
-          <span slot="title" class="ant-page-header-heading-title pointer">机器列表</span>
+          <span slot="title" class="ant-page-header-heading-title pointer" title="刷新" @click="getMachines">机器列表</span>
           <a-icon slot="backIcon" type="desktop" title="刷新" @click="getMachines"/>
         </a-page-header>
       </div>

@@ -67,7 +67,7 @@ export default {
         return
       }
       this.machineId = id
-      setTimeout(() => {
+      this.$nextTick(() => {
         const session = this.currentMachine.session
         if (session) {
           this.$refs.sftpMain.changeToken(session)

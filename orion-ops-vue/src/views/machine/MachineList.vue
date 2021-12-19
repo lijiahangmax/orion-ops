@@ -148,7 +148,7 @@
     <!-- 事件 -->
     <div class="machine-event">
       <!-- 添加模态框 -->
-      <AddMachineModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
     </div>
@@ -213,7 +213,7 @@ const columns = [
     title: '操作',
     key: 'operation',
     fixed: 'right',
-    width: 190,
+    width: 180,
     scopedSlots: { customRender: 'action' }
   }
 ]

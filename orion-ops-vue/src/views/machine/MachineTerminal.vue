@@ -53,7 +53,7 @@ export default {
   watch: {
     activeKey(k) {
       if (k === null) {
-        document.title = 'terminal'
+        document.title = '终端'
         return
       }
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key === k)

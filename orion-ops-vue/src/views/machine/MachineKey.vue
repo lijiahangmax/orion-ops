@@ -261,22 +261,28 @@ export default {
     },
     changeMountStatus(id, status) {
       if (status === 2) {
+        const dumpLoading = this.$message.loading('卸载中...', 3)
         this.$api.dumpMachineKey({
           idList: [id]
         }).then(() => {
+          dumpLoading()
           this.$message.success('卸载成功')
           this.getList()
         }).catch(() => {
+          dumpLoading()
           this.$message.error('卸载失败')
         })
       } else if (status === 3) {
         // 未挂载
+        const mountLoading = this.$message.loading('挂载中...', 3)
         this.$api.mountMachineKey({
           idList: [id]
         }).then(() => {
+          mountLoading()
           this.$message.success('挂载成功')
           this.getList()
         }).catch(() => {
+          mountLoading()
           this.$message.error('挂载失败')
         })
       }
@@ -288,12 +294,15 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
+          const mountLoading = this.$message.loading('挂载中...', 3)
           this.$api.mountMachineKey({
             idList: this.selectedRowKeys
           }).then(() => {
+            mountLoading()
             this.$message.success('挂载成功')
             this.getList()
           }).catch(() => {
+            mountLoading()
             this.$message.error('挂载失败')
           })
           this.selectedRowKeys = []
@@ -307,14 +316,16 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
+          const mountLoading = this.$message.loading('挂载中...', 3)
           this.$api.mountAllMachineKey()
             .then(() => {
+              mountLoading()
               this.$message.success('挂载成功')
               this.getList()
-            })
-            .catch(() => {
-              this.$message.error('挂载失败')
-            })
+            }).catch(() => {
+            mountLoading()
+            this.$message.error('挂载失败')
+          })
         }
       })
     },
@@ -326,12 +337,15 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
+          const dumpLoading = this.$message.loading('卸载中...', 3)
           this.$api.dumpMachineKey({
             idList: this.selectedRowKeys
           }).then(() => {
+            dumpLoading()
             this.$message.success('卸载成功')
             this.getList()
           }).catch(() => {
+            dumpLoading()
             this.$message.error('卸载失败')
           })
           this.selectedRowKeys = []
@@ -346,12 +360,15 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
+          const dumpLoading = this.$message.loading('卸载中...', 3)
           this.$api.dumpAllMachineKey()
             .then(() => {
+              dumpLoading()
               this.$message.success('卸载成功')
               this.getList()
             })
             .catch(() => {
+              dumpLoading()
               this.$message.error('卸载失败')
             })
         }
@@ -405,7 +422,6 @@ export default {
     this.getList({})
   }
 }
-
 </script>
 
 <style scoped>

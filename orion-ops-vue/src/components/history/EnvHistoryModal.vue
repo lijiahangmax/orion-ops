@@ -81,32 +81,32 @@ const columns = [
   {
     title: '序号',
     key: 'seq',
-    customRender: (text, record, index) => `${index + 1}`,
     width: 60,
-    align: 'center'
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
   },
   {
     title: 'beforeValue',
     key: 'beforeValue',
-    scopedSlots: { customRender: 'beforeValue' },
     width: 200,
     ellipsis: true,
-    sorter: (a, b) => (a.beforeValue || '').localeCompare(b.beforeValue || '')
+    sorter: (a, b) => (a.beforeValue || '').localeCompare(b.beforeValue || ''),
+    scopedSlots: { customRender: 'beforeValue' }
   },
   {
     title: 'afterValue',
     key: 'afterValue',
-    scopedSlots: { customRender: 'afterValue' },
     width: 200,
     ellipsis: true,
-    sorter: (a, b) => (a.afterValue || '').localeCompare(b.afterValue || '')
+    sorter: (a, b) => (a.afterValue || '').localeCompare(b.afterValue || ''),
+    scopedSlots: { customRender: 'afterValue' }
   },
   {
     title: '类型',
     key: 'type',
-    scopedSlots: { customRender: 'type' },
     width: 80,
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'type' }
   },
   {
     title: '修改人',
@@ -118,17 +118,17 @@ const columns = [
   {
     title: '修改时间',
     key: 'createTime',
-    scopedSlots: { customRender: 'createTime' },
-    sorter: (a, b) => a.createTime - b.createTime,
     width: 220,
-    align: 'center'
+    align: 'center',
+    sorter: (a, b) => a.createTime - b.createTime,
+    scopedSlots: { customRender: 'createTime' }
   },
   {
     title: '操作',
     key: 'action',
     width: 90,
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
   }
 ]
 

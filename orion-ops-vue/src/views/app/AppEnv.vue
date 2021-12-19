@@ -5,7 +5,7 @@
       <!-- 机器头 -->
       <div class="app-env-app-header">
         <a-page-header @back="() => {}">
-          <span slot="title" class="ant-page-header-heading-title pointer">应用列表</span>
+          <span slot="title" class="ant-page-header-heading-title pointer" title="刷新" @click="getAppList">应用列表</span>
           <a-icon slot="backIcon" type="appstore" title="刷新" @click="getAppList"/>
         </a-page-header>
       </div>

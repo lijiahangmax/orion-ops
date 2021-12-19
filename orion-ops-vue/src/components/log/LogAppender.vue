@@ -121,7 +121,20 @@ export default {
     }
   },
   methods: {
-    openTail(data) {
+    openTail() {
+      this.$nextTick(() => {
+        this.$api.getTailToken(this.config)
+          .then(({ data }) => {
+            this.initLogTailView(data)
+          })
+      })
+    },
+    close() {
+      if (this.client) {
+        this.client.close()
+      }
+    },
+    initLogTailView(data) {
       // 打开websocket
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
@@ -157,11 +170,6 @@ export default {
       this.$refs.logContainer.innerHTML = ''
       this.scroll = 0
     },
-    close() {
-      if (this.client) {
-        this.client.close()
-      }
-    },
     storeScroll() {
       this.scroll = this.$refs.logContainer.scrollTop
     },
@@ -189,11 +197,9 @@ export default {
       })
     }
   },
-  mounted() {
-    this.$api.getTailToken(this.config)
-      .then(({ data }) => {
-        this.openTail(data)
-      })
+  beforeDestroy() {
+    this.clear()
+    this.close()
   }
 }
 </script>
