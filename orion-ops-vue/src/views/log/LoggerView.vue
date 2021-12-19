@@ -5,9 +5,6 @@
       <a-spin :spinning="listLoading">
         <!-- 工具按钮 -->
         <div class="log-list-tools">
-          <div class="log-list-tools-item" title="返回" @click="backList">
-            <a-icon type="arrow-left"/>
-          </div>
           <div class="log-list-tools-item" title="刷新" @click="getTailList">
             <a-icon type="reload"/>
           </div>
@@ -121,9 +118,6 @@ export default {
     }
   },
   methods: {
-    backList() {
-      this.$router.push({ path: '/log/list' })
-    },
     async getTailList() {
       this.listLoading = true
       try {
@@ -162,6 +156,12 @@ export default {
         path: filterTailFile.path,
         machineName: filterTailFile.machineName,
         machineHost: filterTailFile.machineHost
+      })
+      this.$nextTick(() => {
+        const $ref = this.$refs['appender' + id]
+        if ($ref && $ref.length) {
+          $ref[0].openTail()
+        }
       })
     },
     removeTab(targetTab) {

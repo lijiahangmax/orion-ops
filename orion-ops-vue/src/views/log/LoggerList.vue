@@ -83,7 +83,10 @@
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
           <!-- 打开 -->
-          <a target="_blank" :href="`#/log/view/${record.id}`">打开</a>
+          <a target="_blank"
+             title="ctrl 打开新页面"
+             :href="`#/log/view/${record.id}`"
+             @click="openLogView($event, record.id)">打开</a>
           <a-divider type="vertical"/>
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
@@ -105,6 +108,8 @@
       <TextPreview ref="previewText"/>
       <!-- 添加模态框 -->
       <AddLogFileModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 日志模态框 -->
+      <LoggerViewModal ref="logView"/>
     </div>
   </div>
 </template>
@@ -115,6 +120,7 @@ import MachineSelector from '@/components/machine/MachineSelector'
 import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import _utils from '@/lib/utils'
+import LoggerViewModal from '@/components/log/LoggerViewModal'
 
 /**
  * 列
@@ -194,6 +200,7 @@ const columns = [
 export default {
   name: 'LoggerList',
   components: {
+    LoggerViewModal,
     MachineSelector,
     AddLogFileModal,
     TextPreview
@@ -257,6 +264,17 @@ export default {
       this.$refs.machineSelector.reset()
       this.query.machineId = undefined
       this.getList({})
+    },
+    openLogView(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.logView.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     }
   },
   filters: {
