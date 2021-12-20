@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationReleaseMachineDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationReleaseMachineDO">
+        <id column="id" property="id" />
+        <result column="release_id" property="releaseId" />
+        <result column="machine_id" property="machineId" />
+        <result column="machine_name" property="machineName" />
+        <result column="machine_tag" property="machineTag" />
+        <result column="machine_host" property="machineHost" />
+        <result column="run_status" property="runStatus" />
+        <result column="log_path" property="logPath" />
+        <result column="dist_path" property="distPath" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, release_id, machine_id, machine_name, machine_tag, machine_host, run_status, log_path, dist_path, start_time, end_time, create_time, update_time
+    </sql>
+
+</mapper>
