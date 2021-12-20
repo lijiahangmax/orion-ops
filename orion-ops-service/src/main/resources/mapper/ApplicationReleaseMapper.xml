@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationReleaseDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationReleaseDO">
+        <id column="id" property="id" />
+        <result column="release_title" property="releaseTitle" />
+        <result column="release_description" property="releaseDescription" />
+        <result column="build_id" property="buildId" />
+        <result column="app_id" property="appId" />
+        <result column="app_name" property="appName" />
+        <result column="app_tag" property="appTag" />
+        <result column="profile_id" property="profileId" />
+        <result column="profile_name" property="profileName" />
+        <result column="profile_tag" property="profileTag" />
+        <result column="release_type" property="releaseType" />
+        <result column="release_status" property="releaseStatus" />
+        <result column="release_serialize" property="releaseSerialize" />
+        <result column="dist_path" property="distPath" />
+        <result column="rollback_release_id" property="rollbackReleaseId" />
+        <result column="timed_release" property="timedRelease" />
+        <result column="timed_release_time" property="timedReleaseTime" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="create_user_name" property="createUserName" />
+        <result column="audit_user_id" property="auditUserId" />
+        <result column="audit_user_name" property="auditUserName" />
+        <result column="audit_time" property="auditTime" />
+        <result column="audit_reason" property="auditReason" />
+        <result column="release_start_time" property="releaseStartTime" />
+        <result column="release_end_time" property="releaseEndTime" />
+        <result column="release_user_id" property="releaseUserId" />
+        <result column="release_user_name" property="releaseUserName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, release_title, release_description, build_id, app_id, app_name, app_tag, profile_id, profile_name, profile_tag, release_type, release_status, release_serialize, dist_path, rollback_release_id, timed_release, timed_release_time, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason, release_start_time, release_end_time, release_user_id, release_user_name, create_time, update_time
+    </sql>
+
+</mapper>

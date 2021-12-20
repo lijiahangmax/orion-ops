@@ -68,4 +68,10 @@
         LIMIT 1
     </select>
 
+    <select id="selectBuildSeq" resultType="java.lang.Integer">
+        SELECT build_seq
+        FROM application_build
+        WHERE id = #{id}
+    </select>
+
 </mapper>
