@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.consts.app.ReleaseSerialType;
-import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.app.*;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
@@ -231,16 +228,18 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询环境变量
         String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
         String transferPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_PATH.getKey());
+        String transferDirType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
         String releaseSerial = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.RELEASE_SERIAL.getKey());
         // 查询发布机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
         // 查询发布流程
         List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId, null);
         // 组装数据
-        detail.setBundlePath(bundlePath);
-        detail.setTransferPath(transferPath);
-        detail.setReleaseSerial(ReleaseSerialType.of(releaseSerial).getType());
-        detail.setReleaseMachines(machines);
+        ApplicationConfigEnvVO env = new ApplicationConfigEnvVO();
+        env.setBundlePath(bundlePath);
+        env.setTransferPath(transferPath);
+        env.setTransferDirType(TransferDirType.of(transferDirType).getValue());
+        env.setReleaseSerial(ReleaseSerialType.of(releaseSerial).getType());
         List<ApplicationActionVO> buildActions = actions.stream()
                 .filter(s -> ActionType.isBuildAction(s.getActionType()))
                 .map(s -> Converts.to(s, ApplicationActionVO.class))
@@ -249,6 +248,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .filter(s -> ActionType.isReleaseAction(s.getActionType()))
                 .map(s -> Converts.to(s, ApplicationActionVO.class))
                 .collect(Collectors.toList());
+        detail.setEnv(env);
+        detail.setReleaseMachines(machines);
         detail.setBuildActions(buildActions);
         detail.setReleaseActions(releaseActions);
         return detail;

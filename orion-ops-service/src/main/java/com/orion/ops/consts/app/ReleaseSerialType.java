@@ -28,7 +28,7 @@ public enum ReleaseSerialType {
 
     private final Integer type;
 
-    private final String key;
+    private final String value;
 
     public static ReleaseSerialType of(Integer type) {
         if (type == null) {
@@ -42,13 +42,13 @@ public enum ReleaseSerialType {
         return PARALLEL;
     }
 
-    public static ReleaseSerialType of(String key) {
-        if (key == null) {
+    public static ReleaseSerialType of(String value) {
+        if (value == null) {
             return PARALLEL;
         }
-        for (ReleaseSerialType value : values()) {
-            if (value.key.equalsIgnoreCase(key)) {
-                return value;
+        for (ReleaseSerialType type : values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
             }
         }
         return PARALLEL;

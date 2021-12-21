@@ -47,21 +47,9 @@ public class ApplicationDetailVO {
     private String vcsName;
 
     /**
-     * 构建产物目录
+     * env
      */
-    private String bundlePath;
-
-    /**
-     * 产物传输目录
-     */
-    private String transferPath;
-
-    /**
-     * 发布序列 10串行 20并行
-     *
-     * @see com.orion.ops.consts.app.ReleaseSerialType
-     */
-    private Integer releaseSerial;
+    private ApplicationConfigEnvVO env;
 
     /**
      * 构建流程

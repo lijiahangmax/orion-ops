@@ -25,7 +25,12 @@ public enum ApplicationEnvAttr {
     /**
      * 产物传输路径
      */
-    TRANSFER_PATH("产物传输绝对路径"),
+    TRANSFER_PATH("产物传输目标机器绝对路径"),
+
+    /**
+     * 产物为文件夹传输类型 (dir/zip)
+     */
+    TRANSFER_DIR_TYPE("产物为文件夹传输类型 (dir/zip)"),
 
     /**
      * 发布序列方式
