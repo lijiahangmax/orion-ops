@@ -99,7 +99,10 @@
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <!-- 日志 -->
-          <a target="_blank" :href="`#/app/build/log/view/${record.id}`">日志</a>
+          <a target="_blank"
+             title="ctrl 打开新页面"
+             :href="`#/app/build/log/view/${record.id}`"
+             @click="openLogView($event, record.id)">日志</a>
           <a-divider type="vertical"/>
           <!-- 重新构建 -->
           <a-popconfirm title="是否要重新构建?"
@@ -115,7 +118,7 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated(record.id)">
+                        @confirm="terminated(record)">
             <span class="span-blue pointer" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value">停止</span>
           </a-popconfirm>
         </div>
@@ -127,6 +130,8 @@
       <AppBuildModal ref="addModal" @submit="getList({})"/>
       <!-- 详情模态框 -->
       <AppBuildDetailDrawer ref="detail"/>
+      <!-- 日志模态框 -->
+      <AppBuildLogAppenderModal ref="logView"/>
     </div>
   </div>
 </template>
@@ -136,6 +141,7 @@ import _utils from '@/lib/utils'
 import AppSelector from '@/components/app/AppSelector'
 import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
+import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
 
 /**
  * 列
@@ -215,6 +221,7 @@ const columns = [
 export default {
   name: 'AppBuild',
   components: {
+    AppBuildLogAppenderModal,
     AppBuildModal,
     AppSelector,
     AppBuildDetailDrawer
@@ -283,7 +290,16 @@ export default {
         rebuilding()
       })
     },
-    terminated(id) {
+    terminated(record) {
+      const terminating = this.$message.loading('正在提交停止请求...', 5)
+      this.$api.terminatedAppBuild({
+        id: record.id
+      }).then(() => {
+        terminating()
+        this.$message.success('已提交停止请求')
+      }).catch(() => {
+        terminating()
+      })
     },
     resetForm() {
       this.$refs.query.resetFields()
@@ -292,6 +308,17 @@ export default {
       this.query.status = undefined
       this.query.onlyMyself = false
       this.getList({})
+    },
+    openLogView(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.logView.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     },
     pollStatus() {
       if (!this.rows || !this.rows.length) {
