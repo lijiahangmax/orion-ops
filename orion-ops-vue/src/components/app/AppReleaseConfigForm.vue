@@ -33,20 +33,33 @@
                 </div>
                 <!-- 代码块 -->
                 <div class="action-editor-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TARGET_COMMAND.value">
-                <span class="label action-label">
-                  <span class="span-red mr4">*</span>
-                  目标主机命令 :
-                </span>
+                  <span class="label action-label">
+                    <span class="span-red mr4">*</span>
+                    目标主机命令 :
+                  </span>
                   <div class="app-action-editor">
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
                   </div>
                 </div>
-                <div class="action-transfer-wrapper" v-else-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                <!-- 传输路径 -->
+                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label">
                       <span class="span-red mr4">*</span>
                       产物传输路径 :
                   </span>
                   <a-input class="transfer-input" placeholder="目标机器产物传输绝对路径" :maxLength="512" v-model="transferPath"/>
+                </div>
+                <!-- 文件夹类型选择 -->
+                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                  <span class="label action-label" title="如果构建产物为文件夹 传输的文件是文件夹还是打包后的文件">
+                      <span class="span-red mr4">*</span>
+                      文件夹传输类型 :
+                  </span>
+                  <a-select class="transfer-input" v-model="transferDirType">
+                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_DIR_TYPE" :key="type.value" :value="type.value">
+                      {{ type.label }}
+                    </a-select-option>
+                  </a-select>
                 </div>
               </div>
               <!-- 操作 -->
@@ -110,7 +123,8 @@ export default {
       loading: false,
       profileId: null,
       transferPath: undefined,
-      releaseSerial: _enum.RELEASE_SERIAL_TYPE.PARALLEL.value,
+      transferDirType: _enum.RELEASE_SERIAL_TYPE.PARALLEL.value,
+      releaseSerial: _enum.RELEASE_TRANSFER_DIR_TYPE.DIR.value,
       machines: [],
       actions: [],
       editorConfig
@@ -127,8 +141,9 @@ export default {
   methods: {
     initData(detail) {
       this.profileId = detail.profileId
-      this.transferPath = detail.transferPath
-      this.releaseSerial = detail.releaseSerial
+      this.transferPath = detail.env && detail.env.transferPath
+      this.transferDirType = detail.env && detail.env.transferDirType
+      this.releaseSerial = detail.env && detail.env.releaseSerial
       if (detail.releaseMachines && detail.releaseMachines.length) {
         this.machines = detail.releaseMachines.map(s => s.machineId)
       } else {
@@ -204,7 +219,8 @@ export default {
         stageType: 20,
         env: {
           transferPath: this.transferPath,
-          releaseSerial: this.releaseSerial
+          releaseSerial: this.releaseSerial,
+          transferDirType: this.transferDirType
         },
         machineIdList: this.machines,
         releaseActions: this.actions

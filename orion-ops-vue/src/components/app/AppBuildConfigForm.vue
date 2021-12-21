@@ -117,7 +117,7 @@ export default {
     initData(detail) {
       this.profileId = detail.profileId
       this.vcsId = detail.vcsId
-      this.bundlePath = detail.bundlePath
+      this.bundlePath = detail.env && detail.env.bundlePath
       if (detail.buildActions && detail.buildActions.length) {
         this.actions = detail.buildActions.map(s => {
           return {

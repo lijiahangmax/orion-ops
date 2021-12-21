@@ -620,6 +620,20 @@ const $enum = {
   },
 
   /**
+   * 发布产物为文件夹传输类型
+   */
+  RELEASE_TRANSFER_DIR_TYPE: {
+    DIR: {
+      value: 'dir',
+      label: '文件夹'
+    },
+    ZIP: {
+      value: 'zip',
+      label: 'zip文件'
+    }
+  },
+
+  /**
    * 构建状态
    */
   BUILD_STATUS: {
