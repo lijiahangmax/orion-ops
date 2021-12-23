@@ -40,9 +40,19 @@ public enum ReleaseStatus {
     FINISH(50),
 
     /**
-     * 发布异常
+     * 发布停止
      */
-    EXCEPTION(60),
+    TERMINATED(60),
+
+    /**
+     * 初始化失败
+     */
+    INITIAL_ERROR(70),
+
+    /**
+     * 发布失败
+     */
+    FAILURE(80),
 
     ;
 

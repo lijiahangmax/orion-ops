@@ -94,7 +94,7 @@ public class ApplicationReleaseDO implements Serializable {
     private Integer releaseType;
 
     /**
-     * 发布状态 10待审核 20审核驳回 30待发布 40发布中 50发布完成 60发布停止 70发布取消 80发布异常
+     * 发布状态 10待审核 20审核驳回 30待发布 40发布中 50发布完成 60发布停止 70初始化失败 80发布失败
      *
      * @see com.orion.ops.consts.app.ReleaseStatus
      */
@@ -110,10 +110,16 @@ public class ApplicationReleaseDO implements Serializable {
     private Integer releaseSerialize;
 
     /**
-     * 产物文件
+     * 构建产物文件
      */
-    @TableField("dist_path")
-    private String distPath;
+    @TableField("bundle_path")
+    private String bundlePath;
+
+    /**
+     * 产物传输路径
+     */
+    @TableField("transfer_path")
+    private String transferPath;
 
     /**
      * 回滚发布id
@@ -194,6 +200,12 @@ public class ApplicationReleaseDO implements Serializable {
      */
     @TableField("release_user_name")
     private String releaseUserName;
+
+    /**
+     * 发布步骤json
+     */
+    @TableField("action_config")
+    private String actionConfig;
 
     /**
      * 创建时间

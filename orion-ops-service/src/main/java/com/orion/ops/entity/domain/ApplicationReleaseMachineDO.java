@@ -76,12 +76,6 @@ public class ApplicationReleaseMachineDO implements Serializable {
     private String logPath;
 
     /**
-     * 产物路径
-     */
-    @TableField("dist_path")
-    private String distPath;
-
-    /**
      * 开始时间
      */
     @TableField("start_time")
