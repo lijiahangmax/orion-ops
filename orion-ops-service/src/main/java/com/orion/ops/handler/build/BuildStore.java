@@ -58,7 +58,7 @@ public class BuildStore {
 
     public void setBuildRecord(ApplicationBuildDO buildRecord) {
         this.buildRecord = buildRecord;
-        this.vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), buildRecord.getVcsId() + "/" + buildRecord.getBuildSeq());
+        this.vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), buildRecord.getVcsId() + "/" + buildRecord.getId());
     }
 
 }

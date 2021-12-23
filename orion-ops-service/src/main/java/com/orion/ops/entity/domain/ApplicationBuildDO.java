@@ -100,8 +100,8 @@ public class ApplicationBuildDO implements Serializable {
     /**
      * 构建产物文件
      */
-    @TableField("dist_path")
-    private String distPath;
+    @TableField("bundle_path")
+    private String bundlePath;
 
     /**
      * 状态 10未开始 20执行中 30已完成 40执行失败 50已取消

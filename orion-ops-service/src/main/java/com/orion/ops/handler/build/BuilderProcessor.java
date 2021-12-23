@@ -256,15 +256,15 @@ public class BuilderProcessor implements IBuilderProcessor {
             throw Exceptions.log("***** 构建产物文件不存在: " + bundlePath);
         }
         // 复制
-        String distPath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), record.getDistPath());
-        this.appendLog(Strings.format("\n***** 已生成产物文件 {}\n", distPath));
+        String copyBundlePath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), record.getBundlePath());
+        this.appendLog(Strings.format("\n***** 已生成产物文件 {}\n", copyBundlePath));
         if (bundleFile.isFile()) {
-            Files1.copy(bundleFile, new File(distPath));
+            Files1.copy(bundleFile, new File(copyBundlePath));
         } else {
             // 复制文件夹
-            Files1.copyDir(bundleFile, new File(distPath), false);
+            Files1.copyDir(bundleFile, new File(copyBundlePath), false);
             // 文件夹打包
-            String compressFile = distPath + "." + Const.SUFFIX_ZIP;
+            String compressFile = copyBundlePath + "." + Const.SUFFIX_ZIP;
             FileCompressor compressor = CompressTypeEnum.ZIP.compressor().get();
             compressor.addFile(bundleFile);
             compressor.setAbsoluteCompressPath(compressFile);

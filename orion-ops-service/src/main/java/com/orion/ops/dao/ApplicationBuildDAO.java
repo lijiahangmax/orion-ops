@@ -50,4 +50,12 @@ public interface ApplicationBuildDAO extends BaseMapper<ApplicationBuildDO> {
      */
     String selectLastBuildBranch(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("vcsId") Long vcsId);
 
+    /**
+     * 查询构建序列
+     *
+     * @param id id
+     * @return seq
+     */
+    Integer selectBuildSeq(@Param("id") Long id);
+
 }

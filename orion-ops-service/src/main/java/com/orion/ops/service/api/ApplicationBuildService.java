@@ -125,6 +125,6 @@ public interface ApplicationBuildService {
      * @param id id
      * @return path
      */
-    String getBuildDistPath(Long id);
+    String getBuildBundlePath(Long id);
 
 }

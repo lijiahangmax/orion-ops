@@ -53,7 +53,7 @@ public class PathBuilders {
      * @param buildId buildId
      * @return path
      */
-    public static String getBuildDistPath(Long buildId) {
+    public static String getBuildBundlePath(Long buildId) {
         return Const.BUILD_DIR + "/" + buildId;
     }
 

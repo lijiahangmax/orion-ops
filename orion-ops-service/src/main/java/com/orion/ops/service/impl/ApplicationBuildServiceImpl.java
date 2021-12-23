@@ -109,7 +109,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         // 设置目录信息
         buildTask.setLogPath(PathBuilders.getBuildLogPath(buildId));
         String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        buildTask.setDistPath(PathBuilders.getBuildDistPath(buildId) + "/" + Files1.getFileName(bundlePath));
+        buildTask.setBundlePath(PathBuilders.getBuildBundlePath(buildId) + "/" + Files1.getFileName(bundlePath));
         // 更新构建信息
         applicationBuildDAO.updateById(buildTask);
         // 检查是否包含命令
@@ -319,9 +319,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     }
 
     @Override
-    public String getBuildDistPath(Long id) {
+    public String getBuildBundlePath(Long id) {
         return Optional.ofNullable(applicationBuildDAO.selectById(id))
-                .map(ApplicationBuildDO::getDistPath)
+                .map(ApplicationBuildDO::getBundlePath)
                 .filter(Strings::isNotBlank)
                 .map(s -> Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), s))
                 .orElse(null);
@@ -338,9 +338,10 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq, Long vcsId) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.BUILD_SEQ, buildId + Strings.EMPTY);
+        env.put(EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
         if (vcsId != null) {
-            env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildSeq));
+            // TODO 重复 设置分支
+            env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
         }
         // 设置前缀
         MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();

@@ -119,7 +119,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 break;
             case APP_BUILD_BUNDLE:
                 // 应用构建 产物文件
-                path = applicationBuildService.getBuildDistPath(id);
+                path = applicationBuildService.getBuildBundlePath(id);
                 // 如果是文件夹则获取压缩文件
                 if (path != null && Files1.isDirectory(path)) {
                     path += "." + Const.SUFFIX_ZIP;
