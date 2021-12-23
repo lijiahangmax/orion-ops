@@ -93,7 +93,7 @@ public class FileTailVO {
             vo.setCharset(p.getFileCharset());
             vo.setCommand(p.getTailCommand());
             vo.setUpdateTime(p.getUpdateTime());
-            vo.setUpdateTimeAgo(Dates.ago(p.getUpdateTime(), false));
+            vo.setUpdateTimeAgo(Dates.ago(p.getUpdateTime()));
             return vo;
         });
 

@@ -74,7 +74,7 @@ public class MachineTerminalManagerVO {
             vo.setLogId(p.getLogId());
             vo.setConnectedTime(p.getConnectedTime());
             Optional.ofNullable(p.getConnectedTime())
-                    .map(d -> Dates.ago(d, false))
+                    .map(Dates::ago)
                     .ifPresent(vo::setConnectedTimeAgo);
             return vo;
         });

@@ -23,19 +23,14 @@ public enum ActionType {
     BUILD_HOST_COMMAND(120, StageType.BUILD),
 
     /**
-     * 发布-初始化
-     */
-    RELEASE_INITIAL(210, StageType.RELEASE),
-
-    /**
      * 发布-传输产物
      */
-    RELEASE_TRANSFER(220, StageType.RELEASE),
+    RELEASE_TRANSFER(210, StageType.RELEASE),
 
     /**
      * 发布-目标机器命令
      */
-    RELEASE_TARGET_COMMAND(230, StageType.RELEASE),
+    RELEASE_TARGET_COMMAND(220, StageType.RELEASE),
 
     ;
 

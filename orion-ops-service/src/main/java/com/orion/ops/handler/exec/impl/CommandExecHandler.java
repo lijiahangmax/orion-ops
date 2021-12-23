@@ -9,6 +9,7 @@ import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Files1;
@@ -16,7 +17,10 @@ import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 /**
@@ -131,10 +135,11 @@ public class CommandExecHandler extends AbstractExecHandler {
         super.onException(e);
         StringBuilder sb = new StringBuilder()
                 .append("\n--------------------------------------------------\n")
-                .append("# 命令执行异常\n");
+                .append("# 命令执行异常\n")
+                .append(Exceptions.getStackTraceAsString(e))
+                .append(Const.LF);
         try {
             logOutputStream.write(Strings.bytes(sb.toString()));
-            e.printStackTrace(new PrintStream(logOutputStream));
             logOutputStream.flush();
         } catch (Exception ex) {
             log.error("execHandler-写入日志失败 {} {}", execId, ex);

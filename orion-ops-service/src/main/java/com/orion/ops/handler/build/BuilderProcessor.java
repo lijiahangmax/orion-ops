@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
 
@@ -328,7 +327,7 @@ public class BuilderProcessor implements IBuilderProcessor {
             if (ex instanceof LogException) {
                 this.appendLog(ex.getMessage() + Const.LF);
             } else {
-                ex.printStackTrace(new PrintStream(logStream));
+                this.appendLog(Exceptions.getStackTraceAsString(ex) + Const.LF);
             }
         }
     }

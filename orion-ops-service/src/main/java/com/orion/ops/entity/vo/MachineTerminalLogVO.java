@@ -98,10 +98,10 @@ public class MachineTerminalLogVO {
             vo.setConnectedTime(p.getConnectedTime());
             vo.setDisconnectedTime(p.getDisconnectedTime());
             Optional.ofNullable(p.getConnectedTime())
-                    .map(d -> Dates.ago(d, false))
+                    .map(Dates::ago)
                     .ifPresent(vo::setConnectedTimeAgo);
             Optional.ofNullable(p.getDisconnectedTime())
-                    .map(d -> Dates.ago(d, false))
+                    .map(Dates::ago)
                     .ifPresent(vo::setDisconnectedTimeAgo);
             vo.setCloseCode(p.getCloseCode());
             vo.setCreateTime(p.getCreateTime());

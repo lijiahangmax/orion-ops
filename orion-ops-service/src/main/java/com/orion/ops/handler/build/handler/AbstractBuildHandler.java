@@ -18,7 +18,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Date;
 
 /**
@@ -153,12 +152,12 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         log.append(" used: ")
                 .append(action.getEndTime().getTime() - action.getStartTime().getTime())
                 .append("ms\n");
-        // 拼接日志
-        this.appendLog(log.toString());
         // 拼接异常
         if (ex != null) {
-            ex.printStackTrace(new PrintStream(appender));
+            log.append(Exceptions.getStackTraceAsString(ex)).append(Const.LF);
         }
+        // 拼接日志
+        this.appendLog(log.toString());
     }
 
     /**
