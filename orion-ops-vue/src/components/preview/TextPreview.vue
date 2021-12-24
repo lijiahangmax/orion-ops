@@ -1,10 +1,10 @@
 <template>
-  <a-modal v-model="visible" :width="450">
+  <a-modal v-model="visible" :width="450" :footer="null" @close="close">
     <div>{{ value }}</div>
     <!-- 标题 -->
     <div slot="title">
       <span>预览</span>
-      <a @click="$copy(value)">
+      <a @click="$copy(value)" title="复制">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
     </div>

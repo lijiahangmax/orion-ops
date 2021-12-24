@@ -476,7 +476,7 @@ export default {
   }
 
   .machine-env-machine-env-container {
-    width: calc(100% - 222px);
+    width: calc(100% - 228px);
     min-height: calc(100vh - 84px);
     background: #FFF;
     border-radius: 4px;

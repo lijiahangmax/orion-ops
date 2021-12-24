@@ -1,17 +1,13 @@
 <template>
-  <a-modal v-model="visible" :width="650">
+  <a-modal v-model="visible" :width="650" :footer="null" @close="close">
     <!-- 编辑器 -->
     <Editor :value="value" :height="350" :readOnly="true"/>
     <!-- 标题 -->
     <div slot="title">
       <span>预览</span>
-      <a @click="$copy(value)">
+      <a @click="$copy(value)" title="复制">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
-    </div>
-    <!-- 页脚 -->
-    <div slot="footer">
-      <a-button @click="close">关闭</a-button>
     </div>
   </a-modal>
 </template>
