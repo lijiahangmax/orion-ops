@@ -7,19 +7,20 @@
               :type="fold ? 'menu-unfold' : 'menu-fold'"
               :title="fold ? '展开' : '折叠'"
               @click="changeFold"/>
-      <!-- 返回 -->
+      <!-- 左侧配置 -->
       <a-icon class="trigger-icon header-block-container"
-              title="返回"
-              type="arrow-left"
-              v-show="backVisible"
-              @click="back"/>
+              v-for="(prop, index) of leftProps"
+              :key="index"
+              :title="prop.title"
+              :type="prop.icon"
+              @click="handlerCall(prop)"/>
     </div>
     <!-- 头部右侧 -->
     <div class="header-fixed-right">
       <!-- 环境选择 -->
       <HeaderProfileSelect id="header-profile-selector"
                            class="header-block-container"
-                           v-if="profileSelectorVisible"
+                           v-show="profileSelectorVisible"
                            @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
       <!-- 用户下拉 -->
       <HeaderUser id="header-user" class="header-block-container"/>
@@ -42,7 +43,7 @@ export default {
     return {
       fold: false,
       profileSelectorVisible: false,
-      backVisible: false
+      leftProps: []
     }
   },
   watch: {
@@ -55,12 +56,16 @@ export default {
       this.fold = !this.fold
       this.$emit('changeFoldStatus')
     },
+    handlerCall(prop) {
+      prop.call && this[prop.call] && this[prop.call]()
+      prop.event && this.$emit('onHeaderEvent', prop.event)
+    },
     back() {
       this.$router.back(-1)
     },
     checkVisible(e = this.$route) {
       this.profileSelectorVisible = e.meta.visibleProfile === true
-      this.backVisible = e.meta.visibleBack === true
+      this.leftProps = e.meta.leftProps || []
     }
   },
   created() {

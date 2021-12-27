@@ -109,7 +109,11 @@ const routes = [
         meta: {
           requireAuth: true,
           title: '环境变量',
-          visibleBack: true
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
         },
         component: () => import('../views/machine/MachineEnv')
       },
@@ -185,7 +189,15 @@ const routes = [
           requireAuth: true,
           title: '应用配置',
           visibleProfile: true,
-          visibleBack: true
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }, {
+            icon: 'unordered-list',
+            title: '选择模板',
+            event: 'openTemplate'
+          }]
         },
         component: () => import('../views/app/AppConfig')
       },
@@ -205,7 +217,11 @@ const routes = [
           requireAuth: true,
           title: '环境变量',
           visibleProfile: true,
-          visibleBack: true
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
         },
         component: () => import('../views/app/AppEnv')
       },
@@ -271,7 +287,11 @@ const routes = [
         meta: {
           requireAuth: true,
           title: '404',
-          visibleBack: true
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
         },
         component: () => import('../views/404')
       }

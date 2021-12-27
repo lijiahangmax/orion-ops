@@ -10,7 +10,8 @@
       <!-- 头部菜单 -->
       <Header id="common-header"
               @changeFoldStatus="collapsed = !collapsed"
-              @chooseProfile="chooseProfile"/>
+              @chooseProfile="chooseProfile"
+              @onHeaderEvent="onHeaderEvent"/>
       <!-- 主体部分 -->
       <a-layout-content id="common-content">
         <router-view ref="route"/>
@@ -35,7 +36,10 @@ export default {
   },
   methods: {
     chooseProfile(e) {
-      this.$refs.route.chooseProfile && this.$refs.route.chooseProfile(e)
+      this.$refs.route && this.$refs.route.chooseProfile && this.$refs.route.chooseProfile(e)
+    },
+    onHeaderEvent(e) {
+      this.$refs.route && this.$refs.route.onHeaderEvent && this.$refs.route.onHeaderEvent(e)
     }
   }
 }
