@@ -97,6 +97,11 @@ public class ApplicationReleaseListVO {
     private String createUserName;
 
     /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
      * 审核人名称
      */
     private String auditUserName;
@@ -107,9 +112,19 @@ public class ApplicationReleaseListVO {
     private String auditReason;
 
     /**
-     * 创建时间
+     * 审核时间
      */
-    private Date createTime;
+    private Date auditTime;
+
+    /**
+     * 发布人
+     */
+    private String releaseUserName;
+
+    /**
+     * 发布时间
+     */
+    private Date releaseTime;
 
     /**
      * 使用时间 ms
@@ -133,6 +148,7 @@ public class ApplicationReleaseListVO {
             vo.setTitle(p.getReleaseTitle());
             vo.setDescription(p.getReleaseDescription());
             vo.setBuildId(p.getBuildId());
+            vo.setBuildSeq(p.getBuildSeq());
             vo.setAppId(p.getAppId());
             vo.setAppName(p.getAppName());
             vo.setAppTag(p.getAppTag());
@@ -142,10 +158,13 @@ public class ApplicationReleaseListVO {
             vo.setTimedRelease(p.getTimedRelease());
             vo.setTimedReleaseTime(p.getTimedReleaseTime());
             vo.setCreateUserName(p.getCreateUserName());
+            vo.setCreateTime(p.getCreateTime());
             vo.setAuditUserName(p.getAuditUserName());
             vo.setAuditReason(p.getAuditReason());
-            vo.setCreateTime(p.getCreateTime());
+            vo.setAuditTime(p.getAuditTime());
             Date startTime = p.getReleaseStartTime();
+            vo.setReleaseUserName(p.getReleaseUserName());
+            vo.setReleaseTime(startTime);
             Date endTime = p.getReleaseEndTime();
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());

@@ -50,10 +50,22 @@ public class ApplicationMachineDO implements Serializable {
     private Long machineId;
 
     /**
-     * 当前版本发布单id
+     * 当前版本发布id
      */
     @TableField("release_id")
     private Long releaseId;
+
+    /**
+     * 当前版本构建id
+     */
+    @TableField("build_id")
+    private Long buildId;
+
+    /**
+     * 当前版本构建序列
+     */
+    @TableField("build_seq")
+    private Long buildSeq;
 
     /**
      * 创建时间

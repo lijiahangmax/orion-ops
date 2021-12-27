@@ -50,6 +50,12 @@ public class ApplicationReleaseDO implements Serializable {
     private Long buildId;
 
     /**
+     * 构建seq
+     */
+    @TableField("build_seq")
+    private Integer buildSeq;
+
+    /**
      * 应用id
      */
     @TableField("app_id")

@@ -193,6 +193,11 @@ public class ApplicationReleaseDetailVO {
     private String keepTime;
 
     /**
+     * 操作
+     */
+    private List<ApplicationActionVO> actions;
+
+    /**
      * 发布机器
      */
     private List<ApplicationReleaseMachineVO> machines;
@@ -204,6 +209,7 @@ public class ApplicationReleaseDetailVO {
             vo.setTitle(p.getReleaseTitle());
             vo.setDescription(p.getReleaseDescription());
             vo.setBuildId(p.getBuildId());
+            vo.setBuildSeq(p.getBuildSeq());
             vo.setAppId(p.getAppId());
             vo.setAppName(p.getAppName());
             vo.setAppTag(p.getAppTag());

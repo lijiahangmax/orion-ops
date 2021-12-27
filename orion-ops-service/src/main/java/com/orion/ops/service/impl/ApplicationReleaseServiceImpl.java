@@ -1,34 +1,41 @@
 package com.orion.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnvConst;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.dao.ApplicationBuildDAO;
-import com.orion.ops.dao.ApplicationReleaseActionDAO;
-import com.orion.ops.dao.ApplicationReleaseDAO;
-import com.orion.ops.dao.ApplicationReleaseMachineDAO;
-import com.orion.ops.entity.domain.ApplicationReleaseDO;
-import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
+import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.app.*;
+import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.dao.*;
+import com.orion.ops.entity.domain.*;
+import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
-import com.orion.ops.service.api.ApplicationReleaseActionService;
-import com.orion.ops.service.api.ApplicationReleaseMachineService;
-import com.orion.ops.service.api.ApplicationReleaseService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -58,7 +65,28 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private ApplicationReleaseActionDAO applicationReleaseActionDAO;
 
     @Resource
+    private ApplicationInfoDAO applicationInfoDAO;
+
+    @Resource
+    private ApplicationProfileDAO applicationProfileDAO;
+
+    @Resource
+    private ApplicationActionService applicationActionService;
+
+    @Resource
+    private ApplicationEnvService applicationEnvService;
+
+    @Resource
+    private ApplicationMachineService applicationMachineService;
+
+    @Resource
     private ApplicationBuildDAO applicationBuildDAO;
+
+    @Resource
+    private MachineInfoService machineInfoService;
+
+    @Resource
+    private MachineEnvService machineEnvService;
 
     @Override
     public DataGrid<ApplicationReleaseListVO> getReleaseList(ApplicationReleaseRequest request) {
@@ -79,10 +107,6 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .wrapper(wrapper)
                 .page(request)
                 .dataGrid(ApplicationReleaseListVO.class);
-        // 查询构建序列
-        dataGrid.forEach(s -> Optional.ofNullable(s.getBuildId())
-                .map(applicationBuildDAO::selectBuildSeq)
-                .ifPresent(s::setBuildSeq));
         // 查询发布机器
         List<Long> machineIdList = dataGrid.stream().map(ApplicationReleaseListVO::getId).collect(Collectors.toList());
         if (!machineIdList.isEmpty()) {
@@ -102,10 +126,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.UNKNOWN_DATA);
         ApplicationReleaseDetailVO vo = Converts.to(release, ApplicationReleaseDetailVO.class);
-        // 查询构建序列
-        Optional.ofNullable(vo.getBuildId())
-                .map(applicationBuildDAO::selectBuildSeq)
-                .ifPresent(vo::setBuildSeq);
+        // 设置action
+        List<ApplicationActionDO> actions = JSON.parseArray(release.getActionConfig(), ApplicationActionDO.class);
+        vo.setActions(Converts.toList(actions, ApplicationActionVO.class));
         // 查询机器
         List<ApplicationReleaseMachineVO> machines = applicationReleaseMachineService.getReleaseMachines(id).stream()
                 .map(s -> Converts.to(s, ApplicationReleaseMachineVO.class))
@@ -131,13 +154,43 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long submitAppRelease(ApplicationReleaseRequest request) {
-        return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Long copyAppRelease(Long id) {
-        return null;
+        Long appId = request.getAppId();
+        Long profileId = request.getProfileId();
+        // 查询应用
+        ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
+        Valid.notNull(app, MessageConst.APP_ABSENT);
+        // 查询环境
+        ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
+        Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
+        // 查询应用执行块
+        List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId, StageType.RELEASE.getType());
+        Valid.notEmpty(actions, MessageConst.APP_PROFILE_NOT_CONFIGURED);
+        // 检查发布机器
+        this.checkReleaseMachine(request);
+        // 查询机器
+        Map<Long, MachineInfoDO> machines = this.getReleaseMachineInfo(request);
+        // 设置主表信息
+        ApplicationReleaseDO release = this.setReleaseInfo(request, app, profile, actions);
+        applicationReleaseDAO.insert(release);
+        Long releaseId = release.getId();
+        // 设置机器信息
+        List<ApplicationReleaseMachineDO> releaseMachines = this.setReleaseMachineInfo(request, machines, releaseId);
+        releaseMachines.forEach(applicationReleaseMachineDAO::insert);
+        // 检查是否包含命令
+        boolean hasCommand = actions.stream()
+                .map(ApplicationActionDO::getActionType)
+                .anyMatch(ActionType.RELEASE_TARGET_COMMAND.getType()::equals);
+        Map<String, String> releaseEnv = Maps.newMap();
+        if (hasCommand) {
+            // 查询应用环境变量
+            releaseEnv.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
+            // 添加发布环境变量
+            releaseEnv.putAll(this.getReleaseEnv(release));
+        }
+        // 设置部署操作
+        List<ApplicationReleaseActionDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
+        releaseActions.forEach(applicationReleaseActionDAO::insert);
+        return releaseId;
     }
 
     @Override
@@ -165,6 +218,219 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     @Override
     public ApplicationReleaseStatusVO getReleaseStatus(Long id) {
         return null;
+    }
+
+    /**
+     * 检查发布机器
+     *
+     * @param request request
+     */
+    private void checkReleaseMachine(ApplicationReleaseRequest request) {
+        // 获取发布配置机器
+        List<Long> machineIdList = applicationMachineService.getAppProfileMachineIdList(request.getAppId(), request.getProfileId(), false);
+        Valid.notEmpty(machineIdList, MessageConst.UNABLE_CONFIG_RELEASE_MACHINE);
+        for (Long machineId : request.getMachineIdList()) {
+            // 检查发布机器是否在配置中
+            if (machineIdList.stream().noneMatch(machineId::equals)) {
+                throw Exceptions.argument(MessageConst.UNKNOWN_RELEASE_MACHINE);
+            }
+        }
+    }
+
+    /**
+     * 查询发布机器信息
+     *
+     * @param request request
+     * @return machine
+     */
+    private Map<Long, MachineInfoDO> getReleaseMachineInfo(ApplicationReleaseRequest request) {
+        Map<Long, MachineInfoDO> map = Maps.newMap();
+        for (Long machineId : request.getMachineIdList()) {
+            MachineInfoDO machine = machineInfoService.selectById(machineId);
+            Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+            map.put(machineId, machine);
+        }
+        return map;
+    }
+
+    /**
+     * 设置发布参数
+     *
+     * @param request request
+     * @param app     app
+     * @param profile profile
+     * @param actions actions
+     * @return releaseInfo
+     */
+    private ApplicationReleaseDO setReleaseInfo(ApplicationReleaseRequest request,
+                                                ApplicationInfoDO app,
+                                                ApplicationProfileDO profile,
+                                                List<ApplicationActionDO> actions) {
+        UserDTO user = Currents.getUser();
+        // 查询构建产物路径
+        ApplicationBuildDO build = applicationBuildDAO.selectById(request.getBuildId());
+        Valid.notNull(build, MessageConst.BUILD_ABSENT);
+        String buildBundlePath = this.getBuildBundlePath(build);
+        // 查询产物传输路径
+        String transferPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_PATH.getKey());
+        // 查询发布序列
+        String releaseSerial = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.RELEASE_SERIAL.getKey());
+        // 设置参数
+        ApplicationReleaseDO release = new ApplicationReleaseDO();
+        release.setReleaseTitle(request.getTitle());
+        release.setReleaseDescription(request.getDescription());
+        release.setBuildId(build.getId());
+        release.setBuildSeq(build.getBuildSeq());
+        release.setAppId(app.getId());
+        release.setAppName(app.getAppName());
+        release.setAppTag(app.getAppTag());
+        release.setProfileId(profile.getId());
+        release.setProfileName(profile.getProfileName());
+        release.setProfileTag(profile.getProfileTag());
+        release.setReleaseType(ReleaseType.NORMAL.getType());
+        release.setReleaseSerialize(ReleaseSerialType.of(releaseSerial).getType());
+        release.setBundlePath(buildBundlePath);
+        release.setTransferPath(transferPath);
+        release.setTimedRelease(request.getTimedRelease());
+        release.setTimedReleaseTime(request.getTimedReleaseTime());
+        release.setCreateUserId(user.getId());
+        release.setCreateUserName(user.getUsername());
+        release.setActionConfig(JSON.toJSONString(actions));
+        // 设置审核信息
+        this.setCreateAuditInfo(release, user, Const.ENABLE.equals(profile.getReleaseAudit()));
+        return release;
+    }
+
+    /**
+     * 设置发布机器参数
+     *
+     * @param request   request
+     * @param machines  machines
+     * @param releaseId releaseId
+     * @return machine
+     */
+    private List<ApplicationReleaseMachineDO> setReleaseMachineInfo(ApplicationReleaseRequest request, Map<Long, MachineInfoDO> machines, Long releaseId) {
+        return request.getMachineIdList().stream().map(machineId -> {
+            ApplicationReleaseMachineDO machine = new ApplicationReleaseMachineDO();
+            machine.setReleaseId(releaseId);
+            machine.setMachineId(machineId);
+            MachineInfoDO machineInfo = machines.get(machineId);
+            machine.setMachineName(machineInfo.getMachineName());
+            machine.setMachineTag(machineInfo.getMachineTag());
+            machine.setMachineHost(machineInfo.getMachineHost());
+            machine.setRunStatus(ActionStatus.WAIT.getStatus());
+            machine.setLogPath(PathBuilders.getReleaseMachineLogPath(releaseId, machineId));
+            return machine;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 设置发布部署操作
+     *
+     * @param actions         actions
+     * @param releaseMachines 发布机器
+     * @param releaseEnv      发布环境变量
+     * @return actions
+     */
+    private List<ApplicationReleaseActionDO> setReleaseActions(List<ApplicationActionDO> actions, List<ApplicationReleaseMachineDO> releaseMachines, Map<String, String> releaseEnv) {
+        List<ApplicationReleaseActionDO> releaseActions = Lists.newList();
+        for (ApplicationReleaseMachineDO releaseMachine : releaseMachines) {
+            for (ApplicationActionDO action : actions) {
+                ActionType actionType = ActionType.of(action.getActionType());
+                Long machineId = releaseMachine.getMachineId();
+                ApplicationReleaseActionDO releaseAction = new ApplicationReleaseActionDO();
+                releaseAction.setReleaseMachineId(releaseMachine.getId());
+                releaseAction.setMachineId(machineId);
+                Long releaseId = releaseMachine.getReleaseId();
+                releaseAction.setReleaseId(releaseId);
+                releaseAction.setActionId(action.getId());
+                releaseAction.setActionName(action.getActionName());
+                releaseAction.setActionType(action.getActionType());
+                if (ActionType.RELEASE_TARGET_COMMAND.equals(actionType)) {
+                    String command = action.getActionCommand();
+                    // 替换发布命令
+                    command = Strings.format(command, EnvConst.SYMBOL, releaseEnv);
+                    // 替换机器命令
+                    Map<String, String> machineEnv = machineEnvService.getFullMachineEnv(machineId);
+                    command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
+                    releaseAction.setActionCommand(command);
+                }
+                releaseAction.setLogPath(PathBuilders.getReleaseActionLogPath(releaseId, machineId, action.getId()));
+                releaseAction.setRunStatus(ActionStatus.WAIT.getStatus());
+                releaseActions.add(releaseAction);
+            }
+        }
+        return releaseActions;
+    }
+
+    /**
+     * 检查并且获取构建目录
+     *
+     * @param build build
+     * @return 构建产物路径
+     */
+    private String getBuildBundlePath(ApplicationBuildDO build) {
+        // 构建产物
+        String buildBundlePath = build.getBundlePath();
+        File bundleFile = new File(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+        Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_FILE_ABSENT);
+        if (bundleFile.isFile()) {
+            return buildBundlePath;
+        }
+        // 如果是文件夹则需要检查传输文件是文件夹还是压缩文件
+        String transferDirValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
+        if (TransferDirType.ZIP.equals(TransferDirType.of(transferDirValue))) {
+            buildBundlePath = build.getBundlePath() + "." + Const.SUFFIX_ZIP;
+            bundleFile = new File(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+            Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_ZIP_FILE_ABSENT);
+        }
+        return buildBundlePath;
+    }
+
+    /**
+     * 创建时设置是否需要审核
+     *
+     * @param release   release
+     * @param user      user
+     * @param needAudit needAudit
+     */
+    private void setCreateAuditInfo(ApplicationReleaseDO release, UserDTO user, boolean needAudit) {
+        boolean isAdmin = RoleType.isAdministrator(user.getRoleType());
+        // 需要审核 & 不是管理员
+        if (needAudit && !isAdmin) {
+            release.setReleaseStatus(ReleaseStatus.WAIT_AUDIT.getStatus());
+        } else {
+            release.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+            release.setAuditUserId(user.getId());
+            release.setAuditUserName(user.getUsername());
+            release.setAuditTime(new Date());
+            if (isAdmin) {
+                release.setAuditReason(MessageConst.AUTO_AUDIT_RESOLVE);
+            } else {
+                release.setAuditReason(MessageConst.AUDIT_NO_REQUIRED);
+            }
+        }
+    }
+
+    /**
+     * 获取发布环境变量
+     *
+     * @param release release
+     * @return env
+     */
+    private Map<String, String> getReleaseEnv(ApplicationReleaseDO release) {
+        // 设置变量
+        MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
+        env.put(EnvConst.BUILD_ID, release.getBuildId() + Const.EMPTY);
+        env.put(EnvConst.BUILD_SEQ, release.getBuildSeq() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_TITLE, release.getReleaseTitle());
+        // 设置前缀
+        MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();
+        env.forEach((k, v) -> {
+            fullEnv.put(EnvConst.RELEASE_PREFIX + k, v);
+        });
+        return fullEnv;
     }
 
 }

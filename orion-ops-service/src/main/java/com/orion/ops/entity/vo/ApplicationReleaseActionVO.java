@@ -46,14 +46,14 @@ public class ApplicationReleaseActionVO {
     /**
      * 操作名称
      */
-    private String actionName;
+    private String name;
 
     /**
      * 操作类型
      *
      * @see com.orion.ops.consts.app.ActionType
      */
-    private Integer actionType;
+    private Integer type;
 
     /**
      * 操作命令
@@ -105,8 +105,8 @@ public class ApplicationReleaseActionVO {
             vo.setMachineId(p.getMachineId());
             vo.setReleaseId(p.getReleaseId());
             vo.setActionId(p.getActionId());
-            vo.setActionName(p.getActionName());
-            vo.setActionType(p.getActionType());
+            vo.setName(p.getActionName());
+            vo.setType(p.getActionType());
             vo.setCommand(p.getActionCommand());
             vo.setStatus(p.getRunStatus());
             Date startTime = p.getStartTime();
