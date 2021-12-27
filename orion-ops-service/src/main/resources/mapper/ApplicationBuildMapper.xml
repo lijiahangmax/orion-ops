@@ -74,4 +74,14 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectBuildReleaseList" resultMap="BaseResultMap">
+        SELECT id, build_seq, description, create_time
+        FROM application_build
+        WHERE app_id = #{appId}
+        AND profile_id = #{profileId}
+        AND build_status = 30
+        ORDER by id DESC
+        LIMIT #{limit}
+    </select>
+
 </mapper>

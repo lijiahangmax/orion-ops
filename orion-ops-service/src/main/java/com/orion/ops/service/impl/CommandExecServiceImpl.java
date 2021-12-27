@@ -88,7 +88,7 @@ public class CommandExecServiceImpl implements CommandExecService {
             record.setExecStatus(ExecStatus.WAITING.getStatus());
             record.setDescription(request.getDescription());
             // 替换命令
-            Map<String, String> env = machineEnvService.getFullMachineEnv(mid, EnvConst.ENV_PREFIX);
+            Map<String, String> env = machineEnvService.getFullMachineEnv(mid);
             record.setExecCommand(Strings.format(request.getCommand(), EnvConst.SYMBOL, env));
             commandExecDAO.insert(record);
             // 设置日志路径

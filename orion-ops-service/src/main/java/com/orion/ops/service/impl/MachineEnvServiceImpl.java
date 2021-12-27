@@ -273,7 +273,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
-    public MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId, String prefix) {
+    public MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId) {
         // 查询机器
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
@@ -287,7 +287,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId)
                 .orderByAsc(MachineEnvDO::getId);
-        machineEnvDAO.selectList(wrapper).forEach(e -> env.put(prefix + e.getAttrKey(), e.getAttrValue()));
+        machineEnvDAO.selectList(wrapper).forEach(e -> env.put(EnvConst.MACHINE_PREFIX + e.getAttrKey(), e.getAttrValue()));
         return env;
     }
 

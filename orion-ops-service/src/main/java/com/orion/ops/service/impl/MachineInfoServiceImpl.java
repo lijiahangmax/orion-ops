@@ -31,6 +31,7 @@ import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Valid;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Streams;
 import com.orion.utils.net.IPs;
@@ -140,6 +141,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     public DataGrid<MachineInfoVO> listMachine(MachineInfoRequest request) {
         LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
+                .in(Lists.isNotEmpty(request.getIdList()), MachineInfoDO::getId, request.getIdList())
                 .like(Strings.isNotBlank(request.getHost()), MachineInfoDO::getMachineHost, request.getHost())
                 .like(Strings.isNotBlank(request.getName()), MachineInfoDO::getMachineName, request.getName())
                 .like(Strings.isNotBlank(request.getTag()), MachineInfoDO::getMachineTag, request.getTag())

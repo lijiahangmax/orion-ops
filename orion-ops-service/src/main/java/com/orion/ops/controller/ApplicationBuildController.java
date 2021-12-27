@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
+import com.orion.ops.entity.vo.ApplicationBuildReleaseListVO;
 import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
 import com.orion.ops.service.api.ApplicationBuildService;
@@ -92,6 +93,16 @@ public class ApplicationBuildController {
     public Long rebuild(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.rebuild(id);
+    }
+
+    /**
+     * 发布构建列表
+     */
+    @RequestMapping("/release/list")
+    public List<ApplicationBuildReleaseListVO> getBuildReleaseList(@RequestBody ApplicationBuildRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return applicationBuildService.getBuildReleaseList(appId, profileId);
     }
 
 }
