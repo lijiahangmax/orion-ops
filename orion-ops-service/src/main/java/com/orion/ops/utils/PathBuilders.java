@@ -93,7 +93,7 @@ public class PathBuilders {
     public static String getReleaseHostLogPath(Long releaseId) {
         return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_HOST_PREFIX
+                + Const.RELEASE_MACHINE_PREFIX
                 + "." + Const.SUFFIX_LOG;
     }
 
@@ -101,13 +101,13 @@ public class PathBuilders {
      * 获取应用发布目标机器日志文件
      *
      * @param releaseId releaseId
-     * @param machineId 目标机器
+     * @param machineId 机器id
      * @return path
      */
-    public static String getReleaseTargetMachineLogPath(Long releaseId, Long machineId) {
+    public static String getReleaseMachineLogPath(Long releaseId, Long machineId) {
         return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_TARGET_PREFIX
+                + Const.RELEASE_MACHINE_PREFIX
                 + "_" + machineId
                 + "." + Const.SUFFIX_LOG;
     }
@@ -116,14 +116,17 @@ public class PathBuilders {
      * 获取应用发布操作日志文件
      *
      * @param releaseId releaseId
-     * @param id        id
+     * @param machineId machineId
+     * @param actionId  actionId
      * @return path
      */
-    public static String getReleaseActionLogPath(Long releaseId, Long id) {
+    public static String getReleaseActionLogPath(Long releaseId, Long machineId, Long actionId) {
         return Const.RELEASE_DIR
                 + "/" + releaseId
-                + Const.RELEASE_ACTION_PREFIX
-                + "_" + id
+                + Const.RELEASE_MACHINE_PREFIX
+                + "_" + machineId
+                + "-" + Const.ACTION
+                + "_" + actionId
                 + "." + Const.SUFFIX_LOG;
     }
 

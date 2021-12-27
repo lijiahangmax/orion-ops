@@ -164,4 +164,14 @@ public class MessageConst {
 
     public static final String RESET_ERROR = "git reset 操作失败";
 
+    public static final String BUILD_ABSENT = "构建版本不存在";
+
+    public static final String BUNDLE_FILE_ABSENT = "构建产物不存在";
+
+    public static final String BUNDLE_ZIP_FILE_ABSENT = "构建产物压缩文件不存在";
+
+    public static final String UNABLE_CONFIG_RELEASE_MACHINE = "发布机器未配置";
+
+    public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
+
 }

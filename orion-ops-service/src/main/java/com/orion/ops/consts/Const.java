@@ -38,11 +38,7 @@ public class Const extends com.orion.constant.Const {
 
     public static final String RELEASE_DIR = "/release";
 
-    public static final String RELEASE_HOST_PREFIX = "/host";
-
-    public static final String RELEASE_TARGET_PREFIX = "/target";
-
-    public static final String RELEASE_ACTION_PREFIX = "/action";
+    public static final String RELEASE_MACHINE_PREFIX = "/machine";
 
     public static final String EXEC_DIR = "/exec";
 
@@ -100,7 +96,9 @@ public class Const extends com.orion.constant.Const {
 
     public static final Integer NOT_CONFIGURED = 2;
 
-    public static final Integer VCS_COMMIT_LIMIT = 50;
+    public static final Integer VCS_COMMIT_LIMIT = 30;
+
+    public static final Integer BUILD_RELEASE_LIMIT = 20;
 
     public static final String COPY = "Copy";
 

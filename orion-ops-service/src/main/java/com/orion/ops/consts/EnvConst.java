@@ -18,13 +18,13 @@ public class EnvConst {
 
     // -------------------- prefix --------------------
 
-    public static final String ENV_PREFIX = "env.";
-
     public static final String MACHINE_PREFIX = "machine.";
 
     public static final String APP_PREFIX = "app.";
 
     public static final String BUILD_PREFIX = "build.";
+
+    public static final String RELEASE_PREFIX = "release.";
 
     // -------------------- machine --------------------
 
@@ -40,9 +40,13 @@ public class EnvConst {
 
     // -------------------- app --------------------
 
+    public static final String APP_ID = "app_id";
+
     public static final String APP_NAME = "app_name";
 
     public static final String APP_TAG = "app_tag";
+
+    public static final String PROFILE_ID = "profile_id";
 
     public static final String PROFILE_NAME = "profile_name";
 
@@ -50,11 +54,17 @@ public class EnvConst {
 
     // -------------------- build --------------------
 
+    public static final String BUILD_ID = "build_id";
+
     public static final String BUILD_SEQ = "build_seq";
 
     public static final String VCS_HOME = "vcs_home";
 
     // -------------------- release --------------------
+
+    public static final String RELEASE_ID = "release_id";
+
+    public static final String RELEASE_TITLE = "release_title";
 
     public static final String DIST_PATH = "dist_path";
 
