@@ -6,22 +6,22 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="用户名" prop="username">
-              <a-input v-model="query.username"/>
+              <a-input v-model="query.username" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="昵称" prop="nickname">
-              <a-input v-model="query.nickname"/>
+              <a-input v-model="query.nickname" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="手机号" prop="phone">
-              <a-input v-model="query.phone"/>
+              <a-input v-model="query.phone" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="邮箱" prop="email">
-              <a-input v-model="query.email"/>
+              <a-input v-model="query.email" allowClear/>
             </a-form-model-item>
           </a-col>
         </a-row>

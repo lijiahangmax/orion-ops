@@ -124,7 +124,7 @@ export default {
         this.$message.warning('请先维护应用环境')
         return
       }
-      this.selectAppPage = true
+      this.selectAppPage = appId === null
       this.visible = true
       this.loading = false
       this.submit.branchName = null

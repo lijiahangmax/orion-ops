@@ -11,7 +11,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="构建序列" prop="seq">
-              <a-input v-limit-integer v-model="query.seq"/>
+              <a-input v-limit-integer v-model="query.seq" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -25,7 +25,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="4">

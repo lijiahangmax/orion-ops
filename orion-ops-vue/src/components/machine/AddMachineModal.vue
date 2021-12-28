@@ -16,7 +16,7 @@
               <a-form-item label="名称">
                 <a-input v-decorator="decorators.name"/>
               </a-form-item>
-              <a-form-item label="tag">
+              <a-form-item label="标签">
                 <a-input v-decorator="decorators.tag"/>
               </a-form-item>
               <a-form-item label="ssh信息" style="margin-bottom: 0">
@@ -97,10 +97,10 @@ function getDecorators() {
     tag: ['tag', {
       rules: [{
         required: true,
-        message: '请输入tag'
+        message: '请输入标签'
       }, {
         max: 32,
-        message: 'tag长度不能大于32位'
+        message: '标签长度不能大于32位'
       }]
     }],
     username: ['username', {

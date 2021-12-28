@@ -14,8 +14,8 @@
               <UserSelector ref="userSelector" @change="userId => query.userId = userId"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="4">
-            <a-form-model-item label="结束码" prop="closeCode">
+          <a-col :span="5">
+            <a-form-model-item label="退出码" prop="closeCode">
               <a-input-number v-model="query.closeCode" :precision="0" style="width: 100%"/>
             </a-form-model-item>
           </a-col>

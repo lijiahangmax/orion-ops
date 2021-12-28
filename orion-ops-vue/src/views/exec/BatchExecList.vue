@@ -11,7 +11,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="命令" prop="command">
-              <a-input v-model="query.command"/>
+              <a-input v-model="query.command" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -23,14 +23,14 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+          <a-col :span="5">
+            <a-form-model-item label="描述" prop="description">
+              <a-input v-model="query.description" allowClear/>
+            </a-form-model-item>
+          </a-col>
           <a-col :span="4">
             <a-form-model-item label="退出码" prop="exitCode">
               <a-input-number v-model="query.exitCode" :precision="0" style="width: 100%"/>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="5">
-            <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
             </a-form-model-item>
           </a-col>
         </a-row>

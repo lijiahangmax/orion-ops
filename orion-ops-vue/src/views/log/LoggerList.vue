@@ -11,17 +11,17 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="路径" prop="path">
-              <a-input v-model="query.path"/>
+              <a-input v-model="query.path" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="命令" prop="command">
-              <a-input v-model="query.command"/>
+              <a-input v-model="query.command" allowClear/>
             </a-form-model-item>
           </a-col>
         </a-row>

@@ -6,12 +6,12 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="秘钥名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">

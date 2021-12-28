@@ -15,7 +15,7 @@
           <a-descriptions-item label="用户名" :span="3">
             {{ detail.username }}
           </a-descriptions-item>
-          <a-descriptions-item label="tag" :span="3">
+          <a-descriptions-item label="标签" :span="3">
             <a-tag color="#20C997">
               {{ detail.tag }}
             </a-tag>

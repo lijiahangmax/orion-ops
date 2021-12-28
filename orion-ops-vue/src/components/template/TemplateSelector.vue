@@ -10,10 +10,10 @@
       <div class="tools-fixed-left">
         <a-form-model layout="inline" class="command-template-search-form" ref="query" :model="query">
           <a-form-model-item label="模板名称" prop="name">
-            <a-input v-model="query.name"/>
+            <a-input v-model="query.name" allowClear/>
           </a-form-model-item>
           <a-form-model-item label="模板内容" prop="value">
-            <a-input v-model="query.value"/>
+            <a-input v-model="query.value" allowClear/>
           </a-form-model-item>
         </a-form-model>
       </div>

@@ -6,22 +6,22 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="代理主机" prop="host">
-              <a-input v-model="query.host"/>
+              <a-input v-model="query.host" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="代理端口" prop="port">
-              <a-input v-limit-integer v-model="query.port"/>
+              <a-input v-limit-integer v-model="query.port" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="代理用户" prop="username">
-              <a-input v-model="query.username"/>
+              <a-input v-model="query.username" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="4">

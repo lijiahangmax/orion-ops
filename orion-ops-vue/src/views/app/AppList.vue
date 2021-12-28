@@ -6,17 +6,17 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="tag" prop="tag">
-              <a-input v-model="query.tag"/>
+            <a-form-model-item label="标签" prop="tag">
+              <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -107,10 +107,21 @@
           </span>
           <a-divider type="vertical"/>
           <!-- 构建 -->
-          <a v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value" @click="buildApp(record.id)">
+          <a-button class="p0"
+                    type="link"
+                    :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
+                    @click="buildApp(record.id)">
             构建
-          </a>
-          <a-divider type="vertical" v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value"/>
+          </a-button>
+          <a-divider type="vertical"/>
+          <!-- 发布 -->
+          <a-button class="p0"
+                    type="link"
+                    :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
+                    @click="releaseApp(record.id)">
+            发布
+          </a-button>
+          <a-divider type="vertical"/>
           <!-- 同步 -->
           <AppProfileChecker :ref="'profileChecker' + record.id">
             <a slot="trigger">
@@ -149,6 +160,8 @@
       <AddAppModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 构建模态框 -->
       <AppBuildModal ref="buildModal"/>
+      <!-- 构建模态框 -->
+      <AppReleaseModal ref="releaseModal"/>
     </div>
   </div>
 </template>
@@ -157,6 +170,7 @@
 import AddAppModal from '@/components/app/AddAppModal'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
 import AppBuildModal from '@/components/app/AppBuildModal'
+import AppReleaseModal from '@/components/app/AppReleaseModal'
 
 /**
  * 列
@@ -177,7 +191,7 @@ const columns = [
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
-    title: 'tag',
+    title: '标签',
     key: 'tag',
     scopedSlots: { customRender: 'tag' },
     sorter: (a, b) => a.tag.localeCompare(b.tag)
@@ -205,7 +219,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 240,
+    align: 'center',
+    width: 270,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -222,7 +237,7 @@ const innerColumns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: 'tag',
+    title: '标签',
     key: 'tag',
     sorter: (a, b) => a.tag.localeCompare(b.tag),
     scopedSlots: { customRender: 'tag' }
@@ -303,6 +318,7 @@ const moreMenuHandler = {
 export default {
   name: 'AppList',
   components: {
+    AppReleaseModal,
     AppBuildModal,
     AddAppModal,
     AppProfileChecker
@@ -389,6 +405,9 @@ export default {
     },
     buildApp(id) {
       this.$refs.buildModal.openBuild(this.query.profileId, id)
+    },
+    releaseApp(id) {
+      this.$refs.releaseModal.openRelease(this.query.profileId, id)
     },
     sync(id) {
       const ref = this.$refs['profileChecker' + id]

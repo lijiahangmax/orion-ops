@@ -6,22 +6,22 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="tag" prop="tag">
-              <a-input v-model="query.tag"/>
+            <a-form-model-item label="标签" prop="tag">
+              <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="主机" prop="host">
-              <a-input v-model="query.host"/>
+              <a-input v-model="query.host" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="4">
@@ -114,8 +114,14 @@
         <span slot="action" slot-scope="record">
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
-          <a v-if="record.status === 1" target="_blank" :href="`#/machine/terminal/${record.id}`">Terminal</a>
-          <a-divider v-if="record.status === 1" type="vertical"/>
+          <a-button title="打开终端" class="p0" type="link" :disabled="record.status !== 1">
+            <a target="_blank" :href="`#/machine/terminal/${record.id}`">Terminal</a>
+          </a-button>
+          <a-divider type="vertical"/>
+          <a-button title="打开sftp" class="p0" type="link" :disabled="record.status !== 1" @click="toSftp(record.id)">
+            sftp
+          </a-button>
+          <a-divider type="vertical"/>
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down"/></a>
             <a-menu slot="overlay" @click="menuHandler($event, record)">
@@ -127,9 +133,6 @@
               </a-menu-item>
               <a-menu-item key="copy">
                 复制
-              </a-menu-item>
-              <a-menu-item key="sftp" v-if="record.status === 1">
-                sftp
               </a-menu-item>
               <a-menu-item key="ping" v-if="record.status === 1">
                 ping
@@ -176,7 +179,7 @@ const columns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: 'tag',
+    title: '机器标签',
     key: 'tag',
     width: 150,
     sorter: (a, b) => a.tag.localeCompare(b.tag),
@@ -213,7 +216,8 @@ const columns = [
     title: '操作',
     key: 'operation',
     fixed: 'right',
-    width: 180,
+    align: 'center',
+    width: 230,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -258,9 +262,6 @@ const moreMenuHandler = {
         })
       }
     })
-  },
-  sftp(record) {
-    this.$router.push({ path: `/machine/sftp/${record.id}` })
   },
   ping(record) {
     const ping = this.$message.loading(`ping ${record.host}`, 10)
@@ -368,6 +369,9 @@ export default {
     },
     openDetail(id) {
       this.$refs.detailModal.open(id)
+    },
+    toSftp(id) {
+      this.$router.push({ path: `/machine/sftp/${id}` })
     },
     menuHandler({ key }, record) {
       moreMenuHandler[key].call(this, record)

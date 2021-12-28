@@ -6,17 +6,17 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="环境名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="tag" prop="tag">
-              <a-input v-model="query.tag"/>
+            <a-form-model-item label="标签" prop="tag">
+              <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -106,7 +106,7 @@ const columns = [
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
-    title: 'tag',
+    title: '标签',
     key: 'tag',
     ellipsis: true,
     width: 150,

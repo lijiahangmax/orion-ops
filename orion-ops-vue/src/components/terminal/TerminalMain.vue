@@ -41,8 +41,12 @@
           <a slot="extra" @click="closeSearch">
             <a-icon type="close"/>
           </a>
-          <a-input class="search-input" ref="searchInput" placeholder="请输入查找内容"
-                   v-model="search.value" @keyup.enter.native="searchKeywords(true)">
+          <a-input class="search-input"
+                   ref="searchInput"
+                   placeholder="请输入查找内容"
+                   v-model="search.value"
+                   @keyup.enter.native="searchKeywords(true)"
+                   allowClear>
           </a-input>
           <div class="search-options">
             <a-row>

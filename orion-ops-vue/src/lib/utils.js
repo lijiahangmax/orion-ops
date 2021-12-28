@@ -42,7 +42,7 @@ function getClipboardText() {
  * md5
  */
 function md5(val) {
-  return $md5(val)
+  return $md5.hex(val)
 }
 
 /**

@@ -120,7 +120,8 @@
                        :value="selectedKeys[0]"
                        style="width: 188px; margin-bottom: 8px; display: block;"
                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                       @pressEnter="() => confirm()"/>
+                       @pressEnter="() => confirm()"
+                       allowClear/>
               <a-button type="primary" icon="search" size="small"
                         style="width: 90px; margin-right: 8px"
                         @click="() => confirm()">
@@ -162,10 +163,15 @@
               </a>
               <a-divider type="vertical"/>
               <!-- 删除 -->
-              <a v-if="record.isSafe" @click="remove(record)" title="删除">
+              <a-button class="p0"
+                        type="link"
+                        :title="record.isSafe ? '删除' : '禁止删除'"
+                        style="height: 24px"
+                        :disabled="!record.isSafe"
+                        @click="remove(record)">
                 <a-icon type="delete"/>
-              </a>
-              <a-divider v-if="record.isSafe" type="vertical"/>
+              </a-button>
+              <a-divider type="vertical"/>
               <!-- 移动 -->
               <a @click="openMove(record)" title="移动">
                 <a-icon type="block"/>
@@ -251,8 +257,9 @@ const fileListColumns = function() {
     {
       title: '操作',
       key: 'operation',
-      width: 160,
       fixed: 'right',
+      align: 'center',
+      width: 170,
       scopedSlots: { customRender: 'action' }
     }
   ]

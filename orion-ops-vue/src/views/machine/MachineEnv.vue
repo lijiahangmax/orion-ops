@@ -30,17 +30,17 @@
             <a-row>
               <a-col :span="6">
                 <a-form-model-item label="key" prop="key">
-                  <a-input v-model="query.key"/>
+                  <a-input v-model="query.key" allowClear/>
                 </a-form-model-item>
               </a-col>
               <a-col :span="6">
                 <a-form-model-item label="value" prop="value">
-                  <a-input v-model="query.value"/>
+                  <a-input v-model="query.value" allowClear/>
                 </a-form-model-item>
               </a-col>
               <a-col :span="6">
                 <a-form-model-item label="描述" prop="description">
-                  <a-input v-model="query.description"/>
+                  <a-input v-model="query.description" allowClear/>
                 </a-form-model-item>
               </a-col>
             </a-row>
@@ -141,14 +141,16 @@
               </MachineChecker>
               <a-divider type="vertical"/>
               <a @click="history(record)">历史</a>
-              <a-divider v-if="record.forbidDelete === 1" type="vertical"/>
-              <a-popconfirm v-if="record.forbidDelete === 1"
+              <a-divider type="vertical"/>
+              <a-popconfirm :disabled="record.forbidDelete !== 1"
                             placement="topRight"
                             title="是否删除当前变量?"
                             ok-text="确定"
                             cancel-text="取消"
                             @confirm="remove(record.id)">
-                <span class="span-blue pointer">删除</span>
+                <a-button class="p0" type="link" :disabled="record.forbidDelete !== 1">
+                  删除
+                </a-button>
               </a-popconfirm>
             </div>
           </a-table>
@@ -226,7 +228,8 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 180,
+    align: 'center',
+    width: 200,
     scopedSlots: { customRender: 'action' }
   }
 ]

@@ -86,6 +86,7 @@ export default {
         for (let i = 0; i < this.files.length; i++) {
           if (this.files[i].path === this.filePath) {
             this.files[i].attr = this.files[i].attr.charAt(0) + this.permissionString
+            this.files[i].permission = this.permission
           }
         }
         this.close()

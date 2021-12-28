@@ -6,22 +6,22 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name"/>
+              <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="url" prop="url">
-              <a-input v-model="query.url"/>
+              <a-input v-model="query.url" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="资源用户" prop="username">
-              <a-input v-model="query.username"/>
+              <a-input v-model="query.username" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="描述" prop="description">
-              <a-input v-model="query.description"/>
+              <a-input v-model="query.description" allowClear/>
             </a-form-model-item>
           </a-col>
           <a-col :span="4">
@@ -85,7 +85,7 @@
                   $enum.VCS_STATUS.ERROR.value === record.status ||
                   $enum.VCS_STATUS.OK.value === record.status"/>
           <!-- 修改 -->
-          <a-button style="padding: 0"
+          <a-button class="p0"
                     type="link"
                     :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
                     @click="update(record.id)">
@@ -99,7 +99,7 @@
                         cancel-text="取消"
                         :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
                         @confirm="remove(record.id)">
-            <a-button style="padding: 0"
+            <a-button class="p0"
                       type="link"
                       :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
               删除
@@ -113,7 +113,7 @@
                         cancel-text="取消"
                         :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
                         @confirm="clean(record.id)">
-            <a-button style="padding: 0"
+            <a-button class="p0"
                       type="link"
                       :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
               清空
