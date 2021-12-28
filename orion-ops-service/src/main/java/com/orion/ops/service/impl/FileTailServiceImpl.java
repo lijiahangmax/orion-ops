@@ -57,9 +57,6 @@ public class FileTailServiceImpl implements FileTailService {
     private ApplicationBuildService applicationBuildService;
 
     @Resource
-    private ReleaseInfoService releaseInfoService;
-
-    @Resource
     private FileTailListDAO fileTailListDAO;
 
     @Resource
@@ -200,8 +197,8 @@ public class FileTailServiceImpl implements FileTailService {
                 break;
             case APP_RELEASE_LOG:
                 // 应用发布 目标机器流程日志
-                path = releaseInfoService.getReleaseStageLogPath(relId);
-                break;
+                // path = releaseInfoService.getReleaseStageLogPath(relId);
+                // break;
             default:
                 path = null;
         }
