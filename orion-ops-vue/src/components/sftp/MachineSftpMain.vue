@@ -166,7 +166,7 @@
               <a-button class="p0"
                         type="link"
                         :title="record.isSafe ? '删除' : '禁止删除'"
-                        style="height: 24px"
+                        style="height: 22px"
                         :disabled="!record.isSafe"
                         @click="remove(record)">
                 <a-icon type="delete"/>

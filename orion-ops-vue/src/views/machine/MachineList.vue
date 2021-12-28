@@ -114,11 +114,19 @@
         <span slot="action" slot-scope="record">
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
-          <a-button title="打开终端" class="p0" type="link" :disabled="record.status !== 1">
+          <a-button title="打开终端"
+                    class="p0"
+                    type="link"
+                    style="height: 22px"
+                    :disabled="record.status !== 1">
             <a target="_blank" :href="`#/machine/terminal/${record.id}`">Terminal</a>
           </a-button>
           <a-divider type="vertical"/>
-          <a-button title="打开sftp" class="p0" type="link" :disabled="record.status !== 1" @click="toSftp(record.id)">
+          <a-button title="打开sftp"
+                    class="p0"
+                    type="link"
+                    style="height: 22px"
+                    :disabled="record.status !== 1" @click="toSftp(record.id)">
             sftp
           </a-button>
           <a-divider type="vertical"/>

@@ -109,6 +109,7 @@
           <!-- 构建 -->
           <a-button class="p0"
                     type="link"
+                    style="height: 22px"
                     :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
                     @click="buildApp(record.id)">
             构建
@@ -117,6 +118,7 @@
           <!-- 发布 -->
           <a-button class="p0"
                     type="link"
+                    style="height: 22px"
                     :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
                     @click="releaseApp(record.id)">
             发布

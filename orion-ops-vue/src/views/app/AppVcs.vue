@@ -87,6 +87,7 @@
           <!-- 修改 -->
           <a-button class="p0"
                     type="link"
+                    style="height: 22px"
                     :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
                     @click="update(record.id)">
             修改
@@ -101,6 +102,7 @@
                         @confirm="remove(record.id)">
             <a-button class="p0"
                       type="link"
+                      style="height: 22px"
                       :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
               删除
             </a-button>
@@ -115,6 +117,7 @@
                         @confirm="clean(record.id)">
             <a-button class="p0"
                       type="link"
+                      style="height: 22px"
                       :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
               清空
             </a-button>

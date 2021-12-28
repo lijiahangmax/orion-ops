@@ -148,7 +148,10 @@
                             ok-text="确定"
                             cancel-text="取消"
                             @confirm="remove(record.id)">
-                <a-button class="p0" type="link" :disabled="record.forbidDelete !== 1">
+                <a-button class="p0"
+                          type="link"
+                          style="height: 22px"
+                          :disabled="record.forbidDelete !== 1">
                   删除
                 </a-button>
               </a-popconfirm>
