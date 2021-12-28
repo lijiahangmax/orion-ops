@@ -3,7 +3,7 @@ package com.orion.ops.entity.request;
 import lombok.Data;
 
 /**
- * 提交上线单
+ * 应用发布审核
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -13,7 +13,7 @@ import lombok.Data;
 public class ApplicationReleaseAuditRequest {
 
     /**
-     * 上线单id
+     * id
      */
     private Long id;
 

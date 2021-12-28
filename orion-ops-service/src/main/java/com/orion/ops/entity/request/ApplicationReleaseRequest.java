@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,10 +61,32 @@ public class ApplicationReleaseRequest extends PageRequest {
     private Integer status;
 
     /**
+     * 是否是定时发布 10普通发布 20定时发布
+     *
+     * @see com.orion.ops.consts.app.TimedReleaseType
+     */
+    private Integer timedRelease;
+
+    /**
+     * 定时发布时间
+     */
+    private Date timedReleaseTime;
+
+    /**
      * 只看自己
      *
      * @see com.orion.ops.consts.Const#ENABLE
      */
     private Integer onlyMyself;
+
+    /**
+     * 发布机器id
+     */
+    private Long releaseMachineId;
+
+    /**
+     * 回滚发布
+     */
+    private List<Long> idList;
 
 }

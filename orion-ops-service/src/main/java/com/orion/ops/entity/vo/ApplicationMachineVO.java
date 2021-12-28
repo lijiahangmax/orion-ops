@@ -1,6 +1,6 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.domain.ApplicationMachineDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
@@ -34,12 +34,34 @@ public class ApplicationMachineVO {
      */
     private String machineHost;
 
+    /**
+     * tag
+     */
+    private String machineTag;
+
+    /**
+     * 当前版本发布id
+     */
+    private Long releaseId;
+
+    /**
+     * 当前版本构建id
+     */
+    private Long buildId;
+
+    /**
+     * 当前版本构建序列
+     */
+    private Long buildSeq;
+
     static {
-        TypeStore.STORE.register(MachineInfoDO.class, ApplicationMachineVO.class, p -> {
+        TypeStore.STORE.register(ApplicationMachineDO.class, ApplicationMachineVO.class, p -> {
             ApplicationMachineVO vo = new ApplicationMachineVO();
-            vo.setMachineId(p.getId());
-            vo.setMachineName(p.getMachineName());
-            vo.setMachineHost(p.getMachineHost());
+            vo.setId(p.getId());
+            vo.setMachineId(p.getMachineId());
+            vo.setReleaseId(p.getReleaseId());
+            vo.setBuildId(p.getBuildId());
+            vo.setBuildSeq(p.getBuildSeq());
             return vo;
         });
     }

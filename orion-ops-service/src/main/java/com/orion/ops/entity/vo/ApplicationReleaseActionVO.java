@@ -68,6 +68,11 @@ public class ApplicationReleaseActionVO {
     private Integer status;
 
     /**
+     * 退出码
+     */
+    private Integer exitCode;
+
+    /**
      * 开始时间
      */
     private Date startTime;
@@ -109,6 +114,7 @@ public class ApplicationReleaseActionVO {
             vo.setType(p.getActionType());
             vo.setCommand(p.getActionCommand());
             vo.setStatus(p.getRunStatus());
+            vo.setExitCode(p.getExitCode());
             Date startTime = p.getStartTime();
             Date endTime = p.getEndTime();
             vo.setStartTime(startTime);

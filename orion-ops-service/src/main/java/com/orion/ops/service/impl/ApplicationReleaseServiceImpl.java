@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnvConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.*;
@@ -196,7 +193,32 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
-        return null;
+        // 查询状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(request.getId());
+        Valid.notNull(release, MessageConst.UNKNOWN_DATA);
+        ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
+        if (!ReleaseStatus.WAIT_AUDIT.equals(status) && !ReleaseStatus.AUDIT_REJECT.equals(status)) {
+            throw Exceptions.argument(MessageConst.INVALID_STATUS);
+        }
+        AuditStatus auditStatus = AuditStatus.of(request.getStatus());
+        UserDTO user = Currents.getUser();
+        // 更新
+        ApplicationReleaseDO update = new ApplicationReleaseDO();
+        update.setId(request.getId());
+        update.setAuditUserId(user.getId());
+        update.setAuditUserName(user.getUsername());
+        update.setAuditTime(new Date());
+        update.setAuditReason(request.getReason());
+        if (AuditStatus.RESOLVE.equals(auditStatus)) {
+            // 通过
+            update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+        } else if (AuditStatus.REJECT.equals(auditStatus)) {
+            // 驳回
+            update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
+        } else {
+            return 0;
+        }
+        return applicationReleaseDAO.updateById(update);
     }
 
     @Override

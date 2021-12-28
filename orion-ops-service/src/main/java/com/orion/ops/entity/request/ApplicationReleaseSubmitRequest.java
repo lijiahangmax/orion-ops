@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 提交上线单
+ * 提交发布单
  *
  * @author Jiahang Li
  * @version 1.0.0

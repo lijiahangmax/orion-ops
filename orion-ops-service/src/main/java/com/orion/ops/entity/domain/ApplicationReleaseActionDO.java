@@ -90,6 +90,12 @@ public class ApplicationReleaseActionDO implements Serializable {
     private Integer runStatus;
 
     /**
+     * 退出码
+     */
+    @TableField("exit_code")
+    private Integer exitCode;
+
+    /**
      * 开始时间
      */
     @TableField("start_time")

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 上线单请求
+ * 应用发布请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 public class ApplicationReleaseBillRequest extends PageRequest {
 
     /**
-     * 上线单id
+     * id
      */
     private Long id;
 
