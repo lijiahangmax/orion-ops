@@ -18,14 +18,19 @@
       <div v-if="loading">
         <a-skeleton active :paragraph="{rows: 6}"/>
       </div>
-      <div class="app-item" v-for="app of appList" :key="app.id" @click="chooseApp(app)">
-        <div class="app-name">
-          <a-icon class="mx8" type="code-sandbox"/>
-          {{ app.name }}
+      <div v-else-if="appList.length">
+        <div class="app-item" v-for="app of appList" :key="app.id" @click="chooseApp(app)">
+          <div class="app-name">
+            <a-icon class="mx8" type="code-sandbox"/>
+            {{ app.name }}
+          </div>
+          <a-tag color="#5C7CFA">
+            {{ app.tag }}
+          </a-tag>
         </div>
-        <a-tag color="#5C7CFA">
-          {{ app.tag }}
-        </a-tag>
+      </div>
+      <div v-else-if="!appList.length">
+        <a-empty style="margin-top: 10%" description="请先配置应用"/>
       </div>
     </div>
     <!-- 构建配置 -->
@@ -37,7 +42,11 @@
             <span class="span-red">* </span>
             分支 :
           </span>
-          <a-select class="build-form-item-input" v-model="submit.branchName" @change="reloadCommit">
+          <a-select class="build-form-item-input"
+                    v-model="submit.branchName"
+                    placeholder="分支"
+                    @change="reloadCommit"
+                    allowClear>
             <a-select-option v-for="branch of branchList" :key="branch.name" :value="branch.name">
               {{ branch.name }}
             </a-select-option>
@@ -50,7 +59,10 @@
             <span class="span-red">* </span>
             commit :
           </span>
-          <a-select class="build-form-item-input commit-selector" v-model="submit.commitId">
+          <a-select class="build-form-item-input commit-selector"
+                    v-model="submit.commitId"
+                    placeholder="提交记录"
+                    allowClear>
             <a-select-option v-for="commit of commitList" :key="commit.id" :value="commit.id">
               <div class="commit-item">
                 <div class="commit-item-left">
@@ -72,7 +84,10 @@
         <!-- 描述 -->
         <div class="build-form-item" style="margin: 8px 0;">
           <span class="build-form-item-label">构建描述 : </span>
-          <a-input class="build-form-item-input" style="height: 50px; width: 430px" :maxLength="64"/>
+          <a-textarea class="build-form-item-input"
+                      v-model="submit.description"
+                      style="height: 50px; width: 430px"
+                      :maxLength="64"/>
         </div>
       </div>
     </a-spin>
@@ -110,6 +125,8 @@ export default {
         return
       }
       this.selectAppPage = true
+      this.visible = true
+      this.loading = false
       this.submit.branchName = null
       this.submit.commitId = null
       this.submit.description = null
@@ -117,7 +134,6 @@ export default {
       this.appId = null
       this.app = null
       this.appList = []
-      this.visible = true
       await this.loadAppList(profileId)
       if (appId) {
         this.appId = appId
@@ -177,6 +193,11 @@ export default {
     },
     reloadCommit() {
       if (!this.submit.branchName) {
+        this.commitList = []
+        this.submit.commitId = undefined
+        return
+      }
+      if (!this.submit.branchName) {
         this.$message.warning('请先选择分支')
         return
       }
@@ -221,6 +242,10 @@ export default {
       }
     },
     async build() {
+      if (!this.app) {
+        this.$message.warning('请选择构建应用')
+        return
+      }
       if (this.app.vcsId) {
         if (!this.submit.branchName) {
           this.$message.warning('请选择分支')
@@ -350,7 +375,7 @@ export default {
   }
 
   .commit-item-message {
-    width: 260px;
+    width: 227px;
     display: block;
     white-space: nowrap;
     text-overflow: ellipsis;

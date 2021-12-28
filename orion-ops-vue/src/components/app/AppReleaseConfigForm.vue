@@ -15,6 +15,18 @@
           <a-button type="primary" size="small" slot="footer" @click="chooseMachines">确定</a-button>
         </MachineChecker>
       </div>
+      <!-- 发布序列 -->
+      <div id="app-release-serial-wrapper">
+        <span class="label">
+          <span class="span-red mr4">*</span>
+          发布序列 :
+        </span>
+        <a-select style="margin-left: 8px; width: 120px" v-model="releaseSerial">
+          <a-select-option v-for="type of $enum.RELEASE_SERIAL_TYPE" :key="type.value" :value="type.value">
+            {{ type.label }}
+          </a-select-option>
+        </a-select>
+      </div>
       <!-- 发布操作 -->
       <div id="app-action-container">
         <template v-for="(action, index) in actions">
@@ -257,6 +269,11 @@ export default {
     align-items: center;
     justify-content: flex-start;
     align-content: center;
+  }
+
+  #app-release-serial-wrapper {
+    display: flex;
+    margin-top: 8px;
   }
 
   #app-action-container {

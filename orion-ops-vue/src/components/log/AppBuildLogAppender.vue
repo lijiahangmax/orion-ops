@@ -112,11 +112,13 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 设置action
-        for (const actionStatus of data.actions) {
-          for (const action of this.detail.actions) {
-            if (actionStatus.id === action.id) {
-              action.status = actionStatus.status
-              action.used = actionStatus.used
+        if (data.actions) {
+          for (const actionStatus of data.actions) {
+            for (const action of this.detail.actions) {
+              if (actionStatus.id === action.id) {
+                action.status = actionStatus.status
+                action.used = actionStatus.used
+              }
             }
           }
         }

@@ -4,9 +4,10 @@
       <!-- 左侧菜单 -->
       <div class="terminal-header-fixed-left">
         <!-- ssh信息 -->
-        <div class="terminal-ssh" title="复制ssh" @click="copySshCommand">
+        <div class="terminal-ssh">
           <span v-if="machine.username">
-              {{ machine.username }}@{{ machine.host }}:{{ machine.port }}
+            <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
+            <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.port }}</span>
           </span>
         </div>
         <!-- 命令输入框 -->
@@ -93,14 +94,14 @@ export default {
     }
   },
   methods: {
-    copyHost() {
-      this.$message.success(`${this.machine.host} 已复制`)
-      this.$utils.copyToClipboard(this.machine.host)
-    },
     copySshCommand() {
       const command = this.$utils.getSshCommand(this.machine.username, this.machine.host, this.machine.port)
       this.$message.success(`${command} 已复制`)
       this.$utils.copyToClipboard(command)
+    },
+    copyHost() {
+      this.$message.success(`${this.machine.host} 已复制`)
+      this.$utils.copyToClipboard(this.machine.host)
     },
     inputCommand() {
       this.$emit('inputCommand', this.commandInput)

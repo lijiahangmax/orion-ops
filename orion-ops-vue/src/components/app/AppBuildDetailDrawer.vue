@@ -64,7 +64,7 @@
               date: detail.startTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
-          }}({{ detail.startTimeAgo }})
+          }} ({{ detail.startTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="结束时间" :span="3" v-if="detail.endTime !== null">
           {{
@@ -72,7 +72,7 @@
               date: detail.endTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
-          }}({{ detail.endTimeAgo }})
+          }} ({{ detail.endTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="持续时间" :span="3" v-if="detail.used !== null">
           {{ `${detail.keepTime} (${detail.used}ms)` }}
@@ -88,7 +88,7 @@
       </a-descriptions>
       <!-- 构建操作 -->
       <a-divider>构建操作</a-divider>
-      <a-list item-layout="horizontal" :data-source="detail.actions">
+      <a-list :dataSource="detail.actions">
         <a-list-item slot="renderItem" slot-scope="item">
           <a-descriptions size="middle">
             <a-descriptions-item label="操作名称" :span="3">
@@ -108,7 +108,7 @@
                   date: item.startTime,
                   pattern: 'yyyy-MM-dd HH:mm:ss'
                 })
-              }}({{ item.startTimeAgo }})
+              }} ({{ item.startTimeAgo }})
             </a-descriptions-item>
             <a-descriptions-item label="结束时间" :span="3" v-if="item.endTime !== null">
               {{
@@ -116,7 +116,7 @@
                   date: item.endTime,
                   pattern: 'yyyy-MM-dd HH:mm:ss'
                 })
-              }}({{ item.endTimeAgo }})
+              }} ({{ item.endTimeAgo }})
             </a-descriptions-item>
             <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
               {{ `${item.keepTime}  (${item.used}ms)` }}
@@ -129,10 +129,7 @@
             <a-descriptions-item label="命令" :span="3" v-if="item.actionType === $enum.BUILD_ACTION_TYPE.HOST_COMMAND.value">
               <a @click="preview(item.actionCommand)">预览</a>
             </a-descriptions-item>
-            <a-descriptions-item label="日志" :span="3"
-                                 v-if="item.status !== $enum.ACTION_STATUS.WAIT.value
-                                  && item.status !== $enum.ACTION_STATUS.SKIPPED.value
-                                  && item.status !== $enum.ACTION_STATUS.TERMINATED.value">
+            <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
               <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
               <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_BUILD_ACTION_LOG.value)">获取日志文件</a>
             </a-descriptions-item>
@@ -151,6 +148,17 @@
 import _utils from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
 
+function statusHolder() {
+  return {
+    visibleActionLog: (status) => {
+      return status === this.$enum.ACTION_STATUS.RUNNABLE.value ||
+        status === this.$enum.ACTION_STATUS.FINISH.value ||
+        status === this.$enum.ACTION_STATUS.FAILURE.value ||
+        status === this.$enum.ACTION_STATUS.TERMINATED.value
+    }
+  }
+}
+
 export default {
   name: 'AppBuildDetailDrawer',
   components: {
@@ -161,7 +169,8 @@ export default {
       visible: false,
       loading: true,
       pollId: null,
-      detail: {}
+      detail: {},
+      statusHolder: statusHolder.call(this)
     }
   },
   methods: {
@@ -170,6 +179,7 @@ export default {
       if (this.pollId) {
         clearInterval(this.pollId)
       }
+      this.detail = {}
       this.visible = true
       this.loading = true
       this.$api.getAppBuildDetail({
@@ -246,6 +256,7 @@ export default {
       // 关闭轮询状态
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
     }
   },
