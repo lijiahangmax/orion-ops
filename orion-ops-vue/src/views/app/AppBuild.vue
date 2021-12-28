@@ -149,14 +149,14 @@ import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
 const columns = [
   {
     title: '序列',
-    key: 'sort',
+    key: 'seq',
     width: 90,
     align: 'center',
     sorter: (a, b) => a.seq - b.seq,
     scopedSlots: { customRender: 'seq' }
   },
   {
-    title: '应用名称',
+    title: '构建应用',
     key: 'appName',
     dataIndex: 'appName',
     ellipsis: true,
@@ -170,19 +170,19 @@ const columns = [
     scopedSlots: { customRender: 'version' }
   },
   {
-    title: '持续时间',
-    key: 'keepTime',
-    dataIndex: 'keepTime',
-    width: 100,
-    sorter: (a, b) => (a.used || 0) - (b.used || 0)
-  },
-  {
     title: '状态',
     key: 'status',
     align: 'center',
     width: 120,
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
+  },
+  {
+    title: '持续时间',
+    key: 'keepTime',
+    dataIndex: 'keepTime',
+    width: 120,
+    sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
     title: '构建人',

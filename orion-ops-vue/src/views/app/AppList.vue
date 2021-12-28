@@ -50,10 +50,11 @@
           slot="expandedRowRender"
           slot-scope="record"
           v-if="record.machines"
-          :rowKey="(record,index)=> index"
+          :rowKey="(record, index) => index"
           :columns="innerColumns"
           :dataSource="record.machines"
-          :pagination="false">
+          :pagination="false"
+          size="middle">
           <!-- 名称 -->
           <span slot="name" slot-scope="machine">
             {{ machine.name }}
@@ -204,7 +205,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 220,
+    width: 240,
     scopedSlots: { customRender: 'action' }
   }
 ]

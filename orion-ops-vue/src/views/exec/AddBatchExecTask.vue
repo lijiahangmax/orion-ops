@@ -197,6 +197,11 @@ export default {
         this.execMachines = data
         // 轮询状态
         this.pollId = setInterval(this.pollExecStatus, 1000)
+      }).then(() => {
+        // 打开日志
+        this.execMachines.forEach(m => {
+          this.$refs['appender' + m.execId][0].openTail()
+        })
       }).catch(() => {
         this.isRun = false
       })

@@ -1,30 +1,38 @@
 <template>
-  <div id="app-config-container">
-    <a-tabs defaultActiveKey="1" tabPosition="left">
-      <!-- 基本配置 -->
-      <a-tab-pane key="1" tab="基本配置">
-        <div class="app-basic-form-wrapper">
-          <a-spin :spinning="loading">
-            <!-- 表单 -->
-            <AddAppForm ref="basicForm" :layout="{
+  <div class="app-config-container">
+    <!-- 配置tab -->
+    <div id="app-config-wrapper">
+      <a-tabs defaultActiveKey="1" tabPosition="left">
+        <!-- 基本配置 -->
+        <a-tab-pane key="1" tab="基本配置">
+          <div class="app-basic-form-wrapper">
+            <a-spin :spinning="loading">
+              <!-- 表单 -->
+              <AddAppForm ref="basicForm" :layout="{
               labelCol: { span: 5 },
               wrapperCol: { span: 19 }
             }"/>
-            <div class="app-basic-form-footer">
-              <a-button type="primary" @click="updateBasic">修改</a-button>
-            </div>
-          </a-spin>
-        </div>
-      </a-tab-pane>
-      <!-- 构建配置 -->
-      <a-tab-pane key="2" tab="构建配置">
-        <AppBuildConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
-      </a-tab-pane>
-      <!-- 发布配置 -->
-      <a-tab-pane key="3" tab="发布配置">
-        <AppReleaseConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
-      </a-tab-pane>
-    </a-tabs>
+              <div class="app-basic-form-footer">
+                <a-button type="primary" @click="updateBasic">修改</a-button>
+              </div>
+            </a-spin>
+          </div>
+        </a-tab-pane>
+        <!-- 构建配置 -->
+        <a-tab-pane key="2" tab="构建配置">
+          <AppBuildConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
+        </a-tab-pane>
+        <!-- 发布配置 -->
+        <a-tab-pane key="3" tab="发布配置">
+          <AppReleaseConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
+        </a-tab-pane>
+      </a-tabs>
+    </div>
+    <!-- 事件 -->
+    <div id="app-config-event">
+      <!-- 模板选择 -->
+      <TemplateSelector ref="templateSelector" @selected="chooseTemplate"/>
+    </div>
   </div>
 </template>
 
@@ -36,7 +44,8 @@ export default {
   components: {
     AddAppForm,
     AppBuildConfigForm: () => import('@/components/app/AppBuildConfigForm'),
-    AppReleaseConfigForm: () => import('@/components/app/AppReleaseConfigForm')
+    AppReleaseConfigForm: () => import('@/components/app/AppReleaseConfigForm'),
+    TemplateSelector: () => import('@/components/template/TemplateSelector')
   },
   data() {
     return {
@@ -54,6 +63,16 @@ export default {
   methods: {
     chooseProfile({ id }) {
       this.profileId = id
+    },
+    openTemplate() {
+      this.$refs.templateSelector.open()
+    },
+    chooseTemplate(e) {
+      this.$copy(e)
+      this.$refs.templateSelector.close()
+    },
+    onHeaderEvent(e) {
+      e && this[e] && this[e]()
     },
     loadAppConfig() {
       this.loading = true
@@ -89,7 +108,7 @@ export default {
 
 <style lang="less" scoped>
 
-#app-config-container {
+#app-config-wrapper {
   background: #FFF;
   padding: 8px;
   border-radius: 4px;
