@@ -109,7 +109,10 @@
         <!-- 日志 -->
         <div slot="log" slot-scope="record">
           <!-- 日志面板 -->
-          <a target="_blank" :href="`#/batch/exec/log/view/${record.id}`">日志面板</a>
+          <a target="_blank"
+             title="ctrl 打开新页面"
+             :href="`#/batch/exec/log/view/${record.id}`"
+             @click="openLogView($event, record.id)">日志面板</a>
           <a-divider type="vertical"/>
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
@@ -149,6 +152,8 @@
       <TextPreview ref="previewText"/>
       <!-- 详情 -->
       <ExecTaskDetailModal ref="detail"/>
+      <!-- 日志模态框 -->
+      <ExecLoggerAppenderModal ref="logView"/>
     </div>
   </div>
 </template>
@@ -161,6 +166,7 @@ import UserSelector from '@/components/user/UserSelector'
 import EditorPreview from '@/components/preview/EditorPreview'
 import TextPreview from '@/components/preview/TextPreview'
 import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
+import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 
 /**
  * 列
@@ -208,7 +214,7 @@ const columns = [
     title: '持续时间',
     key: 'keepTime',
     dataIndex: 'keepTime',
-    width: 100,
+    width: 120,
     sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
   },
   {
@@ -256,6 +262,7 @@ const columns = [
 export default {
   name: 'BatchExecList',
   components: {
+    ExecLoggerAppenderModal,
     MachineSelector,
     UserSelector,
     EditorPreview,
@@ -339,6 +346,17 @@ export default {
       this.query.userId = undefined
       this.query.status = undefined
       this.getList({})
+    },
+    openLogView(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.logView.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     },
     async loadDownloadUrl(record) {
       try {
