@@ -114,10 +114,9 @@ public interface MachineEnvService {
      * 获取机器环境变量 包含机器信息
      *
      * @param machineId machineId
-     * @param prefix    prefix
      * @return map
      */
-    MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId, String prefix);
+    MutableLinkedHashMap<String, String> getFullMachineEnv(Long machineId);
 
     /**
      * 初始化机器环境

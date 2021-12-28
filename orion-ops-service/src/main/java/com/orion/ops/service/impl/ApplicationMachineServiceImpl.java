@@ -1,18 +1,18 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.ApplicationMachineDAO;
+import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.ApplicationMachineDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
 import com.orion.ops.service.api.ApplicationMachineService;
-import com.orion.ops.service.api.MachineInfoService;
-import com.orion.ops.service.api.ReleaseInfoService;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +35,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     private ApplicationMachineDAO applicationMachineDAO;
 
     @Resource
-    private MachineInfoService machineInfoService;
-
-    @Resource
-    private ReleaseInfoService releaseInfoService;
+    private MachineInfoDAO machineInfoDAO;
 
     @Override
     public Long getAppProfileMachineId(Long machineId, Long appId, Long profileId) {
@@ -52,12 +49,22 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
-    public List<Long> getAppProfileMachineIdList(Long appId, Long profileId) {
-        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+    public List<Long> getAppProfileMachineIdList(Long appId, Long profileId, boolean filterMachineStatus) {
+        LambdaQueryWrapper<ApplicationMachineDO> appMachineWrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
-                .eq(ApplicationMachineDO::getMachineId, profileId);
-        return applicationMachineDAO.selectList(wrapper).stream()
+                .eq(ApplicationMachineDO::getProfileId, profileId);
+        List<Long> appMachineIdList = applicationMachineDAO.selectList(appMachineWrapper).stream()
                 .map(ApplicationMachineDO::getMachineId)
+                .collect(Collectors.toList());
+        if (!filterMachineStatus || appMachineIdList.isEmpty()) {
+            return appMachineIdList;
+        }
+        // 过滤进行中的机器
+        LambdaQueryWrapper<MachineInfoDO> machineWrapper = new LambdaQueryWrapper<MachineInfoDO>()
+                .eq(MachineInfoDO::getMachineStatus, Const.ENABLE)
+                .in(MachineInfoDO::getId, appMachineIdList);
+        return machineInfoDAO.selectList(machineWrapper).stream()
+                .map(MachineInfoDO::getId)
                 .collect(Collectors.toList());
     }
 
@@ -74,22 +81,19 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
                 .eq(ApplicationMachineDO::getProfileId, profileId);
-        return applicationMachineDAO.selectList(wrapper)
-                .stream()
-                .map(m -> {
-                    // 查询机器
-                    MachineInfoDO machine = machineInfoService.selectById(m.getMachineId());
-                    ApplicationMachineVO machineVO = Converts.to(machine, ApplicationMachineVO.class);
-                    machineVO.setId(m.getId());
-                    // 查询版本
-                    Optional.ofNullable(m.getReleaseId())
-                            .map(releaseInfoService::getReleaseBill)
-                            .ifPresent(r -> {
-                                // todo 设置buildSeq
-                            });
-                    return machineVO;
-                })
-                .collect(Collectors.toList());
+        // 查询关联
+        List<ApplicationMachineVO> list = DataQuery.of(applicationMachineDAO)
+                .wrapper(wrapper)
+                .list(ApplicationMachineVO.class);
+        // 查询机器
+        list.forEach(m -> Optional.ofNullable(m.getMachineId())
+                .map(machineInfoDAO::selectById)
+                .ifPresent(s -> {
+                    m.setMachineName(s.getMachineName());
+                    m.setMachineHost(s.getMachineHost());
+                    m.setMachineTag(s.getMachineTag());
+                }));
+        return list;
     }
 
     @Override
@@ -135,7 +139,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
         List<Long> machineIdList = request.getMachineIdList();
         // 检查
         for (Long machineId : machineIdList) {
-            MachineInfoDO machine = machineInfoService.selectById(machineId);
+            MachineInfoDO machine = machineInfoDAO.selectById(machineId);
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         }
         // 删除

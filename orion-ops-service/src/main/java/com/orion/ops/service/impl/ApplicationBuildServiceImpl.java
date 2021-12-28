@@ -12,10 +12,7 @@ import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
-import com.orion.ops.entity.vo.ApplicationBuildActionStatusVO;
-import com.orion.ops.entity.vo.ApplicationBuildActionVO;
-import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
-import com.orion.ops.entity.vo.ApplicationBuildVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.build.BuildSessionHolder;
 import com.orion.ops.handler.build.IBuilderProcessor;
 import com.orion.ops.service.api.ApplicationActionService;
@@ -121,7 +118,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             // 查询应用环境变量
             env.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 查询机器环境变量
-            env.putAll(machineEnvService.getFullMachineEnv(Const.HOST_MACHINE_ID, EnvConst.MACHINE_PREFIX));
+            env.putAll(machineEnvService.getFullMachineEnv(Const.HOST_MACHINE_ID));
             // 添加构建环境变量
             env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId()));
         }
@@ -327,6 +324,12 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .orElse(null);
     }
 
+    @Override
+    public List<ApplicationBuildReleaseListVO> getBuildReleaseList(Long appId, Long profileId) {
+        List<ApplicationBuildDO> list = applicationBuildDAO.selectBuildReleaseList(appId, profileId, Const.BUILD_RELEASE_LIMIT);
+        return Converts.toList(list, ApplicationBuildReleaseListVO.class);
+    }
+
     /**
      * 获取构建环境变量
      *
@@ -338,9 +341,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq, Long vcsId) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
+        env.put(EnvConst.BUILD_ID, buildId + Strings.EMPTY);
         env.put(EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
         if (vcsId != null) {
-            // TODO 重复 设置分支
             env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
         }
         // 设置前缀

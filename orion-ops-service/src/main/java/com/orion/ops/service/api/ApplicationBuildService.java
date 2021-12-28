@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
+import com.orion.ops.entity.vo.ApplicationBuildReleaseListVO;
 import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
 
@@ -126,5 +127,14 @@ public interface ApplicationBuildService {
      * @return path
      */
     String getBuildBundlePath(Long id);
+
+    /**
+     * 获取构建发布序列
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return rows
+     */
+    List<ApplicationBuildReleaseListVO> getBuildReleaseList(Long appId, Long profileId);
 
 }

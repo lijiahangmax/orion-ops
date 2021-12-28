@@ -27,11 +27,12 @@ public interface ApplicationMachineService {
     /**
      * 获取应用环境的机器id
      *
-     * @param appId     appId
-     * @param profileId profileId
+     * @param appId               appId
+     * @param profileId           profileId
+     * @param filterMachineStatus 是否过滤已禁用的机器状态
      * @return machineIdList
      */
-    List<Long> getAppProfileMachineIdList(Long appId, Long profileId);
+    List<Long> getAppProfileMachineIdList(Long appId, Long profileId, boolean filterMachineStatus);
 
     /**
      * 获取应用环境的机器数量

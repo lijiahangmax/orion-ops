@@ -226,22 +226,30 @@ public class ApplicationReleaseDetailVO {
             vo.setAuditUserId(p.getAuditUserId());
             vo.setAuditUserName(p.getAuditUserName());
             vo.setAuditTime(p.getAuditTime());
-            vo.setAuditTimeAgo(p.getAuditReason());
             vo.setAuditReason(p.getAuditReason());
             vo.setStartTime(p.getReleaseStartTime());
             vo.setEndTime(p.getReleaseEndTime());
             vo.setReleaseUserName(p.getReleaseUserName());
             vo.setCreateTime(p.getCreateTime());
             vo.setCreateTimeAgo(Dates.ago(p.getCreateTime()));
-            Optional.ofNullable(p.getTimedReleaseTime())
-                    .map(Dates::ago)
-                    .ifPresent(vo::setTimedReleaseTimeAgo);
             Date startTime = p.getReleaseStartTime();
             Date endTime = p.getReleaseEndTime();
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
                 vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
             }
+            Optional.ofNullable(p.getTimedReleaseTime())
+                    .map(Dates::ago)
+                    .ifPresent(vo::setTimedReleaseTimeAgo);
+            Optional.ofNullable(p.getAuditTime())
+                    .map(Dates::ago)
+                    .ifPresent(vo::setAuditTimeAgo);
+            Optional.ofNullable(startTime)
+                    .map(Dates::ago)
+                    .ifPresent(vo::setStartTimeAgo);
+            Optional.ofNullable(endTime)
+                    .map(Dates::ago)
+                    .ifPresent(vo::setEndTimeAgo);
             return vo;
         });
     }
