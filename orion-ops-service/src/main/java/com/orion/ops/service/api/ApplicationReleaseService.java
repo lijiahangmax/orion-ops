@@ -63,9 +63,9 @@ public interface ApplicationReleaseService {
     /**
      * 执行
      *
-     * @param request request
+     * @param id id
      */
-    void runnableAppRelease(ApplicationReleaseRequest request);
+    void runnableAppRelease(Long id);
 
     /**
      * 回滚

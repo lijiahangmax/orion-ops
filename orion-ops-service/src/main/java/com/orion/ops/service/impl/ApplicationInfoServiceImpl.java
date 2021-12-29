@@ -192,16 +192,21 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         if (Const.ENABLE.equals(request.getQueryMachine())) {
             Map<Long, MachineInfoDO> machineCache = Maps.newMap();
             for (ApplicationInfoVO app : appList) {
-                List<Long> machineIdList = applicationMachineService.selectAppProfileMachineIdList(app.getId(), profileId);
-                if (machineIdList.size() == 0) {
+                List<ApplicationMachineDO> appMachines = applicationMachineService.getAppProfileMachineList(app.getId(), profileId);
+                if (appMachines.size() == 0) {
                     app.setMachines(Lists.empty());
-                } else {
-                    List<MachineInfoVO> machines = machineIdList.stream()
-                            .map(machineId -> machineCache.computeIfAbsent(machineId, m -> machineInfoService.selectById(m)))
-                            .map(p -> Converts.to(p, MachineInfoVO.class))
-                            .collect(Collectors.toList());
-                    app.setMachines(machines);
+                    continue;
                 }
+                List<ApplicationMachineVO> machines = Converts.toList(appMachines, ApplicationMachineVO.class);
+                for (ApplicationMachineVO machine : machines) {
+                    MachineInfoDO machineInfo = machineCache.computeIfAbsent(machine.getMachineId(), m -> machineInfoService.selectById(m));
+                    if (machineInfo != null) {
+                        machine.setMachineName(machineInfo.getMachineName());
+                        machine.setMachineTag(machineInfo.getMachineTag());
+                        machine.setMachineHost(machineInfo.getMachineHost());
+                    }
+                }
+                app.setMachines(machines);
             }
         }
         return appList;
@@ -231,7 +236,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String transferDirType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
         String releaseSerial = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.RELEASE_SERIAL.getKey());
         // 查询发布机器
-        List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineList(appId, profileId);
+        List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineDetail(appId, profileId);
         // 查询发布流程
         List<ApplicationActionDO> actions = applicationActionService.getAppProfileActions(appId, profileId, null);
         // 组装数据

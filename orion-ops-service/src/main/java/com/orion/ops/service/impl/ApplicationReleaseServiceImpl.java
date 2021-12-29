@@ -13,6 +13,7 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
+import com.orion.ops.handler.release.IReleaseProcessor;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -121,7 +122,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     public ApplicationReleaseDetailVO getReleaseDetail(Long id) {
         // 查询
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
-        Valid.notNull(release, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ApplicationReleaseDetailVO vo = Converts.to(release, ApplicationReleaseDetailVO.class);
         // 设置action
         List<ApplicationActionDO> actions = JSON.parseArray(release.getActionConfig(), ApplicationActionDO.class);
@@ -138,7 +139,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     public ApplicationReleaseMachineVO getReleaseMachineDetail(Long releaseMachineId) {
         // 查询数据
         ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
-        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(machine, MessageConst.RELEASE_ABSENT);
         ApplicationReleaseMachineVO vo = Converts.to(machine, ApplicationReleaseMachineVO.class);
         // 查询action
         List<ApplicationReleaseActionVO> actions = applicationReleaseActionService.getReleaseActionByReleaseMachineId(releaseMachineId).stream()
@@ -176,7 +177,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 检查是否包含命令
         boolean hasCommand = actions.stream()
                 .map(ApplicationActionDO::getActionType)
-                .anyMatch(ActionType.RELEASE_TARGET_COMMAND.getType()::equals);
+                .anyMatch(ActionType.RELEASE_COMMAND.getType()::equals);
         Map<String, String> releaseEnv = Maps.newMap();
         if (hasCommand) {
             // 查询应用环境变量
@@ -195,10 +196,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
         // 查询状态
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(request.getId());
-        Valid.notNull(release, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_AUDIT.equals(status) && !ReleaseStatus.AUDIT_REJECT.equals(status)) {
-            throw Exceptions.argument(MessageConst.INVALID_STATUS);
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
         }
         AuditStatus auditStatus = AuditStatus.of(request.getStatus());
         UserDTO user = Currents.getUser();
@@ -222,8 +223,23 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public void runnableAppRelease(ApplicationReleaseRequest request) {
-
+    public void runnableAppRelease(Long id) {
+        // 查询状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
+        if (!ReleaseStatus.WAIT_RUNNABLE.equals(status)) {
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        }
+        UserDTO user = Currents.getUser();
+        // 更新发布人
+        ApplicationReleaseDO update = new ApplicationReleaseDO();
+        update.setId(id);
+        update.setReleaseUserId(user.getId());
+        update.setReleaseUserName(user.getUsername());
+        applicationReleaseDAO.updateById(update);
+        // 发布
+        IReleaseProcessor.with(release).exec();
     }
 
     @Override
@@ -368,7 +384,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 releaseAction.setActionId(action.getId());
                 releaseAction.setActionName(action.getActionName());
                 releaseAction.setActionType(action.getActionType());
-                if (ActionType.RELEASE_TARGET_COMMAND.equals(actionType)) {
+                if (ActionType.RELEASE_COMMAND.equals(actionType)) {
                     String command = action.getActionCommand();
                     // 替换发布命令
                     command = Strings.format(command, EnvConst.SYMBOL, releaseEnv);

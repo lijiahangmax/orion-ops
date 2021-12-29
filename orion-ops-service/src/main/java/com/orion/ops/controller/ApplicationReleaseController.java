@@ -91,7 +91,8 @@ public class ApplicationReleaseController {
      */
     @RequestMapping("/runnable")
     public HttpWrapper<?> runnableAppRelease(@RequestBody ApplicationReleaseRequest request) {
-        applicationReleaseService.runnableAppRelease(request);
+        Long id = Valid.notNull(request.getId());
+        applicationReleaseService.runnableAppRelease(id);
         return HttpWrapper.ok();
     }
 
