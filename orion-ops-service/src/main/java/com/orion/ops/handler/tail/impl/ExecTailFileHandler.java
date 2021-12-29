@@ -13,6 +13,7 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Strings;
 import com.orion.utils.io.Streams;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -74,7 +75,7 @@ public class ExecTailFileHandler implements ITailHandler {
             return;
         }
         // 打开 command
-        this.executor = sessionStore.getCommandExecutor(hint.getCommand());
+        this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(hint.getCommand()));
         executor.inherit()
                 .scheduler(SchedulerPools.TAIL_SCHEDULER)
                 .callback(this::callback)

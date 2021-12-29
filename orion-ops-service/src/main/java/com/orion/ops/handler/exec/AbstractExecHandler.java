@@ -10,6 +10,7 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.BaseRemoteExecutor;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Streams;
 import lombok.Getter;
@@ -76,7 +77,7 @@ public abstract class AbstractExecHandler implements IExecHandler {
             this.openLogger();
             // 打开executor
             this.sessionStore = machineInfoService.openSessionStore(machine);
-            this.executor = sessionStore.getCommandExecutor(record.getExecCommand());
+            this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(record.getExecCommand()));
             execSessionHolder.addSession(execId, this);
             // 开始执行
             executor.inherit()
