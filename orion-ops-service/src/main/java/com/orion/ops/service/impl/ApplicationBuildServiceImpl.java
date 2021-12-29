@@ -112,7 +112,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         // 检查是否包含命令
         boolean hasCommand = actions.stream()
                 .map(ApplicationActionDO::getActionType)
-                .anyMatch(ActionType.BUILD_HOST_COMMAND.getType()::equals);
+                .anyMatch(ActionType.BUILD_COMMAND.getType()::equals);
         Map<String, String> env = Maps.newMap();
         if (hasCommand) {
             // 查询应用环境变量
@@ -129,7 +129,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             buildAction.setActionId(action.getAppId());
             buildAction.setActionName(action.getActionName());
             buildAction.setActionType(action.getActionType());
-            if (ActionType.BUILD_HOST_COMMAND.equals(ActionType.of(action.getActionType()))) {
+            if (ActionType.BUILD_COMMAND.equals(ActionType.of(action.getActionType()))) {
                 buildAction.setActionCommand(Strings.format(action.getActionCommand(), EnvConst.SYMBOL, env));
             }
             buildAction.setRunStatus(ActionStatus.WAIT.getStatus());

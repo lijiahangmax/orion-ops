@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.domain.ApplicationMachineDO;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.vo.ApplicationMachineVO;
 
@@ -50,7 +51,16 @@ public interface ApplicationMachineService {
      * @param profileId profileId
      * @return machineList
      */
-    List<ApplicationMachineVO> getAppProfileMachineList(Long appId, Long profileId);
+    List<ApplicationMachineVO> getAppProfileMachineDetail(Long appId, Long profileId);
+
+    /**
+     * 获取应用环境的机器
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return machineList
+     */
+    List<ApplicationMachineDO> getAppProfileMachineList(Long appId, Long profileId);
 
     /**
      * 通过机器 id 删除应用机器

@@ -77,7 +77,7 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
-    public List<ApplicationMachineVO> getAppProfileMachineList(Long appId, Long profileId) {
+    public List<ApplicationMachineVO> getAppProfileMachineDetail(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)
                 .eq(ApplicationMachineDO::getProfileId, profileId);
@@ -94,6 +94,14 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
                     m.setMachineTag(s.getMachineTag());
                 }));
         return list;
+    }
+
+    @Override
+    public List<ApplicationMachineDO> getAppProfileMachineList(Long appId, Long profileId) {
+        LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
+                .eq(ApplicationMachineDO::getAppId, appId)
+                .eq(ApplicationMachineDO::getProfileId, profileId);
+        return applicationMachineDAO.selectList(wrapper);
     }
 
     @Override

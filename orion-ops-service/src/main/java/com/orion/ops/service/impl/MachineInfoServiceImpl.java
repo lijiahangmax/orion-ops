@@ -347,7 +347,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         CommandExecutor executor = null;
         try {
             session = this.openSessionStore(id);
-            executor = session.getCommandExecutor(command);
+            executor = session.getCommandExecutor(Strings.replaceCRLF(command));
             executor.connect();
             String res = SessionStore.getCommandOutputResultString(executor);
             log.info("执行机器命令-成功 {} {} {}", id, command, res);

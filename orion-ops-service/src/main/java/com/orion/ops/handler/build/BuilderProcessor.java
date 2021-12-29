@@ -170,6 +170,10 @@ public class BuilderProcessor implements IBuilderProcessor {
         this.record = applicationBuildService.selectById(buildId);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
         log.info("应用构建器-获取数据-build buildId: {}, record: {}", buildId, JSON.toJSONString(record));
+        // 检查状态
+        if (!BuildStatus.WAIT.getStatus().equals(record.getBuildStatus())) {
+            return;
+        }
         // 查询action
         List<ApplicationBuildActionDO> actions = applicationBuildService.selectActionById(buildId);
         Valid.notEmpty(actions, MessageConst.UNKNOWN_DATA);
@@ -202,7 +206,7 @@ public class BuilderProcessor implements IBuilderProcessor {
     private void openMachineSession() {
         boolean hasCommand = store.getActions().values().stream()
                 .map(ApplicationBuildActionDO::getActionType)
-                .anyMatch(ActionType.BUILD_HOST_COMMAND.getType()::equals);
+                .anyMatch(ActionType.BUILD_COMMAND.getType()::equals);
         if (!hasCommand) {
             return;
         }

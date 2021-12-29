@@ -58,8 +58,8 @@ public interface IBuildHandler extends Executable, SafeCloseable {
                 .map(action -> Selector.<ActionType, IBuildHandler>of(ActionType.of(action.getActionType()))
                         .test(Branches.eq(ActionType.BUILD_CHECKOUT)
                                 .then(() -> new CheckoutBuildHandler(action.getId(), store)))
-                        .test(Branches.eq(ActionType.BUILD_HOST_COMMAND)
-                                .then(() -> new HostCommandBuildHandler(action.getId(), store)))
+                        .test(Branches.eq(ActionType.BUILD_COMMAND)
+                                .then(() -> new CommandBuildHandler(action.getId(), store)))
                         .get())
                 .collect(Collectors.toList());
     }

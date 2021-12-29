@@ -1,6 +1,7 @@
 package com.orion.ops.handler.build.handler;
 
 import com.orion.constant.Letters;
+import com.orion.exception.LogException;
 import com.orion.lang.io.OutputAppender;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ActionStatus;
@@ -124,7 +125,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         StringBuilder log = new StringBuilder()
                 .append("# 执行构建操作 ").append(action.getActionName())
                 .append(Const.LF);
-        if (ActionType.BUILD_HOST_COMMAND.equals(ActionType.of(action.getActionType()))) {
+        if (ActionType.BUILD_COMMAND.equals(ActionType.of(action.getActionType()))) {
             log.append("# 执行命令: ").append(action.getActionCommand()).append("\n\n");
         }
         store.getMainLogStream().write(Letters.LF);
@@ -154,7 +155,11 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
                 .append("ms\n");
         // 拼接异常
         if (ex != null) {
-            log.append(Exceptions.getStackTraceAsString(ex)).append(Const.LF);
+            if (ex instanceof LogException) {
+                log.append(ex.getMessage()).append(Const.LF);
+            } else {
+                log.append(Exceptions.getStackTraceAsString(ex)).append(Const.LF);
+            }
         }
         // 拼接日志
         this.appendLog(log.toString());
