@@ -65,7 +65,7 @@ public class ApplicationMachineDO implements Serializable {
      * 当前版本构建序列
      */
     @TableField("build_seq")
-    private Long buildSeq;
+    private Integer buildSeq;
 
     /**
      * 创建时间

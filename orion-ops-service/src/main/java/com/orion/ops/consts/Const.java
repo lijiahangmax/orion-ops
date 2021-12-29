@@ -104,13 +104,13 @@ public class Const extends com.orion.constant.Const {
 
     public static final String ROLLBACK = "Rollback";
 
-    public static final String CONNECT = "建立连接";
-
     public static final String COMPRESS_LIST_FILE = "压缩清单.txt";
 
     public static final Integer TERMINATED_EXIT_CODE = -1;
 
     public static final int TRACKER_DELAY_MS = 500;
+
+    public static final String NO_SUCH_FILE = "no such file";
 
     /**
      * 不安全的文件夹

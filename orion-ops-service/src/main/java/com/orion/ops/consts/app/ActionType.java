@@ -18,9 +18,9 @@ public enum ActionType {
     BUILD_CHECKOUT(110, StageType.BUILD),
 
     /**
-     * 构建-主机命令
+     * 构建-机器命令
      */
-    BUILD_HOST_COMMAND(120, StageType.BUILD),
+    BUILD_COMMAND(120, StageType.BUILD),
 
     /**
      * 发布-传输产物
@@ -28,9 +28,9 @@ public enum ActionType {
     RELEASE_TRANSFER(210, StageType.RELEASE),
 
     /**
-     * 发布-目标机器命令
+     * 发布-机器命令
      */
-    RELEASE_TARGET_COMMAND(220, StageType.RELEASE),
+    RELEASE_COMMAND(220, StageType.RELEASE),
 
     ;
 

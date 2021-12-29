@@ -177,8 +177,8 @@ public class ApplicationInfoController {
             Valid.notBlank(action.getName());
             ActionType actionType = Valid.notNull(ActionType.of(action.getType(), stageType.getType()));
             // 检查命令
-            if (ActionType.BUILD_HOST_COMMAND.equals(actionType)
-                    || ActionType.RELEASE_TARGET_COMMAND.equals(actionType)) {
+            if (ActionType.BUILD_COMMAND.equals(actionType)
+                    || ActionType.RELEASE_COMMAND.equals(actionType)) {
                 Valid.notBlank(action.getCommand());
             }
         }

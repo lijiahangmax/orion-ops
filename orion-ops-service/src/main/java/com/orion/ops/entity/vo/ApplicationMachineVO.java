@@ -52,7 +52,7 @@ public class ApplicationMachineVO {
     /**
      * 当前版本构建序列
      */
-    private Long buildSeq;
+    private Integer buildSeq;
 
     static {
         TypeStore.STORE.register(ApplicationMachineDO.class, ApplicationMachineVO.class, p -> {

@@ -134,13 +134,15 @@ public class MessageConst {
 
     public static final String AUDIT_NO_REQUIRED = "无需审核";
 
-    public static final String RELEASE_BILL_ABSENT = "发布单不存在";
+    public static final String RELEASE_ABSENT = "发布单不存在";
+
+    public static final String RELEASE_NOT_ALL_SUCCESS = "未全部执行成功";
 
     public static final String RELEASE_MACHINE_ABSENT = "发布机器不存在";
 
     public static final String UNKNOWN_RELEASE_TYPE = "未知的发布类型";
 
-    public static final String RELEASE_TYPE_UNABLE_COPY = "当前类型不支持此操作";
+    public static final String RELEASE_ILLEGAL_STATUS = "当前状态不支持此操作";
 
     public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚";
 
@@ -173,5 +175,7 @@ public class MessageConst {
     public static final String UNABLE_CONFIG_RELEASE_MACHINE = "发布机器未配置";
 
     public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
+
+    public static final String NO_SUCH_FILE = "未找到文件或目录";
 
 }

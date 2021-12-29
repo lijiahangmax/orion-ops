@@ -20,4 +20,14 @@
         id, app_id, profile_id, machine_id, release_id, build_id, build_seq, create_time, update_time
     </sql>
 
+    <update id="updateAppVersion">
+        UPDATE application_machine
+        SET release_id = #{releaseId},
+        build_id = #{buildId},
+        build_seq = #{buildSeq}
+        WHERE app_id = #{appId}
+        AND profile_id = #{profileId}
+        AND machine_id = #{machineId}
+    </update>
+
 </mapper>

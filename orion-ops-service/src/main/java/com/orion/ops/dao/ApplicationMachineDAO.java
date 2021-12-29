@@ -13,4 +13,12 @@ import com.orion.ops.entity.domain.ApplicationMachineDO;
  */
 public interface ApplicationMachineDAO extends BaseMapper<ApplicationMachineDO> {
 
+    /**NO_SUCH_FILE
+     * 更新版本
+     *
+     * @param update update
+     * @return effect
+     */
+    Integer updateAppVersion(ApplicationMachineDO update);
+
 }

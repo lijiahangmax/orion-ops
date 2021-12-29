@@ -125,7 +125,7 @@ public class PathBuilders {
                 + "/" + releaseId
                 + Const.RELEASE_MACHINE_PREFIX
                 + "_" + machineId
-                + "-" + Const.ACTION
+                + "_" + Const.ACTION
                 + "_" + actionId
                 + "." + Const.SUFFIX_LOG;
     }

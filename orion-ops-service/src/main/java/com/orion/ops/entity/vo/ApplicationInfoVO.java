@@ -63,7 +63,7 @@ public class ApplicationInfoVO {
     /**
      * 机器
      */
-    private List<MachineInfoVO> machines;
+    private List<ApplicationMachineVO> machines;
 
     static {
         TypeStore.STORE.register(ApplicationInfoDO.class, ApplicationInfoVO.class, p -> {

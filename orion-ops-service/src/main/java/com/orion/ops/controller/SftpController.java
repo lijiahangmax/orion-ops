@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.id.ObjectIds;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.entity.request.sftp.*;
@@ -13,6 +14,7 @@ import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +56,11 @@ public class SftpController {
     @RequestMapping("/list")
     public FileListVO list(@RequestBody FileListRequest request) {
         Valid.checkNormalize(request.getPath());
-        return sftpService.list(request);
+        try {
+            return sftpService.list(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -63,7 +69,11 @@ public class SftpController {
     @RequestMapping("/list-dir")
     public FileListVO listDir(@RequestBody FileListRequest request) {
         Valid.checkNormalize(request.getPath());
-        return sftpService.listDir(request);
+        try {
+            return sftpService.listDir(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -90,7 +100,11 @@ public class SftpController {
     @RequestMapping("/truncate")
     public void truncate(@RequestBody FileTruncateRequest request) {
         Valid.checkNormalize(request.getPath());
-        sftpService.truncate(request);
+        try {
+            sftpService.truncate(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -100,7 +114,11 @@ public class SftpController {
     public String move(@RequestBody FileMoveRequest request) {
         Valid.checkNormalize(request.getSource());
         Valid.notBlank(request.getTarget());
-        return sftpService.move(request);
+        try {
+            return sftpService.move(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -112,7 +130,11 @@ public class SftpController {
         paths.forEach(Valid::checkNormalize);
         boolean isSafe = paths.stream().noneMatch(Const.UNSAFE_FS_DIR::contains);
         Valid.isSafe(isSafe);
-        sftpService.remove(request);
+        try {
+            sftpService.remove(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -122,7 +144,11 @@ public class SftpController {
     public String chmod(@RequestBody FileChmodRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getPermission());
-        return sftpService.chmod(request);
+        try {
+            return sftpService.chmod(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -132,7 +158,11 @@ public class SftpController {
     public void chown(@RequestBody FileChownRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getUid());
-        sftpService.chown(request);
+        try {
+            sftpService.chown(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -142,7 +172,11 @@ public class SftpController {
     public void changeGroup(@RequestBody FileChangeGroupRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getGid());
-        sftpService.changeGroup(request);
+        try {
+            sftpService.changeGroup(request);
+        } catch (RuntimeException e) {
+            throw convertError(e);
+        }
     }
 
     /**
@@ -306,6 +340,20 @@ public class SftpController {
     public void transferPackage(@PathVariable("sessionToken") String sessionToken, @PathVariable("packageType") Integer packageType) {
         SftpPackageType sftpPackageType = Valid.notNull(SftpPackageType.of(packageType));
         sftpService.transferPackage(sessionToken, sftpPackageType);
+    }
+
+    /**
+     * 检测文件是否存在
+     *
+     * @param e e
+     * @return RuntimeException
+     */
+    private RuntimeException convertError(RuntimeException e) {
+        if (e.getMessage().toLowerCase().contains(Const.NO_SUCH_FILE)) {
+            return Exceptions.argument(MessageConst.NO_SUCH_FILE);
+        } else {
+            return e;
+        }
     }
 
 }

@@ -116,10 +116,10 @@ public class SchedulerPools {
             .build();
 
     /**
-     * 应用发布 目标机器操作线程池
+     * 应用发布 机器操作线程池
      */
-    public static final ExecutorService RELEASE_TARGET_STAGE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("release-target-stage-thread-")
+    public static final ExecutorService RELEASE_MACHINE_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("release-machine-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
@@ -137,7 +137,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(SFTP_PACKAGE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(APP_BUILD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
-            Threads.shutdownPoolNow(RELEASE_TARGET_STAGE_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(RELEASE_MACHINE_SCHEDULER, Const.MS_S_3);
         });
     }
 
