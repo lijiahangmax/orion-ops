@@ -1028,6 +1028,13 @@ const $api = {
   },
 
   /**
+   * 获取应用机器id
+   */
+  getAppMachineId: param => {
+    return $http.$post('/app-info/get/machine-id', param)
+  },
+
+  /**
    * 提交应用构建
    */
   submitAppBuild: param => {
@@ -1074,12 +1081,86 @@ const $api = {
   },
 
   /**
-   * 应用构建列表
+   * 获取发布构建列表
+   */
+  getBuildReleaseList: param => {
+    return $http.$post('/app-build/release/list', param)
+  },
+
+  /**
+   * 应用构建状态列表
    */
   getAppBuildStatusList: param => {
     return $http.$post('/app-build/list/status', param, {
       skipErrorMessage: true
     })
+  },
+
+  /**
+   * 应用发布列表
+   */
+  getAppReleaseList: param => {
+    return $http.$post('/app-release/list', param)
+  },
+
+  /**
+   * 应用发布详情
+   */
+  getAppReleaseDetail: param => {
+    return $http.$post('/app-release/detail', param)
+  },
+
+  /**
+   * 应用发布机器详情
+   */
+  getAppReleaseMachineDetail: param => {
+    return $http.$post('/app-release/machine/detail', param)
+  },
+
+  /**
+   * 提交应用发布
+   */
+  submitAppRelease: param => {
+    return $http.$post('/app-release/submit', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 审核应用发布
+   */
+  auditAppRelease: param => {
+    return $http.$post('/app-release/audit', param)
+  },
+
+  /**
+   * 嘻嘻应用发布
+   */
+  runnableAppRelease: param => {
+    return $http.$post('/app-release/runnable', param)
+  },
+
+  /**
+   * 应用回滚发布
+   */
+  rollbackAppRelease: param => {
+    return $http.$post('/app-release/rollback', param)
+  },
+
+  /**
+   * 应用发布状态
+   */
+  getAppReleaseStatus: param => {
+    return $http.$post('/app-release/list/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 应用发布列表状态
+   */
+  getAppReleaseListStatus: param => {
+    return $http.$post('/app-release/status', param)
   }
 
 }
