@@ -26,7 +26,7 @@
                   <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
-                <div class="action-editor-wrapper" v-if="action.type === $enum.BUILD_ACTION_TYPE.HOST_COMMAND.value">
+                <div class="action-editor-wrapper" v-if="action.type === $enum.BUILD_ACTION_TYPE.COMMAND.value">
                 <span class="label action-label">
                   <span class="span-red mr4">*</span>
                   主机命令{{ index + 1 }} :
@@ -57,7 +57,7 @@
       <!-- 底部按钮 -->
       <div id="app-action-footer">
         <a-button class="app-action-footer-button" type="dashed"
-                  @click="addAction($enum.BUILD_ACTION_TYPE.HOST_COMMAND.value)">
+                  @click="addAction($enum.BUILD_ACTION_TYPE.COMMAND.value)">
           添加命令操作
         </a-button>
         <a-button class="app-action-footer-button" type="dashed"
@@ -161,7 +161,7 @@ export default {
           this.$message.warning(`请输入操作名称 [构建操作${i + 1}]`)
           return
         }
-        if (this.$enum.BUILD_ACTION_TYPE.HOST_COMMAND.value === action.type) {
+        if (this.$enum.BUILD_ACTION_TYPE.COMMAND.value === action.type) {
           if (!action.command) {
             this.$message.warning(`请输入操作命令 [构建操作${i + 1}]`)
             return

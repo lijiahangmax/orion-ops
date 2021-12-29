@@ -55,26 +55,11 @@
           :dataSource="record.machines"
           :pagination="false"
           size="middle">
-          <!-- 名称 -->
-          <span slot="name" slot-scope="machine">
-            {{ machine.name }}
-            <a-tag v-if="machine.id === 1" color="#5C7CFA">
-              宿主机
-            </a-tag>
-          </span>
-          <!-- tag -->
-          <span slot="tag" slot-scope="machine">
-            <a-tag v-if="machine.tag" color="#20C997">
-              {{ machine.tag }}
-            </a-tag>
-          </span>
-          <!-- 状态 -->
-          <span slot="status" slot-scope="machine">
-            <a-badge
-              v-if="machine.status"
-              :status='$enum.valueOf($enum.ENABLE_STATUS, machine.status)["badge-status"]'
-              :text="$enum.valueOf($enum.ENABLE_STATUS, machine.status).label"/>
-          </span>
+          <!-- 构建版本 -->
+          <a-tag slot="buildSeq" slot-scope="machine" color="#5C7CFA">
+            #{{ machine.buildSeq }}
+          </a-tag>
+          <!-- 操作 -->
           <div slot="action" slot-scope="machine">
             <a @click="removeAppMachine(record.id, machine.id)">删除</a>
           </div>
@@ -234,30 +219,26 @@ const innerColumns = [
   {
     title: '机器名称',
     key: 'name',
+    dataIndex: 'machineName',
+    width: 230,
     ellipsis: true,
-    sorter: (a, b) => a.name.localeCompare(b.name),
-    scopedSlots: { customRender: 'name' }
-  },
-  {
-    title: '标签',
-    key: 'tag',
-    sorter: (a, b) => a.tag.localeCompare(b.tag),
-    scopedSlots: { customRender: 'tag' }
+    sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
     title: '机器主机',
     key: 'host',
-    dataIndex: 'host',
+    dataIndex: 'machineHost',
+    width: 210,
     ellipsis: true,
     sorter: (a, b) => a.host.localeCompare(b.host)
   },
   {
-    title: '状态',
-    key: 'status',
-    width: 120,
+    title: '当前构建版本',
+    key: 'buildSeq',
+    width: 160,
     align: 'center',
-    sorter: (a, b) => a.status - b.status,
-    scopedSlots: { customRender: 'status' }
+    sorter: (a, b) => (a.buildSeq || 0) - (b.buildSeq || 0),
+    scopedSlots: { customRender: 'buildSeq' }
   },
   {
     title: '操作',

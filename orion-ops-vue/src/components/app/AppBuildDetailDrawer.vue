@@ -126,7 +126,7 @@
                 {{ item.exitCode }}
               </span>
             </a-descriptions-item>
-            <a-descriptions-item label="命令" :span="3" v-if="item.actionType === $enum.BUILD_ACTION_TYPE.HOST_COMMAND.value">
+            <a-descriptions-item label="命令" :span="3" v-if="item.actionType === $enum.BUILD_ACTION_TYPE.COMMAND.value">
               <a @click="preview(item.actionCommand)">预览</a>
             </a-descriptions-item>
             <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
