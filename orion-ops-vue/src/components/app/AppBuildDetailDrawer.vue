@@ -42,13 +42,8 @@
             {{ $enum.valueOf($enum.BUILD_STATUS, detail.status).label }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="创建时间" :span="3">
-          {{
-            detail.createTime | formatDate({
-              date: detail.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+        <a-descriptions-item label="构建用户" :span="3">
+          {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="修改时间" :span="3">
           {{
@@ -227,6 +222,7 @@ export default {
               s.startTimeAgo = action.startTimeAgo
               s.endTime = action.endTime
               s.endTimeAgo = action.endTimeAgo
+              s.exitCode = action.exitCode
             })
           }
         }

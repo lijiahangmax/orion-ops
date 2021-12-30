@@ -43,7 +43,9 @@
                :pagination="pagination"
                rowKey="id"
                @change="getList"
+               @expand="expandMachine"
                :loading="loading"
+               :expandedRowKeys.sync="expandedRowKeys"
                size="middle">
         <!-- 展开的机器列表 -->
         <a-table
@@ -53,10 +55,11 @@
           :rowKey="(record, index) => index"
           :columns="innerColumns"
           :dataSource="record.machines"
+          :loading="record.loading"
           :pagination="false"
           size="middle">
           <!-- 构建版本 -->
-          <a-tag slot="buildSeq" slot-scope="machine" color="#5C7CFA">
+          <a-tag slot="buildSeq" slot-scope="machine" color="#5C7CFA" v-if="machine.buildSeq">
             #{{ machine.buildSeq }}
           </a-tag>
           <!-- 操作 -->
@@ -313,8 +316,7 @@ export default {
         name: null,
         tag: null,
         username: null,
-        description: null,
-        queryMachine: 1
+        description: null
       },
       rows: [],
       pagination: {
@@ -326,6 +328,7 @@ export default {
         }
       },
       loading: false,
+      expandedRowKeys: [],
       columns,
       innerColumns
     }
@@ -337,6 +340,7 @@ export default {
     },
     getList(page = this.pagination) {
       this.loading = true
+      this.expandedRowKeys = []
       this.$api.getAppList({
         ...this.query,
         page: page.current,
@@ -345,11 +349,29 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
+        this.$utils.defineArrayKey(data.rows, 'loading', false)
+        this.$utils.defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    expandMachine(expand, record) {
+      if (!expand || record.machines.length) {
+        return
+      }
+      // 加载机器
+      record.loading = true
+      this.$api.getAppMachineList({
+        id: record.id,
+        profileId: this.query.profileId
+      }).then(({ data }) => {
+        record.loading = false
+        record.machines = data
+      }).catch(() => {
+        record.loading = false
       })
     },
     adjustSort(id, sortAdjust) {

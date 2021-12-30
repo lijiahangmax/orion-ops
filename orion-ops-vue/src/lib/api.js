@@ -987,6 +987,13 @@ const $api = {
   },
 
   /**
+   * 应用机器列表
+   */
+  getAppMachineList: param => {
+    return $http.$post('/app-info/list/machine', param)
+  },
+
+  /**
    * 获取应用
    */
   getAppDetail: param => {
@@ -1101,6 +1108,13 @@ const $api = {
    */
   getAppReleaseList: param => {
     return $http.$post('/app-release/list', param)
+  },
+
+  /**
+   * 应用发布机器列表
+   */
+  getAppReleaseMachineList: param => {
+    return $http.$post('/app-release/list/machine', param)
   },
 
   /**

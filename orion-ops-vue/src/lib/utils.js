@@ -205,9 +205,21 @@ function replaceNumber(value) {
 }
 
 /**
- * 给array的元素定义一个key
+ * 给array的元素定义key
  */
-function defineArrayKey(array) {
+function defineArrayKey(array, key, value = null) {
+  if (!array || !array.length) {
+    return
+  }
+  for (const item of array) {
+    item[key] = value
+  }
+}
+
+/**
+ * 给array的元素定义key
+ */
+function defineArrayKeys(array) {
   if (!array || !array.length) {
     return
   }
@@ -287,6 +299,7 @@ export default {
   isNumber,
   replaceNumber,
   defineArrayKey,
+  defineArrayKeys,
   getPathAnalysis,
   getPath,
   detectZoom

@@ -166,7 +166,7 @@ const columns = [
   {
     title: '仓库 / 版本',
     key: 'version',
-    width: 260,
+    width: 300,
     scopedSlots: { customRender: 'version' }
   },
   {
@@ -185,14 +185,6 @@ const columns = [
     sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
-    title: '构建人',
-    key: 'createUserName',
-    dataIndex: 'createUserName',
-    ellipsis: true,
-    width: 130,
-    sorter: (a, b) => a.createUserName.localeCompare(b.createUserName)
-  },
-  {
     title: '构建时间',
     key: 'createTime',
     align: 'center',
@@ -205,8 +197,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
-    ellipsis: true,
-    width: 170
+    ellipsis: true
   },
   {
     title: '操作',
