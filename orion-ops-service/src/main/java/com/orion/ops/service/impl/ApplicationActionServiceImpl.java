@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationActionDAO;
 import com.orion.ops.entity.domain.ApplicationActionDO;
+import com.orion.ops.entity.dto.ApplicationActionConfigDTO;
 import com.orion.ops.entity.request.ApplicationConfigActionRequest;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.service.api.ApplicationActionService;
 import com.orion.utils.Exceptions;
+import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * app发布流程实现
@@ -125,6 +128,23 @@ public class ApplicationActionServiceImpl implements ApplicationActionService {
             action.setUpdateTime(null);
             applicationActionDAO.insert(action);
         }
+    }
+
+    @Override
+    public Map<Long, Boolean> getAppIsConfig(Long profileId, List<Long> appIdList) {
+        // 查询
+        List<ApplicationActionConfigDTO> configList = applicationActionDAO.getAppIsConfig(profileId, appIdList);
+        // 设置结果
+        Map<Long, Boolean> result = Maps.newMap();
+        for (Long appId : appIdList) {
+            Boolean isConfig = configList.stream()
+                    .filter(s -> appId.equals(s.getAppId()))
+                    .findFirst()
+                    .map(s -> s.getBuildStageCount() > 0 && s.getReleaseStageCount() > 0)
+                    .orElse(false);
+            result.put(appId, isConfig);
+        }
+        return result;
     }
 
 }

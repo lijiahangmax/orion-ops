@@ -5,6 +5,7 @@ import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
+import com.orion.ops.entity.vo.ApplicationMachineVO;
 
 import java.util.List;
 
@@ -57,6 +58,15 @@ public interface ApplicationInfoService {
      * @return rows
      */
     DataGrid<ApplicationInfoVO> listApp(ApplicationInfoRequest request);
+
+    /**
+     * 获取app机器
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return machines
+     */
+    List<ApplicationMachineVO> getAppMachines(Long appId, Long profileId);
 
     /**
      * 获取应用详情

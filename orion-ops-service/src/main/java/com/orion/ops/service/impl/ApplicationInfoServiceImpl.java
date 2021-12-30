@@ -25,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -173,20 +170,24 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .wrapper(wrapper)
                 .dataGrid(ApplicationInfoVO.class);
         // 设置版本仓库id
-        for (ApplicationInfoVO app : appList) {
-            // 查询版本控制名称
-            Optional.ofNullable(app.getVcsId())
-                    .map(applicationVcsDAO::selectById)
-                    .map(ApplicationVcsDO::getVcsName)
-                    .ifPresent(app::setVcsName);
+        List<Long> vcsIdList = appList.stream().map(ApplicationInfoVO::getVcsId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (!vcsIdList.isEmpty()) {
+            applicationVcsDAO.selectNameByIdList(vcsIdList).forEach(v -> {
+                appList.stream().filter(s -> v.getId().equals(s.getVcsId()))
+                        .forEach(s -> s.setVcsName(v.getVcsName()));
+            });
         }
         Long profileId = request.getProfileId();
         if (appList.isEmpty() || profileId == null) {
             return appList;
         }
         // 设置配置状态
+        List<Long> appIdList = appList.stream().map(ApplicationInfoVO::getId).collect(Collectors.toList());
+        Map<Long, Boolean> configMap = applicationActionService.getAppIsConfig(profileId, appIdList);
         for (ApplicationInfoVO app : appList) {
-            app.setIsConfig(this.checkAppConfig(app.getId(), profileId) ? Const.CONFIGURED : Const.NOT_CONFIGURED);
+            app.setIsConfig(configMap.get(app.getId()) ? Const.CONFIGURED : Const.NOT_CONFIGURED);
         }
         // 查询机器
         if (Const.ENABLE.equals(request.getQueryMachine())) {
@@ -210,6 +211,24 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
             }
         }
         return appList;
+    }
+
+    @Override
+    public List<ApplicationMachineVO> getAppMachines(Long appId, Long profileId) {
+        List<ApplicationMachineDO> appMachines = applicationMachineService.getAppProfileMachineList(appId, profileId);
+        if (appMachines.size() == 0) {
+            return Lists.empty();
+        }
+        List<ApplicationMachineVO> machines = Converts.toList(appMachines, ApplicationMachineVO.class);
+        for (ApplicationMachineVO machine : machines) {
+            MachineInfoDO machineInfo = machineInfoService.selectById(machine.getMachineId());
+            if (machineInfo != null) {
+                machine.setMachineName(machineInfo.getMachineName());
+                machine.setMachineTag(machineInfo.getMachineTag());
+                machine.setMachineHost(machineInfo.getMachineHost());
+            }
+        }
+        return machines;
     }
 
     @Override

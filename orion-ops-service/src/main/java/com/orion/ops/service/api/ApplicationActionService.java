@@ -4,6 +4,7 @@ import com.orion.ops.entity.domain.ApplicationActionDO;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * app发布流程接口
@@ -66,5 +67,14 @@ public interface ApplicationActionService {
      * @param targetAppId targetAppId
      */
     void copyAppAction(Long appId, Long targetAppId);
+
+    /**
+     * 获取app是否已配置
+     *
+     * @param profileId profileId
+     * @param appIdList appIdList
+     * @return appId, isConfig
+     */
+    Map<Long, Boolean> getAppIsConfig(Long profileId, List<Long> appIdList);
 
 }

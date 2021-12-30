@@ -10,6 +10,7 @@ import com.orion.ops.consts.app.StageType;
 import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
+import com.orion.ops.entity.vo.ApplicationMachineVO;
 import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.utils.Valid;
@@ -82,6 +83,16 @@ public class ApplicationInfoController {
     @RequestMapping("/list")
     public DataGrid<ApplicationInfoVO> listApp(@RequestBody ApplicationInfoRequest request) {
         return applicationService.listApp(request);
+    }
+
+    /**
+     * 应用机器列表
+     */
+    @RequestMapping("/list/machine")
+    public List<ApplicationMachineVO> listAppMachines(@RequestBody ApplicationInfoRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return applicationService.getAppMachines(id, profileId);
     }
 
     /**

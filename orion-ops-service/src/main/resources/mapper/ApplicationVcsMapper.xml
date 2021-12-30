@@ -22,4 +22,13 @@
         id, vcs_name, vcs_description, vcs_type, vsc_url, vsc_username, vcs_password, vcs_access_token, vcs_status, create_time, update_time
     </sql>
 
+    <select id="selectNameByIdList" resultMap="BaseResultMap">
+        SELECT id, vcs_name
+        FROM application_vcs
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

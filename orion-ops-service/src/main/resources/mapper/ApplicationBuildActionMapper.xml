@@ -26,7 +26,7 @@
 
     <!-- 状态列 -->
     <sql id="Base_Status_Columns">
-        SELECT id, run_status, start_time, end_time
+        SELECT id, run_status, start_time, end_time, exit_code
         FROM application_build_action
     </sql>
 

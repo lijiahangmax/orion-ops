@@ -15,9 +15,28 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
+    <resultMap id="ConfigResultMap" type="com.orion.ops.entity.dto.ApplicationActionConfigDTO">
+        <result column="app_id" property="appId"/>
+        <result column="build_stage_count" property="buildStageCount"/>
+        <result column="release_stage_count" property="releaseStageCount"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, app_id, profile_id, action_name, action_type, stage_type, action_command, create_time, update_time
     </sql>
+
+    <select id="getAppIsConfig" resultMap="ConfigResultMap">
+        SELECT app_id,
+        COUNT(stage_type = 10 OR NULL) build_stage_count,
+        COUNT(stage_type = 20 OR NULL) release_stage_count
+        FROM application_action
+        WHERE profile_id = #{profileId}
+        AND app_id IN
+        <foreach collection="appIdList" item="appId" separator="," open="(" close=")">
+            #{appId}
+        </foreach>
+        GROUP BY app_id
+    </select>
 
 </mapper>
