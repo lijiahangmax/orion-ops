@@ -1158,15 +1158,8 @@ const $api = {
    * 应用回滚发布
    */
   rollbackAppRelease: param => {
-    return $http.$post('/app-release/rollback', param)
-  },
-
-  /**
-   * 应用发布状态
-   */
-  getAppReleaseStatus: param => {
-    return $http.$post('/app-release/list/status', param, {
-      skipErrorMessage: true
+    return $http.$post('/app-release/rollback', param, {
+      timeout: 600000
     })
   },
 
@@ -1174,7 +1167,30 @@ const $api = {
    * 应用发布列表状态
    */
   getAppReleaseListStatus: param => {
+    return $http.$post('/app-release/list/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 应用发布状态
+   */
+  getAppReleaseStatus: param => {
     return $http.$post('/app-release/status', param)
+  },
+
+  /**
+   * 应用发布机器列表状态
+   */
+  getAppReleaseMachineListStatus: param => {
+    return $http.$post('/app-release/list/machine/status', param)
+  },
+
+  /**
+   * 应用发布机器状态
+   */
+  getAppReleaseMachineStatus: param => {
+    return $http.$post('/app-release/machine/status', param)
   }
 
 }

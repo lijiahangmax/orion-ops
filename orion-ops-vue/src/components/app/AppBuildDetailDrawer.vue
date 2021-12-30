@@ -205,7 +205,7 @@ export default {
       this.$api.getAppBuildStatus({
         id: this.detail.id
       }).then(({ data }) => {
-        this.detail.status = parseInt(data.status)
+        this.detail.status = data.status
         this.detail.used = data.used
         this.detail.keepTime = data.keepTime
         this.detail.startTime = data.startTime

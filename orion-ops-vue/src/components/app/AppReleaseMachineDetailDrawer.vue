@@ -128,12 +128,17 @@ export default {
     return {
       visible: false,
       loading: true,
+      pollId: null,
       detail: {},
       statusHolder: statusHolder.call(this)
     }
   },
   methods: {
     open(id) {
+      // 关闭轮询状态
+      if (this.pollId) {
+        clearInterval(this.pollId)
+      }
       this.detail = {}
       this.visible = true
       this.loading = true
@@ -142,8 +147,48 @@ export default {
       }).then(({ data }) => {
         this.loading = false
         this.detail = data
+        // 轮询状态
+        if (data.status === this.$enum.ACTION_STATUS.WAIT.value ||
+          data.status === this.$enum.ACTION_STATUS.RUNNABLE.value) {
+          this.pollId = setInterval(this.pollStatus, 5000)
+        }
       }).catch(() => {
         this.loading = false
+      })
+    },
+    pollStatus() {
+      if (!this.detail || !this.detail.status) {
+        return
+      }
+      if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
+        this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        clearInterval(this.pollId)
+        return
+      }
+      this.$api.getAppReleaseMachineStatus({
+        releaseMachineId: this.detail.id
+      }).then(({ data }) => {
+        this.detail.status = data.status
+        this.detail.used = data.used
+        this.detail.keepTime = data.keepTime
+        this.detail.startTime = data.startTime
+        this.detail.startTimeAgo = data.startTimeAgo
+        this.detail.endTime = data.endTime
+        this.detail.endTimeAgo = data.endTimeAgo
+        if (data.actions && data.actions.length) {
+          for (const action of data.actions) {
+            this.detail.actions.filter(s => s.id === action.id).forEach(s => {
+              s.status = action.status
+              s.keepTime = action.keepTime
+              s.used = action.used
+              s.startTime = action.startTime
+              s.startTimeAgo = action.startTimeAgo
+              s.endTime = action.endTime
+              s.endTimeAgo = action.endTimeAgo
+              s.exitCode = action.exitCode
+            })
+          }
+        }
       })
     },
     preview(command) {
@@ -151,6 +196,11 @@ export default {
     },
     onClose() {
       this.visible = false
+      // 关闭轮询状态
+      if (this.pollId) {
+        clearInterval(this.pollId)
+        this.pollId = null
+      }
     }
   },
   filters: {

@@ -57,7 +57,9 @@
                :pagination="pagination"
                rowKey="id"
                @change="getList"
+               @expand="expandMachine"
                :loading="loading"
+               :expandedRowKeys.sync="expandedRowKeys"
                size="middle">
         <!-- 展开的机器列表 -->
         <a-table
@@ -67,6 +69,7 @@
           :rowKey="(record, index) => index"
           :columns="innerColumns"
           :dataSource="record.machines"
+          :loading="record.loading"
           :pagination="false"
           size="middle">
           <!-- 状态 -->
@@ -104,7 +107,7 @@
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
           <!-- 发布 -->
-          <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record.id)">发布</a>
+          <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)">发布</a>
           <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
           <!-- 日志 -->
           <a v-if="statusHolder.visibleLog(record.status)" @click="openReleaseLog(record.id)">日志</a>
@@ -296,6 +299,7 @@ export default {
         }
       },
       loading: false,
+      expandedRowKeys: [],
       columns,
       innerColumns,
       statusHolder: statusHolder.call(this)
@@ -308,6 +312,7 @@ export default {
     },
     getList(page = this.pagination) {
       this.loading = true
+      this.expandedRowKeys = []
       this.$api.getAppReleaseList({
         ...this.query,
         onlyMyself: this.query.onlyMyself ? 1 : 2,
@@ -317,11 +322,28 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
+        this.$utils.defineArrayKey(data.rows, 'loading', false)
+        this.$utils.defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    expandMachine(expand, record) {
+      if (!expand || record.machines.length) {
+        return
+      }
+      // 加载机器
+      record.loading = true
+      this.$api.getAppReleaseMachineList({
+        id: record.id
+      }).then(({ data }) => {
+        record.loading = false
+        record.machines = data
+      }).catch(() => {
+        record.loading = false
       })
     },
     openRelease() {
@@ -336,11 +358,12 @@ export default {
         match[0].status = (res ? this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value : this.$enum.RELEASE_STATUS.AUDIT_REJECT.value)
       }
     },
-    runnableRelease(id) {
+    runnableRelease(record) {
       this.$api.runnableAppRelease({
-        id
+        id: record.id
       }).then(() => {
         this.$message.success('已提交执行请求')
+        record.status = this.$enum.RELEASE_STATUS.RUNNABLE.value
       })
     },
     openReleaseLog(id) {
@@ -367,6 +390,51 @@ export default {
       this.getList({})
     },
     pollStatus() {
+      if (!this.rows || !this.rows.length) {
+        return
+      }
+      const pollItems = this.rows.filter(r => r.status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
+        r.status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value ||
+        r.status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        r.status === this.$enum.RELEASE_STATUS.RUNNABLE.value)
+      if (!pollItems.length) {
+        return
+      }
+      const idList = pollItems.map(s => s.id)
+      if (!idList.length) {
+        return
+      }
+      const machineIdList = pollItems.map(s => s.machines)
+        .filter(s => s && s.length)
+        .flat()
+        .map(s => s.id)
+      this.$api.getAppReleaseListStatus({
+        idList,
+        machineIdList
+      }).then(({ data }) => {
+        if (!data || !data.length) {
+          return
+        }
+        for (const status of data) {
+          // 发布状态
+          this.rows.filter(s => s.id === status.id).forEach(row => {
+            row.status = status.status
+            row.keepTime = status.keepTime
+            row.used = status.used
+            if (!status.machines || !status.machines.length || !row.machines || !row.machines.length) {
+              return
+            }
+            // 机器状态
+            for (const machine of status.machines) {
+              row.machines.filter(m => m.id === machine.id).forEach(m => {
+                m.status = machine.status
+                m.keepTime = machine.keepTime
+                m.used = machine.used
+              })
+            }
+          })
+        }
+      })
     }
   },
   filters: {

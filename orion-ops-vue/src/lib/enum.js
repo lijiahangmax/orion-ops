@@ -203,6 +203,20 @@ const $enum = {
   },
 
   /**
+   * 启用状态
+   */
+  AUDIT_STATUS: {
+    RESOLVE: {
+      value: 10,
+      label: '通过'
+    },
+    REJECT: {
+      value: 20,
+      label: '驳回'
+    }
+  },
+
+  /**
    * 应用环境审核状态
    */
   PROFILE_AUDIT_STATUS: {
@@ -581,7 +595,7 @@ const $enum = {
       value: 110,
       label: '检出'
     },
-    HOST_COMMAND: {
+    COMMAND: {
       value: 120,
       label: '主机命令'
     }
@@ -591,16 +605,12 @@ const $enum = {
    * 发布操作类型
    */
   RELEASE_ACTION_TYPE: {
-    INITIAL: {
-      value: 210,
-      label: '初始化'
-    },
     TRANSFER: {
-      value: 220,
+      value: 210,
       label: '传输'
     },
-    TARGET_COMMAND: {
-      value: 230,
+    COMMAND: {
+      value: 220,
       label: '目标主机命令'
     }
   },
@@ -611,11 +621,11 @@ const $enum = {
   RELEASE_SERIAL_TYPE: {
     SERIAL: {
       value: 10,
-      label: '串行'
+      label: '串行发布'
     },
     PARALLEL: {
       value: 20,
-      label: '并行'
+      label: '并行发布'
     }
   },
 
@@ -702,6 +712,80 @@ const $enum = {
       value: 60,
       color: '#FD7E14',
       label: '已终止'
+    }
+  },
+
+  /**
+   * 发布状态
+   */
+  RELEASE_STATUS: {
+    WAIT_AUDIT: {
+      value: 10,
+      color: '#CED4DA',
+      label: '待审核'
+    },
+    AUDIT_REJECT: {
+      value: 20,
+      color: '#FF922B',
+      label: '审核驳回'
+    },
+    WAIT_RUNNABLE: {
+      value: 30,
+      color: '#12B886',
+      label: '待发布'
+    },
+    RUNNABLE: {
+      value: 40,
+      color: '#51CF66',
+      label: '发布中'
+    },
+    FINISH: {
+      value: 50,
+      color: '#4C6EF5',
+      label: '发布完成'
+    },
+    TERMINATED: {
+      value: 60,
+      color: '#FD7E14',
+      label: '发布停止'
+    },
+    INITIAL_ERROR: {
+      value: 70,
+      color: '#F03E3E',
+      label: '初始化失败'
+    },
+    FAILURE: {
+      value: 80,
+      color: '#C92A2A',
+      label: '发布失败'
+    }
+  },
+
+  /**
+   * 发布类型
+   */
+  RELEASE_TYPE: {
+    WAIT_AUDIT: {
+      value: 10,
+      label: '正常发布'
+    },
+    AUDIT_REJECT: {
+      value: 20,
+      label: '回滚发布'
+    }
+  },
+
+  /**
+   * 发布状态
+   */
+  TIMED_RELEASE_TYPE: {
+    NORMAL: {
+      value: 10,
+      label: '普通发布'
+    },
+    TIMED: {
+      value: 20,
+      label: '定时发布'
     }
   }
 
