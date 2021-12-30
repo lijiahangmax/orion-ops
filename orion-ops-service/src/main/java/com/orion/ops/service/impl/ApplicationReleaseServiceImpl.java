@@ -105,17 +105,25 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .wrapper(wrapper)
                 .page(request)
                 .dataGrid(ApplicationReleaseListVO.class);
-        // 查询发布机器
-        List<Long> machineIdList = dataGrid.stream().map(ApplicationReleaseListVO::getId).collect(Collectors.toList());
-        if (!machineIdList.isEmpty()) {
-            // 查询机器
-            Map<Long, List<ApplicationReleaseMachineVO>> releaseMachineMap = applicationReleaseMachineService.getReleaseMachines(machineIdList)
-                    .stream()
-                    .map(s -> Converts.to(s, ApplicationReleaseMachineVO.class))
-                    .collect(Collectors.groupingBy(ApplicationReleaseMachineVO::getReleaseId));
-            dataGrid.forEach(release -> release.setMachines(releaseMachineMap.get(release.getId())));
+        if (Const.ENABLE.equals(request.getQueryMachine())) {
+            // 查询发布机器
+            List<Long> machineIdList = dataGrid.stream().map(ApplicationReleaseListVO::getId).collect(Collectors.toList());
+            if (!machineIdList.isEmpty()) {
+                // 查询机器
+                Map<Long, List<ApplicationReleaseMachineVO>> releaseMachineMap = applicationReleaseMachineService.getReleaseMachines(machineIdList)
+                        .stream()
+                        .map(s -> Converts.to(s, ApplicationReleaseMachineVO.class))
+                        .collect(Collectors.groupingBy(ApplicationReleaseMachineVO::getReleaseId));
+                dataGrid.forEach(release -> release.setMachines(releaseMachineMap.get(release.getId())));
+            }
         }
         return dataGrid;
+    }
+
+    @Override
+    public List<ApplicationReleaseMachineVO> getReleaseMachineList(Long id) {
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
+        return Converts.toList(machines, ApplicationReleaseMachineVO.class);
     }
 
     @Override
@@ -249,13 +257,65 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public List<ApplicationReleaseStatusVO> getReleaseStatusList(List<Long> idList) {
-        return null;
+    public List<ApplicationReleaseStatusVO> getReleaseStatusList(List<Long> idList, List<Long> machineIdList) {
+        // 查询发布状态
+        List<ApplicationReleaseDO> releaseList = applicationReleaseDAO.selectStatusByIdList(idList);
+        List<ApplicationReleaseStatusVO> statusList = Converts.toList(releaseList, ApplicationReleaseStatusVO.class);
+        // 查询机器状态
+        if (Lists.isNotEmpty(machineIdList)) {
+            List<ApplicationReleaseMachineDO> machineList = applicationReleaseMachineDAO.selectStatusByIdList(machineIdList);
+            for (ApplicationReleaseStatusVO status : statusList) {
+                List<ApplicationReleaseMachineDO> machineStatus = machineList.stream()
+                        .filter(s -> s.getReleaseId().equals(status.getId()))
+                        .collect(Collectors.toList());
+                status.setMachines(Converts.toList(machineStatus, ApplicationReleaseMachineStatusVO.class));
+            }
+        }
+        return statusList;
     }
 
     @Override
     public ApplicationReleaseStatusVO getReleaseStatus(Long id) {
-        return null;
+        // 查询发布状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectStatusById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        ApplicationReleaseStatusVO status = Converts.to(release, ApplicationReleaseStatusVO.class);
+        // 查询机器状态
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineDAO.selectStatusByReleaseId(id);
+        List<ApplicationReleaseMachineStatusVO> machineStatus = Converts.toList(machines, ApplicationReleaseMachineStatusVO.class);
+        status.setMachines(machineStatus);
+        return status;
+    }
+
+    @Override
+    public List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(List<Long> releaseMachineIdList) {
+        // 查询机器状态
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineDAO.selectStatusByIdList(releaseMachineIdList);
+        List<ApplicationReleaseMachineStatusVO> machinesStatus = Converts.toList(machines, ApplicationReleaseMachineStatusVO.class);
+        // 查询操作状态
+        if (!machinesStatus.isEmpty()) {
+            List<ApplicationReleaseActionDO> actions = applicationReleaseActionDAO.selectReleaseActionStatusByMachineIdList(releaseMachineIdList);
+            for (ApplicationReleaseMachineStatusVO machineStatus : machinesStatus) {
+                List<ApplicationReleaseActionDO> machineActions = actions.stream()
+                        .filter(s -> s.getReleaseMachineId().equals(machineStatus.getId()))
+                        .collect(Collectors.toList());
+                machineStatus.setActions(Converts.toList(machineActions, ApplicationReleaseActionStatusVO.class));
+            }
+        }
+        return machinesStatus;
+    }
+
+    @Override
+    public ApplicationReleaseMachineStatusVO getReleaseMachineStatus(Long releaseMachineId) {
+        // 查询机器状态
+        ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectStatusById(releaseMachineId);
+        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        ApplicationReleaseMachineStatusVO status = Converts.to(machine, ApplicationReleaseMachineStatusVO.class);
+        // 查询操作状态
+        List<ApplicationReleaseActionDO> actions = applicationReleaseActionDAO.selectReleaseActionStatusByMachineId(releaseMachineId);
+        List<ApplicationReleaseActionStatusVO> actionStatus = Converts.toList(actions, ApplicationReleaseActionStatusVO.class);
+        status.setActions(actionStatus);
+        return status;
     }
 
     /**

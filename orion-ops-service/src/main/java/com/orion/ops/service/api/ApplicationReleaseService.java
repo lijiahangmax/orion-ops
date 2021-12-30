@@ -3,10 +3,7 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
-import com.orion.ops.entity.vo.ApplicationReleaseDetailVO;
-import com.orion.ops.entity.vo.ApplicationReleaseListVO;
-import com.orion.ops.entity.vo.ApplicationReleaseMachineVO;
-import com.orion.ops.entity.vo.ApplicationReleaseStatusVO;
+import com.orion.ops.entity.vo.*;
 
 import java.util.List;
 
@@ -27,6 +24,14 @@ public interface ApplicationReleaseService {
      * @return rows
      */
     DataGrid<ApplicationReleaseListVO> getReleaseList(ApplicationReleaseRequest request);
+
+    /**
+     * 查询发布机器列表
+     *
+     * @param id id
+     * @return rows
+     */
+    List<ApplicationReleaseMachineVO> getReleaseMachineList(Long id);
 
     /**
      * 发布详情
@@ -78,10 +83,11 @@ public interface ApplicationReleaseService {
     /**
      * 获取发布状态列表
      *
-     * @param idList idList
+     * @param idList        idList
+     * @param machineIdList machineIdList
      * @return list
      */
-    List<ApplicationReleaseStatusVO> getReleaseStatusList(List<Long> idList);
+    List<ApplicationReleaseStatusVO> getReleaseStatusList(List<Long> idList, List<Long> machineIdList);
 
     /**
      * 获取发布状态
@@ -90,5 +96,21 @@ public interface ApplicationReleaseService {
      * @return status
      */
     ApplicationReleaseStatusVO getReleaseStatus(Long id);
+
+    /**
+     * 获取发布状态机器列表
+     *
+     * @param releaseMachineIdList releaseMachineIdList
+     * @return list
+     */
+    List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(List<Long> releaseMachineIdList);
+
+    /**
+     * 获取发布机器状态
+     *
+     * @param releaseMachineId releaseMachineId
+     * @return status
+     */
+    ApplicationReleaseMachineStatusVO getReleaseMachineStatus(Long releaseMachineId);
 
 }

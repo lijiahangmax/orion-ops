@@ -85,8 +85,18 @@ public class ApplicationReleaseRequest extends PageRequest {
     private Long releaseMachineId;
 
     /**
-     * 回滚发布
+     * 发布机器id
+     */
+    private List<Long> releaseMachineIdList;
+
+    /**
+     * id列表
      */
     private List<Long> idList;
+
+    /**
+     * 是否查询机器
+     */
+    private Integer queryMachine;
 
 }

@@ -1,23 +1,22 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationReleaseDO;
+import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 /**
- * 应用发布状态vo
+ * 应用执行操作状态
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/20 9:53
+ * @since 2021/12/29 21:54
  */
 @Data
-public class ApplicationReleaseStatusVO {
+public class ApplicationReleaseActionStatusVO {
 
     /**
      * id
@@ -25,29 +24,27 @@ public class ApplicationReleaseStatusVO {
     private Long id;
 
     /**
-     * 状态
-     *
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.consts.app.ActionStatus
      */
     private Integer status;
 
     /**
-     * 发布开始时间
+     * 执行开始时间
      */
     private Date startTime;
 
     /**
-     * 发布开始时间
+     * 执行开始时间
      */
     private String startTimeAgo;
 
     /**
-     * 发布结束时间
+     * 执行结束时间
      */
     private Date endTime;
 
     /**
-     * 发布结束时间
+     * 执行结束时间
      */
     private String endTimeAgo;
 
@@ -62,20 +59,21 @@ public class ApplicationReleaseStatusVO {
     private String keepTime;
 
     /**
-     * 机器状态
+     * exitCode
      */
-    private List<ApplicationReleaseMachineStatusVO> machines;
+    private Integer exitCode;
 
     static {
-        TypeStore.STORE.register(ApplicationReleaseDO.class, ApplicationReleaseStatusVO.class, p -> {
-            ApplicationReleaseStatusVO vo = new ApplicationReleaseStatusVO();
+        TypeStore.STORE.register(ApplicationReleaseActionDO.class, ApplicationReleaseActionStatusVO.class, p -> {
+            ApplicationReleaseActionStatusVO vo = new ApplicationReleaseActionStatusVO();
             vo.setId(p.getId());
-            vo.setStatus(p.getReleaseStatus());
-            Date startTime = p.getReleaseStartTime(), endTime = p.getReleaseEndTime();
+            vo.setStatus(p.getRunStatus());
+            Date startTime = p.getStartTime(), endTime = p.getEndTime();
             vo.setStartTime(startTime);
             vo.setStartTimeAgo(Optional.ofNullable(startTime).map(Dates::ago).orElse(null));
             vo.setEndTime(endTime);
             vo.setEndTimeAgo(Optional.ofNullable(endTime).map(Dates::ago).orElse(null));
+            vo.setExitCode(p.getExitCode());
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
                 vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));

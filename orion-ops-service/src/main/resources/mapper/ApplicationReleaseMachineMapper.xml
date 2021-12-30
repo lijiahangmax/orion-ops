@@ -23,4 +23,42 @@
         id, release_id, machine_id, machine_name, machine_tag, machine_host, run_status, log_path, start_time, end_time, create_time, update_time
     </sql>
 
+    <sql id="Base_Status_Columns">
+        id, release_id, run_status, start_time, end_time
+    </sql>
+
+    <select id="selectStatusByReleaseId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE release_id = #{releaseId}
+    </select>
+
+    <select id="selectStatusByReleaseIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE release_id IN
+        <foreach collection="releaseIdList" item="releaseId" separator="," open="(" close=")">
+            #{releaseId}
+        </foreach>
+    </select>
+
+    <select id="selectStatusById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

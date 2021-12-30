@@ -1,6 +1,6 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationReleaseDO;
+import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 应用发布状态vo
+ * 发布机器id
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/20 9:53
+ * @since 2021/12/29 21:52
  */
 @Data
-public class ApplicationReleaseStatusVO {
+public class ApplicationReleaseMachineStatusVO {
 
     /**
      * id
@@ -27,7 +27,7 @@ public class ApplicationReleaseStatusVO {
     /**
      * 状态
      *
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.consts.app.ActionStatus
      */
     private Integer status;
 
@@ -62,16 +62,16 @@ public class ApplicationReleaseStatusVO {
     private String keepTime;
 
     /**
-     * 机器状态
+     * action状态
      */
-    private List<ApplicationReleaseMachineStatusVO> machines;
+    private List<ApplicationReleaseActionStatusVO> actions;
 
     static {
-        TypeStore.STORE.register(ApplicationReleaseDO.class, ApplicationReleaseStatusVO.class, p -> {
-            ApplicationReleaseStatusVO vo = new ApplicationReleaseStatusVO();
+        TypeStore.STORE.register(ApplicationReleaseMachineDO.class, ApplicationReleaseMachineStatusVO.class, p -> {
+            ApplicationReleaseMachineStatusVO vo = new ApplicationReleaseMachineStatusVO();
             vo.setId(p.getId());
-            vo.setStatus(p.getReleaseStatus());
-            Date startTime = p.getReleaseStartTime(), endTime = p.getReleaseEndTime();
+            vo.setStatus(p.getRunStatus());
+            Date startTime = p.getStartTime(), endTime = p.getEndTime();
             vo.setStartTime(startTime);
             vo.setStartTimeAgo(Optional.ofNullable(startTime).map(Dates::ago).orElse(null));
             vo.setEndTime(endTime);

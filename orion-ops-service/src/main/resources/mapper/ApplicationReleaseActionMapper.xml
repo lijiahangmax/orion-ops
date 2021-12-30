@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationReleaseActionDO">
         <id column="id" property="id"/>
-        <result column="release_machine_id" property="releaseMachineId" />
+        <result column="release_machine_id" property="releaseMachineId"/>
         <result column="machine_id" property="machineId"/>
         <result column="release_id" property="releaseId"/>
         <result column="action_id" property="actionId"/>
@@ -25,5 +25,26 @@
     <sql id="Base_Column_List">
         id, release_machine_id, machine_id, release_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, create_time, update_time
     </sql>
+
+    <sql id="Status_Columns">
+        id, release_machine_id, run_status, exit_code, start_time, end_time
+    </sql>
+
+    <select id="selectReleaseActionStatusByMachineId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Columns"/>
+        FROM application_release_action
+        WHERE release_machine_id = #{releaseMachineId}
+    </select>
+
+    <select id="selectReleaseActionStatusByMachineIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Columns"/>
+        FROM application_release_action
+        WHERE release_machine_id IN
+        <foreach collection="releaseMachineIdList" item="releaseMachineId" separator="," open="(" close=")">
+            #{releaseMachineId}
+        </foreach>
+    </select>
 
 </mapper>

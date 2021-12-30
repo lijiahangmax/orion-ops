@@ -6,10 +6,7 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
-import com.orion.ops.entity.vo.ApplicationReleaseDetailVO;
-import com.orion.ops.entity.vo.ApplicationReleaseListVO;
-import com.orion.ops.entity.vo.ApplicationReleaseMachineVO;
-import com.orion.ops.entity.vo.ApplicationReleaseStatusVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +37,15 @@ public class ApplicationReleaseController {
     @RequestMapping("/list")
     public DataGrid<ApplicationReleaseListVO> getReleaseList(@RequestBody ApplicationReleaseRequest request) {
         return applicationReleaseService.getReleaseList(request);
+    }
+
+    /**
+     * 发布机器列表
+     */
+    @RequestMapping("/list/machine")
+    public List<ApplicationReleaseMachineVO> getReleaseMachineList(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationReleaseService.getReleaseMachineList(id);
     }
 
     /**
@@ -111,7 +117,7 @@ public class ApplicationReleaseController {
     @RequestMapping("/list/status")
     public List<ApplicationReleaseStatusVO> getReleaseStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
-        return applicationReleaseService.getReleaseStatusList(idList);
+        return applicationReleaseService.getReleaseStatusList(idList, request.getMachineIdList());
     }
 
     /**
@@ -121,6 +127,24 @@ public class ApplicationReleaseController {
     public ApplicationReleaseStatusVO getReleaseStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.getReleaseStatus(id);
+    }
+
+    /**
+     * 发布机器状态列表
+     */
+    @RequestMapping("/list/machine/status")
+    public List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(@RequestBody ApplicationReleaseRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getReleaseMachineIdList());
+        return applicationReleaseService.getReleaseMachineStatusList(idList);
+    }
+
+    /**
+     * 发布机器状态
+     */
+    @RequestMapping("/machine/status")
+    public ApplicationReleaseMachineStatusVO getReleaseMachineStatus(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getReleaseMachineId());
+        return applicationReleaseService.getReleaseMachineStatus(id);
     }
 
 }
