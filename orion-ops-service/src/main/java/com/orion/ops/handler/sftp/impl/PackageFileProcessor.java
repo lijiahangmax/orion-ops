@@ -14,6 +14,8 @@ import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
+import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.io.compress.CompressTypeEnum;
@@ -23,8 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -168,7 +168,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
      * 初始化压缩文件
      */
     private void initCompressFiles() {
-        this.nameMapping = new LinkedHashMap<>();
+        this.nameMapping = Maps.newLinkedMap();
         for (int i = 0; i < fileList.size(); i++) {
             FileTransferLogDO fileLog = fileList.get(i);
             String remoteFile = fileLog.getRemoteFile();
@@ -193,7 +193,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
      */
     private void initCompressFileRaw() {
         // 设置文件清单
-        List<String> compressFileRaw = new ArrayList<>();
+        List<String> compressFileRaw = Lists.newList();
         for (FileTransferLogDO fileLog : fileList) {
             String remoteFile = fileLog.getRemoteFile();
             String label = SftpTransferType.of(fileLog.getTransferType()).getLabel();

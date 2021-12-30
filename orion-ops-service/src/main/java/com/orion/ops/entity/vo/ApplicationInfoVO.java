@@ -61,7 +61,7 @@ public class ApplicationInfoVO {
     private Integer isConfig;
 
     /**
-     * 机器
+     * 应用机器
      */
     private List<ApplicationMachineVO> machines;
 

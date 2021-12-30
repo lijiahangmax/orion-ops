@@ -19,6 +19,7 @@ import com.orion.ops.utils.ValueMix;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.FileWriters;
 import com.orion.utils.io.Files1;
@@ -196,7 +197,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     public Map<String, Integer> mountOrDumpKeys(List<Long> idList, boolean mount) {
-        Map<String, Integer> map = new LinkedHashMap<>();
+        Map<String, Integer> map = Maps.newLinkedMap();
         for (Long id : idList) {
             MachineSecretKeyDO key = Valid.notNull(machineSecretKeyDAO.selectById(id), "秘钥未找到");
             Integer status = this.mountOrDump(key, mount);

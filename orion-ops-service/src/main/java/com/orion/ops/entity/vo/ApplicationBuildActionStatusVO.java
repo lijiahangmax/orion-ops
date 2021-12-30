@@ -58,6 +58,11 @@ public class ApplicationBuildActionStatusVO {
      */
     private String keepTime;
 
+    /**
+     * exitCode
+     */
+    private Integer exitCode;
+
     static {
         TypeStore.STORE.register(ApplicationBuildActionDO.class, ApplicationBuildActionStatusVO.class, p -> {
             ApplicationBuildActionStatusVO vo = new ApplicationBuildActionStatusVO();
@@ -68,6 +73,7 @@ public class ApplicationBuildActionStatusVO {
             vo.setStartTimeAgo(Optional.ofNullable(startTime).map(Dates::ago).orElse(null));
             vo.setEndTime(endTime);
             vo.setEndTimeAgo(Optional.ofNullable(endTime).map(Dates::ago).orElse(null));
+            vo.setExitCode(p.getExitCode());
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
                 vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));

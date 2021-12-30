@@ -29,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 环境变量服务
@@ -153,7 +156,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     public void saveEnv(Long machineId, Map<String, String> env) {
         MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
         // 倒排
-        List<Map.Entry<String, String>> entries = new ArrayList<>(env.entrySet());
+        List<Map.Entry<String, String>> entries = Lists.newList(env.entrySet());
         for (int i = entries.size() - 1; i >= 0; i--) {
             // 更新
             Map.Entry<String, String> entry = entries.get(i);
