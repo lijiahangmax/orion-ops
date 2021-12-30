@@ -131,7 +131,6 @@ public class CommandExecServiceImpl implements CommandExecService {
         }
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                 .eq(Objects.nonNull(request.getId()), CommandExecDO::getId, request.getId())
-                .eq(Objects.nonNull(request.getRelId()), CommandExecDO::getRelId, request.getRelId())
                 .eq(Objects.nonNull(request.getUserId()), CommandExecDO::getUserId, request.getUserId())
                 .eq(Objects.nonNull(request.getStatus()), CommandExecDO::getExecStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getType()), CommandExecDO::getExecType, request.getType())

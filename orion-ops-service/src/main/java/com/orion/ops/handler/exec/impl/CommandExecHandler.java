@@ -77,10 +77,6 @@ public class CommandExecHandler extends AbstractExecHandler {
                     .append("执行机器: ").append(hint.getMachineId()).append(Letters.TAB)
                     .append(machine.getMachineName()).append(Letters.LF)
                     .append("开始时间: ").append(Dates.format(record.getStartDate(), Dates.YMD_HMS)).append(Letters.LF);
-            Long relId = record.getRelId();
-            if (relId != null) {
-                sb.append("relId: ").append(relId).append(Letters.LF);
-            }
             String description = record.getDescription();
             if (!Strings.isBlank(description)) {
                 sb.append("描述: ").append(description).append(Letters.LF);

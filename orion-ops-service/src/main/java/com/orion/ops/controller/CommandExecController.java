@@ -37,7 +37,6 @@ public class CommandExecController {
     public List<CommandTaskSubmitVO> submitTask(@RequestBody CommandExecRequest request) {
         Valid.notBlank(request.getCommand());
         Valid.notEmpty(request.getMachineIdList());
-        request.setRelId(null);
         return commandExecService.batchSubmitTask(request);
     }
 

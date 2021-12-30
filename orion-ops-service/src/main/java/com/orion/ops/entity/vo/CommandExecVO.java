@@ -34,11 +34,6 @@ public class CommandExecVO {
     private String username;
 
     /**
-     * 引用id
-     */
-    private Long relId;
-
-    /**
      * 类型
      *
      * @see com.orion.ops.consts.command.ExecType
@@ -131,7 +126,6 @@ public class CommandExecVO {
             vo.setId(p.getId());
             vo.setUserId(p.getUserId());
             vo.setUsername(p.getUserName());
-            vo.setRelId(p.getRelId());
             vo.setType(p.getExecType());
             vo.setStatus(p.getExecStatus());
             vo.setMachineId(p.getMachineId());

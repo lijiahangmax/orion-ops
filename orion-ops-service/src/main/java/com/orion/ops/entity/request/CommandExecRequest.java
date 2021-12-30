@@ -53,11 +53,6 @@ public class CommandExecRequest extends PageRequest {
     private Long userId;
 
     /**
-     * 关联id
-     */
-    private Long relId;
-
-    /**
      * 状态
      *
      * @see com.orion.ops.consts.command.ExecStatus
