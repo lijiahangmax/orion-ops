@@ -11,6 +11,7 @@
         <result column="action_type" property="actionType"/>
         <result column="stage_type" property="stageType"/>
         <result column="action_command" property="actionCommand"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
@@ -23,7 +24,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, profile_id, action_name, action_type, stage_type, action_command, create_time, update_time
+        id, app_id, profile_id, action_name, action_type, stage_type, action_command, deleted, create_time, update_time
     </sql>
 
     <select id="getAppIsConfig" resultMap="ConfigResultMap">
@@ -36,6 +37,7 @@
         <foreach collection="appIdList" item="appId" separator="," open="(" close=")">
             #{appId}
         </foreach>
+        AND deleted = 1
         GROUP BY app_id
     </select>
 

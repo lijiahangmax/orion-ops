@@ -14,13 +14,14 @@
         <result column="log_path" property="logPath"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, release_id, machine_id, machine_name, machine_tag, machine_host, run_status, log_path, start_time, end_time, create_time, update_time
+        id, release_id, machine_id, machine_name, machine_tag, machine_host, run_status, log_path, start_time, end_time, deleted, create_time, update_time
     </sql>
 
     <sql id="Base_Status_Columns">
@@ -42,6 +43,7 @@
         <foreach collection="releaseIdList" item="releaseId" separator="," open="(" close=")">
             #{releaseId}
         </foreach>
+        AND deleted = 1
     </select>
 
     <select id="selectStatusById" resultMap="BaseResultMap">
@@ -49,6 +51,7 @@
         <include refid="Base_Status_Columns"/>
         FROM application_release_machine
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusByIdList" resultMap="BaseResultMap">
@@ -59,6 +62,7 @@
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+        AND deleted = 1
     </select>
 
 </mapper>

@@ -11,13 +11,14 @@
         <result column="release_id" property="releaseId"/>
         <result column="build_id" property="buildId"/>
         <result column="build_seq" property="buildSeq"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, profile_id, machine_id, release_id, build_id, build_seq, create_time, update_time
+        id, app_id, profile_id, machine_id, release_id, build_id, build_seq, deleted, create_time, update_time
     </sql>
 
     <update id="updateAppVersion">
@@ -28,6 +29,7 @@
         WHERE app_id = #{appId}
         AND profile_id = #{profileId}
         AND machine_id = #{machineId}
+        AND deleted = 1
     </update>
 
 </mapper>

@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -140,6 +137,15 @@ public class ApplicationBuildDO implements Serializable {
      */
     @TableField("build_end_time")
     private Date buildEndTime;
+
+    /**
+     * 是否删除 1未删除 2已删除
+     *
+     * @see com.orion.ops.consts.Const#NOT_DELETED
+     * @see com.orion.ops.consts.Const#IS_DELETED
+     */
+    @TableLogic
+    private Integer deleted;
 
     /**
      * 创建时间

@@ -15,13 +15,15 @@
         <result column="exit_code" property="exitCode"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, build_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, create_time, update_time
+        id, build_id, action_id, action_name, action_type, action_command,
+        log_path, run_status, exit_code, start_time, end_time, deleted, create_time, update_time
     </sql>
 
     <!-- 状态列 -->
@@ -34,16 +36,19 @@
         SELECT run_status
         FROM application_build_action
         WHERE build_id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusInfoByBuildId" resultMap="BaseResultMap">
         <include refid="Base_Status_Columns"/>
         WHERE build_id = #{buildId}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusInfoById" resultMap="BaseResultMap">
         <include refid="Base_Status_Columns"/>
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusInfoByIdList" resultMap="BaseResultMap">
@@ -52,12 +57,14 @@
         <foreach collection="idList" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+        AND deleted = 1
     </select>
 
     <select id="selectActionIdByBuildId" resultType="java.lang.Long">
         SELECT id
         FROM application_build_action
         WHERE build_id = #{buildId}
+        AND deleted = 1
         ORDER BY id ASC
     </select>
 

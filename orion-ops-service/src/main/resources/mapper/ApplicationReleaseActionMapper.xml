@@ -17,13 +17,14 @@
         <result column="exit_code" property="exitCode"/>
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, release_machine_id, machine_id, release_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, create_time, update_time
+        id, release_machine_id, machine_id, release_id, action_id, action_name, action_type, action_command, log_path, run_status, exit_code, start_time, end_time, deleted, create_time, update_time
     </sql>
 
     <sql id="Status_Columns">
@@ -35,6 +36,7 @@
         <include refid="Status_Columns"/>
         FROM application_release_action
         WHERE release_machine_id = #{releaseMachineId}
+        AND deleted = 1
     </select>
 
     <select id="selectReleaseActionStatusByMachineIdList" resultMap="BaseResultMap">
@@ -45,6 +47,7 @@
         <foreach collection="releaseMachineIdList" item="releaseMachineId" separator="," open="(" close=")">
             #{releaseMachineId}
         </foreach>
+        AND deleted = 1
     </select>
 
 </mapper>

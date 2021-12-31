@@ -15,13 +15,14 @@
         <result column="contact_phone" property="contactPhone"/>
         <result column="contact_email" property="contactEmail"/>
         <result column="last_login_time" property="lastLoginTime"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, username, nickname, password, salt, role_type, user_status, avatar_pic, contact_phone, contact_email, last_login_time, create_time, update_time
+        id, username, nickname, password, salt, role_type, user_status, avatar_pic, contact_phone, contact_email, last_login_time, deleted, create_time, update_time
     </sql>
 
 </mapper>

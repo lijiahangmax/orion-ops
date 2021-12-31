@@ -61,14 +61,20 @@ public class ApplicationEnvDO implements Serializable {
     @TableField("system_env")
     private Integer systemEnv;
 
-    @TableLogic
-    private Integer deleted;
-
     /**
      * 描述
      */
     @TableField("description")
     private String description;
+
+    /**
+     * 是否删除 1未删除 2已删除
+     *
+     * @see com.orion.ops.consts.Const#NOT_DELETED
+     * @see com.orion.ops.consts.Const#IS_DELETED
+     */
+    @TableLogic
+    private Integer deleted;
 
     /**
      * 创建时间

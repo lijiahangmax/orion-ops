@@ -23,25 +23,30 @@
         <result column="create_user_name" property="createUserName"/>
         <result column="build_start_time" property="buildStartTime"/>
         <result column="build_end_time" property="buildEndTime"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, app_name, app_tag, profile_id, profile_name, profile_tag, build_seq, branch_name, commit_id, vcs_id, log_path, bundle_path, build_status, description, create_user_id, create_user_name, build_start_time, build_end_time, create_time, update_time
+        id, app_id, app_name, app_tag, profile_id, profile_name, profile_tag,
+        build_seq, branch_name, commit_id, vcs_id, log_path, bundle_path, build_status, description,
+        create_user_id, create_user_name, build_start_time, build_end_time, deleted, create_time, update_time
     </sql>
 
     <select id="selectStatusById" resultType="java.lang.Integer">
         SELECT build_status
         FROM application_build
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusInfoById" resultMap="BaseResultMap">
         SELECT id, build_status, build_start_time, build_end_time
         FROM application_build
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectStatusInfoByIdList" resultMap="BaseResultMap">
@@ -51,6 +56,7 @@
         <foreach collection="idList" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+        AND deleted = 1
     </select>
 
     <select id="selectLastBuildBranch" resultType="java.lang.String">
@@ -64,6 +70,7 @@
             AND profile_id = #{profileId}
         </if>
         AND branch_name IS NOT NULL
+        AND deleted = 1
         ORDER BY id DESC
         LIMIT 1
     </select>
@@ -72,6 +79,7 @@
         SELECT build_seq
         FROM application_build
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
     <select id="selectBuildReleaseList" resultMap="BaseResultMap">
@@ -80,6 +88,7 @@
         WHERE app_id = #{appId}
         AND profile_id = #{profileId}
         AND build_status = 30
+        AND deleted = 1
         ORDER by id DESC
         LIMIT #{limit}
     </select>

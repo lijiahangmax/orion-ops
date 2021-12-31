@@ -10,15 +10,15 @@
         <result column="attr_key" property="attrKey"/>
         <result column="attr_value" property="attrValue"/>
         <result column="system_env" property="systemEnv"/>
-        <result column="deleted" property="deleted"/>
         <result column="description" property="description"/>
+        <result column="deleted" property="deleted"/>
         <result column="update_time" property="updateTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_id, profile_id, attr_key, attr_value, system_env, deleted, description, create_time, update_time
+        id, app_id, profile_id, attr_key, attr_value, system_env, description, deleted, create_time, update_time
     </sql>
 
     <select id="selectOneRel" resultMap="BaseResultMap">

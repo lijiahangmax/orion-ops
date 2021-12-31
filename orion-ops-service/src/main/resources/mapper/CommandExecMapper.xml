@@ -16,19 +16,21 @@
         <result column="log_path" property="logPath"/>
         <result column="start_date" property="startDate"/>
         <result column="end_date" property="endDate"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, user_name, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, create_time, update_time
+        id, user_id, user_name, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, deleted, create_time, update_time
     </sql>
 
     <select id="selectStatusById" resultMap="BaseResultMap">
         SELECT id, exec_status, exit_code, start_date, end_date
         FROM command_exec
         WHERE id = #{id}
+        AND deleted = 1
     </select>
 
 </mapper>

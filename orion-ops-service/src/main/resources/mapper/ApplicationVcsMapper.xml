@@ -13,13 +13,14 @@
         <result column="vcs_password" property="vcsPassword"/>
         <result column="vcs_access_token" property="vcsAccessToken"/>
         <result column="vcs_status" property="vcsStatus"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, vcs_name, vcs_description, vcs_type, vsc_url, vsc_username, vcs_password, vcs_access_token, vcs_status, create_time, update_time
+        id, vcs_name, vcs_description, vcs_type, vsc_url, vsc_username, vcs_password, vcs_access_token, vcs_status, deleted, create_time, update_time
     </sql>
 
     <select id="selectNameByIdList" resultMap="BaseResultMap">
@@ -29,6 +30,7 @@
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+        AND deleted = 1
     </select>
 
 </mapper>

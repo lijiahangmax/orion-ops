@@ -15,13 +15,14 @@
         <result column="password" property="password"/>
         <result column="auth_type" property="authType"/>
         <result column="machine_status" property="machineStatus"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, auth_type, machine_status, create_time, update_time
+        id, proxy_id, machine_host, ssh_port, machine_name, machine_tag, description, username, password, auth_type, machine_status, deleted, create_time, update_time
     </sql>
 
     <update id="setId">

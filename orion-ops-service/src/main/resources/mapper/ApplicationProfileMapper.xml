@@ -9,13 +9,14 @@
         <result column="profile_tag" property="profileTag"/>
         <result column="description" property="description"/>
         <result column="release_audit" property="releaseAudit"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, profile_name, profile_tag, description, release_audit, create_time, update_time
+        id, profile_name, profile_tag, description, release_audit, deleted, create_time, update_time
     </sql>
 
 </mapper>

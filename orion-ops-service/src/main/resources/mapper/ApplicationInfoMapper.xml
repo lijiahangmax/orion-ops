@@ -10,25 +10,28 @@
         <result column="app_sort" property="appSort"/>
         <result column="vcs_id" property="vcsId"/>
         <result column="description" property="description"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_name, app_tag, app_sort, vcs_id, description, create_time, update_time
+        id, app_name, app_tag, app_sort, vcs_id, description, deleted, create_time, update_time
     </sql>
 
     <select id="selectVcsCount" resultType="java.lang.Integer">
         SELECT count(1)
         FROM application_info
         WHERE vcs_id = #{vcsId}
+        AND deleted = 1
     </select>
 
     <update id="cleanVcsCount">
         UPDATE application_info
         SET vcs_id = null
         WHERE vcs_id = #{vcsId}
+        AND deleted = 1
     </update>
 
 </mapper>
