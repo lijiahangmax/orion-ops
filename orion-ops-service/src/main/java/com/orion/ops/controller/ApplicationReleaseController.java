@@ -112,6 +112,16 @@ public class ApplicationReleaseController {
     }
 
     /**
+     * 发布停止
+     */
+    @RequestMapping("/terminated")
+    public HttpWrapper<?> terminatedAppRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationReleaseService.terminatedRelease(id);
+        return HttpWrapper.ok();
+    }
+
+    /**
      * 发布状态列表
      */
     @RequestMapping("/list/status")

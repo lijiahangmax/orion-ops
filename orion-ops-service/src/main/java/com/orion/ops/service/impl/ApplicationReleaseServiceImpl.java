@@ -14,6 +14,7 @@ import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.release.IReleaseProcessor;
+import com.orion.ops.handler.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -85,6 +86,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
 
     @Resource
     private MachineEnvService machineEnvService;
+
+    @Resource
+    private ReleaseSessionHolder releaseSessionHolder;
 
     @Override
     public DataGrid<ApplicationReleaseListVO> getReleaseList(ApplicationReleaseRequest request) {
@@ -303,6 +307,34 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             }
         }
         return releaseId;
+    }
+
+    @Override
+    public void terminatedRelease(Long id) {
+        // 获取数据
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        // 检查状态
+        ApplicationReleaseDO update;
+        switch (ReleaseStatus.of(release.getReleaseStatus())) {
+            case WAIT_RUNNABLE:
+            case RUNNABLE:
+                // 获取实例
+                IReleaseProcessor session = releaseSessionHolder.getSession(id);
+                if (session == null) {
+                    update = new ApplicationReleaseDO();
+                    update.setId(id);
+                    update.setReleaseStatus(ReleaseStatus.TERMINATED.getStatus());
+                    update.setReleaseEndTime(new Date());
+                    applicationReleaseDAO.updateById(update);
+                } else {
+                    // 调用终止
+                    session.terminated();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

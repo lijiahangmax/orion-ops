@@ -81,6 +81,13 @@ public interface ApplicationReleaseService {
     Long rollbackAppRelease(Long id);
 
     /**
+     * 关闭
+     *
+     * @param id id
+     */
+    void terminatedRelease(Long id);
+
+    /**
      * 获取发布状态列表
      *
      * @param idList        idList

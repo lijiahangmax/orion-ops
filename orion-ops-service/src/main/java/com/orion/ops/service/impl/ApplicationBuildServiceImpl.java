@@ -223,14 +223,6 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         ApplicationBuildDO update;
         switch (BuildStatus.of(build.getBuildStatus())) {
             case WAIT:
-                // 修改状态
-                update = new ApplicationBuildDO();
-                update.setId(id);
-                update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
-                update.setBuildStartTime(new Date());
-                update.setBuildEndTime(update.getBuildStartTime());
-                applicationBuildDAO.updateById(update);
-                break;
             case RUNNABLE:
                 // 获取实例
                 IBuilderProcessor session = buildSessionHolder.getSession(id);
@@ -245,9 +237,6 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                     session.terminated();
                 }
                 break;
-            case FAILURE:
-            case FINISH:
-            case TERMINATED:
             default:
                 break;
         }
