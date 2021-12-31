@@ -87,9 +87,6 @@
         <a-descriptions-item label="持续时间" :span="3" v-if="detail.used !== null">
           {{ `${detail.keepTime} (${detail.used}ms)` }}
         </a-descriptions-item>
-        <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleReleaseLog(detail.status)">
-          <a>获取日志文件</a>
-        </a-descriptions-item>
       </a-descriptions>
       <!-- 发布机器 -->
       <a-divider>发布机器</a-divider>
@@ -134,18 +131,6 @@
 import _utils from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
 
-function statusHolder() {
-  return {
-    visibleReleaseLog: (status) => {
-      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
-        status === this.$enum.RELEASE_STATUS.FINISH.value ||
-        status === this.$enum.RELEASE_STATUS.TERMINATED.value ||
-        status === this.$enum.RELEASE_STATUS.INITIAL_ERROR.value ||
-        status === this.$enum.RELEASE_STATUS.FAILURE.value
-    }
-  }
-}
-
 export default {
   name: 'AppReleaseDetailDrawer',
   components: {
@@ -156,8 +141,7 @@ export default {
       visible: false,
       loading: true,
       pollId: null,
-      detail: {},
-      statusHolder: statusHolder.call(this)
+      detail: {}
     }
   },
   methods: {

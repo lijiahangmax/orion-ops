@@ -112,11 +112,11 @@
           <a target="_blank"
              title="ctrl 打开新页面"
              :href="`#/batch/exec/log/view/${record.id}`"
-             @click="openLogView($event, record.id)">日志面板</a>
+             @click="openLogView($event, record.id)">日志</a>
           <a-divider type="vertical"/>
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(record)">获取链接</a>
+          <a v-else @click="loadDownloadUrl(record)">获取</a>
         </div>
         <!-- 操作 -->
         <div slot="action" slot-scope="record">
@@ -245,7 +245,7 @@ const columns = [
     title: '日志',
     key: 'log',
     fixed: 'right',
-    width: 160,
+    width: 100,
     align: 'center',
     scopedSlots: { customRender: 'log' }
   },

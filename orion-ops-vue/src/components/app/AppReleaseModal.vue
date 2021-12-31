@@ -246,19 +246,19 @@ export default {
         this.$message.warning('请选择发布机器')
         return
       }
-      const releasing = this.$message.loading('正在提交发布请求...', 5)
+      const pending = this.$message.loading('正在提交发布请求...', 5)
       this.loading = true
       this.$api.submitAppRelease({
         appId: this.appId,
         profileId: this.profileId,
         ...this.submit
       }).then(() => {
-        releasing()
+        pending()
         this.$message.success('已提交发布请求')
         this.$emit('submit')
         this.close()
       }).catch(() => {
-        releasing()
+        pending()
         this.loading = false
       })
     },

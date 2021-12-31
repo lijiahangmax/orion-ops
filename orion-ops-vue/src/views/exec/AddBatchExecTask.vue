@@ -196,7 +196,7 @@ export default {
         }
         this.execMachines = data
         // 轮询状态
-        this.pollId = setInterval(this.pollExecStatus, 1000)
+        this.pollId = setInterval(this.pollExecStatus, 2000)
       }).then(() => {
         // 打开日志
         this.execMachines.forEach(m => {

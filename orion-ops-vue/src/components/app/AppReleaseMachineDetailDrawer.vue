@@ -44,7 +44,8 @@
           {{ `${detail.keepTime} (${detail.used}ms)` }}
         </a-descriptions-item>
         <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(detail.status)">
-          <a>获取日志文件</a>
+          <a v-if="detail.downloadUrl" @click="clearDownloadUrl(detail)" target="_blank" :href="detail.downloadUrl">下载</a>
+          <a v-else @click="loadDownloadUrl(detail, $enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value)">获取操作日志</a>
         </a-descriptions-item>
       </a-descriptions>
       <!-- 发布操作 -->
@@ -91,7 +92,8 @@
               <a @click="preview(item.command)">预览</a>
             </a-descriptions-item>
             <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
-              <a>获取日志文件</a>
+              <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
+              <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_ACTION_LOG.value)">获取操作日志</a>
             </a-descriptions-item>
           </a-descriptions>
         </a-list-item>
@@ -146,6 +148,8 @@ export default {
         releaseMachineId: id
       }).then(({ data }) => {
         this.loading = false
+        data.downloadUrl = null
+        this.$utils.defineArrayKey(data.actions, 'downloadUrl')
         this.detail = data
         // 轮询状态
         if (data.status === this.$enum.ACTION_STATUS.WAIT.value ||
@@ -189,6 +193,22 @@ export default {
             })
           }
         }
+      })
+    },
+    async loadDownloadUrl(record, type) {
+      try {
+        const downloadUrl = await this.$api.getFileDownloadToken({
+          type,
+          id: record.id
+        })
+        record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
+      } catch (e) {
+        // ignore
+      }
+    },
+    clearDownloadUrl(record) {
+      setTimeout(() => {
+        record.downloadUrl = null
       })
     },
     preview(command) {
