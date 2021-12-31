@@ -78,7 +78,15 @@
           </a-tag>
           <div slot="action" slot-scope="machine">
             <!-- 日志 -->
-            <a @click="openMachineLog(machine.id)">日志</a>
+            <a-button class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="machine.status === $enum.ACTION_STATUS.WAIT.value">
+              <a target="_blank"
+                 title="ctrl 打开新页面"
+                 :href="`#/app/release/log/view/${machine.id}`"
+                 @click="openMachineLog($event, machine.id)">日志</a>
+            </a-button>
             <a-divider type="vertical"/>
             <!-- 详情 -->
             <a @click="openMachineDetail(machine.id)">详情</a>
@@ -109,14 +117,17 @@
           <!-- 发布 -->
           <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)">发布</a>
           <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
-          <!-- 日志 -->
-          <a v-if="statusHolder.visibleLog(record.status)" @click="openReleaseLog(record.id)">日志</a>
-          <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>
           <!-- 停止 -->
           <a v-if="statusHolder.visibleTerminated(record.status)" @click="terminated(record.id)">停止</a>
           <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
+          <!-- 回滚 -->
+          <a v-if="statusHolder.visibleRollback(record.status)" @click="rollback(record.id)">回滚</a>
+          <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
           <!-- 详情 -->
           <a @click="openReleaseDetail(record.id)">详情</a>
+          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
+          <!-- 删除 -->
+          <a v-if="statusHolder.visibleDelete(record.status)" @click="remove(record.id)">删除</a>
         </div>
       </a-table>
     </div>
@@ -130,6 +141,10 @@
       <AppReleaseDetailDrawer ref="releaseDetail"/>
       <!-- 机器详情抽屉 -->
       <AppReleaseMachineDetailDrawer ref="machineDetail"/>
+      <!-- 发布日志 -->
+
+      <!-- 机器日志 -->
+      <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
     </div>
   </div>
 </template>
@@ -141,6 +156,7 @@ import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
 import AppReleaseDetailDrawer from '@/components/app/AppReleaseDetailDrawer'
 import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDetailDrawer'
+import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
 
 function statusHolder() {
   return {
@@ -151,15 +167,14 @@ function statusHolder() {
     visibleRelease: (status) => {
       return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
     },
-    visibleLog: (status) => {
-      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
-        status === this.$enum.RELEASE_STATUS.FINISH.value ||
-        status === this.$enum.RELEASE_STATUS.TERMINATED.value ||
-        status === this.$enum.RELEASE_STATUS.INITIAL_ERROR.value ||
-        status === this.$enum.RELEASE_STATUS.FAILURE.value
-    },
     visibleTerminated: (status) => {
       return status === this.$enum.RELEASE_STATUS.RUNNABLE.value
+    },
+    visibleDelete: (status) => {
+      return status !== this.$enum.RELEASE_STATUS.RUNNABLE.value
+    },
+    visibleRollback: (status) => {
+      return status === this.$enum.RELEASE_STATUS.FINISH.value
     }
   }
 }
@@ -173,7 +188,7 @@ const columns = [
     key: 'seq',
     width: 100,
     align: 'center',
-    sorter: (a, b) => a.seq - b.seq,
+    sorter: (a, b) => a.buildSeq - b.buildSeq,
     scopedSlots: { customRender: 'seq' }
   },
   {
@@ -273,6 +288,7 @@ const innerColumns = [
 export default {
   name: 'AppRelease',
   components: {
+    AppReleaseMachineLogAppenderModal,
     AppReleaseMachineDetailDrawer,
     AppReleaseDetailDrawer,
     AppReleaseAuditModal,
@@ -366,17 +382,45 @@ export default {
         record.status = this.$enum.RELEASE_STATUS.RUNNABLE.value
       })
     },
-    openReleaseLog(id) {
-
-    },
     terminated(id) {
+      const terminating = this.$message.loading('正在提交停止请求...', 5)
+      this.$api.terminatedAppBuild({
+        id: id
+      }).then(() => {
+        terminating()
+        this.$message.success('已提交停止请求')
+      }).catch(() => {
+        terminating()
+      })
+    },
+    rollback(id) {
+      const pending = this.$message.loading('正在提交回滚请求...', 5)
+      this.$api.rollbackAppRelease({
+        id
+      }).then(() => {
+        pending()
+        this.$message.success('已提交回滚请求')
+        this.getList({})
+      }).catch(() => {
+        pending()
+      })
+    },
+    remove(id) {
 
     },
     openReleaseDetail(id) {
       this.$refs.releaseDetail.open(id)
     },
-    openMachineLog(id) {
-
+    openMachineLog(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.machineAppender.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     },
     openMachineDetail(id) {
       this.$refs.machineDetail.open(id)
