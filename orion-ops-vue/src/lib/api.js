@@ -1068,7 +1068,9 @@ const $api = {
    * 获取应用构建状态
    */
   getAppBuildStatus: param => {
-    return $http.$post('/app-build/status', param)
+    return $http.$post('/app-build/status', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
@@ -1176,21 +1178,27 @@ const $api = {
    * 应用发布状态
    */
   getAppReleaseStatus: param => {
-    return $http.$post('/app-release/status', param)
+    return $http.$post('/app-release/status', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
    * 应用发布机器列表状态
    */
   getAppReleaseMachineListStatus: param => {
-    return $http.$post('/app-release/list/machine/status', param)
+    return $http.$post('/app-release/list/machine/status', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
    * 应用发布机器状态
    */
   getAppReleaseMachineStatus: param => {
-    return $http.$post('/app-release/machine/status', param)
+    return $http.$post('/app-release/machine/status', param, {
+      skipErrorMessage: true
+    })
   }
 
 }

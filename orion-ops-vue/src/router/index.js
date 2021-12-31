@@ -80,6 +80,15 @@ const routes = [
     component: () => import('../views/app/AppBuildLogView')
   },
   {
+    path: '/app/release/log/view/:id',
+    name: 'AppReleaseLogView',
+    meta: {
+      requireAuth: true,
+      title: '发布日志'
+    },
+    component: () => import('../views/app/AppReleaseLogView')
+  },
+  {
     path: '',
     name: 'layout',
     component: Layout,

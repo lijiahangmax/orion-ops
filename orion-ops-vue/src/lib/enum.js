@@ -429,6 +429,10 @@ const $enum = {
     APP_BUILD_LOG: {
       value: 30,
       label: '应用构建日志'
+    },
+    APP_RELEASE_LOG: {
+      value: 40,
+      label: '应用发布日志'
     }
   },
 
@@ -493,6 +497,14 @@ const $enum = {
     APP_BUILD_BUNDLE: {
       value: 80,
       label: '应用构建产物文件'
+    },
+    APP_RELEASE_MACHINE_LOG: {
+      value: 90,
+      label: '应用发布机器日志'
+    },
+    APP_RELEASE_ACTION_LOG: {
+      value: 100,
+      label: '应用发布操作日志'
     }
   },
 
@@ -686,32 +698,38 @@ const $enum = {
     WAIT: {
       value: 10,
       color: '#DEE2E6',
-      label: '未开始'
+      label: '未开始',
+      stepStatus: 'wait'
     },
     RUNNABLE: {
       value: 20,
       color: '#51CF66',
-      label: '进行中'
+      label: '进行中',
+      stepStatus: 'process'
     },
     FINISH: {
       value: 30,
       color: '#4C6EF5',
-      label: '已完成'
+      label: '已完成',
+      stepStatus: 'finish'
     },
     FAILURE: {
       value: 40,
       color: '#F03E3E',
-      label: '执行失败'
+      label: '执行失败',
+      stepStatus: 'error'
     },
     SKIPPED: {
       value: 50,
       color: '#FCC419',
-      label: '已跳过'
+      label: '已跳过',
+      stepStatus: 'finish'
     },
     TERMINATED: {
       value: 60,
       color: '#FD7E14',
-      label: '已终止'
+      label: '已终止',
+      stepStatus: 'finish'
     }
   },
 
