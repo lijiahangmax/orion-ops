@@ -84,7 +84,7 @@ export default {
         // 设置轮询状态
         if (this.detail.status === this.$enum.BUILD_STATUS.WAIT.value ||
           this.detail.status === this.$enum.BUILD_STATUS.RUNNABLE.value) {
-          this.pollId = setInterval(this.pollStatus, 1000)
+          this.pollId = setInterval(this.pollStatus, 2000)
         }
       }).then(() => {
         this.$nextTick(() => this.$refs.appender.openTail())

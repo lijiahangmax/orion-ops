@@ -4,9 +4,9 @@
            :title="null"
            :footer="null"
            :dialogStyle="{top: '16px'}"
-           :bodyStyle="{padding: '8px'}"
+           :bodyStyle="{padding: '4px'}"
            @cancel="close"
-           width="90%">
+           width="95%">
     <!-- 日志面板 -->
     <ExecLoggerAppender ref="logger" appenderHeight="calc(100vh - 110px)"/>
   </a-modal>

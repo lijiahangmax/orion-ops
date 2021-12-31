@@ -83,7 +83,7 @@ export default {
       if (this.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
         this.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value) {
         // 轮询状态
-        this.pollId = setInterval(this.pollStatus, 1000)
+        this.pollId = setInterval(this.pollStatus, 2000)
       }
     },
     close() {
