@@ -34,7 +34,7 @@ public enum FileTailType {
     APP_BUILD_LOG(30, true),
 
     /**
-     * 应用发布 目标机器流程日志
+     * 应用发布日志
      *
      * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */

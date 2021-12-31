@@ -57,6 +57,9 @@ public class FileTailServiceImpl implements FileTailService {
     private ApplicationBuildService applicationBuildService;
 
     @Resource
+    private ApplicationReleaseMachineService applicationReleaseMachineService;
+
+    @Resource
     private FileTailListDAO fileTailListDAO;
 
     @Resource
@@ -192,13 +195,13 @@ public class FileTailServiceImpl implements FileTailService {
                 path = commandExecService.getExecLogFilePath(relId);
                 break;
             case APP_BUILD_LOG:
-                // 应用构建 宿主机流程日志
+                // 应用构建日志
                 path = applicationBuildService.getBuildLogPath(relId);
                 break;
             case APP_RELEASE_LOG:
-                // 应用发布 目标机器流程日志
-                // path = releaseInfoService.getReleaseStageLogPath(relId);
-                // break;
+                // 应用发布日志
+                path = applicationReleaseMachineService.getReleaseMachineLogPath(relId);
+                break;
             default:
                 path = null;
         }

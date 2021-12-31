@@ -30,4 +30,12 @@ public interface ApplicationReleaseMachineService {
      */
     List<ApplicationReleaseMachineDO> getReleaseMachines(List<Long> releaseIdList);
 
+    /**
+     * 获取发布机器日志
+     *
+     * @param id id
+     * @return 日志路径
+     */
+    String getReleaseMachineLogPath(Long id);
+
 }
