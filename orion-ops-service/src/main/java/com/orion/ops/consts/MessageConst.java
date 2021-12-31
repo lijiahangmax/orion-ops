@@ -138,17 +138,11 @@ public class MessageConst {
 
     public static final String RELEASE_NOT_ALL_SUCCESS = "未全部执行成功";
 
-    public static final String RELEASE_MACHINE_ABSENT = "发布机器不存在";
-
-    public static final String UNKNOWN_RELEASE_TYPE = "未知的发布类型";
+    public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
 
     public static final String RELEASE_ILLEGAL_STATUS = "当前状态不支持此操作";
 
-    public static final String STATUS_UNABLE_ROLLBACK_RELEASE = "当前状态无法回滚";
-
-    public static final String FILE_ABSENT_UNABLE_ROLLBACK_RELEASE = "产物快照丢失无法回滚";
-
-    public static final String STATUS_UNABLE_RUNNABLE_RELEASE = "当前状态无法执行发布操作";
+    public static final String FILE_ABSENT_UNABLE_ROLLBACK = "产物丢失无法回滚";
 
     public static final String VCS_INIT_ERROR = "仓库初始化失败";
 
@@ -173,8 +167,6 @@ public class MessageConst {
     public static final String BUNDLE_ZIP_FILE_ABSENT = "构建产物压缩文件不存在";
 
     public static final String UNABLE_CONFIG_RELEASE_MACHINE = "发布机器未配置";
-
-    public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
 
     public static final String NO_SUCH_FILE = "未找到文件或目录";
 

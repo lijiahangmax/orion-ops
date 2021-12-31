@@ -253,7 +253,56 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long rollbackAppRelease(Long id) {
-        return null;
+        // 查询状态
+        ApplicationReleaseDO rollback = applicationReleaseDAO.selectById(id);
+        Valid.notNull(rollback, MessageConst.RELEASE_ABSENT);
+        ReleaseStatus status = ReleaseStatus.of(rollback.getReleaseStatus());
+        if (!ReleaseStatus.FINISH.equals(status)) {
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        }
+        // 检查产物是否存在
+        String path = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), rollback.getBundlePath());
+        if (!new File(path).exists()) {
+            throw Exceptions.argument(MessageConst.FILE_ABSENT_UNABLE_ROLLBACK);
+        }
+        // 查询环境
+        ApplicationProfileDO profile = applicationProfileDAO.selectById(rollback.getProfileId());
+        Valid.notNull(profile, MessageConst.PROFILE_ABSENT);
+        // 设置主表信息
+        this.setRollbackReleaseInfo(rollback, profile);
+        applicationReleaseDAO.insert(rollback);
+        Long releaseId = rollback.getId();
+        // 设置机器信息
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
+        for (ApplicationReleaseMachineDO machine : machines) {
+            Long beforeId = machine.getId();
+            machine.setId(null);
+            machine.setReleaseId(releaseId);
+            machine.setRunStatus(ActionStatus.WAIT.getStatus());
+            machine.setLogPath(PathBuilders.getReleaseMachineLogPath(releaseId, machine.getMachineId()));
+            machine.setStartTime(null);
+            machine.setEndTime(null);
+            machine.setCreateTime(null);
+            machine.setUpdateTime(null);
+            applicationReleaseMachineDAO.insert(machine);
+            // 设置操作信息
+            List<ApplicationReleaseActionDO> actions = applicationReleaseActionService.getReleaseActionByReleaseMachineId(beforeId);
+            for (ApplicationReleaseActionDO action : actions) {
+                action.setId(null);
+                action.setReleaseMachineId(machine.getId());
+                action.setMachineId(machine.getMachineId());
+                action.setReleaseId(releaseId);
+                action.setLogPath(PathBuilders.getReleaseActionLogPath(releaseId, machine.getMachineId(), action.getActionId()));
+                action.setRunStatus(ActionStatus.WAIT.getStatus());
+                action.setExitCode(null);
+                action.setStartTime(null);
+                action.setEndTime(null);
+                action.setCreateTime(null);
+                action.setUpdateTime(null);
+                applicationReleaseActionDAO.insert(action);
+            }
+        }
+        return releaseId;
     }
 
     @Override
@@ -397,6 +446,35 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 设置审核信息
         this.setCreateAuditInfo(release, user, Const.ENABLE.equals(profile.getReleaseAudit()));
         return release;
+    }
+
+    /**
+     * 设置回滚发布信息
+     *
+     * @param rollback rollback
+     * @param profile  profile
+     */
+    private void setRollbackReleaseInfo(ApplicationReleaseDO rollback, ApplicationProfileDO profile) {
+        UserDTO user = Currents.getUser();
+        rollback.setId(null);
+        rollback.setReleaseTitle(rollback.getReleaseTitle() + " - " + Const.ROLLBACK);
+        rollback.setReleaseType(ReleaseType.ROLLBACK.getType());
+        rollback.setRollbackReleaseId(rollback.getId());
+        rollback.setTimedRelease(TimedReleaseType.NORMAL.getType());
+        rollback.setTimedReleaseTime(null);
+        rollback.setCreateUserId(user.getId());
+        rollback.setCreateUserName(user.getUsername());
+        rollback.setAuditUserId(null);
+        rollback.setAuditUserName(null);
+        rollback.setAuditTime(null);
+        rollback.setAuditReason(null);
+        rollback.setReleaseStartTime(null);
+        rollback.setReleaseEndTime(null);
+        rollback.setReleaseUserId(null);
+        rollback.setReleaseUserName(null);
+        rollback.setCreateTime(null);
+        rollback.setUpdateTime(null);
+        this.setCreateAuditInfo(rollback, user, Const.ENABLE.equals(profile.getReleaseAudit()));
     }
 
     /**
