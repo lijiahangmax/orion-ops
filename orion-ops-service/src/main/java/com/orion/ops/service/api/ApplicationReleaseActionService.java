@@ -22,4 +22,12 @@ public interface ApplicationReleaseActionService {
      */
     List<ApplicationReleaseActionDO> getReleaseActionByReleaseMachineId(Long releaseMachineId);
 
+    /**
+     * 获取发布操作日志
+     *
+     * @param id id
+     * @return path
+     */
+    String getReleaseActionLogPath(Long id);
+
 }

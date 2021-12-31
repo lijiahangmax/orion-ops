@@ -60,6 +60,12 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private ApplicationBuildService applicationBuildService;
 
     @Resource
+    private ApplicationReleaseMachineService applicationReleaseMachineService;
+
+    @Resource
+    private ApplicationReleaseActionService applicationReleaseActionService;
+
+    @Resource
     private SftpService sftpService;
 
     @Resource
@@ -124,10 +130,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case APP_RELEASE_MACHINE_LOG:
-                // 应用构建产物
-                // path = releaseInfoService.getReleaseStageLogPath(id);
-                // name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
-                // break;
+                // 应用发布机器日志
+                path = applicationReleaseMachineService.getReleaseMachineLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case APP_RELEASE_ACTION_LOG:
+                // 应用发布操作日志
+                path = applicationReleaseActionService.getReleaseActionLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
             default:
                 break;
         }

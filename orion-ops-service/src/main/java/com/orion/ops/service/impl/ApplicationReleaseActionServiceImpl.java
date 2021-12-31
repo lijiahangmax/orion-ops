@@ -2,13 +2,17 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationReleaseActionDAO;
 import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.ops.service.api.ApplicationReleaseActionService;
+import com.orion.utils.Strings;
+import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -30,6 +34,15 @@ public class ApplicationReleaseActionServiceImpl implements ApplicationReleaseAc
                 .eq(ApplicationReleaseActionDO::getReleaseMachineId, releaseMachineId)
                 .orderByAsc(ApplicationReleaseActionDO::getId);
         return applicationReleaseActionDAO.selectList(wrapper);
+    }
+
+    @Override
+    public String getReleaseActionLogPath(Long id) {
+        return Optional.ofNullable(applicationReleaseActionDAO.selectById(id))
+                .map(ApplicationReleaseActionDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .orElse(null);
     }
 
 }

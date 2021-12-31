@@ -69,11 +69,18 @@ public enum FileDownloadType {
     APP_BUILD_BUNDLE(80, true),
 
     /**
-     * 应用发布 目标机器日志
+     * 应用发布 机器日志
      *
      * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
      */
     APP_RELEASE_MACHINE_LOG(90, true),
+
+    /**
+     * 应用发布 操作日志
+     *
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     */
+    APP_RELEASE_ACTION_LOG(100, true),
 
     ;
 
