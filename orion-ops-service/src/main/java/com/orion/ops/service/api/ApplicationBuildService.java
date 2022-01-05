@@ -67,6 +67,14 @@ public interface ApplicationBuildService {
     void terminatedBuildTask(Long id);
 
     /**
+     * 删除构建
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer deleteBuildTask(Long id);
+
+    /**
      * 重新构建
      *
      * @param id id

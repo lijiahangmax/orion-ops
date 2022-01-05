@@ -87,10 +87,19 @@ public class ApplicationBuildController {
     }
 
     /**
+     * 删除构建
+     */
+    @RequestMapping("/delete")
+    public Integer deleteTask(@RequestBody ApplicationBuildRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationBuildService.deleteBuildTask(id);
+    }
+
+    /**
      * 重新构建
      */
     @RequestMapping("/rebuild")
-    public Long rebuild(@RequestBody ApplicationBuildRequest request) {
+    public Long rebuildTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.rebuild(id);
     }

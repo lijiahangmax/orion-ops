@@ -1,5 +1,6 @@
 package com.orion.ops.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
@@ -23,11 +24,13 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -240,6 +243,24 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             default:
                 break;
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteBuildTask(Long id) {
+        // 获取数据
+        ApplicationBuildDO build = applicationBuildDAO.selectById(id);
+        Valid.notNull(build, MessageConst.UNKNOWN_DATA);
+        if (BuildStatus.RUNNABLE.getStatus().equals(build.getBuildStatus())) {
+            throw Exceptions.argument(MessageConst.INVALID_STATUS);
+        }
+        // 删除主表
+        int effect = applicationBuildDAO.deleteById(id);
+        // 删除详情
+        Wrapper<ApplicationBuildActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
+                .eq(ApplicationBuildActionDO::getBuildId, id);
+        effect += applicationBuildActionDAO.delete(actionWrapper);
+        return effect;
     }
 
     @Override
