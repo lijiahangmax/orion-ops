@@ -127,7 +127,14 @@
           <a @click="openReleaseDetail(record.id)">详情</a>
           <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
           <!-- 删除 -->
-          <a v-if="statusHolder.visibleDelete(record.status)" @click="remove(record.id)">删除</a>
+          <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
+                        title="确认删除当前环境?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove(record.id)">
+            <span class="span-blue pointer">删除</span>
+          </a-popconfirm>
         </div>
       </a-table>
     </div>
@@ -141,8 +148,6 @@
       <AppReleaseDetailDrawer ref="releaseDetail"/>
       <!-- 机器详情抽屉 -->
       <AppReleaseMachineDetailDrawer ref="machineDetail"/>
-      <!-- 发布日志 -->
-
       <!-- 机器日志 -->
       <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
     </div>
@@ -161,8 +166,8 @@ import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachin
 function statusHolder() {
   return {
     visibleAudit: (status) => {
-      return status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
-        status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value
+      return (status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
+        status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
     },
     visibleRelease: (status) => {
       return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
@@ -384,7 +389,7 @@ export default {
     },
     terminated(id) {
       const terminating = this.$message.loading('正在提交停止请求...', 5)
-      this.$api.terminatedAppBuild({
+      this.$api.terminatedAppRelease({
         id: id
       }).then(() => {
         terminating()
@@ -406,7 +411,12 @@ export default {
       })
     },
     remove(id) {
-
+      this.$api.deleteAppRelease({
+        id
+      }).then(() => {
+        this.$message.success('已删除')
+        this.getList({})
+      })
     },
     openReleaseDetail(id) {
       this.$refs.releaseDetail.open(id)
