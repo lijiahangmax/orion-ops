@@ -68,11 +68,10 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
         List<ApplicationBuildActionDO> actions = applicationBuildActionDAO.selectList(wrapper);
         // 修改状态
         for (ApplicationBuildActionDO action : actions) {
-            ActionStatus status = ActionStatus.of(action.getRunStatus());
             ApplicationBuildActionDO update = new ApplicationBuildActionDO();
-            update.setUpdateTime(new Date());
             update.setId(action.getId());
-            switch (status) {
+            update.setUpdateTime(new Date());
+            switch (ActionStatus.of(action.getRunStatus())) {
                 case WAIT:
                     update.setRunStatus(ActionStatus.TERMINATED.getStatus());
                     break;
