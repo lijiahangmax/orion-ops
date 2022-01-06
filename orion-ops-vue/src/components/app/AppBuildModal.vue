@@ -124,12 +124,10 @@ export default {
         this.$message.warning('请先维护应用环境')
         return
       }
+      this.cleanData()
       this.selectAppPage = !appId
       this.visible = true
       this.loading = false
-      this.submit.branchName = null
-      this.submit.commitId = null
-      this.submit.description = null
       this.profileId = profileId
       this.appId = null
       this.app = null
@@ -149,9 +147,17 @@ export default {
       this.selectAppPage = false
       this.app = app
       this.appId = app.id
+      this.cleanData()
       if (this.app.vcsId) {
         this.loadVcs()
       }
+    },
+    cleanData() {
+      this.branchList = []
+      this.commitList = []
+      this.submit.branchName = null
+      this.submit.commitId = null
+      this.submit.description = null
     },
     loadVcs() {
       this.loading = true

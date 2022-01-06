@@ -142,21 +142,16 @@ export default {
         this.$message.warning('请先维护应用环境')
         return
       }
+      this.cleanData()
       this.selectAppPage = !appId
       this.visible = true
       this.loading = false
-      this.submit.title = null
-      this.submit.buildId = null
-      this.submit.description = null
-      this.submit.machineIdList = []
-      this.appMachineIdList = [-1]
       this.profileId = profileId
       this.appId = null
       this.app = null
       this.appList = []
       await this.loadAppList(profileId)
       if (appId) {
-        this.appId = appId
         const selectedApp = this.appList.filter(s => s.id === appId)
         if (selectedApp.length) {
           this.chooseApp(selectedApp[0])
@@ -169,8 +164,17 @@ export default {
       this.selectAppPage = false
       this.app = app
       this.appId = app.id
+      this.cleanData()
       this.loadReleaseMachine()
       this.loadBuildList()
+    },
+    cleanData() {
+      this.buildList = []
+      this.appMachineIdList = [-1]
+      this.submit.title = null
+      this.submit.buildId = null
+      this.submit.description = null
+      this.submit.machineIdList = []
     },
     loadBuildList() {
       this.$api.getBuildReleaseList({
