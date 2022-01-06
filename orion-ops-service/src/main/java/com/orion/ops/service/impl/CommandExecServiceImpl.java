@@ -28,6 +28,7 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
@@ -190,6 +191,16 @@ public class CommandExecServiceImpl implements CommandExecService {
         updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
         effect += commandExecDAO.updateById(updateStatus);
         return effect;
+    }
+
+    @Override
+    public Integer deleteTask(Long id) {
+        CommandExecDO execDO = this.selectById(id);
+        Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
+        if (ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus())) {
+            throw Exceptions.argument(MessageConst.INVALID_STATUS);
+        }
+        return commandExecDAO.deleteById(id);
     }
 
     @Override

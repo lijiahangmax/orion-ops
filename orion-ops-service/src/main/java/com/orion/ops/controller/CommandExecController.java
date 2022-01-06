@@ -77,6 +77,15 @@ public class CommandExecController {
     }
 
     /**
+     * 删除任务
+     */
+    @RequestMapping("/delete")
+    public Integer delete(@RequestBody CommandExecRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return commandExecService.deleteTask(id);
+    }
+
+    /**
      * 状态列表
      */
     @RequestMapping("/list/status")

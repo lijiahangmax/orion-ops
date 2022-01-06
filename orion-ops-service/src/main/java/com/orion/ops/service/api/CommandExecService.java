@@ -60,6 +60,14 @@ public interface CommandExecService {
     Integer terminatedExec(Long id);
 
     /**
+     * 删除任务
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer deleteTask(Long id);
+
+    /**
      * 查询状态
      *
      * @param execIdList execIdList
