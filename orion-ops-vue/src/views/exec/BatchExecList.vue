@@ -122,9 +122,18 @@
         <div slot="action" slot-scope="record">
           <!-- 详情 -->
           <a @click="detail(record.id)">详情</a>
-          <a-divider v-if="record.status === 20" type="vertical"/>
+          <a-divider type="vertical"/>
+          <!-- 再次执行 -->
+          <a-popconfirm :title="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="redo(record)">
+            <span class="span-blue pointer">再次执行</span>
+          </a-popconfirm>
+          <a-divider v-if="record.status ===  $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="record.status === 20"
+          <a-popconfirm v-if="record.status ===  $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
                         title="确认停止当前任务?"
                         placement="topRight"
                         ok-text="确定"
@@ -132,14 +141,15 @@
                         @confirm="terminated(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
-          <a-divider type="vertical"/>
-          <!-- 再次执行 -->
-          <a-popconfirm :title="record.status === 20 ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
+          <a-divider v-if="record.status !==  $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
+          <!-- 删除 -->
+          <a-popconfirm v-if="record.status !==  $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
+                        title="确认删除当前任务?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="redo(record)">
-            <span class="span-blue pointer">再次执行</span>
+                        @confirm="deleteTask(record.id)">
+            <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </div>
       </a-table>
@@ -253,7 +263,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 165,
+    width: 175,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -335,6 +345,14 @@ export default {
         id: execId
       }).then(() => {
         this.$message.success('已终止')
+        this.getList({})
+      })
+    },
+    deleteTask(execId) {
+      this.$api.deleteExecTask({
+        id: execId
+      }).then(() => {
+        this.$message.success('已删除')
         this.getList({})
       })
     },

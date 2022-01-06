@@ -114,9 +114,7 @@
           <a-divider type="vertical"/>
           <!-- 同步 -->
           <AppProfileChecker :ref="'profileChecker' + record.id">
-            <a slot="trigger">
-              同步
-            </a>
+            <a slot="trigger">同步</a>
             <a-button type="primary" size="small" slot="footer" @click="sync(record.id)">确定</a-button>
           </AppProfileChecker>
           <a-divider type="vertical"/>
