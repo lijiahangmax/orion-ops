@@ -114,12 +114,23 @@
           </a-popconfirm>
           <a-divider type="vertical" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"/>
           <!-- 停止 -->
-          <a-popconfirm title="是否要停止构建?"
+          <a-popconfirm v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"
+                        title="是否要停止构建?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated(record)">
-            <span class="span-blue pointer" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value">停止</span>
+                        @confirm="terminated(record.id)">
+            <span class="span-blue pointer">停止</span>
+          </a-popconfirm>
+          <a-divider type="vertical" v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"/>
+          <!-- 删除 -->
+          <a-popconfirm v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"
+                        title="是否要删除当前记录?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteBuild(record.id)">
+            <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </div>
       </a-table>
@@ -281,15 +292,23 @@ export default {
         rebuilding()
       })
     },
-    terminated(record) {
+    terminated(id) {
       const terminating = this.$message.loading('正在提交停止请求...', 5)
       this.$api.terminatedAppBuild({
-        id: record.id
+        id
       }).then(() => {
         terminating()
         this.$message.success('已提交停止请求')
       }).catch(() => {
         terminating()
+      })
+    },
+    deleteBuild(id) {
+      this.$api.deleteAppBuild({
+        id
+      }).then(() => {
+        this.$message.success('已删除')
+        this.getList({})
       })
     },
     resetForm() {

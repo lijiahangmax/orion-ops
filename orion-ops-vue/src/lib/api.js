@@ -676,6 +676,13 @@ const $api = {
   },
 
   /**
+   * 删除执行任务
+   */
+  deleteExecTask: param => {
+    return $http.$post('/exec/delete', param)
+  },
+
+  /**
    * 获取执行状态
    */
   getExecTaskStatus: param => {
@@ -1081,6 +1088,13 @@ const $api = {
   },
 
   /**
+   * 删除应用构建
+   */
+  deleteAppBuild: param => {
+    return $http.$post('/app-build/delete', param)
+  },
+
+  /**
    * 重新构建应用
    */
   rebuildApp: param => {
@@ -1163,6 +1177,20 @@ const $api = {
     return $http.$post('/app-release/rollback', param, {
       timeout: 600000
     })
+  },
+
+  /**
+   * 删除应用发布
+   */
+  deleteAppRelease: param => {
+    return $http.$post('/app-release/delete', param)
+  },
+
+  /**
+   * 应用发布停止
+   */
+  terminatedAppRelease: param => {
+    return $http.$post('/app-release/terminated', param)
   },
 
   /**
