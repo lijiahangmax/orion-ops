@@ -1,6 +1,7 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
@@ -335,6 +336,28 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             default:
                 break;
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteRelease(Long id) {
+        // 查询状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        if (ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        }
+        // 删除主表
+        int effect = applicationReleaseDAO.deleteById(id);
+        // 删除机器
+        Wrapper<ApplicationReleaseMachineDO> machineWrapper = new LambdaQueryWrapper<ApplicationReleaseMachineDO>()
+                .eq(ApplicationReleaseMachineDO::getReleaseId, id);
+        effect += applicationReleaseMachineDAO.delete(machineWrapper);
+        // 删除操作
+        Wrapper<ApplicationReleaseActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationReleaseActionDO>()
+                .eq(ApplicationReleaseActionDO::getReleaseId, id);
+        effect += applicationReleaseActionDAO.delete(actionWrapper);
+        return effect;
     }
 
     @Override

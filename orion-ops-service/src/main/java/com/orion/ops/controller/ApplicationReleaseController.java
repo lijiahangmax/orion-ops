@@ -2,8 +2,10 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
@@ -83,6 +85,7 @@ public class ApplicationReleaseController {
      * 发布审核
      */
     @RequestMapping("/audit")
+    @RequireRole(RoleType.ADMINISTRATOR)
     public Integer auditAppRelease(@RequestBody ApplicationReleaseAuditRequest request) {
         Valid.notNull(request.getId());
         AuditStatus status = Valid.notNull(AuditStatus.of(request.getStatus()));
@@ -119,6 +122,15 @@ public class ApplicationReleaseController {
         Long id = Valid.notNull(request.getId());
         applicationReleaseService.terminatedRelease(id);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 发布删除
+     */
+    @RequestMapping("/delete")
+    public Integer deleteAppRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationReleaseService.deleteRelease(id);
     }
 
     /**
