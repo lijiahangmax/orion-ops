@@ -1,5 +1,8 @@
 <template>
-  <a-menu theme="dark" mode="inline" :defaultSelectedKeys="defaultSelectedKeys" :defaultOpenKeys="defaultOpenKeys">
+  <a-menu theme="dark"
+          mode="inline"
+          :selectedKeys="selectedKeys"
+          :defaultOpenKeys="defaultOpenKeys">
     <template v-for="menuItem in menuList">
       <!-- 一级菜单 -->
       <a-menu-item v-if="!menuItem.children" @click="toRoute(menuItem.path)" :key="menuItem.id">
@@ -23,13 +26,44 @@ export default {
   data() {
     return {
       menuList: [],
-      defaultSelectedKeys: [],
+      selectedKeys: [],
       defaultOpenKeys: []
     }
   },
   methods: {
     toRoute(path) {
       this.$router.push({ path })
+    },
+    chooseMenu(route = this.$route) {
+      const routerPath = route.path
+      for (const menu of this.menuList) {
+        if (menu.path && routerPath.startsWith(menu.path)) {
+          // 一级菜单选中
+          this.selectedKeys[0] = menu.id
+          this.$forceUpdate()
+          return
+        }
+        if (menu.children) {
+          for (const child of menu.children) {
+            if (child.path && routerPath.startsWith(child.path)) {
+              // 二级菜单选中
+              let present = false
+              for (const defaultOpenKey of this.defaultOpenKeys) {
+                if (defaultOpenKey === menu.id) {
+                  present = true
+                  break
+                }
+              }
+              this.selectedKeys[0] = child.id
+              if (!present) {
+                this.defaultOpenKeys.push(menu.id)
+              }
+              this.$forceUpdate()
+              return
+            }
+          }
+        }
+      }
     }
   },
   async mounted() {
@@ -48,24 +82,7 @@ export default {
       this.menuList.push(menu)
     }
     // 选中
-    const route = this.$route.path
-    for (var menu of this.menuList) {
-      if (menu.path === route) {
-        // 一级菜单选中
-        this.defaultSelectedKeys.push(menu.id)
-        return
-      }
-      if (menu.children) {
-        for (var child of menu.children) {
-          if (child.path === route) {
-            // 二级菜单选中
-            this.defaultSelectedKeys.push(child.id)
-            this.defaultOpenKeys.push(menu.id)
-            return
-          }
-        }
-      }
-    }
+    this.chooseMenu()
   }
 }
 </script>

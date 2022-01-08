@@ -46,11 +46,6 @@ export default {
       leftProps: []
     }
   },
-  watch: {
-    $route(e) {
-      this.checkVisible(e)
-    }
-  },
   methods: {
     changeFold() {
       this.fold = !this.fold

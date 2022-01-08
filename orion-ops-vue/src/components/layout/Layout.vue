@@ -4,11 +4,12 @@
     <a-layout-sider id="common-sider" v-model="collapsed" :trigger="null">
       <!--  <div class="logo"/> -->
       <!-- 左侧菜单 -->
-      <Menu/>
+      <Menu ref="menu"/>
     </a-layout-sider>
     <a-layout id="common-right">
       <!-- 头部菜单 -->
       <Header id="common-header"
+              ref="header"
               @changeFoldStatus="collapsed = !collapsed"
               @chooseProfile="chooseProfile"
               @onHeaderEvent="onHeaderEvent"/>
@@ -28,6 +29,14 @@ export default {
   components: {
     Menu,
     Header
+  },
+  watch: {
+    $route(e) {
+      // 设置菜单选中
+      this.$refs.menu.chooseMenu(e)
+      // 设置头部按钮
+      this.$refs.header.checkVisible(e)
+    }
   },
   data() {
     return {
