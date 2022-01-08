@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatisticsController {
 
     // 机器数
-    // 任务数
     // 环境数
     // 应用数
-    // 应用部署次数
+    // 日志数
+
+    // 应用发布次数
+
+    // login日志
 
 }

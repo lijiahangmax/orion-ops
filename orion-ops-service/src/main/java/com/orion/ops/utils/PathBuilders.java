@@ -85,19 +85,6 @@ public class PathBuilders {
     }
 
     /**
-     * 获取应用发布宿主机日志文件
-     *
-     * @param releaseId releaseId
-     * @return path
-     */
-    public static String getReleaseHostLogPath(Long releaseId) {
-        return Const.RELEASE_DIR
-                + "/" + releaseId
-                + Const.RELEASE_MACHINE_PREFIX
-                + "." + Const.SUFFIX_LOG;
-    }
-
-    /**
      * 获取应用发布目标机器日志文件
      *
      * @param releaseId releaseId

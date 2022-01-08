@@ -315,9 +315,7 @@ public class BuilderProcessor implements IBuilderProcessor {
         } else {
             // 无异常
             if (terminated) {
-                log.append("# 构建手动停止 结束时间: ").append(Dates.format(record.getBuildEndTime()))
-                        .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
-                        .append("ms\n");
+                log.append("# 构建手动停止 结束时间: ").append(Dates.format(record.getBuildEndTime())).append(Const.LF);
             } else {
                 log.append("# 构建完成 结束时间: ").append(Dates.format(record.getBuildEndTime()))
                         .append("; used: ").append(record.getBuildEndTime().getTime() - record.getBuildStartTime().getTime())
