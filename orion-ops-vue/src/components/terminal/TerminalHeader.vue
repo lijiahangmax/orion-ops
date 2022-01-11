@@ -16,7 +16,9 @@
                           :disabled="machine.status !== $enum.TERMINAL_STATUS.CONNECTED.value"
                           v-model="commandInput"
                           @search="inputCommand">
-            <a-icon type="forward" slot="enterButton"/>
+            <template #enterButton>
+              <a-icon type="forward"/>
+            </template>
           </a-input-search>
         </div>
       </div>
@@ -24,7 +26,7 @@
       <div class="terminal-header-fixed-right">
         <!-- 状态 -->
         <a-popconfirm placement="bottom" ok-text="确认" cancel-text="取消" @confirm="confirmStatus">
-          <template slot="title">
+          <template #title>
             <p v-if="machine.status === $enum.TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
@@ -36,14 +38,16 @@
         </a-popconfirm>
         <!-- 提示 -->
         <a-popover placement="bottom">
-          <div slot="content" style="font-size: 15px; line-height: 26px">
-            <span>ctrl + insert (复制)</span><br>
-            <span>shift + insert (粘贴)</span><br>
-            <span>ctrl + shift + v (粘贴)</span><br>
-            <span>ctrl + shift + f (搜索)</span><br>
-            <span>shift + 鼠标滚轮 (快速移动)</span><br>
-            <span>alt + 鼠标左键 (批量选择)</span>
-          </div>
+          <template #content>
+            <div style="font-size: 15px; line-height: 26px">
+              <span>ctrl + insert (复制)</span><br>
+              <span>shift + insert (粘贴)</span><br>
+              <span>ctrl + shift + v (粘贴)</span><br>
+              <span>ctrl + shift + f (搜索)</span><br>
+              <span>shift + 鼠标滚轮 (快速移动)</span><br>
+              <span>alt + 鼠标左键 (批量选择)</span>
+            </div>
+          </template>
           <a-icon class="trigger-icon" type="question-circle"/>
         </a-popover>
         <!-- 全屏 -->

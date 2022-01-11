@@ -10,37 +10,39 @@
       <div id="right-menu" ref="rightMenu">
         <a-dropdown :trigger="['click']">
           <span ref="rightMenuTrigger" id="right-menu-trigger"></span>
-          <a-menu slot="overlay" @click="clickRightMenuItem" @contextmenu.prevent>
-            <a-menu-item key="selectAll">
-              <span class="right-menu-item"><a-icon type="profile"/>全选</span>
-            </a-menu-item>
-            <a-menu-item key="copy">
-              <span class="right-menu-item"><a-icon type="copy"/>复制</span>
-            </a-menu-item>
-            <a-menu-item key="paste">
-              <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
-            </a-menu-item>
-            <a-menu-item key="clear">
-              <span class="right-menu-item"><a-icon type="stop"/>清空</span>
-            </a-menu-item>
-            <a-menu-item key="openSearch">
-              <span class="right-menu-item"><a-icon type="search"/>搜索</span>
-            </a-menu-item>
-            <a-menu-item key="toTop">
-              <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
-            </a-menu-item>
-            <a-menu-item key="toBottom">
-              <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
-            </a-menu-item>
-          </a-menu>
+          <template #overlay>
+            <a-menu @click="clickRightMenuItem" @contextmenu.prevent>
+              <a-menu-item key="selectAll">
+                <span class="right-menu-item"><a-icon type="profile"/>全选</span>
+              </a-menu-item>
+              <a-menu-item key="copy">
+                <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+              </a-menu-item>
+              <a-menu-item key="paste">
+                <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
+              </a-menu-item>
+              <a-menu-item key="clear">
+                <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+              </a-menu-item>
+              <a-menu-item key="openSearch">
+                <span class="right-menu-item"><a-icon type="search"/>搜索</span>
+              </a-menu-item>
+              <a-menu-item key="toTop">
+                <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+              </a-menu-item>
+              <a-menu-item key="toBottom">
+                <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+              </a-menu-item>
+            </a-menu>
+          </template>
         </a-dropdown>
       </div>
       <!-- 搜索框 -->
-      <div id="search-card" v-show="search.visible">
+      <div id="search-card" v-show="search.visible" @keydown.esc="closeSearch">
         <a-card title="搜索" size="small">
-          <a slot="extra" @click="closeSearch">
-            <a-icon type="close"/>
-          </a>
+          <template #extra>
+            <a-icon class="span-blue pointer" type="close" title="关闭" @click="closeSearch"/>
+          </template>
           <a-input class="search-input"
                    ref="searchInput"
                    placeholder="请输入查找内容"
@@ -385,7 +387,7 @@ export default {
           background: '#212529'
         }
       },
-      debouncedWindowResize: debounce(this.windowChange, 150)
+      debouncedWindowResize: debounce(this.fitTerminal, 150)
     }
   },
   watch: {
@@ -404,7 +406,7 @@ export default {
       this.setting.enableWebGL = setting.enableWebGL
       initTerminal.call(this)
     },
-    windowChange() {
+    fitTerminal() {
       this.plugin.fit.fit()
       this.term.resize(this.term.cols, this.term.rows)
     },
@@ -429,6 +431,7 @@ export default {
     closeSearch() {
       this.search.visible = false
       this.search.value = ''
+      this.term.focus()
     },
     disconnect() {
       terminalOperator.disconnect.call(this)

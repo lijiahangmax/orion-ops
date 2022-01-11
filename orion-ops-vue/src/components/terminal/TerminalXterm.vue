@@ -74,6 +74,9 @@ export default {
     openSftp() {
       this.$refs.machineSftpDrawer.visible = true
     },
+    fitTerminal() {
+      this.$refs.terminalMain.fitTerminal()
+    },
     async getAccessToken() {
       this.loading = this.$message.loading('建立连接中...', 10)
       try {

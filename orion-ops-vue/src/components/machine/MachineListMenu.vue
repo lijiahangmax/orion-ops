@@ -1,5 +1,5 @@
 <template>
-  <a-layout-sider id="machine-list-fixed-left">
+  <a-layout-sider id="machine-list-fixed-left" :collapsible="true" @collapse="changeCollapse">
     <a-spin :spinning="loading">
       <!-- 工具按钮 -->
       <div class="machine-tools">
@@ -12,7 +12,7 @@
       </div>
       <!-- 机器列表菜单 -->
       <a-menu theme="dark" mode="inline" :defaultSelectedKeys="selectedMachine">
-        <a-menu-item v-for="item of list" :key="item.id" :title="item.host" @click="$emit('chooseMachine', item.id)">
+        <a-menu-item v-for="item of list" :key="item.id" :title="item.host" @click="chooseMachine(item.id)">
           <a-icon type="desktop"/>
           <span class="nav-text">{{ item.name }}</span>
         </a-menu-item>
@@ -63,6 +63,12 @@ export default {
         // ignore
       }
       this.loading = false
+    },
+    chooseMachine(id) {
+      this.$emit('chooseMachine', id)
+    },
+    changeCollapse(e) {
+      this.$emit('changeCollapse', e)
     }
   }
 }
