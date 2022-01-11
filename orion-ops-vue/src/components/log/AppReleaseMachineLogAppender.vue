@@ -7,7 +7,9 @@
           <a-step :key="action.id"
                   :title="action.name"
                   :subTitle="action.used ? `${action.used}ms` : ''">
-            <a-icon slot="icon" type="loading" v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value"/>
+            <template v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value" #icon>
+              <a-icon type="loading"/>
+            </template>
           </a-step>
         </template>
       </a-steps>
@@ -21,14 +23,16 @@
                    :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value"
                    :config="{type: $enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value, relId: id}">
         <!-- 左侧工具 -->
-        <div class="machine-log-tools" slot="left-tools">
-          <a-tag color="#5C7CFA">
-            {{ detail.machineName }}
-          </a-tag>
-          <a-tag color="#40C057">
-            {{ detail.machineHost }}
-          </a-tag>
-        </div>
+        <template #left-tools>
+          <div class="machine-log-tools">
+            <a-tag color="#5C7CFA">
+              {{ detail.machineName }}
+            </a-tag>
+            <a-tag color="#40C057">
+              {{ detail.machineHost }}
+            </a-tag>
+          </div>
+        </template>
       </logAppender>
     </div>
   </div>
@@ -103,10 +107,12 @@ export default {
         // 设置action
         if (data.actions) {
           for (const actionStatus of data.actions) {
-            for (const action of this.detail.actions) {
-              if (actionStatus.id === action.id) {
-                action.status = actionStatus.status
-                action.used = actionStatus.used
+            if (this.detail.actions && this.detail.actions.length) {
+              for (const action of this.detail.actions) {
+                if (actionStatus.id === action.id) {
+                  action.status = actionStatus.status
+                  action.used = actionStatus.used
+                }
               }
             }
           }
@@ -131,6 +137,10 @@ export default {
       }
       this.current = curr
     }
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>
