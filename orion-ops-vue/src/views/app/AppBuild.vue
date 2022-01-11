@@ -61,40 +61,46 @@
                :loading="loading"
                size="middle">
         <!-- 构建序列 -->
-        <a-tag slot="seq" slot-scope="record" color="#5C7CFA">
-          #{{ record.seq }}
-        </a-tag>
+        <template v-slot:seq="record">
+          <a-tag color="#5C7CFA">
+            #{{ record.seq }}
+          </a-tag>
+        </template>
         <!-- 版本 -->
-        <span slot="version" slot-scope="record" v-if="record.vcsId">
+        <template v-slot:version="record">
+          <span v-if="record.vcsId">
           <!-- 仓库 -->
           <span class="mr4" title="仓库">{{ record.vcsName }}</span>
-          <!-- 分支 -->
+            <!-- 分支 -->
           <span class="mr4" v-if="record.branchName" style="white-space: nowrap;" title="分支"><a-icon type="branches"/>{{ record.branchName }}</span>
-          <!-- commitId -->
+            <!-- commitId -->
           <a-tooltip v-if="record.commitId">
-            <div slot="title">
+            <template #title>
               <span style="display: block; word-break: break-all;">commitId: {{ record.commitId }}</span>
-            </div>
+            </template>
             <span class="span-blue">
                #{{ record.commitId.substring(0, 7) }}
             </span>
           </a-tooltip>
         </span>
+        </template>
         <!-- 状态 -->
-        <a-tag class="m0" slot="status" slot-scope="record" :color="$enum.valueOf($enum.BUILD_STATUS, record.status).color">
-          {{ $enum.valueOf($enum.BUILD_STATUS, record.status).label }}
-        </a-tag>
+        <template v-slot:status="record">
+          <a-tag class="m0" :color="$enum.valueOf($enum.BUILD_STATUS, record.status).color">
+            {{ $enum.valueOf($enum.BUILD_STATUS, record.status).label }}
+          </a-tag>
+        </template>
         <!-- 创建时间 -->
-        <span slot="createTime" slot-scope="record">
+        <template v-slot:createTime="record">
           {{
             record.createTime | formatDate({
               date: record.createTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 详情 -->
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
@@ -132,7 +138,7 @@
                         @confirm="deleteBuild(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
@@ -248,6 +254,7 @@ export default {
         }
       },
       loading: false,
+      pollId: null,
       columns
     }
   },
@@ -369,9 +376,13 @@ export default {
     }
     this.query.profileId = JSON.parse(activeProfile).id
     // 设置轮询
-    setInterval(this.pollStatus, 5000)
+    this.pollId = setInterval(this.pollStatus, 5000)
     // 查询列表
     this.getList({})
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>

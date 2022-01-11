@@ -62,55 +62,62 @@
                :expandedRowKeys.sync="expandedRowKeys"
                size="middle">
         <!-- 展开的机器列表 -->
-        <a-table
-          slot="expandedRowRender"
-          slot-scope="record"
-          v-if="record.machines"
-          :rowKey="(record, index) => index"
-          :columns="innerColumns"
-          :dataSource="record.machines"
-          :loading="record.loading"
-          :pagination="false"
-          size="middle">
-          <!-- 状态 -->
-          <a-tag class="m0" slot="status" slot-scope="machine" :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
-            {{ $enum.valueOf($enum.ACTION_STATUS, machine.status).label }}
-          </a-tag>
-          <div slot="action" slot-scope="machine">
-            <!-- 日志 -->
-            <a-button class="p0"
-                      type="link"
-                      style="height: 22px"
-                      :disabled="machine.status === $enum.ACTION_STATUS.WAIT.value">
-              <a target="_blank"
-                 title="ctrl 打开新页面"
-                 :href="`#/app/release/log/view/${machine.id}`"
-                 @click="openMachineLog($event, machine.id)">日志</a>
-            </a-button>
-            <a-divider type="vertical"/>
-            <!-- 详情 -->
-            <a @click="openMachineDetail(machine.id)">详情</a>
-          </div>
-        </a-table>
+        <template v-slot:expandedRowRender="record">
+          <a-table
+            v-if="record.machines"
+            :rowKey="(record, index) => index"
+            :columns="innerColumns"
+            :dataSource="record.machines"
+            :loading="record.loading"
+            :pagination="false"
+            size="middle">
+            <!-- 状态 -->
+            <template v-slot:status="machine">
+              <a-tag class="m0" :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
+                {{ $enum.valueOf($enum.ACTION_STATUS, machine.status).label }}
+              </a-tag>
+            </template>
+            <!-- 操作 -->
+            <template v-slot:action="machine">
+              <!-- 日志 -->
+              <a-button class="p0"
+                        type="link"
+                        style="height: 22px"
+                        :disabled="machine.status === $enum.ACTION_STATUS.WAIT.value">
+                <a target="_blank"
+                   title="ctrl 打开新页面"
+                   :href="`#/app/release/log/view/${machine.id}`"
+                   @click="openMachineLog($event, machine.id)">日志</a>
+              </a-button>
+              <a-divider type="vertical"/>
+              <!-- 详情 -->
+              <a @click="openMachineDetail(machine.id)">详情</a>
+            </template>
+          </a-table>
+        </template>
         <!-- 构建序列 -->
-        <a-tag slot="seq" slot-scope="record" color="#5C7CFA">
-          #{{ record.buildSeq }}
-        </a-tag>
+        <template v-slot:seq="record">
+          <a-tag color="#5C7CFA">
+            #{{ record.buildSeq }}
+          </a-tag>
+        </template>
         <!-- 状态 -->
-        <a-tag class="m0" slot="status" slot-scope="record" :color="$enum.valueOf($enum.RELEASE_STATUS, record.status).color">
-          {{ $enum.valueOf($enum.RELEASE_STATUS, record.status).label }}
-        </a-tag>
+        <template v-slot:status="record">
+          <a-tag class="m0" :color="$enum.valueOf($enum.RELEASE_STATUS, record.status).color">
+            {{ $enum.valueOf($enum.RELEASE_STATUS, record.status).label }}
+          </a-tag>
+        </template>
         <!-- 创建时间 -->
-        <span slot="createTime" slot-scope="record">
+        <template v-slot:createTime="record">
           {{
             record.createTime | formatDate({
               date: record.createTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 审核 -->
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
@@ -135,7 +142,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
@@ -321,6 +328,7 @@ export default {
       },
       loading: false,
       expandedRowKeys: [],
+      pollId: null,
       columns,
       innerColumns,
       statusHolder: statusHolder.call(this)
@@ -507,9 +515,13 @@ export default {
     }
     this.query.profileId = JSON.parse(activeProfile).id
     // 设置轮询
-    setInterval(this.pollStatus, 5000)
+    this.pollId = setInterval(this.pollStatus, 5000)
     // 查询列表
     this.getList({})
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>
