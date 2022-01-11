@@ -51,52 +51,54 @@
       <!-- 发布操作 -->
       <a-divider>发布操作</a-divider>
       <a-list :dataSource="detail.actions">
-        <a-list-item slot="renderItem" slot-scope="item">
-          <a-descriptions size="middle">
-            <a-descriptions-item label="操作名称" :span="3">
-              {{ item.name }}
-            </a-descriptions-item>
-            <a-descriptions-item label="操作类型" :span="3">
-              <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
-            </a-descriptions-item>
-            <a-descriptions-item label="操作状态" :span="3">
-              <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color">
-                {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
-              </a-tag>
-            </a-descriptions-item>
-            <a-descriptions-item label="开始时间" :span="3" v-if="item.startTime !== null">
-              {{
-                item.startTime | formatDate({
-                  date: item.startTime,
-                  pattern: 'yyyy-MM-dd HH:mm:ss'
-                })
-              }} ({{ item.startTimeAgo }})
-            </a-descriptions-item>
-            <a-descriptions-item label="结束时间" :span="3" v-if="item.endTime !== null">
-              {{
-                item.endTime | formatDate({
-                  date: item.endTime,
-                  pattern: 'yyyy-MM-dd HH:mm:ss'
-                })
-              }} ({{ item.endTimeAgo }})
-            </a-descriptions-item>
-            <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
-              {{ `${item.keepTime}  (${item.used}ms)` }}
-            </a-descriptions-item>
-            <a-descriptions-item label="退出码" :span="3" v-if="item.exitCode !== null">
+        <template v-slot:renderItem="item">
+          <a-list-item>
+            <a-descriptions size="middle">
+              <a-descriptions-item label="操作名称" :span="3">
+                {{ item.name }}
+              </a-descriptions-item>
+              <a-descriptions-item label="操作类型" :span="3">
+                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="操作状态" :span="3">
+                <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color">
+                  {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
+                </a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="开始时间" :span="3" v-if="item.startTime !== null">
+                {{
+                  item.startTime | formatDate({
+                    date: item.startTime,
+                    pattern: 'yyyy-MM-dd HH:mm:ss'
+                  })
+                }} ({{ item.startTimeAgo }})
+              </a-descriptions-item>
+              <a-descriptions-item label="结束时间" :span="3" v-if="item.endTime !== null">
+                {{
+                  item.endTime | formatDate({
+                    date: item.endTime,
+                    pattern: 'yyyy-MM-dd HH:mm:ss'
+                  })
+                }} ({{ item.endTimeAgo }})
+              </a-descriptions-item>
+              <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
+                {{ `${item.keepTime}  (${item.used}ms)` }}
+              </a-descriptions-item>
+              <a-descriptions-item label="退出码" :span="3" v-if="item.exitCode !== null">
               <span :style="{'color': item.exitCode === 0 ? '#4263EB' : '#E03131'}">
                 {{ item.exitCode }}
               </span>
-            </a-descriptions-item>
-            <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
-              <a @click="preview(item.command)">预览</a>
-            </a-descriptions-item>
-            <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
-              <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
-              <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_ACTION_LOG.value)">获取操作日志</a>
-            </a-descriptions-item>
-          </a-descriptions>
-        </a-list-item>
+              </a-descriptions-item>
+              <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+                <a @click="preview(item.command)">预览</a>
+              </a-descriptions-item>
+              <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
+                <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
+                <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_ACTION_LOG.value)">获取操作日志</a>
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-list-item>
+        </template>
       </a-list>
     </div>
     <!-- 事件 -->
@@ -230,6 +232,10 @@ export default {
     }) {
       return _utils.dateFormat(new Date(date), pattern)
     }
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>

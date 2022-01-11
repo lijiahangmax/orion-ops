@@ -91,33 +91,39 @@
       <!-- 发布机器 -->
       <a-divider>发布机器</a-divider>
       <a-list class="machine-list-container" size="small" bordered :dataSource="detail.machines">
-        <span class="span-blue" slot="header">共 {{ detail.machines.length }} 台机器</span>
-        <a-list-item slot="renderItem" slot-scope="item">
-          <span>{{ item.machineName }}</span>
-          <div>
-            <a @click="$copy(item.machineHost)">{{ item.machineHost }}</a>
-            <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color" style="margin: 0 0 0 8px">
-              {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
-            </a-tag>
-          </div>
-        </a-list-item>
+        <template #header>
+          <span class="span-blue">共 {{ detail.machines.length }} 台机器</span>
+        </template>
+        <template v-slot:renderItem="item">
+          <a-list-item>
+            <span>{{ item.machineName }}</span>
+            <div>
+              <a @click="$copy(item.machineHost)">{{ item.machineHost }}</a>
+              <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color" style="margin: 0 0 0 8px">
+                {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
+              </a-tag>
+            </div>
+          </a-list-item>
+        </template>
       </a-list>
       <!-- 发布操作 -->
       <a-divider>发布操作</a-divider>
       <a-list size="small" :dataSource="detail.actions">
-        <a-list-item slot="renderItem" slot-scope="item">
-          <a-descriptions size="middle">
-            <a-descriptions-item label="操作名称" :span="3">
-              {{ item.name }}
-            </a-descriptions-item>
-            <a-descriptions-item label="操作类型" :span="3">
-              <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
-            </a-descriptions-item>
-            <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
-              <a @click="preview(item.command)">预览</a>
-            </a-descriptions-item>
-          </a-descriptions>
-        </a-list-item>
+        <template v-slot:renderItem="item">
+          <a-list-item>
+            <a-descriptions size="middle">
+              <a-descriptions-item label="操作名称" :span="3">
+                {{ item.name }}
+              </a-descriptions-item>
+              <a-descriptions-item label="操作类型" :span="3">
+                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
+              </a-descriptions-item>
+              <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+                <a @click="preview(item.command)">预览</a>
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-list-item>
+        </template>
       </a-list>
     </div>
     <!-- 事件 -->
@@ -224,6 +230,10 @@ export default {
     }) {
       return _utils.dateFormat(new Date(date), pattern)
     }
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>
