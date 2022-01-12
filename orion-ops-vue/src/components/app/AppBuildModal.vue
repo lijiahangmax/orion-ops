@@ -6,13 +6,13 @@
            @ok="build"
            @cancel="close">
     <!-- 标题 -->
-    <div slot="title">
+    <template #title>
       <a-icon class="ml4 pointer span-blue"
               title="重新选择"
               v-if="appId != null" @click="reselectApp"
               type="arrow-left"/>
       <span class="ml16">应用构建</span>
-    </div>
+    </template>
     <!-- 应用选择 -->
     <div class="app-list" v-if="selectAppPage">
       <div v-if="loading">

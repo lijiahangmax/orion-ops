@@ -3,16 +3,20 @@
     <a-spin :spinning="loading">
       <!-- 发布机器 -->
       <div id="app-machine-wrapper">
-      <span class="label">
-        <span class="span-red mr4">*</span>
-        发布机器 :
-      </span>
+        <span class="label">
+          <span class="span-red mr4">*</span>
+          发布机器 :
+        </span>
         <MachineChecker style="margin-left: 8px"
                         ref="machineChecker"
                         :defaultValue="machines"
                         :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
-          <a slot="trigger">已选择 {{ machines.length }} 台机器</a>
-          <a-button type="primary" size="small" slot="footer" @click="chooseMachines">确定</a-button>
+          <template #trigger>
+            <span class="span-blue pointer">已选择 {{ machines.length }} 台机器</span>
+          </template>
+          <template #footer>
+            <a-button type="primary" size="small" @click="chooseMachines">确定</a-button>
+          </template>
         </MachineChecker>
       </div>
       <!-- 发布序列 -->

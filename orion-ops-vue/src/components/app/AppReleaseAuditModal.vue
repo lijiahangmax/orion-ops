@@ -8,10 +8,11 @@
         <a-textarea class="description-area" v-model="description" :maxLength="64"/>
       </div>
     </a-spin>
-    <div slot="footer">
+    <!-- 操作 -->
+    <template #footer>
       <a-button @click="audit(false)" :disabled="loading">驳回</a-button>
       <a-button type="primary" @click="audit(true)" :disabled="loading">通过</a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 

@@ -5,42 +5,46 @@
              overlayClassName="profile-content-list-popover"
              placement="bottom">
     <!-- 标题 -->
-    <div slot="title" class="profile-title">
-      <a-checkbox v-if="profiles.length"
-                  :indeterminate="indeterminate"
-                  :checked="checkAll"
-                  @change="chooseAll">
-        全选
-      </a-checkbox>
-      <div v-else/>
-      <a @click="hide">关闭</a>
-    </div>
+    <template #title>
+      <div class="profile-title">
+        <a-checkbox v-if="profiles.length"
+                    :indeterminate="indeterminate"
+                    :checked="checkAll"
+                    @change="chooseAll">
+          全选
+        </a-checkbox>
+        <div v-else/>
+        <a @click="hide">关闭</a>
+      </div>
+    </template>
     <!-- 内容 -->
-    <div slot="content" class="profile-content">
-      <a-spin :spinning="loading">
-        <!-- 复选框 -->
-        <div class="profile-list-wrapper" v-if="profiles.length">
-          <div class="profile-list">
-            <a-checkbox-group v-model="checkedList" @change="onChange">
-              <a-row v-for="(option, index) of profiles" :key="index" style="margin: 4px 0">
-                <a-checkbox :value="option.id" :disabled="checkDisabled(option.id)">
-                  {{ option.name }}
-                </a-checkbox>
-              </a-row>
-            </a-checkbox-group>
+    <template #content>
+      <div class="profile-content">
+        <a-spin :spinning="loading">
+          <!-- 复选框 -->
+          <div class="profile-list-wrapper" v-if="profiles.length">
+            <div class="profile-list">
+              <a-checkbox-group v-model="checkedList" @change="onChange">
+                <a-row v-for="(option, index) of profiles" :key="index" style="margin: 4px 0">
+                  <a-checkbox :value="option.id" :disabled="checkDisabled(option.id)">
+                    {{ option.name }}
+                  </a-checkbox>
+                </a-row>
+              </a-checkbox-group>
+            </div>
           </div>
-        </div>
-        <div class="profile-list-empty" v-if="empty">
-          <a-empty/>
-        </div>
-        <!-- 分割线 -->
-        <a-divider class="content-divider"/>
-        <!-- 底部栏 -->
-        <div class="profile-button-tools">
-          <slot name="footer"/>
-        </div>
-      </a-spin>
-    </div>
+          <div class="profile-list-empty" v-if="empty">
+            <a-empty/>
+          </div>
+          <!-- 分割线 -->
+          <a-divider class="content-divider"/>
+          <!-- 底部栏 -->
+          <div class="profile-button-tools">
+            <slot name="footer"/>
+          </div>
+        </a-spin>
+      </div>
+    </template>
     <!-- 触发器 -->
     <slot name="trigger"/>
   </a-popover>

@@ -7,13 +7,13 @@
            @ok="release"
            @cancel="close">
     <!-- 标题 -->
-    <div slot="title">
+    <template #title>
       <a-icon class="ml4 pointer span-blue"
               title="重新选择"
               v-if="appId != null" @click="reselectApp"
               type="arrow-left"/>
       <span class="ml16">应用发布</span>
-    </div>
+    </template>
     <!-- 应用选择 -->
     <div class="app-list" v-if="selectAppPage">
       <div v-if="loading">
@@ -90,8 +90,12 @@
                           placement="bottomLeft"
                           :defaultValue="appMachineIdList"
                           :query="{idList: appMachineIdList}">
-            <a slot="trigger">已选择 {{ submit.machineIdList.length }} 台机器</a>
-            <a-button type="primary" size="small" slot="footer" @click="chooseMachines">确定</a-button>
+            <template #trigger>
+              <span class="span-blue pointer">已选择 {{ submit.machineIdList.length }} 台机器</span>
+            </template>
+            <template #footer>
+              <a-button type="primary" size="small" @click="chooseMachines">确定</a-button>
+            </template>
           </MachineChecker>
         </div>
         <!-- 描述 -->
