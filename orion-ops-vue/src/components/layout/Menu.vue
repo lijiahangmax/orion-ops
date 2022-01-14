@@ -11,7 +11,10 @@
       </a-menu-item>
       <!-- 二级菜单 -->
       <a-sub-menu v-else :key="menuItem.id">
-        <span slot="title"><a-icon :type="menuItem.icon"/><span>{{ menuItem.name }}</span></span>
+        <template #title>
+          <a-icon :type="menuItem.icon"/>
+          <span>{{ menuItem.name }}</span>
+        </template>
         <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id" @click="toRoute(subMenuItem.path)">
           {{ subMenuItem.name }}
         </a-menu-item>

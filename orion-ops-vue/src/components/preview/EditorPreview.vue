@@ -3,12 +3,12 @@
     <!-- 编辑器 -->
     <Editor :value="value" :height="350" :readOnly="true"/>
     <!-- 标题 -->
-    <div slot="title">
+    <template #title>
       <span>预览</span>
       <a @click="$copy(value)" title="复制">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
-    </div>
+    </template>
   </a-modal>
 </template>
 

@@ -17,7 +17,9 @@
                      v-decorator="rules.username"
                      v-model="form.username"
                      allowClear>
-              <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
+              <template #prefix>
+                <a-icon type="user" style="color: rgba(0,0,0,.25)"/>
+              </template>
             </a-input>
           </a-form-model-item>
           <!-- 密码 -->
@@ -28,7 +30,9 @@
                      v-decorator="rules.password"
                      v-model="form.password"
                      allowClear>
-              <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
+              <template #prefix>
+                <a-icon type="lock" style="color: rgba(0,0,0,.25)"/>
+              </template>
             </a-input>
           </a-form-model-item>
           <!-- 按钮 -->

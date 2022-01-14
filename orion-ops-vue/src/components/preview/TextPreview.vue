@@ -2,16 +2,12 @@
   <a-modal v-model="visible" :width="450" :footer="null" @close="close">
     <div>{{ value }}</div>
     <!-- 标题 -->
-    <div slot="title">
+    <template #title>
       <span>预览</span>
       <a @click="$copy(value)" title="复制">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
-    </div>
-    <!-- 页脚 -->
-    <div slot="footer">
-      <a-button @click="close">关闭</a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 

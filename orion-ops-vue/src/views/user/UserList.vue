@@ -77,65 +77,69 @@
                :loading="loading"
                size="middle">
         <!-- 用户名 -->
-        <div class="pointer" slot="username" slot-scope="record" @click="$copy(record.username)" title="复制">
-          <span>{{ record.username }}</span>
-        </div>
+        <template v-slot:username="record">
+          <span class="pointer" @click="$copy(record.username)" title="复制">{{ record.username }}</span>
+        </template>
         <!-- 昵称 -->
-        <span class="pointer" slot="nickname" slot-scope="record" @click="$copy(record.nickname)" title="复制">
-            {{ record.nickname }}
-        </span>
+        <template v-slot:nickname="record">
+          <span class="pointer" @click="$copy(record.nickname)" title="复制">{{ record.nickname }}</span>
+        </template>
         <!-- 手机号 -->
-        <span class="pointer span-blue" slot="phone" slot-scope="record" @click="$copy(record.phone)" title="复制">
-            {{ record.phone }}
-        </span>
+        <template v-slot:phone="record">
+          <span class="pointer span-blue" @click="$copy(record.phone)" title="复制">{{ record.phone }}</span>
+        </template>
         <!-- 邮箱 -->
-        <span class="pointer span-blue" slot="email" slot-scope="record" @click="$copy(record.email)" title="复制">
-            {{ record.email }}
-        </span>
+        <template v-slot:email="record">
+          <span class="pointer span-blue" @click="$copy(record.email)" title="复制">{{ record.email }}</span>
+        </template>
         <!-- 角色 -->
-        <span slot="role" slot-scope="record">
-            {{ $enum.valueOf($enum.ROLE_TYPE, record.role).label }}
-        </span>
+        <template v-slot:role="record">
+          <span>{{ $enum.valueOf($enum.ROLE_TYPE, record.role).label }}</span>
+        </template>
         <!-- 状态 -->
-        <span slot="status" slot-scope="record">
-            <a-badge
-              :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
-              :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
-        </span>
+        <template v-slot:status="record">
+          <a-badge
+            :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+            :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+        </template>
         <!-- 登陆时间 -->
-        <span slot="lastLoginTime" slot-scope="record" v-if="record.lastLoginTime">
-          {{
-            record.lastLoginTime | formatDate({
-              date: record.lastLoginTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ record.lastLoginAgo }})
-        </span>
+        <template v-slot:lastLoginTime="record">
+          <span v-if="record.lastLoginTime">
+            {{
+              record.lastLoginTime | formatDate({
+                date: record.lastLoginTime,
+                pattern: 'yyyy-MM-dd HH:mm:ss'
+              })
+            }} ({{ record.lastLoginAgo }})
+          </span>
+        </template>
         <!-- 操作 -->
-        <div v-if="record.id !== $getUserId()" slot="action" slot-scope="record">
-          <!-- 状态 -->
-          <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前用户?`"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="updateStatus(record)">
-            <span class="span-blue pointer">{{ record.status === 1 ? '停用' : '启用' }}</span>
-          </a-popconfirm>
-          <a-divider type="vertical"/>
-          <!-- 修改 -->
-          <span class="span-blue pointer" @click="update(record.id)">修改</span>
-          <a-divider type="vertical"/>
-          <!-- 重置密码 -->
-          <a @click="resetPassword(record.id)">重置密码</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认要删除该行记录?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(record.id)">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </div>
+        <template v-slot:action="record">
+          <div v-if="record.id !== $getUserId()">
+            <!-- 状态 -->
+            <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前用户?`"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="updateStatus(record)">
+              <span class="span-blue pointer">{{ record.status === 1 ? '停用' : '启用' }}</span>
+            </a-popconfirm>
+            <a-divider type="vertical"/>
+            <!-- 修改 -->
+            <span class="span-blue pointer" @click="update(record.id)">修改</span>
+            <a-divider type="vertical"/>
+            <!-- 重置密码 -->
+            <a @click="resetPassword(record.id)">重置密码</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认要删除该行记录?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(record.id)">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->

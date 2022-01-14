@@ -47,20 +47,22 @@
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
-        <span class="pointer" slot="value" slot-scope="record" title="预览" @click="preview(record.value)">
-          {{ record.value }}
-        </span>
+        <template v-slot:value="record">
+          <span class="pointer" title="预览" @click="preview(record.value)">
+            {{ record.value }}
+          </span>
+        </template>
         <!-- 修改时间 -->
-        <span slot="updateTime" slot-scope="record">
+        <template v-slot:updateTime="record">
           {{
             record.updateTime | formatDate({
               date: record.updateTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -72,7 +74,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->

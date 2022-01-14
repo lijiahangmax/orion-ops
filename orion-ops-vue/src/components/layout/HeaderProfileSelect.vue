@@ -4,11 +4,13 @@
       {{ currentProfile.name }}
       <a-icon type="down"/>
     </a>
-    <a-menu slot="overlay" @click="chooseProfile">
-      <a-menu-item v-for="profile in profileList" :key="JSON.stringify(profile)">
-        {{ profile.name }}
-      </a-menu-item>
-    </a-menu>
+    <template #overlay>
+      <a-menu @click="chooseProfile">
+        <a-menu-item v-for="profile in profileList" :key="JSON.stringify(profile)">
+          {{ profile.name }}
+        </a-menu-item>
+      </a-menu>
+    </template>
   </a-dropdown>
 </template>
 
