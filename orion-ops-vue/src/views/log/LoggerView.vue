@@ -1,7 +1,7 @@
 <template>
   <a-layout id="log-view-layout-container">
     <!-- tail列表 -->
-    <a-layout-sider id="log-view-list-fixed-left">
+    <a-layout-sider id="log-view-list-fixed-left" :collapsible="true">
       <a-spin :spinning="listLoading">
         <!-- 工具按钮 -->
         <div class="log-list-tools">
@@ -25,7 +25,7 @@
         <div v-if="selectedTailFiles.length" class="log-view-tabs-container">
           <a-tabs v-model="activeTab"
                   :tabBarStyle="{margin: 0}"
-                  :hide-add="true"
+                  :hideAdd="true"
                   type="editable-card"
                   @edit="removeTab"
                   :animated="false">
@@ -38,39 +38,41 @@
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
                              :relId="selectedTailFile.id"
-                             :appendStyle="{height: 'calc(100vh - 99px)'}"
+                             :appendStyle="{height: 'calc(100vh - 96px)'}"
                              :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
                              :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: selectedTailFile.id}">
                   <!-- 左侧工具栏 -->
-                  <div class="appender-left-tools" slot="left-tools">
-                    <!-- 信息 -->
-                    <a-breadcrumb>
-                      <a-breadcrumb-item>
-                        <a-tag color="#7950F2" style="margin: 0; max-width: calc(17% - 19px)">
-                          {{ selectedTailFile.machineName }}
-                        </a-tag>
-                      </a-breadcrumb-item>
-                      <a-breadcrumb-item>
-                        <a-tag color="#5C7CFA" style="margin: 0; max-width: calc(17% - 19px)">
-                          {{ selectedTailFile.machineHost }}
-                        </a-tag>
-                      </a-breadcrumb-item>
-                      <a-breadcrumb-item>
-                        <a-tag color="#15AABF" style="margin: 0; max-width: calc(17% - 19px)">
-                          {{ selectedTailFile.name }}
-                        </a-tag>
-                      </a-breadcrumb-item>
-                      <a-breadcrumb-item>
-                        <a-tag class="pointer"
-                               color="#40C057"
-                               style="margin: 0; max-width: calc(47% - 19px)"
-                               @click="$copy(selectedTailFile.path)"
-                               :title="selectedTailFile.path">
-                          {{ selectedTailFile.path }}
-                        </a-tag>
-                      </a-breadcrumb-item>
-                    </a-breadcrumb>
-                  </div>
+                  <template #left-tools>
+                    <div class="appender-left-tools">
+                      <!-- 信息 -->
+                      <a-breadcrumb>
+                        <a-breadcrumb-item>
+                          <a-tag color="#7950F2" style="margin: 0; max-width: calc(17% - 19px)">
+                            {{ selectedTailFile.machineName }}
+                          </a-tag>
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>
+                          <a-tag color="#5C7CFA" style="margin: 0; max-width: calc(17% - 19px)">
+                            {{ selectedTailFile.machineHost }}
+                          </a-tag>
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>
+                          <a-tag color="#15AABF" style="margin: 0; max-width: calc(17% - 19px)">
+                            {{ selectedTailFile.name }}
+                          </a-tag>
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>
+                          <a-tag class="pointer"
+                                 color="#40C057"
+                                 style="margin: 0; max-width: calc(47% - 19px)"
+                                 @click="$copy(selectedTailFile.path)"
+                                 :title="selectedTailFile.path">
+                            {{ selectedTailFile.path }}
+                          </a-tag>
+                        </a-breadcrumb-item>
+                      </a-breadcrumb>
+                    </div>
+                  </template>
                 </LogAppender>
               </div>
             </a-tab-pane>

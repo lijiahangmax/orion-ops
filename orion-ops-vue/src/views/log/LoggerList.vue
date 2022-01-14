@@ -55,33 +55,37 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <div slot="machine" slot-scope="record">
+        <template v-slot:machine="record">
           <a-tooltip placement="top">
-            <template slot="title">
+            <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
             </template>
             <span>{{ record.machineName }}</span>
           </a-tooltip>
-        </div>
+        </template>
         <!-- 路径 -->
-        <span class="pointer" slot="path" slot-scope="record" title="预览" @click="previewText(record.path)">
-            {{ record.path }}
-        </span>
+        <template v-slot:path="record">
+           <span class="pointer" title="预览" @click="previewText(record.path)">
+             {{ record.path }}
+           </span>
+        </template>
         <!-- 命令 -->
-        <span class="pointer" slot="command" slot-scope="record" title="预览" @click="previewText(record.command)">
+        <template v-slot:command="record">
+          <span class="pointer" title="预览" @click="previewText(record.command)">
             {{ record.command }}
-        </span>
+          </span>
+        </template>
         <!-- 修改时间 -->
-        <span slot="updateTime" slot-scope="record">
+        <template v-slot:updateTime="record">
           {{
             record.updateTime | formatDate({
               date: record.updateTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 打开 -->
           <a target="_blank"
              title="ctrl 打开新页面"
@@ -99,7 +103,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
