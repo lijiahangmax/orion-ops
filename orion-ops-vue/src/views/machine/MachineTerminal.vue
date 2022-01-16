@@ -5,14 +5,15 @@
                      :selectedMachine="selectedMachine"
                      :hideBack="true"
                      :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
-                     @chooseMachine="addTerminal"/>
+                     @chooseMachine="addTerminal"
+                     @changeCollapse="fit"/>
     <!-- main -->
     <a-layout>
       <a-layout-content id="terminal-content-fixed-right" :style="{'overflow': machineTabs.length ? 'auto' : 'hidden'}">
         <!-- tabs -->
         <a-tabs v-model="activeKey"
                 v-if="machineTabs.length"
-                :hide-add="true"
+                :hideAdd="true"
                 type="editable-card"
                 @edit="removeTab"
                 :tabBarStyle="{margin: 0}">
@@ -101,6 +102,16 @@ export default {
       }
       this.machineTabs = machineTabs
       this.activeKey = activeKey
+    },
+    fit() {
+      for (const machineTab of this.machineTabs) {
+        const $ref = this.$refs['terminal' + machineTab.key]
+        if ($ref && $ref.length) {
+          setTimeout(() => {
+            $ref[0].fitTerminal()
+          }, 300)
+        }
+      }
     }
   },
   created() {

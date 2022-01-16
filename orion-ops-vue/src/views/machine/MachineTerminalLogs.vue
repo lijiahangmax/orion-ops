@@ -45,16 +45,16 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <div slot="machine" slot-scope="record">
+        <template v-slot:machine="record">
           <a-tooltip placement="top">
-            <template slot="title">
+            <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
             </template>
             <span>{{ record.machineName }}</span>
           </a-tooltip>
-        </div>
+        </template>
         <!-- 连接时间 -->
-        <span slot="connectedTime" slot-scope="record">
+        <template v-slot:connectedTime="record">
           {{
             record.connectedTime | formatDate({
               date: record.connectedTime,
@@ -62,22 +62,24 @@
             })
           }}
           ({{ record.connectedTimeAgo }})
-        </span>
+        </template>
         <!-- 断连时间 -->
-        <span slot="disconnectedTime" slot-scope="record" v-if="record.disconnectedTime">
-          {{
-            record.disconnectedTime | formatDate({
-              date: record.disconnectedTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+        <template v-slot:disconnectedTime="record">
+          <span v-if="record.disconnectedTime">
+           {{
+              record.disconnectedTime | formatDate({
+                date: record.disconnectedTime,
+                pattern: 'yyyy-MM-dd HH:mm:ss'
+              })
+            }}
           ({{ record.disconnectedTimeAgo }})
-        </span>
+          </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
           <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
-        </div>
+        </template>
       </a-table>
     </div>
   </div>

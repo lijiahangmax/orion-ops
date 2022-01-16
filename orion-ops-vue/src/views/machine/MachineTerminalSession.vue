@@ -40,7 +40,7 @@
                :loading="loading"
                size="middle">
         <!-- 连接时间 -->
-        <span slot="connectedTime" slot-scope="record">
+        <template v-slot:connectedTime="record">
           {{
             record.connectedTime | formatDate({
               date: record.connectedTime,
@@ -48,24 +48,14 @@
             })
           }}
           ({{ record.connectedTimeAgo }})
-        </span>
-        <!-- 断连时间 -->
-        <span slot="disconnectedTime" slot-scope="record" v-if="record.disconnectedTime">
-          {{
-            record.disconnectedTime | formatDate({
-              date: record.disconnectedTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
-          ({{ record.disconnectedTimeAgo }})
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
           <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
           <a-divider type="vertical"/>
           <a @click="forceOffline(record.token)">下线</a>
-        </div>
+        </template>
       </a-table>
     </div>
   </div>
