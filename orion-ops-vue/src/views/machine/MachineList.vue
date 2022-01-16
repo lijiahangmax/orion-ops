@@ -71,47 +71,52 @@
                :loading="loading"
                size="middle">
         <!-- 名称 -->
-        <span slot="name" slot-scope="record">
+        <template v-slot:name="record">
           {{ record.name }}
           <a-tag v-if="record.id === 1" color="#5C7CFA">
             宿主机
           </a-tag>
-        </span>
+        </template>
         <!-- tag -->
-        <span slot="tag" slot-scope="record">
+        <template v-slot:tag="record">
           <a-tag v-if="record.tag" color="#20C997">
             {{ record.tag }}
           </a-tag>
-        </span>
+        </template>
         <!-- 主机 -->
-        <a slot="host" slot-scope="record" title="复制主机" @click="$copy(record.host, true)">
-          {{ record.host }}
-        </a>
+        <template v-slot:host="record">
+          <span class="span-blue pointer" title="复制主机" @click="$copy(record.host, true)">
+            {{ record.host }}
+          </span>
+        </template>
         <!-- 端口 -->
-        <a slot="sshPort" slot-scope="record"
-           title="复制ssh"
-           @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
-          {{ record.sshPort }}
-        </a>
+        <template v-slot:sshPort="record">
+          <span class="span-blue pointer" title="复制ssh"
+                @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
+            {{ record.sshPort }}
+          </span>
+        </template>
         <!-- 状态 -->
-        <a v-if="record.id !== 1" slot="status" slot-scope="record" :title="record.status === 1 ? '停用机器' : '启用机器'">
-          <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="changeStatus(record)">
-            <a-badge
-              v-if="record.status"
-              :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
-              :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
-          </a-popconfirm>
-        </a>
-        <span v-else slot="status" slot-scope="record">
+        <template v-slot:status="record">
+          <a v-if="record.id !== 1" :title="record.status === 1 ? '停用机器' : '启用机器'">
+            <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="changeStatus(record)">
+              <a-badge
+                v-if="record.status"
+                :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+                :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+            </a-popconfirm>
+          </a>
+          <span v-else>
             <a-badge v-if="record.status"
                      :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
                      :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
         </span>
+        </template>
         <!-- 更多 -->
-        <span slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <a-button title="打开终端"
@@ -131,29 +136,33 @@
           </a-button>
           <a-divider type="vertical"/>
           <a-dropdown>
-            <a class="ant-dropdown-link">更多 <a-icon type="down"/></a>
-            <a-menu slot="overlay" @click="menuHandler($event, record)">
-              <a-menu-item key="update">
-                编辑
-              </a-menu-item>
-              <a-menu-item v-if="record.id !== 1" key="delete">
-                删除
-              </a-menu-item>
-              <a-menu-item key="copy">
-                复制
-              </a-menu-item>
-              <a-menu-item key="ping" v-if="record.status === 1">
-                ping
-              </a-menu-item>
-              <a-menu-item key="connect" v-if="record.status === 1">
-                测试连接
-              </a-menu-item>
-              <a-menu-item key="openEnv">
-                环境变量
-              </a-menu-item>
-            </a-menu>
+            <a class="ant-dropdown-link">更多
+              <a-icon type="down"/>
+            </a>
+            <template #overlay>
+              <a-menu @click="menuHandler($event, record)">
+                <a-menu-item key="update">
+                  编辑
+                </a-menu-item>
+                <a-menu-item v-if="record.id !== 1" key="delete">
+                  删除
+                </a-menu-item>
+                <a-menu-item key="copy">
+                  复制
+                </a-menu-item>
+                <a-menu-item key="ping" v-if="record.status === 1">
+                  ping
+                </a-menu-item>
+                <a-menu-item key="connect" v-if="record.status === 1">
+                  测试连接
+                </a-menu-item>
+                <a-menu-item key="openEnv">
+                  环境变量
+                </a-menu-item>
+              </a-menu>
+            </template>
           </a-dropdown>
-        </span>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->

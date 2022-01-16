@@ -66,18 +66,20 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <div slot="host" slot-scope="record">
+        <template v-slot:host="record">
           <span>{{ record.host }}</span>
           <a class="copy-icon-right" title="复制" @click="$copy(record.host)">
             <a-icon type="copy"/>
           </a>
-        </div>
+        </template>
         <!-- 类型 -->
-        <a-tag slot="type" slot-scope="record" :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
-          {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).label }}
-        </a-tag>
+        <template v-slot:type="record">
+          <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
+            {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).label }}
+          </a-tag>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -89,7 +91,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->

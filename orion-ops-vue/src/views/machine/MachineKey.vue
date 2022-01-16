@@ -62,7 +62,7 @@
                :loading="loading"
                size="middle">
         <!-- 秘钥路径 -->
-        <div slot="path" slot-scope="record">
+        <template v-slot:path="record">
           <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
           <a v-if="record.downloadUrl"
              target="_blank"
@@ -72,9 +72,9 @@
              @click="clearDownloadUrl(record)">
             <a-icon type="download"/>
           </a>
-        </div>
+        </template>
         <!-- 挂载状态 -->
-        <div slot="mountStatus" slot-scope="record">
+        <template v-slot:mountStatus="record">
           <!-- 未找到 -->
           <div v-if="record.mountStatus === 1">
             <a-tag :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
@@ -94,18 +94,18 @@
               </a-tag>
             </a-popconfirm>
           </div>
-        </div>
+        </template>
         <!-- 创建时间 -->
-        <span slot="createTime" slot-scope="record">
+        <template v-slot:createTime="record">
           {{
             record.createTime | formatDate({
               date: record.createTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -117,7 +117,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
