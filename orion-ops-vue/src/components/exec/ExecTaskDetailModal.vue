@@ -60,10 +60,10 @@
         </a-descriptions>
       </div>
     </a-spin>
-    <div slot="footer">
+    <template #footer>
       <a-button class="mr8" type="primary" @click="() => $copy(detail.command)">复制命令</a-button>
       <a-button @click="close">关闭</a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 

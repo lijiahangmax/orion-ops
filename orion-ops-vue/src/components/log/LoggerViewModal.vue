@@ -16,14 +16,16 @@
                    :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
                    :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: id}">
         <!-- 左侧工具栏 -->
-        <div class="fixed-left-tools" slot="left-tools">
-          <!-- 文件名称 -->
-          <a-tag color="#40C057" style="max-width: 95%" :title="file.path">
-            {{ file.path }}
-          </a-tag>
-          <!-- 复制 -->
-          <a-icon class="span-blue pointer" type="copy" title="复制" @click="$copy(file.path)"/>
-        </div>
+        <template #left-tools>
+          <div class="fixed-left-tools">
+            <!-- 文件名称 -->
+            <a-tag color="#40C057" style="max-width: 95%" :title="file.path">
+              {{ file.path }}
+            </a-tag>
+            <!-- 复制 -->
+            <a-icon class="span-blue pointer" type="copy" title="复制" @click="$copy(file.path)"/>
+          </div>
+        </template>
       </LogAppender>
     </div>
   </a-modal>

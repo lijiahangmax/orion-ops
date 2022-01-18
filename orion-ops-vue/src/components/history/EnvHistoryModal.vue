@@ -15,43 +15,46 @@
                :loading="loading"
                size="middle">
         <!-- beforeValue -->
-        <div slot="beforeValue" slot-scope="record" class="auto-ellipsis">
-          <a class="copy-icon-left" v-if="record.beforeValue" @click="$copy(record.beforeValue)">
-            <a-icon type="copy"/>
-          </a>
-          <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.beforeValue)">
+        <template v-slot:beforeValue="record">
+          <div class="auto-ellipsis">
+            <a class="copy-icon-left" v-if="record.beforeValue" @click="$copy(record.beforeValue)">
+              <a-icon type="copy"/>
+            </a>
+            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.beforeValue)">
             {{ record.beforeValue }}
           </span>
-        </div>
+          </div>
+        </template>
         <!-- afterValue -->
-        <div slot="afterValue" slot-scope="record" class="auto-ellipsis">
-          <a class="copy-icon-left" @click="$copy(record.afterValue)">
-            <a-icon type="copy"/>
-          </a>
-          <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.afterValue)">
+        <template v-slot:afterValue="record">
+          <div class="auto-ellipsis">
+            <a class="copy-icon-left" @click="$copy(record.afterValue)">
+              <a-icon type="copy"/>
+            </a>
+            <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.afterValue)">
             {{ record.afterValue }}
           </span>
-        </div>
+          </div>
+        </template>
         <!-- 类型 -->
-        <a-tag slot="type" slot-scope="record"
-               style="margin: 0"
-               :color="$enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).color">
-          {{ $enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).label }}
-        </a-tag>
+        <template v-slot:type="record">
+          <a-tag class="m0" :color="$enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).color">
+            {{ $enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).label }}
+          </a-tag>
+        </template>
         <!-- 修改时间 -->
-        <div slot="createTime" slot-scope="record">
-          <span>{{
-              record.createTime | formatDate({
-                date: record.createTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}</span>
-          ({{ record.createTimeAgo }})
-        </div>
+        <template v-slot:createTime="record">
+          {{
+            record.createTime | formatDate({
+              date: record.createTime,
+              pattern: 'yyyy-MM-dd HH:mm:ss'
+            })
+          }} ({{ record.createTimeAgo }})
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <a @click="rollback(record)">回滚</a>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 历史值表格 -->
@@ -60,15 +63,17 @@
       <TextPreview ref="preview"/>
     </div>
     <!-- 头部 -->
-    <div slot="title">
+    <template #title>
       <span>历史记录</span>
       <span class="span-blue" style="margin-left: 8px">{{ env.key }}</span>
       <a @click="$copy(env.key)">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
-    </div>
+    </template>
     <!-- 底部 -->
-    <a-button slot="footer" @click="close">关闭</a-button>
+    <template #footer>
+      <a-button @click="close">关闭</a-button>
+    </template>
   </a-modal>
 </template>
 
