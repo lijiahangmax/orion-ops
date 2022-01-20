@@ -111,13 +111,25 @@ public class KeyConst {
     /**
      * 统计数量 key
      * <p>
-     * statistics:count
+     * data:statistics:count
      */
-    public static final String STATISTICS_COUNT_KEY = "statistics:count";
+    public static final String STATISTICS_COUNT_KEY = "data:statistics:count";
 
     /**
      * 5 min
      */
     public static final int STATISTICS_COUNT_KEY_EXPIRE = 60 * 5;
+
+    /**
+     * 环境缓存 key
+     * <p>
+     * data:profile
+     */
+    public static final String DATA_PROFILE_KEY = "data:profile";
+
+    /**
+     * 30 min
+     */
+    public static final int DATA_PROFILE_KEY_EXPIRE = 60 * 30;
 
 }

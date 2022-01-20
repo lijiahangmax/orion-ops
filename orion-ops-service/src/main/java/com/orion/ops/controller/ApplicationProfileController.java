@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
+import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
 import com.orion.ops.service.api.ApplicationProfileService;
 import com.orion.ops.utils.Valid;
@@ -66,6 +67,14 @@ public class ApplicationProfileController {
     @RequestMapping("/list")
     public List<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
         return applicationProfileService.listProfiles(request);
+    }
+
+    /**
+     * 环境列表 (缓存)
+     */
+    @RequestMapping("/fast/list")
+    public List<ApplicationProfileFastVO> listProfiles() {
+        return applicationProfileService.fastListProfiles();
     }
 
     /**

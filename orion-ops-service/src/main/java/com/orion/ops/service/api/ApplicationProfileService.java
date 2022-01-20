@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.ops.entity.request.ApplicationProfileRequest;
+import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
 
 import java.util.List;
@@ -45,6 +46,13 @@ public interface ApplicationProfileService {
      * @return rows
      */
     List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request);
+
+    /**
+     * 环境列表 (缓存)
+     *
+     * @return rows
+     */
+    List<ApplicationProfileFastVO> fastListProfiles();
 
     /**
      * 环境详情

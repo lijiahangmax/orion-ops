@@ -1,10 +1,14 @@
 package com.orion.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
+import com.orion.ops.entity.dto.ApplicationProfileDTO;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
+import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
 import com.orion.ops.service.api.ApplicationActionService;
 import com.orion.ops.service.api.ApplicationEnvService;
@@ -13,13 +17,19 @@ import com.orion.ops.service.api.ApplicationProfileService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 应用环境服务实现
@@ -43,6 +53,9 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     @Resource
     private ApplicationActionService applicationActionService;
 
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+
     @Override
     public Long addProfile(ApplicationProfileRequest request) {
         String name = request.getName();
@@ -55,7 +68,10 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         insert.setDescription(request.getDescription());
         insert.setReleaseAudit(request.getReleaseAudit());
         applicationProfileDAO.insert(insert);
-        return insert.getId();
+        Long id = insert.getId();
+        // 插入缓存
+        this.setProfileToCache(insert);
+        return id;
     }
 
     @Override
@@ -72,7 +88,10 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         update.setDescription(request.getDescription());
         update.setReleaseAudit(request.getReleaseAudit());
         update.setUpdateTime(new Date());
-        return applicationProfileDAO.updateById(update);
+        int updateEffect = applicationProfileDAO.updateById(update);
+        // 修改缓存
+        this.setProfileToCache(update);
+        return updateEffect;
     }
 
     @Override
@@ -87,6 +106,8 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         effect += applicationMachineService.deleteAppMachineByAppProfileId(null, id);
         // 删除环境发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(null, id);
+        // 删除缓存
+        redisTemplate.opsForHash().delete(KeyConst.DATA_PROFILE_KEY, id.toString());
         return effect;
     }
 
@@ -98,6 +119,36 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
                 .like(!Strings.isBlank(request.getDescription()), ApplicationProfileDO::getDescription, request.getDescription());
         List<ApplicationProfileDO> profileList = applicationProfileDAO.selectList(wrapper);
         return Converts.toList(profileList, ApplicationProfileVO.class);
+    }
+
+    @Override
+    public List<ApplicationProfileFastVO> fastListProfiles() {
+        List<ApplicationProfileFastVO> list = Lists.newList();
+        // 查询缓存
+        List<Object> profileCache = redisTemplate.opsForHash().values(KeyConst.DATA_PROFILE_KEY);
+        if (Lists.isEmpty(profileCache)) {
+            // 查库
+            List<ApplicationProfileDTO> profiles = applicationProfileDAO.selectList(null)
+                    .stream()
+                    .map(s -> Converts.to(s, ApplicationProfileDTO.class))
+                    .collect(Collectors.toList());
+            // 设置缓存
+            Map<String, String> cacheData = profiles.stream()
+                    .collect(Collectors.toMap(s -> s.getId().toString(), JSON::toJSONString));
+            redisTemplate.opsForHash().putAll(KeyConst.DATA_PROFILE_KEY, cacheData);
+            redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_KEY_EXPIRE, TimeUnit.SECONDS);
+            // 返回
+            profiles.stream().map(p -> Converts.to(p, ApplicationProfileFastVO.class))
+                    .forEach(list::add);
+        } else {
+            // 返回
+            profileCache.stream().map(p -> JSON.parseObject(p.toString(), ApplicationProfileDTO.class))
+                    .map(p -> Converts.to(p, ApplicationProfileFastVO.class))
+                    .forEach(list::add);
+            // 排序
+            list.sort(Comparator.comparing(ApplicationProfileFastVO::getId));
+        }
+        return list;
     }
 
     @Override
@@ -119,6 +170,17 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
                 .eq(ApplicationProfileDO::getProfileName, name);
         boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    }
+
+    /**
+     * 设置环境缓存
+     *
+     * @param profile profile
+     */
+    private void setProfileToCache(ApplicationProfileDO profile) {
+        ApplicationProfileDTO profileDTO = Converts.to(profile, ApplicationProfileDTO.class);
+        redisTemplate.opsForHash().put(KeyConst.DATA_PROFILE_KEY, profile.getId().toString(), JSON.toJSONString(profileDTO));
+        redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_KEY_EXPIRE, TimeUnit.SECONDS);
     }
 
 }
