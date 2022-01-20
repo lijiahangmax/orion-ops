@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021/11/6 11:20
  */
 @Component
-@Order(160)
+@Order(120)
 @Slf4j
 public class CacheKeyCleanRunner implements CommandLineRunner {
 
@@ -46,7 +46,9 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 // sftp会话token
                 Strings.format(KeyConst.SFTP_SESSION_TOKEN, "*"),
                 // sftp上传请求token
-                Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*")
+                Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*"),
+                // 统计数量key
+                Strings.format(KeyConst.STATISTICS_COUNT_KEY, "*")
         );
         // 查询删除缓存key
         scanKeys.stream().map(key -> RedisUtils.scanKeys(redisTemplate, key, Const.N_10000))
