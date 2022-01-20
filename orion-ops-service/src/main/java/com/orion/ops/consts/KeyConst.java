@@ -87,7 +87,7 @@ public class KeyConst {
     /**
      * sftp 会话 token
      * <p>
-     * "sftp:session:{token}
+     * sftp:session:{token}
      */
     public static final String SFTP_SESSION_TOKEN = "sftp:session:{}";
 
@@ -99,7 +99,7 @@ public class KeyConst {
     /**
      * sftp 上传请求 token
      * <p>
-     * "sftp:upload:{token}
+     * sftp:upload:{token}
      */
     public static final String SFTP_UPLOAD_ACCESS_TOKEN = "sftp:upload:{}";
 
@@ -107,5 +107,17 @@ public class KeyConst {
      * 5 h
      */
     public static final int SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE = 60 * 60 * 5;
+
+    /**
+     * 统计数量 key
+     * <p>
+     * statistics:count
+     */
+    public static final String STATISTICS_COUNT_KEY = "statistics:count";
+
+    /**
+     * 5 min
+     */
+    public static final int STATISTICS_COUNT_KEY_EXPIRE = 60 * 5;
 
 }

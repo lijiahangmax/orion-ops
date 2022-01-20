@@ -1,8 +1,12 @@
 package com.orion.ops.controller;
 
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.entity.vo.StatisticsVO;
+import com.orion.ops.service.api.StatisticsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 统计操作
@@ -16,13 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/orion/api/statistics")
 public class StatisticsController {
 
-    // 机器数
-    // 环境数
-    // 应用数
-    // 日志数
+    @Resource
+    private StatisticsService statisticsService;
 
-    // 应用发布次数
-
-    // login日志
+    /**
+     * 首页统计
+     */
+    @RequestMapping("/home")
+    public StatisticsVO homeStatistics() {
+        return statisticsService.homeStatistics();
+    }
 
 }
