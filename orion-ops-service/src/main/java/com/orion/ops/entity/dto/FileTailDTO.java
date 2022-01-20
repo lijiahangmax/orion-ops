@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import com.orion.ops.entity.vo.FileTailVO;
+import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 /**
@@ -55,5 +57,17 @@ public class FileTailDTO {
      * tail 命令
      */
     private String command;
+
+    static {
+        TypeStore.STORE.register(FileTailVO.class, FileTailDTO.class, p -> {
+            FileTailDTO dto = new FileTailDTO();
+            dto.setMachineId(p.getMachineId());
+            dto.setFilePath(p.getPath());
+            dto.setOffset(p.getOffset());
+            dto.setCharset(p.getCharset());
+            dto.setCommand(p.getCommand());
+            return dto;
+        });
+    }
 
 }

@@ -1,7 +1,6 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.FileTailListDO;
-import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -95,16 +94,6 @@ public class FileTailVO {
             vo.setUpdateTime(p.getUpdateTime());
             vo.setUpdateTimeAgo(Dates.ago(p.getUpdateTime()));
             return vo;
-        });
-
-        TypeStore.STORE.register(FileTailVO.class, FileTailDTO.class, p -> {
-            FileTailDTO dto = new FileTailDTO();
-            dto.setMachineId(p.getMachineId());
-            dto.setFilePath(p.getPath());
-            dto.setOffset(p.getOffset());
-            dto.setCharset(p.getCharset());
-            dto.setCommand(p.getCommand());
-            return dto;
         });
     }
 
