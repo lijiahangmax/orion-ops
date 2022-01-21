@@ -783,6 +783,13 @@ const $api = {
   },
 
   /**
+   * 应用环境列表 (快速)
+   */
+  fastGetProfileList: param => {
+    return $http.$post('/app-profile/fast/list', param)
+  },
+
+  /**
    * 应用环境详情
    */
   getProfileDetail: param => {
@@ -1227,6 +1234,13 @@ const $api = {
     return $http.$post('/app-release/machine/status', param, {
       skipErrorMessage: true
     })
+  },
+
+  /**
+   * 首页统计信息
+   */
+  getHomeStatistics: param => {
+    return $http.$post('/statistics/home', param)
   }
 
 }

@@ -31,16 +31,12 @@ export default {
     }
   },
   mounted() {
-    this.$api.getProfileList()
+    this.$api.fastGetProfileList()
       .then(e => {
         if (!e.data || !e.data.length) {
           return
         }
-        e.data.forEach(d => this.profileList.push({
-          id: d.id,
-          name: d.name,
-          tag: d.tag
-        }))
+        e.data.forEach(d => this.profileList.push(d))
       })
       .then(() => {
         if (!this.profileList.length) {
