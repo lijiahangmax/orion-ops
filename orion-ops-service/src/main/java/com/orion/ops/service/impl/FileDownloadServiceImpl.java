@@ -155,7 +155,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         download.setMachineId(machineId);
         String token = UUIds.random19();
         String key = Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, token);
-        redisTemplate.opsForValue().set(key, JSON.toJSONString(download), KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(download),
+                KeyConst.FILE_DOWNLOAD_EXPIRE, TimeUnit.SECONDS);
         return token;
     }
 

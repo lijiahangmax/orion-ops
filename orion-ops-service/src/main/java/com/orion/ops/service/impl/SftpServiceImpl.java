@@ -223,7 +223,8 @@ public class SftpServiceImpl implements SftpService {
         // 生成accessToken
         String accessToken = UUIds.random32();
         String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
-        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1], KeyConst.SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1],
+                KeyConst.SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         return accessToken;
     }
 
@@ -665,7 +666,8 @@ public class SftpServiceImpl implements SftpService {
         String sessionToken = UUIds.random15();
         // 设置缓存
         String key = Strings.format(KeyConst.SFTP_SESSION_TOKEN, sessionToken);
-        redisTemplate.opsForValue().set(key, userId + "_" + machineId, KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key, userId + "_" + machineId,
+                KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
         return sessionToken;
     }
 

@@ -78,8 +78,8 @@ public class PassportServiceImpl implements PassportService {
         userCache.setNickname(userInfo.getNickname());
         userCache.setRoleType(userInfo.getRoleType());
         userCache.setTimestamp(timestamp);
-        redisTemplate.opsForValue().set(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId),
-                JSON.toJSONString(userCache), KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId), JSON.toJSONString(userCache),
+                KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
         // 返回
         UserLoginVO loginInfo = new UserLoginVO();
         loginInfo.setToken(loginToken);

@@ -141,7 +141,8 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(request.getNickname())
                 .filter(Strings::isNotBlank)
                 .ifPresent(userDTO::setNickname);
-        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO),
+                KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
         return effect;
     }
 
