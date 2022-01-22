@@ -5,7 +5,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;

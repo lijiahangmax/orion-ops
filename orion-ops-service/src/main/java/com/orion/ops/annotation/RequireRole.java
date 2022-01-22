@@ -1,6 +1,6 @@
 package com.orion.ops.annotation;
 
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.user.RoleType;
 
 import java.lang.annotation.*;
 
@@ -19,7 +19,7 @@ public @interface RequireRole {
     /**
      * 所需角色
      * <p>
-     * {@link com.orion.ops.consts.RoleType}
+     * {@link RoleType}
      */
     RoleType[] value();
 

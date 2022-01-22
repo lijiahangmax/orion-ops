@@ -2,13 +2,14 @@ package com.orion.ops.aspect;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.id.UUIds;
-import com.orion.ops.consts.UserHolder;
+import com.orion.ops.consts.user.UserHolder;
 import com.orion.servlet.web.Servlets;
 import com.orion.utils.Exceptions;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Component
 @Aspect
 @Slf4j
+@Order(10)
 public class LogAspect {
 
     /**
@@ -39,10 +41,10 @@ public class LogAspect {
     private ThreadLocal<Date> start = ThreadLocal.withInitial(Date::new);
 
     @Pointcut("execution (* com.orion.ops.controller.*.*(..))")
-    public void controllerLog() {
+    public void logPoint() {
     }
 
-    @Before("controllerLog()")
+    @Before("logPoint()")
     public void beforeLogPrint(JoinPoint point) {
         StringBuilder requestLog = new StringBuilder("\napi请求-开始-seq: ").append(seq.get()).append('\n');
         // 登陆用户
@@ -66,7 +68,7 @@ public class LogAspect {
         log.info(requestLog.toString());
     }
 
-    @AfterReturning(returning = "ret", pointcut = "controllerLog()")
+    @AfterReturning(pointcut = "logPoint()", returning = "ret")
     public void afterReturnLogPrint(Object ret) {
         Date endTime = new Date();
         // 响应日志
@@ -80,8 +82,8 @@ public class LogAspect {
         log.info(responseLog.toString());
     }
 
-    @AfterThrowing(value = "controllerLog()", throwing = "throwable")
-    public void doAfterThrowing(Throwable throwable) {
+    @AfterThrowing(value = "logPoint()", throwing = "throwable")
+    public void afterThrowingLogPrint(Throwable throwable) {
         Date endTime = new Date();
         // 响应日志
         StringBuilder responseLog = new StringBuilder("\napi请求-异常-seq: ").append(seq.get()).append('\n');

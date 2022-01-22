@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.consts.user.RoleType;
 import lombok.Data;
 
 /**
@@ -35,7 +36,7 @@ public class UserLoginVO {
     /**
      * 角色类型
      *
-     * @see com.orion.ops.consts.RoleType
+     * @see RoleType
      */
     private Integer roleType;
 

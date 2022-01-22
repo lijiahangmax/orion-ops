@@ -6,7 +6,7 @@ import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;

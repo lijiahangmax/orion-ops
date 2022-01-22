@@ -4,7 +4,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.service.api.UserService;

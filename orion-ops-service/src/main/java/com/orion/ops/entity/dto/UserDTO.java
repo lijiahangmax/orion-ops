@@ -1,5 +1,6 @@
 package com.orion.ops.entity.dto;
 
+import com.orion.ops.consts.user.RoleType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,7 +35,7 @@ public class UserDTO implements Serializable {
     /**
      * 角色类型
      *
-     * @see com.orion.ops.consts.RoleType
+     * @see RoleType
      */
     private Integer roleType;
 

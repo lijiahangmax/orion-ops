@@ -1,4 +1,4 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.user;
 
 import com.orion.ops.entity.dto.UserDTO;
 

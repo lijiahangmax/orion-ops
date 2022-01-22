@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
@@ -36,7 +37,7 @@ public class UserInfoVO {
     /**
      * 角色类型 10管理员 20开发 30运维
      *
-     * @see com.orion.ops.consts.RoleType
+     * @see RoleType
      */
     private Integer role;
 

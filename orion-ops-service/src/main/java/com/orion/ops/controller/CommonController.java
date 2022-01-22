@@ -3,7 +3,7 @@ package com.orion.ops.controller;
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.OrionOpsServiceApplication;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.RoleType;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.CommonService;
 import com.orion.ops.utils.Currents;
