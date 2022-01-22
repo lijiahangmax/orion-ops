@@ -1,4 +1,4 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.history;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

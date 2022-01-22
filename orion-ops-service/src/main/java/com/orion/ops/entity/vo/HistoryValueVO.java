@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.entity.domain.HistoryValueSnapshotDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
@@ -25,7 +26,7 @@ public class HistoryValueVO {
     /**
      * 操作类型 1新增 2修改 3删除
      *
-     * @see com.orion.ops.consts.HistoryOperator
+     * @see HistoryOperator
      */
     private Integer type;
 

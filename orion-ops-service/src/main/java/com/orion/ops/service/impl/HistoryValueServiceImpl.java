@@ -2,8 +2,8 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.HistoryOperator;
-import com.orion.ops.consts.HistoryValueType;
+import com.orion.ops.consts.history.HistoryOperator;
+import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.HistoryValueSnapshotDAO;

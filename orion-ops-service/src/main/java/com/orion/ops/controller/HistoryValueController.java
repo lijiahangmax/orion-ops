@@ -3,7 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.HistoryValueType;
+import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.entity.request.HistoryValueRequest;
 import com.orion.ops.entity.vo.HistoryValueVO;
 import com.orion.ops.service.api.HistoryValueService;

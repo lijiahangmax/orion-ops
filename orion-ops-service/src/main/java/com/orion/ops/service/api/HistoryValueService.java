@@ -1,8 +1,8 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.HistoryOperator;
-import com.orion.ops.consts.HistoryValueType;
+import com.orion.ops.consts.history.HistoryOperator;
+import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.entity.request.HistoryValueRequest;
 import com.orion.ops.entity.vo.HistoryValueVO;
 
