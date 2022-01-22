@@ -8,6 +8,7 @@ import com.orion.servlet.web.CookiesExt;
 import com.orion.utils.Strings;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * 环境工具类
@@ -48,6 +49,8 @@ public class Currents {
 
     /**
      * 获取当前登录用户
+     * <p>
+     * 可以匿名登陆的接口并且用户未登录获取的是null
      *
      * @return 用户
      */
@@ -61,7 +64,9 @@ public class Currents {
      * @return id
      */
     public static Long getUserId() {
-        return UserHolder.get().getId();
+        return Optional.ofNullable(UserHolder.get())
+                .map(UserDTO::getId)
+                .orElse(null);
     }
 
     /**
@@ -70,7 +75,9 @@ public class Currents {
      * @return username
      */
     public static String getUserName() {
-        return UserHolder.get().getUsername();
+        return Optional.ofNullable(UserHolder.get())
+                .map(UserDTO::getUsername)
+                .orElse(null);
     }
 
     /**

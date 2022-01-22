@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 2021/4/20 21:31
  */
 @Component
-@Order(20)
 public class RoleInterceptor implements HandlerInterceptor {
 
     @Override

@@ -106,7 +106,7 @@ public class KeyConst {
     /**
      * 5 h
      */
-    public static final int SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE = 60 * 60 * 5;
+    public static final int SFTP_UPLOAD_ACCESS_EXPIRE = 60 * 60 * 5;
 
     /**
      * 统计数量 key
@@ -118,7 +118,7 @@ public class KeyConst {
     /**
      * 5 min
      */
-    public static final int STATISTICS_COUNT_KEY_EXPIRE = 60 * 5;
+    public static final int STATISTICS_COUNT_EXPIRE = 60 * 5;
 
     /**
      * 环境缓存 key
@@ -130,6 +130,6 @@ public class KeyConst {
     /**
      * 30 min
      */
-    public static final int DATA_PROFILE_KEY_EXPIRE = 60 * 30;
+    public static final int DATA_PROFILE_EXPIRE = 60 * 30;
 
 }

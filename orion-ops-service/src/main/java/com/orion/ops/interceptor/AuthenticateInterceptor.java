@@ -28,7 +28,6 @@ import java.io.IOException;
  * @since 2021/4/1 17:20
  */
 @Component
-@Order(10)
 public class AuthenticateInterceptor implements HandlerInterceptor {
 
     @Resource
