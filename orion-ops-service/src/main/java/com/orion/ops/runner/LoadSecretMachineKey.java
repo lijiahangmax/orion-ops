@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @since 2021/4/5 14:09
  */
 @Component
-@Order(120)
+@Order(130)
 @Slf4j
 public class LoadSecretMachineKey implements CommandLineRunner {
 

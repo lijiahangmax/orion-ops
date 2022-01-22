@@ -24,7 +24,7 @@ import java.util.List;
  * @since 2021/11/29 20:16
  */
 @Component
-@Order(170)
+@Order(160)
 @Slf4j
 public class CleanVcsStatusRunner implements CommandLineRunner {
 
