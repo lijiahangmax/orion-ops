@@ -1,6 +1,6 @@
 package com.orion.ops.consts.command;
 
-import com.orion.ops.consts.EnvConst;
+import com.orion.ops.consts.env.EnvConst;
 
 /**
  * 命令常量

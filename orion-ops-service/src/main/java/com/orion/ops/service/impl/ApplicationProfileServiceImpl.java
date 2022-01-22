@@ -136,7 +136,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
             Map<String, String> cacheData = profiles.stream()
                     .collect(Collectors.toMap(s -> s.getId().toString(), JSON::toJSONString));
             redisTemplate.opsForHash().putAll(KeyConst.DATA_PROFILE_KEY, cacheData);
-            redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_KEY_EXPIRE, TimeUnit.SECONDS);
+            redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_EXPIRE, TimeUnit.SECONDS);
             // 返回
             profiles.stream().map(p -> Converts.to(p, ApplicationProfileFastVO.class))
                     .forEach(list::add);
@@ -180,7 +180,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     private void setProfileToCache(ApplicationProfileDO profile) {
         ApplicationProfileDTO profileDTO = Converts.to(profile, ApplicationProfileDTO.class);
         redisTemplate.opsForHash().put(KeyConst.DATA_PROFILE_KEY, profile.getId().toString(), JSON.toJSONString(profileDTO));
-        redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_KEY_EXPIRE, TimeUnit.SECONDS);
+        redisTemplate.expire(KeyConst.DATA_PROFILE_KEY, KeyConst.DATA_PROFILE_EXPIRE, TimeUnit.SECONDS);
     }
 
 }

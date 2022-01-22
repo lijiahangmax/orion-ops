@@ -1,4 +1,4 @@
-package com.orion.ops.consts;
+package com.orion.ops.consts.env;
 
 /**
  * 环境变量常量
