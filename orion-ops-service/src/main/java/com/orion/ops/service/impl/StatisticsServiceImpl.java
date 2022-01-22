@@ -73,7 +73,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             count.setAppCount(appCount);
             count.setLogCount(logCount);
             redisTemplate.opsForValue().set(KeyConst.STATISTICS_COUNT_KEY, JSON.toJSONString(count),
-                    KeyConst.STATISTICS_COUNT_KEY_EXPIRE, TimeUnit.SECONDS);
+                    KeyConst.STATISTICS_COUNT_EXPIRE, TimeUnit.SECONDS);
         } else {
             count = JSON.parseObject(countCache, StatisticCountDTO.class);
         }

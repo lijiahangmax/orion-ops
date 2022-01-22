@@ -224,7 +224,7 @@ public class SftpServiceImpl implements SftpService {
         String accessToken = UUIds.random32();
         String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
         redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1],
-                KeyConst.SFTP_UPLOAD_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+                KeyConst.SFTP_UPLOAD_ACCESS_EXPIRE, TimeUnit.SECONDS);
         return accessToken;
     }
 
