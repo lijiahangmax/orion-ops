@@ -9,6 +9,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
+import com.orion.ops.interceptor.UserActiveInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -45,13 +46,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private RoleInterceptor roleInterceptor;
 
+    @Resource
+    private UserActiveInterceptor userActiveInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 认证拦截器
         registry.addInterceptor(authenticateInterceptor)
-                .addPathPatterns("/orion/api/**");
+                .addPathPatterns("/orion/api/**")
+                .order(10);
         registry.addInterceptor(roleInterceptor)
-                .addPathPatterns("/orion/api/**");
+                .addPathPatterns("/orion/api/**")
+                .order(20);
+        registry.addInterceptor(userActiveInterceptor)
+                .addPathPatterns("/orion/api/**")
+                .excludePathPatterns("/orion/api/auth/**")
+                .order(30);
     }
 
     @Override
