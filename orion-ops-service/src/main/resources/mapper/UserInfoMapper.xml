@@ -25,4 +25,11 @@
         id, username, nickname, password, salt, role_type, user_status, avatar_pic, contact_phone, contact_email, last_login_time, deleted, create_time, update_time
     </sql>
 
+    <update id="updateLastLoginTime">
+        UPDATE user_info
+        SET last_login_time = now(),
+        update_time = now()
+        WHERE id = #{userId}
+    </update>
+
 </mapper>

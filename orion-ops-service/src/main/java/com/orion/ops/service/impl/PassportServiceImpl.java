@@ -13,6 +13,7 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
+import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.AvatarPicHolder;
 import com.orion.ops.utils.Currents;
@@ -42,6 +43,9 @@ public class PassportServiceImpl implements PassportService {
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
+
+    @Resource
+    private UserActiveInterceptor userActiveInterceptor;
 
     @Override
     public UserLoginVO login(UserLoginRequest request) {
@@ -87,16 +91,21 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setUsername(userInfo.getUsername());
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
+        // 设置活跃时间
+        userActiveInterceptor.setActiveTime(userId, timestamp);
         return loginInfo;
     }
 
     @Override
     public void logout() {
-        UserDTO user = Currents.getUser();
-        if (user == null) {
+        Long userId = Currents.getUserId();
+        if (userId == null) {
             return;
         }
-        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, user.getId()));
+        // 删除token
+        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY));
+        // 删除活跃时间
+        userActiveInterceptor.deleteActiveTime(userId);
     }
 
     @Override
@@ -128,6 +137,8 @@ public class PassportServiceImpl implements PassportService {
         userInfoDAO.updateById(updateUser);
         // 删除token
         redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
+        // 删除活跃时间
+        userActiveInterceptor.deleteActiveTime(userId);
         return updateCurrent;
     }
 

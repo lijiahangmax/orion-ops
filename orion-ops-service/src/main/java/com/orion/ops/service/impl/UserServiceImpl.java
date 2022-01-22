@@ -13,6 +13,7 @@ import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
+import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.*;
 import com.orion.utils.Exceptions;
@@ -46,6 +47,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
+
+    @Resource
+    private UserActiveInterceptor userActiveInterceptor;
 
     @Override
     public DataGrid<UserInfoVO> userList(UserInfoRequest request) {
@@ -158,7 +162,10 @@ public class UserServiceImpl implements UserService {
         int effect = 0;
         for (Long id : request.getIdList()) {
             effect += userInfoDAO.deleteById(id);
+            // 删除token
             redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+            // 删除活跃时间
+            userActiveInterceptor.deleteActiveTime(id);
         }
         return effect;
     }
@@ -181,7 +188,10 @@ public class UserServiceImpl implements UserService {
             update.setUpdateTime(new Date());
             effect += userInfoDAO.updateById(update);
             if (disable) {
+                // 删除token
                 redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+                // 删除活跃时间
+                userActiveInterceptor.deleteActiveTime(id);
             }
         }
         return effect;
