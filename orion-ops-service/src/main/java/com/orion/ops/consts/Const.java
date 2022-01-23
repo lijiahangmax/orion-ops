@@ -112,6 +112,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final String NO_SUCH_FILE = "no such file";
 
+    public static final String ENABLE_LABEL = "启用";
+
+    public static final String DISABLE_LABEL = "停用";
+
     /**
      * 不安全的文件夹
      */

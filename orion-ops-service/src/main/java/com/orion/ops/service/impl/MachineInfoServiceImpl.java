@@ -6,9 +6,11 @@ import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.machine.MachineProperties;
 import com.orion.ops.consts.machine.ProxyType;
@@ -79,32 +81,43 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long addUpdateMachine(MachineInfoRequest request) {
-        Long id = request.getId();
+    public Long addMachine(MachineInfoRequest request) {
         // 检查proxyId
         this.checkProxy(request.getProxyId());
         MachineInfoDO entity = new MachineInfoDO();
         String password = request.getPassword();
         this.copyProperties(request, entity);
-        if (id == null) {
-            // 添加机器
-            entity.setMachineStatus(Const.ENABLE);
-            machineInfoDAO.insert(entity);
-            if (password != null) {
-                entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
-                machineInfoDAO.updateById(entity);
-            }
-            id = entity.getId();
-            // 添加环境变量
-            machineEnvService.initEnv(id);
-            return id;
-        } else {
-            if (password != null) {
-                entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
-            }
-            // 修改
-            return (long) machineInfoDAO.updateById(entity);
+        // 添加机器
+        entity.setMachineStatus(Const.ENABLE);
+        machineInfoDAO.insert(entity);
+        if (password != null) {
+            entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
+            machineInfoDAO.updateById(entity);
         }
+        Long id = entity.getId();
+        // 初始化环境变量
+        machineEnvService.initEnv(id);
+        // 设置日志参数
+        EventParamsHolder.addParams(entity);
+        return id;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateMachine(MachineInfoRequest request) {
+        // 检查proxyId
+        this.checkProxy(request.getProxyId());
+        MachineInfoDO entity = new MachineInfoDO();
+        String password = request.getPassword();
+        this.copyProperties(request, entity);
+        if (password != null) {
+            entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
+        }
+        // 修改
+        int effect = machineInfoDAO.updateById(entity);
+        // 设置日志参数
+        EventParamsHolder.addParams(entity);
+        return effect;
     }
 
     @Override
@@ -121,6 +134,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             // 删除应用机器
             effect += applicationMachineService.deleteAppMachineByMachineId(id);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 
@@ -135,6 +151,10 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             entity.setUpdateTime(new Date());
             effect += machineInfoDAO.updateById(entity);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, effect);
+        EventParamsHolder.addParam(EventKeys.OPTION, Const.ENABLE.equals(status) ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
         return effect;
     }
 
@@ -178,10 +198,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Long copyMachine(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        String sourceMachineName = machine.getMachineName();
+        String targetMachineName = sourceMachineName + Utils.getCopySuffix();
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
-        machine.setMachineName(machine.getMachineName() + Utils.getCopySuffix());
+        machine.setMachineName(targetMachineName);
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量
@@ -197,6 +219,10 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             // 插入历史值
             historyValueService.addHistory(e.getId(), HistoryValueType.MACHINE_ENV, HistoryOperator.ADD, null, e.getAttrValue());
         });
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.SOURCE, sourceMachineName);
+        EventParamsHolder.addParam(EventKeys.TARGET, targetMachineName);
         return insertId;
     }
 

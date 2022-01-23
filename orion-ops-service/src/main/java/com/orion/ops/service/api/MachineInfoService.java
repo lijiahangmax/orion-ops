@@ -18,12 +18,20 @@ import java.util.List;
 public interface MachineInfoService {
 
     /**
-     * 添加或修改机器
+     * 添加机器
      *
      * @param request request
-     * @return id/effect
+     * @return id
      */
-    Long addUpdateMachine(MachineInfoRequest request);
+    Long addMachine(MachineInfoRequest request);
+
+    /**
+     * 修改机器
+     *
+     * @param request request
+     * @return effect
+     */
+    Integer updateMachine(MachineInfoRequest request);
 
     /**
      * 删除机器

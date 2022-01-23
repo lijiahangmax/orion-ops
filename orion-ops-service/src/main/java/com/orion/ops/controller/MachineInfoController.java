@@ -1,8 +1,10 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
@@ -34,32 +36,35 @@ public class MachineInfoController {
      * 添加
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_MACHINE)
     public Long add(@RequestBody MachineInfoRequest request) {
-        request.setId(null);
         this.check(request);
         MachineAuthType machineAuthTypeEnum = Valid.notNull(MachineAuthType.of(request.getAuthType()));
         if (MachineAuthType.PASSWORD.equals(machineAuthTypeEnum)) {
             Valid.notBlank(request.getPassword());
         }
-        return machineInfoService.addUpdateMachine(request);
+        return machineInfoService.addMachine(request);
     }
 
     /**
      * 修改
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_MACHINE)
     public int update(@RequestBody MachineInfoRequest request) {
         Valid.notNull(request.getId());
         this.check(request);
-        return machineInfoService.addUpdateMachine(request).intValue();
+        return machineInfoService.updateMachine(request);
     }
 
     /**
      * 删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_MACHINE)
     public Integer delete(@RequestBody MachineInfoRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
+        // 设置日志参数
         return machineInfoService.deleteMachine(idList);
     }
 
@@ -67,6 +72,7 @@ public class MachineInfoController {
      * 停用/启用
      */
     @RequestMapping("/status")
+    @EventLog(EventType.CHANGE_MACHINE_STATUS)
     public Integer status(@RequestBody MachineInfoRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         Integer status = Valid.notNull(request.getStatus());
@@ -95,6 +101,7 @@ public class MachineInfoController {
      * 复制
      */
     @RequestMapping("/copy")
+    @EventLog(EventType.COPY_MACHINE)
     public Long copy(@RequestBody MachineInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineInfoService.copyMachine(id);
