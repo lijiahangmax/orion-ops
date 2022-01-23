@@ -3,10 +3,12 @@ package com.orion.ops.controller;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.env.EnvViewType;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.env.EnvViewType;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
 import com.orion.ops.service.api.MachineEnvService;
@@ -61,6 +63,7 @@ public class MachineEnvController {
      * 删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_MACHINE_ENV)
     public Integer delete(@RequestBody MachineEnvRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineEnvService.deleteEnv(idList);
@@ -109,11 +112,12 @@ public class MachineEnvController {
      * 同步
      */
     @RequestMapping("/sync")
+    @EventLog(EventType.SYNC_MACHINE_ENV)
     public HttpWrapper<?> sync(@RequestBody MachineEnvRequest request) {
-        Long id = Valid.notNull(request.getId());
-        Long machineId = Valid.notNull(request.getMachineId());
-        List<Long> targetMachineIdList = Valid.notEmpty(request.getTargetMachineIdList());
-        machineEnvService.syncMachineEnv(id, machineId, targetMachineIdList);
+        Valid.notNull(request.getId());
+        Valid.notNull(request.getMachineId());
+        Valid.notEmpty(request.getTargetMachineIdList());
+        machineEnvService.syncMachineEnv(request);
         return HttpWrapper.ok();
     }
 

@@ -87,11 +87,9 @@ public interface MachineEnvService {
     /**
      * 同步机器属性
      *
-     * @param id                  id
-     * @param machineId           machineId
-     * @param targetMachineIdList targetMachineIdList
+     * @param request request
      */
-    void syncMachineEnv(Long id, Long machineId, List<Long> targetMachineIdList);
+    void syncMachineEnv(MachineEnvRequest request);
 
     /**
      * 获取机器变量

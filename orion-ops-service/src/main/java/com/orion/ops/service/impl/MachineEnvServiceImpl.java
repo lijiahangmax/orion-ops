@@ -3,8 +3,11 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.*;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
@@ -151,6 +154,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             // 插入历史值
             historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.DELETE, env.getAttrValue(), null);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, effect);
         return effect;
     }
 
@@ -229,7 +235,11 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncMachineEnv(Long id, Long machineId, List<Long> targetMachineIdList) {
+    public void syncMachineEnv(MachineEnvRequest request) {
+        Long id = request.getId();
+        Long machineId = request.getMachineId();
+        List<Long> targetMachineIdList = request.getTargetMachineIdList();
+        // 获取self
         MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
         List<MachineEnvDO> envList;
         if (Const.N_N_L_1.equals(id)) {
@@ -247,14 +257,18 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         // 同步
         for (Long targetMachineId : targetMachineIdList) {
             for (MachineEnvDO syncEnv : envList) {
-                MachineEnvRequest request = new MachineEnvRequest();
-                request.setMachineId(targetMachineId);
-                request.setKey(syncEnv.getAttrKey());
-                request.setValue(syncEnv.getAttrValue());
-                request.setDescription(syncEnv.getDescription());
-                self.addEnv(request);
+                MachineEnvRequest addRequest = new MachineEnvRequest();
+                addRequest.setMachineId(targetMachineId);
+                addRequest.setKey(syncEnv.getAttrKey());
+                addRequest.setValue(syncEnv.getAttrValue());
+                addRequest.setDescription(syncEnv.getDescription());
+                self.addEnv(addRequest);
             }
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.ENV_COUNT, envList.size());
+        EventParamsHolder.addParam(EventKeys.MACHINE_COUNT, targetMachineIdList.size());
     }
 
     @Override
