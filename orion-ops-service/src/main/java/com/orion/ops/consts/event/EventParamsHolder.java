@@ -2,6 +2,7 @@ package com.orion.ops.consts.event;
 
 import com.orion.lang.collect.MutableMap;
 import com.orion.utils.collect.Maps;
+import com.orion.utils.reflect.BeanMap;
 
 /**
  * 操作日志参数信息
@@ -37,6 +38,18 @@ public class EventParamsHolder {
      */
     public static void addParam(String key, Object value) {
         PARAMS.get().put(key, value);
+    }
+
+    /**
+     * 设置参数
+     *
+     * @param value value
+     */
+    public static void addParams(Object value) {
+        if (value == null) {
+            return;
+        }
+        PARAMS.get().putAll(BeanMap.create(value));
     }
 
     /**

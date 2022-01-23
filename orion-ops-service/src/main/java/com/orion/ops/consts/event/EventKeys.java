@@ -33,8 +33,83 @@ public class EventKeys {
     public static final String INNER_TEMPLATE = "_TEMPLATE_";
 
     /**
-     * 目标用户名
+     * id
      */
-    public static final String TARGET_USERNAME = "target_username";
+    public static final String ID = "id";
+
+    /**
+     * id list
+     */
+    public static final String ID_LIST = "idList";
+
+    /**
+     * machine id
+     */
+    public static final String MACHINE_ID = "machineId";
+
+    /**
+     * type
+     */
+    public static final String TYPE = "type";
+
+    /**
+     * token
+     */
+    public static final String TOKEN = "token";
+
+    /**
+     * 名称
+     */
+    public static final String NAME = "name";
+
+    /**
+     * 主机
+     */
+    public static final String HOST = "host";
+
+    /**
+     * 用户名
+     */
+    public static final String USERNAME = "username";
+
+    /**
+     * 源
+     */
+    public static final String SOURCE = "source";
+
+    /**
+     * 目标
+     */
+    public static final String TARGET = "target";
+
+    /**
+     * 数量
+     */
+    public static final String COUNT = "count";
+
+    /**
+     * 环境数量
+     */
+    public static final String ENV_COUNT = "envCount";
+
+    /**
+     * 机器数量
+     */
+    public static final String MACHINE_COUNT = "machineCount";
+
+    /**
+     * 路径
+     */
+    public static final String PATH = "path";
+
+    /**
+     * 路径
+     */
+    public static final String PATHS = "paths";
+
+    /**
+     * 操作
+     */
+    public static final String OPTION = "option";
 
 }

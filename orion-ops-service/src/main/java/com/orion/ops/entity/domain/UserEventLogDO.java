@@ -44,6 +44,12 @@ public class UserEventLogDO implements Serializable {
     private String username;
 
     /**
+     * 事件分类
+     */
+    @TableField("event_classify")
+    private Integer eventClassify;
+
+    /**
      * 事件类型
      */
     @TableField("event_type")
