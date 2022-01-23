@@ -3,10 +3,13 @@ package com.orion.ops.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -29,7 +32,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 认证
+ * 认证服务
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -48,6 +51,7 @@ public class PassportServiceImpl implements PassportService {
     private UserActiveInterceptor userActiveInterceptor;
 
     @Override
+    @EventLog(EventType.LOGIN)
     public UserLoginVO login(UserLoginRequest request) {
         // 查询用户
         LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
@@ -61,6 +65,7 @@ public class PassportServiceImpl implements PassportService {
         Valid.isTrue(validPassword, MessageConst.USERNAME_PASSWORD_ERROR);
         Valid.isTrue(Const.ENABLE.equals(userInfo.getUserStatus()), MessageConst.USER_DISABLED);
         Long userId = userInfo.getId();
+        String username = userInfo.getUsername();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
         // 检查头像
@@ -78,7 +83,7 @@ public class PassportServiceImpl implements PassportService {
         String loginToken = ValueMix.createLoginToken(userId, timestamp);
         UserDTO userCache = new UserDTO();
         userCache.setId(userId);
-        userCache.setUsername(userInfo.getUsername());
+        userCache.setUsername(username);
         userCache.setNickname(userInfo.getNickname());
         userCache.setRoleType(userInfo.getRoleType());
         userCache.setTimestamp(timestamp);
@@ -88,27 +93,32 @@ public class PassportServiceImpl implements PassportService {
         UserLoginVO loginInfo = new UserLoginVO();
         loginInfo.setToken(loginToken);
         loginInfo.setUserId(userId);
-        loginInfo.setUsername(userInfo.getUsername());
+        loginInfo.setUsername(username);
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
         // 设置活跃时间
         userActiveInterceptor.setActiveTime(userId, timestamp);
+        // 设置操作日志参数
+        EventType.LOGIN.addParam(EventKeys.INNER_USER_ID, userId);
+        EventType.LOGIN.addParam(EventKeys.INNER_USER_NAME, username);
         return loginInfo;
     }
 
     @Override
+    @EventLog(EventType.LOGOUT)
     public void logout() {
         Long userId = Currents.getUserId();
         if (userId == null) {
             return;
         }
         // 删除token
-        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY));
+        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
         // 删除活跃时间
         userActiveInterceptor.deleteActiveTime(userId);
     }
 
     @Override
+    @EventLog(EventType.RESET_PASSWORD)
     public Boolean resetPassword(UserResetRequest request) {
         UserDTO current = Currents.getUser();
         Long updateUserId = request.getUserId();
@@ -126,6 +136,12 @@ public class PassportServiceImpl implements PassportService {
             String beforePassword = Valid.notBlank(request.getBeforePassword(), MessageConst.BEFORE_PASSWORD_EMPTY);
             String validBeforePassword = ValueMix.encPassword(beforePassword, userInfo.getSalt());
             Valid.isTrue(validBeforePassword.equals(userInfo.getPassword()), MessageConst.BEFORE_PASSWORD_ERROR);
+        }
+        if (updateCurrent) {
+            // 修改自己密码不记录
+            EventType.RESET_PASSWORD.addParam(EventKeys.INNER_SAVE, false);
+        } else {
+            EventType.RESET_PASSWORD.addParam(EventKeys.TARGET_USERNAME, userInfo.getUsername());
         }
         // 修改密码
         String newPassword = ValueMix.encPassword(request.getPassword(), userInfo.getSalt());
