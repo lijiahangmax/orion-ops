@@ -2,6 +2,7 @@ package com.orion.ops.aspect;
 
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.UserEventLogDAO;
 import com.orion.ops.entity.domain.UserEventLogDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -38,8 +39,8 @@ public class UserEventLogAspect {
         // 有可能是登陆接口有可能为空 则用内部常量策略
         UserDTO user = Currents.getUser();
         if (user != null) {
-            e.value().addParam(EventKeys.INNER_USER_ID, user.getId());
-            e.value().addParam(EventKeys.INNER_USER_NAME, user.getUsername());
+            EventParamsHolder.addParam(EventKeys.INNER_USER_ID, user.getId());
+            EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, user.getUsername());
         }
     }
 
@@ -54,7 +55,7 @@ public class UserEventLogAspect {
 
     @AfterThrowing(pointcut = "eventLogPoint(e)", argNames = "e")
     public void afterLogRecordThrowing(EventLog e) {
-        e.value().remove();
+        EventParamsHolder.remove();
     }
 
 }

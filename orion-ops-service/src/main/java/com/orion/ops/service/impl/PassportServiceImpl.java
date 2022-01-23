@@ -9,6 +9,7 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
@@ -99,8 +100,8 @@ public class PassportServiceImpl implements PassportService {
         // 设置活跃时间
         userActiveInterceptor.setActiveTime(userId, timestamp);
         // 设置操作日志参数
-        EventType.LOGIN.addParam(EventKeys.INNER_USER_ID, userId);
-        EventType.LOGIN.addParam(EventKeys.INNER_USER_NAME, username);
+        EventParamsHolder.addParam(EventKeys.INNER_USER_ID, userId);
+        EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
         return loginInfo;
     }
 
@@ -139,9 +140,9 @@ public class PassportServiceImpl implements PassportService {
         }
         if (updateCurrent) {
             // 修改自己密码不记录
-            EventType.RESET_PASSWORD.addParam(EventKeys.INNER_SAVE, false);
+            EventParamsHolder.setSave(false);
         } else {
-            EventType.RESET_PASSWORD.addParam(EventKeys.TARGET_USERNAME, userInfo.getUsername());
+            EventParamsHolder.addParam(EventKeys.TARGET_USERNAME, userInfo.getUsername());
         }
         // 修改密码
         String newPassword = ValueMix.encPassword(request.getPassword(), userInfo.getSalt());

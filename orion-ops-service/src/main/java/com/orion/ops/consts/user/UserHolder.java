@@ -3,6 +3,8 @@ package com.orion.ops.consts.user;
 import com.orion.ops.entity.dto.UserDTO;
 
 /**
+ * 用户信息
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/2 9:44

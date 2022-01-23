@@ -5,7 +5,6 @@ import com.orion.lang.collect.MutableMap;
 import com.orion.ops.entity.domain.UserEventLogDO;
 import com.orion.ops.utils.EventLogUtils;
 import com.orion.utils.Strings;
-import com.orion.utils.collect.Maps;
 import lombok.Getter;
 
 import java.util.Date;
@@ -33,14 +32,13 @@ public enum EventType {
     /**
      * 登出
      */
-    RESET_PASSWORD(30, "重置 ${target_username} 密码"),
+    RESET_PASSWORD(30, "重置用户 ${target_username} 密码"),
 
     ;
 
     EventType(Integer type, String template) {
         this.type = type;
         this.template = template;
-        this.params = ThreadLocal.withInitial(Maps::newMutableLinkedMap);
     }
 
     /**
@@ -54,35 +52,13 @@ public enum EventType {
     private final String template;
 
     /**
-     * 参数
-     */
-    private final ThreadLocal<MutableMap<String, Object>> params;
-
-    /**
-     * 设置参数
-     *
-     * @param key   key
-     * @param value value
-     */
-    public void addParam(String key, Object value) {
-        params.get().put(key, value);
-    }
-
-    /**
-     * 清空当前参数
-     */
-    public void remove() {
-        params.remove();
-    }
-
-    /**
      * 获取操作日志对象
      *
      * @return event
      */
     public UserEventLogDO getEventLog() {
-        MutableMap<String, Object> map = params.get();
-        params.remove();
+        MutableMap<String, Object> map = EventParamsHolder.get();
+        EventParamsHolder.remove();
         // 判断是否保存
         if (!map.getBooleanValue(EventKeys.INNER_SAVE, true)) {
             return null;
