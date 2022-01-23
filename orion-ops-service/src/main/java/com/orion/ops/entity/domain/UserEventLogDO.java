@@ -56,6 +56,12 @@ public class UserEventLogDO implements Serializable {
     private String logInfo;
 
     /**
+     * 日志参数
+     */
+    @TableField("params_json")
+    private String paramsJson;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")
