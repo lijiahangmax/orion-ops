@@ -2,8 +2,10 @@ package com.orion.ops.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
@@ -38,6 +40,7 @@ public class MachineKeyController {
      * 添加秘钥
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_MACHINE_KEY)
     public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getPassword());
@@ -54,6 +57,7 @@ public class MachineKeyController {
      * 更新秘钥
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_MACHINE_KEY)
     public Integer updateKey(@RequestBody MachineKeyRequest request) {
         Valid.notNull(request.getId());
         try {
@@ -68,6 +72,7 @@ public class MachineKeyController {
      * 删除秘钥
      */
     @RequestMapping("/remove")
+    @EventLog(EventType.DELETE_MACHINE_KEY)
     public Integer removeKey(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
@@ -99,6 +104,7 @@ public class MachineKeyController {
      * 挂载秘钥
      */
     @RequestMapping("/mount")
+    @EventLog(EventType.MOUNT_MACHINE_KEY)
     public Map<String, Integer> mountKeys(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
@@ -113,6 +119,7 @@ public class MachineKeyController {
      * 卸载秘钥
      */
     @RequestMapping("/dump")
+    @EventLog(EventType.DUMP_MACHINE_KEY)
     public Map<String, Integer> dumpKeys(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         try {
@@ -127,6 +134,7 @@ public class MachineKeyController {
      * 挂载所有秘钥
      */
     @RequestMapping("/mount-all")
+    @EventLog(EventType.MOUNT_ALL_MACHINE_KEY)
     public void mountAllKey() {
         try {
             machineKeyService.mountAllKey();
@@ -140,6 +148,7 @@ public class MachineKeyController {
      * 卸载所有秘钥
      */
     @RequestMapping("/dump-all")
+    @EventLog(EventType.DUMP_ALL_MACHINE_KEY)
     public void dumpAllKey() {
         try {
             machineKeyService.dumpAllKey();
@@ -153,6 +162,7 @@ public class MachineKeyController {
      * 临时挂载秘钥
      */
     @RequestMapping("/temp-mount")
+    @EventLog(EventType.TEMP_MOUNT_MACHINE_KEY)
     public Integer tempMount(@RequestBody MachineKeyRequest request) {
         String file = Valid.notBlank(request.getFile());
         String password = Valid.notBlank(request.getPassword());

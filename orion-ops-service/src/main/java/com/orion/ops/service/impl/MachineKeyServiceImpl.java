@@ -6,6 +6,8 @@ import com.orion.lang.collect.LimitList;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MountKeyStatus;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
@@ -30,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,45 +66,53 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         // 加载key
         SessionHolder.addIdentity(path, request.getPassword());
         machineSecretKeyDAO.insert(key);
+        // 设置日志参数
+        EventParamsHolder.addParams(key);
         return key.getId();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateSecretKey(MachineKeyRequest request) {
-        MachineSecretKeyDO updateKey = new MachineSecretKeyDO();
+        // 查询key
         Long id = request.getId();
+        MachineSecretKeyDO beforeKey = machineSecretKeyDAO.selectById(id);
+        // 设置修改信息
+        MachineSecretKeyDO updateKey = new MachineSecretKeyDO();
         updateKey.setId(id);
         updateKey.setKeyName(request.getName());
         updateKey.setDescription(request.getDescription());
         updateKey.setUpdateTime(new Date());
         String password = request.getPassword();
         String fileBase64 = request.getFile();
-        if (Strings.isBlank(fileBase64) && Strings.isBlank(password)) {
-            return machineSecretKeyDAO.updateById(updateKey);
-        }
-        // 移除原先的key
-        MachineSecretKeyDO beforeKey = machineSecretKeyDAO.selectById(id);
-        String beforeKeyPath = MachineKeyService.getKeyPath(beforeKey.getSecretKeyPath());
-        SessionHolder.removeIdentity(beforeKeyPath);
-
-        if (!Strings.isBlank(fileBase64)) {
+        final boolean updateKeyFile = !Strings.isBlank(fileBase64) || !Strings.isBlank(password);
+        if (updateKeyFile) {
+            // 移除原先的key
+            String keyPath = MachineKeyService.getKeyPath(beforeKey.getSecretKeyPath());
+            SessionHolder.removeIdentity(keyPath);
             // 修改秘钥文件 将新秘钥保存到本地
-            Files1.delete(beforeKeyPath);
-            String afterKeyFile = PathBuilders.getSecretKeyPath();
-            String afterKeyPath = MachineKeyService.getKeyPath(afterKeyFile);
-            Files1.touch(afterKeyPath);
-            byte[] keyFileData = Base64s.decode(Strings.bytes(fileBase64));
-            FileWriters.writeFast(afterKeyPath, keyFileData);
-            updateKey.setSecretKeyPath(afterKeyFile);
-            updateKey.setPassword(ValueMix.encrypt(password));
-            SessionHolder.addIdentity(afterKeyPath, password);
-        } else {
+            if (!Strings.isBlank(fileBase64)) {
+                Files1.delete(keyPath);
+                String afterKeyFile = PathBuilders.getSecretKeyPath();
+                keyPath = MachineKeyService.getKeyPath(afterKeyFile);
+                Files1.touch(keyPath);
+                byte[] keyFileData = Base64s.decode(Strings.bytes(fileBase64));
+                FileWriters.writeFast(keyPath, keyFileData);
+                updateKey.setSecretKeyPath(afterKeyFile);
+            }
             // 修改密码
-            updateKey.setPassword(ValueMix.encrypt(password));
-            SessionHolder.addIdentity(beforeKeyPath, password);
+            if (!Strings.isBlank(password)) {
+                updateKey.setPassword(ValueMix.encrypt(password));
+                SessionHolder.addIdentity(keyPath, password);
+            }
         }
-        return machineSecretKeyDAO.updateById(updateKey);
+
+        // 更新
+        int effect = machineSecretKeyDAO.updateById(updateKey);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.NAME, beforeKey.getKeyName());
+        EventParamsHolder.addParams(updateKey);
+        return effect;
     }
 
     @Override
@@ -122,6 +131,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             Files1.delete(secretKeyPath);
             effect += machineSecretKeyDAO.deleteById(id);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 
@@ -203,6 +215,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             Integer status = this.mountOrDump(key, mount);
             map.put(id + Strings.EMPTY, status);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return map;
     }
 
@@ -244,6 +259,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         FileWriters.writeFast(path, keyFileData);
         // 加载key
         SessionHolder.addIdentity(path, password);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.PATH, path);
         // 检查状态
         return this.getMountStatus(path);
     }
