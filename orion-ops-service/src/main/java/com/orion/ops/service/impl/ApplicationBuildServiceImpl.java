@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.*;
+import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -123,7 +123,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             // 查询机器环境变量
             env.putAll(machineEnvService.getFullMachineEnv(Const.HOST_MACHINE_ID));
             // 添加构建环境变量
-            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId()));
+            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId(), request));
         }
         // 设置action
         for (ApplicationActionDO action : actions) {
@@ -346,13 +346,17 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
      * @param buildId  buildId
      * @param buildSeq buildSeq
      * @param vcsId    vcsId
+     * @param request  request
      * @return env
      */
-    private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq, Long vcsId) {
+    private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq,
+                                                             Long vcsId, ApplicationBuildRequest request) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.BUILD_ID, buildId + Strings.EMPTY);
         env.put(EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
+        env.put(EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
+        env.put(EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
         if (vcsId != null) {
             env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
         }

@@ -60,15 +60,17 @@ public class EnvConst {
 
     public static final String VCS_HOME = "vcs_home";
 
+    public static final String BRANCH = "branch";
+
+    public static final String COMMIT = "commit";
+
     // -------------------- release --------------------
 
     public static final String RELEASE_ID = "release_id";
 
     public static final String RELEASE_TITLE = "release_title";
 
-    public static final String DIST_PATH = "dist_path";
-
-    public static final String TARGET_DIST_PATH = "target_dist_path";
+    public static final String TRANSFER_PATH = "transfer_path";
 
     // -------------------- tail --------------------
 

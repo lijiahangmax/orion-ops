@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.*;
+import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
@@ -182,8 +184,11 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         this.checkReleaseMachine(request);
         // 查询机器
         Map<Long, MachineInfoDO> machines = this.getReleaseMachineInfo(request);
+        // 查询构建信息
+        ApplicationBuildDO build = applicationBuildDAO.selectById(request.getBuildId());
+        Valid.notNull(build, MessageConst.BUILD_ABSENT);
         // 设置主表信息
-        ApplicationReleaseDO release = this.setReleaseInfo(request, app, profile, actions);
+        ApplicationReleaseDO release = this.setReleaseInfo(request, app, profile, build, actions);
         applicationReleaseDAO.insert(release);
         Long releaseId = release.getId();
         // 设置机器信息
@@ -198,7 +203,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             // 查询应用环境变量
             releaseEnv.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 添加发布环境变量
-            releaseEnv.putAll(this.getReleaseEnv(release));
+            releaseEnv.putAll(this.getReleaseEnv(build, release));
         }
         // 设置部署操作
         List<ApplicationReleaseActionDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
@@ -469,11 +474,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private ApplicationReleaseDO setReleaseInfo(ApplicationReleaseRequest request,
                                                 ApplicationInfoDO app,
                                                 ApplicationProfileDO profile,
+                                                ApplicationBuildDO build,
                                                 List<ApplicationActionDO> actions) {
         UserDTO user = Currents.getUser();
-        // 查询构建产物路径
-        ApplicationBuildDO build = applicationBuildDAO.selectById(request.getBuildId());
-        Valid.notNull(build, MessageConst.BUILD_ABSENT);
         String buildBundlePath = this.getBuildBundlePath(build);
         // 查询产物传输路径
         String transferPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_PATH.getKey());
@@ -648,16 +651,20 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     /**
      * 获取发布环境变量
      *
+     * @param build   build
      * @param release release
      * @return env
      */
-    private Map<String, String> getReleaseEnv(ApplicationReleaseDO release) {
+    private Map<String, String> getReleaseEnv(ApplicationBuildDO build, ApplicationReleaseDO release) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.BUILD_ID, release.getBuildId() + Const.EMPTY);
-        env.put(EnvConst.BUILD_SEQ, release.getBuildSeq() + Const.EMPTY);
+        env.put(EnvConst.BUILD_ID, build.getId() + Const.EMPTY);
+        env.put(EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
+        env.put(EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
+        env.put(EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_TITLE, release.getReleaseTitle());
+        env.put(EnvConst.TRANSFER_PATH, release.getTransferPath());
         // 设置前缀
         MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();
         env.forEach((k, v) -> {
