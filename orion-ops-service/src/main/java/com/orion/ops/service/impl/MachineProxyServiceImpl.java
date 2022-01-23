@@ -3,6 +3,8 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
 import com.orion.ops.entity.domain.MachineProxyDO;
@@ -38,8 +40,30 @@ public class MachineProxyServiceImpl implements MachineProxyService {
     private MachineInfoDAO machineInfoDAO;
 
     @Override
-    public Long addUpdateProxy(MachineProxyRequest request) {
+    public Long addProxy(MachineProxyRequest request) {
+        MachineProxyDO proxy = new MachineProxyDO();
+        proxy.setProxyHost(request.getHost());
+        proxy.setProxyPort(request.getPort());
+        proxy.setProxyType(request.getType());
+        proxy.setProxyUsername(request.getUsername());
+        String password = request.getPassword();
+        if (!Strings.isBlank(password)) {
+            proxy.setProxyPassword(ValueMix.encrypt(password));
+        }
+        proxy.setDescription(request.getDescription());
+        // 插入
+        machineProxyDAO.insert(proxy);
+        // 设置日志参数
+        EventParamsHolder.addParams(proxy);
+        return proxy.getId();
+    }
+
+    @Override
+    public Integer updateProxy(MachineProxyRequest request) {
+        // 查询
         Long id = request.getId();
+        MachineProxyDO beforeProxy = machineProxyDAO.selectById(id);
+        Valid.notNull(beforeProxy, MessageConst.UNKNOWN_DATA);
         MachineProxyDO proxy = new MachineProxyDO();
         proxy.setId(id);
         proxy.setProxyHost(request.getHost());
@@ -51,12 +75,12 @@ public class MachineProxyServiceImpl implements MachineProxyService {
             proxy.setProxyPassword(ValueMix.encrypt(password));
         }
         proxy.setDescription(request.getDescription());
-        if (id == null) {
-            machineProxyDAO.insert(proxy);
-            return proxy.getId();
-        } else {
-            return (long) machineProxyDAO.updateById(proxy);
-        }
+        // 修改
+        int effect = machineProxyDAO.updateById(proxy);
+        // 设置日志参数
+        EventParamsHolder.addParams(proxy);
+        EventParamsHolder.addParam(EventKeys.HOST, beforeProxy.getProxyHost());
+        return effect;
     }
 
     @Override
@@ -89,6 +113,9 @@ public class MachineProxyServiceImpl implements MachineProxyService {
             machineInfoDAO.setProxyIdWithNull(id);
             effect += machineProxyDAO.deleteById(id);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, effect);
         return effect;
     }
 

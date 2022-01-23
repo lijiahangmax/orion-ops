@@ -1,7 +1,9 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.machine.ProxyType;
 import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
@@ -34,23 +36,25 @@ public class MachineProxyController {
      * 添加
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_MACHINE_PROXY)
     public Long addProxy(@RequestBody MachineProxyRequest request) {
         request.setId(null);
         this.check(request);
         if (!Strings.isBlank(request.getUsername())) {
             Valid.notNull(request.getPassword());
         }
-        return machineProxyService.addUpdateProxy(request);
+        return machineProxyService.addProxy(request);
     }
 
     /**
      * 修改
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_MACHINE_PROXY)
     public Integer update(@RequestBody MachineProxyRequest request) {
         Valid.notNull(request.getId());
         this.check(request);
-        return machineProxyService.addUpdateProxy(request).intValue();
+        return machineProxyService.updateProxy(request);
     }
 
     /**
@@ -74,6 +78,7 @@ public class MachineProxyController {
      * 删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_MACHINE_PROXY)
     public Integer delete(@RequestBody MachineProxyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineProxyService.deleteProxy(idList);

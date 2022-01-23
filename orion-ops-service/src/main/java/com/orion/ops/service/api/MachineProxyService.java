@@ -16,12 +16,20 @@ import java.util.List;
 public interface MachineProxyService {
 
     /**
-     * 添加/修改 代理
+     * 添加代理
      *
      * @param request request
-     * @return id/effect
+     * @return id
      */
-    Long addUpdateProxy(MachineProxyRequest request);
+    Long addProxy(MachineProxyRequest request);
+
+    /**
+     * 修改代理
+     *
+     * @param request request
+     * @return effect
+     */
+    Integer updateProxy(MachineProxyRequest request);
 
     /**
      * 分页查询
