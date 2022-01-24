@@ -6,6 +6,8 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.terminal.TerminalConst;
 import com.orion.ops.dao.MachineTerminalDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
@@ -118,8 +120,16 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
 
     @Override
     public Integer updateSetting(MachineTerminalRequest request) {
+        // 查询配置
+        Long id = request.getId();
+        MachineTerminalDO beforeConfig = machineTerminalDAO.selectById(id);
+        Valid.notNull(beforeConfig, MessageConst.UNKNOWN_DATA);
+        // 查询机器信息
+        MachineInfoDO machineInfo = machineInfoService.selectById(beforeConfig.getMachineId());
+        Valid.notNull(machineInfo, MessageConst.UNKNOWN_DATA);
+        // 设置修改信息
         MachineTerminalDO update = new MachineTerminalDO();
-        update.setId(request.getId());
+        update.setId(id);
         update.setTerminalType(request.getTerminalType());
         update.setFontSize(request.getFontSize());
         update.setFontFamily(request.getFontFamily());
@@ -128,7 +138,12 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setUpdateTime(new Date());
         update.setEnableWebLink(request.getEnableWebLink());
         update.setEnableWebGL(request.getEnableWebGL());
-        return machineTerminalDAO.updateById(update);
+        // 修改
+        int effect = machineTerminalDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.NAME, machineInfo.getMachineName());
+        return effect;
     }
 
     @Override

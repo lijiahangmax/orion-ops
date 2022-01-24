@@ -2,9 +2,12 @@ package com.orion.ops.handler.terminal.manager;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
 import com.orion.ops.handler.terminal.IOperateHandler;
+import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
@@ -92,7 +95,13 @@ public class TerminalSessionManager {
             return HttpWrapper.error("未查询到连接信息");
         }
         try {
+            // 下线
             handler.forcedOffline();
+            // 设置日志参数
+            TerminalConnectHint hint = handler.getHint();
+            EventParamsHolder.addParam(EventKeys.TOKEN, token);
+            EventParamsHolder.addParam(EventKeys.USERNAME, hint.getUsername());
+            EventParamsHolder.addParam(EventKeys.NAME, hint.getMachineName());
             return HttpWrapper.ok();
         } catch (Exception e) {
             return HttpWrapper.error("下线失败");

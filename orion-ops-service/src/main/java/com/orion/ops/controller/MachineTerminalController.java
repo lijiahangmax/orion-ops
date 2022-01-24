@@ -2,10 +2,12 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.Wrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
@@ -76,6 +78,7 @@ public class MachineTerminalController {
      * 修改配置
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_TERMINAL_CONFIG)
     public Integer updateSetting(@RequestBody MachineTerminalRequest request) {
         Valid.notNull(request.getId());
         String terminalType = request.getTerminalType();
@@ -113,6 +116,7 @@ public class MachineTerminalController {
      */
     @RequestMapping("/manager/offline")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.FORCE_OFFLINE_TERMINAL)
     public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {
         String token = Valid.notBlank(request.getToken());
         return terminalSessionManager.forceOffline(token);
