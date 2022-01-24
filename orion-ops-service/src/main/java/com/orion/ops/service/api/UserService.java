@@ -48,18 +48,19 @@ public interface UserService {
     /**
      * 删除用户
      *
-     * @param request request
+     * @param id id
      * @return effect
      */
-    Integer deleteUser(UserInfoRequest request);
+    Integer deleteUser(Long id);
 
     /**
      * 更新用户状态
      *
-     * @param request request
+     * @param id     id
+     * @param status status
      * @return effect
      */
-    Integer updateStatus(UserInfoRequest request);
+    Integer updateStatus(Long id, Integer status);
 
     /**
      * 更新头像

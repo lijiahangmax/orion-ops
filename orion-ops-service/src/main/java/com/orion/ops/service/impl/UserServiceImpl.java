@@ -8,6 +8,8 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -110,6 +112,8 @@ public class UserServiceImpl implements UserService {
         update.setAvatarPic(avatar);
         update.setUpdateTime(new Date());
         userInfoDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(insert);
         return userId;
     }
 
@@ -124,6 +128,7 @@ public class UserServiceImpl implements UserService {
         // 设置更新信息
         UserInfoDO update = new UserInfoDO();
         update.setId(updateId);
+        update.setUsername(userInfo.getUsername());
         update.setNickname(request.getNickname());
         update.setContactPhone(request.getPhone());
         update.setContactEmail(request.getEmail());
@@ -133,6 +138,8 @@ public class UserServiceImpl implements UserService {
             update.setRoleType(request.getRole());
         }
         int effect = userInfoDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
         // 更新缓存
         String cacheKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, updateId);
         String tokenValue = redisTemplate.opsForValue().get(cacheKey);
@@ -151,49 +158,51 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Integer deleteUser(UserInfoRequest request) {
+    public Integer deleteUser(Long id) {
         Long userId = Currents.getUserId();
         // 删除检查
-        for (Long id : request.getIdList()) {
-            Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
-        }
+        Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
+        // 查询用户信息
+        UserInfoDO userInfo = userInfoDAO.selectById(id);
+        Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
         // 删除
-        int effect = 0;
-        for (Long id : request.getIdList()) {
-            effect += userInfoDAO.deleteById(id);
-            // 删除token
-            redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
-            // 删除活跃时间
-            userActiveInterceptor.deleteActiveTime(id);
-        }
+        int effect = userInfoDAO.deleteById(id);
+        // 删除token
+        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+        // 删除活跃时间
+        userActiveInterceptor.deleteActiveTime(id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
         return effect;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer updateStatus(UserInfoRequest request) {
+    public Integer updateStatus(Long id, Integer status) {
         Long userId = Currents.getUserId();
         // 更新检查
-        for (Long id : request.getIdList()) {
-            Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
+        Valid.isTrue(!userId.equals(id), MessageConst.UNSUPPORTED_OPERATOR);
+        // 查询用户信息
+        UserInfoDO userInfo = userInfoDAO.selectById(id);
+        Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
+        // 更新
+        boolean enable = Const.ENABLE.equals(status);
+        UserInfoDO update = new UserInfoDO();
+        update.setId(id);
+        update.setUserStatus(status);
+        update.setUpdateTime(new Date());
+        int effect = userInfoDAO.updateById(update);
+        if (!enable) {
+            // 删除token
+            redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+            // 删除活跃时间
+            userActiveInterceptor.deleteActiveTime(id);
         }
-        Integer status = request.getStatus();
-        boolean disable = Const.DISABLE.equals(status);
-        int effect = 0;
-        for (Long id : request.getIdList()) {
-            UserInfoDO update = new UserInfoDO();
-            update.setId(id);
-            update.setUserStatus(status);
-            update.setUpdateTime(new Date());
-            effect += userInfoDAO.updateById(update);
-            if (disable) {
-                // 删除token
-                redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
-                // 删除活跃时间
-                userActiveInterceptor.deleteActiveTime(id);
-            }
-        }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
+        EventParamsHolder.addParam(EventKeys.OPERATOR, enable ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
         return effect;
     }
 

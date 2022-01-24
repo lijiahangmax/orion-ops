@@ -1,9 +1,11 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.UserInfoRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
@@ -53,6 +55,7 @@ public class UserController {
      */
     @RequestMapping("/add")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.ADD_USER)
     public Long addUser(@RequestBody UserInfoRequest request) {
         this.check(request);
         Valid.notBlank(request.getPassword());
@@ -64,6 +67,7 @@ public class UserController {
      * 修改信息
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_USER)
     public Integer update(@RequestBody UserInfoRequest request) {
         Integer roleType = request.getRole();
         if (roleType != null) {
@@ -87,9 +91,10 @@ public class UserController {
      */
     @RequestMapping("/delete")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.DELETE_USER)
     public Integer delete(@RequestBody UserInfoRequest request) {
-        Valid.notEmpty(request.getIdList());
-        return userService.deleteUser(request);
+        Long id = Valid.notNull(request.getId());
+        return userService.deleteUser(id);
     }
 
     /**
@@ -97,10 +102,11 @@ public class UserController {
      */
     @RequestMapping("/status")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.CHANGE_USER_STATUS)
     public Integer status(@RequestBody UserInfoRequest request) {
-        Valid.notEmpty(request.getIdList());
-        Valid.in(Valid.notNull(request.getStatus()), Const.ENABLE, Const.DISABLE);
-        return userService.updateStatus(request);
+        Long id = Valid.notNull(request.getId());
+        Integer status = Valid.in(Valid.notNull(request.getStatus()), Const.ENABLE, Const.DISABLE);
+        return userService.updateStatus(id, status);
     }
 
     /**
