@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.consts.command.ExecType;
+import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.dao.MachineInfoDAO;
@@ -115,6 +117,13 @@ public class CommandExecServiceImpl implements CommandExecService {
             submitVO.setMachineHost(machine.getMachineHost());
             list.add(submitVO);
         }
+        // 设置日志参数
+        List<Long> idList = list.stream()
+                .map(CommandTaskSubmitVO::getExecId)
+                .collect(Collectors.toList());
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, list.size());
         return list;
     }
 
@@ -190,6 +199,8 @@ public class CommandExecServiceImpl implements CommandExecService {
         updateStatus.setExitCode(Const.TERMINATED_EXIT_CODE);
         updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
         effect += commandExecDAO.updateById(updateStatus);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
         return effect;
     }
 
@@ -200,7 +211,10 @@ public class CommandExecServiceImpl implements CommandExecService {
         if (ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus())) {
             throw Exceptions.argument(MessageConst.INVALID_STATUS);
         }
-        return commandExecDAO.deleteById(id);
+        int effect = commandExecDAO.deleteById(id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        return effect;
     }
 
     @Override

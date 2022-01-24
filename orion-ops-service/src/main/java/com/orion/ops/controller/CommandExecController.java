@@ -1,7 +1,9 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;
@@ -34,6 +36,7 @@ public class CommandExecController {
      * 提交批量执行任务
      */
     @RequestMapping("/submit")
+    @EventLog(EventType.EXEC_SUBMIT)
     public List<CommandTaskSubmitVO> submitTask(@RequestBody CommandExecRequest request) {
         Valid.notBlank(request.getCommand());
         Valid.notEmpty(request.getMachineIdList());
@@ -71,6 +74,7 @@ public class CommandExecController {
      * 停止任务
      */
     @RequestMapping("/terminated")
+    @EventLog(EventType.EXEC_TERMINATED)
     public Integer terminated(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandExecService.terminatedExec(id);
@@ -80,6 +84,7 @@ public class CommandExecController {
      * 删除任务
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.EXEC_DELETE)
     public Integer delete(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandExecService.deleteTask(id);
