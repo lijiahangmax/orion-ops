@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.CommandTemplateDAO;
 import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -36,27 +38,43 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
 
     @Override
     public Long addTemplate(CommandTemplateRequest request) {
+        // 插入
         UserDTO user = Currents.getUser();
         CommandTemplateDO entity = new CommandTemplateDO();
-        entity.setCreateUserId(user.getId());
-        entity.setCreateUserName(user.getUsername());
         entity.setTemplateName(request.getName());
         entity.setTemplateValue(request.getValue());
+        entity.setCreateUserId(user.getId());
+        entity.setCreateUserName(user.getUsername());
+        entity.setUpdateUserId(user.getId());
+        entity.setUpdateUserName(user.getUsername());
         entity.setDescription(request.getDescription());
         commandTemplateDAO.insert(entity);
+        // 设置日志参数
+        EventParamsHolder.addParams(entity);
         return entity.getId();
     }
 
     @Override
     public Integer updateTemplate(CommandTemplateRequest request) {
+        // 查询模板信息
+        Long id = request.getId();
+        CommandTemplateDO beforeTemplate = commandTemplateDAO.selectById(id);
+        Valid.notNull(beforeTemplate, MessageConst.TEMPLATE_ABSENT);
         // 更新
+        UserDTO user = Currents.getUser();
         CommandTemplateDO update = new CommandTemplateDO();
-        update.setId(request.getId());
+        update.setId(id);
         update.setTemplateName(request.getName());
         update.setTemplateValue(request.getValue());
         update.setDescription(request.getDescription());
+        update.setUpdateUserId(user.getId());
+        update.setUpdateUserName(user.getUsername());
         update.setUpdateTime(new Date());
-        return commandTemplateDAO.updateById(update);
+        int effect = commandTemplateDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeTemplate.getTemplateName());
+        return effect;
     }
 
     @Override
@@ -73,11 +91,9 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
                 .wrapper(wrapper)
                 .dataGrid(CommandTemplateVO.class);
         // 省略模板
-        dataGrid.forEach(t -> {
-            if (request.isOmitValue()) {
-                t.setValue(Strings.omit(t.getValue(), Const.TEMPLATE_OMIT));
-            }
-        });
+        if (request.isOmitValue()) {
+            dataGrid.forEach(t -> t.setValue(Strings.omit(t.getValue(), Const.TEMPLATE_OMIT)));
+        }
         return dataGrid;
     }
 
@@ -90,7 +106,15 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
 
     @Override
     public Integer deleteTemplate(Long id) {
-        return commandTemplateDAO.deleteById(id);
+        // 查询模板信息
+        CommandTemplateDO beforeTemplate = commandTemplateDAO.selectById(id);
+        Valid.notNull(beforeTemplate, MessageConst.TEMPLATE_ABSENT);
+        // 删除
+        int effect = commandTemplateDAO.deleteById(id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeTemplate.getTemplateName());
+        return effect;
     }
 
 }

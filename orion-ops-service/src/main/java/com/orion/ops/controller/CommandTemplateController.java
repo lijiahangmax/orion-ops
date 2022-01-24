@@ -1,7 +1,9 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.CommandTemplateRequest;
 import com.orion.ops.entity.vo.CommandTemplateVO;
 import com.orion.ops.service.api.CommandTemplateService;
@@ -31,6 +33,7 @@ public class CommandTemplateController {
      * 新增
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_PROFILE)
     public Long add(@RequestBody CommandTemplateRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getValue());
@@ -41,6 +44,7 @@ public class CommandTemplateController {
      * 修改
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_PROFILE)
     public Integer update(@RequestBody CommandTemplateRequest request) {
         Valid.notNull(request.getId());
         Valid.notBlank(request.getValue());
@@ -68,6 +72,7 @@ public class CommandTemplateController {
      * 删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_PROFILE)
     public Integer delete(@RequestBody CommandTemplateRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandTemplateService.deleteTemplate(id);

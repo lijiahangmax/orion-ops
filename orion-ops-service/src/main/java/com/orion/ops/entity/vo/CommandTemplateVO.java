@@ -48,6 +48,16 @@ public class CommandTemplateVO {
     private String createUserName;
 
     /**
+     * 修改用户id
+     */
+    private Long updateUserId;
+
+    /**
+     * 修改用户名
+     */
+    private String updateUserName;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -76,6 +86,8 @@ public class CommandTemplateVO {
             vo.setDescription(p.getDescription());
             vo.setCreateUserId(p.getCreateUserId());
             vo.setCreateUserName(p.getCreateUserName());
+            vo.setUpdateUserId(p.getUpdateUserId());
+            vo.setUpdateUserName(p.getUpdateUserName());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             vo.setCreateTimeAgo(Dates.ago(p.getCreateTime()));

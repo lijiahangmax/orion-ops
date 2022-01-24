@@ -59,6 +59,18 @@ public class CommandTemplateDO implements Serializable {
     private String createUserName;
 
     /**
+     * 修改用户id
+     */
+    @TableField("update_user_id")
+    private Long updateUserId;
+
+    /**
+     * 修改用户名
+     */
+    @TableField("update_user_name")
+    private String updateUserName;
+
+    /**
      * 是否删除 1未删除 2已删除
      *
      * @see com.orion.ops.consts.Const#NOT_DELETED
