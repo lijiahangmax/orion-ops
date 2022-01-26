@@ -33,6 +33,11 @@ public class EventKeys {
     public static final String INNER_TEMPLATE = "_TEMPLATE_";
 
     /**
+     * 请求序列
+     */
+    public static final String INNER_REQUEST_SEQ = "_REQUEST_SEQ_";
+
+    /**
      * id
      */
     public static final String ID = "id";
@@ -46,6 +51,16 @@ public class EventKeys {
      * machine id
      */
     public static final String MACHINE_ID = "machineId";
+
+    /**
+     * app id
+     */
+    public static final String APP_ID = "appId";
+
+    /**
+     * profile id
+     */
+    public static final String PROFILE_ID = "profileId";
 
     /**
      * type
@@ -98,6 +113,11 @@ public class EventKeys {
     public static final String MACHINE_COUNT = "machineCount";
 
     /**
+     * 环境数量
+     */
+    public static final String PROFILE_COUNT = "profileCount";
+
+    /**
      * 路径
      */
     public static final String PATH = "path";
@@ -110,6 +130,26 @@ public class EventKeys {
     /**
      * 操作
      */
-    public static final String OPTION = "option";
+    public static final String OPERATOR = "operator";
+
+    /**
+     * 构建序列
+     */
+    public static final String BUILD_SEQ = "buildSeq";
+
+    /**
+     * 环境名称
+     */
+    public static final String PROFILE_NAME = "profileName";
+
+    /**
+     * 应用名称
+     */
+    public static final String APP_NAME = "appName";
+
+    /**
+     * 标题
+     */
+    public static final String TITLE = "title";
 
 }

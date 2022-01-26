@@ -1,13 +1,6 @@
 package com.orion.ops.consts.event;
 
-import com.alibaba.fastjson.JSON;
-import com.orion.lang.collect.MutableMap;
-import com.orion.ops.entity.domain.UserEventLogDO;
-import com.orion.ops.utils.EventLogUtils;
-import com.orion.utils.Strings;
 import lombok.Getter;
-
-import java.util.Date;
 
 /**
  * 事件类型
@@ -36,6 +29,28 @@ public enum EventType {
      */
     RESET_PASSWORD(1015, EventClassify.AUTHENTICATION, "重置用户 ${username} 密码"),
 
+    // -------------------- 用户操作 --------------------
+
+    /**
+     * 添加用户
+     */
+    ADD_USER(1105, EventClassify.USER, "添加用户 ${username}"),
+
+    /**
+     * 修改用户信息
+     */
+    UPDATE_USER(1110, EventClassify.USER, "修改用户信息 ${username}"),
+
+    /**
+     * 删除用户
+     */
+    DELETE_USER(1115, EventClassify.USER, "删除用户 ${username}"),
+
+    /**
+     * 修改用户状态
+     */
+    CHANGE_USER_STATUS(1120, EventClassify.USER, "${operator}用户 ${username}"),
+
     // -------------------- 机器操作 --------------------
 
     /**
@@ -56,7 +71,7 @@ public enum EventType {
     /**
      * 修改机器状态
      */
-    CHANGE_MACHINE_STATUS(2020, EventClassify.MACHINE, "${option}机器 ${count}台"),
+    CHANGE_MACHINE_STATUS(2020, EventClassify.MACHINE, "${operator}机器 ${count}台"),
 
     /**
      * 复制机器
@@ -71,7 +86,7 @@ public enum EventType {
     DELETE_MACHINE_ENV(2105, EventClassify.MACHINE_ENV, "删除机器环境变量 ${count}个"),
 
     /**
-     * 同步环境变量
+     * 同步机器环境变量
      */
     SYNC_MACHINE_ENV(2110, EventClassify.MACHINE_ENV, "同步 ${envCount}个环境变量 到 ${machineCount}台机器"),
 
@@ -203,6 +218,209 @@ public enum EventType {
      */
     SFTP_PACKAGE(2555, EventClassify.SFTP, "打包 ${count}个文件"),
 
+    // -------------------- 批量执行操作 --------------------
+
+    /**
+     * 批量执行
+     */
+    EXEC_SUBMIT(2605, EventClassify.EXEC, "批量执行机器命令 ${count}台"),
+
+    /**
+     * 删除执行
+     */
+    EXEC_DELETE(2610, EventClassify.EXEC, "删除执行机器命令"),
+
+    /**
+     * 终止执行
+     */
+    EXEC_TERMINATED(2615, EventClassify.EXEC, "终止执行机器命令"),
+
+    // -------------------- 日志操作 --------------------
+
+    /**
+     * 添加日志文件
+     */
+    ADD_TAIL_FILE(2705, EventClassify.TAIL, "添加日志文件 ${aliasName}"),
+
+    /**
+     * 修改日志文件
+     */
+    UPDATE_TAIL_FILE(2710, EventClassify.TAIL, "修改日志文件 ${name}"),
+
+    /**
+     * 删除日志文件
+     */
+    DELETE_TAIL_FILE(2715, EventClassify.TAIL, "删除日志文件 ${name}"),
+
+    // -------------------- 模板操作 --------------------
+
+    /**
+     * 添加模板
+     */
+    ADD_TEMPLATE(2805, EventClassify.TEMPLATE, "添加模板 ${templateName}"),
+
+    /**
+     * 修改模板
+     */
+    UPDATE_TEMPLATE(2810, EventClassify.TEMPLATE, "修改模板 ${name}"),
+
+    /**
+     * 删除模板
+     */
+    DELETE_TEMPLATE(2815, EventClassify.TEMPLATE, "删除模板 ${name}"),
+
+    // -------------------- 应用操作 --------------------
+
+    /**
+     * 添加应用
+     */
+    ADD_APP(3005, EventClassify.APP, "添加应用 ${appName}"),
+
+    /**
+     * 修改应用
+     */
+    UPDATE_APP(3010, EventClassify.APP, "修改应用 ${name}"),
+
+    /**
+     * 删除应用
+     */
+    DELETE_APP(3015, EventClassify.APP, "删除应用 ${name}"),
+
+    /**
+     * 配置应用
+     */
+    CONFIG_APP(3020, EventClassify.APP, "配置应用 ${profileName} ${appName}"),
+
+    /**
+     * 同步应用
+     */
+    SYNC_APP(3025, EventClassify.APP, "同步应用 ${name} 到 ${count}个环境"),
+
+    /**
+     * 复制应用
+     */
+    COPY_APP(3030, EventClassify.APP, "复制应用 ${name}"),
+
+    // -------------------- 环境操作 --------------------
+
+    /**
+     * 添加应用环境
+     */
+    ADD_PROFILE(3105, EventClassify.PROFILE, "添加应用环境 ${profileName}"),
+
+    /**
+     * 修改应用环境
+     */
+    UPDATE_PROFILE(3110, EventClassify.PROFILE, "修改应用环境 ${name}"),
+
+    /**
+     * 删除应用环境
+     */
+    DELETE_PROFILE(3115, EventClassify.PROFILE, "删除应用环境 ${name}"),
+
+    // -------------------- 应用环境变量操作 --------------------
+
+    /**
+     * 删除应用环境变量
+     */
+    DELETE_APP_ENV(3205, EventClassify.APP_ENV, "删除应用环境变量 ${count}个"),
+
+    /**
+     * 同步应用环境变量
+     */
+    SYNC_APP_ENV(3210, EventClassify.APP_ENV, "同步 ${envCount}个环境变量 到 ${profileCount}个环境"),
+
+    // -------------------- 版本仓库操作 --------------------
+
+    /**
+     * 添加版本仓库
+     */
+    ADD_VCS(3305, EventClassify.VCS, "添加版本仓库 ${vcsName}"),
+
+    /**
+     * 初始化版本仓库
+     */
+    INIT_VCS(3310, EventClassify.VCS, "初始化版本仓库 ${name}"),
+
+    /**
+     * 重新初始化版本仓库
+     */
+    RE_INIT_VCS(3315, EventClassify.VCS, "重新初始化版本仓库 ${name}"),
+
+    /**
+     * 更新版本仓库
+     */
+    UPDATE_VCS(3320, EventClassify.VCS, "更新版本仓库 ${name}"),
+
+    /**
+     * 删除版本仓库
+     */
+    DELETE_VCS(3325, EventClassify.VCS, "删除版本仓库 ${name}"),
+
+    /**
+     * 清空版本仓库
+     */
+    CLEAN_VCS(3330, EventClassify.VCS, "清空版本仓库 ${name}"),
+
+    // -------------------- 构建操作 --------------------
+
+    /**
+     * 提交应用构建
+     */
+    SUBMIT_BUILD(4005, EventClassify.BUILD, "提交应用构建 #${buildSeq} ${profileName} ${appName}"),
+
+    /**
+     * 停止应用构建
+     */
+    BUILD_TERMINATED(4010, EventClassify.BUILD, "停止应用构建 #${buildSeq} ${profileName} ${appName}"),
+
+    /**
+     * 删除应用构建
+     */
+    DELETE_BUILD(4015, EventClassify.BUILD, "删除应用构建 #${buildSeq} ${profileName} ${appName}"),
+
+    /**
+     * 重新构建应用
+     */
+    SUBMIT_REBUILD(4020, EventClassify.BUILD, "重新构建应用 #${buildSeq} ${profileName} ${appName}"),
+
+    // -------------------- 发布操作 --------------------
+
+    /**
+     * 提交应用发布
+     */
+    SUBMIT_RELEASE(5005, EventClassify.RELEASE, "提交应用发布 ${releaseTitle}"),
+
+    /**
+     * 应用发布审核
+     */
+    AUDIT_RELEASE(5010, EventClassify.RELEASE, "应用发布审核${operator} ${title}"),
+
+    /**
+     * 执行应用发布
+     */
+    RUNNABLE_RELEASE(5015, EventClassify.RELEASE, "执行应用发布 ${title}"),
+
+    /**
+     * 应用回滚发布
+     */
+    ROLLBACK_RELEASE(5020, EventClassify.RELEASE, "应用回滚发布 ${title}"),
+
+    /**
+     * 停止应用发布
+     */
+    TERMINATED_RELEASE(5025, EventClassify.RELEASE, "停止应用发布 ${title}"),
+
+    /**
+     * 删除应用发布
+     */
+    DELETE_RELEASE(5030, EventClassify.RELEASE, "删除应用发布 ${title}"),
+
+    /**
+     * 复制应用发布
+     */
+    COPY_RELEASE(5035, EventClassify.RELEASE, "复制应用发布 ${releaseTitle}"),
+
     ;
 
     EventType(Integer type, EventClassify classify, String template) {
@@ -225,36 +443,5 @@ public enum EventType {
      * 模板
      */
     private final String template;
-
-    /**
-     * 获取操作日志对象
-     *
-     * @return event
-     */
-    public UserEventLogDO getEventLog() {
-        MutableMap<String, Object> map = EventParamsHolder.get();
-        EventParamsHolder.remove();
-        // 判断是否保存
-        if (!map.getBooleanValue(EventKeys.INNER_SAVE, true)) {
-            return null;
-        }
-        // 读取内置参数
-        Long userId = map.getLong(EventKeys.INNER_USER_ID);
-        if (userId == null) {
-            return null;
-        }
-        // 设置对象
-        UserEventLogDO log = new UserEventLogDO();
-        log.setUserId(userId);
-        log.setUsername(map.getString(EventKeys.INNER_USER_NAME));
-        log.setEventClassify(classify.getClassify());
-        log.setEventType(type);
-        log.setLogInfo(Strings.format(map.getString(EventKeys.INNER_TEMPLATE, template), map));
-        // 移除内部key
-        EventLogUtils.removeInnerKeys(map);
-        log.setParamsJson(JSON.toJSONString(map));
-        log.setCreateTime(new Date());
-        return log;
-    }
 
 }
