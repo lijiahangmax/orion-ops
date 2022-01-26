@@ -5,9 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.*;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.entity.domain.FileTailListDO;
@@ -113,6 +118,7 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Override
     public Long insertTailFile(FileTailRequest request) {
+        // 插入
         FileTailListDO insert = new FileTailListDO();
         insert.setAliasName(request.getName());
         insert.setMachineId(request.getMachineId());
@@ -121,13 +127,20 @@ public class FileTailServiceImpl implements FileTailService {
         insert.setFileOffset(request.getOffset());
         insert.setTailCommand(request.getCommand());
         fileTailListDAO.insert(insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(insert);
         return insert.getId();
     }
 
     @Override
     public Integer updateTailFile(FileTailRequest request) {
+        // 查询文件
+        Long id = request.getId();
+        FileTailListDO beforeTail = fileTailListDAO.selectById(id);
+        Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
+        // 修改
         FileTailListDO update = new FileTailListDO();
-        update.setId(request.getId());
+        update.setId(id);
         update.setAliasName(request.getName());
         update.setMachineId(request.getMachineId());
         update.setFilePath(request.getPath());
@@ -135,12 +148,24 @@ public class FileTailServiceImpl implements FileTailService {
         update.setFileOffset(request.getOffset());
         update.setTailCommand(request.getCommand());
         update.setUpdateTime(new Date());
-        return fileTailListDAO.updateById(update);
+        int effect = fileTailListDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeTail.getAliasName());
+        return effect;
     }
 
     @Override
     public Integer deleteTailFile(Long id) {
-        return fileTailListDAO.deleteById(id);
+        // 查询文件
+        FileTailListDO beforeTail = fileTailListDAO.selectById(id);
+        Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
+        // 删除
+        int effect = fileTailListDAO.deleteById(id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeTail.getAliasName());
+        return effect;
     }
 
     @Override

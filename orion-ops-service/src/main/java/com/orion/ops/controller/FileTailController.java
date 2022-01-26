@@ -1,7 +1,9 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
@@ -46,6 +48,7 @@ public class FileTailController {
      * 添加 tail 文件
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_TAIL_FILE)
     public Long addTailFile(@RequestBody FileTailRequest request) {
         Valid.notBlank(request.getName());
         Valid.notNull(request.getMachineId());
@@ -61,6 +64,7 @@ public class FileTailController {
      * 修改 tail 文件
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_TAIL_FILE)
     public Integer updateTailFile(@RequestBody FileTailRequest request) {
         Valid.notNull(request.getId());
         if (!Strings.isBlank(request.getPath())) {
@@ -76,6 +80,7 @@ public class FileTailController {
      * 删除 tail 文件
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_TAIL_FILE)
     public Integer deleteTailFile(@RequestBody FileTailRequest request) {
         Long id = Valid.notNull(request.getId());
         return fileTailService.deleteTailFile(id);
