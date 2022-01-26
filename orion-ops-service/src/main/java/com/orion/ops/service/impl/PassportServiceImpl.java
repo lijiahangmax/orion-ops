@@ -52,7 +52,6 @@ public class PassportServiceImpl implements PassportService {
     private UserActiveInterceptor userActiveInterceptor;
 
     @Override
-    @EventLog(EventType.LOGIN)
     public UserLoginVO login(UserLoginRequest request) {
         // 查询用户
         LambdaQueryWrapper<UserInfoDO> query = new LambdaQueryWrapper<UserInfoDO>()
@@ -106,7 +105,6 @@ public class PassportServiceImpl implements PassportService {
     }
 
     @Override
-    @EventLog(EventType.LOGOUT)
     public void logout() {
         Long userId = Currents.getUserId();
         if (userId == null) {
@@ -119,7 +117,6 @@ public class PassportServiceImpl implements PassportService {
     }
 
     @Override
-    @EventLog(EventType.RESET_PASSWORD)
     public Boolean resetPassword(UserResetRequest request) {
         UserDTO current = Currents.getUser();
         Long updateUserId = request.getUserId();
@@ -142,7 +139,7 @@ public class PassportServiceImpl implements PassportService {
             // 修改自己密码不记录
             EventParamsHolder.setSave(false);
         } else {
-            EventParamsHolder.addParam(EventKeys.TARGET_USERNAME, userInfo.getUsername());
+            EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
         }
         // 修改密码
         String newPassword = ValueMix.encPassword(request.getPassword(), userInfo.getSalt());

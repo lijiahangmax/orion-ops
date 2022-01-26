@@ -1,10 +1,12 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
@@ -41,6 +43,7 @@ public class AuthenticateController {
      */
     @RequestMapping("/login")
     @IgnoreAuth
+    @EventLog(EventType.LOGIN)
     public UserLoginVO login(@RequestBody UserLoginRequest request, HttpServletResponse response) {
         String username = Valid.notBlank(request.getUsername()).trim();
         String password = Valid.notBlank(request.getPassword()).trim();
@@ -58,6 +61,7 @@ public class AuthenticateController {
      */
     @RequestMapping("/logout")
     @IgnoreAuth
+    @EventLog(EventType.LOGOUT)
     public HttpWrapper<?> logout(HttpServletResponse response) {
         passportService.logout();
         CookiesExt.delete(response, Const.LOGIN_TOKEN);
@@ -68,6 +72,7 @@ public class AuthenticateController {
      * 重置密码
      */
     @RequestMapping("/reset")
+    @EventLog(EventType.RESET_PASSWORD)
     public HttpWrapper<?> resetPassword(@RequestBody UserResetRequest request, HttpServletResponse response) {
         String password = Valid.notBlank(request.getPassword()).trim();
         request.setUserId(Objects1.def(request.getUserId(), Currents::getUserId));
