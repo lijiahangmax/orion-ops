@@ -46,49 +46,58 @@
                @expand="expandMachine"
                :loading="loading"
                :expandedRowKeys.sync="expandedRowKeys"
+               ref="table"
                size="middle">
         <!-- 展开的机器列表 -->
-        <a-table
-          slot="expandedRowRender"
-          slot-scope="record"
-          v-if="record.machines"
-          :rowKey="(record, index) => index"
-          :columns="innerColumns"
-          :dataSource="record.machines"
-          :loading="record.loading"
-          :pagination="false"
-          size="middle">
-          <!-- 构建版本 -->
-          <a-tag slot="buildSeq" slot-scope="machine" color="#5C7CFA" v-if="machine.buildSeq">
-            #{{ machine.buildSeq }}
-          </a-tag>
-          <!-- 操作 -->
-          <div slot="action" slot-scope="machine">
-            <a @click="removeAppMachine(record.id, machine.id)">删除</a>
-          </div>
-        </a-table>
+        <template v-slot:expandedRowRender="record">
+          <a-table
+            v-if="record.machines"
+            :rowKey="(record, index) => index"
+            :columns="innerColumns"
+            :dataSource="record.machines"
+            :loading="record.loading"
+            :pagination="false"
+            size="middle">
+            <!-- 构建版本 -->
+            <template v-slot:buildSeq="machine">
+              <a-tag color="#5C7CFA" v-if="machine.buildSeq">
+                #{{ machine.buildSeq }}
+              </a-tag>
+            </template>
+            <!-- 操作 -->
+            <template v-slot:action="machine">
+              <a @click="removeAppMachine(record, machine.id)">删除</a>
+            </template>
+          </a-table>
+        </template>
         <!-- sort -->
-        <div slot="sort" slot-scope="record" class="sort-column">
-          <a @click="adjustSort(record.id, 1)" title="上调排序">
-            <a-icon type="up-square"/>
-          </a>
-          <a-divider type="vertical"/>
-          <a @click="adjustSort(record.id, 2)" title="下调排序">
-            <a-icon type="down-square"/>
-          </a>
-        </div>
+        <template v-slot:sort="record">
+          <div class="sort-column">
+            <a @click="adjustSort(record.id, 1)" title="上调排序">
+              <a-icon type="up-square"/>
+            </a>
+            <a-divider type="vertical"/>
+            <a @click="adjustSort(record.id, 2)" title="下调排序">
+              <a-icon type="down-square"/>
+            </a>
+          </div>
+        </template>
         <!-- tag -->
-        <span slot="tag" slot-scope="record" class="span-blue pointer">
-          <a-tag color="#5C7CFA">
-          {{ record.tag }}
+        <template v-slot:tag="record">
+          <span class="span-blue pointer">
+            <a-tag color="#5C7CFA">
+              {{ record.tag }}
+            </a-tag>
+          </span>
+        </template>
+        <!-- 配置 -->
+        <template v-slot:config="record">
+          <a-tag :color="$enum.valueOf($enum.CONFIG_STATUS, record.isConfig).color">
+            {{ $enum.valueOf($enum.CONFIG_STATUS, record.isConfig).label }}
           </a-tag>
-        </span>
-        <!-- 状态 -->
-        <a-tag slot="config" slot-scope="record" :color="$enum.valueOf($enum.CONFIG_STATUS, record.isConfig).color">
-          {{ $enum.valueOf($enum.CONFIG_STATUS, record.isConfig).label }}
-        </a-tag>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 配置 -->
           <span class="span-blue pointer" @click="toConfig(record.id)">
             配置
@@ -113,10 +122,21 @@
           </a-button>
           <a-divider type="vertical"/>
           <!-- 同步 -->
-          <AppProfileChecker :ref="'profileChecker' + record.id">
-            <a slot="trigger">同步</a>
-            <a-button type="primary" size="small" slot="footer" @click="sync(record.id)">确定</a-button>
+          <AppProfileChecker v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value" :ref="'profileChecker' + record.id">
+            <template #trigger>
+              <span class="span-blue pointer">同步</span>
+            </template>
+            <template #footer>
+              <a-button type="primary" size="small" @click="sync(record.id)">确定</a-button>
+            </template>
           </AppProfileChecker>
+          <a-button v-else
+                    class="p0"
+                    type="link"
+                    style="height: 22px"
+                    :disabled="true">
+            同步
+          </a-button>
           <a-divider type="vertical"/>
           <!-- 下拉菜单 -->
           <a-dropdown>
@@ -124,22 +144,24 @@
               更多
               <a-icon type="down"/>
             </a>
-            <a-menu slot="overlay" @click="menuHandler($event, record)">
-              <a-menu-item key="update">
-                修改
-              </a-menu-item>
-              <a-menu-item key="remove">
-                删除
-              </a-menu-item>
-              <a-menu-item key="copy">
-                复制
-              </a-menu-item>
-              <a-menu-item key="openEnv">
-                环境变量
-              </a-menu-item>
-            </a-menu>
+            <template #overlay>
+              <a-menu @click="menuHandler($event, record)">
+                <a-menu-item key="update">
+                  修改
+                </a-menu-item>
+                <a-menu-item key="remove">
+                  删除
+                </a-menu-item>
+                <a-menu-item key="copy">
+                  复制
+                </a-menu-item>
+                <a-menu-item key="openEnv">
+                  环境变量
+                </a-menu-item>
+              </a-menu>
+            </template>
           </a-dropdown>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
@@ -265,11 +287,15 @@ const moreMenuHandler = {
       okType: 'danger',
       cancelText: '取消',
       onOk: () => {
+        const pending = this.$message.loading('正在删除...', 5)
         this.$api.deleteApp({
           id: record.id
         }).then(() => {
+          pending()
           this.$message.success('删除成功')
           this.getList({})
+        }).catch(() => {
+          pending()
         })
       }
     })
@@ -281,7 +307,7 @@ const moreMenuHandler = {
       okText: '复制',
       cancelText: '取消',
       onOk: () => {
-        const copyLoading = this.$message.loading('正在提交复制请求', 3)
+        const copyLoading = this.$message.loading('正在复制...', 3)
         this.$api.copyApp({
           id: record.id
         }).then(() => {
@@ -380,23 +406,23 @@ export default {
         this.getList()
       })
     },
-    remove(id) {
-      this.$api.deleteApp({
-        id
-      }).then(() => {
-        this.$message.success('删除成功')
-        this.getList({})
-      })
-    },
-    removeAppMachine(id, machineId) {
+    removeAppMachine(record, machineId) {
+      const pending = this.$message.loading('正在删除...')
       this.$api.deleteAppMachine({
-        id,
+        id: record.id,
         profileId: this.query.profileId,
         machineId
       }).then(() => {
+        pending()
         this.$message.success('已删除')
+        for (let i = 0; i < record.machines.length; i++) {
+          if (record.machines[i].id === machineId) {
+            record.machines.splice(i, 1)
+          }
+        }
+      }).catch(() => {
+        pending()
       })
-      this.getList()
     },
     add() {
       this.$refs.addModal.add()
@@ -422,13 +448,16 @@ export default {
       ref.clear()
       ref.hide()
       // 同步
-      this.$message.success('已提交同步请求')
+      const pending = this.$message.loading('正在同步...', 5)
       this.$api.syncApp({
         appId: id,
         profileId: this.query.profileId,
         targetProfileIdList
       }).then(() => {
+        pending()
         this.$message.success('应用已同步成功')
+      }).catch(() => {
+        pending()
       })
     },
     menuHandler({ key }, record) {

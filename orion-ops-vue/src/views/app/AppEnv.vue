@@ -5,8 +5,12 @@
       <!-- 机器头 -->
       <div class="app-env-app-header">
         <a-page-header @back="() => {}">
-          <span slot="title" class="ant-page-header-heading-title pointer" title="刷新" @click="getAppList">应用列表</span>
-          <a-icon slot="backIcon" type="appstore" title="刷新" @click="getAppList"/>
+          <template #title>
+            <span class="ant-page-header-heading-title pointer" title="刷新" @click="getAppList">应用列表</span>
+          </template>
+          <template #backIcon>
+            <a-icon type="appstore" title="刷新" @click="getAppList"/>
+          </template>
         </a-page-header>
       </div>
       <!-- 机器菜单 -->
@@ -83,8 +87,12 @@
             </a-button>
             <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
             <AppProfileChecker ref="profileChecker-1">
-              <a-button slot="trigger" class="mx8" type="primary" icon="sync">同步</a-button>
-              <a-button type="primary" size="small" slot="footer" @click="syncEnv(-1)">确定</a-button>
+              <template #trigger>
+                <a-button class="mx8" type="primary" icon="sync">同步</a-button>
+              </template>
+              <template #footer>
+                <a-button type="primary" size="small" @click="syncEnv(-1)">确定</a-button>
+              </template>
             </AppProfileChecker>
             <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
             <a-divider type="vertical"/>
@@ -106,38 +114,47 @@
                    :loading="loading"
                    size="middle">
             <!-- key -->
-            <div slot="key" slot-scope="record" class="auto-ellipsis">
-              <a class="copy-icon-left" @click="$copy(record.key)">
-                <a-icon type="copy"/>
-              </a>
-              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
-              {{ record.key }}</span>
-            </div>
+            <template v-slot:key="record">
+              <div class="auto-ellipsis">
+                <a class="copy-icon-left" @click="$copy(record.key)">
+                  <a-icon type="copy"/>
+                </a>
+                <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
+                  {{ record.key }}
+                </span>
+              </div>
+            </template>
             <!-- value -->
-            <div slot="value" slot-scope="record" class="auto-ellipsis">
-              <a class="copy-icon-left" @click="$copy(record.value)">
-                <a-icon type="copy"/>
-              </a>
-              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
-              {{ record.value }}
-            </span>
-            </div>
+            <template v-slot:value="record">
+              <div class="auto-ellipsis">
+                <a class="copy-icon-left" @click="$copy(record.value)">
+                  <a-icon type="copy"/>
+                </a>
+                <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
+                  {{ record.value }}
+                </span>
+              </div>
+            </template>
             <!-- 修改时间 -->
-            <span slot="updateTime" slot-scope="record">
+            <template v-slot:updateTime="record">
               {{
                 record.updateTime | formatDate({
                   date: record.updateTime,
                   pattern: 'yyyy-MM-dd HH:mm:ss'
                 })
               }}
-          </span>
+            </template>
             <!-- 操作 -->
-            <div slot="action" slot-scope="record">
+            <template v-slot:action="record">
               <a @click="update(record.id)">修改</a>
               <a-divider type="vertical"/>
               <AppProfileChecker :ref="'profileChecker' + record.id">
-                <a slot="trigger">同步</a>
-                <a-button type="primary" size="small" slot="footer" @click="syncEnv(record.id)">确定</a-button>
+                <template #trigger>
+                  <span class="span-blue pointer">同步</span>
+                </template>
+                <template #footer>
+                  <a-button type="primary" size="small" @click="syncEnv(record.id)">确定</a-button>
+                </template>
               </AppProfileChecker>
               <a-divider type="vertical"/>
               <a @click="history(record)">历史</a>
@@ -155,7 +172,7 @@
                   删除
                 </a-button>
               </a-popconfirm>
-            </div>
+            </template>
           </a-table>
         </div>
       </div>
@@ -381,11 +398,15 @@ export default {
       this.$refs.addModal.update(id)
     },
     remove(id) {
+      const pending = this.$message.loading('正在删除...')
       this.$api.deleteAppEnv({
         idList: [id]
       }).then(() => {
+        pending()
         this.$message.success('删除成功')
         this.getAppEnv({})
+      }).catch(() => {
+        pending()
       })
     },
     batchRemove() {
@@ -396,11 +417,15 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
+          const pending = this.$message.loading('正在删除...')
           this.$api.deleteAppEnv({
             idList: this.selectedRowKeys
           }).then(() => {
+            pending()
             this.$message.success('删除成功')
             this.getAppEnv({})
+          }).catch(() => {
+            pending()
           })
           this.selectedRowKeys = []
         }
@@ -426,16 +451,17 @@ export default {
       ref.clear()
       ref.hide()
       // 同步
-      if (id === -1) {
-        this.$message.success('已提交同步请求')
-      }
+      const pending = this.$message.loading('正在同步...', 5)
       this.$api.syncAppEnv({
         id,
         appId: this.query.appId,
         profileId: this.query.profileId,
         targetProfileIdList
       }).then(() => {
+        pending()
         this.$message.success('同步成功')
+      }).catch(() => {
+        pending()
       })
     },
     resetForm() {
