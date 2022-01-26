@@ -112,8 +112,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
     public void run() {
         // 判断是否可以传输
         FileTransferLogDO fileTransferLog = fileTransferLogDAO.selectById(packageFile.getId());
-        if (Const.DISABLE.equals(fileTransferLog.getShowType())
-                || !SftpTransferStatus.WAIT.getStatus().equals(fileTransferLog.getTransferStatus())) {
+        if (fileTransferLog == null || !SftpTransferStatus.WAIT.getStatus().equals(fileTransferLog.getTransferStatus())) {
             return;
         }
         transferProcessorManager.addProcessor(fileToken, this);
@@ -130,8 +129,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
             this.initCompressFileRaw();
             // 二次检查状态 防止在添加文件过程中取消或者删除
             fileTransferLog = fileTransferLogDAO.selectById(packageFile.getId());
-            if (Const.DISABLE.equals(fileTransferLog.getShowType())
-                    || !SftpTransferStatus.RUNNABLE.getStatus().equals(fileTransferLog.getTransferStatus())) {
+            if (fileTransferLog == null || !SftpTransferStatus.RUNNABLE.getStatus().equals(fileTransferLog.getTransferStatus())) {
                 return;
             }
             // 开始压缩

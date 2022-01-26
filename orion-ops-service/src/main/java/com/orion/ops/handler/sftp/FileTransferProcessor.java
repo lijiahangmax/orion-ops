@@ -1,6 +1,5 @@
 package com.orion.ops.handler.sftp;
 
-import com.orion.ops.consts.Const;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -62,8 +61,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     public void run() {
         // 判断是否可以传输
         this.record = fileTransferLogDAO.selectById(record.getId());
-        if (Const.DISABLE.equals(record.getShowType())
-                || !SftpTransferStatus.WAIT.getStatus().equals(record.getTransferStatus())) {
+        if (record == null || !SftpTransferStatus.WAIT.getStatus().equals(record.getTransferStatus())) {
             return;
         }
         transferProcessorManager.addProcessor(fileToken, this);

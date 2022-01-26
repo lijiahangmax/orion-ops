@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -102,13 +99,13 @@ public class FileTransferLogDO implements Serializable {
     private Integer transferStatus;
 
     /**
-     * 是否显示 1显示 2不显示
+     * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.consts.Const#NOT_DELETED
+     * @see com.orion.ops.consts.Const#IS_DELETED
      */
-    @TableField("show_type")
-    private Integer showType;
+    @TableLogic
+    private Integer deleted;
 
     /**
      * 创建时间

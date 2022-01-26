@@ -18,20 +18,8 @@ public class FileBaseRequest {
     private String sessionToken;
 
     /**
-     * 当前路径
-     */
-    private String current;
-
-    /**
      * 是否查询隐藏文件
-     * <p>
-     * 0 不查询
-     * 1 查询
      */
-    private int all;
-
-    public FileBaseRequest() {
-        this.all = 0;
-    }
+    private Boolean all;
 
 }

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 文件传输管理器
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/26 14:56
@@ -51,6 +53,14 @@ public class TransferProcessorManager {
      * value: sessionIdList
      */
     private final Map<String, List<String>> userMachineSessionMapping = Maps.newCurrentHashMap();
+
+    /**
+     * 文件传输进度
+     * <p>
+     * key: token
+     * value: progress
+     */
+    private final Map<String, String> TRANSFER_PROGRESS = Maps.newMap();
 
     /**
      * 添加processor
@@ -139,6 +149,9 @@ public class TransferProcessorManager {
      * @param progress  progress
      */
     public void notifySessionProgressEvent(Long userId, Long machineId, String fileToken, FileTransferNotifyDTO.FileTransferNotifyProgress progress) {
+        // 设置进度
+        TRANSFER_PROGRESS.put(fileToken, progress.getProgress());
+        // 通知
         FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
         notify.setType(SftpNotifyType.PROGRESS.getType());
         notify.setFileToken(fileToken);
@@ -155,6 +168,9 @@ public class TransferProcessorManager {
      * @param status    status
      */
     public void notifySessionStatusEvent(Long userId, Long machineId, String fileToken, Integer status) {
+        // 清除进度
+        TRANSFER_PROGRESS.remove(fileToken);
+        // 通知
         FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
         notify.setType(SftpNotifyType.CHANGE_STATUS.getType());
         notify.setFileToken(fileToken);
@@ -209,6 +225,20 @@ public class TransferProcessorManager {
      */
     private String getUserMachine(Long userId, Long machineId) {
         return userId + "_" + machineId;
+    }
+
+    /**
+     * 获取传输进度
+     *
+     * @param token token
+     * @return progress
+     */
+    public Double getProgress(String token) {
+        String progress = TRANSFER_PROGRESS.get(token);
+        if (progress == null) {
+            return null;
+        }
+        return Double.valueOf(progress);
     }
 
 }

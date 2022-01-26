@@ -16,14 +16,14 @@
         <result column="current_size" property="currentSize"/>
         <result column="now_progress" property="nowProgress"/>
         <result column="transfer_status" property="transferStatus"/>
-        <result column="show_type" property="showType"/>
+        <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, user_name, file_token, transfer_type, machine_id, remote_file, local_file, current_size, file_size, now_progress, transfer_status, show_type, create_time, update_time
+        id, user_id, user_name, file_token, transfer_type, machine_id, remote_file, local_file, current_size, file_size, now_progress, transfer_status, deleted, create_time, update_time
     </sql>
 
 </mapper>
