@@ -33,12 +33,12 @@ public class LogAspect {
     /**
      * 请求id
      */
-    private ThreadLocal<String> seq = ThreadLocal.withInitial(UUIds::random32);
+    public static final ThreadLocal<String> SEQ_HOLDER = ThreadLocal.withInitial(UUIds::random32);
 
     /**
      * 开始时间
      */
-    private ThreadLocal<Date> start = ThreadLocal.withInitial(Date::new);
+    private static final ThreadLocal<Date> START_HOLDER = ThreadLocal.withInitial(Date::new);
 
     @Pointcut("execution (* com.orion.ops.controller.*.*(..))")
     public void logPoint() {
@@ -46,7 +46,7 @@ public class LogAspect {
 
     @Before("logPoint()")
     public void beforeLogPrint(JoinPoint point) {
-        StringBuilder requestLog = new StringBuilder("\napi请求-开始-seq: ").append(seq.get()).append('\n');
+        StringBuilder requestLog = new StringBuilder("\napi请求-开始-seq: ").append(SEQ_HOLDER.get()).append('\n');
         // 登陆用户
         requestLog.append("\t当前用户: ").append(JSON.toJSONString(UserHolder.get())).append('\n');
         // http请求信息
@@ -61,7 +61,7 @@ public class LogAspect {
                             .append("\tUA: ").append(Servlets.getUserAgent(request)).append('\n');
                 });
         // 方法信息
-        requestLog.append("\t开始时间: ").append(Dates.format(start.get(), Dates.YMD_HMSS)).append('\n')
+        requestLog.append("\t开始时间: ").append(Dates.format(START_HOLDER.get(), Dates.YMD_HMSS)).append('\n')
                 .append("\tSignature: ").append(point.getSignature().getDeclaringTypeName()).append('.')
                 .append(point.getSignature().getName()).append("()\n")
                 .append("\t请求参数: ").append(argsToString(point.getArgs()));
@@ -72,13 +72,13 @@ public class LogAspect {
     public void afterReturnLogPrint(Object ret) {
         Date endTime = new Date();
         // 响应日志
-        StringBuilder responseLog = new StringBuilder("\napi请求-结束-seq: ").append(seq.get()).append('\n');
+        StringBuilder responseLog = new StringBuilder("\napi请求-结束-seq: ").append(SEQ_HOLDER.get()).append('\n');
         responseLog.append("\t结束时间: ").append(Dates.format(endTime, Dates.YMD_HMSS))
-                .append(" used: ").append(endTime.getTime() - start.get().getTime()).append("ms \n")
+                .append(" used: ").append(endTime.getTime() - START_HOLDER.get().getTime()).append("ms \n")
                 .append("\t响应结果: ").append(argsToString(ret));
         // 删除threadLocal
-        seq.remove();
-        start.remove();
+        SEQ_HOLDER.remove();
+        START_HOLDER.remove();
         log.info(responseLog.toString());
     }
 
@@ -86,13 +86,13 @@ public class LogAspect {
     public void afterThrowingLogPrint(Throwable throwable) {
         Date endTime = new Date();
         // 响应日志
-        StringBuilder responseLog = new StringBuilder("\napi请求-异常-seq: ").append(seq.get()).append('\n');
+        StringBuilder responseLog = new StringBuilder("\napi请求-异常-seq: ").append(SEQ_HOLDER.get()).append('\n');
         responseLog.append("\t结束时间: ").append(Dates.format(endTime, Dates.YMD_HMSS))
-                .append(" used: ").append(endTime.getTime() - start.get().getTime()).append("ms \n")
+                .append(" used: ").append(endTime.getTime() - START_HOLDER.get().getTime()).append("ms \n")
                 .append("\t异常摘要: ").append(Exceptions.getDigest(throwable));
         // 删除threadLocal
-        seq.remove();
-        start.remove();
+        SEQ_HOLDER.remove();
+        START_HOLDER.remove();
         log.error(responseLog.toString());
     }
 

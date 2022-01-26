@@ -68,6 +68,15 @@ public class UserEventLogDO implements Serializable {
     private String paramsJson;
 
     /**
+     * 是否执行成功 1成功 2失败
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    @TableField("exec_result")
+    private Integer execResult;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

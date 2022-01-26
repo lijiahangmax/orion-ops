@@ -3,9 +3,8 @@ package com.orion.ops.aspect;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.dao.UserEventLogDAO;
-import com.orion.ops.entity.domain.UserEventLogDO;
 import com.orion.ops.entity.dto.UserDTO;
+import com.orion.ops.service.api.UserEventLogService;
 import com.orion.ops.utils.Currents;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.*;
@@ -28,7 +27,7 @@ import javax.annotation.Resource;
 public class UserEventLogAspect {
 
     @Resource
-    private UserEventLogDAO userEventLogDAO;
+    private UserEventLogService userEventLogService;
 
     @Pointcut("@annotation(e)")
     public void eventLogPoint(EventLog e) {
@@ -36,6 +35,7 @@ public class UserEventLogAspect {
 
     @Before(value = "eventLogPoint(e)", argNames = "e")
     public void beforeLogRecord(EventLog e) {
+        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
         // 有可能是登陆接口有可能为空 则用内部常量策略
         UserDTO user = Currents.getUser();
         if (user != null) {
@@ -46,16 +46,12 @@ public class UserEventLogAspect {
 
     @AfterReturning(pointcut = "eventLogPoint(e)", argNames = "e")
     public void afterLogRecord(EventLog e) {
-        UserEventLogDO log = e.value().getEventLog();
-        if (log == null) {
-            return;
-        }
-        userEventLogDAO.insert(log);
+        userEventLogService.recordLog(e.value(), true);
     }
 
     @AfterThrowing(pointcut = "eventLogPoint(e)", argNames = "e")
     public void afterLogRecordThrowing(EventLog e) {
-        EventParamsHolder.remove();
+        userEventLogService.recordLog(e.value(), false);
     }
 
 }

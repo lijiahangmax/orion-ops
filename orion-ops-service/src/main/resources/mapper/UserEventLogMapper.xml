@@ -11,12 +11,13 @@
         <result column="event_type" property="eventType"/>
         <result column="log_info" property="logInfo"/>
         <result column="params_json" property="paramsJson"/>
+        <result column="exec_result" property="execResult"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, username, event_classify, event_type, log_info, params_json, create_time
+        id, user_id, username, event_classify, event_type, log_info, params_json, exec_result, create_time
     </sql>
 
 </mapper>
