@@ -52,7 +52,13 @@
       <!-- 右侧 -->
       <div class="tools-fixed-right">
         <a target="_blank" href="#/batch/exec/add">
-          <a-button class="ml16 mr8" type="primary" icon="code">批量执行</a-button>
+          <a-button class="ml16 mr8"
+                    type="primary"
+                    icon="code"
+                    title="ctrl 打开新页面"
+                    @click="openExecute">
+            批量执行
+          </a-button>
         </a>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
@@ -70,44 +76,49 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <div slot="machine" slot-scope="record">
+        <template v-slot:machine="record">
           <a-tooltip placement="top">
-            <template slot="title">
+            <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
             </template>
             <span>{{ record.machineName }}</span>
           </a-tooltip>
-        </div>
+        </template>
         <!-- 命令 -->
-        <span class="pointer" slot="command" slot-scope="record" title="预览" @click="previewEditor(record.command)">
-            {{ record.command }}
-        </span>
+        <template v-slot:command="record">
+          <span class="pointer" title="预览" @click="previewEditor(record.command)">
+              {{ record.command }}
+          </span>
+        </template>
         <!-- 状态 -->
-        <a-tag slot="status" slot-scope="record"
-               style="margin: 0"
-               :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).color">
-          {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).label }}
-        </a-tag>
+        <template v-slot:status="record">
+          <a-tag class="m0" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).color">
+            {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).label }}
+          </a-tag>
+        </template>
         <!-- 退出码 -->
-        <span slot="exitCode" slot-scope="record"
-              :style="{'color': record.exitCode === 0 ? '#4263EB' : '#E03131'}">
+        <template v-slot:exitCode="record">
+          <span :style="{'color': record.exitCode === 0 ? '#4263EB' : '#E03131'}">
             {{ record.exitCode }}
-        </span>
+          </span>
+        </template>
         <!-- 描述 -->
-        <span class="pointer" slot="description" slot-scope="record" @click="previewText(record.description)">
+        <template v-slot:description="record">
+          <span class="pointer" @click="previewText(record.description)">
             {{ record.description }}
-        </span>
+          </span>
+        </template>
         <!-- 创建时间 -->
-        <span slot="createTime" slot-scope="record">
+        <template v-slot:createTime="record">
           {{
             record.createTime | formatDate({
               date: record.createTime,
               pattern: 'yyyy-MM-dd HH:mm:ss'
             })
           }}
-        </span>
+        </template>
         <!-- 日志 -->
-        <div slot="log" slot-scope="record">
+        <template v-slot:log="record">
           <!-- 日志面板 -->
           <a target="_blank"
              title="ctrl 打开新页面"
@@ -117,9 +128,9 @@
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
           <a v-else @click="loadDownloadUrl(record)">获取</a>
-        </div>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 详情 -->
           <a @click="detail(record.id)">详情</a>
           <a-divider type="vertical"/>
@@ -131,9 +142,9 @@
                         @confirm="redo(record)">
             <span class="span-blue pointer">再次执行</span>
           </a-popconfirm>
-          <a-divider v-if="record.status ===  $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
+          <a-divider v-if="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="record.status ===  $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
                         title="确认停止当前任务?"
                         placement="topRight"
                         ok-text="确定"
@@ -141,9 +152,9 @@
                         @confirm="terminated(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
-          <a-divider v-if="record.status !==  $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
+          <a-divider v-if="record.status !== $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
           <!-- 删除 -->
-          <a-popconfirm v-if="record.status !==  $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="record.status !== $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
                         title="确认删除当前任务?"
                         placement="topRight"
                         ok-text="确定"
@@ -151,7 +162,7 @@
                         @confirm="deleteTask(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 表格 -->
@@ -299,6 +310,7 @@ export default {
         }
       },
       loading: false,
+      pollId: null,
       columns
     }
   },
@@ -349,11 +361,15 @@ export default {
       })
     },
     deleteTask(execId) {
+      const pending = this.$message.loading('正在删除...')
       this.$api.deleteExecTask({
         id: execId
       }).then(() => {
+        pending()
         this.$message.success('已删除')
         this.getList({})
+      }).catch(() => {
+        pending()
       })
     },
     resetForm() {
@@ -364,6 +380,17 @@ export default {
       this.query.userId = undefined
       this.query.status = undefined
       this.getList({})
+    },
+    openExecute(e) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 跳转路由
+        this.$router.push({ path: '/batch/exec/add' })
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     },
     openLogView(e, id) {
       if (!e.ctrlKey) {
@@ -426,9 +453,13 @@ export default {
   },
   mounted() {
     // 设置轮询
-    setInterval(this.pollStatus, 5000)
+    this.pollId = setInterval(this.pollStatus, 5000)
     // 查询列表
     this.getList({})
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>

@@ -9,8 +9,12 @@
           <div class="machine-checker-wrapper">
             <MachineChecker ref="machineChecker"
                             :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
-              <a slot="trigger" :disabled="isRun">已选择 {{ selectedMachines.length }} 台机器</a>
-              <a-button type="primary" size="small" slot="footer" @click="chooseMachines">确定</a-button>
+              <template #trigger>
+                <a :disabled="isRun">已选择 {{ selectedMachines.length }} 台机器</a>
+              </template>
+              <template #footer>
+                <a-button type="primary" size="small" @click="chooseMachines">确定</a-button>
+              </template>
             </MachineChecker>
           </div>
         </div>
@@ -56,7 +60,7 @@
       <div v-if="isRun && execMachines.length" class="task-logger-view-container">
         <a-tabs v-model="activeTab"
                 :tabBarStyle="{margin: 0}"
-                :hide-add="true"
+                :hideAdd="true"
                 type="editable-card"
                 @edit="removeTab"
                 :animated="false">
@@ -70,40 +74,45 @@
                            :appendStyle="{height: 'calc(100vh - 132px)'}"
                            :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
                 <!-- 左侧工具栏 -->
-                <div class="appender-left-tools" slot="left-tools">
-                  <!-- 命令输入 -->
-                  <a-input-search class="command-write-input"
-                                  v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
-                                  v-model="execMachine.inputCommand"
-                                  size="small"
-                                  placeholder="输入"
-                                  @search="sendCommand(execMachine)">
-                    <a-icon type="forward" slot="enterButton"/>
-                  </a-input-search>
-                  <!-- 状态 -->
-                  <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
-                    {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
-                  </a-tag>
-                  <!-- used -->
-                  <span class="mx8" title="用时"
-                        v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
+                <template #left-tools>
+                  <div class="appender-left-tools">
+                    <!-- 命令输入 -->
+                    <a-input-search class="command-write-input"
+                                    v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                                    v-model="execMachine.inputCommand"
+                                    size="small"
+                                    placeholder="输入"
+                                    @search="sendCommand(execMachine)">
+                      <template #enterButton>
+                        <a-icon type="forward"/>
+                      </template>
+                    </a-input-search>
+                    <!-- 状态 -->
+                    <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
+                      {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
+                    </a-tag>
+                    <!-- used -->
+                    <span class="mx8" title="用时"
+                          v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
                     {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
                   </span>
-                  <!-- exitCode -->
-                  <span class="mx8" title="退出码"
-                        v-if="execMachine.exitCode !== null"
-                        :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
+                    <!-- exitCode -->
+                    <span class="mx8" title="退出码"
+                          v-if="execMachine.exitCode !== null"
+                          :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
                     {{ execMachine.exitCode }}
                   </span>
-                  <!-- 终止 -->
-                  <a-button class="terminated-button"
-                            v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
-                            size="small"
-                            icon="close"
-                            @click="terminated(execMachine)">
-                    终止
-                  </a-button>
-                </div>
+                    <!-- 终止 -->
+                    <a-button class="terminated-button"
+                              v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                              size="small"
+                              icon="close"
+                              @click="terminated(execMachine)">
+                      终止
+                    </a-button>
+                  </div>
+
+                </template>
               </LogAppender>
             </div>
           </a-tab-pane>
@@ -294,6 +303,10 @@ export default {
       this.execMachines = execMachines
       this.activeTab = activeTab
     }
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>
