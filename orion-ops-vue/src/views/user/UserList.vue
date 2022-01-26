@@ -297,19 +297,25 @@ export default {
       this.$refs.reset.open(id)
     },
     remove(id) {
-      this.$api.deleteUser({ idList: [id] })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.getList({})
-        })
+      this.$api.deleteUser({
+        id: id
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.getList({})
+      })
     },
     updateStatus(record) {
+      const label = record.status === 1 ? '停用' : '启用'
+      const pending = this.$message.loading(`正在${label}...`, 5)
       this.$api.updateUserStatus({
-        idList: [record.id],
+        id: record.id,
         status: record.status === 1 ? 2 : 1
       }).then(() => {
-        this.$message.success('修改成功')
+        pending()
+        this.$message.success(`${label}成功`)
         this.getList()
+      }).catch(() => {
+        pending()
       })
     },
     resetForm() {

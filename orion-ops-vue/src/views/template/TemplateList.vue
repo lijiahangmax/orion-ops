@@ -136,6 +136,14 @@ const columns = [
     sorter: (a, b) => a.createUserName.localeCompare(b.createUserName)
   },
   {
+    title: '修改人',
+    dataIndex: 'updateUserName',
+    key: 'updateUserName',
+    width: 100,
+    ellipsis: true,
+    sorter: (a, b) => a.updateUserName.localeCompare(b.updateUserName)
+  },
+  {
     title: '修改时间',
     key: 'updateTime',
     width: 150,
