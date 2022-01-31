@@ -33,7 +33,7 @@ public class CommandTemplateController {
      * 新增
      */
     @RequestMapping("/add")
-    @EventLog(EventType.ADD_PROFILE)
+    @EventLog(EventType.ADD_TEMPLATE)
     public Long add(@RequestBody CommandTemplateRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getValue());
@@ -44,7 +44,7 @@ public class CommandTemplateController {
      * 修改
      */
     @RequestMapping("/update")
-    @EventLog(EventType.UPDATE_PROFILE)
+    @EventLog(EventType.UPDATE_TEMPLATE)
     public Integer update(@RequestBody CommandTemplateRequest request) {
         Valid.notNull(request.getId());
         Valid.notBlank(request.getValue());
@@ -72,7 +72,7 @@ public class CommandTemplateController {
      * 删除
      */
     @RequestMapping("/delete")
-    @EventLog(EventType.DELETE_PROFILE)
+    @EventLog(EventType.DELETE_TEMPLATE)
     public Integer delete(@RequestBody CommandTemplateRequest request) {
         Long id = Valid.notNull(request.getId());
         return commandTemplateService.deleteTemplate(id);
