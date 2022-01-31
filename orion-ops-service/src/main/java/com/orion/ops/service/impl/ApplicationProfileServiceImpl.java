@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.dto.ApplicationProfileDTO;
@@ -71,12 +73,17 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         Long id = insert.getId();
         // 插入缓存
         this.setProfileToCache(insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(insert);
         return id;
     }
 
     @Override
     public Integer updateProfile(ApplicationProfileRequest request) {
+        // 检查是否存在
         Long id = request.getId();
+        ApplicationProfileDO beforeProfile = applicationProfileDAO.selectById(id);
+        Valid.notNull(beforeProfile, MessageConst.PROFILE_ABSENT);
         String name = request.getName();
         // 重复检查
         this.checkNamePresent(id, name);
@@ -91,12 +98,18 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         int updateEffect = applicationProfileDAO.updateById(update);
         // 修改缓存
         this.setProfileToCache(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeProfile.getProfileName());
         return updateEffect;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer deleteProfile(Long id) {
+        // 检查是否存在
+        ApplicationProfileDO beforeProfile = applicationProfileDAO.selectById(id);
+        Valid.notNull(beforeProfile, MessageConst.PROFILE_ABSENT);
         int effect = 0;
         // 删除环境
         effect += applicationProfileDAO.deleteById(id);
@@ -108,6 +121,9 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         effect += applicationActionService.deleteAppActionByAppProfileId(null, id);
         // 删除缓存
         redisTemplate.opsForHash().delete(KeyConst.DATA_PROFILE_KEY, id.toString());
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeProfile.getProfileName());
         return effect;
     }
 

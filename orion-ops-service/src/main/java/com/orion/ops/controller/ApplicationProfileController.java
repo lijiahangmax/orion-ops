@@ -1,7 +1,9 @@
 package com.orion.ops.controller;
 
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
@@ -33,6 +35,7 @@ public class ApplicationProfileController {
      * 添加环境
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_PROFILE)
     public Long addProfile(@RequestBody ApplicationProfileRequest request) {
         Valid.notBlank(request.getName());
         Valid.notBlank(request.getTag());
@@ -44,6 +47,7 @@ public class ApplicationProfileController {
      * 更新环境
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_PROFILE)
     public Integer updateProfile(@RequestBody ApplicationProfileRequest request) {
         Valid.notNull(request.getId());
         if (request.getReleaseAudit() != null) {
@@ -56,6 +60,7 @@ public class ApplicationProfileController {
      * 删除环境
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_PROFILE)
     public Integer deleteProfile(@RequestBody ApplicationProfileRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationProfileService.deleteProfile(id);
