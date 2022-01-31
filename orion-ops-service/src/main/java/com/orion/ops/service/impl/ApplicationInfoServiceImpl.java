@@ -6,6 +6,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.*;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
@@ -73,6 +75,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         insert.setDescription(request.getDescription());
         insert.setAppSort(this.getNextSort());
         applicationInfoDAO.insert(insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(insert);
         return insert.getId();
     }
 
@@ -80,6 +84,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public Integer updateApp(ApplicationInfoRequest request) {
         Long id = request.getId();
         String name = request.getName();
+        // 查询应用
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(id), MessageConst.APP_ABSENT);
         // 重复检查
         this.checkNamePresent(id, name);
         // 更新
@@ -90,7 +96,11 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         update.setVcsId(request.getVcsId());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
-        return applicationInfoDAO.updateById(update);
+        int effect = applicationInfoDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
+        EventParamsHolder.addParam(EventKeys.NAME, app.getAppName());
+        return effect;
     }
 
     @Override
@@ -144,6 +154,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer deleteApp(Long id) {
+        // 查询应用
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(id), MessageConst.APP_ABSENT);
         int effect = 0;
         // 删除应用
         effect += applicationInfoDAO.deleteById(id);
@@ -153,6 +165,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         effect += applicationMachineService.deleteAppMachineByAppProfileId(id, null);
         // 删除发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(id, null);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, app.getAppName());
         return effect;
     }
 
@@ -184,7 +199,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
             return appList;
         }
         // 设置配置状态
-        List<Long> appIdList = appList.stream().map(ApplicationInfoVO::getId).collect(Collectors.toList());
+        List<Long> appIdList = appList.stream()
+                .map(ApplicationInfoVO::getId)
+                .collect(Collectors.toList());
         Map<Long, Boolean> configMap = applicationActionService.getAppIsConfig(profileId, appIdList);
         for (ApplicationInfoVO app : appList) {
             app.setIsConfig(configMap.get(app.getId()) ? Const.CONFIGURED : Const.NOT_CONFIGURED);
@@ -285,8 +302,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
         // 查询应用和环境
-        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
-        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        ApplicationProfileDO profile = Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         StageType stageType = StageType.of(request.getStageType());
         if (StageType.RELEASE.equals(stageType)) {
             // 配置机器
@@ -296,13 +313,17 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         applicationEnvService.configAppEnv(request);
         // 配置发布
         applicationActionService.configAppAction(request);
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.APP_NAME, app.getAppName());
+        EventParamsHolder.addParam(EventKeys.PROFILE_NAME, profile.getProfileName());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void syncAppProfileConfig(Long appId, Long profileId, List<Long> targetProfileIdList) {
         // 查询应用和环境
-        Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         // 检查环境是否已配置
         boolean isConfig = this.checkAppConfig(appId, profileId);
@@ -315,6 +336,12 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
             // 同步发布流程
             applicationActionService.syncAppProfileAction(appId, profileId, targetProfileId);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.NAME, app.getAppName());
+        EventParamsHolder.addParam(EventKeys.COUNT, targetProfileIdList.size());
+        EventParamsHolder.addParam(EventKeys.APP_ID, appId);
+        EventParamsHolder.addParam(EventKeys.PROFILE_ID, profileId);
+        EventParamsHolder.addParam(EventKeys.ID_LIST, targetProfileIdList);
     }
 
     @Override
@@ -322,6 +349,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public void copyApplication(Long appId) {
         // 查询app
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
+        String beforeName = app.getAppName();
         app.setId(null);
         app.setAppName(app.getAppName() + Utils.getCopySuffix());
         app.setAppSort(this.getNextSort());
@@ -335,6 +363,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         applicationMachineService.copyAppMachine(appId, targetAppId);
         // 复制发布流程
         applicationActionService.copyAppAction(appId, targetAppId);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, appId);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeName);
     }
 
     @Override

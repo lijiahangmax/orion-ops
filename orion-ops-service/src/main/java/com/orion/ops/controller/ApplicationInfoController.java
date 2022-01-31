@@ -2,11 +2,13 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
 import com.orion.ops.entity.vo.ApplicationInfoVO;
@@ -44,6 +46,7 @@ public class ApplicationInfoController {
      * 添加应用
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_APP)
     public Long insertApp(@RequestBody ApplicationInfoRequest request) {
         Valid.allNotBlank(request.getName(), request.getTag());
         return applicationService.insertApp(request);
@@ -53,6 +56,7 @@ public class ApplicationInfoController {
      * 更新应用
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_APP)
     public Integer updateApp(@RequestBody ApplicationInfoRequest request) {
         Valid.notNull(request.getId());
         return applicationService.updateApp(request);
@@ -72,6 +76,7 @@ public class ApplicationInfoController {
      * 删除应用
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_APP)
     public Integer deleteApp(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationService.deleteApp(id);
@@ -108,6 +113,7 @@ public class ApplicationInfoController {
      * 配置应用
      */
     @RequestMapping("/config")
+    @EventLog(EventType.CONFIG_APP)
     public HttpWrapper<?> configApp(@RequestBody ApplicationConfigRequest request) {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
@@ -120,6 +126,7 @@ public class ApplicationInfoController {
      * 同步配置
      */
     @RequestMapping("/sync")
+    @EventLog(EventType.SYNC_APP)
     public HttpWrapper<?> syncAppConfig(@RequestBody ApplicationSyncConfigRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
@@ -132,6 +139,7 @@ public class ApplicationInfoController {
      * 复制应用
      */
     @RequestMapping("/copy")
+    @EventLog(EventType.COPY_APP)
     public HttpWrapper<?> copyApplication(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
         applicationService.copyApplication(appId);
