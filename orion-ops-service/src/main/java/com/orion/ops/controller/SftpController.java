@@ -1,9 +1,11 @@
 package com.orion.ops.controller;
 
 import com.orion.id.ObjectIds;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.entity.request.sftp.*;
@@ -80,6 +82,7 @@ public class SftpController {
      * 创建文件夹
      */
     @RequestMapping("/mkdir")
+    @EventLog(EventType.SFTP_MKDIR)
     public String mkdir(@RequestBody FileMkdirRequest request) {
         Valid.checkNormalize(request.getPath());
         return sftpService.mkdir(request);
@@ -89,6 +92,7 @@ public class SftpController {
      * 创建文件
      */
     @RequestMapping("/touch")
+    @EventLog(EventType.SFTP_TOUCH)
     public String touch(@RequestBody FileTouchRequest request) {
         Valid.checkNormalize(request.getPath());
         return sftpService.touch(request);
@@ -98,6 +102,7 @@ public class SftpController {
      * 截断文件
      */
     @RequestMapping("/truncate")
+    @EventLog(EventType.SFTP_TRUNCATE)
     public void truncate(@RequestBody FileTruncateRequest request) {
         Valid.checkNormalize(request.getPath());
         try {
@@ -111,6 +116,7 @@ public class SftpController {
      * 移动
      */
     @RequestMapping("/move")
+    @EventLog(EventType.SFTP_MOVE)
     public String move(@RequestBody FileMoveRequest request) {
         Valid.checkNormalize(request.getSource());
         Valid.notBlank(request.getTarget());
@@ -125,6 +131,7 @@ public class SftpController {
      * 删除
      */
     @RequestMapping("/remove")
+    @EventLog(EventType.SFTP_REMOVE)
     public void remove(@RequestBody FileRemoveRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
         paths.forEach(Valid::checkNormalize);
@@ -141,6 +148,7 @@ public class SftpController {
      * 修改权限
      */
     @RequestMapping("/chmod")
+    @EventLog(EventType.SFTP_CHMOD)
     public String chmod(@RequestBody FileChmodRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getPermission());
@@ -155,6 +163,7 @@ public class SftpController {
      * 修改所有者
      */
     @RequestMapping("/chown")
+    @EventLog(EventType.SFTP_CHOWN)
     public void chown(@RequestBody FileChownRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getUid());
@@ -169,6 +178,7 @@ public class SftpController {
      * 修改所有组
      */
     @RequestMapping("/chgrp")
+    @EventLog(EventType.SFTP_CHGRP)
     public void changeGroup(@RequestBody FileChangeGroupRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notNull(request.getGid());
@@ -201,6 +211,7 @@ public class SftpController {
      * 上传文件
      */
     @RequestMapping("/upload/exec")
+    @EventLog(EventType.SFTP_UPLOAD)
     public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("remotePath") String remotePath,
                            @RequestParam("files") List<MultipartFile> files) throws IOException {
         // 检查路径
@@ -235,6 +246,7 @@ public class SftpController {
      * 下载文件
      */
     @RequestMapping("/download/exec")
+    @EventLog(EventType.SFTP_DOWNLOAD)
     public void downloadFile(@RequestBody FileDownloadRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
         paths.forEach(Valid::checkNormalize);
@@ -337,6 +349,7 @@ public class SftpController {
      * 传输打包 全部已完成未删除的文件
      */
     @RequestMapping("/transfer/{sessionToken}/{packageType}/package")
+    @EventLog(EventType.SFTP_PACKAGE)
     public void transferPackage(@PathVariable("sessionToken") String sessionToken, @PathVariable("packageType") Integer packageType) {
         SftpPackageType sftpPackageType = Valid.notNull(SftpPackageType.of(packageType));
         sftpService.transferPackage(sessionToken, sftpPackageType);

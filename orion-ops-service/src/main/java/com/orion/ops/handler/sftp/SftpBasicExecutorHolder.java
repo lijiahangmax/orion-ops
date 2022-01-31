@@ -1,6 +1,8 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
@@ -56,6 +58,7 @@ public class SftpBasicExecutorHolder {
     public SftpExecutor getBasicExecutor(String sessionToken) {
         // 获取executor
         Long machineId = sftpService.getMachineId(sessionToken);
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
         return this.getBasicExecutor(machineId);
     }
 

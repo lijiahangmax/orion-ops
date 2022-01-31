@@ -6,6 +6,8 @@ import com.orion.id.UUIds;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
@@ -75,7 +77,7 @@ public class SftpServiceImpl implements SftpService {
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(sessionToken);
         // 查询列表
         String path = executor.getHome();
-        FileListVO list = this.list(path, 0, executor);
+        FileListVO list = this.list(path, false, executor);
         // 返回数据
         FileOpenVO openVO = new FileOpenVO();
         openVO.setSessionToken(sessionToken);
@@ -92,10 +94,10 @@ public class SftpServiceImpl implements SftpService {
         return this.list(request.getPath(), request.getAll(), executor);
     }
 
-    private FileListVO list(String path, int all, SftpExecutor executor) {
+    private FileListVO list(String path, Boolean all, SftpExecutor executor) {
         synchronized (executor) {
             List<SftpFile> fileList;
-            if (all == 0) {
+            if (all == null || !all) {
                 // 不查询隐藏文件
                 fileList = executor.listFilesFilter(path, f -> !f.getName().startsWith("."), false, true);
             } else {
@@ -133,6 +135,8 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.mkdirs(path);
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
         return path;
     }
 
@@ -143,6 +147,8 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.touch(path);
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
         return path;
     }
 
@@ -153,6 +159,8 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.truncate(path);
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
     }
 
     @Override
@@ -163,17 +171,23 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.mv(source, target);
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
         return target;
     }
 
     @Override
     public void remove(FileRemoveRequest request) {
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
+        List<String> paths = request.getPaths();
         synchronized (executor) {
-            request.getPaths().stream()
+            paths.stream()
                     .map(Files1::getPath)
                     .forEach(executor::rm);
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.COUNT, paths.size());
     }
 
     @Override
@@ -182,8 +196,11 @@ public class SftpServiceImpl implements SftpService {
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
             executor.chmod(path, request.getPermission());
-            return Files1.permission10toString(request.getPermission());
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        // 返回权限
+        return Files1.permission10toString(request.getPermission());
     }
 
     @Override
@@ -193,6 +210,8 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.chown(path, request.getUid());
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
     }
 
     @Override
@@ -202,6 +221,8 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             executor.chgrp(path, request.getGid());
         }
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
     }
 
     @Override
@@ -271,6 +292,13 @@ public class SftpServiceImpl implements SftpService {
         for (FileTransferLogDO uploadFile : uploadFiles) {
             IFileTransferProcessor.of(FileTransferHint.transfer(uploadFile)).exec();
         }
+        // 设置日志参数
+        List<String> remoteFiles = requestFiles.stream()
+                .map(FileUploadRequest::getRemotePath)
+                .collect(Collectors.toList());
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.PATHS, remoteFiles);
+        EventParamsHolder.addParam(EventKeys.COUNT, requestFiles.size());
     }
 
     @Override
@@ -301,7 +329,8 @@ public class SftpServiceImpl implements SftpService {
         };
         // 初始化下载信息
         List<FileTransferLogDO> downloadFiles = Lists.newList();
-        for (String path : request.getPaths()) {
+        List<String> paths = request.getPaths();
+        for (String path : paths) {
             SftpFile file = executor.getFile(path);
             Valid.notNull(file, Strings.format(MessageConst.FILE_NOT_FOUND, path));
             // 如果是文件夹则递归所有文件
@@ -321,6 +350,10 @@ public class SftpServiceImpl implements SftpService {
         for (FileTransferLogDO downloadFile : downloadFiles) {
             IFileTransferProcessor.of(FileTransferHint.transfer(downloadFile)).exec();
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.PATHS, paths);
+        EventParamsHolder.addParam(EventKeys.COUNT, downloadFiles.size());
     }
 
     @Override
@@ -452,7 +485,6 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus())
                 .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
@@ -481,7 +513,6 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.PAUSE.getStatus())
                 .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
@@ -495,7 +526,6 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.ERROR.getStatus())
                 .in(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType(), SftpTransferType.DOWNLOAD.getType());
         List<FileTransferLogDO> transferLogs = fileTransferLogDAO.selectList(wrapper);
@@ -536,11 +566,8 @@ public class SftpServiceImpl implements SftpService {
                 processor.stop();
             }
         }
-        // 修改状态
-        FileTransferLogDO update = new FileTransferLogDO();
-        update.setId(transferLog.getId());
-        update.setShowType(Const.DISABLE);
-        fileTransferLogDAO.updateById(update);
+        // 逻辑删除
+        fileTransferLogDAO.deleteById(transferLog.getId());
     }
 
     @Override
@@ -548,25 +575,37 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .in(FileTransferLogDO::getTransferType,
                         SftpTransferType.UPLOAD.getType(),
                         SftpTransferType.DOWNLOAD.getType(),
                         SftpTransferType.PACKAGE.getType())
                 .orderByDesc(FileTransferLogDO::getId);
+        // 查询列表
         List<FileTransferLogDO> logList = fileTransferLogDAO.selectList(wrapper);
+        // 设置进度
+        logList.forEach(log -> {
+            if (!SftpTransferStatus.RUNNABLE.getStatus().equals(log.getTransferStatus())) {
+                return;
+            }
+            if (!Const.D_0.equals(log.getNowProgress())) {
+                return;
+            }
+            // 进行中 && 进度为0 需要获取进行中的进度
+            Double progress = transferProcessorManager.getProgress(log.getFileToken());
+            if (progress != null) {
+                log.setNowProgress(progress);
+            }
+        });
         return Converts.toList(logList, FileTransferLogVO.class);
     }
 
     @Override
     public Integer transferClear(Long machineId) {
-        FileTransferLogDO update = new FileTransferLogDO();
-        update.setShowType(Const.DISABLE);
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getMachineId, machineId)
                 .ne(FileTransferLogDO::getTransferStatus, SftpTransferStatus.RUNNABLE.getStatus());
-        return fileTransferLogDAO.update(update, wrapper);
+        return fileTransferLogDAO.delete(wrapper);
     }
 
     @Override
@@ -579,8 +618,7 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(FileTransferLogDO::getUserId, userId)
                 .eq(FileTransferLogDO::getMachineId, machineId)
-                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.FINISH.getStatus())
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE);
+                .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.FINISH.getStatus());
         switch (packageType) {
             case UPLOAD:
                 wrapper.eq(FileTransferLogDO::getTransferType, SftpTransferType.UPLOAD.getType());
@@ -623,6 +661,14 @@ public class SftpServiceImpl implements SftpService {
         transferProcessorManager.notifySessionAddEvent(userId, machineId, packageRecord.getFileToken(), packageRecord);
         // 提交打包任务
         IFileTransferProcessor.of(FileTransferHint.packaged(packageRecord, logList)).exec();
+        // 设置日志参数
+        List<String> paths = logList.stream()
+                .map(FileTransferLogDO::getRemoteFile)
+                .collect(Collectors.toList());
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.PATHS, paths);
+        EventParamsHolder.addParam(EventKeys.COUNT, logList.size());
+        EventParamsHolder.addParam(EventKeys.TYPE, packageType);
     }
 
     @Override
@@ -630,7 +676,6 @@ public class SftpServiceImpl implements SftpService {
         LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
                 .eq(!Currents.isAdministrator(), FileTransferLogDO::getUserId, Currents.getUserId())
                 .eq(FileTransferLogDO::getTransferStatus, SftpTransferStatus.FINISH.getStatus())
-                .eq(FileTransferLogDO::getShowType, Const.ENABLE)
                 .eq(FileTransferLogDO::getId, id);
         FileTransferLogDO transferLog = fileTransferLogDAO.selectOne(wrapper);
         if (transferLog == null) {
