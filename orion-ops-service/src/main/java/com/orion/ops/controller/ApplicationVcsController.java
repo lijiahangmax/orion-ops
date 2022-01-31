@@ -2,7 +2,9 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
 import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
 import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
@@ -33,18 +35,20 @@ public class ApplicationVcsController {
     private ApplicationVcsService applicationVcsService;
 
     /**
-     * 添加appVcs
+     * 添加版本仓库
      */
     @RequestMapping("/add")
+    @EventLog(EventType.ADD_VCS)
     public Long addAppVcs(@RequestBody ApplicationVcsRequest request) {
         Valid.allNotBlank(request.getName(), request.getUrl());
         return applicationVcsService.addAppVcs(request);
     }
 
     /**
-     * 更新appVcs
+     * 更新版本仓库
      */
     @RequestMapping("/update")
+    @EventLog(EventType.UPDATE_VCS)
     public Integer updateAppVcs(@RequestBody ApplicationVcsRequest request) {
         Valid.notNull(request.getId());
         Valid.allNotBlank(request.getName(), request.getUrl());
@@ -55,6 +59,7 @@ public class ApplicationVcsController {
      * 通过id删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_VCS)
     public Integer deleteAppVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationVcsService.deleteAppVcs(id);
@@ -81,6 +86,7 @@ public class ApplicationVcsController {
      * 仓库初始化
      */
     @RequestMapping("/init")
+    @EventLog(EventType.INIT_VCS)
     public HttpWrapper<?> initVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationVcsService.initEventVcs(id, false);
@@ -91,6 +97,7 @@ public class ApplicationVcsController {
      * 仓库重新初始化
      */
     @RequestMapping("/re/init")
+    @EventLog(EventType.RE_INIT_VCS)
     public HttpWrapper<?> reInitVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationVcsService.initEventVcs(id, true);
@@ -129,6 +136,7 @@ public class ApplicationVcsController {
      * 清空应用构建历史版本
      */
     @RequestMapping("/clean")
+    @EventLog(EventType.CLEAN_VCS)
     public HttpWrapper<?> cleanBuildVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationVcsService.cleanBuildVcs(id);

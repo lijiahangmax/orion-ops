@@ -6,6 +6,8 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.app.VcsType;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
@@ -77,6 +79,8 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         insert.setVcsAccessToken(request.getToken());
         insert.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
         applicationVcsDAO.insert(insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(insert);
         return insert.getId();
     }
 
@@ -109,15 +113,25 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
             Files1.delete(clonePath);
         }
-        return applicationVcsDAO.updateById(update);
+        int effect = applicationVcsDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParams(update);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeVcs.getVcsName());
+        return effect;
     }
 
     @Override
     public Integer deleteAppVcs(Long id) {
+        ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
+        Valid.notNull(beforeVcs, MessageConst.UNKNOWN_DATA);
         // 清空app引用
         applicationInfoDAO.cleanVcsCount(id);
         // 删除
-        return applicationVcsDAO.deleteById(id);
+        int effect = applicationVcsDAO.deleteById(id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, beforeVcs.getVcsName());
+        return effect;
     }
 
     @Override
@@ -169,10 +183,10 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         Gits gits = null;
         try {
             // clone
-            if (vcs.getVscUsername() == null) {
+            String username = vcs.getVscUsername();
+            if (Strings.isBlank(username)) {
                 gits = Gits.clone(vcs.getVscUrl(), clonePath);
             } else {
-                String username = vcs.getVscUsername();
                 String password = ValueMix.decrypt(vcs.getVcsPassword());
                 gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
             }
@@ -189,6 +203,9 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             update.setVcsStatus(VcsStatus.ERROR.getStatus());
         }
         applicationVcsDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
         if (ex != null) {
             throw Exceptions.argument(MessageConst.VCS_INIT_ERROR, ex);
         }
@@ -283,6 +300,12 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
 
     @Override
     public void cleanBuildVcs(Long id) {
+        // 查询数据
+        ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
+        Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
         File rootPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EMPTY));
         if (!Files1.isDirectory(rootPath)) {
             return;
