@@ -3,12 +3,15 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.*;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.ReleaseSerialType;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.consts.app.TransferDirType;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.dao.ApplicationEnvDAO;
@@ -141,6 +144,9 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             // 插入历史值
             historyValueService.addHistory(id, HistoryValueType.APP_ENV, HistoryOperator.DELETE, env.getAttrValue(), null);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, effect);
         return effect;
     }
 
@@ -328,6 +334,13 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             // 初始化系统变量
             self.checkInitSystemEnv(appId, targetProfileId);
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.APP_ID, appId);
+        EventParamsHolder.addParam(EventKeys.PROFILE_ID, profileId);
+        EventParamsHolder.addParam(EventKeys.ID_LIST, targetProfileIdList);
+        EventParamsHolder.addParam(EventKeys.ENV_COUNT, envList.size());
+        EventParamsHolder.addParam(EventKeys.PROFILE_COUNT, targetProfileIdList.size());
     }
 
     @Override

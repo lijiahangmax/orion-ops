@@ -3,10 +3,12 @@ package com.orion.ops.controller;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.env.EnvViewType;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.env.EnvViewType;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.vo.ApplicationEnvVO;
 import com.orion.ops.service.api.ApplicationEnvService;
@@ -54,6 +56,7 @@ public class ApplicationEnvController {
      * 删除应用变量
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_APP_ENV)
     public Integer deleteAppEnv(@RequestBody ApplicationEnvRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationEnvService.deleteAppEnv(idList);
@@ -91,6 +94,7 @@ public class ApplicationEnvController {
      * 同步应用环境变量到其他环境
      */
     @RequestMapping("/sync")
+    @EventLog(EventType.SYNC_APP_ENV)
     public HttpWrapper<?> syncAppEnv(@RequestBody ApplicationEnvRequest request) {
         Long id = Valid.notNull(request.getId());
         Long appId = Valid.notNull(request.getAppId());
