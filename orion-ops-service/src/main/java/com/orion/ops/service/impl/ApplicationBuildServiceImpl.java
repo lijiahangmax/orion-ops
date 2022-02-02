@@ -8,6 +8,8 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -144,6 +146,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         }
         // 提交构建任务
         IBuilderProcessor.with(buildId).exec();
+        // 设置日志参数
+        EventParamsHolder.addParams(buildTask);
         return buildId;
     }
 
@@ -243,6 +247,11 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             default:
                 break;
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());
+        EventParamsHolder.addParam(EventKeys.APP_NAME, build.getAppName());
+        EventParamsHolder.addParam(EventKeys.PROFILE_NAME, build.getProfileName());
     }
 
     @Override
@@ -260,6 +269,11 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Wrapper<ApplicationBuildActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
                 .eq(ApplicationBuildActionDO::getBuildId, id);
         effect += applicationBuildActionDAO.delete(actionWrapper);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());
+        EventParamsHolder.addParam(EventKeys.APP_NAME, build.getAppName());
+        EventParamsHolder.addParam(EventKeys.PROFILE_NAME, build.getProfileName());
         return effect;
     }
 

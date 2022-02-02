@@ -2,7 +2,9 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
 import com.orion.ops.entity.vo.ApplicationBuildReleaseListVO;
 import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
@@ -35,6 +37,7 @@ public class ApplicationBuildController {
      * 提交执行
      */
     @RequestMapping("/submit")
+    @EventLog(EventType.SUBMIT_BUILD)
     public Long submitAppBuild(@RequestBody ApplicationBuildRequest request) {
         Valid.allNotNull(request.getAppId(), request.getProfileId());
         return applicationBuildService.submitBuildTask(request);
@@ -80,6 +83,7 @@ public class ApplicationBuildController {
      * 终止构建
      */
     @RequestMapping("/terminated")
+    @EventLog(EventType.BUILD_TERMINATED)
     public HttpWrapper<?> terminatedTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationBuildService.terminatedBuildTask(id);
@@ -90,6 +94,7 @@ public class ApplicationBuildController {
      * 删除构建
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_BUILD)
     public Integer deleteTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.deleteBuildTask(id);
@@ -99,6 +104,7 @@ public class ApplicationBuildController {
      * 重新构建
      */
     @RequestMapping("/rebuild")
+    @EventLog(EventType.SUBMIT_REBUILD)
     public Long rebuildTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.rebuild(id);
