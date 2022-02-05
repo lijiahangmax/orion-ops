@@ -10,6 +10,8 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.*;
@@ -25,6 +27,7 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
@@ -116,7 +119,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .dataGrid(ApplicationReleaseListVO.class);
         if (Const.ENABLE.equals(request.getQueryMachine())) {
             // 查询发布机器
-            List<Long> machineIdList = dataGrid.stream().map(ApplicationReleaseListVO::getId).collect(Collectors.toList());
+            List<Long> machineIdList = dataGrid.stream()
+                    .map(ApplicationReleaseListVO::getId)
+                    .collect(Collectors.toList());
             if (!machineIdList.isEmpty()) {
                 // 查询机器
                 Map<Long, List<ApplicationReleaseMachineVO>> releaseMachineMap = applicationReleaseMachineService.getReleaseMachines(machineIdList)
@@ -208,14 +213,36 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 设置部署操作
         List<ApplicationReleaseActionDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
         releaseActions.forEach(applicationReleaseActionDAO::insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(release);
         return releaseId;
+    }
+
+    @Override
+    public Long copyAppRelease(Long id) {
+        // 查询
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
+        List<Long> machineIdList = machines.stream()
+                .map(ApplicationReleaseMachineDO::getMachineId)
+                .collect(Collectors.toList());
+        // 提交
+        ApplicationReleaseRequest request = new ApplicationReleaseRequest();
+        request.setTitle(release.getReleaseTitle());
+        request.setAppId(release.getAppId());
+        request.setProfileId(release.getProfileId());
+        request.setBuildId(release.getBuildId());
+        request.setMachineIdList(machineIdList);
+        return SpringHolder.getBean(ApplicationReleaseService.class).submitAppRelease(request);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer auditAppRelease(ApplicationReleaseAuditRequest request) {
         // 查询状态
-        ApplicationReleaseDO release = applicationReleaseDAO.selectById(request.getId());
+        Long id = request.getId();
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_AUDIT.equals(status) && !ReleaseStatus.AUDIT_REJECT.equals(status)) {
@@ -225,21 +252,25 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         UserDTO user = Currents.getUser();
         // 更新
         ApplicationReleaseDO update = new ApplicationReleaseDO();
-        update.setId(request.getId());
+        update.setId(id);
         update.setAuditUserId(user.getId());
         update.setAuditUserName(user.getUsername());
         update.setAuditTime(new Date());
         update.setAuditReason(request.getReason());
-        if (AuditStatus.RESOLVE.equals(auditStatus)) {
+        boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
+        if (resolve) {
             // 通过
             update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
-        } else if (AuditStatus.REJECT.equals(auditStatus)) {
+        } else {
             // 驳回
             update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
-        } else {
-            return 0;
         }
-        return applicationReleaseDAO.updateById(update);
+        int effect = applicationReleaseDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? Const.RESOLVE_LABEL : Const.REJECT_LABEL);
+        return effect;
     }
 
     @Override
@@ -260,6 +291,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         applicationReleaseDAO.updateById(update);
         // 发布
         IReleaseProcessor.with(release).exec();
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
     }
 
     @Override
@@ -314,6 +348,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 applicationReleaseActionDAO.insert(action);
             }
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, rollback.getReleaseTitle());
         return releaseId;
     }
 
@@ -343,6 +380,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             default:
                 break;
         }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
     }
 
     @Override
@@ -364,6 +404,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Wrapper<ApplicationReleaseActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationReleaseActionDO>()
                 .eq(ApplicationReleaseActionDO::getReleaseId, id);
         effect += applicationReleaseActionDAO.delete(actionWrapper);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
         return effect;
     }
 

@@ -58,6 +58,14 @@ public interface ApplicationReleaseService {
     Long submitAppRelease(ApplicationReleaseRequest request);
 
     /**
+     * 复制
+     *
+     * @param id id
+     * @return id
+     */
+    Long copyAppRelease(Long id);
+
+    /**
      * 审核
      *
      * @param request request

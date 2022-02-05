@@ -2,9 +2,11 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
@@ -72,6 +74,7 @@ public class ApplicationReleaseController {
      * 提交发布
      */
     @RequestMapping("/submit")
+    @EventLog(EventType.SUBMIT_RELEASE)
     public Long submitAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Valid.notBlank(request.getTitle());
         Valid.notNull(request.getAppId());
@@ -82,10 +85,21 @@ public class ApplicationReleaseController {
     }
 
     /**
+     * 复制发布
+     */
+    @RequestMapping("/copy")
+    @EventLog(EventType.COPY_RELEASE)
+    public Long copyAppRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationReleaseService.copyAppRelease(id);
+    }
+
+    /**
      * 发布审核
      */
     @RequestMapping("/audit")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.AUDIT_RELEASE)
     public Integer auditAppRelease(@RequestBody ApplicationReleaseAuditRequest request) {
         Valid.notNull(request.getId());
         AuditStatus status = Valid.notNull(AuditStatus.of(request.getStatus()));
@@ -99,6 +113,7 @@ public class ApplicationReleaseController {
      * 执行发布
      */
     @RequestMapping("/runnable")
+    @EventLog(EventType.RUNNABLE_RELEASE)
     public HttpWrapper<?> runnableAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationReleaseService.runnableAppRelease(id);
@@ -109,6 +124,7 @@ public class ApplicationReleaseController {
      * 回滚发布
      */
     @RequestMapping("/rollback")
+    @EventLog(EventType.ROLLBACK_RELEASE)
     public Long rollbackAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.rollbackAppRelease(id);
@@ -118,6 +134,7 @@ public class ApplicationReleaseController {
      * 发布停止
      */
     @RequestMapping("/terminated")
+    @EventLog(EventType.TERMINATED_RELEASE)
     public HttpWrapper<?> terminatedAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationReleaseService.terminatedRelease(id);
@@ -128,6 +145,7 @@ public class ApplicationReleaseController {
      * 发布删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_RELEASE)
     public Integer deleteAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.deleteRelease(id);
