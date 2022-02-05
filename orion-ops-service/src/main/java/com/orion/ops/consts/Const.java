@@ -116,6 +116,12 @@ public class Const extends com.orion.constant.Const {
 
     public static final String DISABLE_LABEL = "停用";
 
+    public static final String RESOLVE_LABEL = "通过";
+
+    public static final String REJECT_LABEL = "驳回";
+
+    public static final Double D_0 = 0D;
+
     /**
      * 不安全的文件夹
      */

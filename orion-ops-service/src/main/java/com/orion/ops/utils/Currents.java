@@ -1,8 +1,8 @@
 package com.orion.ops.utils;
 
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.RoleType;
-import com.orion.ops.consts.UserHolder;
+import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.consts.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.servlet.web.CookiesExt;
 import com.orion.utils.Strings;
