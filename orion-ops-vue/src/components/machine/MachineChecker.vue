@@ -5,42 +5,46 @@
              overlayClassName="machine-content-list-popover"
              :placement="placement">
     <!-- 标题 -->
-    <div slot="title" class="machine-title">
-      <a-checkbox v-if="machines.length"
-                  :indeterminate="indeterminate"
-                  :checked="checkAll"
-                  @change="chooseAll">
-        全选
-      </a-checkbox>
-      <div v-else/>
-      <a @click="hide">关闭</a>
-    </div>
+    <template #title>
+      <div class="machine-title">
+        <a-checkbox v-if="machines.length"
+                    :indeterminate="indeterminate"
+                    :checked="checkAll"
+                    @change="chooseAll">
+          全选
+        </a-checkbox>
+        <div v-else/>
+        <a @click="hide">关闭</a>
+      </div>
+    </template>
     <!-- 内容 -->
-    <div slot="content" class="machine-content">
-      <a-spin :spinning="loading">
-        <!-- 复选框 -->
-        <div class="machine-list-wrapper" v-if="machines.length">
-          <div class="machine-list">
-            <a-checkbox-group v-model="checkedList" @change="onChange">
-              <a-row v-for="(option, index) of machines" :key="index" style="margin: 4px 0">
-                <a-checkbox :value="option.id" :disabled="checkDisabled(option.id)">
-                  {{ `${option.name} (${option.host})` }}
-                </a-checkbox>
-              </a-row>
-            </a-checkbox-group>
+    <template #content>
+      <div class="machine-content">
+        <a-spin :spinning="loading">
+          <!-- 复选框 -->
+          <div class="machine-list-wrapper" v-if="machines.length">
+            <div class="machine-list">
+              <a-checkbox-group v-model="checkedList" @change="onChange">
+                <a-row v-for="(option, index) of machines" :key="index" style="margin: 4px 0">
+                  <a-checkbox :value="option.id" :disabled="checkDisabled(option.id)">
+                    {{ `${option.name} (${option.host})` }}
+                  </a-checkbox>
+                </a-row>
+              </a-checkbox-group>
+            </div>
           </div>
-        </div>
-        <div class="machine-list-empty" v-if="empty">
-          <a-empty/>
-        </div>
-        <!-- 分割线 -->
-        <a-divider class="content-divider"/>
-        <!-- 底部栏 -->
-        <div class="machine-button-tools">
-          <slot name="footer"/>
-        </div>
-      </a-spin>
-    </div>
+          <div class="machine-list-empty" v-if="empty">
+            <a-empty/>
+          </div>
+          <!-- 分割线 -->
+          <a-divider class="content-divider"/>
+          <!-- 底部栏 -->
+          <div class="machine-button-tools">
+            <slot name="footer"/>
+          </div>
+        </a-spin>
+      </div>
+    </template>
     <!-- 触发器 -->
     <slot name="trigger"/>
   </a-popover>

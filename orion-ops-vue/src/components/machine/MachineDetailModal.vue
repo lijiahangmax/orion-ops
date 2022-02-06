@@ -59,9 +59,9 @@
         </a-descriptions>
       </div>
     </a-spin>
-    <div slot="footer">
+    <template #footer>
       <a-button @click="close">关闭</a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 
