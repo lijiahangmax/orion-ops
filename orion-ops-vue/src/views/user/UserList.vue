@@ -306,7 +306,7 @@ export default {
     },
     updateStatus(record) {
       const label = record.status === 1 ? '停用' : '启用'
-      const pending = this.$message.loading(`正在${label}...`, 5)
+      const pending = this.$message.loading(`正在${label}...`)
       this.$api.updateUserStatus({
         id: record.id,
         status: record.status === 1 ? 2 : 1

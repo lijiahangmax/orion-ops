@@ -257,6 +257,7 @@ export default {
     remove(id) {
       this.$api.deleteTailFile({ id })
         .then(() => {
+          this.$message.success('已删除')
           this.getList({})
         })
     },
