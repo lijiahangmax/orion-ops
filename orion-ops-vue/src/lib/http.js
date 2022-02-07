@@ -79,13 +79,17 @@ function fillDefaultConfig(config) {
 $http.interceptors.request.use(
   config => {
     const loginToken = $storage.get($storage.keys.LOGIN_TOKEN)
-    // 设置 'Content-Type
+    // 设置 Content-Type
     config.headers['Content-Type'] = config.contentType
     // 登陆判断
     if (config.auth && !loginToken) {
       throw new RequestError(700, '用户未登录')
     }
     config.headers[$storage.keys.LOGIN_TOKEN] = loginToken
+    // 设置加载
+    if (config.loading) {
+      config.loadingKey = $message.loading(config.loading)
+    }
     return config
   }, err => {
     return Promise.reject(err)
@@ -97,6 +101,8 @@ $http.interceptors.request.use(
  */
 $http.interceptors.response.use(
   resp => {
+    // 加载关闭
+    resp.config.loadingKey && resp.config.loadingKey()
     // 跳过响应拦截器
     if (resp.config.skipRespInterceptor) {
       return resp.data
@@ -133,6 +139,8 @@ $http.interceptors.response.use(
         return Promise.reject(respData)
     }
   }, err => {
+    // 加载关闭
+    err.config.loadingKey && err.config.loadingKey()
     // 跳过响应拦截器
     if (err.config.skipRespInterceptor) {
       return Promise.reject(err)

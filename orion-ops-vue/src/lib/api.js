@@ -100,14 +100,18 @@ const $api = {
    * 新增用户
    */
   addUser: param => {
-    return $http.$post('/user/add', param)
+    return $http.$post('/user/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 更新用户
    */
   updateUser: param => {
-    return $http.$post('/user/update', param)
+    return $http.$post('/user/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -123,7 +127,9 @@ const $api = {
    * 删除用户
    */
   deleteUser: param => {
-    return $http.$post('/user/delete', param)
+    return $http.$post('/user/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -137,21 +143,27 @@ const $api = {
    * 添加机器
    */
   addMachine: param => {
-    return $http.$post('/machine/add', param)
+    return $http.$post('/machine/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 修改机器
    */
   updateMachine: param => {
-    return $http.$post('/machine/update', param)
+    return $http.$post('/machine/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
    * 删除机器
    */
   deleteMachine: param => {
-    return $http.$post('/machine/delete', param)
+    return $http.$post('/machine/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -180,7 +192,8 @@ const $api = {
    */
   copyMachine: param => {
     return $http.$post('/machine/copy', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在复制...'
     })
   },
 
@@ -188,21 +201,27 @@ const $api = {
    * 测试机器ping
    */
   machineTestPing: param => {
-    return $http.$post('/machine/test/ping', param, { skipErrorMessage: true })
+    return $http.$post('/machine/test/ping', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
    * 测试机器连接
    */
   machineTestConnect: param => {
-    return $http.$post('/machine/test/connect', param, { skipErrorMessage: true })
+    return $http.$post('/machine/test/connect', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
    * 获取终端访问信息
    */
   accessTerminal: param => {
-    return $http.$post('/terminal/access', param, { skipErrorMessage: true })
+    return $http.$post('/terminal/access', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
@@ -223,7 +242,10 @@ const $api = {
    * 修改机器终端配置
    */
   updateTerminalSetting: param => {
-    return $http.$post('/terminal/update', param, { skipErrorMessage: true })
+    return $http.$post('/terminal/update', param, {
+      skipErrorMessage: true,
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -244,7 +266,9 @@ const $api = {
    * 强制下线终端
    */
   terminalOffline: param => {
-    return $http.$post('/terminal/manager/offline', param)
+    return $http.$post('/terminal/manager/offline', param, {
+      loading: '正在操作...'
+    })
   },
 
   /**
@@ -272,35 +296,39 @@ const $api = {
    * sftp 创建目录
    */
   sftpMkdir: param => {
-    return $http.$post('/sftp/mkdir', param, { skipErrorMessage: true })
+    return $http.$post('/sftp/mkdir', param, {
+      skipErrorMessage: true,
+      loading: '正在创建...'
+    })
   },
 
   /**
    * sftp 创建文件
    */
   sftpTouch: param => {
-    return $http.$post('/sftp/touch', param, { skipErrorMessage: true })
+    return $http.$post('/sftp/touch', param, {
+      skipErrorMessage: true,
+      loading: '正在创建...'
+    })
   },
 
   /**
    * sftp 移动文件
    */
   sftpMove: param => {
-    return $http.$post('/sftp/move', param, { skipErrorMessage: true })
+    return $http.$post('/sftp/move', param, {
+      skipErrorMessage: true,
+      loading: '正在移动...'
+    })
   },
 
   /**
    * sftp 删除文件
    */
   sftpRemove: param => {
-    return $http.$post('/sftp/remove', param)
-  },
-
-  /**
-   * sftp 修改权限
-   */
-  sftpChmod: param => {
-    return $http.$post('/sftp/chmod', param, { skipErrorMessage: true })
+    return $http.$post('/sftp/remove', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -308,6 +336,16 @@ const $api = {
    */
   sftpTruncate: param => {
     return $http.$post('/sftp/truncate', param)
+  },
+
+  /**
+   * sftp 修改权限
+   */
+  sftpChmod: param => {
+    return $http.$post('/sftp/chmod', param, {
+      skipErrorMessage: true,
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -344,6 +382,7 @@ const $api = {
   sftpUploadExec: param => {
     return $http.$post('/sftp/upload/exec', param, {
       timeout: 18000000,
+      loading: '正在提交上传请求...',
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -355,7 +394,8 @@ const $api = {
    */
   sftpDownloadExec: param => {
     return $http.$post('/sftp/download/exec', param, {
-      timeout: 180000
+      timeout: 180000,
+      loading: '正在请求下载文件...'
     })
   },
 
@@ -460,14 +500,18 @@ const $api = {
    * 添加机器代理
    */
   addMachineProxy: param => {
-    return $http.$post('/proxy/add', param)
+    return $http.$post('/proxy/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 更新机器代理
    */
   updateMachineProxy: param => {
-    return $http.$post('/proxy/update', param)
+    return $http.$post('/proxy/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -488,28 +532,36 @@ const $api = {
    * 删除机器代理
    */
   deleteMachineProxy: param => {
-    return $http.$post('/proxy/delete', param)
+    return $http.$post('/proxy/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
    * 添加秘钥
    */
   addMachineKey: param => {
-    return $http.$post('/key/add', param)
+    return $http.$post('/key/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
-   *更新秘钥
+   * 更新秘钥
    */
   updateMachineKey: param => {
-    return $http.$post('/key/update', param)
+    return $http.$post('/key/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
    * 删除秘钥
    */
   removeMachineKey: param => {
-    return $http.$post('/key/remove', param)
+    return $http.$post('/key/remove', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -527,45 +579,61 @@ const $api = {
   },
 
   /**
-   *挂载秘钥
+   * 挂载秘钥
    */
   mountMachineKey: param => {
-    return $http.$post('/key/mount', param, { skipErrorMessage: true })
+    return $http.$post('/key/mount', param, {
+      skipErrorMessage: true,
+      loading: '正在挂载...'
+    })
   },
 
   /**
    * 卸载秘钥
    */
   dumpMachineKey: param => {
-    return $http.$post('/key/dump', param, { skipErrorMessage: true })
+    return $http.$post('/key/dump', param, {
+      skipErrorMessage: true,
+      loading: '正在卸载...'
+    })
   },
 
   /**
    * 挂载所有秘钥
    */
   mountAllMachineKey: () => {
-    return $http.$post('/key/mount-all', { skipErrorMessage: true })
+    return $http.$post('/key/mount-all', {}, {
+      skipErrorMessage: true,
+      loading: '正在挂载...'
+    })
   },
 
   /**
    * 卸载所有秘钥
    */
   dumpAllMachineKey: () => {
-    return $http.$post('/key/dump-all', { skipErrorMessage: true })
+    return $http.$post('/key/dump-all', {}, {
+      skipErrorMessage: true,
+      loading: '正在卸载...'
+    })
   },
 
   /**
    * 临时挂载秘钥
    */
   tempMountMachineKey: param => {
-    return $http.$post('/key/temp-mount', param)
+    return $http.$post('/key/temp-mount', param, {
+      loading: '正在挂载...'
+    })
   },
 
   /**
    * 添加机器环境变量
    */
   addMachineEnv: param => {
-    return $http.$post('/env/add', param)
+    return $http.$post('/env/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
@@ -573,7 +641,8 @@ const $api = {
    */
   updateMachineEnv: param => {
     return $http.$post('/env/update', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在修改...'
     })
   },
 
@@ -581,7 +650,9 @@ const $api = {
    * 删除机器环境变量
    */
   deleteMachineEnv: param => {
-    return $http.$post('/env/delete', param)
+    return $http.$post('/env/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -611,7 +682,8 @@ const $api = {
   saveMachineEnvView: param => {
     return $http.$post('/env/view/save', param, {
       skipErrorMessage: true,
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在保存...'
     })
   },
 
@@ -620,7 +692,8 @@ const $api = {
    */
   syncMachineEnv: param => {
     return $http.$post('/env/sync', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在同步...'
     })
   },
 
@@ -635,7 +708,9 @@ const $api = {
    * 回滚历史值
    */
   rollbackHistoryValue: param => {
-    return $http.$post('/history-value/rollback', param)
+    return $http.$post('/history-value/rollback', param, {
+      loading: '正在回滚...'
+    })
   },
 
   /**
@@ -643,7 +718,8 @@ const $api = {
    */
   submitExecTask: param => {
     return $http.$post('/exec/submit', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在提交执行...'
     })
   },
 
@@ -672,14 +748,18 @@ const $api = {
    * 执行停止
    */
   terminatedExecTask: param => {
-    return $http.$post('/exec/terminated', param)
+    return $http.$post('/exec/terminated', param, {
+      loading: '正在终止...'
+    })
   },
 
   /**
    * 删除执行任务
    */
   deleteExecTask: param => {
-    return $http.$post('/exec/delete', param)
+    return $http.$post('/exec/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -695,14 +775,18 @@ const $api = {
    * 新增模板
    */
   addTemplate: param => {
-    return $http.$post('/template/add', param)
+    return $http.$post('/template/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 修改模板
    */
   updateTemplate: param => {
-    return $http.$post('/template/update', param)
+    return $http.$post('/template/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -723,7 +807,9 @@ const $api = {
    * 删除模板
    */
   deleteTemplate: param => {
-    return $http.$post('/template/delete', param)
+    return $http.$post('/template/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -737,21 +823,27 @@ const $api = {
    * 添加 tail 文件
    */
   addTailFile: param => {
-    return $http.$post('/file-tail/add', param)
+    return $http.$post('/file-tail/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 修改 tail 文件
    */
   updateTailFile: param => {
-    return $http.$post('/file-tail/update', param)
+    return $http.$post('/file-tail/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
    * 删除 tail 文件
    */
   deleteTailFile: param => {
-    return $http.$post('/file-tail/delete', param)
+    return $http.$post('/file-tail/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -800,42 +892,54 @@ const $api = {
    * 添加应用环境
    */
   addProfile: param => {
-    return $http.$post('/app-profile/add', param)
+    return $http.$post('/app-profile/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 修改应用环境
    */
   updateProfile: param => {
-    return $http.$post('/app-profile/update', param)
+    return $http.$post('/app-profile/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
    * 删除应用环境
    */
   deleteProfile: param => {
-    return $http.$post('/app-profile/delete', param)
+    return $http.$post('/app-profile/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
    * 添加应用变量
    */
   addAppEnv: param => {
-    return $http.$post('/app-env/add', param)
+    return $http.$post('/app-env/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 删除应用变量
    */
   deleteAppEnv: param => {
-    return $http.$post('/app-env/delete', param)
+    return $http.$post('/app-env/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
    * 修改应用变量
    */
   updateAppEnv: param => {
-    return $http.$post('/app-env/update', param)
+    return $http.$post('/app-env/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -857,7 +961,8 @@ const $api = {
    */
   syncAppEnv: param => {
     return $http.$post('/app-env/sync', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在同步...'
     })
   },
 
@@ -874,7 +979,8 @@ const $api = {
   saveAppEnvView: param => {
     return $http.$post('/app-env/view/save', param, {
       skipErrorMessage: true,
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在保存...'
     })
   },
 
@@ -882,7 +988,9 @@ const $api = {
    * 添加应用版本仓库
    */
   addVcs: param => {
-    return $http.$post('/app-vcs/add', param)
+    return $http.$post('/app-vcs/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
@@ -890,7 +998,8 @@ const $api = {
    */
   updateVcs: param => {
     return $http.$post('/app-vcs/update', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在修改...'
     })
   },
 
@@ -899,7 +1008,8 @@ const $api = {
    */
   deleteVcs: param => {
     return $http.$post('/app-vcs/delete', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在删除...'
     })
   },
 
@@ -922,7 +1032,8 @@ const $api = {
    */
   initVcs: param => {
     return $http.$post('/app-vcs/init', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在初始化...'
     })
   },
 
@@ -931,7 +1042,8 @@ const $api = {
    */
   reInitVcs: param => {
     return $http.$post('/app-vcs/re/init', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在初始化...'
     })
   },
 
@@ -940,7 +1052,8 @@ const $api = {
    */
   cleanVcs: param => {
     return $http.$post('/app-vcs/clean', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在清空...'
     })
   },
 
@@ -969,14 +1082,18 @@ const $api = {
    * 添加应用
    */
   addApp: param => {
-    return $http.$post('/app-info/add', param)
+    return $http.$post('/app-info/add', param, {
+      loading: '正在添加...'
+    })
   },
 
   /**
    * 更新应用
    */
   updateApp: param => {
-    return $http.$post('/app-info/update', param)
+    return $http.$post('/app-info/update', param, {
+      loading: '正在修改...'
+    })
   },
 
   /**
@@ -990,7 +1107,9 @@ const $api = {
    * 删除应用
    */
   deleteApp: param => {
-    return $http.$post('/app-info/delete', param)
+    return $http.$post('/app-info/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -1019,7 +1138,8 @@ const $api = {
    */
   configApp: param => {
     return $http.$post('/app-info/config', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在保存...'
     })
   },
 
@@ -1028,7 +1148,8 @@ const $api = {
    */
   syncApp: param => {
     return $http.$post('/app-info/sync', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在同步...'
     })
   },
 
@@ -1037,7 +1158,8 @@ const $api = {
    */
   copyApp: param => {
     return $http.$post('/app-info/copy', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在复制...'
     })
   },
 
@@ -1045,7 +1167,9 @@ const $api = {
    * 删除应用机器
    */
   deleteAppMachine: param => {
-    return $http.$post('/app-info/delete/machine', param)
+    return $http.$post('/app-info/delete/machine', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -1060,7 +1184,8 @@ const $api = {
    */
   submitAppBuild: param => {
     return $http.$post('/app-build/submit', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在提交构建请求...'
     })
   },
 
@@ -1091,14 +1216,18 @@ const $api = {
    * 停止应用构建
    */
   terminatedAppBuild: param => {
-    return $http.$post('/app-build/terminated', param)
+    return $http.$post('/app-build/terminated', param, {
+      loading: '正在提交停止请求...'
+    })
   },
 
   /**
    * 删除应用构建
    */
   deleteAppBuild: param => {
-    return $http.$post('/app-build/delete', param)
+    return $http.$post('/app-build/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
@@ -1106,7 +1235,8 @@ const $api = {
    */
   rebuildApp: param => {
     return $http.$post('/app-build/rebuild', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在提交构建请求...'
     })
   },
 
@@ -1159,7 +1289,18 @@ const $api = {
    */
   submitAppRelease: param => {
     return $http.$post('/app-release/submit', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在提交发布请求...'
+    })
+  },
+
+  /**
+   * 复制应用发布
+   */
+  copyAppRelease: param => {
+    return $http.$post('/app-release/copy', param, {
+      timeout: 600000,
+      loading: '正在提交复制请求...'
     })
   },
 
@@ -1167,14 +1308,18 @@ const $api = {
    * 审核应用发布
    */
   auditAppRelease: param => {
-    return $http.$post('/app-release/audit', param)
+    return $http.$post('/app-release/audit', param, {
+      loading: '正在操作...'
+    })
   },
 
   /**
-   * 嘻嘻应用发布
+   * 执行应用发布
    */
   runnableAppRelease: param => {
-    return $http.$post('/app-release/runnable', param)
+    return $http.$post('/app-release/runnable', param, {
+      loading: '正在提交执行请求...'
+    })
   },
 
   /**
@@ -1182,7 +1327,8 @@ const $api = {
    */
   rollbackAppRelease: param => {
     return $http.$post('/app-release/rollback', param, {
-      timeout: 600000
+      timeout: 600000,
+      loading: '正在提交回滚请求...'
     })
   },
 
@@ -1190,14 +1336,18 @@ const $api = {
    * 删除应用发布
    */
   deleteAppRelease: param => {
-    return $http.$post('/app-release/delete', param)
+    return $http.$post('/app-release/delete', param, {
+      loading: '正在删除...'
+    })
   },
 
   /**
    * 应用发布停止
    */
   terminatedAppRelease: param => {
-    return $http.$post('/app-release/terminated', param)
+    return $http.$post('/app-release/terminated', param, {
+      loading: '正在提交停止请求...'
+    })
   },
 
   /**
