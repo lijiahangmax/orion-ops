@@ -20,7 +20,7 @@
         </a-menu-item>
         <a-menu-item key="logout">
           <a-icon type="export"/>
-          退出登录
+          退出登陆
         </a-menu-item>
       </a-menu>
     </template>
@@ -39,8 +39,8 @@ const menuItemHandler = {
   resetPassword() {
     this.openResetModel()
   },
-  logout() {
-    this.$api.logout()
+  async logout() {
+    await this.$api.logout()
     this.$storage.clear()
     this.$router.push({ path: '/login' })
   }
