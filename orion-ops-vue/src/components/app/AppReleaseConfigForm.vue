@@ -207,6 +207,10 @@ export default {
         this.$message.warning('请选择发布机器')
         return
       }
+      if (!this.actions.length) {
+        this.$message.warning('请设置发布操作')
+        return
+      }
       for (let i = 0; i < this.actions.length; i++) {
         const action = this.actions[i]
         if (!action.name) {
