@@ -151,8 +151,12 @@ export default {
       this.$set(this.actions, index, temp)
     },
     save() {
-      if (!this.bundlePath.trim().length) {
+      if (!this.bundlePath || !this.bundlePath.trim().length) {
         this.$message.warning('请输入构建产物路径')
+        return
+      }
+      if (!this.actions.length) {
+        this.$message.warning('请设置构建操作')
         return
       }
       for (let i = 0; i < this.actions.length; i++) {
