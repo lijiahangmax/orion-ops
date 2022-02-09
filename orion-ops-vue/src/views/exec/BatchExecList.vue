@@ -361,15 +361,11 @@ export default {
       })
     },
     deleteTask(execId) {
-      const pending = this.$message.loading('正在删除...')
       this.$api.deleteExecTask({
         id: execId
       }).then(() => {
-        pending()
         this.$message.success('已删除')
         this.getList({})
-      }).catch(() => {
-        pending()
       })
     },
     resetForm() {
