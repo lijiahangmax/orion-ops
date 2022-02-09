@@ -78,7 +78,7 @@ export default {
       this.$refs.terminalMain.fitTerminal()
     },
     async getAccessToken() {
-      this.loading = this.$message.loading('建立连接中...', 10)
+      this.loading = this.$message.loading('建立连接中...')
       try {
         const { data } = await this.$api.accessTerminal({ machineId: this.machineId })
         // 初始化数据
