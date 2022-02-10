@@ -45,12 +45,16 @@ public class UserEventLogDO implements Serializable {
 
     /**
      * 事件分类
+     *
+     * @see com.orion.ops.consts.event.EventClassify
      */
     @TableField("event_classify")
     private Integer eventClassify;
 
     /**
      * 事件类型
+     *
+     * @see com.orion.ops.consts.event.EventType
      */
     @TableField("event_type")
     private Integer eventType;

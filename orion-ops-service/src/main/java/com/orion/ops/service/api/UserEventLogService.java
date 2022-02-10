@@ -1,6 +1,9 @@
 package com.orion.ops.service.api;
 
+import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.event.EventType;
+import com.orion.ops.entity.request.EventLogRequest;
+import com.orion.ops.entity.vo.EventLogVO;
 
 /**
  * 用户操作日志服务
@@ -18,5 +21,13 @@ public interface UserEventLogService {
      * @param isSuccess 是否成功
      */
     void recordLog(EventType eventType, boolean isSuccess);
+
+    /**
+     * 获取操作日志
+     *
+     * @param request request
+     * @return rows
+     */
+    DataGrid<EventLogVO> getLogList(EventLogRequest request);
 
 }
