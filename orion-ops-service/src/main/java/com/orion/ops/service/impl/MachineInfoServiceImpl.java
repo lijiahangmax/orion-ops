@@ -174,8 +174,8 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, Const.ENABLE)
                 .orderByAsc(MachineInfoDO::getId);
         return DataQuery.of(machineInfoDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(MachineInfoVO.class);
     }
 

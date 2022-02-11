@@ -110,6 +110,7 @@ public class MachineInfoVO {
             vo.setAuthType(p.getAuthType());
             vo.setStatus(p.getMachineStatus());
             vo.setCreateTime(p.getCreateTime());
+            vo.setUpdateTime(p.getUpdateTime());
             return vo;
         });
     }

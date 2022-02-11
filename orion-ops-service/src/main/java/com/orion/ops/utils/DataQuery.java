@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.PageRequest;
 import com.orion.lang.wrapper.Pager;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
 
 import java.util.List;
@@ -106,6 +107,8 @@ public class DataQuery<T> {
                     .map(convert)
                     .collect(Collectors.toList());
             pager.setRows(rows);
+        } else {
+            pager.setRows(Lists.empty());
         }
         return DataGrid.of(pager);
     }

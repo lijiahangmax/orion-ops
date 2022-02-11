@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * 公共controller
+ * 公共 controller
  *
  * @author Jiahang Li
  * @version 1.0.0

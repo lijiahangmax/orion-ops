@@ -151,8 +151,8 @@ public class CommandExecServiceImpl implements CommandExecService {
                 .in(Lists.isNotEmpty(request.getMachineIdList()), CommandExecDO::getMachineId, request.getMachineIdList())
                 .orderByDesc(CommandExecDO::getId);
         DataGrid<CommandExecVO> dataGrid = DataQuery.of(commandExecDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(CommandExecVO.class);
         if (!dataGrid.isEmpty()) {
             this.assembleExecData(dataGrid.getRows(), request.isOmitCommand());

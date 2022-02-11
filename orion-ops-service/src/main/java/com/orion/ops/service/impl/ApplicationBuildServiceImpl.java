@@ -164,8 +164,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .orderByDesc(ApplicationBuildDO::getUpdateTime);
         // 查询列表
         DataGrid<ApplicationBuildVO> dataGrid = DataQuery.of(applicationBuildDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(ApplicationBuildVO.class);
         // 查询版本信息
         Map<Long, ApplicationVcsDO> vcsCache = Maps.newMap();

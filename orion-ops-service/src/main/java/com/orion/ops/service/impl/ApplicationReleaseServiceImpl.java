@@ -114,8 +114,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .orderByDesc(ApplicationReleaseDO::getId);
         // 查询列表
         DataGrid<ApplicationReleaseListVO> dataGrid = DataQuery.of(applicationReleaseDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(ApplicationReleaseListVO.class);
         if (Const.ENABLE.equals(request.getQueryMachine())) {
             // 查询发布机器

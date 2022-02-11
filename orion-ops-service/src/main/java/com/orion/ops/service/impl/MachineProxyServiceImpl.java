@@ -93,8 +93,8 @@ public class MachineProxyServiceImpl implements MachineProxyService {
                 .eq(Objects.nonNull(request.getType()), MachineProxyDO::getProxyType, request.getType())
                 .orderByDesc(MachineProxyDO::getCreateTime);
         return DataQuery.of(machineProxyDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(MachineProxyVO.class);
     }
 

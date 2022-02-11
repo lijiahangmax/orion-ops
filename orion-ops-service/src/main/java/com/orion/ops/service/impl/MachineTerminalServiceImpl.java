@@ -177,8 +177,8 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                         MachineTerminalLogDO::getDisconnectedTime, request.getDisconnectedTimeStart(), request.getDisconnectedTimeEnd())
                 .orderByDesc(MachineTerminalLogDO::getCreateTime);
         return DataQuery.of(machineTerminalLogDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(MachineTerminalLogVO.class);
     }
 

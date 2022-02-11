@@ -145,8 +145,8 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
                 .eq(Objects.nonNull(request.getStatus()), ApplicationVcsDO::getVcsStatus, request.getStatus())
                 .orderByDesc(ApplicationVcsDO::getUpdateTime);
         return DataQuery.of(applicationVcsDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(ApplicationVcsVO.class);
     }
 

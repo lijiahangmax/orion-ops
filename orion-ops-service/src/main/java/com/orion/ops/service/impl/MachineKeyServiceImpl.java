@@ -156,8 +156,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
                 .like(Strings.isNotBlank(request.getDescription()), MachineSecretKeyDO::getDescription, request.getDescription())
                 .orderByDesc(MachineSecretKeyDO::getCreateTime);
         DataGrid<MachineSecretKeyVO> dataGrid = DataQuery.of(machineSecretKeyDAO)
-                .wrapper(wrapper)
                 .page(request)
+                .wrapper(wrapper)
                 .dataGrid(MachineSecretKeyVO.class);
         if (!dataGrid.isEmpty()) {
             List<String> loadKeys = SessionHolder.getLoadKeys();
@@ -180,7 +180,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             return dataGrid;
         } else {
             // 手动过滤
-            List<MachineSecretKeyVO> totalRows = dataGrid.stream().filter(row -> request.getMountStatus().equals(row.getMountStatus()))
+            List<MachineSecretKeyVO> totalRows = dataGrid.stream()
+                    .filter(row -> request.getMountStatus().equals(row.getMountStatus()))
                     .collect(Collectors.toList());
             List<MachineSecretKeyVO> rows = new LimitList<>(totalRows, limit).page(page);
             // 封装返回
