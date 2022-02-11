@@ -1,7 +1,7 @@
-package com.orion.ops.handler.release;
+package com.orion.ops.handler.app.release;
 
 import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.handler.release.machine.IMachineProcessor;
+import com.orion.ops.handler.app.release.machine.IMachineProcessor;
 import com.orion.utils.io.Streams;
 
 /**

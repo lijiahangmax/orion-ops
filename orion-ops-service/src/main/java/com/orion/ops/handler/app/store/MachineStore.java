@@ -1,9 +1,9 @@
-package com.orion.ops.handler.release.machine;
+package com.orion.ops.handler.app.store;
 
 import com.beust.jcommander.internal.Maps;
 import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
-import com.orion.ops.handler.release.handler.IReleaseHandler;
+import com.orion.ops.handler.app.release.handler.IReleaseHandler;
 import com.orion.remote.channel.SessionStore;
 import lombok.Data;
 

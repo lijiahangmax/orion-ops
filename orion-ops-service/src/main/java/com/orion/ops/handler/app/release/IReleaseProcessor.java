@@ -1,4 +1,4 @@
-package com.orion.ops.handler.release;
+package com.orion.ops.handler.app.release;
 
 import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;

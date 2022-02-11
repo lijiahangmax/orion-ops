@@ -1,8 +1,9 @@
-package com.orion.ops.handler.release.machine;
+package com.orion.ops.handler.app.release.machine;
 
 import com.orion.able.SafeCloseable;
 import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.handler.release.ReleaseStore;
+import com.orion.ops.handler.app.store.MachineStore;
+import com.orion.ops.handler.app.store.ReleaseStore;
 
 /**
  * 机器处理器接口

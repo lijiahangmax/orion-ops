@@ -1,4 +1,4 @@
-package com.orion.ops.handler.release.handler;
+package com.orion.ops.handler.app.release.handler;
 
 import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;
@@ -7,8 +7,8 @@ import com.orion.function.select.Selector;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
-import com.orion.ops.handler.release.ReleaseStore;
-import com.orion.ops.handler.release.machine.MachineStore;
+import com.orion.ops.handler.app.store.ReleaseStore;
+import com.orion.ops.handler.app.store.MachineStore;
 
 import java.util.List;
 import java.util.stream.Collectors;

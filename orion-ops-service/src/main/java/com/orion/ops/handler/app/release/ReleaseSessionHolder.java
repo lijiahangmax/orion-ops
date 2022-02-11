@@ -1,4 +1,4 @@
-package com.orion.ops.handler.release;
+package com.orion.ops.handler.app.release;
 
 import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Component;

@@ -1,11 +1,11 @@
-package com.orion.ops.handler.build.handler;
+package com.orion.ops.handler.app.build.handler;
 
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.ops.handler.build.BuildStore;
+import com.orion.ops.handler.app.store.BuildStore;
 import com.orion.ops.utils.ValueMix;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -37,13 +37,12 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
 
     @Override
     protected void handler() {
-        ApplicationBuildDO buildRecord = store.getBuildRecord();
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(buildRecord.getVcsId());
+        ApplicationVcsDO vcs = applicationVcsDAO.selectById(store.getVcsId());
         // 查询分支
-        String fullBranchName = buildRecord.getBranchName();
+        String fullBranchName = store.getBranchName();
         String remote = fullBranchName.substring(0, fullBranchName.indexOf("/"));
         String branchName = fullBranchName.substring(fullBranchName.indexOf("/") + 1);
-        String commitId = buildRecord.getCommitId();
+        String commitId = store.getCommitId();
         // 拼接日志
         String log = "*** 检出url: " + vcs.getVscUrl() + "\tremote: " + remote + "\t分支: " + branchName + "\t提交: " + commitId + "\n" +
                 "*** 检出目录: " + store.getVcsClonePath() + "\n" +

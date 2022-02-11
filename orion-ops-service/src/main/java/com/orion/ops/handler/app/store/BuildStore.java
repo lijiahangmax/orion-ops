@@ -1,11 +1,8 @@
-package com.orion.ops.handler.build;
+package com.orion.ops.handler.app.store;
 
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
-import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.remote.channel.SessionStore;
 import com.orion.utils.collect.Maps;
-import com.orion.utils.io.Files1;
 import lombok.Data;
 
 import java.io.OutputStream;
@@ -27,9 +24,29 @@ public class BuildStore {
     private SessionStore sessionStore;
 
     /**
-     * record
+     * 构建id
      */
-    private ApplicationBuildDO buildRecord;
+    private Long buildId;
+
+    /**
+     * 版本id
+     */
+    private Long vcsId;
+
+    /**
+     * 分支
+     */
+    private String branchName;
+
+    /**
+     * 提交版本
+     */
+    private String commitId;
+
+    /**
+     * vcs clone 路径
+     */
+    private String vcsClonePath;
 
     /**
      * key: action.id
@@ -47,18 +64,8 @@ public class BuildStore {
      */
     private String mainLogPath;
 
-    /**
-     * vcs clone 路径
-     */
-    private String vcsClonePath;
-
     public BuildStore() {
         this.actions = Maps.newLinkedMap();
-    }
-
-    public void setBuildRecord(ApplicationBuildDO buildRecord) {
-        this.buildRecord = buildRecord;
-        this.vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), buildRecord.getVcsId() + "/" + buildRecord.getId());
     }
 
 }

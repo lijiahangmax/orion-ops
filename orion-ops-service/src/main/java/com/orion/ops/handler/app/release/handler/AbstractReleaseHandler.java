@@ -1,4 +1,4 @@
-package com.orion.ops.handler.release.handler;
+package com.orion.ops.handler.app.release.handler;
 
 import com.orion.constant.Letters;
 import com.orion.exception.LogException;
@@ -9,8 +9,8 @@ import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationReleaseActionDAO;
 import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
-import com.orion.ops.handler.release.ReleaseStore;
-import com.orion.ops.handler.release.machine.MachineStore;
+import com.orion.ops.handler.app.store.ReleaseStore;
+import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
@@ -36,7 +36,7 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
 
     protected Long releaseId;
 
-    protected Long actionId;
+    protected Long id;
 
     protected ApplicationReleaseActionDO action;
 
@@ -49,18 +49,18 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
     @Getter
     protected volatile ActionStatus status;
 
-    public AbstractReleaseHandler(Long actionId, ReleaseStore store, MachineStore machineStore) {
-        this.actionId = actionId;
+    public AbstractReleaseHandler(Long id, ReleaseStore store, MachineStore machineStore) {
+        this.id = id;
         this.store = store;
         this.machineStore = machineStore;
-        this.action = machineStore.getActions().get(actionId);
+        this.action = machineStore.getActions().get(id);
         this.releaseId = action.getReleaseId();
         this.status = ActionStatus.WAIT;
     }
 
     @Override
     public void exec() {
-        log.info("应用发布action-开始: releaseId: {}, actionId: {}", releaseId, actionId);
+        log.info("应用发布action-开始: releaseId: {}, actionId: {}", releaseId, id);
         Exception ex = null;
         try {
             // 更新状态
@@ -70,7 +70,7 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
             // 执行
             this.handler();
         } catch (Exception e) {
-            log.error("应用发布action-异常: releaseId: {}, actionId: {}", releaseId, actionId, e);
+            log.error("应用发布action-异常: releaseId: {}, actionId: {}", releaseId, id, e);
             ex = e;
         }
         if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
@@ -96,13 +96,13 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
 
     @Override
     public void skipped() {
-        log.info("应用发布action-跳过: releaseId: {}, actionId: {}", releaseId, actionId);
+        log.info("应用发布action-跳过: releaseId: {}, actionId: {}", releaseId, id);
         this.updateStatus(ActionStatus.SKIPPED);
     }
 
     @Override
     public void terminated() {
-        log.info("应用发布action-终止: releaseId: {}, actionId: {}", releaseId, actionId);
+        log.info("应用发布action-终止: releaseId: {}, actionId: {}", releaseId, id);
         this.updateStatus(ActionStatus.TERMINATED);
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
      */
     protected void openLogger() {
         String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), action.getLogPath());
-        log.info("应用发布action-打开日志 releaseId: {}, actionId: {}, path: {}", releaseId, actionId, logPath);
+        log.info("应用发布action-打开日志 releaseId: {}, actionId: {}, path: {}", releaseId, id, logPath);
         File logFile = new File(logPath);
         Files1.touch(logFile);
         this.appender = OutputAppender.create(Files1.openOutputStreamFastSafe(logFile))
@@ -198,7 +198,7 @@ public abstract class AbstractReleaseHandler implements IReleaseHandler {
      */
     protected void updateStatus(ActionStatus status) {
         ApplicationReleaseActionDO update = new ApplicationReleaseActionDO();
-        update.setId(actionId);
+        update.setId(id);
         update.setRunStatus(status.getStatus());
         action.setRunStatus(status.getStatus());
         this.status = status;

@@ -1,7 +1,6 @@
-package com.orion.ops.handler.release.handler;
+package com.orion.ops.handler.app.build.handler;
 
-import com.orion.ops.handler.release.ReleaseStore;
-import com.orion.ops.handler.release.machine.MachineStore;
+import com.orion.ops.handler.app.store.BuildStore;
 import com.orion.remote.ExitCode;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
@@ -10,27 +9,28 @@ import com.orion.utils.io.Streams;
 import lombok.Getter;
 
 /**
- * 发布命令处理器
+ * 构建执行操作-主机命令
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/28 18:07
+ * @see com.orion.ops.consts.app.ActionType#BUILD_COMMAND
+ * @since 2021/12/6 10:54
  */
-public class CommandReleaseHandler extends AbstractReleaseHandler {
+public class CommandBuildHandler extends AbstractBuildHandler {
 
     private CommandExecutor executor;
 
     @Getter
     private Integer exitCode;
 
-    public CommandReleaseHandler(Long actionId, ReleaseStore store, MachineStore machineStore) {
-        super(actionId, store, machineStore);
+    public CommandBuildHandler(Long actionId, BuildStore store) {
+        super(actionId, store);
     }
 
     @Override
     protected void handler() throws Exception {
         // 打开executor
-        this.executor = machineStore.getSessionStore().getCommandExecutor(Strings.replaceCRLF(action.getActionCommand()));
+        this.executor = store.getSessionStore().getCommandExecutor(Strings.replaceCRLF(action.getActionCommand()));
         executor.inherit()
                 .sync()
                 .transfer(appender)

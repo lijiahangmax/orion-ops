@@ -1,4 +1,4 @@
-package com.orion.ops.handler.build.handler;
+package com.orion.ops.handler.app.build.handler;
 
 import com.orion.constant.Letters;
 import com.orion.exception.LogException;
@@ -8,7 +8,7 @@ import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
-import com.orion.ops.handler.build.BuildStore;
+import com.orion.ops.handler.app.store.BuildStore;
 import com.orion.ops.service.api.ApplicationBuildService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -35,7 +35,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
 
     protected Long buildId;
 
-    protected Long actionId;
+    protected Long id;
 
     protected BuildStore store;
 
@@ -46,17 +46,17 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
     @Getter
     protected volatile ActionStatus status;
 
-    public AbstractBuildHandler(Long actionId, BuildStore store) {
-        this.actionId = actionId;
+    public AbstractBuildHandler(Long id, BuildStore store) {
+        this.id = id;
         this.store = store;
-        this.buildId = store.getBuildRecord().getId();
-        this.action = store.getActions().get(actionId);
+        this.buildId = store.getBuildId();
+        this.action = store.getActions().get(id);
         this.status = ActionStatus.WAIT;
     }
 
     @Override
     public void exec() {
-        log.info("应用构建action-开始: buildId: {}, actionId: {}", buildId, actionId);
+        log.info("应用构建action-开始: buildId: {}, actionId: {}", buildId, id);
         Exception ex = null;
         try {
             // 更新状态
@@ -66,7 +66,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
             // 执行
             this.handler();
         } catch (Exception e) {
-            log.error("应用构建action-异常: buildId: {}, actionId: {}", buildId, actionId, e);
+            log.error("应用构建action-异常: buildId: {}, actionId: {}", buildId, id, e);
             ex = e;
         }
         if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
@@ -92,13 +92,13 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
 
     @Override
     public void skipped() {
-        log.info("应用构建action-跳过: buildId: {}, actionId: {}", buildId, actionId);
+        log.info("应用构建action-跳过: buildId: {}, actionId: {}", buildId, id);
         this.updateStatus(ActionStatus.SKIPPED);
     }
 
     @Override
     public void terminated() {
-        log.info("应用构建action-终止: buildId: {}, actionId: {}", buildId, actionId);
+        log.info("应用构建action-终止: buildId: {}, actionId: {}", buildId, id);
         this.updateStatus(ActionStatus.TERMINATED);
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
      */
     protected void openLogger() {
         String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), action.getLogPath());
-        log.info("应用构建action-打开日志 buildId: {}, actionId: {}, path: {}", buildId, actionId, logPath);
+        log.info("应用构建action-打开日志 buildId: {}, actionId: {}, path: {}", buildId, id, logPath);
         File logFile = new File(logPath);
         Files1.touch(logFile);
         this.appender = OutputAppender.create(Files1.openOutputStreamFastSafe(logFile))
@@ -194,7 +194,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
      */
     protected void updateStatus(ActionStatus status) {
         ApplicationBuildActionDO update = new ApplicationBuildActionDO();
-        update.setId(actionId);
+        update.setId(id);
         update.setRunStatus(status.getStatus());
         action.setRunStatus(status.getStatus());
         this.status = status;

@@ -1,9 +1,9 @@
-package com.orion.ops.handler.release.handler;
+package com.orion.ops.handler.app.release.handler;
 
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
-import com.orion.ops.handler.release.ReleaseStore;
-import com.orion.ops.handler.release.machine.MachineStore;
+import com.orion.ops.handler.app.store.ReleaseStore;
+import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;

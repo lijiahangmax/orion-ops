@@ -1,4 +1,4 @@
-package com.orion.ops.handler.build;
+package com.orion.ops.handler.app.build;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.exception.LogException;
@@ -12,7 +12,8 @@ import com.orion.ops.consts.app.BuildStatus;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
-import com.orion.ops.handler.build.handler.IBuildHandler;
+import com.orion.ops.handler.app.build.handler.IBuildHandler;
+import com.orion.ops.handler.app.store.BuildStore;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.ApplicationBuildService;
@@ -179,7 +180,12 @@ public class BuilderProcessor implements IBuilderProcessor {
         Valid.notEmpty(actions, MessageConst.UNKNOWN_DATA);
         log.info("应用构建器-获取数据-action buildId: {}, actions: {}", buildId, JSON.toJSONString(actions));
         // 插入store
-        store.setBuildRecord(record);
+        store.setBuildId(record.getId());
+        store.setVcsId(record.getVcsId());
+        store.setBranchName(record.getBranchName());
+        store.setCommitId(record.getCommitId());
+        String vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), record.getVcsId() + "/" + record.getId());
+        store.setVcsClonePath(vcsClonePath);
         actions.forEach(action -> store.getActions().put(action.getId(), action));
         // 创建handler
         this.handlerList = IBuildHandler.createHandler(actions, store);
