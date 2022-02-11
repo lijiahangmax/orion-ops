@@ -97,12 +97,7 @@
         </template>
         <!-- 创建时间 -->
         <template v-slot:createTime="record">
-          {{
-            record.createTime | formatDate({
-              date: record.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -131,9 +126,9 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
 import TempMountMachineKeyModal from '@/components/machine/TempMountMachineKeyModal'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -231,7 +226,7 @@ export default {
         pagination.current = data.page
         // 定义下载路径
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
         this.selectedRowKeys = []
@@ -261,28 +256,22 @@ export default {
     },
     changeMountStatus(id, status) {
       if (status === 2) {
-        const dumpLoading = this.$message.loading('卸载中...', 3)
         this.$api.dumpMachineKey({
           idList: [id]
         }).then(() => {
-          dumpLoading()
           this.$message.success('卸载成功')
           this.getList()
         }).catch(() => {
-          dumpLoading()
           this.$message.error('卸载失败')
         })
       } else if (status === 3) {
         // 未挂载
-        const mountLoading = this.$message.loading('挂载中...', 3)
         this.$api.mountMachineKey({
           idList: [id]
         }).then(() => {
-          mountLoading()
           this.$message.success('挂载成功')
           this.getList()
         }).catch(() => {
-          mountLoading()
           this.$message.error('挂载失败')
         })
       }
@@ -294,15 +283,12 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
-          const mountLoading = this.$message.loading('挂载中...', 3)
           this.$api.mountMachineKey({
             idList: this.selectedRowKeys
           }).then(() => {
-            mountLoading()
             this.$message.success('挂载成功')
             this.getList()
           }).catch(() => {
-            mountLoading()
             this.$message.error('挂载失败')
           })
           this.selectedRowKeys = []
@@ -316,14 +302,11 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
-          const mountLoading = this.$message.loading('挂载中...', 3)
           this.$api.mountAllMachineKey()
             .then(() => {
-              mountLoading()
               this.$message.success('挂载成功')
               this.getList()
             }).catch(() => {
-            mountLoading()
             this.$message.error('挂载失败')
           })
         }
@@ -337,15 +320,12 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
-          const dumpLoading = this.$message.loading('卸载中...', 3)
           this.$api.dumpMachineKey({
             idList: this.selectedRowKeys
           }).then(() => {
-            dumpLoading()
             this.$message.success('卸载成功')
             this.getList()
           }).catch(() => {
-            dumpLoading()
             this.$message.error('卸载失败')
           })
           this.selectedRowKeys = []
@@ -360,17 +340,13 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
-          const dumpLoading = this.$message.loading('卸载中...', 3)
           this.$api.dumpAllMachineKey()
             .then(() => {
-              dumpLoading()
               this.$message.success('卸载成功')
               this.getList()
-            })
-            .catch(() => {
-              dumpLoading()
-              this.$message.error('卸载失败')
-            })
+            }).catch(() => {
+            this.$message.error('卸载失败')
+          })
         }
       })
     },
@@ -411,12 +387,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     this.getList({})

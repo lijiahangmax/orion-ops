@@ -69,7 +69,7 @@
             </div>
             <a-divider v-show="selectedRowKeys.length" type="vertical"/>
             <!-- 删除 -->
-            <a-button class="ml8" v-show="selectedRowKeys.length"
+            <a-button class="ml8" v-show="selectedRowKeys.length && viewType === $enum.VIEW_TYPE.TABLE.value"
                       type="danger"
                       icon="delete"
                       @click="batchRemove()">
@@ -137,14 +137,7 @@
             </template>
             <!-- 修改时间 -->
             <template v-slot:updateTime="record">
-              <span>
-                {{
-                  record.updateTime | formatDate({
-                    date: record.updateTime,
-                    pattern: 'yyyy-MM-dd HH:mm:ss'
-                  })
-                }}
-              </span>
+              {{ record.updateTime | formatDate }}
             </template>
             <!-- 操作 -->
             <template v-slot:action="record">
@@ -199,13 +192,13 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import _$enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddMachineEnvModal from '@/components/machine/AddMachineEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 import MachineChecker from '@/components/machine/MachineChecker'
+import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -347,7 +340,7 @@ export default {
           const pagination = { ...this.pagination }
           pagination.total = data.total
           pagination.current = data.page
-          this.rows = data.rows
+          this.rows = data.rows || []
           this.pagination = pagination
           this.loading = false
           this.selectedRowKeys = []
@@ -439,9 +432,6 @@ export default {
       ref.clear()
       ref.hide()
       // 同步
-      if (id === -1) {
-        this.$message.success('已提交同步请求')
-      }
       this.$api.syncMachineEnv({
         id,
         machineId: this.query.machineId,
@@ -475,12 +465,7 @@ export default {
     this.defaultSelectedMachineIds.push(chooseId)
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

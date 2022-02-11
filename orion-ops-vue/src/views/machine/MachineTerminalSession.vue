@@ -41,13 +41,7 @@
                size="middle">
         <!-- 连接时间 -->
         <template v-slot:connectedTime="record">
-          {{
-            record.connectedTime | formatDate({
-              date: record.connectedTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
-          ({{ record.connectedTimeAgo }})
+          {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -65,7 +59,7 @@
 
 import MachineSelector from '@/components/machine/MachineSelector'
 import UserSelector from '@/components/user/UserSelector'
-import _utils from '@/lib/utils'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -158,7 +152,7 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -198,12 +192,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     this.getList({})

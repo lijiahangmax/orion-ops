@@ -267,46 +267,44 @@ const moreMenuHandler = {
       okText: '复制',
       cancelText: '取消',
       onOk: () => {
-        const copyLoading = this.$message.loading('正在提交复制请求', 3)
         this.$api.copyMachine({
           id: record.id
         }).then(() => {
-          copyLoading()
           this.$message.success('复制成功')
           this.getList()
-        }).catch(() => {
-          copyLoading()
         })
       }
     })
   },
   ping(record) {
-    const ping = this.$message.loading(`ping ${record.host}`, 10)
-    this.$api.machineTestPing({ id: record.id })
-      .then(e => {
-        ping()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法访问 ${record.host}`)
-        }
-      }).catch(() => {
+    const ping = this.$message.loading(`ping ${record.host}`)
+    this.$api.machineTestPing({
+      id: record.id
+    }).then(e => {
+      ping()
+      if (e.data === 1) {
+        this.$message.success('ok')
+      } else {
+        this.$message.error(`无法访问 ${record.host}`)
+      }
+    }).catch(() => {
       ping()
       this.$message.error(`无法访问 ${record.host}`)
     })
   },
   connect(record) {
     const ssh = `${record.username}@${record.host}:${record.sshPort}`
-    const connecting = this.$message.loading(`connecting ${ssh}`, 10)
-    this.$api.machineTestConnect({ id: record.id })
-      .then(e => {
-        connecting()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法连接 ${ssh}`)
-        }
-      }).catch(() => {
+    const connecting = this.$message.loading(`connecting ${ssh}`)
+    this.$api.machineTestConnect({
+      id: record.id
+    }).then(e => {
+      connecting()
+      if (e.data === 1) {
+        this.$message.success('ok')
+      } else {
+        this.$message.error(`无法连接 ${ssh}`)
+      }
+    }).catch(() => {
       connecting()
       this.$message.error(`无法连接 ${ssh}`)
     })
@@ -373,7 +371,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
         this.selectedRowKeys = []
@@ -397,29 +395,39 @@ export default {
       if (record.id === 1) {
         this.$message.error('宿主机不支持该操作')
       } else {
+        const label = status === 1 ? '启用' : '停用'
+        const pending = this.$message.loading(`正在${label}...`)
         this.$api.updateMachineStatus({
           idList: [record.id],
           status: record.status === 1 ? 2 : 1
         }).then(() => {
-          this.$message.success('修改成功')
+          pending()
+          this.$message.success(`已${label}`)
           this.getList()
+        }).catch(() => {
+          pending()
         })
       }
     },
     batchStatus(status) {
+      const label = status === 1 ? '启用' : '停用'
       this.$confirm({
-        title: `确认${status === 1 ? '启用' : '停用'}`,
-        content: `是否${status === 1 ? '启用' : '停用'}选中机器?`,
+        title: `确认${label}`,
+        content: `是否${label}选中机器?`,
         okText: '确认',
         okType: 'danger',
         cancelText: '取消',
         onOk: () => {
+          const pending = this.$message.loading(`正在${label}...`)
           this.$api.updateMachineStatus({
             idList: this.selectedRowKeys,
             status
           }).then(() => {
-            this.$message.success('修改成功')
+            pending()
+            this.$message.success(`已${label}`)
             this.getList()
+          }).catch(() => {
+            pending()
           })
           this.selectedRowKeys = []
         }

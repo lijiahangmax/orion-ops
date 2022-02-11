@@ -55,24 +55,12 @@
         </template>
         <!-- 连接时间 -->
         <template v-slot:connectedTime="record">
-          {{
-            record.connectedTime | formatDate({
-              date: record.connectedTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
-          ({{ record.connectedTimeAgo }})
+          {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
         </template>
         <!-- 断连时间 -->
         <template v-slot:disconnectedTime="record">
           <span v-if="record.disconnectedTime">
-           {{
-              record.disconnectedTime | formatDate({
-                date: record.disconnectedTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
-          ({{ record.disconnectedTimeAgo }})
+           {{ record.disconnectedTime | formatDate }} ({{ record.disconnectedTimeAgo }})
           </span>
         </template>
         <!-- 操作 -->
@@ -87,9 +75,9 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import MachineSelector from '@/components/machine/MachineSelector'
 import UserSelector from '@/components/user/UserSelector'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -191,7 +179,7 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -224,12 +212,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     this.getList({})
