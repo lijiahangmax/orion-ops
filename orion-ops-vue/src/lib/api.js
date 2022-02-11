@@ -1391,6 +1391,13 @@ const $api = {
    */
   getHomeStatistics: param => {
     return $http.$post('/statistics/home', param)
+  },
+
+  /**
+   * 获取日志列表
+   */
+  getLogList: param => {
+    return $http.$post('/log/list', param)
   }
 
 }

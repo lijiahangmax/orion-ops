@@ -805,6 +805,414 @@ const $enum = {
       value: 20,
       label: '定时发布'
     }
+  },
+
+  /**
+   * 操作日志分类
+   */
+  EVENT_CLASSIFY: {
+    AUTHENTICATION: {
+      value: 5,
+      label: '认证操作',
+      type: {
+        LOGIN: {
+          value: 1005,
+          label: '登陆'
+        },
+        LOGOUT: {
+          value: 1010,
+          label: '登出'
+        },
+        RESET_PASSWORD: {
+          value: 1015,
+          label: '重置密码'
+        }
+      }
+    },
+    MACHINE: {
+      value: 10,
+      label: '机器操作',
+      type: {
+        ADD_MACHINE: {
+          value: 2005,
+          label: '添加机器'
+        },
+        UPDATE_MACHINE: {
+          value: 2010,
+          label: '修改机器'
+        },
+        DELETE_MACHINE: {
+          value: 2015,
+          label: '删除机器'
+        },
+        CHANGE_MACHINE_STATUS: {
+          value: 2020,
+          label: '修改状态'
+        },
+        COPY_MACHINE: {
+          value: 2025,
+          label: '复制机器'
+        }
+      }
+    },
+    MACHINE_ENV: {
+      value: 15,
+      label: '机器变量操作',
+      type: {
+        DELETE_MACHINE_ENV: {
+          value: 2105,
+          label: '删除变量'
+        },
+        SYNC_MACHINE_ENV: {
+          value: 2110,
+          label: '同步变量'
+        }
+      }
+    },
+    MACHINE_KEY: {
+      value: 20,
+      label: '秘钥操作',
+      type: {
+        ADD_MACHINE_KEY: {
+          value: 2205,
+          label: '新增秘钥'
+        },
+        UPDATE_MACHINE_KEY: {
+          value: 2210,
+          label: '修改秘钥'
+        },
+        DELETE_MACHINE_KEY: {
+          value: 2215,
+          label: '删除秘钥'
+        },
+        MOUNT_MACHINE_KEY: {
+          value: 2220,
+          label: '挂载秘钥'
+        },
+        DUMP_MACHINE_KEY: {
+          value: 2225,
+          label: '卸载秘钥'
+        },
+        MOUNT_ALL_MACHINE_KEY: {
+          value: 2230,
+          label: '挂载全部秘钥'
+        },
+        DUMP_ALL_MACHINE_KEY: {
+          value: 2235,
+          label: '卸载全部秘钥'
+        },
+        TEMP_MOUNT_MACHINE_KEY: {
+          value: 2240,
+          label: '临时挂载秘钥'
+        }
+      }
+    },
+    MACHINE_PROXY: {
+      value: 25,
+      label: '代理操作',
+      type: {
+        ADD_MACHINE_PROXY: {
+          value: 2305,
+          label: '新增代理'
+        },
+        UPDATE_MACHINE_PROXY: {
+          value: 2310,
+          label: '修改代理'
+        },
+        DELETE_MACHINE_PROXY: {
+          value: 2315,
+          label: '删除代理'
+        }
+      }
+    },
+    TERMINAL: {
+      value: 30,
+      label: '终端操作',
+      type: {
+        FORCE_OFFLINE_TERMINAL: {
+          value: 2405,
+          label: '强制下线'
+        },
+        UPDATE_TERMINAL_CONFIG: {
+          value: 2410,
+          label: '修改配置'
+        }
+      }
+    },
+    SFTP: {
+      value: 35,
+      label: '远程文件操作',
+      type: {
+        SFTP_MKDIR: {
+          value: 2505,
+          label: '创建文件夹'
+        },
+        SFTP_TOUCH: {
+          value: 2510,
+          label: '创建文件'
+        },
+        SFTP_TRUNCATE: {
+          value: 2515,
+          label: '截断文件'
+        },
+        SFTP_MOVE: {
+          value: 2520,
+          label: '移动文件'
+        },
+        SFTP_REMOVE: {
+          value: 2525,
+          label: '删除文件'
+        },
+        SFTP_CHMOD: {
+          value: 2530,
+          label: '修改权限'
+        },
+        SFTP_CHOWN: {
+          value: 2535,
+          label: '修改所有者'
+        },
+        SFTP_CHGRP: {
+          value: 2540,
+          label: '修改所有组'
+        },
+        SFTP_UPLOAD: {
+          value: 2545,
+          label: '上传文件'
+        },
+        SFTP_DOWNLOAD: {
+          value: 2550,
+          label: '下载文件'
+        },
+        SFTP_PACKAGE: {
+          value: 2555,
+          label: '打包文件'
+        }
+      }
+    },
+    EXEC: {
+      value: 40,
+      label: '批量执行操作',
+      type: {
+        EXEC_SUBMIT: {
+          value: 2605,
+          label: '批量执行'
+        },
+        EXEC_DELETE: {
+          value: 2610,
+          label: '删除执行'
+        },
+        EXEC_TERMINATED: {
+          value: 2615,
+          label: '终止执行'
+        }
+      }
+    },
+    TAIL: {
+      value: 45,
+      label: '日志文件操作',
+      type: {
+        ADD_TAIL_FILE: {
+          value: 2705,
+          label: '添加日志文件'
+        },
+        UPDATE_TAIL_FILE: {
+          value: 2710,
+          label: '修改日志文件'
+        },
+        DELETE_TAIL_FILE: {
+          value: 2715,
+          label: '删除日志文件'
+        }
+      }
+    },
+    TEMPLATE: {
+      value: 50,
+      label: '模板操作',
+      type: {
+        ADD_TEMPLATE: {
+          value: 2805,
+          label: '添加模板'
+        },
+        UPDATE_TEMPLATE: {
+          value: 2810,
+          label: '修改模板'
+        },
+        DELETE_TEMPLATE: {
+          value: 2815,
+          label: '删除模板'
+        }
+      }
+    },
+    USER: {
+      value: 55,
+      label: '用户操作',
+      type: {
+        ADD_USER: {
+          value: 1105,
+          label: '添加用户'
+        },
+        UPDATE_USER: {
+          value: 1110,
+          label: '修改信息'
+        },
+        DELETE_USER: {
+          value: 1115,
+          label: '删除用户'
+        },
+        CHANGE_USER_STATUS: {
+          value: 1120,
+          label: '修改状态'
+        }
+      }
+    },
+    APP: {
+      value: 60,
+      label: '应用操作',
+      type: {
+        ADD_APP: {
+          value: 3005,
+          label: '添加应用'
+        },
+        UPDATE_APP: {
+          value: 3010,
+          label: '修改应用'
+        },
+        DELETE_APP: {
+          value: 3015,
+          label: '删除应用'
+        },
+        CONFIG_APP: {
+          value: 3020,
+          label: '配置应用'
+        },
+        SYNC_APP: {
+          value: 3025,
+          label: '同步应用'
+        },
+        COPY_APP: {
+          value: 3030,
+          label: '复制应用'
+        }
+      }
+    },
+    PROFILE: {
+      value: 65,
+      label: '环境操作',
+      type: {
+        ADD_PROFILE: {
+          value: 3105,
+          label: '添加环境'
+        },
+        UPDATE_PROFILE: {
+          value: 3110,
+          label: '修改环境'
+        },
+        DELETE_PROFILE: {
+          value: 3115,
+          label: '删除环境'
+        }
+      }
+    },
+    APP_ENV: {
+      value: 70,
+      label: '应用变量操作',
+      type: {
+        DELETE_APP_ENV: {
+          value: 3205,
+          label: '删除变量'
+        },
+        SYNC_APP_ENV: {
+          value: 3210,
+          label: '同步变量'
+        }
+      }
+    },
+    VCS: {
+      value: 75,
+      label: '应用仓库操作',
+      type: {
+        ADD_VCS: {
+          value: 3305,
+          label: '添加仓库'
+        },
+        INIT_VCS: {
+          value: 3310,
+          label: '初始化仓库'
+        },
+        RE_INIT_VCS: {
+          value: 3315,
+          label: '重新初始化'
+        },
+        UPDATE_VCS: {
+          value: 3320,
+          label: '更新仓库'
+        },
+        DELETE_VCS: {
+          value: 3325,
+          label: '删除仓库'
+        },
+        CLEAN_VCS: {
+          value: 3330,
+          label: '清空仓库'
+        }
+      }
+    },
+    BUILD: {
+      value: 80,
+      label: '应用构建操作',
+      type: {
+        SUBMIT_BUILD: {
+          value: 4005,
+          label: '提交构建'
+        },
+        BUILD_TERMINATED: {
+          value: 4010,
+          label: '停止构建'
+        },
+        DELETE_BUILD: {
+          value: 4015,
+          label: '删除构建'
+        },
+        SUBMIT_REBUILD: {
+          value: 4020,
+          label: '重新构建'
+        }
+      }
+    },
+    RELEASE: {
+      value: 85,
+      label: '应用发布操作',
+      type: {
+        SUBMIT_RELEASE: {
+          value: 5005,
+          label: '提交发布'
+        },
+        AUDIT_RELEASE: {
+          value: 5010,
+          label: '发布审核'
+        },
+        RUNNABLE_RELEASE: {
+          value: 5015,
+          label: '执行发布'
+        },
+        ROLLBACK_RELEASE: {
+          value: 5020,
+          label: '回滚发布'
+        },
+        TERMINATED_RELEASE: {
+          value: 5025,
+          label: '停止发布'
+        },
+        DELETE_RELEASE: {
+          value: 5030,
+          label: '删除发布'
+        },
+        COPY_RELEASE: {
+          value: 5035,
+          label: '复制发布'
+        }
+      }
+    }
   }
 
 }
