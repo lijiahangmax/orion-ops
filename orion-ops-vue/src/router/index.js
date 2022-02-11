@@ -277,7 +277,7 @@ const routes = [
         name: 'userDetail',
         meta: {
           requireAuth: true,
-          title: '用户详情'
+          title: '个人信息'
         },
         component: () => import('../views/user/UserDetail')
       },
