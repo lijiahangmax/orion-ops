@@ -68,12 +68,8 @@
                   <span class="build-item-message">{{ build.description }}</span>
                 </div>
                 <span class="build-item-date">
-                  {{
-                    build.createTime | formatDate({
-                      date: build.createTime,
-                      pattern: 'MM-dd HH:mm'
-                    })
-                  }}</span>
+                  {{ build.createTime | formatDate('MM-dd HH:mm') }}
+                </span>
               </div>
             </a-select-option>
           </a-select>
@@ -113,8 +109,8 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import MachineChecker from '@/components/machine/MachineChecker'
+import _filters from '@/lib/filters'
 
 export default {
   name: 'AppReleaseModal',
@@ -273,12 +269,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

@@ -46,28 +46,13 @@
           {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="修改时间" :span="3">
-          {{
-            detail.updateTime | formatDate({
-              date: detail.updateTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ detail.updateTime | formatDate }}
         </a-descriptions-item>
         <a-descriptions-item label="开始时间" :span="3" v-if="detail.startTime !== null">
-          {{
-            detail.startTime | formatDate({
-              date: detail.startTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.startTimeAgo }})
+          {{ detail.startTime | formatDate }} ({{ detail.startTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="结束时间" :span="3" v-if="detail.endTime !== null">
-          {{
-            detail.endTime | formatDate({
-              date: detail.endTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.endTimeAgo }})
+          {{ detail.endTime | formatDate }} ({{ detail.endTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="持续时间" :span="3" v-if="detail.used !== null">
           {{ `${detail.keepTime} (${detail.used}ms)` }}
@@ -99,20 +84,10 @@
                 </a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="开始时间" :span="3" v-if="item.startTime !== null">
-                {{
-                  item.startTime | formatDate({
-                    date: item.startTime,
-                    pattern: 'yyyy-MM-dd HH:mm:ss'
-                  })
-                }} ({{ item.startTimeAgo }})
+                {{ item.startTime | formatDate }} ({{ item.startTimeAgo }})
               </a-descriptions-item>
               <a-descriptions-item label="结束时间" :span="3" v-if="item.endTime !== null">
-                {{
-                  item.endTime | formatDate({
-                    date: item.endTime,
-                    pattern: 'yyyy-MM-dd HH:mm:ss'
-                  })
-                }} ({{ item.endTimeAgo }})
+                {{ item.endTime | formatDate }} ({{ item.endTimeAgo }})
               </a-descriptions-item>
               <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
                 {{ `${item.keepTime}  (${item.used}ms)` }}
@@ -142,8 +117,8 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
+import _filters from '@/lib/filters'
 
 function statusHolder() {
   return {
@@ -259,12 +234,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)

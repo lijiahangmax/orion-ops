@@ -70,12 +70,8 @@
                   <span class="commit-item-message">{{ commit.message }}</span>
                 </div>
                 <span class="commit-item-date">
-                  {{
-                    commit.createTime | formatDate({
-                      date: commit.time,
-                      pattern: 'MM-dd HH:mm'
-                    })
-                  }}</span>
+                  {{ commit.time | formatDate('MM-dd HH:mm' ) }}
+                </span>
               </div>
             </a-select-option>
           </a-select>
@@ -96,7 +92,7 @@
 
 <script>
 
-import _utils from '@/lib/utils'
+import _filters from '@/lib/filters'
 
 export default {
   name: 'AppBuildModal',
@@ -280,12 +276,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

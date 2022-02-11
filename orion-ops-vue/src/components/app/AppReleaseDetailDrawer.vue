@@ -44,23 +44,13 @@
           {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="创建时间" :span="3" v-if="detail.createTime !== null">
-          {{
-            detail.createTime | formatDate({
-              date: detail.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.createTimeAgo }})
+          {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="审核用户" :span="3" v-if=" detail.auditUserName !== null">
           {{ detail.auditUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="审核时间" :span="3" v-if="detail.auditTime !== null">
-          {{
-            detail.auditTime | formatDate({
-              date: detail.auditTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.auditTimeAgo }})
+          {{ detail.auditTime | formatDate }} ({{ detail.auditTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="审核批注" :span="3" v-if="detail.auditReason !== null">
           {{ detail.auditReason }}
@@ -69,20 +59,10 @@
           {{ detail.releaseUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="开始时间" :span="3" v-if="detail.startTime !== null">
-          {{
-            detail.startTime | formatDate({
-              date: detail.startTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.startTimeAgo }})
+          {{ detail.startTime | formatDate }} ({{ detail.startTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="结束时间" :span="3" v-if="detail.endTime !== null">
-          {{
-            detail.endTime | formatDate({
-              date: detail.endTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ detail.endTimeAgo }})
+          {{ detail.endTime | formatDate }} ({{ detail.endTimeAgo }})
         </a-descriptions-item>
         <a-descriptions-item label="持续时间" :span="3" v-if="detail.used !== null">
           {{ `${detail.keepTime} (${detail.used}ms)` }}
@@ -134,8 +114,8 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
+import _filters from '@/lib/filters'
 
 export default {
   name: 'AppReleaseDetailDrawer',
@@ -224,12 +204,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)
