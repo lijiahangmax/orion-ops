@@ -42,62 +42,62 @@ public enum EventClassify {
     /**
      * 终端操作
      */
-    TERMINAL(25),
+    TERMINAL(30),
 
     /**
      * sftp 操作
      */
-    SFTP(30),
+    SFTP(35),
 
     /**
      * 批量执行操作
      */
-    EXEC(35),
+    EXEC(40),
 
     /**
      * tail 文件操作
      */
-    TAIL(40),
+    TAIL(45),
 
     /**
      * 模板操作
      */
-    TEMPLATE(45),
+    TEMPLATE(50),
 
     /**
      * 用户操作
      */
-    USER(50),
+    USER(55),
 
     /**
      * 应用操作
      */
-    APP(50),
+    APP(60),
 
     /**
      * 环境操作
      */
-    PROFILE(55),
+    PROFILE(65),
 
     /**
      * 应用环境变量操作
      */
-    APP_ENV(60),
+    APP_ENV(70),
 
     /**
      * 应用仓库操作
      */
-    VCS(60),
+    VCS(75),
 
     /**
      * 应用构建操作
      */
-    BUILD(65),
+    BUILD(80),
 
     /**
      * 应用发布操作
      */
-    RELEASE(70),
+    RELEASE(85),
 
     ;
 

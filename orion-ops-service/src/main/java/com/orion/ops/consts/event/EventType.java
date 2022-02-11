@@ -25,7 +25,7 @@ public enum EventType {
     LOGOUT(1010, EventClassify.AUTHENTICATION, "退出系统"),
 
     /**
-     * 登出
+     * 重置密码
      */
     RESET_PASSWORD(1015, EventClassify.AUTHENTICATION, "重置用户 ${username} 密码"),
 
