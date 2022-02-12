@@ -1,6 +1,6 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
+import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -9,14 +9,14 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * 应用构建 action 详情
+ * 应用操作日志vo
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/3 17:52
  */
 @Data
-public class ApplicationBuildActionVO {
+public class ApplicationActionLogVO {
 
     /**
      * id
@@ -24,9 +24,9 @@ public class ApplicationBuildActionVO {
     private Long id;
 
     /**
-     * 构建id
+     * 引用id
      */
-    private Long buildId;
+    private Long relId;
 
     /**
      * 操作id
@@ -100,10 +100,10 @@ public class ApplicationBuildActionVO {
     private Date updateTime;
 
     static {
-        TypeStore.STORE.register(ApplicationBuildActionDO.class, ApplicationBuildActionVO.class, p -> {
-            ApplicationBuildActionVO vo = new ApplicationBuildActionVO();
+        TypeStore.STORE.register(ApplicationActionLogDO.class, ApplicationActionLogVO.class, p -> {
+            ApplicationActionLogVO vo = new ApplicationActionLogVO();
             vo.setId(p.getId());
-            vo.setBuildId(p.getBuildId());
+            vo.setRelId(p.getRelId());
             vo.setActionId(p.getActionId());
             vo.setActionName(p.getActionName());
             vo.setActionType(p.getActionType());

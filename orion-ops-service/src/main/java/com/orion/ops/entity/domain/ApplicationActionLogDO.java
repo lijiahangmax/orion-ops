@@ -1,6 +1,9 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,16 +12,16 @@ import java.util.Date;
 
 /**
  * <p>
- * 应用构建操作
+ * 应用操作日志
  * </p>
  *
  * @author Jiahang Li
- * @since 2021-12-03
+ * @since 2022-02-11
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("application_build_action")
-public class ApplicationBuildActionDO implements Serializable {
+@TableName("application_action_log")
+public class ApplicationActionLogDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,10 +32,16 @@ public class ApplicationBuildActionDO implements Serializable {
     private Long id;
 
     /**
-     * 构建id
+     * 阶段类型 10构建 20发布
      */
-    @TableField("build_id")
-    private Long buildId;
+    @TableField("stage_type")
+    private Integer stageType;
+
+    /**
+     * 引用id
+     */
+    @TableField("rel_id")
+    private Long relId;
 
     /**
      * 操作id
@@ -48,8 +57,6 @@ public class ApplicationBuildActionDO implements Serializable {
 
     /**
      * 操作类型
-     *
-     * @see com.orion.ops.consts.app.ActionType
      */
     @TableField("action_type")
     private Integer actionType;
@@ -68,8 +75,6 @@ public class ApplicationBuildActionDO implements Serializable {
 
     /**
      * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
-     *
-     * @see com.orion.ops.consts.app.ActionStatus
      */
     @TableField("run_status")
     private Integer runStatus;
@@ -94,11 +99,8 @@ public class ApplicationBuildActionDO implements Serializable {
 
     /**
      * 是否删除 1未删除 2已删除
-     *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
      */
-    @TableLogic
+    @TableField("deleted")
     private Integer deleted;
 
     /**

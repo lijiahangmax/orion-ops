@@ -1,6 +1,6 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
+import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -13,10 +13,10 @@ import java.util.Optional;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/8 15:56
+ * @since 2022/2/11 17:00
  */
 @Data
-public class ApplicationBuildActionStatusVO {
+public class ApplicationActionStatusVO {
 
     /**
      * id
@@ -64,8 +64,8 @@ public class ApplicationBuildActionStatusVO {
     private Integer exitCode;
 
     static {
-        TypeStore.STORE.register(ApplicationBuildActionDO.class, ApplicationBuildActionStatusVO.class, p -> {
-            ApplicationBuildActionStatusVO vo = new ApplicationBuildActionStatusVO();
+        TypeStore.STORE.register(ApplicationActionLogDO.class, ApplicationActionStatusVO.class, p -> {
+            ApplicationActionStatusVO vo = new ApplicationActionStatusVO();
             vo.setId(p.getId());
             vo.setStatus(p.getRunStatus());
             Date startTime = p.getStartTime(), endTime = p.getEndTime();
