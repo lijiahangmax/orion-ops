@@ -287,15 +287,11 @@ const moreMenuHandler = {
       okType: 'danger',
       cancelText: '取消',
       onOk: () => {
-        const pending = this.$message.loading('正在删除...', 5)
         this.$api.deleteApp({
           id: record.id
         }).then(() => {
-          pending()
           this.$message.success('删除成功')
           this.getList({})
-        }).catch(() => {
-          pending()
         })
       }
     })
@@ -307,15 +303,11 @@ const moreMenuHandler = {
       okText: '复制',
       cancelText: '取消',
       onOk: () => {
-        const copyLoading = this.$message.loading('正在复制...', 3)
         this.$api.copyApp({
           id: record.id
         }).then(() => {
-          copyLoading()
           this.$message.success('复制成功')
           this.getList()
-        }).catch(() => {
-          copyLoading()
         })
       }
     })
@@ -375,7 +367,7 @@ export default {
         pagination.current = data.page
         this.$utils.defineArrayKey(data.rows, 'loading', false)
         this.$utils.defineArrayKey(data.rows, 'machines', [])
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -407,21 +399,17 @@ export default {
       })
     },
     removeAppMachine(record, machineId) {
-      const pending = this.$message.loading('正在删除...')
       this.$api.deleteAppMachine({
         id: record.id,
         profileId: this.query.profileId,
         machineId
       }).then(() => {
-        pending()
         this.$message.success('已删除')
         for (let i = 0; i < record.machines.length; i++) {
           if (record.machines[i].id === machineId) {
             record.machines.splice(i, 1)
           }
         }
-      }).catch(() => {
-        pending()
       })
     },
     add() {
@@ -448,16 +436,12 @@ export default {
       ref.clear()
       ref.hide()
       // 同步
-      const pending = this.$message.loading('正在同步...', 5)
       this.$api.syncApp({
         appId: id,
         profileId: this.query.profileId,
         targetProfileIdList
       }).then(() => {
-        pending()
         this.$message.success('应用已同步成功')
-      }).catch(() => {
-        pending()
       })
     },
     menuHandler({ key }, record) {

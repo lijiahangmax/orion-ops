@@ -61,15 +61,19 @@
                :loading="loading"
                size="middle">
         <!-- url -->
-        <span slot="url" slot-scope="record" class="span-blue pointer" title="预览" @click="$refs.preview.preview(record.url)">
-          {{ record.url }}
-        </span>
+        <template v-slot:url="record">
+          <span class="span-blue pointer" title="预览" @click="$refs.preview.preview(record.url)">
+            {{ record.url }}
+          </span>
+        </template>
         <!-- 状态 -->
-        <a-tag slot="status" slot-scope="record" :color="$enum.valueOf($enum.VCS_STATUS, record.status).color">
-          {{ $enum.valueOf($enum.VCS_STATUS, record.status).label }}
-        </a-tag>
+        <template v-slot:status="record">
+          <a-tag :color="$enum.valueOf($enum.VCS_STATUS, record.status).color">
+            {{ $enum.valueOf($enum.VCS_STATUS, record.status).label }}
+          </a-tag>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 初始化 -->
           <a v-if="$enum.VCS_STATUS.UNINITIALIZED.value === record.status || $enum.VCS_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
           <a-popconfirm title="确定要重新初始化吗?"
@@ -122,7 +126,7 @@
               清空
             </a-button>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
@@ -234,7 +238,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -250,7 +254,6 @@ export default {
       })
     },
     clean(id) {
-      this.$message.success('已提交清空请求')
       this.$api.cleanVcs({
         id
       }).then(() => {
@@ -258,26 +261,20 @@ export default {
       })
     },
     init(record) {
-      this.$message.success('已提交初始化请求')
       record.status = this.$enum.VCS_STATUS.INITIALIZING.value
       this.$api.initVcs({
         id: record.id
       }).then(() => {
         this.$message.success('初始化成功')
         this.getList({})
-      }).catch(() => {
-        this.getList({})
       })
     },
     reInit(record) {
-      this.$message.success('已提交重新初始化请求')
       record.status = this.$enum.VCS_STATUS.INITIALIZING.value
       this.$api.reInitVcs({
         id: record.id
       }).then(() => {
         this.$message.success('重新初始化成功')
-        this.getList({})
-      }).catch(() => {
         this.getList({})
       })
     },

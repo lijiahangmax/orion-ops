@@ -97,7 +97,7 @@
         </template>
         <!-- 构建序列 -->
         <template v-slot:seq="record">
-          <a-tag color="#5C7CFA">
+          <a-tag class="ml8" color="#5C7CFA">
             #{{ record.buildSeq }}
           </a-tag>
         </template>
@@ -109,18 +109,16 @@
         </template>
         <!-- 创建时间 -->
         <template v-slot:createTime="record">
-          {{
-            record.createTime | formatDate({
-              date: record.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 审核 -->
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
+          <!-- 复制 -->
+          <a @click="copyRelease(record.id)">复制</a>
+          <a-divider type="vertical"/>
           <!-- 发布 -->
           <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)">发布</a>
           <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
@@ -162,13 +160,13 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import AppSelector from '@/components/app/AppSelector'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
 import AppReleaseDetailDrawer from '@/components/app/AppReleaseDetailDrawer'
 import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDetailDrawer'
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
+import _filters from '@/lib/filters'
 
 function statusHolder() {
   return {
@@ -199,7 +197,6 @@ const columns = [
     title: '构建序列',
     key: 'seq',
     width: 100,
-    align: 'center',
     sorter: (a, b) => a.buildSeq - b.buildSeq,
     scopedSlots: { customRender: 'seq' }
   },
@@ -248,7 +245,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 160,
+    width: 190,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -353,7 +350,7 @@ export default {
         pagination.current = data.page
         this.$utils.defineArrayKey(data.rows, 'loading', false)
         this.$utils.defineArrayKey(data.rows, 'machines', [])
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -387,6 +384,14 @@ export default {
         match[0].status = (res ? this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value : this.$enum.RELEASE_STATUS.AUDIT_REJECT.value)
       }
     },
+    copyRelease(id) {
+      this.$api.copyAppRelease({
+        id
+      }).then(() => {
+        this.$message.success('已复制')
+        this.getList({})
+      })
+    },
     runnableRelease(record) {
       this.$api.runnableAppRelease({
         id: record.id
@@ -396,26 +401,18 @@ export default {
       })
     },
     terminated(id) {
-      const terminating = this.$message.loading('正在提交停止请求...', 5)
       this.$api.terminatedAppRelease({
         id: id
       }).then(() => {
-        terminating()
         this.$message.success('已提交停止请求')
-      }).catch(() => {
-        terminating()
       })
     },
     rollback(id) {
-      const pending = this.$message.loading('正在提交回滚请求...', 5)
       this.$api.rollbackAppRelease({
         id
       }).then(() => {
-        pending()
         this.$message.success('已提交回滚请求')
         this.getList({})
-      }).catch(() => {
-        pending()
       })
     },
     remove(id) {
@@ -500,12 +497,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     // 读取当前环境

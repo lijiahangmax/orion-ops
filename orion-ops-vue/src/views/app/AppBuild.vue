@@ -92,12 +92,7 @@
         </template>
         <!-- 创建时间 -->
         <template v-slot:createTime="record">
-          {{
-            record.createTime | formatDate({
-              date: record.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -154,11 +149,11 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import AppSelector from '@/components/app/AppSelector'
 import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -168,7 +163,6 @@ const columns = [
     title: '序列',
     key: 'seq',
     width: 90,
-    align: 'center',
     sorter: (a, b) => a.seq - b.seq,
     scopedSlots: { customRender: 'seq' }
   },
@@ -189,7 +183,6 @@ const columns = [
   {
     title: '状态',
     key: 'status',
-    align: 'center',
     width: 120,
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
@@ -274,7 +267,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -288,26 +281,18 @@ export default {
       this.$refs.detail.open(id)
     },
     rebuild(id) {
-      const rebuilding = this.$message.loading('正在提交构建请求...', 5)
       this.$api.rebuildApp({
         id
       }).then(() => {
-        rebuilding()
         this.$message.success('已开始重新构建')
         this.getList({})
-      }).catch(() => {
-        rebuilding()
       })
     },
     terminated(id) {
-      const terminating = this.$message.loading('正在提交停止请求...', 5)
       this.$api.terminatedAppBuild({
         id
       }).then(() => {
-        terminating()
         this.$message.success('已提交停止请求')
-      }).catch(() => {
-        terminating()
       })
     },
     deleteBuild(id) {
@@ -361,12 +346,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     // 读取当前环境

@@ -69,7 +69,7 @@
             </div>
             <a-divider v-show="selectedRowKeys.length" type="vertical"/>
             <!-- 删除 -->
-            <a-button class="ml8" v-show="selectedRowKeys.length"
+            <a-button class="ml8" v-show="selectedRowKeys.length && viewType === $enum.VIEW_TYPE.TABLE.value"
                       type="danger"
                       icon="delete"
                       @click="batchRemove()">
@@ -137,12 +137,7 @@
             </template>
             <!-- 修改时间 -->
             <template v-slot:updateTime="record">
-              {{
-                record.updateTime | formatDate({
-                  date: record.updateTime,
-                  pattern: 'yyyy-MM-dd HH:mm:ss'
-                })
-              }}
+              {{ record.updateTime | formatDate }}
             </template>
             <!-- 操作 -->
             <template v-slot:action="record">
@@ -197,13 +192,13 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import _$enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddAppEnvModal from '@/components/app/AddAppEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
+import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -350,7 +345,7 @@ export default {
           const pagination = { ...this.pagination }
           pagination.total = data.total
           pagination.current = data.page
-          this.rows = data.rows
+          this.rows = data.rows || []
           this.pagination = pagination
           this.loading = false
           this.selectedRowKeys = []
@@ -398,15 +393,11 @@ export default {
       this.$refs.addModal.update(id)
     },
     remove(id) {
-      const pending = this.$message.loading('正在删除...')
       this.$api.deleteAppEnv({
         idList: [id]
       }).then(() => {
-        pending()
         this.$message.success('删除成功')
         this.getAppEnv({})
-      }).catch(() => {
-        pending()
       })
     },
     batchRemove() {
@@ -417,15 +408,11 @@ export default {
         okText: '确认',
         cancelText: '取消',
         onOk: () => {
-          const pending = this.$message.loading('正在删除...')
           this.$api.deleteAppEnv({
             idList: this.selectedRowKeys
           }).then(() => {
-            pending()
             this.$message.success('删除成功')
             this.getAppEnv({})
-          }).catch(() => {
-            pending()
           })
           this.selectedRowKeys = []
         }
@@ -451,17 +438,13 @@ export default {
       ref.clear()
       ref.hide()
       // 同步
-      const pending = this.$message.loading('正在同步...', 5)
       this.$api.syncAppEnv({
         id,
         appId: this.query.appId,
         profileId: this.query.profileId,
         targetProfileIdList
       }).then(() => {
-        pending()
         this.$message.success('同步成功')
-      }).catch(() => {
-        pending()
       })
     },
     resetForm() {
@@ -497,12 +480,7 @@ export default {
     this.defaultSelectedAppIds.push(chooseId)
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

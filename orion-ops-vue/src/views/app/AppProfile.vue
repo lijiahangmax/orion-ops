@@ -47,19 +47,19 @@
                :loading="loading"
                size="middle">
         <!-- tag -->
-        <a slot="tag" slot-scope="record">
-          <a-tag color="#20C997">
+        <template v-slot:tag="record">
+          <a-tag color="#5C7CFA">
             {{ record.tag }}
           </a-tag>
-        </a>
+        </template>
         <!-- 审核 -->
-        <a slot="releaseAudit" slot-scope="record">
+        <template v-slot:releaseAudit="record">
           <a-tag v-if="record.releaseAudit" :color=" $enum.valueOf($enum.PROFILE_AUDIT_STATUS,record.releaseAudit).color">
             {{ $enum.valueOf($enum.PROFILE_AUDIT_STATUS, record.releaseAudit).label }}
           </a-tag>
-        </a>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -71,7 +71,7 @@
                         @confirm="remove(record.id)">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 事件 -->
@@ -195,6 +195,7 @@ export default {
     remove(id) {
       this.$api.deleteProfile({ id })
         .then(() => {
+          this.$message.success('已删除')
           this.getList({})
         })
     },
