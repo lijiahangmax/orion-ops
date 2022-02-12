@@ -1,4 +1,4 @@
-package com.orion.ops.handler.app.build.handler;
+package com.orion.ops.handler.app.action;
 
 import com.orion.constant.Letters;
 import com.orion.exception.LogException;
@@ -7,9 +7,9 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
-import com.orion.ops.handler.app.store.BuildStore;
-import com.orion.ops.service.api.ApplicationBuildService;
+import com.orion.ops.dao.ApplicationActionLogDAO;
+import com.orion.ops.entity.domain.ApplicationActionLogDO;
+import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
@@ -22,41 +22,41 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * 应用构建处理器
+ * 应用操作处理器基类
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/6 8:53
+ * @since 2022/2/11 15:27
  */
 @Slf4j
-public abstract class AbstractBuildHandler implements IBuildHandler {
+public abstract class AbstractActionHandler implements IActionHandler {
 
-    protected static ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
-
-    protected Long buildId;
+    protected static ApplicationActionLogDAO applicationActionLogDAO = SpringHolder.getBean(ApplicationActionLogDAO.class);
 
     protected Long id;
 
-    protected BuildStore store;
+    protected Long relId;
 
-    protected ApplicationBuildActionDO action;
+    protected MachineStore store;
+
+    protected ApplicationActionLogDO action;
 
     protected OutputAppender appender;
 
     @Getter
     protected volatile ActionStatus status;
 
-    public AbstractBuildHandler(Long id, BuildStore store) {
+    public AbstractActionHandler(Long id, MachineStore store) {
         this.id = id;
+        this.relId = store.getRelId();
         this.store = store;
-        this.buildId = store.getBuildId();
         this.action = store.getActions().get(id);
         this.status = ActionStatus.WAIT;
     }
 
     @Override
     public void exec() {
-        log.info("应用构建action-开始: buildId: {}, actionId: {}", buildId, id);
+        log.info("应用操作执行-开始: relId: {}, id: {}", relId, id);
         Exception ex = null;
         try {
             // 更新状态
@@ -66,16 +66,16 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
             // 执行
             this.handler();
         } catch (Exception e) {
-            log.error("应用构建action-异常: buildId: {}, actionId: {}", buildId, id, e);
+            log.error("应用操作执行-异常: relId: {}, id: {}", relId, id, e);
             ex = e;
         }
         if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
-            // 拼接日志
+            // 拼接终止日志
             this.appendTerminatedLog();
         } else {
             // 修改状态
             this.updateStatus(ex == null ? ActionStatus.FINISH : ActionStatus.FAILURE);
-            // 拼接日志
+            // 拼接完成日志
             this.appendFinishedLog(ex);
             if (ex != null) {
                 throw Exceptions.runtime(ex.getMessage(), ex);
@@ -84,7 +84,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
     }
 
     /**
-     * 执行
+     * 处理流程
      *
      * @throws Exception Exception
      */
@@ -92,13 +92,13 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
 
     @Override
     public void skipped() {
-        log.info("应用构建action-跳过: buildId: {}, actionId: {}", buildId, id);
+        log.info("应用操作执行-跳过: relId: {}, id: {}", relId, id);
         this.updateStatus(ActionStatus.SKIPPED);
     }
 
     @Override
     public void terminated() {
-        log.info("应用构建action-终止: buildId: {}, actionId: {}", buildId, id);
+        log.info("应用操作执行-终止: relId: {}, id: {}", relId, id);
         this.updateStatus(ActionStatus.TERMINATED);
     }
 
@@ -107,11 +107,11 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
      */
     protected void openLogger() {
         String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), action.getLogPath());
-        log.info("应用构建action-打开日志 buildId: {}, actionId: {}, path: {}", buildId, id, logPath);
+        log.info("应用操作执行-打开日志 relId: {}, id: {}, path: {}", relId, id, logPath);
         File logFile = new File(logPath);
         Files1.touch(logFile);
         this.appender = OutputAppender.create(Files1.openOutputStreamFastSafe(logFile))
-                .then(store.getMainLogStream())
+                .then(store.getSuperLogStream())
                 .onClose(true);
         // 拼接开始日志
         this.appendStartedLog();
@@ -123,12 +123,28 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
     @SneakyThrows
     private void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 执行构建操作 ").append(action.getActionName())
+                .append("# 执行操作开始 ").append(action.getActionName())
                 .append(Const.LF);
-        if (ActionType.BUILD_COMMAND.equals(ActionType.of(action.getActionType()))) {
+        ActionType actionType = ActionType.of(action.getActionType());
+        if (ActionType.BUILD_COMMAND.equals(actionType)
+                || ActionType.RELEASE_COMMAND.equals(actionType)) {
             log.append("# 执行命令: ").append(action.getActionCommand()).append("\n\n");
         }
-        store.getMainLogStream().write(Letters.LF);
+        store.getSuperLogStream().write(Letters.LF);
+        this.appendLog(log.toString());
+    }
+
+    /**
+     * 拼接停止日志
+     */
+    private void appendTerminatedLog() {
+        StringBuilder log = new StringBuilder()
+                .append("\n# 执行操作手动停止 ")
+                .append(action.getActionName());
+        log.append(" used: ")
+                .append(action.getEndTime().getTime() - action.getStartTime().getTime())
+                .append("ms\n\n");
+        // 拼接日志
         this.appendLog(log.toString());
     }
 
@@ -141,14 +157,14 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
         StringBuilder log = new StringBuilder();
         if (ex != null) {
             // 有异常
-            log.append("# 构建操作执行失败 ").append(action.getActionName());
+            log.append("# 执行操作执行失败 ").append(action.getActionName());
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
                 log.append("\texitCode: ").append(exitCode).append(";");
             }
         } else {
             // 无异常
-            log.append("# 构建操作执行完成 ").append(action.getActionName());
+            log.append("# 执行操作执行完成 ").append(action.getActionName());
         }
         log.append(" used: ")
                 .append(action.getEndTime().getTime() - action.getStartTime().getTime())
@@ -161,18 +177,6 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
                 log.append(Exceptions.getStackTraceAsString(ex)).append(Const.LF);
             }
         }
-        // 拼接日志
-        this.appendLog(log.toString());
-    }
-
-    /**
-     * 拼接停止日志
-     */
-    private void appendTerminatedLog() {
-        StringBuilder log = new StringBuilder()
-                .append("\n# 构建操作手动停止 ").append(action.getActionName())
-                .append(" used: ").append(action.getEndTime().getTime() - action.getStartTime().getTime())
-                .append("ms\n\n");
         // 拼接日志
         this.appendLog(log.toString());
     }
@@ -193,7 +197,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
      * @param status status
      */
     protected void updateStatus(ActionStatus status) {
-        ApplicationBuildActionDO update = new ApplicationBuildActionDO();
+        ApplicationActionLogDO update = new ApplicationActionLogDO();
         update.setId(id);
         update.setRunStatus(status.getStatus());
         action.setRunStatus(status.getStatus());
@@ -223,7 +227,7 @@ public abstract class AbstractBuildHandler implements IBuildHandler {
                 break;
         }
         // 更新状态
-        applicationBuildService.updateActionById(update);
+        applicationActionLogDAO.updateById(update);
     }
 
     @Override

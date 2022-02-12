@@ -1,11 +1,10 @@
-package com.orion.ops.handler.app.build.handler;
+package com.orion.ops.handler.app.action;
 
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
-import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.ops.handler.app.store.BuildStore;
+import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.ops.utils.ValueMix;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -18,20 +17,20 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import java.io.File;
 
 /**
- * 构建执行操作-检出
+ * 执行操作-检出
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @see com.orion.ops.consts.app.ActionType#BUILD_CHECKOUT
- * @since 2021/12/6 10:54
+ * @since 2022/2/11 15:57
  */
-public class CheckoutBuildHandler extends AbstractBuildHandler {
+public class CheckoutActionHandler extends AbstractActionHandler {
 
     private static ApplicationVcsDAO applicationVcsDAO = SpringHolder.getBean(ApplicationVcsDAO.class);
 
     private Git git;
 
-    public CheckoutBuildHandler(Long actionId, BuildStore store) {
+    public CheckoutActionHandler(Long actionId, MachineStore store) {
         super(actionId, store);
     }
 
@@ -83,11 +82,6 @@ public class CheckoutBuildHandler extends AbstractBuildHandler {
         super.terminated();
         // 关闭git
         Streams.close(git);
-    }
-
-    @Override
-    public Integer getExitCode() {
-        return null;
     }
 
     @Override

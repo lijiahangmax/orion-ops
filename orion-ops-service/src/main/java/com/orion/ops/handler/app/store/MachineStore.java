@@ -1,30 +1,43 @@
 package com.orion.ops.handler.app.store;
 
 import com.beust.jcommander.internal.Maps;
-import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
-import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
-import com.orion.ops.handler.app.release.handler.IReleaseHandler;
+import com.orion.ops.consts.Const;
+import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.remote.channel.SessionStore;
 import lombok.Data;
 
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
 
 /**
- * 发布机器信息
+ * 发布操作参数
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/28 17:39
+ * @since 2022/2/11 16:05
  */
 @Data
 public class MachineStore {
 
     /**
-     * 发布机器id
+     * 引用id
      */
-    private Long id;
+    private Long relId;
+
+    /**
+     * action
+     */
+    private Map<Long, ApplicationActionLogDO> actions;
+
+    /**
+     * 日志文件
+     */
+    private String superLogPath;
+
+    /**
+     * 日志输出流
+     */
+    private OutputStream superLogStream;
 
     /**
      * 机器id
@@ -32,36 +45,54 @@ public class MachineStore {
     private Long machineId;
 
     /**
-     * 发布机器
-     */
-    private ApplicationReleaseMachineDO machine;
-
-    /**
-     * 日志流
-     */
-    private OutputStream logStream;
-
-    /**
-     * 日志路径
-     */
-    private String logPath;
-
-    /**
      * 机器会话
      */
     private SessionStore sessionStore;
 
     /**
-     * 处理器
+     * 版本id
+     *
+     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
      */
-    private List<IReleaseHandler> handler;
+    private Long vcsId;
 
     /**
-     * actions
+     * 分支
+     *
+     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
      */
-    private Map<Long, ApplicationReleaseActionDO> actions;
+    private String branchName;
+
+    /**
+     * 提交版本
+     *
+     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     */
+    private String commitId;
+
+    /**
+     * vcs clone 路径
+     *
+     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     */
+    private String vcsClonePath;
+
+    /**
+     * 构建产物文件
+     *
+     * @see com.orion.ops.handler.app.action.TransferActionHandler
+     */
+    private String bundlePath;
+
+    /**
+     * 产物传输路径
+     *
+     * @see com.orion.ops.handler.app.action.TransferActionHandler
+     */
+    private String transferPath;
 
     public MachineStore() {
+        this.machineId = Const.HOST_MACHINE_ID;
         this.actions = Maps.newLinkedHashMap();
     }
 
