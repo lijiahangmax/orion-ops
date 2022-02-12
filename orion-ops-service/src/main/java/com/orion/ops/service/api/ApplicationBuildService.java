@@ -1,7 +1,6 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
 import com.orion.ops.entity.vo.ApplicationBuildReleaseListVO;
@@ -91,42 +90,12 @@ public interface ApplicationBuildService {
     ApplicationBuildDO selectById(Long id);
 
     /**
-     * 通过id查询action
-     *
-     * @param id id
-     * @return action
-     */
-    List<ApplicationBuildActionDO> selectActionById(Long id);
-
-    /**
-     * 更新
-     *
-     * @param record record
-     */
-    void updateById(ApplicationBuildDO record);
-
-    /**
-     * 更新action
-     *
-     * @param record record
-     */
-    void updateActionById(ApplicationBuildActionDO record);
-
-    /**
      * 获取构建日志路径
      *
      * @param id id
      * @return path
      */
     String getBuildLogPath(Long id);
-
-    /**
-     * 获取构建操作日志路径
-     *
-     * @param id id
-     * @return path
-     */
-    String getBuildActionLogPath(Long id);
 
     /**
      * 获取构建产物路径

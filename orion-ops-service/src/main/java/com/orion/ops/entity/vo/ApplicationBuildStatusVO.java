@@ -64,7 +64,7 @@ public class ApplicationBuildStatusVO {
     /**
      * action
      */
-    private List<ApplicationBuildActionStatusVO> actions;
+    private List<ApplicationActionStatusVO> actions;
 
     static {
         TypeStore.STORE.register(ApplicationBuildDO.class, ApplicationBuildStatusVO.class, p -> {

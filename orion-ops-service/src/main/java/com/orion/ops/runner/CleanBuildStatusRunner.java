@@ -2,12 +2,11 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.BuildStatus;
-import com.orion.ops.dao.ApplicationBuildActionDAO;
+import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationBuildDAO;
-import com.orion.ops.entity.domain.ApplicationBuildActionDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
+import com.orion.ops.service.api.ApplicationActionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -33,7 +32,7 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
     private ApplicationBuildDAO applicationBuildDAO;
 
     @Resource
-    private ApplicationBuildActionDAO applicationBuildActionDAO;
+    private ApplicationActionLogService applicationActionLogService;
 
     @Override
     public void run(String... args) {
@@ -50,40 +49,10 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
             update.setBuildEndTime(new Date());
             update.setUpdateTime(new Date());
             applicationBuildDAO.updateById(update);
-            this.updateActionStatus(buildId);
+            applicationActionLogService.resetActionStatus(buildId, StageType.BUILD);
             log.info("重置应用构建状态-执行 {}", buildId);
         }
         log.info("重置应用构建状态-结束");
-    }
-
-    /**
-     * 更新action状态
-     *
-     * @param buildId buildId
-     */
-    private void updateActionStatus(Long buildId) {
-        // 查询action
-        Wrapper<ApplicationBuildActionDO> wrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
-                .eq(ApplicationBuildActionDO::getBuildId, buildId);
-        List<ApplicationBuildActionDO> actions = applicationBuildActionDAO.selectList(wrapper);
-        // 修改状态
-        for (ApplicationBuildActionDO action : actions) {
-            ApplicationBuildActionDO update = new ApplicationBuildActionDO();
-            update.setId(action.getId());
-            update.setUpdateTime(new Date());
-            switch (ActionStatus.of(action.getRunStatus())) {
-                case WAIT:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    break;
-                case RUNNABLE:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    update.setEndTime(new Date());
-                    break;
-                default:
-                    break;
-            }
-            applicationBuildActionDAO.updateById(update);
-        }
     }
 
 }

@@ -1,6 +1,5 @@
 package com.orion.ops.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
@@ -16,12 +15,9 @@ import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
 import com.orion.ops.entity.vo.*;
-import com.orion.ops.handler.build.BuildSessionHolder;
-import com.orion.ops.handler.build.IBuilderProcessor;
-import com.orion.ops.service.api.ApplicationActionService;
-import com.orion.ops.service.api.ApplicationBuildService;
-import com.orion.ops.service.api.ApplicationEnvService;
-import com.orion.ops.service.api.MachineEnvService;
+import com.orion.ops.handler.app.build.BuildSessionHolder;
+import com.orion.ops.handler.app.build.IBuilderProcessor;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
@@ -51,7 +47,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     private ApplicationBuildDAO applicationBuildDAO;
 
     @Resource
-    private ApplicationBuildActionDAO applicationBuildActionDAO;
+    private ApplicationActionLogDAO applicationActionLogDAO;
 
     @Resource
     private ApplicationInfoDAO applicationInfoDAO;
@@ -67,6 +63,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Resource
     private ApplicationActionService applicationActionService;
+
+    @Resource
+    private ApplicationActionLogService applicationActionLogService;
 
     @Resource
     private MachineEnvService machineEnvService;
@@ -129,20 +128,21 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         }
         // 设置action
         for (ApplicationActionDO action : actions) {
-            ApplicationBuildActionDO buildAction = new ApplicationBuildActionDO();
-            buildAction.setBuildId(buildId);
-            buildAction.setActionId(action.getAppId());
-            buildAction.setActionName(action.getActionName());
-            buildAction.setActionType(action.getActionType());
+            ApplicationActionLogDO actionLog = new ApplicationActionLogDO();
+            actionLog.setRelId(buildId);
+            actionLog.setStageType(StageType.BUILD.getType());
+            actionLog.setActionId(action.getAppId());
+            actionLog.setActionName(action.getActionName());
+            actionLog.setActionType(action.getActionType());
             if (ActionType.BUILD_COMMAND.equals(ActionType.of(action.getActionType()))) {
-                buildAction.setActionCommand(Strings.format(action.getActionCommand(), EnvConst.SYMBOL, env));
+                actionLog.setActionCommand(Strings.format(action.getActionCommand(), EnvConst.SYMBOL, env));
             }
-            buildAction.setRunStatus(ActionStatus.WAIT.getStatus());
-            applicationBuildActionDAO.insert(buildAction);
+            actionLog.setRunStatus(ActionStatus.WAIT.getStatus());
+            applicationActionLogDAO.insert(actionLog);
             // 设置日志路径
-            buildAction.setLogPath(PathBuilders.getBuildActionLogPath(buildId, buildAction.getId()));
+            actionLog.setLogPath(PathBuilders.getBuildActionLogPath(buildId, actionLog.getId()));
             // 更新
-            applicationBuildActionDAO.updateById(buildAction);
+            applicationActionLogDAO.updateById(actionLog);
         }
         // 提交构建任务
         IBuilderProcessor.with(buildId).exec();
@@ -192,12 +192,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .map(applicationVcsDAO::selectById)
                 .ifPresent(v -> detail.setVcsName(v.getVcsName()));
         // 查询action
-        LambdaQueryWrapper<ApplicationBuildActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
-                .eq(ApplicationBuildActionDO::getBuildId, id)
-                .orderByAsc(ApplicationBuildActionDO::getId);
-        List<ApplicationBuildActionVO> actions = DataQuery.of(applicationBuildActionDAO)
-                .wrapper(actionWrapper)
-                .list(ApplicationBuildActionVO.class);
+        List<ApplicationActionLogVO> actions = applicationActionLogService.getActionLogsByRelId(id, StageType.BUILD);
         detail.setActions(actions);
         return detail;
     }
@@ -209,9 +204,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Valid.notNull(buildStatus, MessageConst.UNKNOWN_DATA);
         ApplicationBuildStatusVO status = Converts.to(buildStatus, ApplicationBuildStatusVO.class);
         // 查询操作状态
-        List<ApplicationBuildActionDO> actionStatus = applicationBuildActionDAO.selectStatusInfoByBuildId(id);
-        List<ApplicationBuildActionStatusVO> actions = Converts.toList(actionStatus, ApplicationBuildActionStatusVO.class);
-        status.setActions(actions);
+        List<ApplicationActionLogDO> actions = applicationActionLogDAO.selectStatusInfoByRelId(id, StageType.BUILD.getType());
+        status.setActions(Converts.toList(actions, ApplicationActionStatusVO.class));
         return status;
     }
 
@@ -266,9 +260,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         // 删除主表
         int effect = applicationBuildDAO.deleteById(id);
         // 删除详情
-        Wrapper<ApplicationBuildActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
-                .eq(ApplicationBuildActionDO::getBuildId, id);
-        effect += applicationBuildActionDAO.delete(actionWrapper);
+        effect += applicationActionLogService.deleteByRelId(id, StageType.BUILD);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());
@@ -298,42 +290,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     }
 
     @Override
-    public List<ApplicationBuildActionDO> selectActionById(Long id) {
-        LambdaQueryWrapper<ApplicationBuildActionDO> wrapper = new LambdaQueryWrapper<ApplicationBuildActionDO>()
-                .eq(ApplicationBuildActionDO::getBuildId, id)
-                .orderByAsc(ApplicationBuildActionDO::getId);
-        return applicationBuildActionDAO.selectList(wrapper);
-    }
-
-    @Override
-    public void updateById(ApplicationBuildDO record) {
-        if (record.getUpdateTime() == null) {
-            record.setUpdateTime(new Date());
-        }
-        applicationBuildDAO.updateById(record);
-    }
-
-    @Override
-    public void updateActionById(ApplicationBuildActionDO record) {
-        if (record.getUpdateTime() == null) {
-            record.setUpdateTime(new Date());
-        }
-        applicationBuildActionDAO.updateById(record);
-    }
-
-    @Override
     public String getBuildLogPath(Long id) {
         return Optional.ofNullable(applicationBuildDAO.selectById(id))
                 .map(ApplicationBuildDO::getLogPath)
-                .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
-                .orElse(null);
-    }
-
-    @Override
-    public String getBuildActionLogPath(Long id) {
-        return Optional.ofNullable(applicationBuildActionDAO.selectById(id))
-                .map(ApplicationBuildActionDO::getLogPath)
                 .filter(Strings::isNotBlank)
                 .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);

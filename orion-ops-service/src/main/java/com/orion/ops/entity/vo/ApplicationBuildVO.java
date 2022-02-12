@@ -144,7 +144,7 @@ public class ApplicationBuildVO {
     /**
      * 操作
      */
-    private List<ApplicationBuildActionVO> actions;
+    private List<ApplicationActionLogVO> actions;
 
     static {
         TypeStore.STORE.register(ApplicationBuildDO.class, ApplicationBuildVO.class, p -> {
