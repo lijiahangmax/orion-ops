@@ -4,12 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ReleaseStatus;
-import com.orion.ops.dao.ApplicationReleaseActionDAO;
+import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationReleaseDAO;
 import com.orion.ops.dao.ApplicationReleaseMachineDAO;
-import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
+import com.orion.ops.service.api.ApplicationActionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -38,7 +38,7 @@ public class CleanReleaseStatusRunner implements CommandLineRunner {
     private ApplicationReleaseMachineDAO applicationReleaseMachineDAO;
 
     @Resource
-    private ApplicationReleaseActionDAO applicationReleaseActionDAO;
+    private ApplicationActionLogService applicationActionLogService;
 
     @Override
     public void run(String... args) {
@@ -75,7 +75,8 @@ public class CleanReleaseStatusRunner implements CommandLineRunner {
         // 修改状态
         for (ApplicationReleaseMachineDO machine : machines) {
             ApplicationReleaseMachineDO update = new ApplicationReleaseMachineDO();
-            update.setId(machine.getId());
+            Long releaseMachineId = machine.getId();
+            update.setId(releaseMachineId);
             update.setUpdateTime(new Date());
             switch (ActionStatus.of(machine.getRunStatus())) {
                 case WAIT:
@@ -90,37 +91,7 @@ public class CleanReleaseStatusRunner implements CommandLineRunner {
             }
             applicationReleaseMachineDAO.updateById(update);
             // 设置操作状态
-            this.resetActionStatus(machine.getId());
-        }
-    }
-
-    /**
-     * 设置操作id
-     *
-     * @param releaseMachineId releaseMachineId
-     */
-    private void resetActionStatus(Long releaseMachineId) {
-        // 查询action
-        Wrapper<ApplicationReleaseActionDO> wrapper = new LambdaQueryWrapper<ApplicationReleaseActionDO>()
-                .eq(ApplicationReleaseActionDO::getReleaseMachineId, releaseMachineId);
-        List<ApplicationReleaseActionDO> actions = applicationReleaseActionDAO.selectList(wrapper);
-        // 修改状态
-        for (ApplicationReleaseActionDO action : actions) {
-            ApplicationReleaseActionDO update = new ApplicationReleaseActionDO();
-            update.setId(action.getId());
-            update.setUpdateTime(new Date());
-            switch (ActionStatus.of(action.getRunStatus())) {
-                case WAIT:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    break;
-                case RUNNABLE:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    update.setEndTime(new Date());
-                    break;
-                default:
-                    break;
-            }
-            applicationReleaseActionDAO.updateById(update);
+            applicationActionLogService.resetActionStatus(releaseMachineId, StageType.RELEASE);
         }
     }
 
