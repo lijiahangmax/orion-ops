@@ -43,6 +43,13 @@ public class ApplicationReleaseMachineServiceImpl implements ApplicationReleaseM
     }
 
     @Override
+    public Integer deleteByReleaseId(Long releaseId) {
+        LambdaQueryWrapper<ApplicationReleaseMachineDO> machineWrapper = new LambdaQueryWrapper<ApplicationReleaseMachineDO>()
+                .eq(ApplicationReleaseMachineDO::getReleaseId, releaseId);
+        return applicationReleaseMachineDAO.delete(machineWrapper);
+    }
+
+    @Override
     public String getReleaseMachineLogPath(Long id) {
         return Optional.ofNullable(applicationReleaseMachineDAO.selectById(id))
                 .map(ApplicationReleaseMachineDO::getLogPath)

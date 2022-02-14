@@ -1,7 +1,6 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
@@ -20,8 +19,8 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
-import com.orion.ops.handler.release.IReleaseProcessor;
-import com.orion.ops.handler.release.ReleaseSessionHolder;
+import com.orion.ops.handler.app.release.IReleaseProcessor;
+import com.orion.ops.handler.app.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -66,10 +65,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private ApplicationReleaseMachineDAO applicationReleaseMachineDAO;
 
     @Resource
-    private ApplicationReleaseActionService applicationReleaseActionService;
+    private ApplicationActionLogService applicationActionLogService;
 
     @Resource
-    private ApplicationReleaseActionDAO applicationReleaseActionDAO;
+    private ApplicationActionLogDAO applicationActionLogDAO;
 
     @Resource
     private ApplicationInfoDAO applicationInfoDAO;
@@ -164,9 +163,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(machine, MessageConst.RELEASE_ABSENT);
         ApplicationReleaseMachineVO vo = Converts.to(machine, ApplicationReleaseMachineVO.class);
         // 查询action
-        List<ApplicationReleaseActionVO> actions = applicationReleaseActionService.getReleaseActionByReleaseMachineId(releaseMachineId).stream()
-                .map(s -> Converts.to(s, ApplicationReleaseActionVO.class))
-                .collect(Collectors.toList());
+        List<ApplicationActionLogVO> actions = applicationActionLogService.getActionLogsByRelId(releaseMachineId, StageType.RELEASE);
         vo.setActions(actions);
         return vo;
     }
@@ -211,8 +208,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             releaseEnv.putAll(this.getReleaseEnv(build, release));
         }
         // 设置部署操作
-        List<ApplicationReleaseActionDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
-        releaseActions.forEach(applicationReleaseActionDAO::insert);
+        List<ApplicationActionLogDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
+        releaseActions.forEach(applicationActionLogDAO::insert);
         // 设置日志参数
         EventParamsHolder.addParams(release);
         return releaseId;
@@ -332,12 +329,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             machine.setUpdateTime(null);
             applicationReleaseMachineDAO.insert(machine);
             // 设置操作信息
-            List<ApplicationReleaseActionDO> actions = applicationReleaseActionService.getReleaseActionByReleaseMachineId(beforeId);
-            for (ApplicationReleaseActionDO action : actions) {
+            List<ApplicationActionLogDO> actions = applicationActionLogService.selectActionByRelId(beforeId, StageType.RELEASE);
+            for (ApplicationActionLogDO action : actions) {
                 action.setId(null);
-                action.setReleaseMachineId(machine.getId());
-                action.setMachineId(machine.getMachineId());
-                action.setReleaseId(releaseId);
+                action.setRelId(machine.getId());
                 action.setLogPath(PathBuilders.getReleaseActionLogPath(releaseId, machine.getMachineId(), action.getActionId()));
                 action.setRunStatus(ActionStatus.WAIT.getStatus());
                 action.setExitCode(null);
@@ -345,7 +340,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 action.setEndTime(null);
                 action.setCreateTime(null);
                 action.setUpdateTime(null);
-                applicationReleaseActionDAO.insert(action);
+                applicationActionLogDAO.insert(action);
             }
         }
         // 设置日志参数
@@ -396,14 +391,14 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         }
         // 删除主表
         int effect = applicationReleaseDAO.deleteById(id);
+        // 查询机器
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
         // 删除机器
-        Wrapper<ApplicationReleaseMachineDO> machineWrapper = new LambdaQueryWrapper<ApplicationReleaseMachineDO>()
-                .eq(ApplicationReleaseMachineDO::getReleaseId, id);
-        effect += applicationReleaseMachineDAO.delete(machineWrapper);
+        effect += applicationReleaseMachineService.deleteByReleaseId(id);
         // 删除操作
-        Wrapper<ApplicationReleaseActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationReleaseActionDO>()
-                .eq(ApplicationReleaseActionDO::getReleaseId, id);
-        effect += applicationReleaseActionDAO.delete(actionWrapper);
+        for (ApplicationReleaseMachineDO machine : machines) {
+            effect += applicationActionLogService.deleteByRelId(machine.getId(), StageType.RELEASE);
+        }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
@@ -446,15 +441,16 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 查询机器状态
         List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineDAO.selectStatusByIdList(releaseMachineIdList);
         List<ApplicationReleaseMachineStatusVO> machinesStatus = Converts.toList(machines, ApplicationReleaseMachineStatusVO.class);
+        if (machinesStatus.isEmpty()) {
+            return machinesStatus;
+        }
         // 查询操作状态
-        if (!machinesStatus.isEmpty()) {
-            List<ApplicationReleaseActionDO> actions = applicationReleaseActionDAO.selectReleaseActionStatusByMachineIdList(releaseMachineIdList);
-            for (ApplicationReleaseMachineStatusVO machineStatus : machinesStatus) {
-                List<ApplicationReleaseActionDO> machineActions = actions.stream()
-                        .filter(s -> s.getReleaseMachineId().equals(machineStatus.getId()))
-                        .collect(Collectors.toList());
-                machineStatus.setActions(Converts.toList(machineActions, ApplicationReleaseActionStatusVO.class));
-            }
+        List<ApplicationActionLogDO> actions = applicationActionLogDAO.selectStatusInfoByRelIdList(releaseMachineIdList, StageType.RELEASE.getType());
+        for (ApplicationReleaseMachineStatusVO machineStatus : machinesStatus) {
+            List<ApplicationActionLogDO> machineActions = actions.stream()
+                    .filter(s -> s.getRelId().equals(machineStatus.getId()))
+                    .collect(Collectors.toList());
+            machineStatus.setActions(Converts.toList(machineActions, ApplicationActionStatusVO.class));
         }
         return machinesStatus;
     }
@@ -466,9 +462,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
         ApplicationReleaseMachineStatusVO status = Converts.to(machine, ApplicationReleaseMachineStatusVO.class);
         // 查询操作状态
-        List<ApplicationReleaseActionDO> actions = applicationReleaseActionDAO.selectReleaseActionStatusByMachineId(releaseMachineId);
-        List<ApplicationReleaseActionStatusVO> actionStatus = Converts.toList(actions, ApplicationReleaseActionStatusVO.class);
-        status.setActions(actionStatus);
+        List<ApplicationActionLogDO> actions = applicationActionLogDAO.selectStatusInfoByRelId(releaseMachineId, StageType.RELEASE.getType());
+        status.setActions(Converts.toList(actions, ApplicationActionStatusVO.class));
         return status;
     }
 
@@ -611,20 +606,21 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      * @param releaseEnv      发布环境变量
      * @return actions
      */
-    private List<ApplicationReleaseActionDO> setReleaseActions(List<ApplicationActionDO> actions, List<ApplicationReleaseMachineDO> releaseMachines, Map<String, String> releaseEnv) {
-        List<ApplicationReleaseActionDO> releaseActions = Lists.newList();
+    private List<ApplicationActionLogDO> setReleaseActions(List<ApplicationActionDO> actions, List<ApplicationReleaseMachineDO> releaseMachines, Map<String, String> releaseEnv) {
+        List<ApplicationActionLogDO> releaseActions = Lists.newList();
         for (ApplicationReleaseMachineDO releaseMachine : releaseMachines) {
             for (ApplicationActionDO action : actions) {
                 ActionType actionType = ActionType.of(action.getActionType());
                 Long machineId = releaseMachine.getMachineId();
-                ApplicationReleaseActionDO releaseAction = new ApplicationReleaseActionDO();
-                releaseAction.setReleaseMachineId(releaseMachine.getId());
-                releaseAction.setMachineId(machineId);
-                Long releaseId = releaseMachine.getReleaseId();
-                releaseAction.setReleaseId(releaseId);
-                releaseAction.setActionId(action.getId());
+                Long actionId = action.getId();
+                // 设置机器操作
+                ApplicationActionLogDO releaseAction = new ApplicationActionLogDO();
+                releaseAction.setStageType(StageType.RELEASE.getType());
+                releaseAction.setRelId(releaseMachine.getId());
+                releaseAction.setActionId(actionId);
                 releaseAction.setActionName(action.getActionName());
                 releaseAction.setActionType(action.getActionType());
+                // 设置命令
                 if (ActionType.RELEASE_COMMAND.equals(actionType)) {
                     String command = action.getActionCommand();
                     // 替换发布命令
@@ -634,7 +630,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                     command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
                     releaseAction.setActionCommand(command);
                 }
-                releaseAction.setLogPath(PathBuilders.getReleaseActionLogPath(releaseId, machineId, action.getId()));
+                releaseAction.setLogPath(PathBuilders.getReleaseActionLogPath(releaseMachine.getReleaseId(), machineId, actionId));
                 releaseAction.setRunStatus(ActionStatus.WAIT.getStatus());
                 releaseActions.add(releaseAction);
             }
