@@ -205,7 +205,7 @@ public class ApplicationReleaseDO implements Serializable {
     private String releaseUserName;
 
     /**
-     * 发布步骤json
+     * 发布操作json
      */
     @TableField("action_config")
     private String actionConfig;

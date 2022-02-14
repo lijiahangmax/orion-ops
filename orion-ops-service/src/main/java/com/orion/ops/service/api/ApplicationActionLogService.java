@@ -34,7 +34,7 @@ public interface ApplicationActionLogService {
     Integer deleteByRelId(Long relId, StageType stageType);
 
     /**
-     * 通过id查询action
+     * 通过 relId 查询 action
      *
      * @param relId     relId
      * @param stageType stageType
@@ -43,7 +43,7 @@ public interface ApplicationActionLogService {
     List<ApplicationActionLogDO> selectActionByRelId(Long relId, StageType stageType);
 
     /**
-     * 更新action
+     * 更新 action
      *
      * @param record record
      */
