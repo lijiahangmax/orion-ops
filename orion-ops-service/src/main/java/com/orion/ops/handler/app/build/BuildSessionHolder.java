@@ -1,5 +1,6 @@
 package com.orion.ops.handler.app.build;
 
+import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.utils.collect.Maps;
 import org.springframework.stereotype.Component;
 
@@ -18,15 +19,15 @@ public class BuildSessionHolder {
     /**
      * session
      */
-    private ConcurrentHashMap<Long, IBuilderProcessor> session = Maps.newCurrentHashMap();
+    private ConcurrentHashMap<Long, IMachineProcessor> session = Maps.newCurrentHashMap();
 
     /**
      * 添加 session
      *
      * @param processor processor
      */
-    public void addSession(IBuilderProcessor processor) {
-        session.put(processor.getBuildId(), processor);
+    public void addSession(Long id, IMachineProcessor processor) {
+        session.put(id, processor);
     }
 
     /**
@@ -35,7 +36,7 @@ public class BuildSessionHolder {
      * @param id id
      * @return session
      */
-    public IBuilderProcessor getSession(Long id) {
+    public IMachineProcessor getSession(Long id) {
         return session.get(id);
     }
 
