@@ -3,12 +3,9 @@ package com.orion.ops.handler.app.release;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.handler.app.release.machine.IMachineProcessor;
+import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Threads;
-import com.orion.utils.collect.Lists;
-
-import java.util.List;
 
 /**
  * 并行处理器
@@ -25,13 +22,12 @@ public class ParallelReleaseProcessor extends AbstractReleaseProcessor {
 
     @Override
     protected void handler() throws Exception {
-        List<IMachineProcessor> processor = Lists.newList(store.getMachineProcessors().values());
-        Threads.blockRun(processor, SchedulerPools.RELEASE_MACHINE_SCHEDULER);
+        Threads.blockRun(machineProcessors, SchedulerPools.RELEASE_MACHINE_SCHEDULER);
         // 检查是否成功
         if (terminated) {
             return;
         }
-        if (!processor.stream().map(IMachineProcessor::getStatus).allMatch(ActionStatus.FINISH::equals)) {
+        if (!machineProcessors.stream().map(ReleaseMachineProcessor::getStatus).allMatch(ActionStatus.FINISH::equals)) {
             throw Exceptions.log(MessageConst.RELEASE_NOT_ALL_SUCCESS);
         }
     }
@@ -39,7 +35,7 @@ public class ParallelReleaseProcessor extends AbstractReleaseProcessor {
     @Override
     public void terminated() {
         super.terminated();
-        store.getMachineProcessors().values().forEach(IMachineProcessor::terminated);
+        machineProcessors.forEach(ReleaseMachineProcessor::terminated);
     }
 
 }

@@ -4,18 +4,14 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ReleaseStatus;
 import com.orion.ops.dao.ApplicationReleaseDAO;
-import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
-import com.orion.ops.handler.app.release.handler.IReleaseHandler;
-import com.orion.ops.handler.app.release.machine.IMachineProcessor;
-import com.orion.ops.handler.app.store.MachineStore;
-import com.orion.ops.handler.app.store.ReleaseStore;
-import com.orion.ops.service.api.ApplicationReleaseActionService;
+import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.ops.service.api.ApplicationReleaseMachineService;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Threads;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Streams;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,14 +33,14 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
 
     protected static ApplicationReleaseMachineService applicationReleaseMachineService = SpringHolder.getBean(ApplicationReleaseMachineService.class);
 
-    protected static ApplicationReleaseActionService applicationReleaseActionService = SpringHolder.getBean(ApplicationReleaseActionService.class);
-
     protected static ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
 
     @Getter
     private Long releaseId;
 
-    protected ReleaseStore store;
+    private ApplicationReleaseDO release;
+
+    protected List<ReleaseMachineProcessor> machineProcessors;
 
     /**
      * 是否已结束
@@ -53,7 +49,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
 
     public AbstractReleaseProcessor(Long releaseId) {
         this.releaseId = releaseId;
-        this.store = new ReleaseStore();
+        this.machineProcessors = Lists.newList();
     }
 
     @Override
@@ -69,7 +65,8 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
             // 查询数据
             this.getReleaseData();
             // 检查状态
-            if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(store.getRecord().getReleaseStatus())) {
+            if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())
+                    && !ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
                 return;
             }
             this.updateStatus(ReleaseStatus.RUNNABLE);
@@ -115,28 +112,16 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
      */
     protected void getReleaseData() {
         // 查询发布信息主表
-        ApplicationReleaseDO release = applicationReleaseDAO.selectById(releaseId);
+        this.release = applicationReleaseDAO.selectById(releaseId);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
-        store.setRecord(release);
-        if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
+        if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())
+                && !ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
             return;
         }
         // 查询发布机器
-        List<ApplicationReleaseMachineDO> releaseMachines = applicationReleaseMachineService.getReleaseMachines(releaseId);
-        for (ApplicationReleaseMachineDO releaseMachine : releaseMachines) {
-            // 设置store
-            MachineStore machineStore = new MachineStore();
-            machineStore.setId(releaseMachine.getId());
-            machineStore.setMachineId(releaseMachine.getMachineId());
-            machineStore.setMachine(releaseMachine);
-            // 设置处理器
-            store.getMachineProcessors().put(releaseMachine.getId(), IMachineProcessor.with(store, machineStore));
-            // 设置发布操作
-            List<ApplicationReleaseActionDO> actions = applicationReleaseActionService.getReleaseActionByReleaseMachineId(releaseMachine.getId());
-            actions.forEach(s -> machineStore.getActions().put(s.getId(), s));
-            List<IReleaseHandler> handlers = IReleaseHandler.with(actions, store, machineStore);
-            machineStore.setHandler(handlers);
-            store.getMachines().put(releaseMachine.getId(), machineStore);
+        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(releaseId);
+        for (ApplicationReleaseMachineDO machine : machines) {
+            machineProcessors.add(new ReleaseMachineProcessor(release, machine));
         }
     }
 
@@ -164,13 +149,12 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
             default:
                 break;
         }
-
         applicationReleaseDAO.updateById(update);
     }
 
     @Override
     public void close() {
-        store.getMachineProcessors().values().forEach(Streams::close);
+        machineProcessors.forEach(Streams::close);
     }
 
 }

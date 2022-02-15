@@ -1,7 +1,7 @@
 package com.orion.ops.handler.app.release;
 
 import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.handler.app.release.machine.IMachineProcessor;
+import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.utils.io.Streams;
 
 /**
@@ -20,7 +20,7 @@ public class SerialReleaseProcessor extends AbstractReleaseProcessor {
     @Override
     protected void handler() throws Exception {
         Exception ex = null;
-        for (IMachineProcessor machineProcessor : store.getMachineProcessors().values()) {
+        for (IMachineProcessor machineProcessor : machineProcessors) {
             if (ex != null || terminated) {
                 machineProcessor.skipped();
                 continue;
@@ -42,7 +42,7 @@ public class SerialReleaseProcessor extends AbstractReleaseProcessor {
     public void terminated() {
         super.terminated();
         // 获取当前执行中的机器执行器
-        store.getMachineProcessors().values().stream()
+        machineProcessors.stream()
                 .filter(s -> s.getStatus().equals(ActionStatus.RUNNABLE))
                 .forEach(IMachineProcessor::terminated);
     }
