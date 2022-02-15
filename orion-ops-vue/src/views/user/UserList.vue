@@ -24,27 +24,13 @@
               <a-input v-model="query.email" allowClear/>
             </a-form-model-item>
           </a-col>
-        </a-row>
-        <a-row style="margin-top: 8px">
-          <a-col :span="5">
+          <a-col :span="4">
             <a-form-model-item label="角色" prop="role">
               <a-select v-model="query.role" placeholder="全部" allowClear>
                 <a-select-option v-for="role in $enum.ROLE_TYPE"
                                  :value="role.value"
                                  :key="role.value">
                   {{ role.label }}
-                </a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="5">
-            <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="1">
-                  启用
-                </a-select-option>
-                <a-select-option :value="2">
-                  停用
                 </a-select-option>
               </a-select>
             </a-form-model-item>
@@ -60,7 +46,22 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
-        <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+        <!-- 状态单选 -->
+        <div class="mr8">
+          <a-radio-group v-model="query.status" buttonStyle="solid" @change="getList({})">
+            <a-radio-button :value="undefined">
+              全部
+            </a-radio-button>
+            <a-radio-button :value="1">
+              启用
+            </a-radio-button>
+            <a-radio-button :value="2">
+              停用
+            </a-radio-button>
+          </a-radio-group>
+        </div>
+        <a-divider type="vertical"/>
+        <a-button class="mx8" type="primary" icon="plus" @click="add">添加</a-button>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
@@ -105,12 +106,7 @@
         <!-- 登陆时间 -->
         <template v-slot:lastLoginTime="record">
           <span v-if="record.lastLoginTime">
-            {{
-              record.lastLoginTime | formatDate({
-                date: record.lastLoginTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }} ({{ record.lastLoginAgo }})
+            {{ record.lastLoginTime | formatDate }} ({{ record.lastLoginAgo }})
           </span>
         </template>
         <!-- 操作 -->
@@ -127,6 +123,9 @@
             <!-- 修改 -->
             <span class="span-blue pointer" @click="update(record.id)">修改</span>
             <a-divider type="vertical"/>
+            <!-- 操作日志 -->
+            <a :href="`#/user/event/log/${record.id}`">日志</a>
+            <a-divider type="vertical"/>
             <!-- 重置密码 -->
             <a @click="resetPassword(record.id)">重置密码</a>
             <a-divider type="vertical"/>
@@ -138,6 +137,10 @@
                           @confirm="remove(record.id)">
               <span class="span-blue pointer">删除</span>
             </a-popconfirm>
+          </div>
+          <div v-else>
+            <!-- 操作日志 -->
+            <a :href="`#/user/event/log/${record.id}`">日志</a>
           </div>
         </template>
       </a-table>
@@ -154,7 +157,7 @@
 
 <script>
 
-import _utils from '@/lib/utils'
+import _filters from '@/lib/filters'
 import ResetPassword from '@/components/user/ResetPassword'
 import AddUserModal from '@/components/user/AddUserModal'
 
@@ -232,7 +235,7 @@ function getColumns() {
       title: '操作',
       key: 'action',
       fixed: 'right',
-      width: 220,
+      width: 260,
       align: 'center',
       scopedSlots: { customRender: 'action' }
     })
@@ -280,7 +283,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -326,12 +329,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     this.getList({})
