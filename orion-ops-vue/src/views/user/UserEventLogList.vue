@@ -5,11 +5,16 @@
       <a-form-model ref="query" :model="query">
         <a-row>
           <a-col :span="6">
+            <a-form-model-item label="用户" prop="user">
+              <UserSelector ref="userSelector" @change="userId => query.userId = userId"/>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="5">
             <a-form-model-item label="关键字" prop="log">
               <a-input v-model="query.log" placeholder="日志关键字" allowClear/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="7">
+          <a-col :span="6">
             <a-form-model-item label="分类" prop="classify">
               <a-input-group compact>
                 <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
@@ -30,7 +35,7 @@
               <a-range-picker v-model="dateRange" @change="selectedDate"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="5">
+          <a-col :span="1">
             <div class="table-tools-bar p0 log-search-bar">
               <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
@@ -52,6 +57,12 @@
                 <span class="log-info">{{ item.log }}</span>
               </div>
               <div class="log-item-container-right">
+                <!-- 操作人 -->
+                <span class="log-item-user span-blue pointer"
+                      :title="item.username"
+                      @click="chooseUser(item.userId)">
+                  {{ item.username }}
+                </span>
                 <!-- 操作类型 -->
                 <span class="log-item-type">
                   <span class="span-blue pointer" @click="chooseClassify(item.classify)">
@@ -82,29 +93,24 @@
 </template>
 
 <script>
-import EditorPreview from '@/components/preview/EditorPreview'
-import _enum from '@/lib/enum'
 import _filters from '@/lib/filters'
+import _enum from '@/lib/enum'
+import UserSelector from '@/components/user/UserSelector'
+import EditorPreview from '@/components/preview/EditorPreview'
 
 export default {
-  name: 'EventLogList',
-  components: { EditorPreview },
-  props: {
-    baseQuery: {
-      type: Object,
-      default: () => {
-        return {
-          result: 1,
-          onlyMyself: 1
-        }
-      }
-    }
+  name: 'UserEventLogList',
+  components: {
+    UserSelector,
+    EditorPreview
   },
   data() {
     return {
       loading: false,
       rows: [],
       query: {
+        result: 1,
+        userId: undefined,
         classify: undefined,
         type: undefined,
         log: undefined,
@@ -145,7 +151,6 @@ export default {
       this.loading = true
       this.$api.getLogList({
         ...this.query,
-        ...this.baseQuery,
         page,
         limit: this.pagination.pageSize
       }).then(({ data }) => {
@@ -169,6 +174,12 @@ export default {
     selectedDate(moments, dates) {
       this.query.rangeStart = dates[0] + ' 00:00:00'
       this.query.rangeEnd = dates[1] + ' 23:59:59'
+      console.log(this.query)
+    },
+    chooseUser(userId) {
+      this.query.userId = userId
+      this.$refs.userSelector.set(userId)
+      this.getEventLog()
     },
     chooseClassify(classify) {
       this.query.classify = classify
@@ -184,6 +195,8 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.$refs.userSelector.reset()
+      this.query.userId = undefined
       this.query.classify = undefined
       this.query.type = undefined
       this.query.rangeStart = undefined
@@ -220,13 +233,19 @@ export default {
 
 <style lang="less" scoped>
 
-.log-list-filter {
-  padding: 8px 0 0 0 !important;
-  margin-bottom: 16px;
+.log-list-container {
+  background: #FFF;
+  border-radius: 4px;
+  padding: 16px;
 
-  .log-search-bar {
-    justify-content: flex-end;
-    height: 40px;
+  .log-list-filter {
+    margin-bottom: 16px;
+    padding: 0;
+
+    .log-search-bar {
+      justify-content: flex-end;
+      height: 40px;
+    }
   }
 }
 
@@ -247,8 +266,14 @@ export default {
   .log-item-container-right {
     white-space: nowrap;
 
-    .log-item-type {
+    .log-item-user {
       margin: 0 12px 0 24px;
+      width: 120px;
+      display: inline-block;
+    }
+
+    .log-item-type {
+      margin: 0 12px 0 12px;
       width: 175px;
       display: inline-block;
     }
