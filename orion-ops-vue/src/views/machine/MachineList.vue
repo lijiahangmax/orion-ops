@@ -79,7 +79,7 @@
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
-          <a-tag v-if="record.tag" color="#20C997">
+          <a-tag v-if="record.tag" color="#5C7CFA">
             {{ record.tag }}
           </a-tag>
         </template>
@@ -119,21 +119,25 @@
         <template v-slot:action="record">
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
-          <a-button title="打开终端"
-                    class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="record.status !== 1">
-            <a target="_blank" :href="`#/machine/terminal/${record.id}`">Terminal</a>
-          </a-button>
+          <a target="_blank" :href="`#/machine/terminal/${record.id}`">
+            <a-button title="打开终端"
+                      class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="record.status !== 1">
+              Terminal
+            </a-button>
+          </a>
           <a-divider type="vertical"/>
-          <a-button title="打开sftp"
-                    class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="record.status !== 1" @click="toSftp(record.id)">
-            sftp
-          </a-button>
+          <a :href="`#/machine/sftp/${record.id}`">
+            <a-button title="打开sftp"
+                      class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="record.status !== 1">
+              sftp
+            </a-button>
+          </a>
           <a-divider type="vertical"/>
           <a-dropdown>
             <a class="ant-dropdown-link">更多
@@ -384,9 +388,6 @@ export default {
     },
     openDetail(id) {
       this.$refs.detailModal.open(id)
-    },
-    toSftp(id) {
-      this.$router.push({ path: `/machine/sftp/${id}` })
     },
     menuHandler({ key }, record) {
       moreMenuHandler[key].call(this, record)

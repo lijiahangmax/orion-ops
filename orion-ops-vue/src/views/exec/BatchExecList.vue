@@ -110,12 +110,7 @@
         </template>
         <!-- 创建时间 -->
         <template v-slot:createTime="record">
-          {{
-            record.createTime | formatDate({
-              date: record.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ record.createTime | formatDate }}
         </template>
         <!-- 日志 -->
         <template v-slot:log="record">
@@ -181,13 +176,13 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import MachineSelector from '@/components/machine/MachineSelector'
 import UserSelector from '@/components/user/UserSelector'
 import EditorPreview from '@/components/preview/EditorPreview'
 import TextPreview from '@/components/preview/TextPreview'
 import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -326,7 +321,7 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -356,7 +351,7 @@ export default {
       this.$api.terminatedExecTask({
         id: execId
       }).then(() => {
-        this.$message.success('已终止')
+        this.$message.success('已停止')
         this.getList({})
       })
     },
@@ -440,12 +435,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     // 设置轮询

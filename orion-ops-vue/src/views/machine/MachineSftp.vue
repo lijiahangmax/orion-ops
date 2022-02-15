@@ -21,7 +21,7 @@
             </a-tag>
           </a-breadcrumb-item>
           <a-breadcrumb-item>
-            <a-tag color="#20C997" style="margin: 0">
+            <a-tag color="#5C7CFA" style="margin: 0">
               {{ currentMachine.tag }}
             </a-tag>
           </a-breadcrumb-item>

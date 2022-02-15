@@ -54,12 +54,7 @@
         </template>
         <!-- 修改时间 -->
         <template v-slot:updateTime="record">
-          {{
-            record.updateTime | formatDate({
-              date: record.updateTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }}
+          {{ record.updateTime | formatDate }}
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -89,9 +84,9 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import AddTemplateModal from '@/components/template/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
+import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -198,7 +193,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -227,12 +222,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   },
   mounted() {
     this.getList({})

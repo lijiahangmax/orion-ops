@@ -102,13 +102,13 @@
                           :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
                     {{ execMachine.exitCode }}
                   </span>
-                    <!-- 终止 -->
+                    <!-- 停止 -->
                     <a-button class="terminated-button"
                               v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
                               size="small"
                               icon="close"
                               @click="terminated(execMachine)">
-                      终止
+                      停止
                     </a-button>
                   </div>
 
@@ -274,7 +274,7 @@ export default {
       this.$api.terminatedExecTask({
         id: execMachine.execId
       }).then(() => {
-        this.$message.success('已终止')
+        this.$message.success('已停止')
       })
     },
     removeTab(targetTab) {

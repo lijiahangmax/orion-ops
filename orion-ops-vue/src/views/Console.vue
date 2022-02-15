@@ -51,36 +51,6 @@
     </div>
     <!-- 柱状统计 -->
     <div class="statistics-chart-container" v-if="false">
-      <a-row>
-        <a-col :span="14" class="pr8">
-          <a-card title="Card title" :bordered="false">
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-          </a-card>
-        </a-col>
-        <a-col :span="10" class="pl8">
-          <a-card title="Card title" :bordered="false">
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-            <p>Card content</p>
-          </a-card>
-        </a-col>
-      </a-row>
     </div>
   </div>
 </template>
