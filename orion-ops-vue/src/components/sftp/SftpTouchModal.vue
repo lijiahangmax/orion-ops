@@ -20,7 +20,7 @@
       </a-input-group>
     </a-spin>
     <!-- 底部按钮 -->
-    <div slot="footer">
+    <template #footer>
       <a-button @click="close()">取消</a-button>
       <a-button type="primary"
                 :disabled="loading"
@@ -34,7 +34,7 @@
                 @click="handleTouch(false)">
         创建文件夹
       </a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 <script>

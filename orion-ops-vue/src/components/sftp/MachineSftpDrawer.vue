@@ -9,13 +9,15 @@
     :bodyStyle="{padding: 0}"
     @close="visible = !visible">
     <!-- 标题 -->
-    <div class="sftp-drawer-title" slot="title">
-      <span>文件管理器</span>
-      <a-icon
-        @click="changeFolderVisible"
-        :title="folderTreeVisible ? '折叠文件夹' : '打开文件夹'"
-        :type="folderTreeVisible ? 'menu-unfold' : 'menu-fold'"/>
-    </div>
+    <template #title>
+      <div class="sftp-drawer-title">
+        <span>文件管理器</span>
+        <a-icon
+          @click="changeFolderVisible"
+          :title="folderTreeVisible ? '折叠文件夹' : '打开文件夹'"
+          :type="folderTreeVisible ? 'menu-unfold' : 'menu-fold'"/>
+      </div>
+    </template>
     <!-- sftp主体 -->
     <MachineSftpMain ref="sftpMain"
                      :machineId="machineId"

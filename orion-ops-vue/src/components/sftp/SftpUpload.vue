@@ -129,7 +129,6 @@ export default {
         return
       }
       this.$emit('changeVisible', false)
-      this.$message.success('开始提交上传请求')
       const formData = new FormData()
       formData.append('accessToken', accessToken)
       formData.append('remotePath', this.path)

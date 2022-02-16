@@ -3,22 +3,22 @@
     <div class="transfer-list-container">
       <!-- 工具栏 -->
       <div class="transfer-list-bar" ref="transferListBar">
-        <div class="transfer-list-action">
-          <a-icon type="sync" title="刷新" @click="getTransferList"/>
+        <div class="transfer-list-action" @click="getTransferList" title="刷新">
+          <a-icon type="sync"/>
         </div>
-        <div class="transfer-list-action">
-          <a-icon type="caret-right" title="开始所有" @click="resumeAll"/>
+        <div class="transfer-list-action" @click="resumeAll" title="开始所有">
+          <a-icon type="caret-right"/>
         </div>
-        <div class="transfer-list-action">
-          <a-icon type="pause" title="暂停所有" @click="pauseAll"/>
+        <div class="transfer-list-action" @click="pauseAll" title="暂停所有">
+          <a-icon type="pause"/>
         </div>
-        <div class="transfer-list-action">
-          <a-icon type="issues-close" title="重试所有" @click="retryAll"/>
+        <div class="transfer-list-action" @click="retryAll" title="重试所有">
+          <a-icon type="issues-close"/>
         </div>
         <a-popconfirm placement="bottomRight"
                       v-model="packageVisible"
                       :getPopupContainer="() => $refs.transferListBar">
-          <div slot="title">
+          <template #title>
             <!-- 标题 -->
             <div class="transfer-popover-title-wrapper">
               <span>是否要打包传输文件?</span>
@@ -30,14 +30,14 @@
               <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(2)">仅下载</a-button>
               <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(3)">所有</a-button>
             </div>
-          </div>
+          </template>
           <!-- 触发器 -->
-          <div class="transfer-list-action" @click="() => packageVisible = true">
-            <a-icon type="file-zip" title="打包传输"/>
+          <div class="transfer-list-action" @click="() => packageVisible = true" title="打包传输">
+            <a-icon type="file-zip"/>
           </div>
         </a-popconfirm>
-        <div class="transfer-list-action">
-          <a-icon type="delete" title="清空" @click="clearAll"/>
+        <div class="transfer-list-action" @click="clearAll" title="清空">
+          <a-icon type="delete"/>
         </div>
       </div>
       <!-- 传输列表 -->
@@ -124,32 +124,34 @@
       <div id="transfer-right-menu" ref="transferRightMenu">
         <a-dropdown :trigger="['click']">
           <span ref="transferRightMenuTrigger"/>
-          <a-menu slot="overlay" v-if="curr" @click="clickTransferRightMenuItem">
-            <a-menu-item key="resumeFile" v-if="curr.status === 30">
-              <span class="transfer-right-menu-item"><a-icon type="play-circle"/>开始</span>
-            </a-menu-item>
-            <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type !== 40">
-              <span class="transfer-right-menu-item"><a-icon type="pause-circle"/>暂停</span>
-            </a-menu-item>
-            <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type === 40">
-              <span class="transfer-right-menu-item"><a-icon type="stop"/>取消</span>
-            </a-menu-item>
-            <a-menu-item key="retryFile" v-if="curr.status === 60 && curr.type !== 40">
-              <span class="transfer-right-menu-item"><a-icon type="sync"/>重试</span>
-            </a-menu-item>
-            <a-menu-item key="removeFile">
-              <span class="transfer-right-menu-item"><a-icon type="close-circle"/>删除</span>
-            </a-menu-item>
-            <a-menu-item key="reUploadFile" v-if="curr.type === 10">
-              <span class="transfer-right-menu-item"><a-icon type="redo"/>重新上传</span>
-            </a-menu-item>
-            <a-menu-item key="reDownloadFile" v-if="curr.type === 20">
-              <span class="transfer-right-menu-item"><a-icon type="redo"/>重新下载</span>
-            </a-menu-item>
-            <a-menu-item key="clearAllFile">
-              <span class="transfer-right-menu-item"><a-icon type="stop"/>清空所有</span>
-            </a-menu-item>
-          </a-menu>
+          <template #overlay>
+            <a-menu v-if="curr" @click="clickTransferRightMenuItem">
+              <a-menu-item key="resumeFile" v-if="curr.status === 30">
+                <span class="transfer-right-menu-item"><a-icon type="play-circle"/>开始</span>
+              </a-menu-item>
+              <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type !== 40">
+                <span class="transfer-right-menu-item"><a-icon type="pause-circle"/>暂停</span>
+              </a-menu-item>
+              <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type === 40">
+                <span class="transfer-right-menu-item"><a-icon type="stop"/>取消</span>
+              </a-menu-item>
+              <a-menu-item key="retryFile" v-if="curr.status === 60 && curr.type !== 40">
+                <span class="transfer-right-menu-item"><a-icon type="sync"/>重试</span>
+              </a-menu-item>
+              <a-menu-item key="removeFile">
+                <span class="transfer-right-menu-item"><a-icon type="close-circle"/>删除</span>
+              </a-menu-item>
+              <a-menu-item key="reUploadFile" v-if="curr.type === 10">
+                <span class="transfer-right-menu-item"><a-icon type="redo"/>重新上传</span>
+              </a-menu-item>
+              <a-menu-item key="reDownloadFile" v-if="curr.type === 20">
+                <span class="transfer-right-menu-item"><a-icon type="redo"/>重新下载</span>
+              </a-menu-item>
+              <a-menu-item key="clearAllFile">
+                <span class="transfer-right-menu-item"><a-icon type="stop"/>清空所有</span>
+              </a-menu-item>
+            </a-menu>
+          </template>
         </a-dropdown>
       </div>
     </div>

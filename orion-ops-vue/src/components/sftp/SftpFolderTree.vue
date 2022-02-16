@@ -81,6 +81,7 @@ const folderRightMenuHandler = {
           sessionToken: this.sessionToken,
           paths: [path]
         }).then(() => {
+          this.$message.success('删除成功')
           const parentNodeChildren = findNode(this.treeData, parentPath).children
           for (let i = 0; i < parentNodeChildren.length; i++) {
             if (parentNodeChildren[i].key === path) {

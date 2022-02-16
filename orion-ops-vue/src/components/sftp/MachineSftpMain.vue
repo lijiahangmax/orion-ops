@@ -64,15 +64,18 @@
                 <a-button :disabled="!sessionToken" @click="listFiles()" title="刷新" icon="reload"/>
                 <a-button :disabled="!sessionToken" @click="openTouch" title="创建" icon="file-add"/>
                 <a-popover v-model="uploadVisible" trigger="click" placement="bottomRight" overlayClassName="sftp-upload-list-popover">
-                  <SftpUpload ref="upload"
-                              slot="content"
-                              @changeVisible="changeUploadVisible"
-                              :currentPath="path"
-                              :sessionToken="sessionToken"/>
+                  <template #content>
+                    <SftpUpload ref="upload"
+                                @changeVisible="changeUploadVisible"
+                                :currentPath="path"
+                                :sessionToken="sessionToken"/>
+                  </template>
                   <a-button :disabled="!sessionToken" title="上传" icon="cloud-upload"/>
                 </a-popover>
                 <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-transfer-list-popover">
-                  <FileTransferList slot="content" ref="transferList" :sessionToken="sessionToken"/>
+                  <template #content>
+                    <FileTransferList ref="transferList" :sessionToken="sessionToken"/>
+                  </template>
                   <a-button :disabled="!sessionToken" title="传输列表" icon="unordered-list" @click="loadTransferList"/>
                 </a-popover>
               </a-button-group>
@@ -91,57 +94,51 @@
                    :loading="loading"
                    size="small">
             <!-- 名称 -->
-            <span slot="name" slot-scope="record" class="file-name-cols">
-              <!-- 图标 -->
-              <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
-                      :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).label"
-                      class="file-name-cols-icon pointer"
-                      @click="$copy(record.name, '已复制文件名称')"/>
-              <!-- 名称 -->
-              <span v-if="record.isDir"
-                    class="span-blue pointer"
-                    :title="record.name"
-                    @click="listFiles(record.path)">{{ record.name }}</span>
-              <span v-else :title="record.name">{{ record.name }}</span>
-            </span>
+            <template v-slot:name="record">
+              <span class="file-name-cols">
+                <!-- 图标 -->
+                <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
+                        :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).label"
+                        class="file-name-cols-icon pointer"
+                        @click="$copy(record.name, '已复制文件名称')"/>
+                <!-- 名称 -->
+                <span v-if="record.isDir"
+                      class="span-blue pointer"
+                      :title="record.name"
+                      @click="listFiles(record.path)">{{ record.name }}</span>
+                <span v-else :title="record.name">{{ record.name }}</span>
+              </span>
+            </template>
             <!-- 名称筛选图标 -->
-            <a-icon
-              slot="nameFilterIcon"
-              slot-scope="filtered"
-              type="search"
-              :style="{ color: filtered ? '#108EE9' : undefined }"
-            />
+            <template v-slot:nameFilterIcon="filtered">
+              <a-icon type="search" :style="{ color: filtered ? '#108EE9' : undefined }"/>
+            </template>
             <!-- 名称筛选输入框 -->
-            <div slot="nameFilterDropdown"
-                 slot-scope="{setSelectedKeys, selectedKeys, confirm, clearFilters}"
-                 style="padding: 8px">
-              <a-input v-ant-ref="c => (nameSearchInput = c)"
-                       placeholder="名称"
-                       :value="selectedKeys[0]"
-                       style="width: 188px; margin-bottom: 8px; display: block;"
-                       @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                       @pressEnter="() => confirm()"
-                       allowClear/>
-              <a-button type="primary" icon="search" size="small"
-                        style="width: 90px; margin-right: 8px"
-                        @click="() => confirm()">
-                搜索
-              </a-button>
-              <a-button size="small" style="width: 90px" @click="() => resetFileName(selectedKeys, clearFilters)">
-                重置
-              </a-button>
-            </div>
+            <template v-slot:nameFilterDropdown="{setSelectedKeys, selectedKeys, confirm, clearFilters}">
+              <div style="padding: 8px">
+                <a-input v-ant-ref="c => (nameSearchInput = c)"
+                         placeholder="名称"
+                         :value="selectedKeys[0]"
+                         style="width: 188px; margin-bottom: 8px; display: block;"
+                         @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                         @pressEnter="() => confirm()"
+                         allowClear/>
+                <a-button type="primary" icon="search" size="small"
+                          style="width: 90px; margin-right: 8px"
+                          @click="() => confirm()">
+                  搜索
+                </a-button>
+                <a-button size="small" style="width: 90px" @click="() => resetFileName(selectedKeys, clearFilters)">
+                  重置
+                </a-button>
+              </div>
+            </template>
             <!-- 修改时间 -->
-            <span slot="modifyTime" slot-scope="record">
-              {{
-                record.modifyTime | formatDate({
-                  date: record.modifyTime,
-                  pattern: 'yyyy-MM-dd HH:mm:ss'
-                })
-              }}
-            </span>
+            <template v-slot:modifyTime="record">
+              {{ record.modifyTime | formatDate }}
+            </template>
             <!-- 操作 -->
-            <div slot="action" slot-scope="record">
+            <template v-slot:action="record">
               <!-- 复制路径 -->
               <a @click="$copy(record.path, '已复制文件路径')" title="复制路径">
                 <a-icon type="copy"/>
@@ -181,7 +178,7 @@
               <a @click="openChmod(record)" title="提权">
                 <a-icon type="team"/>
               </a>
-            </div>
+            </template>
           </a-table>
         </div>
       </div>
@@ -199,7 +196,6 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import SftpFolderTree from './SftpFolderTree'
 import SftpTouchModal from './SftpTouchModal'
 import SftpMoveModal from './SftpMoveModal'
@@ -207,6 +203,7 @@ import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
 import SftpUpload from './SftpUpload'
 import { Empty } from 'ant-design-vue'
+import _filters from '@/lib/filters'
 
 /**
  * 表格列
@@ -415,29 +412,21 @@ export default {
       selectedKeys = []
     },
     download(record) {
-      const downloadLoading = this.$message.loading('正在请求下载文件...', 3)
       this.$api.sftpDownloadExec({
         paths: [record.path],
         sessionToken: this.sessionToken
       }).then(() => {
-        downloadLoading()
         this.$message.success('已添加至传输列表')
-      }).catch(() => {
-        downloadLoading()
       })
     },
     batchDownload() {
-      const downloadLoading = this.$message.loading('正在请求下载文件...', 3)
       this.$api.sftpDownloadExec({
         paths: this.selectedRowKeys,
         sessionToken: this.sessionToken
       }).then(() => {
-        downloadLoading()
         this.$message.success('已添加至传输列表')
         this.selectedRowKeys = []
         this.selectedRows = []
-      }).catch(() => {
-        downloadLoading()
       })
     },
     remove(record) {
@@ -526,12 +515,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>
