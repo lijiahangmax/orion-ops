@@ -1,10 +1,10 @@
 <template>
   <a-modal v-model="visible" :width="650" :footer="null" @close="close">
     <!-- 编辑器 -->
-    <Editor :value="value" :height="350" :readOnly="true"/>
+    <Editor v-bind="editorConfig" :value="value" :height="350" :readOnly="true"/>
     <!-- 标题 -->
     <template #title>
-      <span>预览</span>
+      <span>{{ title }}</span>
       <a @click="$copy(value)" title="复制">
         <a-icon class="copy-icon-right" type="copy"/>
       </a>
@@ -19,6 +19,18 @@ export default {
   name: 'EditorPreview',
   components: {
     Editor
+  },
+  props: {
+    editorConfig: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    title: {
+      type: String,
+      default: '预览'
+    }
   },
   data() {
     return {

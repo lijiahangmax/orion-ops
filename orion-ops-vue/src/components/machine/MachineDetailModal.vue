@@ -16,7 +16,7 @@
             {{ detail.username }}
           </a-descriptions-item>
           <a-descriptions-item label="标签" :span="3">
-            <a-tag color="#20C997">
+            <a-tag color="#5C7CFA">
               {{ detail.tag }}
             </a-tag>
           </a-descriptions-item>
@@ -41,20 +41,10 @@
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.createTime" label="创建时间" :span="3">
-            {{
-              detail.createTime | formatDate({
-                date: detail.createTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
+            {{ detail.createTime | formatDate }}
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.updateTime" label="修改时间" :span="3">
-            {{
-              detail.updateTime | formatDate({
-                date: detail.updateTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
+            {{ detail.updateTime | formatDate }}
           </a-descriptions-item>
         </a-descriptions>
       </div>
@@ -66,7 +56,7 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
+import _filters from '@/lib/filters'
 
 export default {
   name: 'MachineDetailModal',
@@ -97,12 +87,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

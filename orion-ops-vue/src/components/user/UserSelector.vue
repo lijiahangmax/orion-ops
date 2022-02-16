@@ -20,6 +20,9 @@ export default {
   methods: {
     reset() {
       this.id = undefined
+    },
+    set(id) {
+      this.id = id
     }
   },
   async created() {

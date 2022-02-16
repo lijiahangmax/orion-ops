@@ -34,20 +34,22 @@
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
-        <span class="pointer" slot="value" slot-scope="record" title="复制" @click="$copy(record.value)">
-          {{ record.value }}
+        <template v-slot:value="record">
+          <span class="pointer" title="复制" @click="$copy(record.value)">
+            {{ record.value }}
           </span>
+        </template>
         <!-- 操作 -->
-        <div slot="action" slot-scope="record">
+        <template v-slot:action="record">
           <!-- 选择 -->
           <a @click="selected(record.value)">选择</a>
-        </div>
+        </template>
       </a-table>
     </div>
     <!-- 页脚 -->
-    <div slot="footer">
+    <template #footer>
       <a-button @click="() => visible = false">关闭</a-button>
-    </div>
+    </template>
   </a-modal>
 </template>
 
@@ -140,7 +142,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {

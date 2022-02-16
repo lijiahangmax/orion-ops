@@ -5,7 +5,7 @@
       <a-steps :current="current" :status="stepStatus">
         <template v-for="action in detail.actions">
           <a-step :key="action.id"
-                  :title="action.name"
+                  :title="action.actionName"
                   :subTitle="action.used ? `${action.used}ms` : ''">
             <template v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value" #icon>
               <a-icon type="loading"/>
