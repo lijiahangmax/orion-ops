@@ -3,7 +3,7 @@
     <!-- 头部左侧 -->
     <div class="header-fixed-left">
       <!-- 折叠 -->
-      <a-icon class="trigger-icon header-block-container"
+      <a-icon class="trigger-icon header-block-container header-block-fold"
               :type="fold ? 'menu-unfold' : 'menu-fold'"
               :title="fold ? '展开' : '折叠'"
               @click="changeFold"/>
@@ -80,6 +80,10 @@ export default {
   .header-fixed-left {
     display: flex;
 
+    .header-block-fold {
+      margin-left: 2px;
+    }
+
     .trigger-icon {
       font-size: 18px;
       line-height: 48px;
@@ -112,8 +116,8 @@ export default {
     }
 
     #header-user {
-      padding: 0 12px;
-      margin-right: 8px;
+      padding: 0 8px;
+      margin-right: 2px;
       height: 48px;
       display: flex;
       align-items: center;

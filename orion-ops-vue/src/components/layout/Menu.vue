@@ -71,21 +71,21 @@ export default {
   },
   async mounted() {
     // 加载菜单
-    const menuRes = await this.$api.getMenu()
-    const menuData = menuRes.data
-    let id = 0
-    for (const menu of menuData) {
-      menu.id = ++id
-      const children = menu.children
-      if (children) {
-        for (let i = 0; i < children.length; i++) {
-          children[i].id = ++id
+    this.$api.getMenu().then(({ data }) => {
+      let id = 0
+      for (const menu of data) {
+        menu.id = ++id
+        const children = menu.children
+        if (children) {
+          for (let i = 0; i < children.length; i++) {
+            children[i].id = ++id
+          }
         }
+        this.menuList.push(menu)
       }
-      this.menuList.push(menu)
-    }
-    // 选中
-    this.chooseMenu()
+      // 选中
+      this.chooseMenu()
+    })
   }
 }
 </script>

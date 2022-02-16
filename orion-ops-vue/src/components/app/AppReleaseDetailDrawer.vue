@@ -2,7 +2,7 @@
   <a-drawer title="发布详情"
             placement="right"
             :visible="visible"
-            :maskStyle="{opacity: 0, animation: 'none', '-webkit-animation': 'none'}"
+            :maskStyle="{opacity: 0, animation: 'none'}"
             :width="430"
             @close="onClose">
     <!-- 加载中 -->
@@ -40,13 +40,16 @@
           /
           {{ $enum.valueOf($enum.RELEASE_SERIAL_TYPE, detail.serializer).label }}
         </a-descriptions-item>
+        <a-descriptions-item label="调度时间" :span="3" v-if="detail.timedReleaseTime !== null">
+          {{ detail.timedReleaseTime | formatDate }}
+        </a-descriptions-item>
         <a-descriptions-item label="创建用户" :span="3">
           {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="创建时间" :span="3" v-if="detail.createTime !== null">
           {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
         </a-descriptions-item>
-        <a-descriptions-item label="审核用户" :span="3" v-if=" detail.auditUserName !== null">
+        <a-descriptions-item label="审核用户" :span="3" v-if="detail.auditUserName !== null">
           {{ detail.auditUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="审核时间" :span="3" v-if="detail.auditTime !== null">
@@ -148,6 +151,7 @@ export default {
         if (data.status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
           data.status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value ||
           data.status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
+          data.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value ||
           data.status === this.$enum.RELEASE_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 5000)
         }
@@ -162,6 +166,7 @@ export default {
       if (this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_AUDIT.value &&
         this.detail.status !== this.$enum.RELEASE_STATUS.AUDIT_REJECT.value &&
         this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value &&
+        this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value &&
         this.detail.status !== this.$enum.RELEASE_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
         return

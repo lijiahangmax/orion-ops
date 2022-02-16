@@ -2,7 +2,7 @@
   <a-drawer title="机器详情"
             placement="right"
             :visible="visible"
-            :maskStyle="{opacity: 0, animation: 'none', '-webkit-animation': 'none'}"
+            :maskStyle="{opacity: 0, animation: 'none'}"
             :width="430"
             @close="onClose">
     <!-- 加载中 -->
@@ -45,10 +45,10 @@
           <a-list-item>
             <a-descriptions size="middle">
               <a-descriptions-item label="操作名称" :span="3">
-                {{ item.name }}
+                {{ item.actionName }}
               </a-descriptions-item>
               <a-descriptions-item label="操作类型" :span="3">
-                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
+                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.actionType).label }}</a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="操作状态" :span="3">
                 <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color">
@@ -69,8 +69,8 @@
                 {{ item.exitCode }}
               </span>
               </a-descriptions-item>
-              <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
-                <a @click="preview(item.command)">预览</a>
+              <a-descriptions-item label="命令" :span="3" v-if="item.actionType === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+                <a @click="preview(item.actionCommand)">预览</a>
               </a-descriptions-item>
               <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
                 <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>

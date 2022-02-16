@@ -2,7 +2,7 @@
   <a-drawer title="构建详情"
             placement="right"
             :visible="visible"
-            :maskStyle="{opacity: 0, animation: 'none', '-webkit-animation': 'none'}"
+            :maskStyle="{opacity: 0, animation: 'none'}"
             :width="430"
             @close="onClose">
     <!-- 加载中 -->

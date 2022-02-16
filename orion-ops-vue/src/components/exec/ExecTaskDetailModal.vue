@@ -16,13 +16,7 @@
             {{ detail.description }}
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.createTime" label="创建时间" :span="2">
-            {{
-              detail.createTime | formatDate({
-                date: detail.createTime,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
-            ({{ detail.createTimeAgo }})
+            {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
           </a-descriptions-item>
           <a-descriptions-item label="状态" :span="1">
             <a-tag
@@ -32,13 +26,7 @@
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.startDate" label="开始时间" :span="detail.exitCode === null ? 3 : 2">
-            {{
-              detail.startDate | formatDate({
-                date: detail.startDate,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
-            ({{ detail.startDateAgo }})
+            {{ detail.startDate | formatDate }} ({{ detail.startDateAgo }})
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.exitCode !== null" label="退出码" :span="1">
             <span :style="{'color': detail.exitCode === 0 ? '#4263EB' : '#E03131'}">
@@ -46,13 +34,7 @@
             </span>
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.endDate" label="结束时间" :span="2">
-            {{
-              detail.endDate | formatDate({
-                date: detail.endDate,
-                pattern: 'yyyy-MM-dd HH:mm:ss'
-              })
-            }}
-            ({{ detail.endDateAgo }})
+            {{ detail.endDate | formatDate }} ({{ detail.endDateAgo }})
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.used" label="用时" :span="1">
             {{ `${detail.keepTime} (${detail.used}ms)` }}
@@ -68,8 +50,8 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
 import Editor from '@/components/editor/Editor'
+import _filters from '@/lib/filters'
 
 export default {
   name: 'ExecTaskDetailModal',
@@ -103,12 +85,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>
