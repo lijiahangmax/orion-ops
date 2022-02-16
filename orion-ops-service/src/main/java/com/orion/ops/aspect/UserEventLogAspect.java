@@ -6,12 +6,16 @@ import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.UserEventLogService;
 import com.orion.ops.utils.Currents;
+import com.orion.servlet.web.Servlets;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * 用户操作日志切面
@@ -43,6 +47,14 @@ public class UserEventLogAspect {
             EventParamsHolder.addParam(EventKeys.INNER_USER_ID, user.getId());
             EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, user.getUsername());
         }
+        // 浏览器
+        Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+                .map(s -> (ServletRequestAttributes) s)
+                .map(ServletRequestAttributes::getRequest)
+                .ifPresent(request -> {
+                    EventParamsHolder.addParam(EventKeys.USER_AGENT, Servlets.getUserAgent(request));
+                    EventParamsHolder.addParam(EventKeys.IP, Servlets.getRemoteAddr(request));
+                });
     }
 
     @AfterReturning(pointcut = "eventLogPoint(e)", argNames = "e")
