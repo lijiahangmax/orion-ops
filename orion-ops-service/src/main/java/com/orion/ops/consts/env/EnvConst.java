@@ -26,6 +26,8 @@ public class EnvConst {
 
     public static final String RELEASE_PREFIX = "release.";
 
+    public static final String SYSTEM_PREFIX = "system.";
+
     // -------------------- machine --------------------
 
     public static final String MACHINE_NAME = "machine_name";

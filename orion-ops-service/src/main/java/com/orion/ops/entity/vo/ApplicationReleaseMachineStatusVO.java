@@ -64,7 +64,7 @@ public class ApplicationReleaseMachineStatusVO {
     /**
      * action状态
      */
-    private List<ApplicationReleaseActionStatusVO> actions;
+    private List<ApplicationActionStatusVO> actions;
 
     static {
         TypeStore.STORE.register(ApplicationReleaseMachineDO.class, ApplicationReleaseMachineStatusVO.class, p -> {

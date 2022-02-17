@@ -30,6 +30,11 @@ public enum ReleaseStatus {
     WAIT_RUNNABLE(30),
 
     /**
+     * 待调度
+     */
+    WAIT_SCHEDULE(35),
+
+    /**
      * 发布中
      */
     RUNNABLE(40),
@@ -43,6 +48,11 @@ public enum ReleaseStatus {
      * 发布停止
      */
     TERMINATED(60),
+
+    /**
+     * 发布取消
+     */
+    CANCEL(65),
 
     /**
      * 初始化失败

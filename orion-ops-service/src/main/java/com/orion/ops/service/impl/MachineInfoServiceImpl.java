@@ -90,7 +90,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         // 添加机器
         entity.setMachineStatus(Const.ENABLE);
         machineInfoDAO.insert(entity);
-        if (password != null) {
+        if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
             machineInfoDAO.updateById(entity);
         }
@@ -110,7 +110,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         MachineInfoDO entity = new MachineInfoDO();
         String password = request.getPassword();
         this.copyProperties(request, entity);
-        if (password != null) {
+        if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
         }
         // 修改
@@ -298,8 +298,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         SessionStore session;
         try {
             session = SessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
-            if (machine.getPassword() != null) {
-                session.setPassword(ValueMix.decrypt(machine.getPassword(), machine.getId() + Const.ORION_OPS));
+            String password = machine.getPassword();
+            if (Strings.isNotBlank(password)) {
+                session.setPassword(ValueMix.decrypt(password, machine.getId() + Const.ORION_OPS));
             }
             MachineProxyDO proxy = null;
             if (proxyId != null) {
@@ -307,18 +308,18 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             }
             if (proxy != null) {
                 ProxyType proxyType = ProxyType.of(proxy.getProxyType());
-                String password = proxy.getProxyPassword();
-                if (!Strings.isBlank(password)) {
-                    password = ValueMix.decrypt(password);
+                String proxyPassword = proxy.getProxyPassword();
+                if (!Strings.isBlank(proxyPassword)) {
+                    proxyPassword = ValueMix.decrypt(proxyPassword);
                 }
                 if (ProxyType.HTTP.equals(proxyType)) {
-                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKET4.equals(proxyType)) {
-                    session.setSocket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                    session.setSocket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKET5.equals(proxyType)) {
-                    session.setSocket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                    session.setSocket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
-                session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), password);
+                session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
             }
             session.connect(MachineConst.CONNECT_TIMEOUT);
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());

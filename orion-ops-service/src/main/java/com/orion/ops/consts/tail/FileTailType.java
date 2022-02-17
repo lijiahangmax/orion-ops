@@ -17,7 +17,7 @@ public enum FileTailType {
     /**
      * 命令执行日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     EXEC_LOG(10, true),
 
@@ -29,14 +29,14 @@ public enum FileTailType {
     /**
      * 应用构建日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_BUILD_LOG(30, true),
 
     /**
      * 应用发布日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_RELEASE_LOG(40, true),
 

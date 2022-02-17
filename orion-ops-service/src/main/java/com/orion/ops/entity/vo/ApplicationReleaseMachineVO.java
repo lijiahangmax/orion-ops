@@ -87,7 +87,7 @@ public class ApplicationReleaseMachineVO {
     /**
      * 操作
      */
-    private List<ApplicationReleaseActionVO> actions;
+    private List<ApplicationActionLogVO> actions;
 
     static {
         TypeStore.STORE.register(ApplicationReleaseMachineDO.class, ApplicationReleaseMachineVO.class, p -> {
