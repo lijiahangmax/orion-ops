@@ -54,7 +54,7 @@
             <!-- 日志主体 -->
             <div class="log-item-container">
               <div class="log-item-container-left">
-                <span class="log-info">{{ item.log }}</span>
+                <span class="log-info" v-html="item.log"></span>
               </div>
               <div class="log-item-container-right">
                 <!-- 操作人 -->
@@ -158,6 +158,11 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         this.rows = data.rows || []
+        this.rows.forEach((row) => {
+          row.log = this.$utils.cleanXss(row.log)
+            .replaceAll('&lt;sb&gt;', '<span class="span-blue mx4">')
+            .replaceAll('&lt;/sb&gt;', '</span>')
+        })
         this.pagination = pagination
         this.loading = false
       }).catch(() => {

@@ -282,6 +282,20 @@ function detectZoom() {
   return ratio
 }
 
+/**
+ * 清除xss
+ */
+function cleanXss(s) {
+  s = s.replaceAll('&', '&amp;')
+  s = s.replaceAll('<', '&lt;')
+  s = s.replaceAll('>', '&gt;')
+  s = s.replaceAll('\'', '&apos;')
+  s = s.replaceAll('"', '&quot;')
+  s = s.replaceAll('\n', '<br/>')
+  s = s.replaceAll('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')
+  return s
+}
+
 export default {
   isEmptyStr,
   copyToClipboard,
@@ -302,5 +316,6 @@ export default {
   defineArrayKeys,
   getPathAnalysis,
   getPath,
-  detectZoom
+  detectZoom,
+  cleanXss
 }
