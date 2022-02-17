@@ -1,7 +1,7 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.id.UUIds;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.utils.io.Files1;
 
@@ -27,7 +27,7 @@ public class SftpSupport {
      */
     public static boolean checkUseFileSystem(SftpExecutor executor) {
         // 创建一个临时文件
-        String checkPath = Files1.getPath(MachineEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
+        String checkPath = Files1.getPath(SystemEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
         File checkFile = new File(checkPath);
         Files1.touch(checkFile);
         checkFile.deleteOnExit();

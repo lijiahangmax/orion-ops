@@ -2,7 +2,7 @@ package com.orion.ops.handler.exec.impl;
 
 import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.handler.exec.AbstractExecHandler;
 import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.tail.ITailHandler;
@@ -46,7 +46,7 @@ public class CommandExecHandler extends AbstractExecHandler {
     @Override
     public void exec() {
         super.exec();
-        File logFile = new File(Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), record.getLogPath()));
+        File logFile = new File(Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), record.getLogPath()));
         Files1.touch(logFile);
         this.logPath = logFile.getAbsolutePath();
     }

@@ -7,7 +7,6 @@ import com.orion.function.select.Selector;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
-import com.orion.ops.handler.app.store.MachineStore;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +54,7 @@ public interface IActionHandler extends Executable, SafeCloseable {
      * @param store   store
      * @return handler
      */
-    static List<IActionHandler> createHandler(List<ApplicationActionLogDO> actions, MachineStore store) {
+    static List<IActionHandler> createHandler(List<ApplicationActionLogDO> actions, MachineActionStore store) {
         return actions.stream()
                 .map(action -> Selector.<ActionType, IActionHandler>of(ActionType.of(action.getActionType()))
                         .test(Branches.eq(ActionType.BUILD_CHECKOUT)

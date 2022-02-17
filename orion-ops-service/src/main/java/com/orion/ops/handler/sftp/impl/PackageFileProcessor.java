@@ -3,9 +3,9 @@ package com.orion.ops.handler.sftp.impl;
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
@@ -101,7 +101,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
     @Override
     public void exec() {
         String localFile = packageFile.getLocalFile();
-        this.compressPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), localFile);
+        this.compressPath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件打包-提交任务 fileToken: {} machineId: {}, local: {}, remote: {}, record: {}, fileList: {}",
                 fileToken, machineId, compressPath, packageFile.getRemoteFile(),
                 JSON.toJSONString(packageFile), JSON.toJSONString(fileList));
@@ -170,7 +170,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (int i = 0; i < fileList.size(); i++) {
             FileTransferLogDO fileLog = fileList.get(i);
             String remoteFile = fileLog.getRemoteFile();
-            String localFilePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
+            String localFilePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
             if (!Files1.isFile(new File(localFilePath))) {
                 continue;
             }
@@ -195,7 +195,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         for (FileTransferLogDO fileLog : fileList) {
             String remoteFile = fileLog.getRemoteFile();
             String label = SftpTransferType.of(fileLog.getTransferType()).getLabel();
-            String localFilePath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
+            String localFilePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), fileLog.getLocalFile());
             String status = Files1.isFile(localFilePath) ? "成功" : "未找到文件";
             // 添加raw
             compressFileRaw.add(label + Const.SPACE + status + Const.SPACE + remoteFile);

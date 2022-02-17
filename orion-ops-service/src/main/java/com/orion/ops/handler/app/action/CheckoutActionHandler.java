@@ -4,7 +4,6 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.ops.utils.ValueMix;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -30,7 +29,7 @@ public class CheckoutActionHandler extends AbstractActionHandler {
 
     private Git git;
 
-    public CheckoutActionHandler(Long actionId, MachineStore store) {
+    public CheckoutActionHandler(Long actionId, MachineActionStore store) {
         super(actionId, store);
     }
 

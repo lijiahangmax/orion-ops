@@ -1,6 +1,5 @@
 package com.orion.ops.handler.app.action;
 
-import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.remote.ExitCode;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
@@ -24,7 +23,7 @@ public class CommandActionHandler extends AbstractActionHandler {
     @Getter
     private Integer exitCode;
 
-    public CommandActionHandler(Long actionId, MachineStore store) {
+    public CommandActionHandler(Long actionId, MachineActionStore store) {
         super(actionId, store);
     }
 

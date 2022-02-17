@@ -7,7 +7,7 @@ import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
 import com.orion.ops.consts.app.StageType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
@@ -93,7 +93,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
         store.setVcsId(record.getVcsId());
         store.setBranchName(record.getBranchName());
         store.setCommitId(record.getCommitId());
-        String vcsClonePath = Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), record.getVcsId() + "/" + record.getId());
+        String vcsClonePath = Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), record.getVcsId() + "/" + record.getId());
         store.setVcsClonePath(vcsClonePath);
         // 创建handler
         this.handlerList = IActionHandler.createHandler(actions, store);
@@ -138,7 +138,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
             throw Exceptions.log("***** 构建产物文件不存在: " + bundlePath);
         }
         // 复制
-        String copyBundlePath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), record.getBundlePath());
+        String copyBundlePath = Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), record.getBundlePath());
         this.appendLog(Strings.format("\n***** 已生成产物文件 {}\n", copyBundlePath));
         if (bundleFile.isFile()) {
             Files1.copy(bundleFile, new File(copyBundlePath));

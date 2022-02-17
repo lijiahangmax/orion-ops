@@ -3,7 +3,7 @@ package com.orion.ops.handler.app.machine;
 import com.orion.exception.LogException;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.handler.app.action.IActionHandler;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
@@ -135,7 +135,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
      * 打开日志
      */
     protected void openLogger() {
-        String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), this.getLogPath());
+        String logPath = Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), this.getLogPath());
         File logFile = new File(logPath);
         Files1.touch(logFile);
         this.logStream = Files1.openOutputStreamFastSafe(logFile);

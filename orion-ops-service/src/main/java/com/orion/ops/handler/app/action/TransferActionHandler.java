@@ -1,7 +1,6 @@
 package com.orion.ops.handler.app.action;
 
-import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.handler.app.store.MachineStore;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
@@ -28,14 +27,14 @@ public class TransferActionHandler extends AbstractActionHandler {
 
     private SftpExecutor executor;
 
-    public TransferActionHandler(Long actionId, MachineStore store) {
+    public TransferActionHandler(Long actionId, MachineActionStore store) {
         super(actionId, store);
     }
 
     @Override
     protected void handler() throws Exception {
         // 检查文件
-        String bundlePath = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), store.getBundlePath());
+        String bundlePath = Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), store.getBundlePath());
         File bundleFile = new File(bundlePath);
         if (!bundleFile.exists()) {
             throw Exceptions.log("*** 产物文件不存在 " + bundlePath);

@@ -6,10 +6,9 @@ import com.orion.lang.io.OutputAppender;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
-import com.orion.ops.handler.app.store.MachineStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
@@ -37,7 +36,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
 
     protected Long relId;
 
-    protected MachineStore store;
+    protected MachineActionStore store;
 
     protected ApplicationActionLogDO action;
 
@@ -46,7 +45,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @Getter
     protected volatile ActionStatus status;
 
-    public AbstractActionHandler(Long id, MachineStore store) {
+    public AbstractActionHandler(Long id, MachineActionStore store) {
         this.id = id;
         this.relId = store.getRelId();
         this.store = store;
@@ -106,7 +105,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
      * 打开日志
      */
     protected void openLogger() {
-        String logPath = Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), action.getLogPath());
+        String logPath = Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), action.getLogPath());
         log.info("应用操作执行-打开日志 relId: {}, id: {}, path: {}", relId, id, logPath);
         File logFile = new File(logPath);
         Files1.touch(logFile);
@@ -123,7 +122,9 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @SneakyThrows
     private void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 执行操作开始 ").append(action.getActionName())
+                .append("# 操作 [")
+                .append(action.getActionName())
+                .append("] 执行开始")
                 .append(Const.LF);
         ActionType actionType = ActionType.of(action.getActionType());
         if (ActionType.BUILD_COMMAND.equals(actionType)
@@ -155,16 +156,25 @@ public abstract class AbstractActionHandler implements IActionHandler {
      */
     private void appendFinishedLog(Exception ex) {
         StringBuilder log = new StringBuilder();
+        Integer actionType = action.getActionType();
+        if (ActionType.BUILD_COMMAND.getType().equals(actionType)
+                || ActionType.RELEASE_COMMAND.getType().equals(actionType)) {
+            log.append(Const.LF);
+        }
         if (ex != null) {
             // 有异常
-            log.append("# 执行操作执行失败 ").append(action.getActionName());
+            log.append("# 操作 [")
+                    .append(action.getActionName())
+                    .append("] 执行失败");
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
                 log.append("\texitCode: ").append(exitCode).append(";");
             }
         } else {
             // 无异常
-            log.append("# 执行操作执行完成 ").append(action.getActionName());
+            log.append("# 操作 [")
+                    .append(action.getActionName())
+                    .append("] 执行完成");
         }
         log.append(" used: ")
                 .append(action.getEndTime().getTime() - action.getStartTime().getTime())

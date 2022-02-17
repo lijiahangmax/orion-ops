@@ -1,7 +1,6 @@
-package com.orion.ops.handler.app.store;
+package com.orion.ops.handler.app.action;
 
 import com.beust.jcommander.internal.Maps;
-import com.orion.ops.consts.Const;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.remote.channel.SessionStore;
 import lombok.Data;
@@ -17,7 +16,7 @@ import java.util.Map;
  * @since 2022/2/11 16:05
  */
 @Data
-public class MachineStore {
+public class MachineActionStore {
 
     /**
      * 引用id
@@ -28,11 +27,6 @@ public class MachineStore {
      * action
      */
     private Map<Long, ApplicationActionLogDO> actions;
-
-    /**
-     * 日志文件
-     */
-    private String superLogPath;
 
     /**
      * 日志输出流
@@ -91,8 +85,7 @@ public class MachineStore {
      */
     private String transferPath;
 
-    public MachineStore() {
-        this.machineId = Const.HOST_MACHINE_ID;
+    public MachineActionStore() {
         this.actions = Maps.newLinkedHashMap();
     }
 
