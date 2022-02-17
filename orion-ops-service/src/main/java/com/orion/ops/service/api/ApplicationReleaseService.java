@@ -74,11 +74,19 @@ public interface ApplicationReleaseService {
     Integer auditAppRelease(ApplicationReleaseAuditRequest request);
 
     /**
-     * 执行
+     * 执行发布
+     *
+     * @param id             id
+     * @param systemSchedule 是否为系统调度
+     */
+    void runnableAppRelease(Long id, boolean systemSchedule);
+
+    /**
+     * 取消执行
      *
      * @param id id
      */
-    void runnableAppRelease(Long id);
+    void cancelAppRelease(Long id);
 
     /**
      * 回滚

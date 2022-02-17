@@ -11,7 +11,7 @@ import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -21,6 +21,8 @@ import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.app.release.IReleaseProcessor;
 import com.orion.ops.handler.app.release.ReleaseSessionHolder;
+import com.orion.ops.handler.scheduler.TaskRegister;
+import com.orion.ops.handler.scheduler.TaskType;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -95,7 +97,13 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private MachineEnvService machineEnvService;
 
     @Resource
+    private SystemEnvService systemEnvService;
+
+    @Resource
     private ReleaseSessionHolder releaseSessionHolder;
+
+    @Resource
+    private TaskRegister taskRegister;
 
     @Override
     public DataGrid<ApplicationReleaseListVO> getReleaseList(ApplicationReleaseRequest request) {
@@ -204,6 +212,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         if (hasCommand) {
             // 查询应用环境变量
             releaseEnv.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
+            // 添加系统环境变量
+            releaseEnv.putAll(systemEnvService.getFullSystemEnv());
             // 添加发布环境变量
             releaseEnv.putAll(this.getReleaseEnv(build, release));
         }
@@ -254,10 +264,17 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         update.setAuditUserName(user.getUsername());
         update.setAuditTime(new Date());
         update.setAuditReason(request.getReason());
-        boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
+        final boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
         if (resolve) {
             // 通过
-            update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+            final boolean timedRelease = TimedReleaseType.TIMED.getType().equals(release.getTimedRelease());
+            if (!timedRelease) {
+                update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+            } else {
+                update.setReleaseStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
+                // 提交任务
+                taskRegister.submit(TaskType.RELEASE, release.getTimedReleaseTime(), id);
+            }
         } else {
             // 驳回
             update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
@@ -271,23 +288,55 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public void runnableAppRelease(Long id) {
+    public void runnableAppRelease(Long id, boolean systemSchedule) {
         // 查询状态
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
-        if (!ReleaseStatus.WAIT_RUNNABLE.equals(status)) {
+        if (!ReleaseStatus.WAIT_RUNNABLE.equals(status)
+                && !ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
             throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
         }
-        UserDTO user = Currents.getUser();
         // 更新发布人
         ApplicationReleaseDO update = new ApplicationReleaseDO();
         update.setId(id);
-        update.setReleaseUserId(user.getId());
-        update.setReleaseUserName(user.getUsername());
+        update.setUpdateTime(new Date());
+        if (systemSchedule) {
+            update.setReleaseUserId(release.getAuditUserId());
+            update.setReleaseUserName(release.getAuditUserName());
+        } else {
+            UserDTO user = Currents.getUser();
+            update.setReleaseUserId(user.getId());
+            update.setReleaseUserName(user.getUsername());
+            // 移除
+            taskRegister.cancel(TaskType.RELEASE, id);
+        }
         applicationReleaseDAO.updateById(update);
         // 发布
         IReleaseProcessor.with(release).exec();
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+        EventParamsHolder.addParam(EventKeys.SYSTEM, systemSchedule);
+    }
+
+    @Override
+    public void cancelAppRelease(Long id) {
+        // 查询状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
+        if (!ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        }
+        // 更新状态
+        ApplicationReleaseDO update = new ApplicationReleaseDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        update.setReleaseStatus(ReleaseStatus.CANCEL.getStatus());
+        applicationReleaseDAO.updateById(update);
+        // 取消调度任务
+        taskRegister.cancel(TaskType.RELEASE, id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
@@ -304,7 +353,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
         }
         // 检查产物是否存在
-        String path = Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), rollback.getBundlePath());
+        String path = Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), rollback.getBundlePath());
         if (!new File(path).exists()) {
             throw Exceptions.argument(MessageConst.FILE_ABSENT_UNABLE_ROLLBACK);
         }
@@ -388,6 +437,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         if (ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
             throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        } else if (ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
+            // 取消调度任务
+            taskRegister.cancel(TaskType.RELEASE, id);
         }
         // 删除主表
         int effect = applicationReleaseDAO.deleteById(id);
@@ -647,7 +699,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private String getBuildBundlePath(ApplicationBuildDO build) {
         // 构建产物
         String buildBundlePath = build.getBundlePath();
-        File bundleFile = new File(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+        File bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
         Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_FILE_ABSENT);
         if (bundleFile.isFile()) {
             return buildBundlePath;
@@ -656,7 +708,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         String transferDirValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
         if (TransferDirType.ZIP.equals(TransferDirType.of(transferDirValue))) {
             buildBundlePath = build.getBundlePath() + "." + Const.SUFFIX_ZIP;
-            bundleFile = new File(Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+            bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
             Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_ZIP_FILE_ABSENT);
         }
         return buildBundlePath;
@@ -675,14 +727,18 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         if (needAudit && !isAdmin) {
             release.setReleaseStatus(ReleaseStatus.WAIT_AUDIT.getStatus());
         } else {
-            release.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+            if (TimedReleaseType.TIMED.getType().equals(release.getTimedRelease())) {
+                release.setReleaseStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
+            } else {
+                release.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+            }
             release.setAuditUserId(user.getId());
             release.setAuditUserName(user.getUsername());
             release.setAuditTime(new Date());
             if (isAdmin) {
                 release.setAuditReason(MessageConst.AUTO_AUDIT_RESOLVE);
             } else {
-                release.setAuditReason(MessageConst.AUDIT_NO_REQUIRED);
+                release.setAuditReason(MessageConst.AUDIT_NOT_REQUIRED);
             }
         }
     }

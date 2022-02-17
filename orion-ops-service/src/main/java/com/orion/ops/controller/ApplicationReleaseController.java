@@ -6,11 +6,14 @@ import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.app.TimedReleaseType;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
+import com.orion.ops.handler.scheduler.TaskRegister;
+import com.orion.ops.handler.scheduler.TaskType;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +37,9 @@ public class ApplicationReleaseController {
 
     @Resource
     private ApplicationReleaseService applicationReleaseService;
+
+    @Resource
+    private TaskRegister taskRegister;
 
     /**
      * 发布列表
@@ -81,7 +87,17 @@ public class ApplicationReleaseController {
         Valid.notNull(request.getProfileId());
         Valid.notNull(request.getBuildId());
         Valid.notEmpty(request.getMachineIdList());
-        return applicationReleaseService.submitAppRelease(request);
+        TimedReleaseType timedReleaseType = Valid.notNull(TimedReleaseType.of(request.getTimedRelease()));
+        if (TimedReleaseType.TIMED.equals(timedReleaseType)) {
+            Valid.notNull(request.getTimedReleaseTime());
+        }
+        // 提交
+        Long id = applicationReleaseService.submitAppRelease(request);
+        // 提交任务
+        if (TimedReleaseType.TIMED.equals(timedReleaseType)) {
+            taskRegister.submit(TaskType.RELEASE, request.getTimedReleaseTime(), id);
+        }
+        return id;
     }
 
     /**
@@ -116,7 +132,18 @@ public class ApplicationReleaseController {
     @EventLog(EventType.RUNNABLE_RELEASE)
     public HttpWrapper<?> runnableAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationReleaseService.runnableAppRelease(id);
+        applicationReleaseService.runnableAppRelease(id, false);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 取消发布
+     */
+    @RequestMapping("/cancel")
+    @EventLog(EventType.CANCEL_RELEASE)
+    public HttpWrapper<?> cancelRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationReleaseService.cancelAppRelease(id);
         return HttpWrapper.ok();
     }
 
