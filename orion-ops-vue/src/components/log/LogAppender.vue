@@ -32,12 +32,12 @@
           </a>
         </div>
         <!-- 固定日志 -->
-        <div class="log-fixed-wrapper" v-if="rightToolsProps.fixed !== false">
+        <div class="log-fixed-wrapper nowrap" v-if="rightToolsProps.fixed !== false">
           <span class="log-fixed-label ml8">固定: </span>
           <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
         </div>
         <!-- 状态 -->
-        <div class="log-status-wrapper" v-if="rightToolsProps.status !== false">
+        <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
           <!-- 状态 可关闭 -->
           <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
             <a-popconfirm title="确认关闭当前日志连接?"
@@ -66,6 +66,33 @@
 <script>
 
 import _enum from '@/lib/enum'
+
+const stain = {
+  DEBUG: {
+    class: 'color-debug',
+    reg: new RegExp('debug', 'ig')
+  },
+  INFO: {
+    class: 'color-info',
+    reg: new RegExp('info', 'ig')
+  },
+  WARN: {
+    class: 'color-warn',
+    reg: new RegExp('warn', 'ig')
+  },
+  ERROR: {
+    class: 'color-error',
+    reg: new RegExp('error', 'ig')
+  },
+  DATE_TIME: {
+    class: 'color-date',
+    reg: new RegExp('[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\\s+(20|21|22|23|[0-1]\\d):[0-5]\\d:[0-5]\\d(\\.\\d{1,4})?', 'ig')
+  },
+  DATE: {
+    class: 'color-date',
+    reg: new RegExp('[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])(\\.\\d{1,4})?', 'ig')
+  }
+}
 
 export default {
   name: 'LogAppender',
@@ -156,7 +183,7 @@ export default {
         }
         const pre = document.createElement('pre')
         pre.className = 'log-line'
-        pre.innerText = msg
+        pre.innerHTML = this.stainKeywords(msg)
         this.$refs.logContainer.appendChild(pre)
         if (!this.fixedLog) {
           this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
@@ -195,6 +222,15 @@ export default {
       setTimeout(() => {
         this.downloadUrl = null
       })
+    },
+    stainKeywords(msg) {
+      msg = this.$utils.cleanXss(msg)
+      for (const stainKey in stain) {
+        msg = msg.replace(stain[stainKey].reg, (keyword) => {
+          return `<span class="${stain[stainKey].class}">${keyword}</span>`
+        })
+      }
+      return msg
     }
   },
   beforeDestroy() {
@@ -226,21 +262,20 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-  }
 
-  .log-fixed-wrapper {
-    display: flex;
-    align-items: center;
+    .log-fixed-wrapper {
+      display: flex;
+      align-items: center;
 
-    .log-fixed-label {
-      margin-right: 4px;
+      .log-fixed-label {
+        margin-right: 4px;
+      }
+
+      .log-fixed-switch {
+        margin: 2px 12px 0 0;
+      }
     }
-
-    .log-fixed-switch {
-      margin: 2px 12px 0 0;
-    }
   }
-
 }
 
 .log-container {
@@ -249,7 +284,6 @@ export default {
   padding: 8px;
   border-radius: 4px;
   width: 100%;
-  color: #FFF;
   background: #212529;
   font-size: 13px;
   line-height: 17px;
@@ -259,6 +293,32 @@ export default {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-all;
+  color: lightgrey;
+
+  .color-debug {
+    color: #757575;
+    font-weight: 700;
+  }
+
+  .color-info {
+    color: #58C612;
+    font-weight: 700;
+  }
+
+  .color-warn {
+    color: #FFCA28;
+    font-weight: 700;
+  }
+
+  .color-error {
+    color: #DD2C00;
+    font-weight: 700;
+  }
+
+  .color-date {
+    color: #80DEEA;
+    font-weight: 700;
+  }
 }
 
 </style>
