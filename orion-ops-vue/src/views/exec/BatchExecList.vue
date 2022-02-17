@@ -4,6 +4,11 @@
     <div class="table-search-columns">
       <a-form-model ref="query" :model="query">
         <a-row>
+          <a-col v-if="$isAdmin()" :span="5">
+            <a-form-model-item label="用户" prop="user">
+              <UserSelector ref="userSelector" @change="userId => query.userId = userId"/>
+            </a-form-model-item>
+          </a-col>
           <a-col :span="5">
             <a-form-model-item label="主机" prop="machine">
               <MachineSelector ref="machineSelector" @change="machineId => query.machineId = machineId"/>
@@ -12,15 +17,6 @@
           <a-col :span="5">
             <a-form-model-item label="命令" prop="command">
               <a-input v-model="query.command" allowClear/>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="5">
-            <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.value" v-for="status in $enum.BATCH_EXEC_STATUS" :key="status.value">
-                  {{ status.label }}
-                </a-select-option>
-              </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -34,13 +30,6 @@
             </a-form-model-item>
           </a-col>
         </a-row>
-        <a-row v-if="$isAdmin()" style="margin-top: 8px">
-          <a-col :span="5">
-            <a-form-model-item label="用户" prop="user">
-              <UserSelector ref="userSelector" @change="userId => query.userId = userId"/>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
       </a-form-model>
     </div>
     <!-- 工具栏 -->
@@ -51,8 +40,22 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <!-- 状态 -->
+        <div class="exec-status-container">
+          <a-radio-group v-model="query.status"
+                         buttonStyle="solid"
+                         @change="getList({})">
+            <a-radio-button v-for="status in $enum.BATCH_EXEC_STATUS"
+                            :key="status.value"
+                            :value="status.value">
+              {{ status.label }}
+            </a-radio-button>
+          </a-radio-group>
+        </div>
+        <a-divider type="vertical"/>
+        <!-- 执行 -->
         <a target="_blank" href="#/batch/exec/add">
-          <a-button class="ml16 mr8"
+          <a-button class="mx8"
                     type="primary"
                     icon="code"
                     title="ctrl 打开新页面"
@@ -452,8 +455,13 @@ export default {
 
 <style lang="less" scoped>
 
-/deep/ .ant-row {
-  margin: 0;
+.exec-status-container {
+  margin-right: 8px;
+
+  /deep/ .ant-row.ant-form-item {
+    display: flex;
+    margin: 0;
+  }
 }
 
 </style>

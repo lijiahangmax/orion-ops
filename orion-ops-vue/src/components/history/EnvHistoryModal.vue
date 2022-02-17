@@ -44,12 +44,7 @@
         </template>
         <!-- 修改时间 -->
         <template v-slot:createTime="record">
-          {{
-            record.createTime | formatDate({
-              date: record.createTime,
-              pattern: 'yyyy-MM-dd HH:mm:ss'
-            })
-          }} ({{ record.createTimeAgo }})
+          {{ record.createTime | formatDate }} ({{ record.createTimeAgo }})
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -79,8 +74,8 @@
 
 <script>
 
-import _utils from '@/lib/utils'
 import TextPreview from '@/components/preview/TextPreview'
+import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -176,7 +171,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.rows = data.rows
+        this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false
       }).catch(() => {
@@ -223,12 +218,7 @@ export default {
     }
   },
   filters: {
-    formatDate(origin, {
-      date,
-      pattern
-    }) {
-      return _utils.dateFormat(new Date(date), pattern)
-    }
+    ..._filters
   }
 }
 </script>

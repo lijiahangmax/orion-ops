@@ -21,13 +21,19 @@
               </a-form-item>
               <a-form-item label="ssh信息" style="margin-bottom: 0">
                 <a-form-item style="display: inline-block; width: 35%">
-                  <a-input addon-before="user" placeholder="用户" v-decorator="decorators.username"/>
+                  <a-input addon-before="user"
+                           placeholder="用户"
+                           v-decorator="decorators.username"/>
                 </a-form-item>
                 <a-form-item style="display: inline-block; width: 40%">
-                  <a-input addon-before="@" placeholder="主机" v-decorator="decorators.host"/>
+                  <a-input addon-before="@"
+                           placeholder="主机"
+                           v-decorator="decorators.host"/>
                 </a-form-item>
                 <a-form-item style="display: inline-block; width: 25%">
-                  <a-input addon-before="-p" placeholder="端口" v-decorator="decorators.sshPort"/>
+                  <a-input addon-before="-p"
+                           placeholder="端口"
+                           v-decorator="decorators.sshPort"/>
                 </a-form-item>
               </a-form-item>
               <a-form-item label="认证方式" style="margin-bottom: 0">
@@ -39,7 +45,10 @@
                   </a-select>
                 </a-form-item>
                 <a-form-item style="display: inline-block; width: 70%">
-                  <a-input-password v-decorator="decorators.password" v-if="form.getFieldValue('authType') === 1" placeholder="密码"/>
+                  <a-input-password v-if="form.getFieldValue('authType') === 1"
+                                    v-decorator="decorators.password"
+                                    placeholder="密码"
+                                    allowClear/>
                   <a class="add-secret-key" v-else @click="addKey">添加秘钥</a>
                 </a-form-item>
               </a-form-item>

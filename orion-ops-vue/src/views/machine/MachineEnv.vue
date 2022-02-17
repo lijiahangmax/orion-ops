@@ -202,16 +202,9 @@ import _filters from '@/lib/filters'
 
 const columns = [
   {
-    title: '序号',
-    key: 'seq',
-    width: 60,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
-  {
     title: 'key',
     key: 'key',
-    width: 180,
+    width: 220,
     ellipsis: true,
     sorter: (a, b) => a.key.localeCompare(b.key),
     scopedSlots: { customRender: 'key' }
@@ -219,7 +212,6 @@ const columns = [
   {
     title: 'value',
     key: 'value',
-    width: 220,
     ellipsis: true,
     sorter: (a, b) => a.value.localeCompare(b.value),
     scopedSlots: { customRender: 'value' }
@@ -228,8 +220,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
-    ellipsis: true,
-    width: 180
+    ellipsis: true
   },
   {
     title: '修改时间',
@@ -498,7 +489,7 @@ export default {
 
   .env-editor-container {
     height: calc(100% - 150px);
-    padding-bottom: 8px;
+    padding-bottom: 12px;
   }
 }
 
