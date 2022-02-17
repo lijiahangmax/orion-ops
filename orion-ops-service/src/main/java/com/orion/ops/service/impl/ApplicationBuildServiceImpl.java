@@ -5,18 +5,20 @@ import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.app.build.BuildSessionHolder;
-import com.orion.ops.handler.app.build.IBuilderProcessor;
+import com.orion.ops.handler.app.machine.BuildMachineProcessor;
+import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -24,9 +26,11 @@ import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +44,7 @@ import java.util.*;
  * @version 1.0.0
  * @since 2021/12/3 14:14
  */
+@Slf4j
 @Service("applicationBuildService")
 public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
@@ -69,6 +74,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Resource
     private MachineEnvService machineEnvService;
+
+    @Resource
+    private SystemEnvService systemEnvService;
 
     @Resource
     private BuildSessionHolder buildSessionHolder;
@@ -123,6 +131,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             env.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 查询机器环境变量
             env.putAll(machineEnvService.getFullMachineEnv(Const.HOST_MACHINE_ID));
+            // 查询系统环境变量
+            env.putAll(systemEnvService.getFullSystemEnv());
             // 添加构建环境变量
             env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId(), request));
         }
@@ -145,7 +155,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             applicationActionLogDAO.updateById(actionLog);
         }
         // 提交构建任务
-        IBuilderProcessor.with(buildId).exec();
+        log.info("提交应用构建任务 buildId: {}", buildId);
+        BuildMachineProcessor buildProcessor = new BuildMachineProcessor(buildId);
+        Threads.start(buildProcessor, SchedulerPools.APP_BUILD_SCHEDULER);
         // 设置日志参数
         EventParamsHolder.addParams(buildTask);
         return buildId;
@@ -226,7 +238,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             case WAIT:
             case RUNNABLE:
                 // 获取实例
-                IBuilderProcessor session = buildSessionHolder.getSession(id);
+                IMachineProcessor session = buildSessionHolder.getSession(id);
                 if (session == null) {
                     update = new ApplicationBuildDO();
                     update.setId(id);
@@ -294,7 +306,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         return Optional.ofNullable(applicationBuildDAO.selectById(id))
                 .map(ApplicationBuildDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 
@@ -303,7 +315,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         return Optional.ofNullable(applicationBuildDAO.selectById(id))
                 .map(ApplicationBuildDO::getBundlePath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.DIST_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), s))
                 .orElse(null);
     }
 
@@ -331,7 +343,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         env.put(EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
         env.put(EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
         if (vcsId != null) {
-            env.put(EnvConst.VCS_HOME, Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
+            env.put(EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
         }
         // 设置前缀
         MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();

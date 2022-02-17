@@ -10,7 +10,7 @@ import com.orion.ops.consts.command.ExecType;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
@@ -26,6 +26,7 @@ import com.orion.ops.handler.exec.IExecHandler;
 import com.orion.ops.service.api.CommandExecService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
@@ -65,6 +66,9 @@ public class CommandExecServiceImpl implements CommandExecService {
     private MachineEnvService machineEnvService;
 
     @Resource
+    private SystemEnvService systemEnvService;
+
+    @Resource
     private ExecSessionHolder execSessionHolder;
 
     @Override
@@ -78,6 +82,9 @@ public class CommandExecServiceImpl implements CommandExecService {
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
             machineStore.put(machine.getId(), machine);
         }
+        // 查询系统环境变量
+        Map<String, String> systemEnv = systemEnvService.getFullSystemEnv();
+        String command = Strings.format(request.getCommand(), EnvConst.SYMBOL, systemEnv);
         // 批量执行命令
         List<CommandTaskSubmitVO> list = Lists.newList();
         for (Long mid : machineIdList) {
@@ -92,7 +99,7 @@ public class CommandExecServiceImpl implements CommandExecService {
             record.setDescription(request.getDescription());
             // 替换命令
             Map<String, String> env = machineEnvService.getFullMachineEnv(mid);
-            record.setExecCommand(Strings.format(request.getCommand(), EnvConst.SYMBOL, env));
+            record.setExecCommand(Strings.format(command, EnvConst.SYMBOL, env));
             commandExecDAO.insert(record);
             // 设置日志路径
             String logPath = PathBuilders.getExecLogPath(Const.COMMAND_DIR, record.getId(), machine.getId());
@@ -247,7 +254,7 @@ public class CommandExecServiceImpl implements CommandExecService {
         return Optional.ofNullable(commandExecDAO.selectOne(wrapper))
                 .map(CommandExecDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 

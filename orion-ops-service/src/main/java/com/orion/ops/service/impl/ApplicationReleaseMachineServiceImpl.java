@@ -1,7 +1,7 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationReleaseMachineDAO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.ops.service.api.ApplicationReleaseMachineService;
@@ -54,7 +54,7 @@ public class ApplicationReleaseMachineServiceImpl implements ApplicationReleaseM
         return Optional.ofNullable(applicationReleaseMachineDAO.selectById(id))
                 .map(ApplicationReleaseMachineDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 

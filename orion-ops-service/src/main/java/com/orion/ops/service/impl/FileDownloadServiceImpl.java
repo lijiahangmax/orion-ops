@@ -8,7 +8,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.download.FileDownloadType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
@@ -57,13 +57,13 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private FileTailListDAO fileTailListDAO;
 
     @Resource
+    private ApplicationActionLogService applicationActionLogService;
+
+    @Resource
     private ApplicationBuildService applicationBuildService;
 
     @Resource
     private ApplicationReleaseMachineService applicationReleaseMachineService;
-
-    @Resource
-    private ApplicationReleaseActionService applicationReleaseActionService;
 
     @Resource
     private SftpService sftpService;
@@ -116,8 +116,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case APP_BUILD_ACTION_LOG:
+            case APP_RELEASE_ACTION_LOG:
                 // 应用构建操作日志
-                path = applicationBuildService.getBuildActionLogPath(id);
+                path = applicationActionLogService.getActionLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case APP_BUILD_BUNDLE:
@@ -132,11 +133,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             case APP_RELEASE_MACHINE_LOG:
                 // 应用发布机器日志
                 path = applicationReleaseMachineService.getReleaseMachineLogPath(id);
-                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
-                break;
-            case APP_RELEASE_ACTION_LOG:
-                // 应用发布操作日志
-                path = applicationReleaseActionService.getReleaseActionLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             default:
@@ -241,7 +237,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
                 .map(MachineTerminalLogDO::getOperateLogFile)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 

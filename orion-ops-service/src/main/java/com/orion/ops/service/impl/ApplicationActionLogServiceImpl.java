@@ -1,13 +1,11 @@
 package com.orion.ops.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.StageType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
-import com.orion.ops.entity.domain.ApplicationReleaseActionDO;
 import com.orion.ops.entity.vo.ApplicationActionLogVO;
 import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.utils.DataQuery;
@@ -74,7 +72,7 @@ public class ApplicationActionLogServiceImpl implements ApplicationActionLogServ
         return Optional.ofNullable(applicationActionLogDAO.selectById(id))
                 .map(ApplicationActionLogDO::getLogPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(MachineEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 

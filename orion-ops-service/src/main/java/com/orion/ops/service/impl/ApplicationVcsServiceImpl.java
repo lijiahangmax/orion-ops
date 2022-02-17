@@ -8,7 +8,7 @@ import com.orion.ops.consts.app.VcsStatus;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
@@ -110,7 +110,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 如果修改了url则状态改为未初始化
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             // 删除目录
-            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File clonePath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
             Files1.delete(clonePath);
         }
         int effect = applicationVcsDAO.updateById(update);
@@ -176,7 +176,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
         // 删除
-        File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+        File clonePath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
         Files1.delete(clonePath);
         // 初始化
         Exception ex = null;
@@ -277,7 +277,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         Valid.isTrue(VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
         // 获取仓库位置
-        File vcsPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+        File vcsPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
         if (!vcsPath.isDirectory()) {
             // 修改状态为未初始化
             ApplicationVcsDO entity = new ApplicationVcsDO();
@@ -306,7 +306,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
-        File rootPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EMPTY));
+        File rootPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EMPTY));
         if (!Files1.isDirectory(rootPath)) {
             return;
         }
@@ -334,7 +334,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(new LambdaQueryWrapper<>());
         for (ApplicationVcsDO vcs : vcsList) {
             Long id = vcs.getId();
-            File vcsPath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File vcsPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
             boolean isDir = Files1.isDirectory(vcsPath);
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();

@@ -8,10 +8,10 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.sftp.SftpTransferType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
@@ -459,7 +459,7 @@ public class SftpServiceImpl implements SftpService {
             }
         } else {
             // 删除本地文件
-            String loacalPath = Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
+            String loacalPath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
             Files1.delete(loacalPath);
         }
         // 修改进度
@@ -681,7 +681,7 @@ public class SftpServiceImpl implements SftpService {
         if (transferLog == null) {
             return null;
         }
-        transferLog.setLocalFile(Files1.getPath(MachineEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile()));
+        transferLog.setLocalFile(Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile()));
         return transferLog;
     }
 
