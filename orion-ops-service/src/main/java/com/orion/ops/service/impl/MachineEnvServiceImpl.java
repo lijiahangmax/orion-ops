@@ -11,19 +11,15 @@ import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.machine.MachineTargetEnvAttr;
-import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.MachineEnvRequest;
 import com.orion.ops.entity.vo.MachineEnvVO;
-import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Charsets;
@@ -58,9 +54,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Resource
     private HistoryValueService historyValueService;
-
-    @Resource
-    private ApplicationVcsService applicationVcsService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -113,19 +106,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             // 检查是否修改了值 增加历史值
             historyValueService.addHistory(id, HistoryValueType.MACHINE_ENV, HistoryOperator.UPDATE, beforeValue, afterValue);
         }
-        // 判断是否是宿主机系统环境变量 同步更新对象
-        if (Const.HOST_MACHINE_ID.equals(before.getMachineId())) {
-            MachineEnvAttr env = MachineEnvAttr.of(before.getAttrKey());
-            if (env != null) {
-                env.setValue(afterValue);
-                if (afterValue != null && !afterValue.equals(beforeValue)) {
-                    if (MachineEnvAttr.VCS_PATH.equals(env)) {
-                        // 如果修改的是 vcs 则修改 vcs 状态
-                        applicationVcsService.syncVcsStatus();
-                    }
-                }
-            }
-        }
         // 修改
         MachineEnvDO update = new MachineEnvDO();
         update.setId(id);
@@ -144,11 +124,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             MachineEnvDO env = machineEnvDAO.selectById(id);
             Valid.notNull(env, MessageConst.ENV_ABSENT);
             String key = env.getAttrKey();
-            if (Const.HOST_MACHINE_ID.equals(env.getMachineId())) {
-                Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
-            } else {
-                Valid.isTrue(MachineTargetEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
-            }
+            Valid.isTrue(MachineEnvAttr.of(key) == null, "{} " + MessageConst.FORBID_DELETE, key);
             // 删除
             effect += machineEnvDAO.deleteById(id);
             // 插入历史值
@@ -313,9 +289,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public void initEnv(Long machineId) {
-        MachineInfoDO machine = machineInfoDAO.selectById(machineId);
-        List<String> keys = MachineTargetEnvAttr.getKeys();
-        String home = PathBuilders.getEnvPath(machine.getUsername());
+        List<String> keys = MachineEnvAttr.getKeys();
         for (String key : keys) {
             MachineEnvDO env = new MachineEnvDO();
             MachineEnvAttr attr = MachineEnvAttr.of(key);
@@ -323,15 +297,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             env.setDescription(attr.getDescription());
             env.setAttrKey(attr.getKey());
             switch (attr) {
-                case LOG_PATH:
-                    env.setAttrValue(home + Const.LOG_PATH);
-                    break;
-                case DIST_PATH:
-                    env.setAttrValue(home + Const.DIST_PATH);
-                    break;
-                case TEMP_PATH:
-                    env.setAttrValue(home + Const.TEMP_PATH);
-                    break;
                 case TAIL_OFFSET:
                     env.setAttrValue(Const.TAIL_OFFSET_LINE + Strings.EMPTY);
                     break;
@@ -343,6 +308,8 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                     break;
             }
             machineEnvDAO.insert(env);
+            // 插入历史记录
+            historyValueService.addHistory(env.getId(), HistoryValueType.MACHINE_ENV, HistoryOperator.ADD, null, env.getAttrValue());
         }
     }
 
@@ -361,16 +328,6 @@ public class MachineEnvServiceImpl implements MachineEnvService {
             charset = Const.UTF_8;
         }
         return charset;
-    }
-
-    @Override
-    public String getMachineTailMode(Long machineId) {
-        if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            String mode = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_MODE.getKey());
-            return FileTailMode.of(mode, true).getMode();
-        } else {
-            return FileTailMode.TAIL.getMode();
-        }
     }
 
     @Override

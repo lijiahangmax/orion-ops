@@ -87,7 +87,6 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         insert.setAttrKey(key);
         insert.setAttrValue(request.getValue());
         insert.setDescription(request.getDescription());
-        insert.setSystemEnv(request.getSystemEnv());
         applicationEnvDAO.insert(insert);
         // 插入历史值
         Long id = insert.getId();
@@ -392,7 +391,6 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         update.setKey(ApplicationEnvAttr.BUILD_SEQ.getKey());
         update.setValue(seq + Const.EMPTY);
         update.setDescription(ApplicationEnvAttr.BUILD_SEQ.getDescription());
-        update.setSystemEnv(Const.IS_SYSTEM);
         this.addAppEnv(update);
         return seq;
     }

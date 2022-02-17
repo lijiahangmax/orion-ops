@@ -2,19 +2,21 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.dao.ApplicationEnvDAO;
 import com.orion.ops.dao.HistoryValueSnapshotDAO;
-import com.orion.ops.dao.MachineEnvDAO;
-import com.orion.ops.entity.domain.ApplicationEnvDO;
 import com.orion.ops.entity.domain.HistoryValueSnapshotDO;
-import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.dto.UserDTO;
+import com.orion.ops.entity.request.ApplicationEnvRequest;
 import com.orion.ops.entity.request.HistoryValueRequest;
+import com.orion.ops.entity.request.MachineEnvRequest;
+import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.HistoryValueVO;
+import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.HistoryValueService;
+import com.orion.ops.service.api.MachineEnvService;
+import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
@@ -37,10 +39,13 @@ public class HistoryValueServiceImpl implements HistoryValueService {
     private HistoryValueSnapshotDAO historyValueSnapshotDAO;
 
     @Resource
-    private MachineEnvDAO machineEnvDAO;
+    private MachineEnvService machineEnvService;
 
     @Resource
-    private ApplicationEnvDAO applicationEnvDAO;
+    private ApplicationEnvService applicationEnvService;
+
+    @Resource
+    private SystemEnvService systemEnvService;
 
     @Override
     public void addHistory(Long valueId, HistoryValueType valueType, HistoryOperator operatorType, String beforeValue, String afterValue) {
@@ -51,8 +56,10 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         insert.setValueType(valueType.getType());
         insert.setBeforeValue(beforeValue);
         insert.setAfterValue(afterValue);
-        insert.setUpdateUserId(user.getId());
-        insert.setUpdateUserName(user.getUsername());
+        if (user != null) {
+            insert.setUpdateUserId(user.getId());
+            insert.setUpdateUserName(user.getUsername());
+        }
         insert.setCreateTime(new Date());
         insert.setUpdateTime(new Date());
         historyValueSnapshotDAO.insert(insert);
@@ -89,59 +96,27 @@ public class HistoryValueServiceImpl implements HistoryValueService {
         // 修改值
         Long valueId = historyValue.getValueId();
         HistoryValueType valueType = HistoryValueType.of(historyValue.getValueType());
-        String beforeValue;
         switch (valueType) {
             case MACHINE_ENV:
-                beforeValue = this.rollbackMachineEnv(valueId, updateValue);
-                break;
-            case APP_ENV:
-                beforeValue = this.rollbackAppEnv(valueId, updateValue);
-                break;
-            default:
+                MachineEnvRequest machineEnvRequest = new MachineEnvRequest();
+                machineEnvRequest.setId(valueId);
+                machineEnvRequest.setValue(updateValue);
+                machineEnvService.updateEnv(machineEnvRequest);
                 return;
+            case APP_ENV:
+                ApplicationEnvRequest appEnvRequest = new ApplicationEnvRequest();
+                appEnvRequest.setId(valueId);
+                appEnvRequest.setValue(updateValue);
+                applicationEnvService.updateAppEnv(appEnvRequest);
+                return;
+            case SYSTEM_ENV:
+                SystemEnvRequest systemRequest = new SystemEnvRequest();
+                systemRequest.setId(valueId);
+                systemRequest.setValue(updateValue);
+                systemEnvService.updateEnv(systemRequest);
+                return;
+            default:
         }
-        // 添加历史记录
-        this.addHistory(valueId, valueType, HistoryOperator.UPDATE, beforeValue, updateValue);
-    }
-
-    /**
-     * 回滚 机器环境变量
-     *
-     * @param valueId     valueId
-     * @param updateValue updateValue
-     * @return beforeValue
-     */
-    private String rollbackMachineEnv(Long valueId, String updateValue) {
-        // 查询
-        MachineEnvDO env = machineEnvDAO.selectById(valueId);
-        Valid.notNull(env, MessageConst.METADATA_ABSENT);
-        // 更新
-        MachineEnvDO update = new MachineEnvDO();
-        update.setId(valueId);
-        update.setAttrValue(updateValue);
-        update.setUpdateTime(new Date());
-        machineEnvDAO.updateById(update);
-        return env.getAttrValue();
-    }
-
-    /**
-     * 回滚 应用环境变量模板
-     *
-     * @param valueId     valueId
-     * @param updateValue updateValue
-     * @return beforeValue
-     */
-    private String rollbackAppEnv(Long valueId, String updateValue) {
-        // 查询
-        ApplicationEnvDO env = applicationEnvDAO.selectById(valueId);
-        Valid.notNull(env, MessageConst.METADATA_ABSENT);
-        // 更新
-        ApplicationEnvDO update = new ApplicationEnvDO();
-        update.setId(valueId);
-        update.setAttrValue(updateValue);
-        update.setUpdateTime(new Date());
-        applicationEnvDAO.updateById(update);
-        return env.getAttrValue();
     }
 
 }
