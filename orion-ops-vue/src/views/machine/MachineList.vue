@@ -185,13 +185,6 @@ import AddMachineModal from '@/components/machine/AddMachineModal'
 
 const columns = [
   {
-    title: '序号',
-    key: 'seq',
-    width: 60,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
-  {
     title: '名称',
     key: 'name',
     width: 200,

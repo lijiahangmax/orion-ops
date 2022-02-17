@@ -176,7 +176,6 @@ function getColumns() {
     {
       title: '用户名',
       key: 'username',
-      width: 150,
       ellipsis: true,
       sorter: (a, b) => a.username.localeCompare(b.username),
       scopedSlots: { customRender: 'username' }
@@ -185,7 +184,6 @@ function getColumns() {
       title: '昵称',
       key: 'nickname',
       ellipsis: true,
-      width: 150,
       sorter: (a, b) => a.nickname.localeCompare(b.nickname),
       scopedSlots: { customRender: 'nickname' }
     },
@@ -193,7 +191,6 @@ function getColumns() {
       title: '联系电话',
       key: 'phone',
       ellipsis: true,
-      width: 150,
       align: 'center',
       scopedSlots: { customRender: 'phone' }
     },
@@ -201,7 +198,6 @@ function getColumns() {
       title: '联系邮箱',
       key: 'email',
       ellipsis: true,
-      width: 200,
       scopedSlots: { customRender: 'email' }
     },
     {

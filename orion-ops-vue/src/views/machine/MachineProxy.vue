@@ -109,13 +109,6 @@ import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
  */
 const columns = [
   {
-    title: '序号',
-    key: 'seq',
-    width: 60,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
-  {
     title: '代理主机',
     key: 'host',
     width: 200,

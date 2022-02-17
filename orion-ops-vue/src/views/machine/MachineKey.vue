@@ -135,13 +135,6 @@ import _filters from '@/lib/filters'
  */
 const columns = [
   {
-    title: '序号',
-    key: 'seq',
-    width: 60,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
-  {
     title: '秘钥名称',
     dataIndex: 'name',
     key: 'name',
