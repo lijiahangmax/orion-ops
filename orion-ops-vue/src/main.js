@@ -11,6 +11,7 @@ import './lib/directive'
 
 import ant from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.min.css'
+import $message from 'ant-design-vue/lib/message'
 
 Vue.use(ant)
 
@@ -21,6 +22,10 @@ Vue.prototype.$storage = $storage
 Vue.prototype.$enum = $enum
 
 Vue.config.productionTip = false
+
+$message.config({
+  maxCount: 1
+})
 
 router.beforeEach((to, from, next) => {
   // 校验登陆

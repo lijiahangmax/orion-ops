@@ -50,10 +50,7 @@
               <a-button type="primary" v-if="isRun" icon="undo">重置</a-button>
             </a-popconfirm>
           </div>
-          <div>
-            <a-button class="mr8" type="primary" @click="() => {$router.push({path: '/batch/exec/list'})}" icon="rollback">返回列表</a-button>
-            <a-button type="primary" :disabled="isRun" @click="openTemplate" icon="unordered-list">模板选择</a-button>
-          </div>
+          <a-button type="primary" :disabled="isRun" @click="openTemplate" icon="unordered-list">模板选择</a-button>
         </div>
       </div>
       <!-- 日志 -->
@@ -71,7 +68,7 @@
             <div class="machine-log-view">
               <LogAppender :ref="'appender' + execMachine.execId"
                            :relId="execMachine.execId"
-                           :appendStyle="{height: 'calc(100vh - 132px)'}"
+                           :appendStyle="{height: 'calc(100vh - 184px)'}"
                            :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
                 <!-- 左侧工具栏 -->
                 <template #left-tools>
@@ -92,7 +89,7 @@
                       {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
                     </a-tag>
                     <!-- used -->
-                    <span class="mx8" title="用时"
+                    <span class="mx8 nowrap" title="用时"
                           v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
                     {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
                   </span>
@@ -315,12 +312,10 @@ export default {
 
 .batch-exec-task-container {
   display: flex;
-  padding: 16px;
-  background-color: #F0F2F5;
-  height: 100vh;
+  height: calc(100vh - 84px);
 
   .task-add-container {
-    width: 40%;
+    width: 45%;
     margin-right: 1%;
     padding: 16px;
     border-radius: 4px;
@@ -354,12 +349,12 @@ export default {
     }
 
     .editor-container {
-      height: 70%;
+      height: 78%;
       padding: 8px;
     }
 
     .machine-description-container {
-      margin-bottom: 8px;
+      margin: 4px 0 12px 0;
     }
 
     .exec-buttons {
@@ -371,16 +366,16 @@ export default {
   }
 
   .task-logger-view-container, .task-logger-view-empty-container {
-    width: 59%;
+    width: 54%;
     border-radius: 4px;
     background-color: #FFF;
   }
 
   .task-logger-view-container {
-    padding: 8px 16px 16px 16px;;
+    padding: 12px;
 
     .machine-log-view {
-      height: calc(100vh - 96px);
+      height: calc(100vh - 148px);
     }
   }
 

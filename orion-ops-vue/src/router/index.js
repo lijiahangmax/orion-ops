@@ -44,15 +44,6 @@ const routes = [
     component: () => import('../views/machine/MachineSftp')
   },
   {
-    path: '/batch/exec/add',
-    name: 'BatchExecAdd',
-    meta: {
-      requireAuth: true,
-      title: '批量执行'
-    },
-    component: () => import('../views/exec/AddBatchExecTask')
-  },
-  {
     path: '/batch/exec/log/view/:id',
     name: 'ExecLoggerView',
     meta: {
@@ -173,6 +164,11 @@ const routes = [
         component: () => import('../views/exec/BatchExecList')
       },
       {
+        path: '/batch/exec/add',
+        name: 'BatchExecAdd',
+        component: () => import('../views/exec/AddBatchExecTask')
+      },
+      {
         path: '/log/list',
         name: 'loggerList',
         meta: {
@@ -282,6 +278,29 @@ const routes = [
         component: () => import('../views/user/UserDetail')
       },
       {
+        path: '/user/event/log/:id',
+        name: 'simpleUserEventLog',
+        meta: {
+          requireAuth: true,
+          title: '操作日志',
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
+        },
+        component: () => import('../views/user/SimpleUserEventLogList')
+      },
+      {
+        path: '/user/event/logs',
+        name: 'UserEventLogList',
+        meta: {
+          requireAuth: true,
+          title: '操作日志'
+        },
+        component: () => import('../views/user/UserEventLogList')
+      },
+      {
         path: '/template/list',
         name: 'templateList',
         meta: {
@@ -289,6 +308,24 @@ const routes = [
           title: '模板配置'
         },
         component: () => import('../views/template/TemplateList')
+      },
+      {
+        path: '/system/env',
+        name: 'systemEnv',
+        meta: {
+          requireAuth: true,
+          title: '环境变量'
+        },
+        component: () => import('../views/system/SystemEnv')
+      },
+      {
+        path: '/system/setting',
+        name: 'systemSetting',
+        meta: {
+          requireAuth: true,
+          title: '系统设置'
+        },
+        component: () => import('../views/system/SystemSetting')
       },
       {
         path: '*',
