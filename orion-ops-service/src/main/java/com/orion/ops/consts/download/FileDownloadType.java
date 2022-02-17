@@ -17,28 +17,28 @@ public enum FileDownloadType {
     /**
      * 秘钥
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#KEY_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#KEY_PATH
      */
     SECRET_KEY(10, true),
 
     /**
      * terminal 日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     TERMINAL_LOG(20, true),
 
     /**
      * 命令 执行日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     EXEC_LOG(30, true),
 
     /**
      * sftp 下载文件
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#SWAP_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#SWAP_PATH
      */
     SFTP_DOWNLOAD(40, true),
 
@@ -50,35 +50,35 @@ public enum FileDownloadType {
     /**
      * 应用构建日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_BUILD_LOG(60, true),
 
     /**
      * 应用构建操作日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_BUILD_ACTION_LOG(70, true),
 
     /**
      * 应用构建 产物文件
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#DIST_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#DIST_PATH
      */
     APP_BUILD_BUNDLE(80, true),
 
     /**
      * 应用发布 机器日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_RELEASE_MACHINE_LOG(90, true),
 
     /**
      * 应用发布 操作日志
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#LOG_PATH
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_RELEASE_ACTION_LOG(100, true),
 

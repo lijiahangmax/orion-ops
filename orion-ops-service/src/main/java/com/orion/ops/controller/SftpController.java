@@ -6,8 +6,8 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.consts.sftp.SftpPackageType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
@@ -226,7 +226,7 @@ public class SftpController {
             // 传输文件到本地
             String fileToken = ObjectIds.next();
             String localPath = PathBuilders.getSftpUploadFilePath(fileToken);
-            Path localAbsolutePath = Paths.get(MachineEnvAttr.SWAP_PATH.getValue(), localPath);
+            Path localAbsolutePath = Paths.get(SystemEnvAttr.SWAP_PATH.getValue(), localPath);
             Files1.touch(localAbsolutePath);
             file.transferTo(localAbsolutePath);
 

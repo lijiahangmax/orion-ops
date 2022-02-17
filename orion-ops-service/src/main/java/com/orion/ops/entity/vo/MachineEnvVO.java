@@ -2,7 +2,6 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.machine.MachineTargetEnvAttr;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
@@ -70,12 +69,7 @@ public class MachineEnvVO {
             vo.setDescription(p.getDescription());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
-            Integer forbidDelete;
-            if (Const.HOST_MACHINE_ID.equals(p.getMachineId())) {
-                forbidDelete = MachineEnvAttr.of(p.getAttrKey()) == null ? Const.FORBID_DELETE_CAN : Const.FORBID_DELETE_NOT;
-            } else {
-                forbidDelete = MachineTargetEnvAttr.of(p.getAttrKey()) == null ? Const.FORBID_DELETE_CAN : Const.FORBID_DELETE_NOT;
-            }
+            Integer forbidDelete = MachineEnvAttr.of(p.getAttrKey()) == null ? Const.FORBID_DELETE_CAN : Const.FORBID_DELETE_NOT;
             vo.setForbidDelete(forbidDelete);
             return vo;
         });
