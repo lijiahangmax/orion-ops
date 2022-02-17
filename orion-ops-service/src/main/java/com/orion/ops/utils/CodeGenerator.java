@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("application_action_log");
+                .setInclude("system_env");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()
