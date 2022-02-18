@@ -10,6 +10,7 @@ import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -31,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -121,6 +121,7 @@ public class UserServiceImpl implements UserService {
     public Integer updateUser(UserInfoRequest request) {
         Long userId = Currents.getUserId();
         Long updateId = request.getId();
+        String nickname = request.getNickname();
         final boolean updateCurrent = updateId.equals(userId);
         // 查询用户信息
         UserInfoDO userInfo = userInfoDAO.selectById(updateId);
@@ -129,7 +130,7 @@ public class UserServiceImpl implements UserService {
         UserInfoDO update = new UserInfoDO();
         update.setId(updateId);
         update.setUsername(userInfo.getUsername());
-        update.setNickname(request.getNickname());
+        update.setNickname(nickname);
         update.setContactPhone(request.getPhone());
         update.setContactEmail(request.getEmail());
         update.setUserStatus(request.getStatus());
@@ -140,20 +141,8 @@ public class UserServiceImpl implements UserService {
         int effect = userInfoDAO.updateById(update);
         // 设置日志参数
         EventParamsHolder.addParams(update);
-        // 更新缓存
-        String cacheKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, updateId);
-        String tokenValue = redisTemplate.opsForValue().get(cacheKey);
-        if (Strings.isEmpty(tokenValue)) {
-            return effect;
-        }
-        UserDTO userDTO = JSON.parseObject(tokenValue, UserDTO.class);
-        Optional.ofNullable(update.getRoleType())
-                .ifPresent(userDTO::setRoleType);
-        Optional.ofNullable(request.getNickname())
-                .filter(Strings::isNotBlank)
-                .ifPresent(userDTO::setNickname);
-        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO),
-                KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        // 更新用户缓存数据
+        this.updateUserCache(updateId, nickname, update.getRoleType(), null);
         return effect;
     }
 
@@ -168,7 +157,7 @@ public class UserServiceImpl implements UserService {
         // 删除
         int effect = userInfoDAO.deleteById(id);
         // 删除token
-        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
+        RedisUtils.deleteLoginToken(redisTemplate, userId);
         // 删除活跃时间
         userActiveInterceptor.deleteActiveTime(id);
         // 设置日志参数
@@ -193,12 +182,8 @@ public class UserServiceImpl implements UserService {
         update.setUserStatus(status);
         update.setUpdateTime(new Date());
         int effect = userInfoDAO.updateById(update);
-        if (!enable) {
-            // 删除token
-            redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, id));
-            // 删除活跃时间
-            userActiveInterceptor.deleteActiveTime(id);
-        }
+        // 更新用户缓存数据
+        this.updateUserCache(id, null, null, status);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
@@ -226,6 +211,40 @@ public class UserServiceImpl implements UserService {
         update.setAvatarPic(url);
         update.setUpdateTime(new Date());
         return userInfoDAO.updateById(update);
+    }
+
+    /**
+     * 更新用户缓存
+     *
+     * @param updateId   updateId
+     * @param nickname   nickname
+     * @param roleType   roleType
+     * @param userStatus userStatus
+     */
+    private void updateUserCache(Long updateId, String nickname, Integer roleType, Integer userStatus) {
+        // 查询缓存
+        String cacheKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, updateId);
+        String tokenValue = redisTemplate.opsForValue().get(cacheKey);
+        if (Strings.isEmpty(tokenValue)) {
+            return;
+        }
+        // 查询过期时间
+        Long expire = redisTemplate.getExpire(cacheKey, TimeUnit.SECONDS);
+        if (expire == null) {
+            expire = TimeUnit.HOURS.toSeconds(Long.parseLong(SystemEnvAttr.LOGIN_TOKEN_EXPIRE.getValue()));
+        }
+        // 更新缓存
+        UserDTO userDTO = JSON.parseObject(tokenValue, UserDTO.class);
+        if (roleType != null) {
+            userDTO.setRoleType(roleType);
+        }
+        if (!Strings.isBlank(nickname)) {
+            userDTO.setNickname(nickname);
+        }
+        if (userStatus != null) {
+            userDTO.setUserStatus(userStatus);
+        }
+        redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(userDTO), expire, TimeUnit.SECONDS);
     }
 
 }
