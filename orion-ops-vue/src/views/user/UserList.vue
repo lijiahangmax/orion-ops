@@ -56,7 +56,7 @@
               启用
             </a-radio-button>
             <a-radio-button :value="2">
-              停用
+              禁用
             </a-radio-button>
           </a-radio-group>
         </div>
@@ -113,11 +113,11 @@
         <template v-slot:action="record">
           <div v-if="record.id !== $getUserId()">
             <!-- 状态 -->
-            <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前用户?`"
+            <a-popconfirm :title="`确认${record.status === 1 ? '禁用' : '启用'}当前用户?`"
                           ok-text="确定"
                           cancel-text="取消"
                           @confirm="updateStatus(record)">
-              <span class="span-blue pointer">{{ record.status === 1 ? '停用' : '启用' }}</span>
+              <span class="span-blue pointer">{{ record.status === 1 ? '禁用' : '启用' }}</span>
             </a-popconfirm>
             <a-divider type="vertical"/>
             <!-- 修改 -->
@@ -219,7 +219,7 @@ function getColumns() {
     {
       title: '最后登录时间',
       key: 'lastLoginTime',
-      width: 200,
+      width: 210,
       ellipsis: true,
       align: 'center',
       sorter: (a, b) => (a.lastLoginTime || 0) - (b.lastLoginTime || 0),
@@ -304,7 +304,7 @@ export default {
       })
     },
     updateStatus(record) {
-      const label = record.status === 1 ? '停用' : '启用'
+      const label = record.status === 1 ? '禁用' : '启用'
       const pending = this.$message.loading(`正在${label}...`)
       this.$api.updateUserStatus({
         id: record.id,

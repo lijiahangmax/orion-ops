@@ -122,8 +122,10 @@ $http.interceptors.response.use(
         // 正常返回
         return respData
       case 700:
-        // 未登录
-        $message.warning('会话过期')
+      case 730:
+      case 740:
+        // 未登录/IP封禁/用户禁用
+        $message.warning(respData.msg)
         $storage.remove($storage.keys.LOGIN_TOKEN)
         router.push({ path: '/login' })
         return Promise.reject(respData)
