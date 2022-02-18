@@ -101,6 +101,18 @@
             #{{ record.buildSeq }}
           </a-tag>
         </template>
+        <!-- 构建标题 -->
+        <template v-slot:releaseTitle="record">
+          <!-- 定时图标 -->
+          <a-tooltip v-if="record.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
+            <template #title>
+              调度时间: {{ record.timedReleaseTime | formatDate }}
+            </template>
+            <a-icon class="timed-icon" type="hourglass"/>
+          </a-tooltip>
+          <!-- 标题 -->
+          {{ record.title }}
+        </template>
         <!-- 状态 -->
         <template v-slot:status="record">
           <a-tag class="m0" :color="$enum.valueOf($enum.RELEASE_STATUS, record.status).color">
@@ -117,11 +129,14 @@
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
           <!-- 复制 -->
-          <a @click="copyRelease(record.id)">复制</a>
-          <a-divider type="vertical"/>
+          <a v-if="statusHolder.visibleCopy(record.status)" @click="copyRelease(record.id)">复制</a>
+          <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
           <!-- 发布 -->
           <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)">发布</a>
           <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
+          <!-- 取消 -->
+          <a v-if="statusHolder.visibleCancel(record.status)" @click="cancelRelease(record)">取消</a>
+          <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
           <!-- 停止 -->
           <a v-if="statusHolder.visibleTerminated(record.status)" @click="terminated(record.id)">停止</a>
           <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
@@ -170,12 +185,19 @@ import _filters from '@/lib/filters'
 
 function statusHolder() {
   return {
+    visibleCopy: (status) => {
+      return status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+    },
+    visibleCancel: (status) => {
+      return status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+    },
     visibleAudit: (status) => {
       return (status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
         status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
     },
     visibleRelease: (status) => {
-      return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
+      return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleTerminated: (status) => {
       return status === this.$enum.RELEASE_STATUS.RUNNABLE.value
@@ -203,8 +225,8 @@ const columns = [
   {
     title: '标题',
     key: 'title',
-    dataIndex: 'title',
-    ellipsis: true
+    ellipsis: true,
+    scopedSlots: { customRender: 'releaseTitle' }
   },
   {
     title: '发布应用',
@@ -392,6 +414,14 @@ export default {
         this.getList({})
       })
     },
+    cancelRelease(record) {
+      this.$api.cancelAppRelease({
+        id: record.id
+      }).then(() => {
+        this.$message.success('已取消')
+        record.status = this.$enum.RELEASE_STATUS.CANCEL.value
+      })
+    },
     runnableRelease(record) {
       this.$api.runnableAppRelease({
         id: record.id
@@ -455,6 +485,7 @@ export default {
       const pollItems = this.rows.filter(r => r.status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
         r.status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value ||
         r.status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        r.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value ||
         r.status === this.$enum.RELEASE_STATUS.RUNNABLE.value)
       if (!pollItems.length) {
         return
@@ -518,6 +549,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+.timed-icon {
+  background: #12B886;
+  color: #FFF;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 3px;
+  margin-right: 2px;
+  display: inline-block;
+}
 
 </style>

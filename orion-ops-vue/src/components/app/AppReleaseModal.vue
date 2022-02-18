@@ -75,6 +75,26 @@
           </a-select>
           <a-icon type="reload" class="reload" title="刷新" @click="loadBuildList"/>
         </div>
+        <!-- 发布类型 -->
+        <div class="release-form-item">
+          <span class="release-form-item-label">
+            <span class="span-red">* </span>
+            发布类型 :
+          </span>
+          <a-radio-group v-model="submit.timedRelease" buttonStyle="solid">
+            <a-radio-button :value="type.value" v-for="type in $enum.TIMED_RELEASE_TYPE" :key="type.value">
+              {{ type.label }}
+            </a-radio-button>
+          </a-radio-group>
+        </div>
+        <!-- 调度时间 -->
+        <div class="release-form-item" v-if="submit.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
+          <span class="release-form-item-label">
+            <span class="span-red">* </span>
+            调度时间 :
+          </span>
+          <a-date-picker v-model="submit.timedReleaseTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
+        </div>
         <!-- 发布机器 -->
         <div class="release-form-item">
           <span class="release-form-item-label">
@@ -110,6 +130,7 @@
 <script>
 
 import MachineChecker from '@/components/machine/MachineChecker'
+import _enum from '@/lib/enum'
 import _filters from '@/lib/filters'
 
 export default {
@@ -130,6 +151,8 @@ export default {
         title: null,
         buildId: null,
         description: null,
+        timedRelease: _enum.TIMED_RELEASE_TYPE.NORMAL.value,
+        timedReleaseTime: null,
         machineIdList: []
       },
       visible: false,
@@ -174,6 +197,8 @@ export default {
       this.submit.title = null
       this.submit.buildId = null
       this.submit.description = null
+      this.submit.timedRelease = this.$enum.TIMED_RELEASE_TYPE.NORMAL.value
+      this.submit.timedReleaseTime = null
       this.submit.machineIdList = []
     },
     loadBuildList() {
@@ -249,6 +274,14 @@ export default {
       if (!this.submit.machineIdList.length) {
         this.$message.warning('请选择发布机器')
         return
+      }
+      if (this.submit.timedRelease === this.$enum.TIMED_RELEASE_TYPE.TIMED.value) {
+        if (!this.submit.timedReleaseTime) {
+          this.$message.warning('请选择调度时间')
+          return
+        }
+      } else {
+        this.submit.timedReleaseTime = undefined
       }
       this.loading = true
       this.$api.submitAppRelease({
