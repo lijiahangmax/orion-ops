@@ -3,26 +3,20 @@ package com.orion.ops.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.annotation.EventLog;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.ResultCode;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
+import com.orion.ops.entity.dto.LoginBindDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.PassportService;
-import com.orion.ops.utils.AvatarPicHolder;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.Valid;
-import com.orion.ops.utils.ValueMix;
+import com.orion.ops.utils.*;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -61,11 +55,12 @@ public class PassportServiceImpl implements PassportService {
         Valid.notNull(userInfo, MessageConst.USERNAME_PASSWORD_ERROR);
         // 检查密码
         boolean validPassword = ValueMix.validPassword(request.getPassword(), userInfo.getSalt(), userInfo.getPassword());
-        // 密码错误
         Valid.isTrue(validPassword, MessageConst.USERNAME_PASSWORD_ERROR);
         Valid.isTrue(Const.ENABLE.equals(userInfo.getUserStatus()), MessageConst.USER_DISABLED);
+        // 更新用户信息
         Long userId = userInfo.getId();
         String username = userInfo.getUsername();
+        String ip = request.getIp();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
         // 检查头像
@@ -74,11 +69,10 @@ public class PassportServiceImpl implements PassportService {
             userInfo.setAvatarPic(url);
             updateUser.setAvatarPic(url);
         }
-        // 更新最后登录时间
         updateUser.setUpdateTime(new Date());
         updateUser.setLastLoginTime(new Date());
         userInfoDAO.updateById(updateUser);
-        // 设置token
+        // 设置登陆信息
         long timestamp = System.currentTimeMillis();
         String loginToken = ValueMix.createLoginToken(userId, timestamp);
         UserDTO userCache = new UserDTO();
@@ -86,9 +80,21 @@ public class PassportServiceImpl implements PassportService {
         userCache.setUsername(username);
         userCache.setNickname(userInfo.getNickname());
         userCache.setRoleType(userInfo.getRoleType());
+        userCache.setUserStatus(userInfo.getUserStatus());
         userCache.setTimestamp(timestamp);
-        redisTemplate.opsForValue().set(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId), JSON.toJSONString(userCache),
-                KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        // 设置绑定信息
+        LoginBindDTO bind = new LoginBindDTO();
+        bind.setTimestamp(timestamp);
+        bind.setLoginIp(ip);
+        // 设置登陆缓存
+        long expire = Long.parseLong(SystemEnvAttr.LOGIN_TOKEN_EXPIRE.getValue());
+        String userInfoKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId);
+        redisTemplate.opsForValue().set(userInfoKey, JSON.toJSONString(userCache), expire, TimeUnit.HOURS);
+        // 设置绑定缓存
+        String loginBindKey = Strings.format(KeyConst.LOGIN_TOKEN_BIND_KEY, userId, timestamp);
+        redisTemplate.opsForValue().set(loginBindKey, JSON.toJSONString(bind), expire, TimeUnit.HOURS);
+        // 设置活跃时间
+        userActiveInterceptor.setActiveTime(userId, timestamp);
         // 返回
         UserLoginVO loginInfo = new UserLoginVO();
         loginInfo.setToken(loginToken);
@@ -96,8 +102,6 @@ public class PassportServiceImpl implements PassportService {
         loginInfo.setUsername(username);
         loginInfo.setNickname(userInfo.getNickname());
         loginInfo.setRoleType(userInfo.getRoleType());
-        // 设置活跃时间
-        userActiveInterceptor.setActiveTime(userId, timestamp);
         // 设置操作日志参数
         EventParamsHolder.addParam(EventKeys.INNER_USER_ID, userId);
         EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
@@ -106,18 +110,20 @@ public class PassportServiceImpl implements PassportService {
 
     @Override
     public void logout() {
-        Long userId = Currents.getUserId();
-        if (userId == null) {
+        UserDTO user = Currents.getUser();
+        if (user == null) {
             return;
         }
+        Long id = user.getId();
+        Long timestamp = user.getCurrentBindTimestamp();
         // 删除token
-        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
+        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_BIND_KEY, id, timestamp));
         // 删除活跃时间
-        userActiveInterceptor.deleteActiveTime(userId);
+        userActiveInterceptor.deleteActiveTime(id);
     }
 
     @Override
-    public Boolean resetPassword(UserResetRequest request) {
+    public void resetPassword(UserResetRequest request) {
         UserDTO current = Currents.getUser();
         Long updateUserId = request.getUserId();
         final boolean isAdmin = Currents.isAdministrator();
@@ -150,29 +156,47 @@ public class PassportServiceImpl implements PassportService {
         updateUser.setUpdateTime(new Date());
         userInfoDAO.updateById(updateUser);
         // 删除token
-        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
+        RedisUtils.deleteLoginToken(redisTemplate, userId);
         // 删除活跃时间
         userActiveInterceptor.deleteActiveTime(userId);
-        return updateCurrent;
     }
 
     @Override
-    public UserDTO getUserByToken(String token) {
+    public UserDTO getUserByToken(String token, String checkIp) {
         if (Strings.isBlank(token)) {
             return null;
         }
+        // 解析 token 信息
         Long[] info = ValueMix.getLoginTokenInfo(token);
         if (info == null) {
             return null;
         }
-        String cache = redisTemplate.opsForValue().get(Strings.format(KeyConst.LOGIN_TOKEN_KEY, info[0]));
-        if (Strings.isEmpty(cache)) {
+        Long userId = info[0];
+        Long timestamp = info[1];
+        // 获取用户绑定信息
+        String bindCache = redisTemplate.opsForValue().get(Strings.format(KeyConst.LOGIN_TOKEN_BIND_KEY, userId, timestamp));
+        if (Strings.isBlank(bindCache)) {
             return null;
         }
-        UserDTO user = JSON.parseObject(cache, UserDTO.class);
-        if (!info[1].equals(user.getTimestamp())) {
+        // 获取用户登陆信息
+        String userCache = redisTemplate.opsForValue().get(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
+        if (Strings.isBlank(userCache)) {
             return null;
         }
+        LoginBindDTO bind = JSON.parseObject(bindCache, LoginBindDTO.class);
+        UserDTO user = JSON.parseObject(userCache, UserDTO.class);
+        // 检查 ip 是否为登陆时的ip
+        if (checkIp != null && !checkIp.equals(bind.getLoginIp())) {
+            return null;
+        }
+        // 检查多端登陆
+        if (!EnableType.of(SystemEnvAttr.ALLOW_MULTIPLE_LOGIN.getValue()).getValue()) {
+            // 不是登陆的时间戳则证明后续有人登陆
+            if (!timestamp.equals(user.getTimestamp())) {
+                return null;
+            }
+        }
+        user.setCurrentBindTimestamp(bind.getTimestamp());
         return user;
     }
 

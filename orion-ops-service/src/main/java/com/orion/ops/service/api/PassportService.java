@@ -1,6 +1,5 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
@@ -32,16 +31,16 @@ public interface PassportService {
      * 重置密码
      *
      * @param request request
-     * @return 是否需要删除cookie
      */
-    Boolean resetPassword(UserResetRequest request);
+    void resetPassword(UserResetRequest request);
 
     /**
      * 通过token获取用户 所有通过token查用户都要用此方法
      *
-     * @param token token
+     * @param token   token
+     * @param checkIp 检查的ip 不检查设置为null
      * @return user
      */
-    UserDTO getUserByToken(String token);
+    UserDTO getUserByToken(String token, String checkIp);
 
 }
