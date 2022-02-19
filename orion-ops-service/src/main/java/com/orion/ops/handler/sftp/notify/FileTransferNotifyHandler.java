@@ -77,7 +77,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
             return;
         }
         // 获取认证用户
-        UserDTO user = passportService.getUserByToken(authToken);
+        UserDTO user = passportService.getUserByToken(authToken, null);
         if (user == null) {
             log.info("sftp-Notify 认证失败-未查询到用户 id: {}, authToken: {}", id, authToken);
             session.close(WsCloseCode.INCORRECT_TOKEN.close());

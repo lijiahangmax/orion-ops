@@ -222,7 +222,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         // 检查操作用户
-        UserDTO userDTO = passportService.getUserByToken(connectInfo.getLoginToken());
+        UserDTO userDTO = passportService.getUserByToken(connectInfo.getLoginToken(), null);
         if (userDTO == null || !tokenUserId.equals(userDTO.getId())) {
             log.info("terminal 建立连接拒绝-用户认证失败 token: {}", token);
             session.close(WsCloseCode.IDENTITY_MISMATCH.close());

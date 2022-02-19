@@ -1,5 +1,6 @@
-package com.orion.ops.handler.terminal.manager;
+package com.orion.ops.task;
 
+import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -21,8 +22,8 @@ public class TerminalDownChecker {
     private TerminalSessionManager terminalSessionManager;
 
     @Scheduled(cron = "0 */1 * * * ?")
-    private void configureTasks() {
-        terminalSessionManager.getSessionStore().forEach((k, v) -> {
+    private void checkHeartbeat() {
+        terminalSessionManager.getSessionHolder().forEach((k, v) -> {
             if (!v.isDown()) {
                 return;
             }

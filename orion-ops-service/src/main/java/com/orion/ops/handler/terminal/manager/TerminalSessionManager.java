@@ -108,7 +108,7 @@ public class TerminalSessionManager {
         }
     }
 
-    public Map<String, IOperateHandler> getSessionStore() {
+    public Map<String, IOperateHandler> getSessionHolder() {
         return sessionHolder;
     }
 
