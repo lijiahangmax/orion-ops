@@ -4,8 +4,6 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.consts.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.servlet.web.CookiesExt;
-import com.orion.utils.Strings;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -40,11 +38,7 @@ public class Currents {
      * @return token
      */
     public static String getToken(HttpServletRequest request, String token) {
-        String t = request.getHeader(token);
-        if (Strings.isEmpty(t)) {
-            t = CookiesExt.get(request, token);
-        }
-        return t;
+        return request.getHeader(token);
     }
 
     /**

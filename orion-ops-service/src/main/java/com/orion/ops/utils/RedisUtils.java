@@ -1,5 +1,9 @@
 package com.orion.ops.utils;
 
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.KeyConst;
+import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Streams;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisCallback;
@@ -53,6 +57,24 @@ public class RedisUtils {
             Streams.close(cursor);
             return keys;
         });
+    }
+
+    /**
+     * 删除用户登陆&绑定 token
+     *
+     * @param userId userId
+     */
+    public static void deleteLoginToken(RedisTemplate<String, ?> redisTemplate, Long userId) {
+        // 删除登陆 token
+        redisTemplate.delete(Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId));
+        // 删除绑定 token
+        String scanMatches = Strings.format(KeyConst.LOGIN_TOKEN_BIND_KEY, userId, "*");
+        Set<String> bindTokens = scanKeys(redisTemplate, scanMatches, Const.N_10000);
+        if (!Lists.isEmpty(bindTokens)) {
+            for (String bindToken : bindTokens) {
+                redisTemplate.delete(bindToken);
+            }
+        }
     }
 
 }
