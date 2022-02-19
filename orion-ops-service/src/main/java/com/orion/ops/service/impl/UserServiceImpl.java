@@ -192,6 +192,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Integer unlockUser(Long id) {
+        // 查询用户信息
+        UserInfoDO userInfo = userInfoDAO.selectById(id);
+        Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
+        // 更新
+        UserInfoDO update = new UserInfoDO();
+        update.setId(id);
+        update.setLockStatus(Const.ENABLE);
+        update.setFailedLoginCount(0);
+        update.setUpdateTime(new Date());
+        int effect = userInfoDAO.updateById(update);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
+        return effect;
+    }
+
+    @Override
     public Integer updateAvatar(String avatar) {
         Long userId = Currents.getUserId();
         UserInfoDO userInfo = userInfoDAO.selectById(userId);

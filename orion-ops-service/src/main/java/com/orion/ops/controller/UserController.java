@@ -92,7 +92,7 @@ public class UserController {
     @RequestMapping("/delete")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.DELETE_USER)
-    public Integer delete(@RequestBody UserInfoRequest request) {
+    public Integer deleteUser(@RequestBody UserInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return userService.deleteUser(id);
     }
@@ -103,10 +103,21 @@ public class UserController {
     @RequestMapping("/status")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.CHANGE_USER_STATUS)
-    public Integer status(@RequestBody UserInfoRequest request) {
+    public Integer updateUserStatus(@RequestBody UserInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         Integer status = Valid.in(Valid.notNull(request.getStatus()), Const.ENABLE, Const.DISABLE);
         return userService.updateStatus(id, status);
+    }
+
+    /**
+     * 解锁
+     */
+    @RequestMapping("/unlock")
+    @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.UNLOCK_USER)
+    public Integer unlockUser(@RequestBody UserInfoRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return userService.unlockUser(id);
     }
 
     /**

@@ -71,6 +71,21 @@ public class UserInfoDO implements Serializable {
     private Integer userStatus;
 
     /**
+     * 锁定状态 1正常 2锁定
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    @TableField("lock_status")
+    private Integer lockStatus;
+
+    /**
+     * 登陆失败次数
+     */
+    @TableField("failed_login_count")
+    private Integer failedLoginCount;
+
+    /**
      * 头像地址
      */
     @TableField("avatar_pic")

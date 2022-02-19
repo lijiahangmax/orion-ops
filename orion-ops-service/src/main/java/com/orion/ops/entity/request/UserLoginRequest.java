@@ -22,4 +22,9 @@ public class UserLoginRequest {
      */
     private String password;
 
+    /**
+     * ip
+     */
+    private String ip;
+
 }

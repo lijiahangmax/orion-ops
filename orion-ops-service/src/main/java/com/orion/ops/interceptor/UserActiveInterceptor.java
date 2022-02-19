@@ -1,10 +1,12 @@
 package com.orion.ops.interceptor;
 
 import com.orion.ops.aspect.LogAspect;
+import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.event.EventType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.UserEventLogService;
@@ -30,11 +32,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class UserActiveInterceptor implements HandlerInterceptor {
-
-    /**
-     * 活跃域值 2h
-     */
-    private static final long ACTIVE_THRESHOLD = 1000 * 60 * 60 * 2L;
 
     /**
      * key: 用户id
@@ -71,11 +68,14 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         long now = System.currentTimeMillis();
         Long before = activeUsers.put(userId, now);
         if (before == null) {
-            // 应用启动但是token有效
+            // 应用启动/多端登陆(单端登出) token有效
             this.refreshActive(userId, username);
             return;
         }
-        if (before + ACTIVE_THRESHOLD < now) {
+        // 获取活跃域值
+        long activeThresholdHour = Long.parseLong(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW_THRESHOLD.getValue());
+        long activeThreshold = TimeUnit.HOURS.toMillis(activeThresholdHour);
+        if (before + activeThreshold < now) {
             // 超过活跃域值
             this.refreshActive(userId, username);
         }
@@ -88,9 +88,6 @@ public class UserActiveInterceptor implements HandlerInterceptor {
      * @param username username
      */
     private void refreshActive(Long userId, String username) {
-        // 刷新登陆token
-        String loginKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId);
-        redisTemplate.expire(loginKey, KeyConst.LOGIN_TOKEN_EXPIRE, TimeUnit.SECONDS);
         // 刷新登陆时间
         userInfoDAO.updateLastLoginTime(userId);
         // 记录日志
@@ -98,6 +95,12 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
         EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
         userEventLogService.recordLog(EventType.LOGIN, true);
+        // 如果开启自动续签 刷新登陆token
+        if (EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue()) {
+            long expire = Long.parseLong(SystemEnvAttr.LOGIN_TOKEN_EXPIRE.getValue());
+            String loginKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId);
+            redisTemplate.expire(loginKey, expire, TimeUnit.HOURS);
+        }
     }
 
     /**

@@ -11,6 +11,8 @@
         <result column="salt" property="salt"/>
         <result column="role_type" property="roleType"/>
         <result column="user_status" property="userStatus"/>
+        <result column="failed_login_count" property="failedLoginCount"/>
+        <result column="lock_status" property="lockStatus"/>
         <result column="avatar_pic" property="avatarPic"/>
         <result column="contact_phone" property="contactPhone"/>
         <result column="contact_email" property="contactEmail"/>
@@ -22,7 +24,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, username, nickname, password, salt, role_type, user_status, avatar_pic, contact_phone, contact_email, last_login_time, deleted, create_time, update_time
+        id, username, nickname, password, salt, role_type, user_status, lock_status, failed_login_count, avatar_pic, contact_phone, contact_email, last_login_time, deleted, create_time, update_time
     </sql>
 
     <update id="updateLastLoginTime">

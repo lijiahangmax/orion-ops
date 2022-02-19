@@ -42,12 +42,20 @@ public class UserInfoVO {
     private Integer role;
 
     /**
-     * 1启用 2停用
+     * 用户状态 1启用 2停用
      *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
     private Integer status;
+
+    /**
+     * 锁定状态 1正常 2锁定
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    private Integer locked;
 
     /**
      * 手机号
@@ -82,6 +90,7 @@ public class UserInfoVO {
             vo.setNickname(d.getNickname());
             vo.setRole(d.getRoleType());
             vo.setStatus(d.getUserStatus());
+            vo.setLocked(d.getLockStatus());
             vo.setPhone(d.getContactPhone());
             vo.setEmail(d.getContactEmail());
             Date lastLoginTime = d.getLastLoginTime();

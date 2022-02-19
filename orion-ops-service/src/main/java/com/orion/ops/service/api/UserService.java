@@ -63,6 +63,14 @@ public interface UserService {
     Integer updateStatus(Long id, Integer status);
 
     /**
+     * 解锁用户
+     *
+     * @param id  id
+     * @return effect
+     */
+    Integer unlockUser(Long id);
+
+    /**
      * 更新头像
      *
      * @param avatar base64
