@@ -8,13 +8,13 @@
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
         <a-form-item label="key" v-show="id == null">
-          <a-input v-decorator="decorators.key"/>
+          <a-input v-decorator="decorators.key" allowClear/>
         </a-form-item>
-        <a-form-item label="value">
-          <a-input v-decorator="decorators.value"/>
+        <a-form-item label="value" style="margin-bottom: 12px;">
+          <a-textarea v-decorator="decorators.value" allowClear/>
         </a-form-item>
-        <a-form-item label="描述">
-          <a-textarea v-decorator="decorators.description"/>
+        <a-form-item label="描述" style="margin-bottom: 0;">
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

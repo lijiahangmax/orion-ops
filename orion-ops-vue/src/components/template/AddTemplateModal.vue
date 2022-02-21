@@ -7,14 +7,14 @@
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="模板名称">
-          <a-input v-decorator="decorators.name"/>
+        <a-form-item label="模板名称" hasFeedback>
+          <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
         <a-form-item label="模板内容">
           <Editor :height="350" v-decorator="decorators.value"/>
         </a-form-item>
         <a-form-item label="模板描述">
-          <a-input v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

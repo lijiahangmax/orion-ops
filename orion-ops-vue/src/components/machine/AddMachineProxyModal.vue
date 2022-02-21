@@ -9,16 +9,16 @@
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
         <a-form-item label="代理主机" hasFeedback>
-          <a-input v-decorator="decorators.host"/>
+          <a-input v-decorator="decorators.host" allowClear/>
         </a-form-item>
         <a-form-item label="代理端口" hasFeedback>
-          <a-input v-decorator="decorators.port"/>
+          <a-input v-decorator="decorators.port" allowClear/>
         </a-form-item>
         <a-form-item label="代理用户">
-          <a-input v-decorator="decorators.username"/>
+          <a-input v-decorator="decorators.username" allowClear/>
         </a-form-item>
         <a-form-item label="密码">
-          <a-input-password v-decorator="decorators.password"/>
+          <a-input-password v-decorator="decorators.password" allowClear/>
         </a-form-item>
         <a-form-item label="代理类型">
           <a-select v-decorator="decorators.type" placeholder="请选择">
@@ -28,7 +28,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="描述">
-          <a-textarea v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

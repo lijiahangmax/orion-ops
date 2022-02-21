@@ -1,26 +1,47 @@
 <template>
   <a-modal v-model="visible"
            :title="title"
-           :width="550"
+           :width="560"
            :okButtonProps="{props: {disabled: loading}}"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="名称">
-          <a-input v-decorator="decorators.name"/>
+        <a-form-item label="名称" hasFeedback>
+          <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="url">
-          <a-input v-decorator="decorators.url"/>
+        <a-form-item label="url" hasFeedback>
+          <a-input v-decorator="decorators.url" allowClear/>
         </a-form-item>
-        <a-form-item label="资源用户">
-          <a-input v-decorator="decorators.username"/>
+        <a-form-item label="认证方式">
+          <a-radio-group v-decorator="decorators.authType">
+            <a-radio :value="type.value" v-for="type in $enum.VCS_AUTH_TYPE" :key="type.value">
+              {{ type.label }}
+            </a-radio>
+          </a-radio-group>
         </a-form-item>
-        <a-form-item label="资源密码">
-          <a-input-password v-decorator="decorators.password"/>
+        <a-form-item label="资源用户" v-if="visibleUsername()" hasFeedback>
+          <a-input v-decorator="decorators.username" allowClear/>
+        </a-form-item>
+        <a-form-item label="认证令牌" v-if="!visiblePassword()" style="margin-bottom: 0">
+          <a-form-item style="display: inline-block; width: 30%">
+            <a-select v-decorator="decorators.tokenType">
+              <a-select-option :value="type.value" v-for="type in $enum.VCS_TOKEN_TYPE" :key="type.value">
+                {{ type.label }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+          <a-form-item style="display: inline-block; width: 70%">
+            <a-input v-decorator="decorators.privateToken"
+                     :placeholder="getPrivateTokenPlaceholder()"
+                     allowClear/>
+          </a-form-item>
+        </a-form-item>
+        <a-form-item label="资源密码" v-if="visiblePassword()">
+          <a-input-password v-decorator="decorators.password" allowClear/>
         </a-form-item>
         <a-form-item label="描述">
-          <a-textarea v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -29,10 +50,11 @@
 
 <script>
 import { pick } from 'lodash'
+import _enum from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
-  wrapperCol: { span: 17 }
+  wrapperCol: { span: 16 }
 }
 
 function getDecorators() {
@@ -53,6 +75,20 @@ function getDecorators() {
       }, {
         max: 1024,
         message: 'url长度不能大于1024位'
+      }]
+    }],
+    authType: ['authType', {
+      initialValue: _enum.VCS_AUTH_TYPE.PASSWORD.value
+    }],
+    tokenType: ['tokenType', {
+      initialValue: _enum.VCS_TOKEN_TYPE.GITHUB.value
+    }],
+    privateToken: ['privateToken', {
+      rules: [{
+        max: 128,
+        message: '令牌长度不能大于256位'
+      }, {
+        validator: this.validatePrivateToken
       }]
     }],
     username: ['username', {
@@ -110,14 +146,35 @@ export default {
       this.form.resetFields()
       this.visible = true
       this.id = row.id
-      this.record = pick(Object.assign({}, row), 'name', 'url', 'username', 'description')
+      this.record = pick(Object.assign({}, row), 'name', 'url', 'authType', 'tokenType', 'username', 'description')
+      const tokenType = this.record.tokenType
+      if (!this.visibleUsername(this.record.authType, tokenType)) {
+        delete this.record.username
+      }
+      delete this.record.tokenType
+      // 设置数据
       this.$nextTick(() => {
         this.form.setFieldsValue(this.record)
+        // tokenType必须异步加载
+        if (this.record.authType === this.$enum.VCS_AUTH_TYPE.TOKEN.value) {
+          this.$nextTick(() => {
+            this.form.setFieldsValue({ tokenType })
+          })
+        }
       })
+    },
+    validatePrivateToken(rule, value, callback) {
+      if (!this.id && !value) {
+        callback(new Error('请输入私人令牌'))
+      } else {
+        callback()
+      }
     },
     validateUsername(rule, value, callback) {
       if (this.form.getFieldValue('password') && !value) {
         callback(new Error('用户名和密码须同时存在'))
+      } else if (this.form.getFieldValue('tokenType') === this.$enum.VCS_TOKEN_TYPE.GITEE.value && !value) {
+        callback(new Error('gitee 令牌认证用户名必填'))
       } else {
         callback()
       }
@@ -128,6 +185,18 @@ export default {
       } else {
         callback()
       }
+    },
+    visibleUsername(authType = this.form.getFieldValue('authType'), tokenType = this.form.getFieldValue('tokenType')) {
+      return authType !== this.$enum.VCS_AUTH_TYPE.TOKEN.value ||
+        (authType === this.$enum.VCS_AUTH_TYPE.TOKEN.value &&
+          tokenType === this.$enum.VCS_AUTH_TYPE.TOKEN.value)
+    },
+    visiblePassword() {
+      return this.form.getFieldValue('authType') === this.$enum.VCS_AUTH_TYPE.PASSWORD.value
+    },
+    getPrivateTokenPlaceholder() {
+      return this.$enum.valueOf(this.$enum.VCS_TOKEN_TYPE, this.form.getFieldValue('tokenType')).description ||
+        this.$enum.VCS_TOKEN_TYPE.GITHUB.description
     },
     check() {
       this.loading = true

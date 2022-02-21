@@ -1,11 +1,11 @@
 <template>
   <a-spin :spinning="loading">
     <a-form :form="form" v-bind="layout">
-      <a-form-item label="名称">
-        <a-input v-decorator="decorators.name"/>
+      <a-form-item label="名称" hasFeedback>
+        <a-input v-decorator="decorators.name" allowClear/>
       </a-form-item>
-      <a-form-item label="标签">
-        <a-input v-decorator="decorators.tag"/>
+      <a-form-item label="标签" hasFeedback>
+        <a-input v-decorator="decorators.tag" allowClear/>
       </a-form-item>
       <a-form-item label="版本仓库">
         <a-select placeholder="请选择" v-decorator="decorators.vcsId" style="width: 85%" allowClear>
@@ -18,7 +18,7 @@
         </a>
       </a-form-item>
       <a-form-item label="描述">
-        <a-textarea v-decorator="decorators.description"/>
+        <a-textarea v-decorator="decorators.description" allowClear/>
       </a-form-item>
     </a-form>
   </a-spin>
@@ -65,7 +65,7 @@ export default {
       default: () => {
         return {
           labelCol: { span: 5 },
-          wrapperCol: { span: 17 }
+          wrapperCol: { span: 16 }
         }
       }
     }

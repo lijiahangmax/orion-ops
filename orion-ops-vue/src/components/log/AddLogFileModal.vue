@@ -13,20 +13,20 @@
                            @change="setDefaultConfig"
                            v-decorator="decorators.machineId"/>
         </a-form-item>
-        <a-form-item label="名称">
-          <a-input v-decorator="decorators.name"/>
+        <a-form-item label="名称" hasFeedback>
+          <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="文件路径">
-          <a-input v-decorator="decorators.path"/>
+        <a-form-item label="文件路径" hasFeedback>
+          <a-input v-decorator="decorators.path" allowClear/>
         </a-form-item>
-        <a-form-item label="命令">
-          <a-textarea v-decorator="decorators.command"/>
+        <a-form-item label="命令" style="margin-bottom: 12px">
+          <a-textarea v-decorator="decorators.command" allowClear/>
         </a-form-item>
-        <a-form-item label="文件偏移量(行)">
-          <a-input v-decorator="decorators.offset"/>
+        <a-form-item label="文件偏移量(行)" hasFeedback>
+          <a-input v-decorator="decorators.offset" allowClear/>
         </a-form-item>
         <a-form-item label="文件编码">
-          <a-input v-decorator="decorators.charset"/>
+          <a-input v-decorator="decorators.charset" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

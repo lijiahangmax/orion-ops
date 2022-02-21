@@ -120,7 +120,8 @@
           <a-textarea class="build-form-item-input"
                       v-model="submit.description"
                       style="height: 50px; width: 430px"
-                      :maxLength="64"/>
+                      :maxLength="64"
+                      allowClear/>
         </div>
       </div>
     </a-spin>

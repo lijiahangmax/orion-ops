@@ -7,11 +7,11 @@
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="环境名称">
-          <a-input v-decorator="decorators.name"/>
+        <a-form-item label="环境名称" hasFeedback>
+          <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="标签">
-          <a-input v-decorator="decorators.tag"/>
+        <a-form-item label="标签" hasFeedback>
+          <a-input v-decorator="decorators.tag" allowClear/>
         </a-form-item>
         <a-form-item label="是否需要审核">
           <a-select v-decorator="decorators.releaseAudit">
@@ -21,7 +21,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="描述">
-          <a-textarea v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

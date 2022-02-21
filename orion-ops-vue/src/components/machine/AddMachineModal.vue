@@ -13,11 +13,11 @@
         <a-spin :spinning="loading">
           <div class="machine-info-form">
             <a-form :form="form" v-bind="layout">
-              <a-form-item label="名称">
-                <a-input v-decorator="decorators.name"/>
+              <a-form-item label="名称" hasFeedback>
+                <a-input v-decorator="decorators.name" allowClear/>
               </a-form-item>
-              <a-form-item label="标签">
-                <a-input v-decorator="decorators.tag"/>
+              <a-form-item label="标签" hasFeedback>
+                <a-input v-decorator="decorators.tag" allowClear/>
               </a-form-item>
               <a-form-item label="ssh信息" style="margin-bottom: 0">
                 <a-form-item style="display: inline-block; width: 35%">
@@ -30,7 +30,7 @@
                            placeholder="主机"
                            v-decorator="decorators.host"/>
                 </a-form-item>
-                <a-form-item style="display: inline-block; width: 25%">
+                <a-form-item hasFeedback style="display: inline-block; width: 25%">
                   <a-input addon-before="-p"
                            placeholder="端口"
                            v-decorator="decorators.sshPort"/>
@@ -68,7 +68,7 @@
                 </a>
               </a-form-item>
               <a-form-item label="描述">
-                <a-textarea v-decorator="decorators.description"/>
+                <a-textarea v-decorator="decorators.description" allowClear/>
               </a-form-item>
             </a-form>
           </div>
@@ -84,12 +84,13 @@
 </template>
 
 <script>
+import _enum from '@/lib/enum'
 import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 import { pick } from 'lodash'
 
 const layout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 16 }
+  wrapperCol: { span: 17 }
 }
 
 function getDecorators() {
@@ -130,7 +131,7 @@ function getDecorators() {
       }]
     }],
     authType: ['authType', {
-      initialValue: 2
+      initialValue: _enum.MACHINE_AUTH_TYPE.KEY.value
     }],
     password: ['password', {
       rules: [{

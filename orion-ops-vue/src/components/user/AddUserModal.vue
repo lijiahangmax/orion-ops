@@ -7,14 +7,14 @@
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="用户名">
-          <a-input :disabled="!!id" v-decorator="decorators.username"/>
+        <a-form-item label="用户名" hasFeedback>
+          <a-input :disabled="!!id" v-decorator="decorators.username" allowClear/>
         </a-form-item>
-        <a-form-item label="昵称">
-          <a-input v-decorator="decorators.nickname"/>
+        <a-form-item label="昵称" hasFeedback>
+          <a-input v-decorator="decorators.nickname" allowClear/>
         </a-form-item>
         <a-form-item v-if="!id" label="密码">
-          <a-input-password v-decorator="decorators.password"/>
+          <a-input-password v-decorator="decorators.password" allowClear/>
         </a-form-item>
         <a-form-item label="角色">
           <a-select v-decorator="decorators.role">
@@ -23,11 +23,11 @@
             </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="联系电话">
-          <a-input v-decorator="decorators.phone"/>
+        <a-form-item label="联系电话" hasFeedback>
+          <a-input v-decorator="decorators.phone" allowClear/>
         </a-form-item>
-        <a-form-item label="联系邮箱">
-          <a-input v-decorator="decorators.email"/>
+        <a-form-item label="联系邮箱" hasFeedback>
+          <a-input v-decorator="decorators.email" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

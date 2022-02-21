@@ -9,7 +9,7 @@
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
         <a-form-item label="秘钥名称" hasFeedback>
-          <a-input v-decorator="decorators.name"/>
+          <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
         <a-form-item label="秘钥文件">
           <a-upload v-decorator="decorators.file"
@@ -20,10 +20,10 @@
           </a-upload>
         </a-form-item>
         <a-form-item label="密码">
-          <a-input-password v-decorator="decorators.password"/>
+          <a-input-password v-decorator="decorators.password" allowClear/>
         </a-form-item>
         <a-form-item label="描述">
-          <a-textarea v-decorator="decorators.description"/>
+          <a-textarea v-decorator="decorators.description" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>

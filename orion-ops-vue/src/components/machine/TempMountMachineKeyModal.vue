@@ -16,7 +16,7 @@
           </a-upload>
         </a-form-item>
         <a-form-item label="密码">
-          <a-input-password v-decorator="decorators.password"/>
+          <a-input-password v-decorator="decorators.password" allowClear/>
         </a-form-item>
       </a-form>
     </a-spin>
