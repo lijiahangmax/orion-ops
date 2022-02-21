@@ -8,6 +8,7 @@ import com.orion.exception.argument.RpcWrapperException;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
+import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
 import com.orion.ops.interceptor.UserActiveInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ import java.io.InterruptedIOException;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Resource
+    private IpFilterInterceptor ipFilterInterceptor;
+
+    @Resource
     private AuthenticateInterceptor authenticateInterceptor;
 
     @Resource
@@ -51,13 +55,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // IP拦截器
+        registry.addInterceptor(ipFilterInterceptor)
+                .addPathPatterns("/**")
+                .order(5);
         // 认证拦截器
         registry.addInterceptor(authenticateInterceptor)
                 .addPathPatterns("/orion/api/**")
                 .order(10);
+        // 权限拦截器
         registry.addInterceptor(roleInterceptor)
                 .addPathPatterns("/orion/api/**")
                 .order(20);
+        // 活跃拦截器
         registry.addInterceptor(userActiveInterceptor)
                 .addPathPatterns("/orion/api/**")
                 .excludePathPatterns("/orion/api/auth/**")
