@@ -3,16 +3,10 @@ package com.orion.ops.runner;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.machine.MachineAuthType;
-import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.tail.FileTailMode;
-import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
-import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.utils.Strings;
+import com.orion.ops.service.api.MachineEnvService;
 import com.orion.utils.Systems;
-import com.orion.utils.io.Files1;
 import com.orion.utils.net.IPs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +14,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 宿主机初始化
@@ -30,7 +23,7 @@ import java.util.List;
  * @since 2021/3/29 18:54
  */
 @Component
-@Order(100)
+@Order(1600)
 @Slf4j
 public class HostMachineInitialize implements CommandLineRunner {
 
@@ -38,28 +31,26 @@ public class HostMachineInitialize implements CommandLineRunner {
     private MachineInfoDAO machineInfoDAO;
 
     @Resource
-    private MachineEnvDAO machineEnvDAO;
+    private MachineEnvService machineEnvService;
 
     @Override
     public void run(String... args) {
-        // 初始化宿主机
+        log.info("初始化宿主机配置-开始");
         this.initMachine();
-        // 初始化环境
-        this.initEnv();
+        log.info("初始化宿主机配置-结束");
     }
 
     /**
      * 初始化宿主机
      */
     private void initMachine() {
-        log.info("初始化宿主机配置-开始");
         LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
-                .eq(MachineInfoDO::getId, 1);
+                .eq(MachineInfoDO::getId, Const.HOST_MACHINE_ID);
         MachineInfoDO machineInfo = machineInfoDAO.selectOne(wrapper);
         if (machineInfo == null) {
+            // 插入机器
             MachineInfoDO insert = new MachineInfoDO();
             insert.setMachineHost(IPs.IP);
-            // insert.setMachineHost(Const.LOCALHOST_IP_V4);
             insert.setSshPort(22);
             insert.setMachineName(Systems.HOST_NAME);
             insert.setDescription("宿主机");
@@ -68,81 +59,10 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);
             machineInfoDAO.setId(insert.getId(), Const.HOST_MACHINE_ID);
+            log.info("宿主机已初始化");
+            // 初始化环境变量
+            machineEnvService.initEnv(Const.HOST_MACHINE_ID);
         }
-        log.info("初始化宿主机配置-结束");
-    }
-
-    /**
-     * 初始化环境
-     */
-    private void initEnv() {
-        log.info("初始化宿主机环境-开始");
-        LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                .eq(MachineEnvDO::getMachineId, Const.HOST_MACHINE_ID);
-        List<MachineEnvDO> envList = machineEnvDAO.selectList(wrapper);
-        for (String key : MachineEnvAttr.getKeys()) {
-            MachineEnvDO env = envList.stream()
-                    .filter(s -> s.getAttrKey().equals(key))
-                    .findFirst()
-                    .orElse(null);
-            if (env == null) {
-                MachineEnvAttr attr = MachineEnvAttr.of(key);
-                MachineEnvDO insert = new MachineEnvDO();
-                insert.setMachineId(Const.HOST_MACHINE_ID);
-                insert.setAttrKey(key);
-                insert.setAttrValue(this.getAttrValue(attr));
-                insert.setDescription(attr.getDescription());
-                machineEnvDAO.insert(insert);
-            }
-        }
-        log.info("初始化宿主机环境-结束");
-    }
-
-    /**
-     * 获取属性值
-     *
-     * @param attr attr
-     * @return value
-     */
-    private String getAttrValue(MachineEnvAttr attr) {
-        switch (attr) {
-            case LOG_PATH:
-                return createOrionOpsPath(Const.LOG_PATH);
-            case KEY_PATH:
-                return createOrionOpsPath(Const.KEYS_PATH);
-            case DIST_PATH:
-                return createOrionOpsPath(Const.DIST_PATH);
-            case PIC_PATH:
-                return createOrionOpsPath(Const.PIC_PATH);
-            case TEMP_PATH:
-                return createOrionOpsPath(Const.TEMP_PATH);
-            case SWAP_PATH:
-                return createOrionOpsPath(Const.SWAP_PATH);
-            case VCS_PATH:
-                return createOrionOpsPath(Const.VCS_PATH);
-            case TAIL_MODE:
-                return FileTailMode.TRACKER.getMode();
-            case TAIL_OFFSET:
-                return Const.TAIL_OFFSET_LINE + Strings.EMPTY;
-            case TAIL_CHARSET:
-            case SFTP_CHARSET:
-                return Const.UTF_8;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * 创建项目目录
-     *
-     * @param path path
-     * @return path
-     */
-    public static String createOrionOpsPath(String path) {
-        String dir = PathBuilders.getHostEnvPath(path);
-        dir = Files1.getPath(dir);
-        Files1.mkdirs(dir);
-        return dir;
     }
 
 }

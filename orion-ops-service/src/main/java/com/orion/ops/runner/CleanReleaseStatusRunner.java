@@ -27,7 +27,7 @@ import java.util.List;
  * @since 2021/7/29 17:49
  */
 @Component
-@Order(180)
+@Order(2400)
 @Slf4j
 public class CleanReleaseStatusRunner implements CommandLineRunner {
 

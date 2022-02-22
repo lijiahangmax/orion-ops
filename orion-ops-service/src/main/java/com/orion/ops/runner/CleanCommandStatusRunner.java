@@ -21,7 +21,7 @@ import java.util.Date;
  * @since 2021/6/5 0:18
  */
 @Component
-@Order(150)
+@Order(2200)
 @Slf4j
 public class CleanCommandStatusRunner implements CommandLineRunner {
 

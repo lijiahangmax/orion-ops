@@ -109,7 +109,21 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return FileTailMode.TRACKER.getMode();
             case ENABLE_IP_FILTER:
             case ENABLE_WHITE_IP_LIST:
+            case ENABLE_AUTO_CLEAN_FILE:
+            case ALLOW_MULTIPLE_LOGIN:
                 return EnableType.DISABLED.getLabel();
+            case LOGIN_FAILURE_LOCK:
+            case LOGIN_IP_BIND:
+            case LOGIN_TOKEN_AUTO_RENEW:
+                return EnableType.ENABLED.getLabel();
+            case LOGIN_TOKEN_EXPIRE:
+                return Const.DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR + Const.EMPTY;
+            case LOGIN_FAILURE_LOCK_THRESHOLD:
+                return Const.N_5 + Const.EMPTY;
+            case LOGIN_TOKEN_AUTO_RENEW_THRESHOLD:
+                return Const.N_2 + Const.EMPTY;
+            case FILE_CLEAN_THRESHOLD:
+                return Const.DEFAULT_FILE_CLEAN_THRESHOLD + Const.EMPTY;
             default:
                 return null;
         }

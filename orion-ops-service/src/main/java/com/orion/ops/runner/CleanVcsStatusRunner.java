@@ -1,11 +1,10 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.VcsStatus;
-import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.utils.Utils;
 import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -24,7 +23,7 @@ import java.util.List;
  * @since 2021/11/29 20:16
  */
 @Component
-@Order(160)
+@Order(2500)
 @Slf4j
 public class CleanVcsStatusRunner implements CommandLineRunner {
 
@@ -56,7 +55,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             // 删除文件夹
-            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File clonePath = new File(Utils.getVcsEventDir(id));
             Files1.delete(clonePath);
             log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }
@@ -72,7 +71,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
         for (ApplicationVcsDO vcs : vcsList) {
             // 检查是否存在
             Long id = vcs.getId();
-            File clonePath = new File(Files1.getPath(MachineEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File clonePath = new File(Utils.getVcsEventDir(id));
             if (Files1.isDirectory(clonePath)) {
                 continue;
             }

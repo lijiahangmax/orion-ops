@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  * @since 2021/6/29 18:38
  */
 @Component
-@Order(140)
+@Order(2100)
 @Slf4j
 public class CleanTransferStatusRunner implements CommandLineRunner {
 

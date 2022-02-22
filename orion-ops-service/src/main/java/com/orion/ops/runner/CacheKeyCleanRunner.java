@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2021/11/6 11:20
  */
 @Component
-@Order(120)
+@Order(1200)
 @Slf4j
 public class CacheKeyCleanRunner implements CommandLineRunner {
 
