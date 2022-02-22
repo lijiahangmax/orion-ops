@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 认证过滤器
+ * IP过滤拦截器器
  *
  * @author Jiahang Li
  * @version 1.0.0
