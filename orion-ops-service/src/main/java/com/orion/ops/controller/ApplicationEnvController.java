@@ -38,8 +38,6 @@ public class ApplicationEnvController {
     @Resource
     private ApplicationEnvService applicationEnvService;
 
-    // merge diff
-
     /**
      * 添加应用变量
      */

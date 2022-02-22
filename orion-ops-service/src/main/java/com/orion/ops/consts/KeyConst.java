@@ -20,9 +20,11 @@ public class KeyConst {
     public static final String LOGIN_TOKEN_KEY = "auth:info:{}";
 
     /**
-     * 3 day
+     * 登陆token绑定 token
+     * <p>
+     * auth:login:{id}
      */
-    public static final int LOGIN_TOKEN_EXPIRE = 60 * 60 * 24 * 3;
+    public static final String LOGIN_TOKEN_BIND_KEY = "auth:bind:{}:{}";
 
     /**
      * terminal 访问 token

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 环境变量
+ * 机器环境变量
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -32,7 +32,7 @@ import java.util.Map;
  */
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/env")
+@RequestMapping("/orion/api/machine-env")
 public class MachineEnvController {
 
     @Resource
@@ -68,27 +68,6 @@ public class MachineEnvController {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineEnvService.deleteEnv(idList);
     }
-
-    // /**
-    //  * 合并且替换
-    //  */
-    // @RequestMapping("/merge")
-    // public Integer merge(@RequestBody MachineEnvRequest request) {
-    //   Long sourceMachineId = Valid.notNull(request.getSourceMachineId());
-    //   Long targetMachineId = Valid.notNull(request.getTargetMachineId());
-    //   return machineEnvService.mergeEnv(sourceMachineId, targetMachineId);
-    //   /**
-    //    * 合并选择的目标id
-    //    */
-    //   private Long sourceMachineId;
-    //
-    //   /**
-    //    * 合并选择的目标机器id
-    //    */
-    //   private Long targetMachineId;
-    // }
-
-    // merge diff
 
     /**
      * 列表

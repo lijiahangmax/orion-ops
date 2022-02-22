@@ -152,4 +152,39 @@ public class EventKeys {
      */
     public static final String TITLE = "title";
 
+    /**
+     * 系统
+     */
+    public static final String SYSTEM = "system";
+
+    /**
+     * UA
+     */
+    public static final String USER_AGENT = "userAgent";
+
+    /**
+     * ip
+     */
+    public static final String IP = "ip";
+
+    /**
+     * before
+     */
+    public static final String BEFORE = "before";
+
+    /**
+     * after
+     */
+    public static final String AFTER = "after";
+
+    /**
+     * key
+     */
+    public static final String KEY = "key";
+
+    /**
+     * label
+     */
+    public static final String LABEL = "label";
+
 }

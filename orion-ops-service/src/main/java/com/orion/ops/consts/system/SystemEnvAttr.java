@@ -58,24 +58,69 @@ public enum SystemEnvAttr {
     TAIL_MODE("文件追踪模式 (tracker/tail)", false),
 
     /**
-     * ip 白名单 (无 value)
+     * ip 白名单
      */
     WHITE_IP_LIST("ip 白名单", true),
 
     /**
-     * ip 黑名单 (无 value)
+     * ip 黑名单
      */
     BLACK_IP_LIST("ip 黑名单", true),
 
     /**
-     * ip 白名单 (无 value)
+     * 是否启用 IP 过滤
      */
-    ENABLE_IP_FILTER("是否启用 ip 过滤", true),
+    ENABLE_IP_FILTER("是否启用IP过滤", true),
 
     /**
-     * ip 黑名单 (无 value)
+     * 是否启用 IP 白名单
      */
-    ENABLE_WHITE_IP_LIST("是否启用 ip 白名单", true),
+    ENABLE_WHITE_IP_LIST("是否启用IP白名单", true),
+
+    /**
+     * 文件清理阈值 (天)
+     */
+    FILE_CLEAN_THRESHOLD("文件清理阈值", true),
+
+    /**
+     * 是否启用自动清理
+     */
+    ENABLE_AUTO_CLEAN_FILE("是否启用自动清理", true),
+
+    /**
+     * 是否允许多端登陆
+     */
+    ALLOW_MULTIPLE_LOGIN("允许多端登陆", true),
+
+    /**
+     * 是否启用登陆失败锁定
+     */
+    LOGIN_FAILURE_LOCK("是否启用登陆失败锁定", true),
+
+    /**
+     * 是否启用登陆IP绑定
+     */
+    LOGIN_IP_BIND("是否启用登陆IP绑定", true),
+
+    /**
+     * 是否启用凭证自动续签
+     */
+    LOGIN_TOKEN_AUTO_RENEW("是否启用凭证自动续签", true),
+
+    /**
+     * 登陆凭证有效期 (时)
+     */
+    LOGIN_TOKEN_EXPIRE("登陆凭证有效期", true),
+
+    /**
+     * 登陆失败锁定阈值 (次)
+     */
+    LOGIN_FAILURE_LOCK_THRESHOLD("登陆失败锁定阈值", true),
+
+    /**
+     * 登陆自动续签阈值 (时)
+     */
+    LOGIN_TOKEN_AUTO_RENEW_THRESHOLD("登陆自动续签阈值", true),
 
     ;
 

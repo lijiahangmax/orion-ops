@@ -12,11 +12,13 @@ public class MessageConst {
     private MessageConst() {
     }
 
-    public static final String UNAUTHORIZED = "未认证";
+    public static final String UNAUTHORIZED = "会话过期";
 
-    public static final String NO_PERMISSION = "无权限";
+    public static final String NO_PERMISSION = "无操作权限";
 
-    public static final String FILE_ABSENT = "文件丢失";
+    public static final String FILE_ABSENT = "文件不存在";
+
+    public static final String IP_BAN = "当前IP已被封禁";
 
     public static final String ABSENT_PARAM = "参数缺失";
 
@@ -39,6 +41,8 @@ public class MessageConst {
     public static final String USERNAME_PASSWORD_ERROR = "用户名或密码错误";
 
     public static final String USER_DISABLED = "用户已被禁用";
+
+    public static final String USER_LOCKED = "用户已被锁定";
 
     public static final String UNKNOWN_USER = "未查询到用户信息";
 
@@ -132,7 +136,7 @@ public class MessageConst {
 
     public static final String AUTO_AUDIT_RESOLVE = "自动审核通过";
 
-    public static final String AUDIT_NO_REQUIRED = "无需审核";
+    public static final String AUDIT_NOT_REQUIRED = "无需审核";
 
     public static final String RELEASE_ABSENT = "发布单不存在";
 
@@ -169,5 +173,11 @@ public class MessageConst {
     public static final String UNABLE_CONFIG_RELEASE_MACHINE = "发布机器未配置";
 
     public static final String NO_SUCH_FILE = "未找到文件或目录";
+
+    public static final String TASK_PRESENT = "任务已存在";
+
+    public static final String INVALID_CONFIG = "配置不合法";
+
+    public static final String ERROR_EXPRESSION = "表达式错误";
 
 }

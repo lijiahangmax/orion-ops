@@ -122,6 +122,12 @@ public class Const extends com.orion.constant.Const {
 
     public static final Double D_0 = 0D;
 
+    public static final int DEFAULT_FILE_CLEAN_THRESHOLD = 60;
+
+    public static final int DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR = 24 * 2;
+
+    public static final String OAUTH2 = "oauth2";
+
     /**
      * 不安全的文件夹
      */

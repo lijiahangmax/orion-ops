@@ -99,6 +99,16 @@ public enum EventClassify {
      */
     RELEASE(85),
 
+    /**
+     * 系统环境变量操作
+     */
+    SYSTEM_ENV(90),
+
+    /**
+     * 系统操作
+     */
+    SYSTEM(95),
+
     ;
 
     /**

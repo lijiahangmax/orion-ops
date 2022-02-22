@@ -26,6 +26,16 @@ public enum ResultCode implements CodeInfo {
      */
     FILE_MISSING(720, MessageConst.FILE_ABSENT),
 
+    /**
+     * IP封禁
+     */
+    IP_BAN(730, MessageConst.IP_BAN),
+
+    /**
+     * 用户禁用
+     */
+    USER_DISABLE(740, MessageConst.USER_DISABLED),
+
     ;
 
     private final int code;
