@@ -65,7 +65,7 @@ public interface UserService {
     /**
      * 解锁用户
      *
-     * @param id  id
+     * @param id id
      * @return effect
      */
     Integer unlockUser(Long id);
@@ -77,5 +77,15 @@ public interface UserService {
      * @return effect
      */
     Integer updateAvatar(String avatar);
+
+    /**
+     * 自动生成管理员账号
+     */
+    void generatorDefaultAdminUser();
+
+    /**
+     * 重置默认管理员密码
+     */
+    void resetDefaultAdminUserPassword();
 
 }

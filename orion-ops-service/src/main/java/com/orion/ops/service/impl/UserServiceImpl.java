@@ -11,6 +11,7 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -24,6 +25,7 @@ import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base64s;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.crypto.Signatures;
 import com.orion.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Service("userService")
 public class UserServiceImpl implements UserService {
+
+    private static final String DEFAULT_USERNAME = "orionadmin";
+
+    private static final String DEFAULT_NICKNAME = "管理员";
 
     @Resource
     private UserInfoDAO userInfoDAO;
@@ -157,7 +163,7 @@ public class UserServiceImpl implements UserService {
         // 删除
         int effect = userInfoDAO.deleteById(id);
         // 删除token
-        RedisUtils.deleteLoginToken(redisTemplate, userId);
+        RedisUtils.deleteLoginToken(redisTemplate, id);
         // 删除活跃时间
         userActiveInterceptor.deleteActiveTime(id);
         // 设置日志参数
@@ -229,6 +235,55 @@ public class UserServiceImpl implements UserService {
         update.setAvatarPic(url);
         update.setUpdateTime(new Date());
         return userInfoDAO.updateById(update);
+    }
+
+    @Override
+    public void generatorDefaultAdminUser() {
+        // 用户名重复检查
+        LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
+                .eq(UserInfoDO::getUsername, DEFAULT_USERNAME);
+        UserInfoDO admin = userInfoDAO.selectOne(wrapper);
+        if (admin != null) {
+            return;
+        }
+        // 密码
+        String salt = UUIds.random19();
+        String password = ValueMix.encPassword(Signatures.md5(DEFAULT_USERNAME), salt);
+        // 创建
+        UserInfoDO insert = new UserInfoDO();
+        insert.setUsername(DEFAULT_USERNAME);
+        insert.setNickname(DEFAULT_NICKNAME);
+        insert.setPassword(password);
+        insert.setSalt(salt);
+        insert.setRoleType(RoleType.ADMINISTRATOR.getType());
+        insert.setUserStatus(Const.ENABLE);
+        userInfoDAO.insert(insert);
+    }
+
+    @Override
+    public void resetDefaultAdminUserPassword() {
+        // 用户名重复检查
+        LambdaQueryWrapper<UserInfoDO> wrapper = new LambdaQueryWrapper<UserInfoDO>()
+                .eq(UserInfoDO::getUsername, DEFAULT_USERNAME);
+        UserInfoDO admin = userInfoDAO.selectOne(wrapper);
+        if (admin != null) {
+            // 重置用户
+            Long id = admin.getId();
+            UserInfoDO update = new UserInfoDO();
+            String password = ValueMix.encPassword(Signatures.md5(DEFAULT_USERNAME), admin.getSalt());
+            update.setId(id);
+            update.setPassword(password);
+            update.setFailedLoginCount(0);
+            update.setUserStatus(Const.ENABLE);
+            update.setLockStatus(Const.ENABLE);
+            update.setUpdateTime(new Date());
+            userInfoDAO.updateById(update);
+            // 删除token
+            RedisUtils.deleteLoginToken(redisTemplate, id);
+        } else {
+            // 生成用户
+            this.generatorDefaultAdminUser();
+        }
     }
 
     /**
