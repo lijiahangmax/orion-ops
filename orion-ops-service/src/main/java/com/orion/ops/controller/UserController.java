@@ -100,7 +100,7 @@ public class UserController {
     /**
      * 停用/启用
      */
-    @RequestMapping("/status")
+    @RequestMapping("/update-status")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.CHANGE_USER_STATUS)
     public Integer updateUserStatus(@RequestBody UserInfoRequest request) {

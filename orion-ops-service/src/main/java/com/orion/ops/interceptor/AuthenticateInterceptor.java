@@ -3,7 +3,10 @@ package com.orion.ops.interceptor;
 import com.orion.constant.StandardContentType;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.IgnoreAuth;
+import com.orion.ops.consts.Const;
+import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.ResultCode;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.consts.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.PassportService;
@@ -20,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 认证过滤器
+ * 认证拦截器
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -37,19 +40,36 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
+        // 是否跳过
         boolean ignore = ((HandlerMethod) handler).hasMethodAnnotation(IgnoreAuth.class);
-        boolean pass = false;
+        HttpWrapper<?> rejectWrapper = null;
         String loginToken = Currents.getLoginToken(request);
         if (!Strings.isEmpty(loginToken)) {
-            UserDTO user = passportService.getUserByToken(loginToken);
+            String ip = null;
+            // 如果开启用户 ip 绑定 则获取 ip
+            if (EnableType.of(SystemEnvAttr.LOGIN_IP_BIND.getValue()).getValue()) {
+                ip = Servlets.getRemoteAddr(request);
+            }
+            // 获取用户登陆信息
+            UserDTO user = passportService.getUserByToken(loginToken, ip);
             if (user != null) {
-                pass = true;
-                UserHolder.set(user);
+                if (Const.DISABLE.equals(user.getUserStatus())) {
+                    rejectWrapper = HttpWrapper.of(ResultCode.USER_DISABLE);
+                } else {
+                    UserHolder.set(user);
+                }
+            } else {
+                rejectWrapper = HttpWrapper.of(ResultCode.UNAUTHORIZED);
             }
         }
-        if (!ignore && !pass) {
+        // 匿名接口直接返回
+        if (ignore) {
+            return true;
+        }
+        // 驳回接口设置返回
+        if (rejectWrapper != null) {
             response.setContentType(StandardContentType.APPLICATION_JSON);
-            Servlets.transfer(response, HttpWrapper.of(ResultCode.UNAUTHORIZED).toJsonString().getBytes());
+            Servlets.transfer(response, rejectWrapper.toJsonString().getBytes());
             return false;
         }
         return true;

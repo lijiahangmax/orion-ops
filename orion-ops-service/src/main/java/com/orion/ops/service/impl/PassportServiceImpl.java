@@ -53,10 +53,27 @@ public class PassportServiceImpl implements PassportService {
                 .last(Const.LIMIT_1);
         UserInfoDO userInfo = userInfoDAO.selectOne(query);
         Valid.notNull(userInfo, MessageConst.USERNAME_PASSWORD_ERROR);
+        Valid.isTrue(Const.ENABLE.equals(userInfo.getLockStatus()), MessageConst.USER_LOCKED);
         // 检查密码
         boolean validPassword = ValueMix.validPassword(request.getPassword(), userInfo.getSalt(), userInfo.getPassword());
-        Valid.isTrue(validPassword, MessageConst.USERNAME_PASSWORD_ERROR);
-        Valid.isTrue(Const.ENABLE.equals(userInfo.getUserStatus()), MessageConst.USER_DISABLED);
+        if (validPassword) {
+            Valid.isTrue(Const.ENABLE.equals(userInfo.getUserStatus()), MessageConst.USER_DISABLED);
+        } else {
+            // 开启登陆失败锁定
+            if (EnableType.of(SystemEnvAttr.LOGIN_FAILURE_LOCK.getValue()).getValue()) {
+                // 修改登录失败次数
+                UserInfoDO updateUser = new UserInfoDO();
+                updateUser.setId(userInfo.getId());
+                updateUser.setFailedLoginCount(userInfo.getFailedLoginCount() + 1);
+                updateUser.setUpdateTime(new Date());
+                if (updateUser.getFailedLoginCount() >= Integer.parseInt(SystemEnvAttr.LOGIN_FAILURE_LOCK_THRESHOLD.getValue())) {
+                    // 锁定用户
+                    updateUser.setLockStatus(Const.DISABLE);
+                }
+                userInfoDAO.updateById(updateUser);
+            }
+            throw Exceptions.invalidArgument(MessageConst.USERNAME_PASSWORD_ERROR);
+        }
         // 更新用户信息
         Long userId = userInfo.getId();
         String username = userInfo.getUsername();
@@ -69,6 +86,7 @@ public class PassportServiceImpl implements PassportService {
             userInfo.setAvatarPic(url);
             updateUser.setAvatarPic(url);
         }
+        updateUser.setFailedLoginCount(0);
         updateUser.setUpdateTime(new Date());
         updateUser.setLastLoginTime(new Date());
         userInfoDAO.updateById(updateUser);
@@ -153,6 +171,8 @@ public class PassportServiceImpl implements PassportService {
         Long userId = userInfo.getId();
         updateUser.setId(userId);
         updateUser.setPassword(newPassword);
+        updateUser.setLockStatus(Const.ENABLE);
+        updateUser.setFailedLoginCount(0);
         updateUser.setUpdateTime(new Date());
         userInfoDAO.updateById(updateUser);
         // 删除token
