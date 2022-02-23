@@ -1,71 +1,114 @@
 <template>
-  <div class="logger-view-container">
-    <!-- 工具 -->
-    <div class="log-tools" v-if="toolsProps.visible !== false">
-      <!-- 左侧工具 -->
-      <div class="log-tools-fixed-left">
-        <slot name="left-tools" v-if="toolsProps.visibleLeft !== false"/>
-      </div>
-      <!-- 右侧工具 -->
-      <div class="log-tools-fixed-right" v-if="toolsProps.visibleRight !== false">
-        <!-- 复制 -->
-        <a-button class="mr4"
-                  v-if="rightToolsProps.copy !== false"
-                  :size="size"
-                  type="primary"
-                  icon="copy"
-                  @click="copy">复制
-        </a-button>
-        <!-- 清空 -->
-        <a-button class="mr4"
-                  v-if="rightToolsProps.clean !== false"
-                  :size="size"
-                  type="default"
-                  icon="delete"
-                  @click="clear">清空
-        </a-button>
-        <!-- 下载 -->
-        <div class="log-download-wrapper" v-if="rightToolsProps.download !== false">
-          <a-button :size="size" v-if="!downloadUrl" type="default" icon="link" @click="loadDownloadUrl">获取下载链接</a-button>
-          <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
-            <a-button :size="size" type="default" icon="download">下载</a-button>
-          </a>
+  <div class="logger-view-container-wrapper">
+    <!-- 日志面板 -->
+    <div class="logger-view-container">
+      <!-- 工具 -->
+      <div class="log-tools" v-if="toolsProps.visible !== false">
+        <!-- 左侧工具 -->
+        <div class="log-tools-fixed-left">
+          <slot name="left-tools" v-if="toolsProps.visibleLeft !== false"/>
         </div>
-        <!-- 固定日志 -->
-        <div class="log-fixed-wrapper nowrap" v-if="rightToolsProps.fixed !== false">
-          <span class="log-fixed-label ml8">固定: </span>
-          <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
-        </div>
-        <!-- 状态 -->
-        <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
-          <!-- 状态 可关闭 -->
-          <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
-            <a-popconfirm title="确认关闭当前日志连接?"
-                          placement="topRight"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="close">
-              <a-badge class="pointer"
-                       :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
+        <!-- 右侧工具 -->
+        <div class="log-tools-fixed-right" v-if="toolsProps.visibleRight !== false">
+          <!-- 行数 -->
+          <div class="mr8 line-tool-container" v-if="rightToolsProps.line !== false">
+            <a-tooltip title="防止内容太多而造成浏览器卡死, 设置行数保留阈值">
+              <a-input v-model="linesThresholdTemp" :size="size" v-limit-integer addon-before="行数">
+                <template #addonAfter>
+                  <a-icon class="pointer" type="check" title="保存" @click="saveLinesThreshold"/>
+                </template>
+              </a-input>
+            </a-tooltip>
+          </div>
+          <!-- 复制 -->
+          <a-button class="mr8"
+                    v-if="rightToolsProps.copy !== false"
+                    :size="size"
+                    type="primary"
+                    icon="copy"
+                    @click="copy">
+            复制
+          </a-button>
+          <!-- 清空 -->
+          <a-button class="mr8"
+                    v-if="rightToolsProps.clean !== false"
+                    :size="size"
+                    type="default"
+                    icon="delete"
+                    @click="clear">
+            清空
+          </a-button>
+          <!-- 下载 -->
+          <div class="log-download-wrapper" v-if="rightToolsProps.download !== false">
+            <a-button :size="size" v-if="!downloadUrl" type="default" icon="link" @click="loadDownloadUrl">获取下载链接</a-button>
+            <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
+              <a-button :size="size" type="default" icon="download">下载</a-button>
+            </a>
+          </div>
+          <!-- 固定日志 -->
+          <div class="log-fixed-wrapper nowrap" v-if="rightToolsProps.fixed !== false">
+            <span class="log-fixed-label ml8">固定: </span>
+            <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
+          </div>
+          <!-- 状态 -->
+          <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
+            <!-- 状态 可关闭 -->
+            <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
+              <a-popconfirm title="确认关闭当前日志连接?"
+                            placement="topRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="close">
+                <a-badge class="pointer"
+                         :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
+                         :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
+              </a-popconfirm>
+            </template>
+            <!-- 状态 其他 -->
+            <template v-else>
+              <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
                        :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
-            </a-popconfirm>
-          </template>
-          <!-- 状态 其他 -->
-          <template v-else>
-            <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
-                     :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
-          </template>
+            </template>
+          </div>
         </div>
       </div>
+      <!-- 日志容器 -->
+      <div class="log-container"
+           ref="logContainer"
+           :style="appendStyle"
+           @contextmenu.prevent="$refs.rightMenu.openRightMenu"/>
     </div>
-    <!-- 日志容器 -->
-    <div class="log-container" ref="logContainer" :style="appendStyle"></div>
+    <!-- 事件 -->
+    <div class="logger-view-event-container">
+      <RightClickMenu ref="rightMenu" @clickRight="clickRightMenuItem">
+        <template #items>
+          <a-menu-item key="copy">
+            <span class="right-menu-item"><a-icon type="copy"/>复制所有</span>
+          </a-menu-item>
+          <a-menu-item key="clear">
+            <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+          </a-menu-item>
+          <a-menu-item key="lock" v-if="!fixedLog">
+            <span class="right-menu-item"><a-icon type="lock"/>锁定</span>
+          </a-menu-item>
+          <a-menu-item key="unlock" v-if="fixedLog">
+            <span class="right-menu-item"><a-icon type="unlock"/>滚动</span>
+          </a-menu-item>
+          <a-menu-item key="toTop">
+            <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+          </a-menu-item>
+          <a-menu-item key="toBottom">
+            <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+          </a-menu-item>
+        </template>
+      </RightClickMenu>
+    </div>
   </div>
 </template>
 
 <script>
-
 import _enum from '@/lib/enum'
+import RightClickMenu from '@/components/common/RightClickMenu'
 
 const stain = {
   DEBUG: {
@@ -94,8 +137,35 @@ const stain = {
   }
 }
 
+const urlPattern = new RegExp('(http|https)://([\\w.]+/?)\\S*\\b', 'ig')
+
+/**
+ * 右键菜单操作
+ */
+const rightMenuHandler = {
+  copy() {
+    this.copy()
+  },
+  clear() {
+    this.clear()
+  },
+  lock() {
+    this.fixedLog = true
+  },
+  unlock() {
+    this.fixedLog = false
+  },
+  toTop() {
+    this.$refs.logContainer.scrollTop = 0
+  },
+  toBottom() {
+    this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
+  }
+}
+
 export default {
   name: 'LogAppender',
+  components: { RightClickMenu },
   props: {
     config: Object,
     appendStyle: {
@@ -129,6 +199,7 @@ export default {
       type: Object,
       default: () => {
         return {
+          line: true,
           copy: true,
           clean: true,
           fixed: true,
@@ -144,7 +215,10 @@ export default {
       fixedLog: false,
       status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
       scroll: 0,
-      downloadUrl: null
+      downloadUrl: null,
+      lines: 0,
+      linesThresholdTemp: undefined,
+      linesThreshold: -1
     }
   },
   methods: {
@@ -155,11 +229,6 @@ export default {
             this.initLogTailView(data)
           })
       })
-    },
-    close() {
-      if (this.client) {
-        this.client.close()
-      }
     },
     initLogTailView(data) {
       // 打开websocket
@@ -175,6 +244,11 @@ export default {
         this.$emit('close')
       }
       this.client.onmessage = event => {
+        this.lines++
+        if (this.linesThreshold !== -1 && this.lines > this.linesThreshold) {
+          this.$refs.logContainer.removeChild(this.$refs.logContainer.childNodes[0])
+          this.lines--
+        }
         let msg
         if (event.data.length) {
           msg = event.data
@@ -196,6 +270,12 @@ export default {
     clear() {
       this.$refs.logContainer.innerHTML = ''
       this.scroll = 0
+      this.lines = 0
+    },
+    close() {
+      if (this.client) {
+        this.client.close()
+      }
     },
     storeScroll() {
       this.scroll = this.$refs.logContainer.scrollTop
@@ -225,12 +305,42 @@ export default {
     },
     stainKeywords(msg) {
       msg = this.$utils.cleanXss(msg)
+      // 高亮
       for (const stainKey in stain) {
         msg = msg.replace(stain[stainKey].reg, (keyword) => {
           return `<span class="${stain[stainKey].class}">${keyword}</span>`
         })
       }
+      // url
+      msg = msg.replace(urlPattern, (keyword) => {
+        return `<a target="_blank" class="color-url" href="${keyword}">${keyword}</a>`
+      })
       return msg
+    },
+    saveLinesThreshold() {
+      this.linesThreshold = this.linesThresholdTemp
+      this.$storage.set(this.$storage.keys.LINES_THRESHOLD, this.linesThreshold)
+      const effect = this.lines - this.linesThreshold
+      if (effect > 0) {
+        for (let i = 0; i < effect; i++) {
+          this.$refs.logContainer.removeChild(this.$refs.logContainer.childNodes[0])
+          this.lines--
+        }
+      }
+      this.$message.success('已生效')
+    },
+    clickRightMenuItem(key) {
+      rightMenuHandler[key].call(this)
+    }
+  },
+  mounted() {
+    if (this.rightToolsProps.line) {
+      const _lineThreshold = ~~this.$storage.get(this.$storage.keys.LINES_THRESHOLD) || 1000
+      this.linesThreshold = _lineThreshold
+      this.linesThresholdTemp = _lineThreshold
+      this.$storage.set(this.$storage.keys.LINES_THRESHOLD, _lineThreshold)
+    } else {
+      this.linesThreshold = -1
     }
   },
   beforeDestroy() {
@@ -262,6 +372,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+
+    .line-tool-container {
+      width: 160px;
+    }
 
     .log-fixed-wrapper {
       display: flex;
@@ -318,6 +432,10 @@ export default {
   .color-date {
     color: #80DEEA;
     font-weight: 700;
+  }
+
+  .color-url {
+    text-decoration: underline;
   }
 }
 

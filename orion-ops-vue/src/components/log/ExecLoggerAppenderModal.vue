@@ -3,12 +3,12 @@
            :closable="false"
            :title="null"
            :footer="null"
-           :dialogStyle="{top: '16px'}"
+           :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '4px'}"
            @cancel="close"
-           width="95%">
+           width="98%">
     <!-- 日志面板 -->
-    <ExecLoggerAppender ref="logger" appenderHeight="calc(100vh - 110px)"/>
+    <ExecLoggerAppender ref="logger" appenderHeight="calc(100vh - 92px)"/>
   </a-modal>
 </template>
 

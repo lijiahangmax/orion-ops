@@ -3,12 +3,12 @@
            :closable="false"
            :title="null"
            :footer="null"
-           :dialogStyle="{top: '16px'}"
+           :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '4px'}"
            @cancel="close"
-           width="95%">
+           width="98%">
     <!-- 日志面板 -->
-    <AppReleaseMachineLogAppender ref="logger" appenderHeight="calc(100vh - 164px)"/>
+    <AppReleaseMachineLogAppender ref="logger" appenderHeight="calc(100vh - 148px)"/>
   </a-modal>
 </template>
 
