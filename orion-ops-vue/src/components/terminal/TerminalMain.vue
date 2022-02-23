@@ -2,41 +2,39 @@
   <div class="terminal-main" :style="{background: this.options.theme.background}">
     <!-- terminal -->
     <div class="terminal-content">
-      <div id="terminal" ref="terminal" @contextmenu.prevent="openRightMenu"></div>
+      <div id="terminal" ref="terminal" @contextmenu.prevent="$refs.rightMenu.openRightMenu"></div>
     </div>
     <!-- 事件 -->
     <div class="terminal-event-container">
       <!-- 右键菜单 -->
-      <div id="right-menu" ref="rightMenu">
-        <a-dropdown :trigger="['click']">
-          <span ref="rightMenuTrigger" id="right-menu-trigger"></span>
-          <template #overlay>
-            <a-menu @click="clickRightMenuItem" @contextmenu.prevent>
-              <a-menu-item key="selectAll">
-                <span class="right-menu-item"><a-icon type="profile"/>全选</span>
-              </a-menu-item>
-              <a-menu-item key="copy">
-                <span class="right-menu-item"><a-icon type="copy"/>复制</span>
-              </a-menu-item>
-              <a-menu-item key="paste">
-                <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
-              </a-menu-item>
-              <a-menu-item key="clear">
-                <span class="right-menu-item"><a-icon type="stop"/>清空</span>
-              </a-menu-item>
-              <a-menu-item key="openSearch">
-                <span class="right-menu-item"><a-icon type="search"/>搜索</span>
-              </a-menu-item>
-              <a-menu-item key="toTop">
-                <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
-              </a-menu-item>
-              <a-menu-item key="toBottom">
-                <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-      </div>
+      <RightClickMenu ref="rightMenu"
+                      :x="e => e.offsetX + 10"
+                      :y="e => e.offsetY + 80"
+                      @clickRight="clickRightMenuItem">
+        <template #items>
+          <a-menu-item key="selectAll">
+            <span class="right-menu-item"><a-icon type="profile"/>全选</span>
+          </a-menu-item>
+          <a-menu-item key="copy">
+            <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+          </a-menu-item>
+          <a-menu-item key="paste">
+            <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
+          </a-menu-item>
+          <a-menu-item key="clear">
+            <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+          </a-menu-item>
+          <a-menu-item key="openSearch">
+            <span class="right-menu-item"><a-icon type="search"/>搜索</span>
+          </a-menu-item>
+          <a-menu-item key="toTop">
+            <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+          </a-menu-item>
+          <a-menu-item key="toBottom">
+            <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+          </a-menu-item>
+        </template>
+      </RightClickMenu>
       <!-- 搜索框 -->
       <div id="search-card" v-show="search.visible" @keydown.esc="closeSearch">
         <a-card title="搜索" size="small">
@@ -93,6 +91,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links'
 import { WebglAddon } from 'xterm-addon-webgl'
 
 import 'xterm/css/xterm.css'
+import RightClickMenu from '@/components/common/RightClickMenu'
 
 /**
  * 初始化terminal
@@ -348,6 +347,7 @@ function parseProtocol(msg) {
 
 export default {
   name: 'TerminalMain',
+  components: { RightClickMenu },
   props: {
     machineId: Number
   },
@@ -410,17 +410,7 @@ export default {
       this.plugin.fit.fit()
       this.term.resize(this.term.cols, this.term.rows)
     },
-    openRightMenu(e) {
-      if (e.button === 2) {
-        this.$refs.rightMenuTrigger.click()
-        this.$refs.rightMenu.style.top = (e.offsetY + 80) + 'px'
-        this.$refs.rightMenu.style.left = (e.offsetX + 10) + 'px'
-        this.$refs.rightMenu.style.display = 'block'
-      } else {
-        this.$refs.rightMenu.style.display = 'none'
-      }
-    },
-    clickRightMenuItem({ key }) {
+    clickRightMenuItem(key) {
       rightMenuHandler[key].call(this)
     },
     writerCommand(command) {
@@ -474,16 +464,6 @@ export default {
     }
   }
 
-}
-
-#right-menu {
-  position: absolute;
-  z-index: 10;
-  color: #D0EBFF;
-
-  .right-menu-item {
-    padding: 0 14px;
-  }
 }
 
 #search-card {

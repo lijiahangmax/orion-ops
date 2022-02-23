@@ -55,6 +55,7 @@
           <div class="transfer-list-item-name auto-ellipsis-item">
             <span :title="item.remoteFile">{{ item.remoteFile }}</span>
           </div>
+          <!-- 传输主体 -->
           <div class="transfer-list-item-body">
             <!-- 类型 -->
             <div class="transfer-list-item-type">
@@ -121,44 +122,44 @@
     <!-- 事件 -->
     <div class="transfer-event-container">
       <!-- 右键菜单 -->
-      <div id="transfer-right-menu" ref="transferRightMenu">
-        <a-dropdown :trigger="['click']">
-          <span ref="transferRightMenuTrigger"/>
-          <template #overlay>
-            <a-menu v-if="curr" @click="clickTransferRightMenuItem">
-              <a-menu-item key="resumeFile" v-if="curr.status === 30">
-                <span class="transfer-right-menu-item"><a-icon type="play-circle"/>开始</span>
-              </a-menu-item>
-              <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type !== 40">
-                <span class="transfer-right-menu-item"><a-icon type="pause-circle"/>暂停</span>
-              </a-menu-item>
-              <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type === 40">
-                <span class="transfer-right-menu-item"><a-icon type="stop"/>取消</span>
-              </a-menu-item>
-              <a-menu-item key="retryFile" v-if="curr.status === 60 && curr.type !== 40">
-                <span class="transfer-right-menu-item"><a-icon type="sync"/>重试</span>
-              </a-menu-item>
-              <a-menu-item key="removeFile">
-                <span class="transfer-right-menu-item"><a-icon type="close-circle"/>删除</span>
-              </a-menu-item>
-              <a-menu-item key="reUploadFile" v-if="curr.type === 10">
-                <span class="transfer-right-menu-item"><a-icon type="redo"/>重新上传</span>
-              </a-menu-item>
-              <a-menu-item key="reDownloadFile" v-if="curr.type === 20">
-                <span class="transfer-right-menu-item"><a-icon type="redo"/>重新下载</span>
-              </a-menu-item>
-              <a-menu-item key="clearAllFile">
-                <span class="transfer-right-menu-item"><a-icon type="stop"/>清空所有</span>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
-      </div>
+      <RightClickMenu ref="rightMenu"
+                      :x="e => e.offsetX + 20"
+                      :y="e => e.y - 110"
+                      @clickRight="clickTransferRightMenuItem">
+        <template #items v-if="curr">
+          <a-menu-item key="resumeFile" v-if="curr.status === 30">
+            <span class="right-menu-item"><a-icon type="play-circle"/>开始</span>
+          </a-menu-item>
+          <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type !== 40">
+            <span class="right-menu-item"><a-icon type="pause-circle"/>暂停</span>
+          </a-menu-item>
+          <a-menu-item key="pauseFile" v-if="(curr.status === 10 || curr.status === 20) && curr.type === 40">
+            <span class="right-menu-item"><a-icon type="stop"/>取消</span>
+          </a-menu-item>
+          <a-menu-item key="retryFile" v-if="curr.status === 60 && curr.type !== 40">
+            <span class="right-menu-item"><a-icon type="sync"/>重试</span>
+          </a-menu-item>
+          <a-menu-item key="removeFile">
+            <span class="right-menu-item"><a-icon type="close-circle"/>删除</span>
+          </a-menu-item>
+          <a-menu-item key="reUploadFile" v-if="curr.type === 10">
+            <span class="right-menu-item"><a-icon type="redo"/>重新上传</span>
+          </a-menu-item>
+          <a-menu-item key="reDownloadFile" v-if="curr.type === 20">
+            <span class="right-menu-item"><a-icon type="redo"/>重新下载</span>
+          </a-menu-item>
+          <a-menu-item key="clearAllFile">
+            <span class="right-menu-item"><a-icon type="stop"/>清空所有</span>
+          </a-menu-item>
+        </template>
+      </RightClickMenu>
     </div>
   </div>
 </template>
 
 <script>
+
+import RightClickMenu from '@/components/common/RightClickMenu'
 
 /**
  * 打开sftp通知
@@ -237,6 +238,7 @@ const transferRightMenuHandler = {
 
 export default {
   name: 'FileTransferList',
+  components: { RightClickMenu },
   props: {
     sessionToken: String
   },
@@ -321,15 +323,10 @@ export default {
     openTransferRightMenu(e, item) {
       if (e.button === 2) {
         this.curr = item
-        this.$refs.transferRightMenuTrigger.click()
-        this.$refs.transferRightMenu.style.left = (e.offsetX + 20) + 'px'
-        this.$refs.transferRightMenu.style.top = (e.y - 110) + 'px'
-        this.$refs.transferRightMenu.style.display = 'block'
-      } else {
-        this.$refs.transferRightMenu.style.display = 'none'
+        this.$refs.rightMenu.openRightMenu(e)
       }
     },
-    clickTransferRightMenuItem({ key }) {
+    clickTransferRightMenuItem(key) {
       transferRightMenuHandler[key].call(this)
     }
   }
@@ -413,16 +410,6 @@ export default {
     .transfer-list-item-action {
       margin: 5px 0 0 8px;
     }
-  }
-}
-
-#transfer-right-menu {
-  position: absolute;
-  z-index: 10;
-  color: #D0EBFF;
-
-  .transfer-right-menu-item {
-    padding: 0 14px;
   }
 }
 

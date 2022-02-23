@@ -22,6 +22,7 @@
     <MachineSftpMain ref="sftpMain"
                      :machineId="machineId"
                      :leftFolderDefaultVisible="false"
+                     :visibleRightMenu="false"
                      @opened="() => init = true"/>
   </a-drawer>
 </template>

@@ -92,6 +92,7 @@
                    @change="changePage"
                    :scroll="{x: '100%'}"
                    :loading="loading"
+                   :customRow="customClick"
                    size="small">
             <!-- 名称 -->
             <template v-slot:name="record">
@@ -170,9 +171,14 @@
               </a-button>
               <a-divider type="vertical"/>
               <!-- 移动 -->
-              <a @click="openMove(record)" title="移动">
+              <a-button class="p0"
+                        type="link"
+                        :title="record.isSafe ? '移动' : '无法移动'"
+                        style="height: 22px"
+                        :disabled="!record.isSafe"
+                        @click="openMove(record)">
                 <a-icon type="block"/>
-              </a>
+              </a-button>
               <a-divider type="vertical"/>
               <!-- 提权 -->
               <a @click="openChmod(record)" title="提权">
@@ -191,6 +197,32 @@
       <SftpMoveModal ref="moveModal" :sessionToken="sessionToken" :files="files"/>
       <!-- 文件提权模态框 -->
       <SftpChmodModal ref="chmodModal" :sessionToken="sessionToken" :files="files"/>
+      <!-- 右键菜单 -->
+      <RightClickMenu ref="fileRightMenu"
+                      :x="e => e.clientX + 2"
+                      :y="e => e.y + 2"
+                      @clickRight="clickFileRightMenuItem">
+        <template #items v-if="curr">
+          <a-menu-item key="copyName">
+            <span class="right-menu-item"><a-icon type="copy"/>复制名称</span>
+          </a-menu-item>
+          <a-menu-item key="copyPath">
+            <span class="right-menu-item"><a-icon type="snippets"/>复制路径</span>
+          </a-menu-item>
+          <a-menu-item key="downloadFile">
+            <span class="right-menu-item"><a-icon type="cloud-download"/>下载</span>
+          </a-menu-item>
+          <a-menu-item key="deleteFile" v-if="curr.isSafe">
+            <span class="right-menu-item"><a-icon type="delete"/>删除文件</span>
+          </a-menu-item>
+          <a-menu-item key="moveFile" v-if="curr.isSafe">
+            <span class="right-menu-item"><a-icon type="block"/>移动</span>
+          </a-menu-item>
+          <a-menu-item key="chomdFile">
+            <span class="right-menu-item"><a-icon type="team"/>提权</span>
+          </a-menu-item>
+        </template>
+      </RightClickMenu>
     </div>
   </div>
 </template>
@@ -201,6 +233,7 @@ import SftpTouchModal from './SftpTouchModal'
 import SftpMoveModal from './SftpMoveModal'
 import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
+import RightClickMenu from '@/components/common/RightClickMenu'
 import SftpUpload from './SftpUpload'
 import { Empty } from 'ant-design-vue'
 import _filters from '@/lib/filters'
@@ -262,11 +295,47 @@ const fileListColumns = function() {
   ]
 }
 
+/**
+ * 右键菜单操作
+ */
+const fileRightMenuHandler = {
+  copyName() {
+    this.$copy(this.curr.name)
+  },
+  copyPath() {
+    this.$copy(this.curr.path)
+  },
+  downloadFile() {
+    if (this.curr.isDir) {
+      this.$confirm({
+        content: '确定要下载当前文件夹?',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          this.download(this.curr)
+        }
+      })
+    } else {
+      this.download(this.curr)
+    }
+  },
+  deleteFile() {
+    this.remove(this.curr)
+  },
+  moveFile() {
+    this.openMove(this.curr)
+  },
+  chomdFile() {
+    this.openChmod(this.curr)
+  }
+}
+
 export default {
   name: 'MachineSftpMain',
   props: {
     machineId: Number,
-    leftFolderDefaultVisible: Boolean
+    leftFolderDefaultVisible: Boolean,
+    visibleRightMenu: Boolean
   },
   components: {
     SftpFolderTree,
@@ -274,7 +343,8 @@ export default {
     SftpMoveModal,
     SftpChmodModal,
     FileTransferList,
-    SftpUpload
+    SftpUpload,
+    RightClickMenu
   },
   data: function() {
     return {
@@ -292,6 +362,20 @@ export default {
       nameSearchInput: null,
       uploadVisible: false,
       emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
+      curr: null,
+      customClick: record => ({
+        on: {
+          contextmenu: e => {
+            if (this.visibleRightMenu) {
+              e.preventDefault()
+              if (e.button === 2) {
+                this.curr = record
+                this.$refs.fileRightMenu.openRightMenu(e)
+              }
+            }
+          }
+        }
+      }),
       pagination: {
         current: 1,
         pageSize: 12,
@@ -512,6 +596,9 @@ export default {
       setTimeout(() => {
         this.$refs.transferList.open()
       })
+    },
+    clickFileRightMenuItem(key) {
+      fileRightMenuHandler[key].call(this)
     }
   },
   filters: {

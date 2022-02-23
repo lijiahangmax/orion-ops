@@ -30,6 +30,7 @@
         <MachineSftpMain ref="sftpMain"
                          :machineId="machineId"
                          :leftFolderDefaultVisible="true"
+                         :visibleRightMenu="true"
                          @opened="sftpOpened"/>
       </a-layout-content>
     </a-layout>

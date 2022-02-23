@@ -115,7 +115,7 @@
                      :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
         </span>
         </template>
-        <!-- 更多 -->
+        <!-- 操作 -->
         <template v-slot:action="record">
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
