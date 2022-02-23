@@ -66,6 +66,10 @@
             {{ record.url }}
           </span>
         </template>
+        <!-- 资源用户 -->
+        <template v-slot:username="record">
+          {{ record.authType === $enum.VCS_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
+        </template>
         <!-- 状态 -->
         <template v-slot:status="record">
           <a-tag :color="$enum.valueOf($enum.VCS_STATUS, record.status).color">
@@ -171,10 +175,10 @@ const columns = [
   },
   {
     title: '资源用户',
-    dataIndex: 'username',
     key: 'username',
     ellipsis: true,
-    width: 180
+    width: 180,
+    scopedSlots: { customRender: 'username' }
   },
   {
     title: '状态',
@@ -266,7 +270,9 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('初始化成功')
-        this.getList({})
+        record.status = this.$enum.VCS_STATUS.OK.value
+      }).catch(() => {
+        record.status = this.$enum.VCS_STATUS.ERROR.value
       })
     },
     reInit(record) {
@@ -275,7 +281,9 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('重新初始化成功')
-        this.getList({})
+        record.status = this.$enum.VCS_STATUS.OK.value
+      }).catch(() => {
+        record.status = this.$enum.VCS_STATUS.ERROR.value
       })
     },
     add() {

@@ -126,7 +126,7 @@ $http.interceptors.response.use(
       case 740:
         // 未登录/IP封禁/用户禁用
         $message.warning(respData.msg)
-        $storage.remove($storage.keys.LOGIN_TOKEN)
+        $storage.clear()
         router.push({ path: '/login' })
         return Promise.reject(respData)
       case 500:

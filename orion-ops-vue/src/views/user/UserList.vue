@@ -47,8 +47,8 @@
       <!-- 右侧 -->
       <div class="tools-fixed-right">
         <!-- 状态单选 -->
-        <div class="mr8">
-          <a-radio-group v-model="query.status" buttonStyle="solid" @change="getList({})">
+        <div class="mr8 nowrap">
+          <a-radio-group v-model="query.status" @change="getList({})">
             <a-radio-button :value="undefined">
               全部
             </a-radio-button>
@@ -112,6 +112,14 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <div v-if="record.id !== $getUserId()">
+            <!-- 解锁 -->
+            <a-button :disabled="record.locked === 1"
+                      style="padding: 0; height: 24px"
+                      type="link"
+                      @click="unlock(record.id)">
+              解锁
+            </a-button>
+            <a-divider type="vertical"/>
             <!-- 状态 -->
             <a-popconfirm :title="`确认${record.status === 1 ? '禁用' : '启用'}当前用户?`"
                           ok-text="确定"
@@ -231,7 +239,7 @@ function getColumns() {
       title: '操作',
       key: 'action',
       fixed: 'right',
-      width: 260,
+      width: 310,
       align: 'center',
       scopedSlots: { customRender: 'action' }
     })
@@ -294,6 +302,14 @@ export default {
     },
     resetPassword(id) {
       this.$refs.reset.open(id)
+    },
+    unlock(id) {
+      this.$api.unlockUser({
+        id: id
+      }).then(() => {
+        this.$message.success('已解锁')
+        this.getList()
+      })
     },
     remove(id) {
       this.$api.deleteUser({

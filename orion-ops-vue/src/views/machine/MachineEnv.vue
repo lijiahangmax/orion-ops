@@ -57,7 +57,7 @@
             <span class="table-title">环境变量</span>
             <a-divider type="vertical"/>
             <!-- 视图 -->
-            <div class="mx8">
+            <div class="mx8 nowrap">
               <a-radio-group v-model="viewType" buttonStyle="solid">
                 <a-radio-button v-for="view in $enum.VIEW_TYPE"
                                 :key="view.value"

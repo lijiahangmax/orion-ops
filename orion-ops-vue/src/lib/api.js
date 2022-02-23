@@ -136,7 +136,16 @@ const $api = {
    * 更新用户
    */
   updateUserStatus: param => {
-    return $http.$post('/user/status', param)
+    return $http.$post('/user/update-status', param)
+  },
+
+  /**
+   * 解锁用户
+   */
+  unlockUser: param => {
+    return $http.$post('/user/unlock', param, {
+      loading: '正在解锁...'
+    })
   },
 
   /**
@@ -170,7 +179,7 @@ const $api = {
    * 修改机器状态
    */
   updateMachineStatus: param => {
-    return $http.$post('/machine/status', param)
+    return $http.$post('/machine/update-status', param)
   },
 
   /**
@@ -631,7 +640,7 @@ const $api = {
    * 添加机器环境变量
    */
   addMachineEnv: param => {
-    return $http.$post('/env/add', param, {
+    return $http.$post('/machine-env/add', param, {
       loading: '正在添加...'
     })
   },
@@ -640,7 +649,7 @@ const $api = {
    * 更新机器环境变量
    */
   updateMachineEnv: param => {
-    return $http.$post('/env/update', param, {
+    return $http.$post('/machine-env/update', param, {
       timeout: 600000,
       loading: '正在修改...'
     })
@@ -650,7 +659,7 @@ const $api = {
    * 删除机器环境变量
    */
   deleteMachineEnv: param => {
-    return $http.$post('/env/delete', param, {
+    return $http.$post('/machine-env/delete', param, {
       loading: '正在删除...'
     })
   },
@@ -659,28 +668,28 @@ const $api = {
    * 获取机器环境变量列表
    */
   getMachineEnvList: param => {
-    return $http.$post('/env/list', param)
+    return $http.$post('/machine-env/list', param)
   },
 
   /**
    * 获取机器环境变量详情
    */
   getMachineEnvDetail: param => {
-    return $http.$post('/env/detail', param)
+    return $http.$post('/machine-env/detail', param)
   },
 
   /**
    * 获取机器环境变量视图
    */
   getMachineEnvView: param => {
-    return $http.$post('/env/view', param)
+    return $http.$post('/machine-env/view', param)
   },
 
   /**
    * 保存机器环境变量视图
    */
   saveMachineEnvView: param => {
-    return $http.$post('/env/view/save', param, {
+    return $http.$post('/machine-env/view/save', param, {
       skipErrorMessage: true,
       timeout: 600000,
       loading: '正在保存...'
@@ -691,7 +700,7 @@ const $api = {
    * 同步机器环境变量
    */
   syncMachineEnv: param => {
-    return $http.$post('/env/sync', param, {
+    return $http.$post('/machine-env/sync', param, {
       timeout: 600000,
       loading: '正在同步...'
     })
@@ -749,7 +758,7 @@ const $api = {
    */
   terminatedExecTask: param => {
     return $http.$post('/exec/terminated', param, {
-      loading: '正在终止...'
+      loading: '正在停止...'
     })
   },
 
@@ -1323,6 +1332,15 @@ const $api = {
   },
 
   /**
+   * 应用发布取消
+   */
+  cancelAppRelease: param => {
+    return $http.$post('/app-release/cancel', param, {
+      loading: '正在取消...'
+    })
+  },
+
+  /**
    * 应用回滚发布
    */
   rollbackAppRelease: param => {
@@ -1398,6 +1416,176 @@ const $api = {
    */
   getLogList: param => {
     return $http.$post('/log/list', param)
+  },
+
+  /**
+   * 添加系统环境变量
+   */
+  addSystemEnv: param => {
+    return $http.$post('/system-env/add', param, {
+      loading: '正在添加...'
+    })
+  },
+
+  /**
+   * 更新系统环境变量
+   */
+  updateSystemEnv: param => {
+    return $http.$post('/system-env/update', param, {
+      timeout: 600000,
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 删除系统环境变量
+   */
+  deleteSystemEnv: param => {
+    return $http.$post('/system-env/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取系统环境变量列表
+   */
+  getSystemEnvList: param => {
+    return $http.$post('/system-env/list', param)
+  },
+
+  /**
+   * 获取系统环境变量详情
+   */
+  getSystemEnvDetail: param => {
+    return $http.$post('/system-env/detail', param)
+  },
+
+  /**
+   * 获取系统环境变量视图
+   */
+  getSystemEnvView: param => {
+    return $http.$post('/system-env/view', param)
+  },
+
+  /**
+   * 保存系统环境变量视图
+   */
+  saveSystemEnvView: param => {
+    return $http.$post('/system-env/view/save', param, {
+      skipErrorMessage: true,
+      timeout: 600000,
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 获取 ip 配置
+   */
+  getIpInfo: param => {
+    return $http.$post('/system/ip-info', param)
+  },
+
+  /**
+   * 配置 ip 列表
+   */
+  configIpList: param => {
+    return $http.$post('/system/config-ip', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 获取系统分析信息
+   */
+  getSystemAnalysis: param => {
+    return $http.$post('/system/get-system-analysis', param)
+  },
+
+  /**
+   * 重新进行系统统计分析
+   */
+  reAnalysisSystem: param => {
+    return $http.$post('/system/re-analysis', param, {
+      timeout: 600000
+    })
+  },
+
+  /**
+   * 清理系统文件
+   */
+  cleanSystemFile: param => {
+    return $http.$post('/system/clean-system-file', param)
+  },
+
+  /**
+   * 修改系统配置项
+   */
+  updateSystemOption: param => {
+    return $http.$post('/system/update-system-option', param)
+  },
+
+  /**
+   * 获取系统配置项
+   */
+  getSystemOptions: param => {
+    return $http.$post('/system/get-system-options', param)
+  },
+
+  /**
+   * 获取 cron 下几次执行时间
+   */
+  getCronNextTime: param => {
+    return $http.$post('/scheduler/cron-next', param)
+  },
+
+  /**
+   * 添加调度任务
+   */
+  addSchedulerTask: param => {
+    return $http.$post('/scheduler/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改调度任务
+   */
+  updateSchedulerTask: param => {
+    return $http.$post('/scheduler/update', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 获取调度任务详情
+   */
+  getSchedulerTask: param => {
+    return $http.$post('/scheduler/get', param)
+  },
+
+  /**
+   * 获取调度任务列表
+   */
+  getSchedulerTaskList: param => {
+    return $http.$post('/scheduler/list', param)
+  },
+
+  /**
+   * 更新调度任务状态
+   */
+  updateSchedulerTaskStatus: param => {
+    return $http.$post('/scheduler/update-status', param, {
+      loading: '正在更新...'
+    })
+  },
+
+  /**
+   * 删除调度任务
+   */
+  deleteSchedulerTask: param => {
+    return $http.$post('/scheduler/delete', param, {
+      loading: '正在删除...'
+    })
   }
 
 }

@@ -17,7 +17,7 @@ const $enum = {
     } else {
       _enum = e
     }
-    for (var key in _enum) {
+    for (const key in _enum) {
       const val = _enum[key]
       if (val && val.value === value) {
         return val
@@ -223,12 +223,12 @@ const $enum = {
     ENABLE: {
       value: 1,
       label: '需要审核',
-      color: '#228BE6'
+      color: 'blue'
     },
     DISABLE: {
       value: 2,
       label: '无需审核',
-      color: '#40C057'
+      color: 'green'
     }
   },
 
@@ -301,6 +301,10 @@ const $enum = {
     APP_ENV: {
       value: 20,
       label: '应用环境变量'
+    },
+    SYSTEM_ENV: {
+      value: 30,
+      label: '系统环境变量'
     }
   },
 
@@ -390,27 +394,27 @@ const $enum = {
     WAITING: {
       value: 10,
       label: '未开始',
-      color: '#FF922B'
+      color: ''
     },
     RUNNABLE: {
       value: 20,
       label: '执行中',
-      color: '#51cf66'
+      color: 'green'
     },
     COMPLETE: {
       value: 30,
       label: '执行完成',
-      color: '#4C6EF5'
+      color: 'blue'
     },
     EXCEPTION: {
       value: 40,
       label: '执行异常',
-      color: '#F03E3E'
+      color: 'red'
     },
     TERMINATED: {
       value: 50,
-      label: '执行终止',
-      color: '#868E96'
+      label: '执行停止',
+      color: 'orange'
     }
   },
 
@@ -558,28 +562,63 @@ const $enum = {
   },
 
   /**
-   * 角色类型
+   * 仓库状态
    */
   VCS_STATUS: {
     UNINITIALIZED: {
       value: 10,
       label: '未初始化',
-      color: '#CED4DA'
+      color: ''
     },
     INITIALIZING: {
       value: 20,
       label: '未初始中',
-      color: '#51CF66'
+      color: 'green'
     },
     OK: {
       value: 30,
       label: '正常',
-      color: '#228BE6'
+      color: 'blue'
     },
     ERROR: {
       value: 40,
       label: '失败',
-      color: '#FD7E14'
+      color: 'red'
+    }
+  },
+
+  /**
+   * 仓库认证方式
+   */
+  VCS_AUTH_TYPE: {
+    PASSWORD: {
+      value: 10,
+      label: '密码认证'
+    },
+    TOKEN: {
+      value: 20,
+      label: '私人令牌'
+    }
+  },
+
+  /**
+   * 仓库令牌类型
+   */
+  VCS_TOKEN_TYPE: {
+    GITHUB: {
+      value: 10,
+      label: 'github',
+      description: 'Settings -> Developer settings -> Personal access tokens'
+    },
+    GITEE: {
+      value: 20,
+      label: 'gitee',
+      description: '设置 -> 私人令牌'
+    },
+    GITLAB: {
+      value: 30,
+      label: 'gitlab',
+      description: 'User Settings -> Access Tokens'
     }
   },
 
@@ -590,12 +629,12 @@ const $enum = {
     CONFIGURED: {
       value: 1,
       label: '已配置',
-      color: '#4C6EF5'
+      color: 'blue'
     },
     NOT_CONFIGURED: {
       value: 2,
       label: '未配置',
-      color: '#DEE2E6'
+      color: 'green'
     }
   },
 
@@ -628,16 +667,16 @@ const $enum = {
   },
 
   /**
-   * 发布序列类型
+   * 序列类型
    */
-  RELEASE_SERIAL_TYPE: {
+  SERIAL_TYPE: {
     SERIAL: {
       value: 10,
-      label: '串行发布'
+      label: '串行'
     },
     PARALLEL: {
       value: 20,
-      label: '并行发布'
+      label: '并行'
     }
   },
 
@@ -661,32 +700,32 @@ const $enum = {
   BUILD_STATUS: {
     WAIT: {
       value: 10,
-      color: '#DEE2E6',
+      color: '',
       label: '未开始',
       stepStatus: 'wait'
     },
     RUNNABLE: {
       value: 20,
-      color: '#51CF66',
+      color: 'green',
       label: '进行中',
       stepStatus: 'process'
     },
     FINISH: {
       value: 30,
-      color: '#4C6EF5',
-      label: '构建完成',
+      color: 'blue',
+      label: '已完成',
       stepStatus: 'finish'
     },
     FAILURE: {
       value: 40,
-      color: '#F03E3E',
-      label: '构建失败',
+      color: 'red',
+      label: '已失败',
       stepStatus: 'error'
     },
     TERMINATED: {
       value: 50,
-      color: '#FD7E14',
-      label: '已终止',
+      color: 'orange',
+      label: '已停止',
       stepStatus: 'finish'
     }
   },
@@ -697,38 +736,38 @@ const $enum = {
   ACTION_STATUS: {
     WAIT: {
       value: 10,
-      color: '#DEE2E6',
+      color: '',
       label: '未开始',
       stepStatus: 'wait'
     },
     RUNNABLE: {
       value: 20,
-      color: '#51CF66',
+      color: 'green',
       label: '进行中',
       stepStatus: 'process'
     },
     FINISH: {
       value: 30,
-      color: '#4C6EF5',
+      color: 'blue',
       label: '已完成',
       stepStatus: 'finish'
     },
     FAILURE: {
       value: 40,
-      color: '#F03E3E',
-      label: '执行失败',
+      color: 'red',
+      label: '已失败',
       stepStatus: 'error'
     },
     SKIPPED: {
       value: 50,
-      color: '#FCC419',
+      color: 'orange',
       label: '已跳过',
       stepStatus: 'finish'
     },
     TERMINATED: {
       value: 60,
-      color: '#FD7E14',
-      label: '已终止',
+      color: 'orange',
+      label: '已停止',
       stepStatus: 'finish'
     }
   },
@@ -739,43 +778,48 @@ const $enum = {
   RELEASE_STATUS: {
     WAIT_AUDIT: {
       value: 10,
-      color: '#CED4DA',
+      color: '',
       label: '待审核'
     },
     AUDIT_REJECT: {
       value: 20,
-      color: '#FF922B',
-      label: '审核驳回'
+      color: 'orange',
+      label: '已驳回'
     },
     WAIT_RUNNABLE: {
       value: 30,
-      color: '#12B886',
+      color: 'cyan',
       label: '待发布'
+    },
+    WAIT_SCHEDULE: {
+      value: 35,
+      color: 'cyan',
+      label: '待调度'
     },
     RUNNABLE: {
       value: 40,
-      color: '#51CF66',
+      color: 'green',
       label: '发布中'
     },
     FINISH: {
       value: 50,
-      color: '#4C6EF5',
-      label: '发布完成'
+      color: 'blue',
+      label: '已完成'
     },
     TERMINATED: {
       value: 60,
-      color: '#FD7E14',
-      label: '发布停止'
+      color: 'orange',
+      label: '已停止'
     },
-    INITIAL_ERROR: {
-      value: 70,
-      color: '#F03E3E',
-      label: '初始化失败'
+    CANCEL: {
+      value: 65,
+      color: 'orange',
+      label: '已取消'
     },
     FAILURE: {
-      value: 80,
-      color: '#C92A2A',
-      label: '发布失败'
+      value: 70,
+      color: 'red',
+      label: '已失败'
     }
   },
 
@@ -783,11 +827,11 @@ const $enum = {
    * 发布类型
    */
   RELEASE_TYPE: {
-    WAIT_AUDIT: {
+    NORMAL: {
       value: 10,
       label: '正常发布'
     },
-    AUDIT_REJECT: {
+    ROLLBACK: {
       value: 20,
       label: '回滚发布'
     }
@@ -1003,7 +1047,7 @@ const $enum = {
         },
         EXEC_TERMINATED: {
           value: 2615,
-          label: '终止执行'
+          label: '停止执行'
         }
       }
     },
@@ -1013,15 +1057,15 @@ const $enum = {
       type: {
         ADD_TAIL_FILE: {
           value: 2705,
-          label: '添加日志文件'
+          label: '添加文件'
         },
         UPDATE_TAIL_FILE: {
           value: 2710,
-          label: '修改日志文件'
+          label: '修改文件'
         },
         DELETE_TAIL_FILE: {
           value: 2715,
-          label: '删除日志文件'
+          label: '删除文件'
         }
       }
     },
@@ -1062,6 +1106,10 @@ const $enum = {
         CHANGE_USER_STATUS: {
           value: 1120,
           label: '修改状态'
+        },
+        UNLOCK_USER: {
+          value: 1125,
+          label: '解锁用户'
         }
       }
     },
@@ -1210,8 +1258,200 @@ const $enum = {
         COPY_RELEASE: {
           value: 5035,
           label: '复制发布'
+        },
+        CANCEL_RELEASE: {
+          value: 5040,
+          label: '取消发布'
         }
       }
+    },
+    SYSTEM_ENV: {
+      value: 90,
+      label: '系统变量操作',
+      type: {
+        ADD_SYSTEM_ENV: {
+          value: 6005,
+          label: '添加变量'
+        },
+        UPDATE_SYSTEM_ENV: {
+          value: 6010,
+          label: '更新变量'
+        },
+        DELETE_SYSTEM_ENV: {
+          value: 6015,
+          label: '删除变量'
+        },
+        SAVE_SYSTEM_ENV: {
+          value: 6020,
+          label: '保存变量'
+        }
+      }
+    },
+    SYSTEM: {
+      value: 95,
+      label: '系统操作',
+      type: {
+        CONFIG_IP_LIST: {
+          value: 6105,
+          label: '配置IP名单'
+        },
+        RE_ANALYSIS_SYSTEM: {
+          value: 6110,
+          label: '系统统计分析'
+        },
+        CLEAN_SYSTEM_FILE: {
+          value: 6115,
+          label: '清理系统文件'
+        },
+        UPDATE_SYSTEM_CONFIG: {
+          value: 6120,
+          label: '修改系统配置'
+        }
+      }
+    }
+  },
+
+  /**
+   * 系统清理类型
+   */
+  SYSTEM_CLEAR_TYPE: {
+    TEMP_FILE: {
+      key: 'tempFile',
+      value: 10,
+      label: '临时文件'
+    },
+    LOG_FILE: {
+      key: 'logFile',
+      value: 20,
+      label: '日志文件'
+    },
+    SWAP_FILE: {
+      key: 'swapFile',
+      value: 30,
+      label: '交换区文件'
+    },
+    DIST_FILE: {
+      key: 'distFile',
+      value: 40,
+      label: '旧版本构建产物'
+    },
+    VCS_FILE: {
+      key: 'vcsFile',
+      value: 50,
+      label: '旧版本应用仓库'
+    }
+  },
+
+  /**
+   * 系统配置项
+   */
+  SYSTEM_OPTION_KEY: {
+    FILE_CLEAN_THRESHOLD: {
+      key: 'fileCleanThreshold',
+      value: 10
+    },
+    ENABLE_AUTO_CLEAN_FILE: {
+      key: 'autoCleanFile',
+      value: 20
+    },
+    ALLOW_MULTIPLE_LOGIN: {
+      key: 'allowMultipleLogin',
+      value: 30
+    },
+    LOGIN_FAILURE_LOCK: {
+      key: 'loginFailureLock',
+      value: 40
+    },
+    LOGIN_IP_BIND: {
+      key: 'loginIpBind',
+      value: 50
+    },
+    LOGIN_TOKEN_AUTO_RENEW: {
+      key: 'loginTokenAutoRenew',
+      value: 60
+    },
+    LOGIN_TOKEN_EXPIRE: {
+      key: 'loginTokenExpire',
+      value: 70
+    },
+    LOGIN_FAILURE_LOCK_THRESHOLD: {
+      key: 'loginFailureLockThreshold',
+      value: 80
+    },
+    LOGIN_TOKEN_AUTO_RENEW_THRESHOLD: {
+      key: 'loginTokenAutoRenewThreshold',
+      value: 90
+    }
+  },
+
+  /**
+   * 调度任务执行状态
+   */
+  SCHEDULER_TASK_STATUS: {
+    WAIT: {
+      value: 10,
+      label: '待调度',
+      color: ''
+    },
+    RUNNABLE: {
+      value: 20,
+      label: '执行中',
+      color: 'green'
+    },
+    SUCCESS: {
+      value: 30,
+      label: '成功',
+      color: 'blue'
+    },
+    FAILURE: {
+      value: 40,
+      label: '失败',
+      color: 'red'
+    }
+  },
+
+  /**
+   * 调度任务执行机器状态
+   */
+  SCHEDULER_TASK_MACHINE_STATUS: {
+    WAIT: {
+      value: 10,
+      label: '待调度',
+      color: ''
+    },
+    RUNNABLE: {
+      value: 20,
+      label: '执行中',
+      color: 'green'
+    },
+    SUCCESS: {
+      value: 30,
+      label: '成功',
+      color: 'blue'
+    },
+    FAILURE: {
+      value: 40,
+      label: '失败',
+      color: 'red'
+    },
+    SKIPPED: {
+      value: 50,
+      label: '已跳过',
+      color: 'orange'
+    }
+  },
+
+  /**
+   * 异常处理类型
+   */
+  EXCEPTION_HANDLER_TYPE: {
+    BREAK: {
+      value: 10,
+      label: '跳过'
+    },
+    CONTINUE: {
+      value: 20,
+      label: '继续'
     }
   }
 

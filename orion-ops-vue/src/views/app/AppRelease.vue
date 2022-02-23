@@ -239,6 +239,7 @@ const columns = [
     title: '状态',
     key: 'status',
     width: 120,
+    align: 'center',
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
   },

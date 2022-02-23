@@ -7,8 +7,7 @@
         <div class="machine-field-container">
           <span class="machine-field-label">执行机器:</span>
           <div class="machine-checker-wrapper">
-            <MachineChecker ref="machineChecker"
-                            :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+            <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
               <template #trigger>
                 <a :disabled="isRun">已选择 {{ selectedMachines.length }} 台机器</a>
               </template>
@@ -35,7 +34,7 @@
         <div class="machine-field-container machine-description-container">
           <span class="machine-field-label">执行描述:</span>
           <div class="machine-field-input">
-            <a-input v-model="description"/>
+            <a-input v-model="description" allowClear/>
           </div>
         </div>
         <!-- 模板选择 -->
@@ -69,10 +68,15 @@
               <LogAppender :ref="'appender' + execMachine.execId"
                            :relId="execMachine.execId"
                            :appendStyle="{height: 'calc(100vh - 184px)'}"
+                           :rightToolsProps="{line: false, download: false}"
                            :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
                 <!-- 左侧工具栏 -->
                 <template #left-tools>
                   <div class="appender-left-tools">
+                    <!-- 状态 -->
+                    <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
+                      {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
+                    </a-tag>
                     <!-- 命令输入 -->
                     <a-input-search class="command-write-input"
                                     v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
@@ -84,21 +88,6 @@
                         <a-icon type="forward"/>
                       </template>
                     </a-input-search>
-                    <!-- 状态 -->
-                    <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
-                      {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
-                    </a-tag>
-                    <!-- used -->
-                    <span class="mx8 nowrap" title="用时"
-                          v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
-                    {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
-                  </span>
-                    <!-- exitCode -->
-                    <span class="mx8" title="退出码"
-                          v-if="execMachine.exitCode !== null"
-                          :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
-                    {{ execMachine.exitCode }}
-                  </span>
                     <!-- 停止 -->
                     <a-button class="terminated-button"
                               v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
@@ -107,8 +96,18 @@
                               @click="terminated(execMachine)">
                       停止
                     </a-button>
+                    <!-- used -->
+                    <span class="mx8 nowrap" title="用时"
+                          v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
+                    {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
+                    </span>
+                    <!-- exitCode -->
+                    <span class="mx8" title="退出码"
+                          v-if="execMachine.exitCode !== null"
+                          :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
+                      {{ execMachine.exitCode }}
+                    </span>
                   </div>
-
                 </template>
               </LogAppender>
             </div>

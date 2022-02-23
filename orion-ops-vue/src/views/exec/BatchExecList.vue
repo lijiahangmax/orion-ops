@@ -42,9 +42,10 @@
       <div class="tools-fixed-right">
         <!-- 状态 -->
         <div class="exec-status-container">
-          <a-radio-group v-model="query.status"
-                         buttonStyle="solid"
+          <a-radio-group class="nowrap"
+                         v-model="query.status"
                          @change="getList({})">
+            <a-radio-button :value="undefined">全部</a-radio-button>
             <a-radio-button v-for="status in $enum.BATCH_EXEC_STATUS"
                             :key="status.value"
                             :value="status.value">

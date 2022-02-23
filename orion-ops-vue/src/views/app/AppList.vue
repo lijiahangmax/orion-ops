@@ -207,7 +207,7 @@ const columns = [
     sorter: (a, b) => a.tag.localeCompare(b.tag)
   },
   {
-    title: '是否已配置',
+    title: '配置状态',
     key: 'config',
     align: 'center',
     sorter: (a, b) => a.isConfig - b.isConfig,
@@ -223,8 +223,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
-    ellipsis: true,
-    width: 200
+    ellipsis: true
   },
   {
     title: '操作',
