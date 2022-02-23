@@ -8,6 +8,7 @@
                :zIndex="805"
                :okButtonProps="{props: {disabled: loading}}"
                :dialogStyle="{ top: '90px' }"
+               :maskClosable="false"
                @ok="check"
                @cancel="close">
         <a-spin :spinning="loading">

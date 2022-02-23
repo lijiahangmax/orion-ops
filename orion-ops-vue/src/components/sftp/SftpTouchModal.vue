@@ -1,7 +1,8 @@
 <template>
   <a-modal v-model="visible"
            title="创建"
-           width="450px">
+           width="450px"
+           :maskClosable="false">
     <!-- 输入框 -->
     <a-spin :spinning="loading">
       <a-input-group compact>

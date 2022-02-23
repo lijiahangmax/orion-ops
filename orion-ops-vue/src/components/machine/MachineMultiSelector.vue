@@ -1,12 +1,14 @@
 <template>
   <a-select
-    v-model="value"
+    ref="machineSelector"
+    :value="value"
     :disabled="disabled"
     mode="multiple"
-    allowClear
     style="width: 100%"
     placeholder="请选择机器"
-    option-label-prop="label">
+    option-label-prop="label"
+    @change="change"
+    allowClear>
     <a-select-option v-for="machine in machineList" :key="machine.id" :value="machine.id" :label="machine.name">
       {{ `${machine.name} (${machine.host})` }}
     </a-select-option>
@@ -23,12 +25,7 @@ export default {
         return {}
       }
     },
-    defaultValue: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    },
+    value: Array,
     disabled: {
       type: Boolean,
       default: false
@@ -36,18 +33,15 @@ export default {
   },
   data() {
     return {
-      machineList: [],
-      value: []
-    }
-  },
-  watch: {
-    value(e) {
-      this.$emit('change', e)
+      machineList: []
     }
   },
   methods: {
-    reset() {
-      this.value = []
+    change(e) {
+      this.$emit('change', e)
+    },
+    getValue() {
+      return this.$refs.machineSelector.value
     }
   },
   async created() {
@@ -63,11 +57,6 @@ export default {
           host: row.host
         })
       }
-    }
-  },
-  mounted() {
-    if (this.defaultValue) {
-      this.value = this.defaultValue
     }
   }
 }

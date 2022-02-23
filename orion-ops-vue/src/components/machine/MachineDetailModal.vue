@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="visible" title="详情" width="700px">
+  <a-modal v-model="visible" title="详情" width="700px" :maskClosable="false">
     <a-spin :spinning="loading">
       <div id="machine-descriptions">
         <a-descriptions bordered size="middle">
@@ -21,7 +21,7 @@
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item label="认证方式" :span="2">
-            <a-tag v-if="detail.authType" :color="$enum.valueOf($enum.MACHINE_AUTH_TYPE,detail.authType).color">
+            <a-tag v-if="detail.authType">
               {{ $enum.valueOf($enum.MACHINE_AUTH_TYPE, detail.authType).label }}
             </a-tag>
           </a-descriptions-item>

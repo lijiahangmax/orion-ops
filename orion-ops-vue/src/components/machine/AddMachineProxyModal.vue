@@ -4,6 +4,7 @@
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
            :mask="mask"
+           :maskClosable="false"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">

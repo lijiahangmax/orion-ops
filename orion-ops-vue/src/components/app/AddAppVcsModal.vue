@@ -3,6 +3,7 @@
            :title="title"
            :width="560"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
@@ -146,19 +147,30 @@ export default {
       this.form.resetFields()
       this.visible = true
       this.id = row.id
-      this.record = pick(Object.assign({}, row), 'name', 'url', 'authType', 'tokenType', 'username', 'description')
-      const tokenType = this.record.tokenType
-      if (!this.visibleUsername(this.record.authType, tokenType)) {
-        delete this.record.username
-      }
-      delete this.record.tokenType
+      const username = row.username
+      const tokenType = row.tokenType
+      this.record = pick(Object.assign({}, row), 'name', 'url', 'authType', 'description')
       // 设置数据
-      this.$nextTick(() => {
-        this.form.setFieldsValue(this.record)
-        // tokenType必须异步加载
+      new Promise((resolve) => {
+        // 加载数据
+        this.$nextTick(() => {
+          this.form.setFieldsValue(this.record)
+        })
+        resolve()
+      }).then(() => {
+        // 加载令牌类型
         if (this.record.authType === this.$enum.VCS_AUTH_TYPE.TOKEN.value) {
           this.$nextTick(() => {
+            this.record.tokenType = tokenType
             this.form.setFieldsValue({ tokenType })
+          })
+        }
+      }).then(() => {
+        // 加载用户名
+        if (this.visibleUsername(this.record.authType, tokenType)) {
+          this.$nextTick(() => {
+            this.record.username = username
+            this.form.setFieldsValue({ username })
           })
         }
       })

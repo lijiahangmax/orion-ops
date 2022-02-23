@@ -37,8 +37,8 @@
         </a-descriptions-item>
         <a-descriptions-item label="发布类型" :span="3">
           {{ $enum.valueOf($enum.RELEASE_TYPE, detail.type).label }}
-          /
-          {{ $enum.valueOf($enum.RELEASE_SERIAL_TYPE, detail.serializer).label }}
+          -
+          {{ $enum.valueOf($enum.SERIAL_TYPE, detail.serializer).label }}
         </a-descriptions-item>
         <a-descriptions-item label="调度时间" :span="3" v-if="detail.timedReleaseTime !== null">
           {{ detail.timedReleaseTime | formatDate }}

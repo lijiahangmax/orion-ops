@@ -1,5 +1,9 @@
 <template>
-  <a-modal v-model="visible" title="详情" width="700px" :dialogStyle="{top: '16px'}">
+  <a-modal v-model="visible"
+           title="详情"
+           width="700px"
+           :dialogStyle="{top: '16px'}"
+           :maskClosable="false">
     <a-spin :spinning="loading">
       <div id="exec-task-descriptions">
         <a-descriptions bordered size="middle">

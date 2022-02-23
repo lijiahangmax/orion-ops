@@ -3,6 +3,7 @@
            okText="构建"
            :width="550"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="build"
            @cancel="close">
     <!-- 标题 -->

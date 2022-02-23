@@ -3,6 +3,7 @@
            :title="title"
            :width="550"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="check"
            @cancel="close">
     <!-- 表单 -->

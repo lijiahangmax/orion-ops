@@ -2,7 +2,9 @@
   <a-modal v-model="visible"
            :title="title"
            :width="650"
+           :dialogStyle="{top: '64px'}"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">

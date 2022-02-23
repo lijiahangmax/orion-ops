@@ -3,6 +3,7 @@
            title="临时挂载"
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">

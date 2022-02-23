@@ -2,8 +2,8 @@
   <a-modal v-model="visible"
            title="文件提权"
            :width="450"
-           :mask="false"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @cancel="close"
            @ok="chmod">
     <a-spin :spinning="loading">

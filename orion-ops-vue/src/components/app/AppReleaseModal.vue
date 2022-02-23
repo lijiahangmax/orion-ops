@@ -4,6 +4,7 @@
            :width="550"
            :destroyOnClose="true"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @ok="release"
            @cancel="close">
     <!-- 标题 -->

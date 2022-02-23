@@ -3,8 +3,8 @@
            title="文件移动"
            :width="450"
            okText="移动"
-           :mask="false"
            :okButtonProps="{props: {disabled: loading}}"
+           :maskClosable="false"
            @cancel="close"
            @ok="move">
     <a-spin :spinning="loading">

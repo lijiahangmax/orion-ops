@@ -26,7 +26,7 @@
           发布序列 :
         </span>
         <a-select style="margin-left: 8px; width: 120px" v-model="releaseSerial">
-          <a-select-option v-for="type of $enum.RELEASE_SERIAL_TYPE" :key="type.value" :value="type.value">
+          <a-select-option v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
             {{ type.label }}
           </a-select-option>
         </a-select>
@@ -139,7 +139,7 @@ export default {
       loading: false,
       profileId: null,
       transferPath: undefined,
-      transferDirType: _enum.RELEASE_SERIAL_TYPE.PARALLEL.value,
+      transferDirType: _enum.SERIAL_TYPE.PARALLEL.value,
       releaseSerial: _enum.RELEASE_TRANSFER_DIR_TYPE.DIR.value,
       machines: [],
       actions: [],
