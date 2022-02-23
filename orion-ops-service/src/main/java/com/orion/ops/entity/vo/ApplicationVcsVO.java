@@ -49,16 +49,25 @@ public class ApplicationVcsVO {
     private String username;
 
     /**
-     * token
-     */
-    private String token;
-
-    /**
      * 状态 10未初始化 20初始化中 30正常 40失败
      *
      * @see com.orion.ops.consts.app.VcsStatus
      */
     private Integer status;
+
+    /**
+     * 认证类型 10密码 20令牌
+     *
+     * @see com.orion.ops.consts.app.VcsAuthType
+     */
+    private Integer authType;
+
+    /**
+     * 令牌类型 10github 20gitee 30gitlab
+     *
+     * @see com.orion.ops.consts.app.VcsTokenType
+     */
+    private Integer tokenType;
 
     /**
      * 创建时间
@@ -79,8 +88,9 @@ public class ApplicationVcsVO {
             vo.setType(p.getVcsType());
             vo.setUrl(p.getVscUrl());
             vo.setUsername(p.getVscUsername());
-            vo.setToken(p.getVcsAccessToken());
             vo.setStatus(p.getVcsStatus());
+            vo.setAuthType(p.getVcsAuthType());
+            vo.setTokenType(p.getVcsTokenType());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             return vo;

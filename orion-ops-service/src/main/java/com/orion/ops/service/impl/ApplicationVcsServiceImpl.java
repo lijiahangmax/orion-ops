@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.app.VcsAuthType;
 import com.orion.ops.consts.app.VcsStatus;
+import com.orion.ops.consts.app.VcsTokenType;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
@@ -20,6 +22,7 @@ import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Arrays1;
@@ -70,13 +73,20 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         insert.setVcsType(VcsType.GIT.getType());
         insert.setVscUrl(request.getUrl());
         insert.setVscUsername(request.getUsername());
+        insert.setVcsAuthType(request.getAuthType());
+        insert.setVcsTokenType(request.getTokenType());
         // 加密密码
         String password = request.getPassword();
         if (!Strings.isBlank(password)) {
             password = ValueMix.encrypt(password);
             insert.setVcsPassword(password);
         }
-        insert.setVcsAccessToken(request.getToken());
+        // 加密token
+        String token = request.getPrivateToken();
+        if (!Strings.isBlank(token)) {
+            token = ValueMix.encrypt(token);
+            insert.setVcsPrivateToken(token);
+        }
         insert.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
         applicationVcsDAO.insert(insert);
         // 设置日志参数
@@ -99,18 +109,25 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setVcsDescription(request.getDescription());
         update.setVscUrl(request.getUrl());
         update.setVscUsername(request.getUsername());
+        update.setVcsAuthType(request.getAuthType());
+        update.setVcsTokenType(request.getTokenType());
         // 加密密码
         String password = request.getPassword();
         if (!Strings.isBlank(password)) {
             password = ValueMix.encrypt(password);
             update.setVcsPassword(password);
         }
-        update.setVcsAccessToken(request.getToken());
+        // 加密token
+        String token = request.getPrivateToken();
+        if (!Strings.isBlank(token)) {
+            token = ValueMix.encrypt(token);
+            update.setVcsPrivateToken(token);
+        }
         if (!beforeVcs.getVscUrl().equals(update.getVscUrl())) {
             // 如果修改了url则状态改为未初始化
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
             // 删除目录
-            File clonePath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File clonePath = new File(Utils.getVcsEventDir(id));
             Files1.delete(clonePath);
         }
         int effect = applicationVcsDAO.updateById(update);
@@ -176,18 +193,19 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
         // 删除
-        File clonePath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+        File clonePath = new File(Utils.getVcsEventDir(id));
         Files1.delete(clonePath);
         // 初始化
         Exception ex = null;
         Gits gits = null;
         try {
             // clone
-            String username = vcs.getVscUsername();
-            if (Strings.isBlank(username)) {
+            String[] pair = this.getVcsUsernamePassword(vcs);
+            String username = pair[0];
+            String password = pair[1];
+            if (username == null) {
                 gits = Gits.clone(vcs.getVscUrl(), clonePath);
             } else {
-                String password = ValueMix.decrypt(vcs.getVcsPassword());
                 gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
             }
         } catch (Exception e) {
@@ -277,7 +295,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         Valid.isTrue(VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
         // 获取仓库位置
-        File vcsPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+        File vcsPath = new File(Utils.getVcsEventDir(id));
         if (!vcsPath.isDirectory()) {
             // 修改状态为未初始化
             ApplicationVcsDO entity = new ApplicationVcsDO();
@@ -289,8 +307,11 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 打开git
         try {
             Gits gits = Gits.of(vcsPath);
-            if (vcs.getVcsPassword() != null) {
-                gits.auth(vcs.getVscUsername(), ValueMix.decrypt(vcs.getVcsPassword()));
+            String[] pair = this.getVcsUsernamePassword(vcs);
+            String username = pair[0];
+            String password = pair[1];
+            if (username != null) {
+                gits.auth(username, password);
             }
             return gits;
         } catch (Exception e) {
@@ -334,7 +355,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(new LambdaQueryWrapper<>());
         for (ApplicationVcsDO vcs : vcsList) {
             Long id = vcs.getId();
-            File vcsPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EVENT_DIR));
+            File vcsPath = new File(Utils.getVcsEventDir(id));
             boolean isDir = Files1.isDirectory(vcsPath);
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();
@@ -357,6 +378,44 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
                 .eq(ApplicationVcsDO::getVcsName, name);
         boolean present = DataQuery.of(applicationVcsDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    }
+
+    /**
+     * 获取仓库账号密码
+     *
+     * @param vcs vcs
+     * @return [username, password]
+     */
+    private String[] getVcsUsernamePassword(ApplicationVcsDO vcs) {
+        String username = null;
+        String password = null;
+        VcsAuthType authType = VcsAuthType.of(vcs.getVcsAuthType());
+        if (VcsAuthType.PASSWORD.equals(authType)) {
+            // 用户名
+            String vscUsername = vcs.getVscUsername();
+            if (!Strings.isBlank(vscUsername)) {
+                username = vscUsername;
+                password = ValueMix.decrypt(vcs.getVcsPassword());
+            }
+        } else {
+            // token
+            VcsTokenType tokenType = VcsTokenType.of(vcs.getVcsTokenType());
+            switch (tokenType) {
+                case GITHUB:
+                    username = Const.EMPTY;
+                    break;
+                case GITEE:
+                    username = vcs.getVscUsername();
+                    break;
+                case GITLAB:
+                    username = Const.OAUTH2;
+                    break;
+                default:
+                    break;
+            }
+            password = ValueMix.decrypt(vcs.getVcsPrivateToken());
+        }
+        return new String[]{username, password};
     }
 
 }

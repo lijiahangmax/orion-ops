@@ -69,8 +69,8 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * token
      */
-    @TableField("vcs_access_token")
-    private String vcsAccessToken;
+    @TableField("vcs_private_token")
+    private String vcsPrivateToken;
 
     /**
      * 状态 10未初始化 20初始化中 30正常 40失败
@@ -79,6 +79,22 @@ public class ApplicationVcsDO implements Serializable {
      */
     @TableField("vcs_status")
     private Integer vcsStatus;
+
+    /**
+     * 认证类型 10密码 20令牌
+     *
+     * @see com.orion.ops.consts.app.VcsAuthType
+     */
+    @TableField("vcs_auth_type")
+    private Integer vcsAuthType;
+
+    /**
+     * 令牌类型 10github 20gitee 30gitlab
+     *
+     * @see com.orion.ops.consts.app.VcsTokenType
+     */
+    @TableField("vcs_token_type")
+    private Integer vcsTokenType;
 
     /**
      * 是否删除 1未删除 2已删除

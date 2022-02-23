@@ -11,8 +11,10 @@
         <result column="vsc_url" property="vscUrl"/>
         <result column="vsc_username" property="vscUsername"/>
         <result column="vcs_password" property="vcsPassword"/>
-        <result column="vcs_access_token" property="vcsAccessToken"/>
+        <result column="vcs_private_token" property="vcsPrivateToken"/>
         <result column="vcs_status" property="vcsStatus"/>
+        <result column="vcs_auth_type" property="vcsAuthType"/>
+        <result column="vcs_token_type" property="vcsTokenType"/>
         <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -20,7 +22,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, vcs_name, vcs_description, vcs_type, vsc_url, vsc_username, vcs_password, vcs_access_token, vcs_status, deleted, create_time, update_time
+        id, vcs_name, vcs_description, vcs_type, vsc_url, vsc_username, vcs_password, vcs_private_token,
+        vcs_status, vcs_auth_type, vcs_token_type, deleted, create_time, update_time
     </sql>
 
     <select id="selectNameByIdList" resultMap="BaseResultMap">

@@ -50,6 +50,20 @@ public class ApplicationVcsRequest extends PageRequest {
     private Integer status;
 
     /**
+     * 认证类型 10密码 20令牌
+     *
+     * @see com.orion.ops.consts.app.VcsAuthType
+     */
+    private Integer authType;
+
+    /**
+     * 令牌类型 10github 20gitee 30gitlab
+     *
+     * @see com.orion.ops.consts.app.VcsTokenType
+     */
+    private Integer tokenType;
+
+    /**
      * 用户名
      */
     private String username;
@@ -60,9 +74,9 @@ public class ApplicationVcsRequest extends PageRequest {
     private String password;
 
     /**
-     * token
+     * 令牌
      */
-    private String token;
+    private String privateToken;
 
     /**
      * 分支名称
