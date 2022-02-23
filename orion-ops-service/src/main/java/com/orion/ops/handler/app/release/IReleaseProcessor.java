@@ -4,7 +4,7 @@ import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;
 import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
-import com.orion.ops.consts.app.ReleaseSerialType;
+import com.orion.ops.consts.SerialType;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 
 /**
@@ -35,10 +35,10 @@ public interface IReleaseProcessor extends Executable, Runnable, SafeCloseable {
      * @return 执行器
      */
     static IReleaseProcessor with(ApplicationReleaseDO release) {
-        return Selector.<ReleaseSerialType, IReleaseProcessor>of(ReleaseSerialType.of(release.getReleaseSerialize()))
-                .test(Branches.eq(ReleaseSerialType.SERIAL)
+        return Selector.<SerialType, IReleaseProcessor>of(SerialType.of(release.getReleaseSerialize()))
+                .test(Branches.eq(SerialType.SERIAL)
                         .then(() -> new SerialReleaseProcessor(release.getId())))
-                .test(Branches.eq(ReleaseSerialType.PARALLEL)
+                .test(Branches.eq(SerialType.PARALLEL)
                         .then(() -> new ParallelReleaseProcessor(release.getId())))
                 .get();
     }

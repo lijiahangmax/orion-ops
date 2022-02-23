@@ -7,6 +7,7 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.SerialType;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -585,7 +586,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         release.setProfileName(profile.getProfileName());
         release.setProfileTag(profile.getProfileTag());
         release.setReleaseType(ReleaseType.NORMAL.getType());
-        release.setReleaseSerialize(ReleaseSerialType.of(releaseSerial).getType());
+        release.setReleaseSerialize(SerialType.of(releaseSerial).getType());
         release.setBundlePath(buildBundlePath);
         release.setTransferPath(transferPath);
         release.setTimedRelease(request.getTimedRelease());
@@ -667,8 +668,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 Long actionId = action.getId();
                 // 设置机器操作
                 ApplicationActionLogDO releaseAction = new ApplicationActionLogDO();
-                releaseAction.setStageType(StageType.RELEASE.getType());
                 releaseAction.setRelId(releaseMachine.getId());
+                releaseAction.setStageType(StageType.RELEASE.getType());
+                releaseAction.setMachineId(releaseMachine.getMachineId());
                 releaseAction.setActionId(actionId);
                 releaseAction.setActionName(action.getActionName());
                 releaseAction.setActionType(action.getActionType());

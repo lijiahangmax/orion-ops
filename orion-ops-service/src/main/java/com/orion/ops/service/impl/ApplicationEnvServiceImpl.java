@@ -5,8 +5,8 @@ import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.SerialType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.consts.app.ReleaseSerialType;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.consts.app.TransferDirType;
 import com.orion.ops.consts.env.EnvConst;
@@ -282,7 +282,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         if (releaseSerial != null) {
             ApplicationEnvRequest releaseSerialEnv = new ApplicationEnvRequest();
             releaseSerialEnv.setKey(ApplicationEnvAttr.RELEASE_SERIAL.getKey());
-            releaseSerialEnv.setValue(ReleaseSerialType.of(releaseSerial).getValue());
+            releaseSerialEnv.setValue(SerialType.of(releaseSerial).getValue());
             releaseSerialEnv.setDescription(ApplicationEnvAttr.RELEASE_SERIAL.getDescription());
             list.add(releaseSerialEnv);
         }

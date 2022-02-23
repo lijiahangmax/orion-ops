@@ -7,6 +7,7 @@
         <id column="id" property="id"/>
         <result column="stage_type" property="stageType"/>
         <result column="rel_id" property="relId"/>
+        <result column="machine_id" property="machineId"/>
         <result column="action_id" property="actionId"/>
         <result column="action_name" property="actionName"/>
         <result column="action_type" property="actionType"/>
@@ -23,7 +24,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, stage_type, rel_id, action_id, action_name, action_type, action_command, log_path, run_status,
+        id, stage_type, rel_id, machine_id, action_id, action_name, action_type, action_command, log_path, run_status,
         exit_code, start_time, end_time, deleted, create_time, update_time
     </sql>
 

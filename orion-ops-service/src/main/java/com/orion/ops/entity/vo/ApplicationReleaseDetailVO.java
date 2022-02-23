@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.ops.consts.SerialType;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
@@ -91,7 +92,7 @@ public class ApplicationReleaseDetailVO {
     /**
      * 发布序列 10串行 20并行
      *
-     * @see com.orion.ops.consts.app.ReleaseSerialType
+     * @see SerialType
      */
     private Integer serializer;
 

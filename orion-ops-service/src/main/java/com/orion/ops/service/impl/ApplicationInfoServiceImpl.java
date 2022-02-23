@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.*;
+import com.orion.ops.consts.SerialType;
+import com.orion.ops.consts.app.ActionType;
+import com.orion.ops.consts.app.ApplicationEnvAttr;
+import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.app.TransferDirType;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationInfoDAO;
@@ -280,7 +284,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         env.setBundlePath(bundlePath);
         env.setTransferPath(transferPath);
         env.setTransferDirType(TransferDirType.of(transferDirType).getValue());
-        env.setReleaseSerial(ReleaseSerialType.of(releaseSerial).getType());
+        env.setReleaseSerial(SerialType.of(releaseSerial).getType());
         List<ApplicationActionVO> buildActions = actions.stream()
                 .filter(s -> ActionType.isBuildAction(s.getActionType()))
                 .map(s -> Converts.to(s, ApplicationActionVO.class))

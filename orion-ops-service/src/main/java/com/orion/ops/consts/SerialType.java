@@ -1,4 +1,4 @@
-package com.orion.ops.consts.app;
+package com.orion.ops.consts;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum ReleaseSerialType {
+public enum SerialType {
 
     /**
      * 串行
@@ -30,11 +30,11 @@ public enum ReleaseSerialType {
 
     private final String value;
 
-    public static ReleaseSerialType of(Integer type) {
+    public static SerialType of(Integer type) {
         if (type == null) {
             return PARALLEL;
         }
-        for (ReleaseSerialType value : values()) {
+        for (SerialType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
@@ -42,11 +42,11 @@ public enum ReleaseSerialType {
         return PARALLEL;
     }
 
-    public static ReleaseSerialType of(String value) {
+    public static SerialType of(String value) {
         if (value == null) {
             return PARALLEL;
         }
-        for (ReleaseSerialType type : values()) {
+        for (SerialType type : values()) {
             if (type.value.equalsIgnoreCase(value)) {
                 return type;
             }

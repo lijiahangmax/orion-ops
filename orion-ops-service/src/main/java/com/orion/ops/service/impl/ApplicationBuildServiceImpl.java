@@ -141,6 +141,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             ApplicationActionLogDO actionLog = new ApplicationActionLogDO();
             actionLog.setRelId(buildId);
             actionLog.setStageType(StageType.BUILD.getType());
+            actionLog.setMachineId(Const.HOST_MACHINE_ID);
             actionLog.setActionId(action.getAppId());
             actionLog.setActionName(action.getActionName());
             actionLog.setActionType(action.getActionType());

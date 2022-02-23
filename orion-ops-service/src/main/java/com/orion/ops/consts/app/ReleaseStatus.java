@@ -55,14 +55,9 @@ public enum ReleaseStatus {
     CANCEL(65),
 
     /**
-     * 初始化失败
-     */
-    INITIAL_ERROR(70),
-
-    /**
      * 发布失败
      */
-    FAILURE(80),
+    FAILURE(70),
 
     ;
 
