@@ -11,7 +11,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="主机" prop="machine">
-              <MachineSelector ref="machineSelector" @change="machineId => query.machineId = machineId"/>
+              <MachineAutoComplete ref="machineSelector" @change="selectedMachine"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -180,12 +180,12 @@
 
 <script>
 
-import MachineSelector from '@/components/machine/MachineSelector'
 import UserSelector from '@/components/user/UserSelector'
 import EditorPreview from '@/components/preview/EditorPreview'
 import TextPreview from '@/components/preview/TextPreview'
 import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
+import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import _filters from '@/lib/filters'
 
 /**
@@ -282,8 +282,8 @@ const columns = [
 export default {
   name: 'BatchExecList',
   components: {
+    MachineAutoComplete,
     ExecLoggerAppenderModal,
-    MachineSelector,
     UserSelector,
     EditorPreview,
     TextPreview,
@@ -292,12 +292,13 @@ export default {
   data: function() {
     return {
       query: {
-        command: null,
-        exitCode: null,
+        command: undefined,
+        exitCode: undefined,
         userId: undefined,
         machineId: undefined,
+        machineName: undefined,
         status: undefined,
-        description: null
+        description: undefined
       },
       rows: [],
       pagination: {
@@ -367,11 +368,21 @@ export default {
         this.getList({})
       })
     },
+    selectedMachine(id, name) {
+      if (id) {
+        this.query.machineId = id
+        this.query.machineName = undefined
+      } else {
+        this.query.machineId = undefined
+        this.query.machineName = name
+      }
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
       this.$refs.userSelector.reset()
       this.query.machineId = undefined
+      this.query.machineName = undefined
       this.query.userId = undefined
       this.query.status = undefined
       this.getList({})

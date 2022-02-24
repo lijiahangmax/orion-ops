@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="主机" prop="host">
-              <MachineSelector ref="machineSelector" @change="machineId => query.machineId = machineId"/>
+              <MachineAutoComplete ref="machineSelector" @change="selectedMachine"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -57,7 +57,7 @@
 
 <script>
 
-import MachineSelector from '@/components/machine/MachineSelector'
+import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserSelector from '@/components/user/UserSelector'
 import _filters from '@/lib/filters'
 
@@ -118,14 +118,15 @@ const columns = [
 export default {
   name: 'MachineTerminalSession',
   components: {
-    MachineSelector,
+    MachineAutoComplete,
     UserSelector
   },
   data: function() {
     return {
       query: {
         userId: undefined,
-        machineId: undefined
+        machineId: undefined,
+        machineName: undefined
       },
       rows: [],
       pagination: {
@@ -159,11 +160,21 @@ export default {
         this.loading = false
       })
     },
+    selectedMachine(id, name) {
+      if (id) {
+        this.query.machineId = id
+        this.query.machineName = undefined
+      } else {
+        this.query.machineId = undefined
+        this.query.machineName = name
+      }
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
       this.$refs.userSelector.reset()
       this.query.machineId = undefined
+      this.query.machineName = undefined
       this.query.userId = undefined
       this.getList({})
     },
