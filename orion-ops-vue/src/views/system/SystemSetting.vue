@@ -1,6 +1,10 @@
 <template>
   <div class="user-detail-container">
     <a-tabs default-active-key="1" tab-position="left">
+      <!-- 安全设置 -->
+      <a-tab-pane key="2" tab="安全设置">
+        <SecurityConfig/>
+      </a-tab-pane>
       <!-- IP 操作 -->
       <a-tab-pane key="3" tab="IP名单配置">
         <IpConfig/>
