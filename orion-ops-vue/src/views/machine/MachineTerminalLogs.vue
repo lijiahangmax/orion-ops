@@ -11,7 +11,7 @@
           </a-col>
           <a-col v-if="$isAdmin()" :span="5">
             <a-form-model-item label="用户" prop="user">
-              <UserSelector ref="userSelector" @change="userId => query.userId = userId"/>
+              <UserAutoComplete ref="userSelector" @change="selectedUser"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -76,7 +76,7 @@
 <script>
 
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
-import UserSelector from '@/components/user/UserSelector'
+import UserAutoComplete from '@/components/user/UserAutoComplete'
 import _filters from '@/lib/filters'
 
 /**
@@ -145,12 +145,13 @@ export default {
   name: 'MachineTerminalLogs',
   components: {
     MachineAutoComplete,
-    UserSelector
+    UserAutoComplete
   },
   data: function() {
     return {
       query: {
         userId: undefined,
+        username: undefined,
         machineId: undefined,
         machineName: undefined,
         closeCode: undefined
@@ -196,6 +197,15 @@ export default {
         this.query.machineName = name
       }
     },
+    selectedUser(id, name) {
+      if (id) {
+        this.query.userId = id
+        this.query.username = undefined
+      } else {
+        this.query.userId = undefined
+        this.query.username = name
+      }
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
@@ -203,6 +213,7 @@ export default {
       this.query.machineId = undefined
       this.query.machineName = undefined
       this.query.userId = undefined
+      this.query.username = undefined
       this.getList({})
     },
     async loadDownloadUrl(record) {
