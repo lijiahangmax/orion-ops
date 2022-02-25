@@ -47,6 +47,7 @@ export default {
       } catch (e) {
       }
       this.$emit('change', id, val)
+      this.value = val
     },
     search(value) {
       if (!value) {

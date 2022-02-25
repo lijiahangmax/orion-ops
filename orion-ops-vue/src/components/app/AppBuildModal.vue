@@ -39,10 +39,7 @@
       <div class="build-form">
         <!-- 分支 -->
         <div class="build-form-item" v-if="app && app.vcsId">
-          <span class="build-form-item-label">
-            <span class="span-red">* </span>
-            分支 :
-          </span>
+          <span class="build-form-item-label normal-label required-label">分支</span>
           <a-select class="build-form-item-input"
                     v-model="submit.branchName"
                     placeholder="分支"
@@ -56,10 +53,7 @@
         </div>
         <!-- commit -->
         <div class="build-form-item" v-if="app && app.vcsId">
-          <span class="build-form-item-label">
-            <span class="span-red">* </span>
-            commit :
-          </span>
+          <span class="build-form-item-label normal-label required-label">commit</span>
           <a-select class="build-form-item-input commit-selector"
                     v-model="submit.commitId"
                     placeholder="提交记录"
@@ -80,7 +74,7 @@
         </div>
         <!-- 描述 -->
         <div class="build-form-item" style="margin: 8px 0;">
-          <span class="build-form-item-label">构建描述 : </span>
+          <span class="build-form-item-label normal-label">构建描述</span>
           <a-textarea class="build-form-item-input"
                       v-model="submit.description"
                       style="height: 50px; width: 430px"
@@ -332,8 +326,6 @@ export default {
     .build-form-item-label {
       width: 70px;
       margin: 16px 8px;
-      text-align: end;
-      display: block;
       font-size: 15px;
     }
 

@@ -5,7 +5,7 @@
            :width="550">
     <a-spin :spinning="loading">
       <div class="audit-description">
-        <span class="description-label">审核描述 :</span>
+        <span class="description-label normal-label mr8">审核描述</span>
         <a-textarea class="description-area" v-model="description" :maxLength="64"/>
       </div>
     </a-spin>

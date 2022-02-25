@@ -8,13 +8,13 @@
            @ok="chmod">
     <a-spin :spinning="loading">
       <div class="file-path-container">
-        <span class="file-path-label span-label span-blue" @click="$copy(filePath, '文件路径已复制')">文件路径:</span>
+        <span class="file-path-label span-label span-blue normal-label" @click="$copy(filePath, '文件路径已复制')">文件路径</span>
         <span class="file-path-text">{{ filePath }}</span>
       </div>
       <br>
       <div class="file-permission-container">
         <div>
-          <span class="file-permission-label span-label">权限:</span>
+          <span class="file-permission-label span-label normal-label">权限</span>
           <a-input class="file-permission-input"
                    placeholder="权限"
                    v-model.number="permission"
@@ -128,6 +128,7 @@ export default {
 
 .span-label {
   margin-right: 10px;
+  width: 74px;
 }
 
 .file-permission-string {

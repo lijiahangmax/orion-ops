@@ -40,10 +40,7 @@
       <div class="release-form">
         <!-- 发布标题 -->
         <div class="release-form-item">
-          <span class="release-form-item-label">
-            <span class="span-red">* </span>
-            发布标题 :
-          </span>
+          <span class="release-form-item-label normal-label required-label">发布标题</span>
           <a-input class="release-form-item-input"
                    v-model="submit.title"
                    placeholder="标题"
@@ -52,10 +49,7 @@
         </div>
         <!-- 发布版本 -->
         <div class="release-form-item">
-          <span class="release-form-item-label">
-            <span class="span-red">* </span>
-            发布版本 :
-          </span>
+          <span class="release-form-item-label normal-label required-label">发布版本</span>
           <a-select class="release-form-item-input build-selector"
                     v-model="submit.buildId"
                     placeholder="版本"
@@ -78,10 +72,7 @@
         </div>
         <!-- 发布类型 -->
         <div class="release-form-item">
-          <span class="release-form-item-label">
-            <span class="span-red">* </span>
-            发布类型 :
-          </span>
+          <span class="release-form-item-label normal-label required-label">发布类型</span>
           <a-radio-group v-model="submit.timedRelease" buttonStyle="solid">
             <a-radio-button :value="type.value" v-for="type in $enum.TIMED_RELEASE_TYPE" :key="type.value">
               {{ type.label }}
@@ -90,18 +81,12 @@
         </div>
         <!-- 调度时间 -->
         <div class="release-form-item" v-if="submit.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
-          <span class="release-form-item-label">
-            <span class="span-red">* </span>
-            调度时间 :
-          </span>
+          <span class="release-form-item-label normal-label required-label">调度时间</span>
           <a-date-picker v-model="submit.timedReleaseTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
         </div>
         <!-- 发布机器 -->
         <div class="release-form-item">
-          <span class="release-form-item-label">
-            <span class="span-red">* </span>
-            发布机器 :
-          </span>
+          <span class="release-form-item-label normal-label required-label">发布机器</span>
           <MachineChecker ref="machineChecker"
                           class="release-form-item-input"
                           placement="bottomLeft"
@@ -117,7 +102,7 @@
         </div>
         <!-- 描述 -->
         <div class="release-form-item" style="margin: 8px 0;">
-          <span class="release-form-item-label">发布描述 : </span>
+          <span class="release-form-item-label normal-label">发布描述</span>
           <a-textarea class="build-form-item-input"
                       v-model="submit.description"
                       style="height: 50px; width: 430px"
@@ -282,6 +267,10 @@ export default {
           this.$message.warning('请选择调度时间')
           return
         }
+        if (this.submit.timedReleaseTime.unix() * 1000 < Date.now()) {
+          this.$message.warning('调度时间需要大于当前时间')
+          return
+        }
       } else {
         this.submit.timedReleaseTime = undefined
       }
@@ -357,8 +346,6 @@ export default {
     .release-form-item-label {
       width: 80px;
       margin: 16px 8px;
-      text-align: end;
-      display: block;
       font-size: 15px;
     }
 

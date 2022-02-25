@@ -4,7 +4,7 @@
     <div class="current-ip-container">
       <a-alert type="info">
         <template #message>
-          <span class="mr4">当前访问IP: </span>
+          <span class="mr4 normal-label">当前访问IP</span>
           <span class="ip-text span-blue mr16">{{ (currentIp || '--') }}</span>
           <span class="ip-text"> {{ (ipLocation || '--') }}</span>
         </template>

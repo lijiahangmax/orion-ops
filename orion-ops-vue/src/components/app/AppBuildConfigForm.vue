@@ -3,10 +3,7 @@
     <a-spin :spinning="loading">
       <!-- 产物路径 -->
       <div id="app-bundle-wrapper">
-      <span class="label">
-        <span class="span-red mr4">*</span>
-        构建产物路径 :
-      </span>
+        <span class="label normal-label required-label">构建产物路径</span>
         <a-input class="bundle-input" v-model="bundlePath" :maxLength="512" placeholder="主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"/>
       </div>
       <!-- 构建操作 -->
@@ -19,24 +16,18 @@
               <!-- 操作 -->
               <div class="app-action">
                 <div class="action-name-wrapper">
-                <span class="label action-label">
-                  <span class="span-red mr4">*</span>
-                  操作名称{{ index + 1 }} :
-                </span>
+                  <span class="label normal-label required-label action-label">操作名称{{ index + 1 }}</span>
                   <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
                 <div class="action-editor-wrapper" v-if="action.type === $enum.BUILD_ACTION_TYPE.COMMAND.value">
-                <span class="label action-label">
-                  <span class="span-red mr4">*</span>
-                  主机命令{{ index + 1 }} :
-                </span>
+                  <span class="label normal-label required-label action-label">主机命令{{ index + 1 }}</span>
                   <div class="app-action-editor">
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
                   </div>
                 </div>
                 <div class="action-type-wrapper" v-else>
-                  <span class="label action-label">操作类型 :</span>
+                  <span class="label normal-label action-label">操作类型</span>
                   <a-button class="action-type-name" ghost disabled>
                     {{ $enum.valueOf($enum.BUILD_ACTION_TYPE, action.type).label }}
                   </a-button>
@@ -205,8 +196,6 @@ export default {
   width: 760px;
 
   .label {
-    text-align: end;
-    display: block;
     width: 160px;
     font-size: 15px;
     line-height: 32px;

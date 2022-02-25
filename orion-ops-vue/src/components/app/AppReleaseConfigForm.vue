@@ -3,10 +3,7 @@
     <a-spin :spinning="loading">
       <!-- 发布机器 -->
       <div id="app-machine-wrapper">
-        <span class="label">
-          <span class="span-red mr4">*</span>
-          发布机器 :
-        </span>
+        <span class="label normal-label required-label">发布机器</span>
         <MachineChecker style="margin-left: 8px"
                         ref="machineChecker"
                         :defaultValue="machines"
@@ -21,10 +18,7 @@
       </div>
       <!-- 发布序列 -->
       <div id="app-release-serial-wrapper">
-        <span class="label">
-          <span class="span-red mr4">*</span>
-          发布序列 :
-        </span>
+        <span class="label normal-label required-label">发布序列</span>
         <a-select style="margin-left: 8px; width: 120px" v-model="releaseSerial">
           <a-select-option v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
             {{ type.label }}
@@ -41,35 +35,25 @@
               <!-- 操作 -->
               <div class="app-action">
                 <div class="action-name-wrapper">
-                <span class="label action-label">
-                  <span class="span-red mr4">*</span>
-                  操作名称 :
-                </span>
+                  <span class="label action-label normal-label required-label">操作名称</span>
                   <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
                 <div class="action-editor-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
-                  <span class="label action-label">
-                    <span class="span-red mr4">*</span>
-                    目标主机命令 :
-                  </span>
+                  <span class="label action-label normal-label required-label">目标主机命令</span>
                   <div class="app-action-editor">
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
                   </div>
                 </div>
                 <!-- 传输路径 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  <span class="label action-label">
-                      <span class="span-red mr4">*</span>
-                      产物传输路径 :
-                  </span>
+                  <span class="label action-label normal-label required-label">产物传输路径</span>
                   <a-input class="transfer-input" placeholder="目标机器产物传输绝对路径" :maxLength="512" v-model="transferPath"/>
                 </div>
                 <!-- 文件夹类型选择 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  <span class="label action-label" title="如果构建产物为文件夹 传输的文件是文件夹还是打包后的文件">
-                      <span class="span-red mr4">*</span>
-                      文件夹传输类型 :
+                  <span class="label action-label normal-label required-label" title="如果构建产物为文件夹 传输的文件是文件夹还是打包后的文件">
+                      文件夹传输类型
                   </span>
                   <a-select class="transfer-input" v-model="transferDirType">
                     <a-select-option v-for="type of $enum.RELEASE_TRANSFER_DIR_TYPE" :key="type.value" :value="type.value">
@@ -265,8 +249,6 @@ export default {
   width: 760px;
 
   .label {
-    text-align: end;
-    display: block;
     width: 160px;
     font-size: 15px;
     line-height: 32px;

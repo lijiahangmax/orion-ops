@@ -64,7 +64,18 @@
 }
 
 .normal-label::after {
+  display: inline-block;
   content: ':';
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+.required-label::before {
+  display: inline-block;
+  content: '*';
+  color: #F5222D;
+  margin-right: 4px;
+  font-size: 14px;
 }
 
 .normal-description {

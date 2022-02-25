@@ -44,7 +44,7 @@
           <div class="sftp-tools-bar">
             <!-- 显示隐藏 -->
             <div class="sftp-tools-hide-switch">
-              <span class="text">显示隐藏文件 : </span>
+              <span class="text normal-label mr4">显示隐藏文件</span>
               <a-switch :disabled="!sessionToken" v-model="showHideFile" @change="changeShowHideFile"/>
             </div>
             <!-- 工具栏 -->
@@ -686,6 +686,8 @@ export default {
   .sftp-tools-hide-switch {
     margin-right: 12px;
     width: 140px;
+    display: flex;
+    align-items: center;
   }
 
   .text {

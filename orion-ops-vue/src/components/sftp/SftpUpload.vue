@@ -3,7 +3,7 @@
     <div class="upload-container">
       <!-- 路径 -->
       <div class="upload-path-container">
-        <span class="upload-path-label">文件夹: </span>
+        <span class="upload-path-label normal-label mr4">文件夹</span>
         <a-input v-model="path" placeholder="上传文件夹"/>
       </div>
       <!-- 上传文件触发器 -->

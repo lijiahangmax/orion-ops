@@ -9,12 +9,12 @@
            @ok="move">
     <a-spin :spinning="loading">
       <div class="origin-path-container">
-        <span class="path-label span-blue" @click="$copy(filePath, '原始路径已复制')">原始路径: </span>
+        <span class="path-label span-blue normal-label" @click="$copy(filePath, '原始路径已复制')">原始路径</span>
         <span class="origin-path-text">{{ filePath }}</span>
       </div>
       <br>
       <div class="move-path-container">
-        <span class="path-label span-blue" @click="$copy(movePath, '移动路径已复制')">移动路径: </span>
+        <span class="path-label span-blue normal-label" @click="$copy(movePath, '移动路径已复制')">移动路径</span>
         <a-input class="move-path-input" id="move-path" v-model="movePath"/>
       </div>
     </a-spin>
@@ -106,7 +106,7 @@ export default {
 }
 
 .move-path-input {
-  width: 330px;
+  width: 324px;
 }
 
 </style>

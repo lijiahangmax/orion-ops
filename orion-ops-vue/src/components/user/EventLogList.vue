@@ -184,8 +184,8 @@ export default {
       this.query.classify = classify
       this.$nextTick(() => {
         this.query.type = type
+        this.getEventLog()
       })
-      this.getEventLog()
     },
     resetForm() {
       this.$refs.query.resetFields()
@@ -254,7 +254,7 @@ export default {
 
     .log-item-type {
       margin: 0 12px 0 24px;
-      width: 175px;
+      width: 180px;
       display: inline-block;
     }
 

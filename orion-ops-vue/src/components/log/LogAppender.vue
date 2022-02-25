@@ -47,7 +47,7 @@
           </div>
           <!-- 固定日志 -->
           <div class="log-fixed-wrapper nowrap" v-if="rightToolsProps.fixed !== false">
-            <span class="log-fixed-label ml8">固定: </span>
+            <span class="log-fixed-label normal-label ml8">固定</span>
             <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
           </div>
           <!-- 状态 -->
