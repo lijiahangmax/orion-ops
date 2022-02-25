@@ -82,9 +82,14 @@ public class CommandExecServiceImpl implements CommandExecService {
             Valid.notNull(machine, MessageConst.INVALID_MACHINE);
             machineStore.put(machine.getId(), machine);
         }
-        // 查询系统环境变量
-        Map<String, String> systemEnv = systemEnvService.getFullSystemEnv();
-        String command = Strings.format(request.getCommand(), EnvConst.SYMBOL, systemEnv);
+        // 设置命令
+        String command = request.getCommand();
+        final boolean containsEnv = command.contains(EnvConst.SYMBOL);
+        if (containsEnv) {
+            // 查询系统环境变量
+            Map<String, String> systemEnv = systemEnvService.getFullSystemEnv();
+            command = Strings.format(command, EnvConst.SYMBOL, systemEnv);
+        }
         // 批量执行命令
         List<CommandTaskSubmitVO> list = Lists.newList();
         for (Long mid : machineIdList) {
@@ -94,12 +99,19 @@ public class CommandExecServiceImpl implements CommandExecService {
             record.setUserId(user.getId());
             record.setUserName(user.getUsername());
             record.setMachineId(mid);
+            record.setMachineName(machine.getMachineName());
+            record.setMachineHost(machine.getMachineHost());
+            record.setMachineTag(machine.getMachineTag());
             record.setExecType(ExecType.BATCH_EXEC.getType());
             record.setExecStatus(ExecStatus.WAITING.getStatus());
             record.setDescription(request.getDescription());
-            // 替换命令
-            Map<String, String> env = machineEnvService.getFullMachineEnv(mid);
-            record.setExecCommand(Strings.format(command, EnvConst.SYMBOL, env));
+            if (containsEnv) {
+                // 查询机器环境变量
+                Map<String, String> machineEnv = machineEnvService.getFullMachineEnv(mid);
+                record.setExecCommand(Strings.format(command, EnvConst.SYMBOL, machineEnv));
+            } else {
+                record.setExecCommand(command);
+            }
             commandExecDAO.insert(record);
             // 设置日志路径
             String logPath = PathBuilders.getExecLogPath(Const.COMMAND_DIR, record.getId(), machine.getId());
@@ -153,7 +165,9 @@ public class CommandExecServiceImpl implements CommandExecService {
                 .eq(Objects.nonNull(request.getType()), CommandExecDO::getExecType, request.getType())
                 .eq(Objects.nonNull(request.getExitCode()), CommandExecDO::getExitCode, request.getExitCode())
                 .eq(Objects.nonNull(request.getMachineId()), CommandExecDO::getMachineId, request.getMachineId())
+                .like(Strings.isNotBlank(request.getMachineName()), CommandExecDO::getMachineName, request.getMachineName())
                 .like(Strings.isNotBlank(request.getCommand()), CommandExecDO::getExecCommand, request.getCommand())
+                .like(Strings.isNotBlank(request.getUsername()), CommandExecDO::getUserName, request.getUsername())
                 .like(Strings.isNotBlank(request.getDescription()), CommandExecDO::getDescription, request.getDescription())
                 .in(Lists.isNotEmpty(request.getMachineIdList()), CommandExecDO::getMachineId, request.getMachineIdList())
                 .orderByDesc(CommandExecDO::getId);
@@ -265,18 +279,11 @@ public class CommandExecServiceImpl implements CommandExecService {
      * @param omitCommand 省略命令
      */
     private void assembleExecData(List<CommandExecVO> execList, boolean omitCommand) {
-        Map<Long, MachineInfoDO> machineCache = Maps.newMap();
         for (CommandExecVO exec : execList) {
             if (omitCommand) {
                 // 命令省略
                 exec.setCommand(Strings.omit(exec.getCommand(), Const.EXEC_COMMAND_OMIT));
             }
-            // 查询机器信息
-            Optional.ofNullable(machineCache.computeIfAbsent(exec.getMachineId(), machineInfoDAO::selectById))
-                    .ifPresent(m -> {
-                        exec.setMachineName(m.getMachineName());
-                        exec.setMachineHost(m.getMachineHost());
-                    });
         }
     }
 

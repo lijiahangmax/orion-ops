@@ -50,6 +50,12 @@
         id, release_status, release_start_time, release_end_time
     </sql>
 
+    <update id="setTimedReleaseTimeNull">
+        UPDATE application_release
+        SET timed_release_time = NULL
+        WHERE id = #{id}
+    </update>
+
     <select id="selectStatusById" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Status"/>

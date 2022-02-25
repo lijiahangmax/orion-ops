@@ -121,12 +121,15 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         buildTask.setBundlePath(PathBuilders.getBuildBundlePath(buildId) + "/" + Files1.getFileName(bundlePath));
         // 更新构建信息
         applicationBuildDAO.updateById(buildTask);
-        // 检查是否包含命令
-        boolean hasCommand = actions.stream()
-                .map(ApplicationActionDO::getActionType)
-                .anyMatch(ActionType.BUILD_COMMAND.getType()::equals);
+        // 检查是否包含环境变量命令
+        final boolean hasEnvCommand = actions.stream()
+                .filter(s -> ActionType.BUILD_COMMAND.getType().equals(s.getActionType()))
+                .map(ApplicationActionDO::getActionCommand)
+                .filter(Strings::isNotBlank)
+                .anyMatch(s -> s.contains(EnvConst.SYMBOL));
+
         Map<String, String> env = Maps.newMap();
-        if (hasCommand) {
+        if (hasEnvCommand) {
             // 查询应用环境变量
             env.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 查询机器环境变量

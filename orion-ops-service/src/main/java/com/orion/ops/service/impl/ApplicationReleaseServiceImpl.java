@@ -22,9 +22,9 @@ import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.app.release.IReleaseProcessor;
 import com.orion.ops.handler.app.release.ReleaseSessionHolder;
-import com.orion.ops.handler.scheduler.TaskRegister;
-import com.orion.ops.handler.scheduler.TaskType;
 import com.orion.ops.service.api.*;
+import com.orion.ops.task.TaskRegister;
+import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
@@ -36,6 +36,7 @@ import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
+import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -206,11 +207,13 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         List<ApplicationReleaseMachineDO> releaseMachines = this.setReleaseMachineInfo(request, machines, releaseId);
         releaseMachines.forEach(applicationReleaseMachineDAO::insert);
         // 检查是否包含命令
-        boolean hasCommand = actions.stream()
-                .map(ApplicationActionDO::getActionType)
-                .anyMatch(ActionType.RELEASE_COMMAND.getType()::equals);
+        final boolean hasEnvCommand = actions.stream()
+                .filter(s -> ActionType.RELEASE_COMMAND.getType().equals(s.getActionType()))
+                .map(ApplicationActionDO::getActionCommand)
+                .filter(Strings::isNotBlank)
+                .anyMatch(s -> s.contains(EnvConst.SYMBOL));
         Map<String, String> releaseEnv = Maps.newMap();
-        if (hasCommand) {
+        if (hasEnvCommand) {
             // 查询应用环境变量
             releaseEnv.putAll(applicationEnvService.getAppProfileFullEnv(appId, profileId));
             // 添加系统环境变量
@@ -219,7 +222,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             releaseEnv.putAll(this.getReleaseEnv(build, release));
         }
         // 设置部署操作
-        List<ApplicationActionLogDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv);
+        List<ApplicationActionLogDO> releaseActions = this.setReleaseActions(actions, releaseMachines, releaseEnv, hasEnvCommand);
         releaseActions.forEach(applicationActionLogDAO::insert);
         // 设置日志参数
         EventParamsHolder.addParams(release);
@@ -322,7 +325,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public void cancelAppRelease(Long id) {
+    public void cancelAppTimedRelease(Long id) {
         // 查询状态
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
@@ -334,13 +337,42 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseDO update = new ApplicationReleaseDO();
         update.setId(id);
         update.setUpdateTime(new Date());
-        update.setReleaseStatus(ReleaseStatus.CANCEL.getStatus());
+        update.setTimedRelease(TimedReleaseType.NORMAL.getType());
+        update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
         applicationReleaseDAO.updateById(update);
+        applicationReleaseDAO.setTimedReleaseTimeNull(id);
         // 取消调度任务
         taskRegister.cancel(TaskType.RELEASE, id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+    }
+
+    @Override
+    public void setTimedRelease(Long id, Date releaseTime) {
+        // 查询状态
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
+        if (!ReleaseStatus.WAIT_RUNNABLE.equals(status) && !ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
+            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+        }
+        // 取消调度任务
+        taskRegister.cancel(TaskType.RELEASE, id);
+        // 更新状态
+        ApplicationReleaseDO update = new ApplicationReleaseDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        update.setReleaseStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
+        update.setTimedRelease(TimedReleaseType.TIMED.getType());
+        update.setTimedReleaseTime(releaseTime);
+        applicationReleaseDAO.updateById(update);
+        // 提交任务
+        taskRegister.submit(TaskType.RELEASE, releaseTime, id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+        EventParamsHolder.addParam(EventKeys.TIME, Dates.format(releaseTime));
     }
 
     @Override
@@ -657,9 +689,11 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      * @param actions         actions
      * @param releaseMachines 发布机器
      * @param releaseEnv      发布环境变量
+     * @param hasEnvCommand   hasEnvCommand
      * @return actions
      */
-    private List<ApplicationActionLogDO> setReleaseActions(List<ApplicationActionDO> actions, List<ApplicationReleaseMachineDO> releaseMachines, Map<String, String> releaseEnv) {
+    private List<ApplicationActionLogDO> setReleaseActions(List<ApplicationActionDO> actions, List<ApplicationReleaseMachineDO> releaseMachines,
+                                                           Map<String, String> releaseEnv, boolean hasEnvCommand) {
         List<ApplicationActionLogDO> releaseActions = Lists.newList();
         for (ApplicationReleaseMachineDO releaseMachine : releaseMachines) {
             for (ApplicationActionDO action : actions) {
@@ -677,11 +711,13 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 // 设置命令
                 if (ActionType.RELEASE_COMMAND.equals(actionType)) {
                     String command = action.getActionCommand();
-                    // 替换发布命令
-                    command = Strings.format(command, EnvConst.SYMBOL, releaseEnv);
-                    // 替换机器命令
-                    Map<String, String> machineEnv = machineEnvService.getFullMachineEnv(machineId);
-                    command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
+                    if (hasEnvCommand) {
+                        // 替换发布命令
+                        command = Strings.format(command, EnvConst.SYMBOL, releaseEnv);
+                        // 替换机器命令
+                        Map<String, String> machineEnv = machineEnvService.getFullMachineEnv(machineId);
+                        command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
+                    }
                     releaseAction.setActionCommand(command);
                 }
                 releaseAction.setLogPath(PathBuilders.getReleaseActionLogPath(releaseMachine.getReleaseId(), machineId, actionId));

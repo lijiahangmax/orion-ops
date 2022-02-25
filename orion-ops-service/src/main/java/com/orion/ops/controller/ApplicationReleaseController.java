@@ -6,21 +6,23 @@ import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.TimedReleaseType;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
-import com.orion.ops.handler.scheduler.TaskRegister;
-import com.orion.ops.handler.scheduler.TaskType;
 import com.orion.ops.service.api.ApplicationReleaseService;
+import com.orion.ops.task.TaskRegister;
+import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,7 +91,8 @@ public class ApplicationReleaseController {
         Valid.notEmpty(request.getMachineIdList());
         TimedReleaseType timedReleaseType = Valid.notNull(TimedReleaseType.of(request.getTimedRelease()));
         if (TimedReleaseType.TIMED.equals(timedReleaseType)) {
-            Valid.notNull(request.getTimedReleaseTime());
+            Date timedReleaseTime = Valid.notNull(request.getTimedReleaseTime());
+            Valid.isTrue(timedReleaseTime.compareTo(new Date()) > 0, MessageConst.TIMED_GREATER_THAN_NOW);
         }
         // 提交
         Long id = applicationReleaseService.submitAppRelease(request);
@@ -137,13 +140,26 @@ public class ApplicationReleaseController {
     }
 
     /**
-     * 取消发布
+     * 取消定时发布
      */
-    @RequestMapping("/cancel")
-    @EventLog(EventType.CANCEL_RELEASE)
-    public HttpWrapper<?> cancelRelease(@RequestBody ApplicationReleaseRequest request) {
+    @RequestMapping("/cancel-timed")
+    @EventLog(EventType.CANCEL_TIMED_RELEASE)
+    public HttpWrapper<?> cancelTimedRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationReleaseService.cancelAppRelease(id);
+        applicationReleaseService.cancelAppTimedRelease(id);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 设置定时发布
+     */
+    @RequestMapping("/set-timed")
+    @EventLog(EventType.SET_TIMED_RELEASE)
+    public HttpWrapper<?> setTimedRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Date timedReleaseTime = Valid.notNull(request.getTimedReleaseTime());
+        Valid.isTrue(timedReleaseTime.compareTo(new Date()) > 0, MessageConst.TIMED_GREATER_THAN_NOW);
+        applicationReleaseService.setTimedRelease(id, timedReleaseTime);
         return HttpWrapper.ok();
     }
 

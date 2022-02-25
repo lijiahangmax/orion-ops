@@ -5,6 +5,7 @@ import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.entity.vo.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -86,7 +87,15 @@ public interface ApplicationReleaseService {
      *
      * @param id id
      */
-    void cancelAppRelease(Long id);
+    void cancelAppTimedRelease(Long id);
+
+    /**
+     * 设置定时时间
+     *
+     * @param id          id
+     * @param releaseTime 定时时间
+     */
+    void setTimedRelease(Long id, Date releaseTime);
 
     /**
      * 回滚
