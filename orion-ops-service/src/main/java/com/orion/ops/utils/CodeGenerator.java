@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("system_env");
+                .setInclude("scheduler_task", "scheduler_task_machine", "scheduler_task_record", "scheduler_task_machine_record");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()

@@ -192,6 +192,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
     }
 
+    @ExceptionHandler(value = ParseCronException.class)
+    public HttpWrapper<?> parseCronExceptionHandler(ParseCronException ex) {
+        return HttpWrapper.error().msg(MessageConst.ERROR_EXPRESSION).data(ex.getMessage());
+    }
+
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
     public HttpWrapper<?> maxUploadSizeExceededExceptionHandler(HttpServletRequest request, MaxUploadSizeExceededException ex) {
         log.error("maxUploadSizeExceededExceptionHandler url: {}, 上传异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
