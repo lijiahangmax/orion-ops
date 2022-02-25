@@ -1332,11 +1332,20 @@ const $api = {
   },
 
   /**
-   * 应用发布取消
+   * 应用取消定时发布
    */
-  cancelAppRelease: param => {
-    return $http.$post('/app-release/cancel', param, {
-      loading: '正在取消...'
+  cancelAppTimedRelease: param => {
+    return $http.$post('/app-release/cancel-timed', param, {
+      loading: '正在取消定时发布...'
+    })
+  },
+
+  /**
+   * 设置定时发布时间
+   */
+  setAppTimedRelease: param => {
+    return $http.$post('/app-release/set-timed', param, {
+      loading: '正在设置...'
     })
   },
 
@@ -1585,6 +1594,15 @@ const $api = {
   deleteSchedulerTask: param => {
     return $http.$post('/scheduler/delete', param, {
       loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 手动触发调度任务
+   */
+  manualTriggerSchedulerTask: param => {
+    return $http.$post('/scheduler/manual-trigger', param, {
+      loading: '正在触发...'
     })
   }
 

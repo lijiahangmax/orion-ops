@@ -103,15 +103,17 @@
         </template>
         <!-- 构建标题 -->
         <template v-slot:releaseTitle="record">
-          <!-- 定时图标 -->
-          <a-tooltip v-if="record.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
-            <template #title>
-              调度时间: {{ record.timedReleaseTime | formatDate }}
-            </template>
-            <a-icon class="timed-icon" type="hourglass"/>
-          </a-tooltip>
-          <!-- 标题 -->
-          {{ record.title }}
+          <div class="timed-wrapper">
+            <!-- 定时图标 -->
+            <a-tooltip v-if="record.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
+              <template #title>
+                调度时间: {{ record.timedReleaseTime | formatDate }}
+              </template>
+              <a-icon class="timed-icon" type="hourglass"/>
+            </a-tooltip>
+            <!-- 标题 -->
+            {{ record.title }}
+          </div>
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
@@ -126,22 +128,25 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 审核 -->
-          <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</a>
+          <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)" title="审核">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
           <!-- 复制 -->
-          <a v-if="statusHolder.visibleCopy(record.status)" @click="copyRelease(record.id)">复制</a>
+          <a v-if="statusHolder.visibleCopy(record.status)" @click="copyRelease(record.id)" title="复制发布">复制</a>
           <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
-          <!-- 发布 -->
-          <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)">发布</a>
-          <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
           <!-- 取消 -->
-          <a v-if="statusHolder.visibleCancel(record.status)" @click="cancelRelease(record)">取消</a>
+          <a v-if="statusHolder.visibleCancel(record.status)" @click="cancelTimedRelease(record)" title="取消定时发布">取消</a>
           <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
+          <!-- 发布 -->
+          <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)" title="执行发布">发布</a>
+          <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
+          <!-- 定时 -->
+          <a v-if="statusHolder.visibleTimed(record.status)" @click="openTimedRelease(record)" title="设置定时发布">定时</a>
+          <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
           <!-- 停止 -->
-          <a v-if="statusHolder.visibleTerminated(record.status)" @click="terminated(record.id)">停止</a>
+          <a v-if="statusHolder.visibleTerminated(record.status)" @click="terminated(record.id)" title="停止发布">停止</a>
           <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
           <!-- 回滚 -->
-          <a v-if="statusHolder.visibleRollback(record.status)" @click="rollback(record.id)">回滚</a>
+          <a v-if="statusHolder.visibleRollback(record.status)" @click="rollback(record.id)" title="回滚发布">回滚</a>
           <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
           <!-- 详情 -->
           <a @click="openReleaseDetail(record.id)">详情</a>
@@ -170,6 +175,8 @@
       <AppReleaseMachineDetailDrawer ref="machineDetail"/>
       <!-- 机器日志 -->
       <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
+      <!-- 机器日志 -->
+      <AppReleaseTimedModal ref="releaseTimed"/>
     </div>
   </div>
 </template>
@@ -178,6 +185,7 @@
 import AppSelector from '@/components/app/AppSelector'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
+import AppReleaseTimedModal from '@/components/app/AppReleaseTimedModal'
 import AppReleaseDetailDrawer from '@/components/app/AppReleaseDetailDrawer'
 import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDetailDrawer'
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
@@ -196,6 +204,10 @@ function statusHolder() {
         status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
     },
     visibleRelease: (status) => {
+      return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+    },
+    visibleTimed: (status) => {
       return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
         status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
     },
@@ -268,7 +280,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 190,
+    width: 230,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -320,6 +332,7 @@ const innerColumns = [
 export default {
   name: 'AppRelease',
   components: {
+    AppReleaseTimedModal,
     AppReleaseMachineLogAppenderModal,
     AppReleaseMachineDetailDrawer,
     AppReleaseDetailDrawer,
@@ -415,12 +428,14 @@ export default {
         this.getList({})
       })
     },
-    cancelRelease(record) {
-      this.$api.cancelAppRelease({
+    cancelTimedRelease(record) {
+      this.$api.cancelAppTimedRelease({
         id: record.id
       }).then(() => {
-        this.$message.success('已取消')
-        record.status = this.$enum.RELEASE_STATUS.CANCEL.value
+        this.$message.success('已取消定时发布')
+        record.status = this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
+        record.timedRelease = this.$enum.TIMED_RELEASE_TYPE.NORMAL.value
+        record.timedReleaseTime = undefined
       })
     },
     runnableRelease(record) {
@@ -430,6 +445,9 @@ export default {
         this.$message.success('已提交执行请求')
         record.status = this.$enum.RELEASE_STATUS.RUNNABLE.value
       })
+    },
+    openTimedRelease(record) {
+      this.$refs.releaseTimed.open(record)
     },
     terminated(id) {
       this.$api.terminatedAppRelease({
@@ -552,14 +570,19 @@ export default {
 
 <style lang="less" scoped>
 
-.timed-icon {
-  background: #12B886;
-  color: #FFF;
-  font-size: 16px;
-  padding: 4px;
-  border-radius: 3px;
-  margin-right: 2px;
-  display: inline-block;
+.timed-wrapper {
+  display: flex;
+  align-items: center;
+
+  .timed-icon {
+    background: #03A9F4;
+    color: #FAFAFA;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 3px;
+    margin-right: 4px;
+    display: inline-block;
+  }
 }
 
 </style>
