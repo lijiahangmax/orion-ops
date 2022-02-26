@@ -66,6 +66,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private ApplicationReleaseMachineService applicationReleaseMachineService;
 
     @Resource
+    private SchedulerTaskMachineRecordService schedulerTaskMachineRecordService;
+
+    @Resource
     private SftpService sftpService;
 
     @Resource
@@ -133,6 +136,11 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             case APP_RELEASE_MACHINE_LOG:
                 // 应用发布机器日志
                 path = applicationReleaseMachineService.getReleaseMachineLogPath(id);
+                name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
+                break;
+            case SCHEDULER_TASK_MACHINE_LOG:
+                // 调度任务机器日志
+                path = schedulerTaskMachineRecordService.getTaskMachineLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             default:

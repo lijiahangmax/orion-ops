@@ -40,6 +40,13 @@ public enum FileTailType {
      */
     APP_RELEASE_LOG(40, true),
 
+    /**
+     * 调度任务机器日志
+     *
+     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
+     */
+    SCHEDULER_TASK_MACHINE_LOG(50, true),
+
     ;
 
     private final Integer type;

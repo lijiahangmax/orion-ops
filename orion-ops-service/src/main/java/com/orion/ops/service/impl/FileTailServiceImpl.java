@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 文件tail 实现
+ * 文件 tail 实现
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -57,6 +57,9 @@ public class FileTailServiceImpl implements FileTailService {
     private MachineInfoService machineInfoService;
 
     @Resource
+    private SystemEnvService systemEnvService;
+
+    @Resource
     private CommandExecService commandExecService;
 
     @Resource
@@ -64,6 +67,9 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Resource
     private ApplicationReleaseMachineService applicationReleaseMachineService;
+
+    @Resource
+    private SchedulerTaskMachineRecordService schedulerTaskMachineRecordService;
 
     @Resource
     private FileTailListDAO fileTailListDAO;
@@ -88,8 +94,6 @@ public class FileTailServiceImpl implements FileTailService {
             FileTailListDO fileTail = fileTailListDAO.selectById(relId);
             Valid.notNull(fileTail, MessageConst.UNKNOWN_DATA);
             res = Converts.to(fileTail, FileTailVO.class);
-            // 设置修改时间为当前时间
-            this.updateFileUpdateTime(relId);
         }
         // 设置命令
         this.replaceTailCommand(res);
@@ -105,7 +109,7 @@ public class FileTailServiceImpl implements FileTailService {
         // 设置缓存
         FileTailDTO tail = Converts.to(res, FileTailDTO.class);
         tail.setUserId(Currents.getUserId());
-        tail.setMode(machineEnvService.getMachineTailMode(machine.getId()));
+        tail.setMode(systemEnvService.getMachineTailMode(machine.getId()));
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
         // 非列表不返回命令和路径
@@ -169,6 +173,13 @@ public class FileTailServiceImpl implements FileTailService {
     }
 
     @Override
+    public Integer deleteByMachineId(Long machineId) {
+        LambdaQueryWrapper<FileTailListDO> wrapper = new LambdaQueryWrapper<FileTailListDO>()
+                .eq(FileTailListDO::getMachineId, machineId);
+        return fileTailListDAO.delete(wrapper);
+    }
+
+    @Override
     public DataGrid<FileTailVO> tailFileList(FileTailRequest request) {
         LambdaQueryWrapper<FileTailListDO> wrapper = new LambdaQueryWrapper<FileTailListDO>()
                 .eq(Objects.nonNull(request.getMachineId()), FileTailListDO::getMachineId, request.getMachineId())
@@ -227,6 +238,10 @@ public class FileTailServiceImpl implements FileTailService {
             case APP_RELEASE_LOG:
                 // 应用发布日志
                 path = applicationReleaseMachineService.getReleaseMachineLogPath(relId);
+                break;
+            case SCHEDULER_TASK_MACHINE_LOG:
+                // 调度任务机器日志
+                path = schedulerTaskMachineRecordService.getTaskMachineLogPath(relId);
                 break;
             default:
                 path = null;
