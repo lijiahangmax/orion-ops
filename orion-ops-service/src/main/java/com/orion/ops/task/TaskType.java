@@ -1,7 +1,8 @@
-package com.orion.ops.handler.scheduler;
+package com.orion.ops.task;
 
 import com.orion.ops.consts.Const;
-import com.orion.ops.handler.scheduler.task.ReleaseTask;
+import com.orion.ops.task.impl.ReleaseTaskImpl;
+import com.orion.ops.task.impl.SchedulerTaskImpl;
 import lombok.AllArgsConstructor;
 
 import java.util.function.Function;
@@ -19,10 +20,20 @@ public enum TaskType {
     /**
      * 发布任务
      */
-    RELEASE(id -> new ReleaseTask((Long) id)) {
+    RELEASE(id -> new ReleaseTaskImpl((Long) id)) {
         @Override
         public String getKey(Object params) {
             return Const.RELEASE + "-" + params;
+        }
+    },
+
+    /**
+     * 调度任务
+     */
+    SCHEDULER_TASK(id -> new SchedulerTaskImpl((Long) id)) {
+        @Override
+        public String getKey(Object params) {
+            return Const.TASK + "-" + params;
         }
     },
 

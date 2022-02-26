@@ -1,4 +1,4 @@
-package com.orion.ops.handler.scheduler;
+package com.orion.ops.task;
 
 import com.orion.ops.consts.MessageConst;
 import com.orion.utils.Exceptions;
@@ -6,6 +6,7 @@ import com.orion.utils.collect.Maps;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,6 +37,33 @@ public class TaskRegister implements DisposableBean {
      * @param params params
      */
     public void submit(TaskType type, Date time, Object params) {
+        // 获取任务
+        TimedTask timedTask = this.getTask(type, params);
+        // 执行任务
+        timedTask.submit(scheduler, time);
+    }
+
+    /**
+     * 提交任务
+     *
+     * @param type   type
+     * @param cron   cron
+     * @param params params
+     */
+    public void submit(TaskType type, String cron, Object params) {
+        // 获取任务
+        TimedTask timedTask = this.getTask(type, params);
+        // 执行任务
+        timedTask.submit(scheduler, new CronTrigger(cron));
+    }
+
+    /**
+     * 获取任务
+     *
+     * @param type   type
+     * @param params params
+     */
+    private TimedTask getTask(TaskType type, Object params) {
         // 生成任务
         Runnable runnable = type.create(params);
         String key = type.getKey(params);
@@ -43,10 +71,9 @@ public class TaskRegister implements DisposableBean {
         if (taskMap.containsKey(key)) {
             throw Exceptions.init(MessageConst.TASK_PRESENT);
         }
-        TimedTask timedTask = new TimedTask(runnable, time);
+        TimedTask timedTask = new TimedTask(runnable);
         taskMap.put(key, timedTask);
-        // 执行任务
-        timedTask.submit(scheduler);
+        return timedTask;
     }
 
     /**

@@ -1,6 +1,7 @@
-package com.orion.ops.handler.scheduler;
+package com.orion.ops.task;
 
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.Trigger;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
@@ -20,27 +21,32 @@ public class TimedTask {
     private Runnable runnable;
 
     /**
-     * 执行时间
-     */
-    private Date time;
-
-    /**
      * 异步执行
      */
     private volatile ScheduledFuture<?> future;
 
-    public TimedTask(Runnable runnable, Date time) {
+    public TimedTask(Runnable runnable) {
         this.runnable = runnable;
-        this.time = time;
     }
 
     /**
-     * 提交任务
+     * 提交任务 一次性
      *
      * @param scheduler scheduler
+     * @param time      time
      */
-    public void submit(TaskScheduler scheduler) {
+    public void submit(TaskScheduler scheduler, Date time) {
         this.future = scheduler.schedule(runnable, time);
+    }
+
+    /**
+     * 提交任务 cron表达式
+     *
+     * @param trigger   trigger
+     * @param scheduler scheduler
+     */
+    public void submit(TaskScheduler scheduler, Trigger trigger) {
+        this.future = scheduler.schedule(runnable, trigger);
     }
 
     /**
