@@ -35,7 +35,7 @@ public enum ApplicationEnvAttr {
     /**
      * 发布序列方式
      *
-     * @see ReleaseSerialType
+     * @see com.orion.ops.consts.SerialType
      */
     RELEASE_SERIAL("发布序列方式 (serial/parallel)"),
 

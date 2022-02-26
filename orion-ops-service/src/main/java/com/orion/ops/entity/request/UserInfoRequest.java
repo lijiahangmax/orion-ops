@@ -1,7 +1,6 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
-import com.orion.ops.consts.user.RoleType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -46,7 +45,7 @@ public class UserInfoRequest extends PageRequest {
     /**
      * 角色类型 10管理员 20开发 30运维
      *
-     * @see RoleType
+     * @see com.orion.ops.consts.user.RoleType
      */
     private Integer role;
 

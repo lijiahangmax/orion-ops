@@ -37,7 +37,7 @@ public class ApplicationConfigEnvRequest {
      * 发布序列 10串行 20并行
      *
      * @see com.orion.ops.consts.app.ApplicationEnvAttr#RELEASE_SERIAL
-     * @see com.orion.ops.consts.app.ReleaseSerialType
+     * @see com.orion.ops.consts.SerialType
      */
     private Integer releaseSerial;
 

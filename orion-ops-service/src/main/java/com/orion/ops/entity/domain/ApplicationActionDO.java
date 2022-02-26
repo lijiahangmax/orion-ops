@@ -1,7 +1,6 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.orion.ops.consts.app.StageType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -58,7 +57,7 @@ public class ApplicationActionDO implements Serializable {
     /**
      * 阶段类型
      *
-     * @see StageType
+     * @see com.orion.ops.consts.app.StageType
      */
     @TableField("stage_type")
     private Integer stageType;

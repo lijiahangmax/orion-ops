@@ -1,7 +1,6 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
-import com.orion.ops.consts.env.EnvViewType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -46,7 +45,7 @@ public class SystemEnvRequest extends PageRequest {
     /**
      * 视图类型
      *
-     * @see EnvViewType
+     * @see com.orion.ops.consts.env.EnvViewType
      */
     private Integer viewType;
 

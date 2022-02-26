@@ -1,7 +1,6 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.orion.ops.consts.user.RoleType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -56,7 +55,7 @@ public class UserInfoDO implements Serializable {
     /**
      * 角色类型 10管理员 20开发 30运维
      *
-     * @see RoleType
+     * @see com.orion.ops.consts.user.RoleType
      */
     @TableField("role_type")
     private Integer roleType;

@@ -1,7 +1,6 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
-import com.orion.ops.consts.history.HistoryValueType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,7 +28,7 @@ public class HistoryValueRequest extends PageRequest {
     /**
      * 值类型
      *
-     * @see HistoryValueType
+     * @see com.orion.ops.consts.history.HistoryValueType
      */
     private Integer valueType;
 

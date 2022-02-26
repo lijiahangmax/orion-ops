@@ -1,7 +1,6 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.orion.ops.consts.SerialType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -108,7 +107,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 发布序列 10串行 20并行
      *
-     * @see SerialType
+     * @see com.orion.ops.consts.SerialType
      */
     @TableField("release_serialize")
     private Integer releaseSerialize;

@@ -88,7 +88,7 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 上次调度时间
      */
-    @TableField(value = "lately_schedule_time", updateStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "lately_schedule_time")
     private Date latelyScheduleTime;
 
     /**
