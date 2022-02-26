@@ -1,13 +1,17 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.SchedulerTaskMachineRecordDAO;
 import com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import com.orion.ops.service.api.SchedulerTaskMachineRecordService;
+import com.orion.utils.Strings;
+import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <p>
@@ -35,6 +39,15 @@ public class SchedulerTaskMachineRecordServiceImpl implements SchedulerTaskMachi
         LambdaQueryWrapper<SchedulerTaskMachineRecordDO> wrapper = new LambdaQueryWrapper<SchedulerTaskMachineRecordDO>()
                 .eq(SchedulerTaskMachineRecordDO::getRecordId, recordId);
         return schedulerTaskMachineRecordDAO.selectList(wrapper);
+    }
+
+    @Override
+    public String getTaskMachineLogPath(Long id) {
+        return Optional.ofNullable(schedulerTaskMachineRecordDAO.selectById(id))
+                .map(SchedulerTaskMachineRecordDO::getLogPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
+                .orElse(null);
     }
 
 }

@@ -108,7 +108,6 @@ public class SchedulerTaskServiceImpl implements SchedulerTaskService {
         update.setLatelyStatus(SchedulerTaskStatus.WAIT.getStatus());
         update.setSerializeType(request.getSerializeType());
         update.setExceptionHandler(request.getExceptionHandler());
-        update.setLatelyScheduleTime(null);
         update.setUpdateTime(new Date());
         int effect = schedulerTaskDAO.updateById(update);
         // 查询机器信息
@@ -195,16 +194,16 @@ public class SchedulerTaskServiceImpl implements SchedulerTaskService {
     public Integer deleteTask(Long id) {
         SchedulerTaskDO task = schedulerTaskDAO.selectById(id);
         Valid.notNull(task, MessageConst.UNKNOWN_DATA);
+        // 停止任务
+        taskRegister.cancel(TaskType.SCHEDULER_TASK, id);
         // 删除任务
         int effect = schedulerTaskDAO.deleteById(id);
         // 删除任务机器
         effect += schedulerTaskMachineService.deleteByTaskId(id);
         // 删除任务明细
-        effect += schedulerTaskRecordService.deleteByTaskId(id);
+        // effect += schedulerTaskRecordService.deleteByTaskId(id);
         // 删除任务明细
-        effect += schedulerTaskMachineRecordService.deleteByTaskId(id);
-        // 停止任务
-        taskRegister.cancel(TaskType.SCHEDULER_TASK, id);
+        // effect += schedulerTaskMachineRecordService.deleteByTaskId(id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, task.getTaskName());

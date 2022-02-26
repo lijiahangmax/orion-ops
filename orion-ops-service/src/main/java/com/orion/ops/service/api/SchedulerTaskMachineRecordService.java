@@ -30,4 +30,12 @@ public interface SchedulerTaskMachineRecordService {
      */
     List<SchedulerTaskMachineRecordDO> selectByRecordId(Long recordId);
 
+    /**
+     * 获取任务机器执行日志路径
+     *
+     * @param machineRecordId machineRecordId
+     * @return path
+     */
+    String getTaskMachineLogPath(Long machineRecordId);
+
 }

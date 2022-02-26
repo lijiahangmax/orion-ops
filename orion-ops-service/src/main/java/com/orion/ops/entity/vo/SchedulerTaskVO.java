@@ -2,6 +2,7 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.SchedulerTaskDO;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.cron.Cron;
 import com.orion.utils.time.cron.CronSupport;
 import lombok.Data;
 
@@ -90,7 +91,7 @@ public class SchedulerTaskVO {
     /**
      * 下次执行时间
      */
-    private Date nextTime;
+    private List<Date> nextTime;
 
     static {
         TypeStore.STORE.register(SchedulerTaskDO.class, SchedulerTaskVO.class, p -> {
@@ -107,7 +108,7 @@ public class SchedulerTaskVO {
             vo.setLatelyScheduleTime(p.getLatelyScheduleTime());
             vo.setUpdateTime(p.getUpdateTime());
             try {
-                vo.setNextTime(CronSupport.getCron(p.getExpression()).getNextValidTimeAfter(new Date()));
+                vo.setNextTime(CronSupport.getNextTime(new Cron(p.getExpression()), 5));
             } catch (Exception e) {
                 e.printStackTrace();
             }

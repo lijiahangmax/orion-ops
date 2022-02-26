@@ -2,6 +2,8 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
+import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.consts.scheduler.SchedulerTaskStatus;
@@ -9,10 +11,18 @@ import com.orion.ops.dao.SchedulerTaskDAO;
 import com.orion.ops.dao.SchedulerTaskMachineRecordDAO;
 import com.orion.ops.dao.SchedulerTaskRecordDAO;
 import com.orion.ops.entity.domain.*;
+import com.orion.ops.entity.request.SchedulerTaskRecordRequest;
+import com.orion.ops.entity.vo.SchedulerTaskMachineRecordStatusVO;
+import com.orion.ops.entity.vo.SchedulerTaskMachineRecordVO;
+import com.orion.ops.entity.vo.SchedulerTaskRecordStatusVO;
+import com.orion.ops.entity.vo.SchedulerTaskRecordVO;
 import com.orion.ops.service.api.*;
+import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
+import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +30,8 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -43,6 +55,9 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
 
     @Resource
     private SchedulerTaskMachineRecordDAO schedulerTaskMachineRecordDAO;
+
+    @Resource
+    private SchedulerTaskMachineRecordService schedulerTaskMachineRecordService;
 
     @Resource
     private MachineInfoService machineInfoService;
@@ -123,6 +138,63 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
         updateTask.setUpdateTime(now);
         schedulerTaskDAO.updateById(updateTask);
         return recordId;
+    }
+
+    @Override
+    public DataGrid<SchedulerTaskRecordVO> listTaskRecord(SchedulerTaskRecordRequest request) {
+        LambdaQueryWrapper<SchedulerTaskRecordDO> wrapper = new LambdaQueryWrapper<SchedulerTaskRecordDO>()
+                .eq(Objects.nonNull(request.getTaskId()), SchedulerTaskRecordDO::getTaskId, request.getTaskId())
+                .eq(Objects.nonNull(request.getStatus()), SchedulerTaskRecordDO::getTaskStatus, request.getStatus())
+                .like(Strings.isNotBlank(request.getTaskName()), SchedulerTaskRecordDO::getTaskName, request.getTaskName())
+                .orderByDesc(SchedulerTaskRecordDO::getId);
+        // 查询列表
+        return DataQuery.of(schedulerTaskRecordDAO)
+                .page(request)
+                .wrapper(wrapper)
+                .dataGrid(SchedulerTaskRecordVO.class);
+    }
+
+    @Override
+    public SchedulerTaskRecordVO getDetailById(Long id) {
+        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        SchedulerTaskRecordVO taskRecord = Converts.to(record, SchedulerTaskRecordVO.class);
+        // 查询机器
+        List<SchedulerTaskMachineRecordDO> machines = schedulerTaskMachineRecordService.selectByRecordId(id);
+        List<SchedulerTaskMachineRecordVO> machineRecords = Converts.toList(machines, SchedulerTaskMachineRecordVO.class);
+        taskRecord.setMachines(machineRecords);
+        return taskRecord;
+    }
+
+    @Override
+    public List<SchedulerTaskMachineRecordVO> listMachinesRecord(Long recordId) {
+        List<SchedulerTaskMachineRecordDO> machines = schedulerTaskMachineRecordService.selectByRecordId(recordId);
+        return Converts.toList(machines, SchedulerTaskMachineRecordVO.class);
+    }
+
+    @Override
+    public List<SchedulerTaskRecordStatusVO> listRecordStatus(List<Long> idList, List<Long> machineRecordIdList) {
+        // 查询任务状态
+        List<SchedulerTaskRecordDO> recordStatus = schedulerTaskRecordDAO.selectTaskStatusByIdList(idList);
+        List<SchedulerTaskRecordStatusVO> recordStatusList = Converts.toList(recordStatus, SchedulerTaskRecordStatusVO.class);
+        if (!Lists.isEmpty(machineRecordIdList)) {
+            // 查询机器状态
+            List<SchedulerTaskMachineRecordDO> machineRecords = schedulerTaskMachineRecordDAO.selectStatusByIdList(machineRecordIdList);
+            Map<Long, List<SchedulerTaskMachineRecordStatusVO>> machineStatusMap = machineRecords.stream()
+                    .map(s -> Converts.to(s, SchedulerTaskMachineRecordStatusVO.class))
+                    .collect(Collectors.groupingBy(SchedulerTaskMachineRecordStatusVO::getRecordId));
+            // 设置机器状态
+            for (SchedulerTaskRecordStatusVO record : recordStatusList) {
+                record.setMachines(machineStatusMap.get(record.getId()));
+            }
+        }
+        return recordStatusList;
+    }
+
+    @Override
+    public List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(List<Long> idList) {
+        List<SchedulerTaskMachineRecordDO> status = schedulerTaskMachineRecordDAO.selectStatusByIdList(idList);
+        return Converts.toList(status, SchedulerTaskMachineRecordStatusVO.class);
     }
 
 }

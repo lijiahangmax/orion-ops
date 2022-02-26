@@ -1,5 +1,14 @@
 package com.orion.ops.service.api;
 
+import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.request.SchedulerTaskRecordRequest;
+import com.orion.ops.entity.vo.SchedulerTaskMachineRecordStatusVO;
+import com.orion.ops.entity.vo.SchedulerTaskMachineRecordVO;
+import com.orion.ops.entity.vo.SchedulerTaskRecordStatusVO;
+import com.orion.ops.entity.vo.SchedulerTaskRecordVO;
+
+import java.util.List;
+
 /**
  * <p>
  * 调度任务执行日志 服务类
@@ -25,5 +34,46 @@ public interface SchedulerTaskRecordService {
      * @return recordId
      */
     Long createTaskRecord(Long taskId);
+
+    /**
+     * 查询任务明细
+     *
+     * @param request request
+     * @return rows
+     */
+    DataGrid<SchedulerTaskRecordVO> listTaskRecord(SchedulerTaskRecordRequest request);
+
+    /**
+     * 通过 id 查询
+     *
+     * @param id id
+     * @return row
+     */
+    SchedulerTaskRecordVO getDetailById(Long id);
+
+    /**
+     * 查询任务机器明细
+     *
+     * @param recordId recordId
+     * @return rows
+     */
+    List<SchedulerTaskMachineRecordVO> listMachinesRecord(Long recordId);
+
+    /**
+     * 查询任务状态
+     *
+     * @param idList              idList
+     * @param machineRecordIdList machineRecordIdList
+     * @return status
+     */
+    List<SchedulerTaskRecordStatusVO> listRecordStatus(List<Long> idList, List<Long> machineRecordIdList);
+
+    /**
+     * 查询任务机器状态
+     *
+     * @param idList id
+     * @return status
+     */
+    List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(List<Long> idList);
 
 }
