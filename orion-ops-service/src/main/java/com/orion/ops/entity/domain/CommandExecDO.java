@@ -55,6 +55,24 @@ public class CommandExecDO implements Serializable {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    @TableField("machine_name")
+    private String machineName;
+
+    /**
+     * 机器主机
+     */
+    @TableField("machine_host")
+    private String machineHost;
+
+    /**
+     * 机器tag
+     */
+    @TableField("machine_tag")
+    private String machineTag;
+
+    /**
      * 执行状态 10未开始 20执行中 30执行成功 40执行失败 50执行终止
      *
      * @see com.orion.ops.consts.command.ExecStatus

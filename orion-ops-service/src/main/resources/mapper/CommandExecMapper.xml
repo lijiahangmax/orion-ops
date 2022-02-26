@@ -9,6 +9,9 @@
         <result column="user_name" property="userName"/>
         <result column="exec_type" property="execType"/>
         <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+        <result column="machine_host" property="machineHost"/>
+        <result column="machine_tag" property="machineTag"/>
         <result column="exec_status" property="execStatus"/>
         <result column="exit_code" property="exitCode"/>
         <result column="exec_command" property="execCommand"/>
@@ -23,7 +26,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, user_name, exec_type, machine_id, exec_status, exit_code, exec_command, description, log_path, start_date, end_date, deleted, create_time, update_time
+        id, user_id, user_name, exec_type, machine_id, machine_name, machine_host, machine_tag, exec_status, exit_code, exec_command,
+        description, log_path, start_date, end_date, deleted, create_time, update_time
     </sql>
 
     <select id="selectStatusById" resultMap="BaseResultMap">

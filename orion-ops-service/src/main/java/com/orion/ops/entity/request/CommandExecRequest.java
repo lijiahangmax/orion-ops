@@ -33,6 +33,11 @@ public class CommandExecRequest extends PageRequest {
     private Long machineId;
 
     /**
+     * 机器名称
+     */
+    private String machineName;
+
+    /**
      * 执行机器id
      */
     private List<Long> machineIdList;
@@ -51,6 +56,11 @@ public class CommandExecRequest extends PageRequest {
      * 执行人
      */
     private Long userId;
+
+    /**
+     * 用户名
+     */
+    private String username;
 
     /**
      * 状态

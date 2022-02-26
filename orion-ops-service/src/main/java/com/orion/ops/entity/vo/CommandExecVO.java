@@ -68,6 +68,11 @@ public class CommandExecVO {
     private String machineHost;
 
     /**
+     * 机器标签
+     */
+    private String machineTag;
+
+    /**
      * 执行退出码
      */
     private Integer exitCode;
@@ -129,6 +134,9 @@ public class CommandExecVO {
             vo.setType(p.getExecType());
             vo.setStatus(p.getExecStatus());
             vo.setMachineId(p.getMachineId());
+            vo.setMachineName(p.getMachineName());
+            vo.setMachineHost(p.getMachineHost());
+            vo.setMachineTag(p.getMachineTag());
             vo.setExitCode(p.getExitCode());
             vo.setCommand(p.getExecCommand());
             vo.setDescription(p.getDescription());
