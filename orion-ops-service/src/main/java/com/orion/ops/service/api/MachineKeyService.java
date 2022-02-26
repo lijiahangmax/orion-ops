@@ -1,8 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.machine.MachineEnvAttr;
-import com.orion.ops.consts.machine.MountKeyStatus;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
@@ -74,7 +73,7 @@ public interface MachineKeyService {
      * @param idList idList
      * @param mount  挂碍/卸载
      * @return key: idString value: status
-     * @see MountKeyStatus
+     * @see com.orion.ops.consts.machine.MountKeyStatus
      */
     Map<String, Integer> mountOrDumpKeys(List<Long> idList, boolean mount);
 
@@ -94,7 +93,7 @@ public interface MachineKeyService {
      * @param fileData fileData
      * @param password password
      * @return status
-     * @see MountKeyStatus
+     * @see com.orion.ops.consts.machine.MountKeyStatus
      */
     Integer tempMountKey(String fileData, String password);
 
@@ -105,7 +104,7 @@ public interface MachineKeyService {
      * @return 实际路径
      */
     static String getKeyPath(String path) {
-        return Files1.getPath(MachineEnvAttr.KEY_PATH.getValue(), path);
+        return Files1.getPath(SystemEnvAttr.KEY_PATH.getValue(), path);
     }
 
 }

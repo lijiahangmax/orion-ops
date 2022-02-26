@@ -71,7 +71,7 @@ public class MachineInfoController {
     /**
      * 停用/启用
      */
-    @RequestMapping("/status")
+    @RequestMapping("/update-status")
     @EventLog(EventType.CHANGE_MACHINE_STATUS)
     public Integer status(@RequestBody MachineInfoRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());

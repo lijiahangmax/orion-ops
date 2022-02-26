@@ -49,6 +49,14 @@ public interface FileTailService {
     Integer deleteTailFile(Long id);
 
     /**
+     * 删除 tail 文件
+     *
+     * @param machineId machineId
+     * @return effect
+     */
+    Integer deleteByMachineId(Long machineId);
+
+    /**
      * tail 列表
      *
      * @param request request

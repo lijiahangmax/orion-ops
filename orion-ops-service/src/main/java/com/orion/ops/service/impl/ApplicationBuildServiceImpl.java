@@ -177,7 +177,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .eq(Objects.nonNull(request.getStatus()), ApplicationBuildDO::getBuildStatus, request.getStatus())
                 .eq(Const.ENABLE.equals(request.getOnlyMyself()), ApplicationBuildDO::getCreateUserId, Currents.getUserId())
                 .like(Strings.isNotBlank(request.getDescription()), ApplicationBuildDO::getDescription, request.getDescription())
-                .orderByDesc(ApplicationBuildDO::getUpdateTime);
+                .orderByDesc(ApplicationBuildDO::getId);
         // 查询列表
         DataGrid<ApplicationBuildVO> dataGrid = DataQuery.of(applicationBuildDAO)
                 .page(request)

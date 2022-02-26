@@ -1,7 +1,10 @@
 package com.orion.ops.handler.tail;
 
+import com.orion.ops.consts.Const;
+import com.orion.utils.Threads;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2021/6/18 17:34
  */
+@Slf4j
 @Component
 public class TailSessionHolder {
 
@@ -82,6 +86,23 @@ public class TailSessionHolder {
             fileTokenMapping.remove(handler.getMachineId() + ":" + handler.getFilePath());
         }
         return handler;
+    }
+
+    /**
+     * 异步关闭进行中的 tail
+     *
+     * @param machineId machineId
+     * @param path      path
+     */
+    public void asyncCloseTailFile(Long machineId, String path) {
+        Threads.start(() -> {
+            try {
+                Threads.sleep(Const.MS_S_10);
+                this.getSession(machineId, path).forEach(ITailHandler::close);
+            } catch (Exception e) {
+                log.error("关闭tailingFile失败 machineId: {}, path: {}", machineId, path, e);
+            }
+        });
     }
 
 }

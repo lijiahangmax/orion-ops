@@ -140,14 +140,6 @@ public interface MachineEnvService {
     String getSftpCharset(Long machineId);
 
     /**
-     * 获取文件tail模型
-     *
-     * @param machineId 机器id
-     * @return mode
-     */
-    String getMachineTailMode(Long machineId);
-
-    /**
      * 获取文件tail 尾行偏移量
      *
      * @param machineId 机器id

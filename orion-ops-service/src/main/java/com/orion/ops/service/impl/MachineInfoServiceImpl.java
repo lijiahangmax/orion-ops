@@ -77,6 +77,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private ApplicationMachineService applicationMachineService;
 
     @Resource
+    private FileTailService fileTailService;
+
+    @Resource
+    private SchedulerTaskMachineService schedulerTaskMachineService;
+
+    @Resource
     private HistoryValueService historyValueService;
 
     @Override
@@ -133,6 +139,10 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             effect += machineTerminalService.deleteTerminalByMachineId(id);
             // 删除应用机器
             effect += applicationMachineService.deleteAppMachineByMachineId(id);
+            // 删除日志文件
+            effect += fileTailService.deleteByMachineId(id);
+            // 删除调度任务
+            effect += schedulerTaskMachineService.deleteByMachineId(id);
         }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
