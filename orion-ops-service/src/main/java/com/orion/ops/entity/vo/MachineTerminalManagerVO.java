@@ -59,6 +59,11 @@ public class MachineTerminalManagerVO {
     private String machineHost;
 
     /**
+     * 机器tag
+     */
+    private String machineTag;
+
+    /**
      * logId
      */
     private Long logId;
@@ -71,6 +76,7 @@ public class MachineTerminalManagerVO {
             vo.setMachineId(p.getMachineId());
             vo.setMachineName(p.getMachineName());
             vo.setMachineHost(p.getMachineHost());
+            vo.setMachineTag(p.getMachineTag());
             vo.setLogId(p.getLogId());
             vo.setConnectedTime(p.getConnectedTime());
             Optional.ofNullable(p.getConnectedTime())

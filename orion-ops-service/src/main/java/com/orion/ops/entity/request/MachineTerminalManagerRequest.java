@@ -28,6 +28,11 @@ public class MachineTerminalManagerRequest extends PageRequest {
     private Long userId;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
      * 连接时间 开始
      */
     private Date connectedTimeStart;
@@ -48,8 +53,13 @@ public class MachineTerminalManagerRequest extends PageRequest {
     private String machineName;
 
     /**
-     * 连接主机
+     * 机器主机
      */
     private String machineHost;
+
+    /**
+     * 机器tag
+     */
+    private String machineTag;
 
 }

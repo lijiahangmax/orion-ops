@@ -44,6 +44,11 @@ public class MachineTerminalLogVO {
     private String machineName;
 
     /**
+     * 机器tag
+     */
+    private String machineTag;
+
+    /**
      * 机器host
      */
     private String machineHost;
@@ -93,6 +98,7 @@ public class MachineTerminalLogVO {
             vo.setUsername(p.getUsername());
             vo.setMachineId(p.getMachineId());
             vo.setMachineName(p.getMachineName());
+            vo.setMachineTag(p.getMachineTag());
             vo.setMachineHost(p.getMachineHost());
             vo.setAccessToken(p.getAccessToken());
             vo.setConnectedTime(p.getConnectedTime());

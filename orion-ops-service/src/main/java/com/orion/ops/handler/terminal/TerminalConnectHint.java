@@ -65,6 +65,11 @@ public class TerminalConnectHint {
     private String machineHost;
 
     /**
+     * 机器tag
+     */
+    private String machineTag;
+
+    /**
      * 连接时间
      */
     private Date connectedTime;

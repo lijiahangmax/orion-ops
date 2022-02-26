@@ -256,6 +256,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         hint.setMachineId(machineId);
         hint.setMachineName(machine.getMachineName());
         hint.setMachineHost(machine.getMachineHost());
+        hint.setMachineTag(machine.getMachineTag());
         hint.setCols(connectInfo.getCols());
         hint.setRows(connectInfo.getRows());
         hint.setWidth(connectInfo.getWidth());

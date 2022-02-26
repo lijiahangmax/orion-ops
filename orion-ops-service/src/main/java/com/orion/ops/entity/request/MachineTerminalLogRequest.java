@@ -28,6 +28,11 @@ public class MachineTerminalLogRequest extends PageRequest {
     private Long userId;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
      * 机器id
      */
     private Integer machineId;
