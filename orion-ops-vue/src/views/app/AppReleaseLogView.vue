@@ -1,14 +1,14 @@
 <template>
-  <AppReleaseMachineLogAppender ref="appender"/>
+  <AppReleaseLogAppender ref="appender" height="100vh"/>
 </template>
 
 <script>
-import AppReleaseMachineLogAppender from '@/components/log/AppReleaseMachineLogAppender'
+import AppReleaseLogAppender from '@/components/log/AppReleaseLogAppender'
 
 export default {
   name: 'AppReleaseLogView',
   components: {
-    AppReleaseMachineLogAppender
+    AppReleaseLogAppender
   },
   mounted() {
     this.$refs.appender.open(parseInt(this.$route.params.id))

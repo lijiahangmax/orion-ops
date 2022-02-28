@@ -86,7 +86,7 @@
                         :disabled="machine.status === $enum.ACTION_STATUS.WAIT.value">
                 <a target="_blank"
                    title="ctrl 打开新页面"
-                   :href="`#/app/release/log/view/${machine.id}`"
+                   :href="`#/app/release/machine/log/view/${machine.id}`"
                    @click="openMachineLog($event, machine.id)">日志</a>
               </a-button>
               <a-divider type="vertical"/>
@@ -131,29 +131,71 @@
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)" title="审核">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
           <!-- 复制 -->
-          <a v-if="statusHolder.visibleCopy(record.status)" @click="copyRelease(record.id)" title="复制发布">复制</a>
+          <a-popconfirm v-if="statusHolder.visibleCopy(record.status)"
+                        title="是否要复制发布任务?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="copyRelease(record.id)">
+            <span class="span-blue pointer">复制</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
           <!-- 取消 -->
-          <a v-if="statusHolder.visibleCancel(record.status)" @click="cancelTimedRelease(record)" title="取消定时发布">取消</a>
+          <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
+                        title="是否要取消定时发布?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="cancelTimedRelease(record)">
+            <span class="span-blue pointer">取消</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
           <!-- 发布 -->
-          <a v-if="statusHolder.visibleRelease(record.status)" @click="runnableRelease(record)" title="执行发布">发布</a>
+          <a-popconfirm v-if="statusHolder.visibleRelease(record.status)"
+                        title="是否要执行发布?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="runnableRelease(record)">
+            <span class="span-blue pointer">发布</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
           <!-- 定时 -->
           <a v-if="statusHolder.visibleTimed(record.status)" @click="openTimedRelease(record)" title="设置定时发布">定时</a>
           <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
           <!-- 停止 -->
-          <a v-if="statusHolder.visibleTerminated(record.status)" @click="terminated(record.id)" title="停止发布">停止</a>
+          <a-popconfirm v-if="statusHolder.visibleTerminated(record.status)"
+                        title="是否要停止发布?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="terminated(record.id)">
+            <span class="span-blue pointer">停止</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
           <!-- 回滚 -->
-          <a v-if="statusHolder.visibleRollback(record.status)" @click="rollback(record.id)" title="回滚发布">回滚</a>
+          <a-popconfirm v-if="statusHolder.visibleRollback(record.status)"
+                        title="是否要回滚发布?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="rollback(record.id)">
+            <span class="span-blue pointer">回滚</span>
+          </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
+          <!-- 日志 -->
+          <a v-if="statusHolder.visibleLog(record.status)"
+             target="_blank"
+             title="ctrl 打开新页面"
+             :href="`#/app/release/log/view/${record.id}`"
+             @click="openReleaseLog($event, record.id)">日志</a>
+          <a-divider v-if="statusHolder.visibleLog(record.status)" type="vertical"/>
           <!-- 详情 -->
           <a @click="openReleaseDetail(record.id)">详情</a>
           <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
-                        title="确认删除当前环境?"
+                        title="确认删除当前发布任务?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
@@ -173,9 +215,11 @@
       <AppReleaseDetailDrawer ref="releaseDetail"/>
       <!-- 机器详情抽屉 -->
       <AppReleaseMachineDetailDrawer ref="machineDetail"/>
+      <!-- 发布日志 -->
+      <AppReleaseLogAppenderModal ref="releaseAppender"/>
       <!-- 机器日志 -->
       <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
-      <!-- 机器日志 -->
+      <!-- 定时模态框 -->
       <AppReleaseTimedModal ref="releaseTimed"/>
     </div>
   </div>
@@ -190,6 +234,7 @@ import AppReleaseDetailDrawer from '@/components/app/AppReleaseDetailDrawer'
 import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDetailDrawer'
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
 import _filters from '@/lib/filters'
+import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 
 function statusHolder() {
   return {
@@ -219,6 +264,12 @@ function statusHolder() {
     },
     visibleRollback: (status) => {
       return status === this.$enum.RELEASE_STATUS.FINISH.value
+    },
+    visibleLog: (status) => {
+      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
+        status === this.$enum.RELEASE_STATUS.FINISH.value ||
+        status === this.$enum.RELEASE_STATUS.TERMINATED.value ||
+        status === this.$enum.RELEASE_STATUS.FAILURE.value
     }
   }
 }
@@ -280,7 +331,7 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 230,
+    width: 260,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -332,6 +383,7 @@ const innerColumns = [
 export default {
   name: 'AppRelease',
   components: {
+    AppReleaseLogAppenderModal,
     AppReleaseTimedModal,
     AppReleaseMachineLogAppenderModal,
     AppReleaseMachineDetailDrawer,
@@ -472,6 +524,17 @@ export default {
         this.getList({})
       })
     },
+    openReleaseLog(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.releaseAppender.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
+    },
     openReleaseDetail(id) {
       this.$refs.releaseDetail.open(id)
     },
@@ -554,6 +617,7 @@ export default {
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {
       this.$message.warning('请先维护应用环境')
+      return
     }
     this.query.profileId = JSON.parse(activeProfile).id
     // 设置轮询
