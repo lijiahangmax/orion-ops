@@ -78,7 +78,7 @@ public class SchedulerTaskDO implements Serializable {
     private Integer serializeType;
 
     /**
-     * 异常处理 10跳过 20继续
+     * 异常处理 10跳过所有 20跳过错误
      *
      * @see com.orion.ops.consts.ExceptionHandlerType
      */

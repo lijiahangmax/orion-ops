@@ -140,11 +140,11 @@ public class MessageConst {
 
     public static final String RELEASE_ABSENT = "发布单不存在";
 
-    public static final String RELEASE_NOT_ALL_SUCCESS = "未全部执行成功";
+    public static final String OPERATOR_NOT_ALL_SUCCESS = "未全部执行成功";
 
     public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
 
-    public static final String RELEASE_ILLEGAL_STATUS = "当前状态不支持此操作";
+    public static final String ILLEGAL_STATUS = "当前状态不支持此操作";
 
     public static final String FILE_ABSENT_UNABLE_ROLLBACK = "产物丢失无法回滚";
 
@@ -179,5 +179,9 @@ public class MessageConst {
     public static final String INVALID_CONFIG = "配置不合法";
 
     public static final String ERROR_EXPRESSION = "表达式错误";
+
+    public static final String TIMED_GREATER_THAN_NOW = "定时操作时间不能小于当前时间";
+
+    public static final String TASK_NOT_ENABLED = "调度任务未启用";
 
 }

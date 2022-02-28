@@ -29,4 +29,36 @@
         exec_status, exit_code, deleted, log_path, start_time, end_time, create_time, update_time
     </sql>
 
+    <!-- 状态结果列 -->
+    <sql id="Status_Column_List">
+        id, record_id, exec_status, exit_code, start_time, end_time
+    </sql>
+
+    <select id="selectStatusByRecordId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE record_id = #{recordId}
+    </select>
+
+    <select id="selectStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectStatusByRecordIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE record_id IN
+        <foreach collection="recordIdList" item="recordId" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </select>
+
 </mapper>

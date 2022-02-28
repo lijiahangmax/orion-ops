@@ -109,6 +109,11 @@ public enum EventClassify {
      */
     SYSTEM(95),
 
+    /**
+     * 调度操作
+     */
+    SCHEDULER(100),
+
     ;
 
     /**

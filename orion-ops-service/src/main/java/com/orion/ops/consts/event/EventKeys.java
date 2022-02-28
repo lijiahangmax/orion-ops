@@ -53,6 +53,11 @@ public class EventKeys {
     public static final String MACHINE_ID = "machineId";
 
     /**
+     * machine id list
+     */
+    public static final String MACHINE_ID_LIST = "machineIdList";
+
+    /**
      * app id
      */
     public static final String APP_ID = "appId";
@@ -111,6 +116,11 @@ public class EventKeys {
      * 机器数量
      */
     public static final String MACHINE_COUNT = "machineCount";
+
+    /**
+     * 机器名称
+     */
+    public static final String MACHINE_NAME = "machineName";
 
     /**
      * 环境数量
@@ -186,5 +196,10 @@ public class EventKeys {
      * label
      */
     public static final String LABEL = "label";
+
+    /**
+     * time
+     */
+    public static final String TIME = "time";
 
 }

@@ -427,9 +427,14 @@ public enum EventType {
     COPY_RELEASE(5035, EventClassify.RELEASE, "复制应用发布 <sb>${releaseTitle}</sb>"),
 
     /**
-     * 取消应用发布
+     * 取消应用定时发布
      */
-    CANCEL_RELEASE(5040, EventClassify.RELEASE, "取消应用发布 <sb>${title}</sb>"),
+    CANCEL_TIMED_RELEASE(5040, EventClassify.RELEASE, "取消应用定时发布 <sb>${title}</sb>"),
+
+    /**
+     * 设置应用定时发布
+     */
+    SET_TIMED_RELEASE(5045, EventClassify.RELEASE, "应用定时发布时间 <sb>${title}</sb> -> <sb>${time}</sb>"),
 
     // -------------------- 系统环境变量操作 --------------------
 
@@ -474,6 +479,48 @@ public enum EventType {
      * 修改系统配置
      */
     UPDATE_SYSTEM_OPTION(6120, EventClassify.SYSTEM, "修改系统配置项 <sb>${label}</sb> 原始值:<sb>${before}</sb> 修改为:<sb>${after}</sb>"),
+
+    // -------------------- 调度操作 --------------------
+
+    /**
+     * 添加调度任务
+     */
+    ADD_SCHEDULER_TASK(7105, EventClassify.SCHEDULER, "添加调度任务 <sb>${taskName}</sb>"),
+
+    /**
+     * 修改调度任务
+     */
+    UPDATE_SCHEDULER_TASK(7110, EventClassify.SCHEDULER, "修改调度任务 <sb>${name}</sb>"),
+
+    /**
+     * 更新调度任务状态
+     */
+    UPDATE_SCHEDULER_TASK_STATUS(7115, EventClassify.SCHEDULER, "${operator}调度任务 <sb>${name}</sb>"),
+
+    /**
+     * 删除调度任务
+     */
+    DELETE_SCHEDULER_TASK(7120, EventClassify.SCHEDULER, "删除调度任务 <sb>${name}</sb>"),
+
+    /**
+     * 手动触发调度任务
+     */
+    MANUAL_TRIGGER_SCHEDULER_TASK(7125, EventClassify.SCHEDULER, "手动触发调度任务 <sb>${name}</sb>"),
+
+    /**
+     * 停止调度任务
+     */
+    TERMINATED_ALL_SCHEDULER_TASK(7130, EventClassify.SCHEDULER, "停止调度任务 <sb>${name}</sb>"),
+
+    /**
+     * 停止调度任务机器操作
+     */
+    TERMINATED_SCHEDULER_TASK_MACHINE(7135, EventClassify.SCHEDULER, "停止调度任务机器操作 <sb>${name}</sb> <sb>${machineName}</sb>"),
+
+    /**
+     * 跳过调度任务机器操作
+     */
+    SKIP_SCHEDULER_TASK_MACHINE(7140, EventClassify.SCHEDULER, "跳过调度任务机器操作 <sb>${name}</sb> <sb>${machineName}</sb>"),
 
     ;
 

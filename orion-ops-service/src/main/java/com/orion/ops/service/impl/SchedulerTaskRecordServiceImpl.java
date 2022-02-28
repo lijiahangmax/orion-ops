@@ -5,6 +5,8 @@ import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.env.EnvConst;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.consts.scheduler.SchedulerTaskStatus;
 import com.orion.ops.dao.SchedulerTaskDAO;
@@ -16,6 +18,8 @@ import com.orion.ops.entity.vo.SchedulerTaskMachineRecordStatusVO;
 import com.orion.ops.entity.vo.SchedulerTaskMachineRecordVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordStatusVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordVO;
+import com.orion.ops.handler.scheduler.ITaskProcessor;
+import com.orion.ops.handler.scheduler.TaskSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
@@ -27,10 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +68,9 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
 
     @Resource
     private SystemEnvService systemEnvService;
+
+    @Resource
+    private TaskSessionHolder taskSessionHolder;
 
     @Override
     public Integer deleteByTaskId(Long taskId) {
@@ -195,6 +199,52 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     public List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(List<Long> idList) {
         List<SchedulerTaskMachineRecordDO> status = schedulerTaskMachineRecordDAO.selectStatusByIdList(idList);
         return Converts.toList(status, SchedulerTaskMachineRecordStatusVO.class);
+    }
+
+    @Override
+    public void terminatedAll(Long id) {
+        // 查询数据
+        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        // 停止
+        Optional.ofNullable(taskSessionHolder.getSession(id)).ifPresent(ITaskProcessor::terminatedAll);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
+    }
+
+    @Override
+    public void terminatedMachine(Long id, Long machineRecordId) {
+        // 查询数据
+        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
+        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        // 停止
+        Optional.ofNullable(taskSessionHolder.getSession(id))
+                .ifPresent(s -> s.terminatedMachine(machineRecordId));
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineRecordId);
+        EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
+        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
+    }
+
+    @Override
+    public void skipMachine(Long id, Long machineRecordId) {
+        // 查询数据
+        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
+        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        // 跳过
+        Optional.ofNullable(taskSessionHolder.getSession(id))
+                .ifPresent(s -> s.skipMachine(machineRecordId));
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineRecordId);
+        EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
+        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
     }
 
 }

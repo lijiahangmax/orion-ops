@@ -76,4 +76,27 @@ public interface SchedulerTaskRecordService {
      */
     List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(List<Long> idList);
 
+    /**
+     * 停止所有
+     *
+     * @param id id
+     */
+    void terminatedAll(Long id);
+
+    /**
+     * 停止单个
+     *
+     * @param id              id
+     * @param machineRecordId machineRecordId
+     */
+    void terminatedMachine(Long id, Long machineRecordId);
+
+    /**
+     * 跳过单个
+     *
+     * @param id              id
+     * @param machineRecordId machineRecordId
+     */
+    void skipMachine(Long id, Long machineRecordId);
+
 }

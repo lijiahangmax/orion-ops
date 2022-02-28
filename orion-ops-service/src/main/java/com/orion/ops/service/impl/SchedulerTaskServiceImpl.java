@@ -19,6 +19,7 @@ import com.orion.ops.service.api.SchedulerTaskRecordService;
 import com.orion.ops.service.api.SchedulerTaskService;
 import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
+import com.orion.ops.task.impl.SchedulerTaskImpl;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
@@ -215,8 +216,8 @@ public class SchedulerTaskServiceImpl implements SchedulerTaskService {
         SchedulerTaskDO task = schedulerTaskDAO.selectById(id);
         Valid.notNull(task, MessageConst.UNKNOWN_DATA);
         Valid.isTrue(Const.ENABLE.equals(task.getEnableStatus()), MessageConst.TASK_NOT_ENABLED);
-        // TODO
-
+        // 手动执行
+        new SchedulerTaskImpl(id).run();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, task.getTaskName());

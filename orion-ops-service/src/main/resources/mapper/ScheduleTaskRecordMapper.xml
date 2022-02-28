@@ -20,4 +20,19 @@
         id, task_id, task_name, task_status, deleted, start_time, end_time, create_time, update_time
     </sql>
 
+    <!-- 状态查询结果列 -->
+    <sql id="Base_Status_List">
+        id, task_status, start_time, end_time
+    </sql>
+
+    <select id="selectTaskStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_List"/>
+        FROM scheduler_task_record
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>
