@@ -13,6 +13,10 @@
       <a-tab-pane key="3" tab="IP名单配置">
         <IpConfig/>
       </a-tab-pane>
+      <!-- 其他设置 -->
+      <a-tab-pane key="4" tab="其他设置">
+        <OtherConfig/>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -26,7 +30,8 @@ export default {
   components: {
     SystemAnalysis,
     SecurityConfig: () => import('@/components/system/SecurityConfig'),
-    IpConfig: () => import('@/components/system/IpConfig')
+    IpConfig: () => import('@/components/system/IpConfig'),
+    OtherConfig: () => import('@/components/system/OtherConfig')
   }
 }
 </script>

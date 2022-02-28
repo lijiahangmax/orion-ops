@@ -189,7 +189,6 @@ export default {
   .option-input {
     width: 200px;
   }
-
 }
 
 </style>
