@@ -32,4 +32,12 @@ public interface ApplicationReleaseDAO extends BaseMapper<ApplicationReleaseDO> 
      */
     List<ApplicationReleaseDO> selectStatusByIdList(@Param("idList") List<Long> idList);
 
+    /**
+     * 设置定时时间为 null
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer setTimedReleaseTimeNull(@Param("id") Long id);
+
 }

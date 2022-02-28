@@ -99,4 +99,9 @@ public class ApplicationReleaseRequest extends PageRequest {
      */
     private Integer queryMachine;
 
+    /**
+     * 是否查询操作
+     */
+    private Integer queryAction;
+
 }

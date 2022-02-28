@@ -60,6 +60,15 @@ public class ApplicationActionLogServiceImpl implements ApplicationActionLogServ
     }
 
     @Override
+    public List<ApplicationActionLogDO> selectActionByRelIdList(List<Long> relIdList, StageType stageType) {
+        LambdaQueryWrapper<ApplicationActionLogDO> wrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
+                .in(ApplicationActionLogDO::getRelId, relIdList)
+                .eq(ApplicationActionLogDO::getStageType, stageType.getType())
+                .orderByAsc(ApplicationActionLogDO::getId);
+        return applicationActionLogDAO.selectList(wrapper);
+    }
+
+    @Override
     public void updateActionById(ApplicationActionLogDO record) {
         if (record.getUpdateTime() == null) {
             record.setUpdateTime(new Date());

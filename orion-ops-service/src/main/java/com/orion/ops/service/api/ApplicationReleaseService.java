@@ -37,10 +37,10 @@ public interface ApplicationReleaseService {
     /**
      * 发布详情
      *
-     * @param id id
+     * @param request request
      * @return row
      */
-    ApplicationReleaseDetailVO getReleaseDetail(Long id);
+    ApplicationReleaseDetailVO getReleaseDetail(ApplicationReleaseRequest request);
 
     /**
      * 获取发布机器详情

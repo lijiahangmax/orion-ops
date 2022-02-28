@@ -150,8 +150,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public ApplicationReleaseDetailVO getReleaseDetail(Long id) {
+    public ApplicationReleaseDetailVO getReleaseDetail(ApplicationReleaseRequest request) {
         // 查询
+        Long id = request.getId();
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ApplicationReleaseDetailVO vo = Converts.to(release, ApplicationReleaseDetailVO.class);
@@ -163,6 +164,20 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .map(s -> Converts.to(s, ApplicationReleaseMachineVO.class))
                 .collect(Collectors.toList());
         vo.setMachines(machines);
+        // 查询操作
+        if (Const.ENABLE.equals(request.getQueryAction())) {
+            List<Long> releaseMachineIdList = machines.stream().map(ApplicationReleaseMachineVO::getId).collect(Collectors.toList());
+            if (!releaseMachineIdList.isEmpty()) {
+                // 机器操作
+                List<ApplicationActionLogDO> machineActions = applicationActionLogService.selectActionByRelIdList(releaseMachineIdList, StageType.RELEASE);
+                Map<Long, List<ApplicationActionLogVO>> machineActionsMap = machineActions.stream()
+                        .map(s -> Converts.to(s, ApplicationActionLogVO.class))
+                        .collect(Collectors.groupingBy(ApplicationActionLogVO::getRelId));
+                for (ApplicationReleaseMachineVO machine : machines) {
+                    machine.setActions(machineActionsMap.get(machine.getId()));
+                }
+            }
+        }
         return vo;
     }
 

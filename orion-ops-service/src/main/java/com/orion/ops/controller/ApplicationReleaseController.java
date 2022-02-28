@@ -65,8 +65,8 @@ public class ApplicationReleaseController {
      */
     @RequestMapping("/detail")
     public ApplicationReleaseDetailVO getReleaseDetail(@RequestBody ApplicationReleaseRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return applicationReleaseService.getReleaseDetail(id);
+        Valid.notNull(request.getId());
+        return applicationReleaseService.getReleaseDetail(request);
     }
 
     /**

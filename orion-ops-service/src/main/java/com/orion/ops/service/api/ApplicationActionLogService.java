@@ -43,6 +43,15 @@ public interface ApplicationActionLogService {
     List<ApplicationActionLogDO> selectActionByRelId(Long relId, StageType stageType);
 
     /**
+     * 通过 relIdList 查询 action
+     *
+     * @param relIdList relIdList
+     * @param stageType stageType
+     * @return action
+     */
+    List<ApplicationActionLogDO> selectActionByRelIdList(List<Long> relIdList, StageType stageType);
+
+    /**
      * 更新 action
      *
      * @param record record
