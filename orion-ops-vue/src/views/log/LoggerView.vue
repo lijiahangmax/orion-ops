@@ -38,7 +38,7 @@
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
                              :relId="selectedTailFile.id"
-                             :appendStyle="{height: 'calc(100vh - 96px)'}"
+                             :appendStyle="{height: 'calc(100vh - 100px)'}"
                              :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
                              :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: selectedTailFile.id}">
                   <!-- 左侧工具栏 -->
@@ -46,22 +46,22 @@
                     <div class="appender-left-tools">
                       <!-- 信息 -->
                       <a-breadcrumb>
-                        <a-breadcrumb-item>
-                          <a-tag color="#7950F2" style="margin: 0; max-width: calc(17% - 19px)">
+                        <a-breadcrumb-item v-if="selectedTailFile.machineName">
+                          <a-tag color="#7950F2" class="m0">
                             {{ selectedTailFile.machineName }}
                           </a-tag>
                         </a-breadcrumb-item>
-                        <a-breadcrumb-item>
-                          <a-tag color="#5C7CFA" style="margin: 0; max-width: calc(17% - 19px)">
+                        <a-breadcrumb-item v-if="selectedTailFile.machineHost">
+                          <a-tag color="#5C7CFA" class="m0">
                             {{ selectedTailFile.machineHost }}
                           </a-tag>
                         </a-breadcrumb-item>
-                        <a-breadcrumb-item>
-                          <a-tag color="#15AABF" style="margin: 0; max-width: calc(17% - 19px)">
+                        <a-breadcrumb-item v-if="selectedTailFile.name">
+                          <a-tag color="#15AABF" class="m0">
                             {{ selectedTailFile.name }}
                           </a-tag>
                         </a-breadcrumb-item>
-                        <a-breadcrumb-item>
+                        <a-breadcrumb-item v-if="selectedTailFile.path">
                           <a-tag class="pointer"
                                  color="#40C057"
                                  style="margin: 0; max-width: calc(47% - 19px)"
@@ -215,6 +215,10 @@ export default {
   overflow: auto;
   background-color: #FFF;
   padding: 4px 8px 8px 8px;
+
+  .file-log-view {
+    padding-top: 8px;
+  }
 }
 
 #log-view-list-fixed-left {
@@ -244,9 +248,8 @@ export default {
     }
 
     .log-list-tools-item:hover {
-      color: hsla(0, 0%, 100%, .2);
       background-color: #1890FF;
-      color: #FFF;
+      color: #FFFFFF;
     }
   }
 }

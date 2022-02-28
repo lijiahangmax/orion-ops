@@ -252,7 +252,6 @@ export default {
   data: function() {
     return {
       defaultSelectedAppIds: [],
-      redirectAppId: null,
       appLoading: false,
       appList: [],
       rows: [],
@@ -443,11 +442,6 @@ export default {
       this.getAppEnv({})
     }
   },
-  created() {
-    if (this.$route.params.id) {
-      this.redirectAppId = parseInt(this.$route.params.id)
-    }
-  },
   async mounted() {
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
@@ -459,8 +453,8 @@ export default {
     // 加载应用列表
     await this.getAppList()
     let chooseId
-    if (this.redirectAppId) {
-      chooseId = this.redirectAppId
+    if (this.$route.params.id) {
+      chooseId = parseInt(this.$route.params.id)
     } else if (this.appList.length) {
       chooseId = this.appList[0].id
     } else {

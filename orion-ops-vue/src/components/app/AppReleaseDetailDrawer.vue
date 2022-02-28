@@ -138,6 +138,7 @@ export default {
       // 关闭轮询状态
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
       this.detail = {}
       this.visible = true
@@ -169,6 +170,7 @@ export default {
         this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value &&
         this.detail.status !== this.$enum.RELEASE_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
+        this.pollId = null
         return
       }
       this.$api.getAppReleaseStatus({

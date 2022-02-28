@@ -236,6 +236,7 @@ const clientHandler = {
     // 关闭心跳
     if (this.pingThread) {
       clearInterval(this.pingThread)
+      this.pingThread = null
     }
   }
 }

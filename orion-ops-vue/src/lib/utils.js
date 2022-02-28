@@ -77,7 +77,7 @@ function exitFullScreen() {
 /**
  * 格式化时间
  */
-function dateFormat(date, pattern) {
+function dateFormat(date, pattern = 'yyyy-MM-dd HH:mm:ss') {
   const o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),

@@ -252,7 +252,6 @@ export default {
   data: function() {
     return {
       defaultSelectedMachineIds: [],
-      redirectMachineId: null,
       machineLoading: false,
       machineList: [],
       rows: [],
@@ -436,16 +435,11 @@ export default {
       this.getMachineEnv({})
     }
   },
-  created() {
-    if (this.$route.params.id) {
-      this.redirectMachineId = parseInt(this.$route.params.id)
-    }
-  },
   async mounted() {
     await this.getMachines()
     let chooseId
-    if (this.redirectMachineId) {
-      chooseId = this.redirectMachineId
+    if (this.$route.params.id) {
+      chooseId = parseInt(this.$route.params.id)
     } else if (this.machineList.length) {
       chooseId = this.machineList[0].id
     } else {

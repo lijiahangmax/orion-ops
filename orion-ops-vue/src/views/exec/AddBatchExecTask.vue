@@ -5,7 +5,7 @@
       <div class="task-add-container">
         <!-- 执行机器 -->
         <div class="machine-field-container">
-          <span class="machine-field-label">执行机器:</span>
+          <span class="machine-field-label normal-label">执行机器</span>
           <div class="machine-checker-wrapper">
             <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
               <template #trigger>
@@ -20,7 +20,7 @@
         <!-- 状态 -->
         <div class="status-container">
           <!-- label -->
-          <span>执行命令: </span>
+          <span class="normal-label">执行命令</span>
           <!-- status -->
           <a-tag :color="isRun ? '#4C6EF5' : '#40C057'">
             {{ isRun ? '已执行' : '未执行' }}
@@ -32,7 +32,7 @@
         </div>
         <!-- 执行描述 -->
         <div class="machine-field-container machine-description-container">
-          <span class="machine-field-label">执行描述:</span>
+          <span class="machine-field-label normal-label">执行描述</span>
           <div class="machine-field-input">
             <a-input v-model="description" allowClear/>
           </div>
@@ -67,7 +67,7 @@
             <div class="machine-log-view">
               <LogAppender :ref="'appender' + execMachine.execId"
                            :relId="execMachine.execId"
-                           :appendStyle="{height: 'calc(100vh - 184px)'}"
+                           :appendStyle="{height: 'calc(100vh - 188px)'}"
                            :rightToolsProps="{line: false, download: false}"
                            :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
                 <!-- 左侧工具栏 -->
@@ -215,6 +215,7 @@ export default {
       // 关闭轮询
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
       // 关闭日志
       this.execMachines.forEach(m => {
@@ -315,8 +316,8 @@ export default {
 
   .task-add-container {
     width: 45%;
-    margin-right: 1%;
-    padding: 16px;
+    margin-right: 16px;
+    padding: 8px;
     border-radius: 4px;
     background-color: #FFF;
 
@@ -325,7 +326,7 @@ export default {
 
       .machine-field-label {
         font-weight: 600;
-        width: 65px;
+        width: 64px;
         margin: 4px 8px;
       }
 
@@ -335,7 +336,7 @@ export default {
       }
 
       .machine-field-input {
-        width: calc(100% - 60px);
+        width: calc(100% - 78px);
         padding-right: 8px;
       }
     }
@@ -374,7 +375,8 @@ export default {
     padding: 12px;
 
     .machine-log-view {
-      height: calc(100vh - 148px);
+      height: calc(100vh - 144px);
+      padding-top: 8px;
     }
   }
 

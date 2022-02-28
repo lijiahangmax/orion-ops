@@ -354,6 +354,7 @@ export default {
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {
       this.$message.warning('请先维护应用环境')
+      return
     }
     this.query.profileId = JSON.parse(activeProfile).id
     // 设置轮询
