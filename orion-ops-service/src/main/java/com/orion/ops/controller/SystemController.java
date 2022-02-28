@@ -5,10 +5,15 @@ import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.event.EventType;
+import com.orion.ops.consts.system.SystemConfigKey;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ConfigIpListRequest;
+import com.orion.ops.entity.request.SystemOptionRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
+import com.orion.ops.entity.vo.SystemAnalysisVO;
+import com.orion.ops.entity.vo.SystemOptionVO;
 import com.orion.ops.service.api.SystemService;
+import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +54,47 @@ public class SystemController {
     public HttpWrapper<?> configIpList(@RequestBody ConfigIpListRequest request) {
         systemService.configIpList(request);
         return HttpWrapper.ok();
+    }
+
+    /**
+     * 获取系统分析信息
+     */
+    @RequestMapping("/get-system-analysis")
+    public SystemAnalysisVO getSystemAnalysis() {
+        return systemService.getSystemAnalysis();
+    }
+
+    /**
+     * 重新进行系统统计分析
+     */
+    @RequestMapping("/re-analysis")
+    @EventLog(EventType.RE_ANALYSIS_SYSTEM)
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public SystemAnalysisVO reAnalysisSystem() {
+        systemService.analysisSystemSpace();
+        return systemService.getSystemAnalysis();
+    }
+
+    /**
+     * 修改系统配置项
+     */
+    @RequestMapping("/update-system-option")
+    @EventLog(EventType.UPDATE_SYSTEM_OPTION)
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public HttpWrapper<?> updateSystemOption(@RequestBody SystemOptionRequest request) {
+        SystemConfigKey key = Valid.notNull(SystemConfigKey.of(request.getOption()));
+        String value = key.getValue(Valid.notBlank(request.getValue()));
+        systemService.updateSystemOption(key.getEnv(), value);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 获取系统配置项
+     */
+    @RequestMapping("/get-system-options")
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public SystemOptionVO getSystemOptions() {
+        return systemService.getSystemOptions();
     }
 
 }

@@ -1,9 +1,10 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.consts.system.SystemCleanType;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
+import com.orion.ops.entity.vo.SystemOptionVO;
 
 /**
  * 系统服务
@@ -30,13 +31,6 @@ public interface SystemService {
     void configIpList(ConfigIpListRequest request);
 
     /**
-     * 清理系统文件
-     *
-     * @param cleanType 文件类型
-     */
-    void cleanSystemFile(SystemCleanType cleanType);
-
-    /**
      * 分析磁盘占用空间
      */
     void analysisSystemSpace();
@@ -47,5 +41,20 @@ public interface SystemService {
      * @return 系统分析信息
      */
     SystemAnalysisVO getSystemAnalysis();
+
+    /**
+     * 更新系统配置
+     *
+     * @param env   env
+     * @param value value
+     */
+    void updateSystemOption(SystemEnvAttr env, String value);
+
+    /**
+     * 获取系统配置项
+     *
+     * @return 配置项
+     */
+    SystemOptionVO getSystemOptions();
 
 }

@@ -8,7 +8,6 @@ import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.system.SystemCleanType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
@@ -16,14 +15,13 @@ import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
+import com.orion.ops.entity.vo.SystemOptionVO;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.service.api.SystemService;
-import com.orion.ops.utils.FileCleaner;
 import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
-import com.orion.utils.Threads;
 import com.orion.utils.Valid;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
@@ -129,14 +127,6 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public void cleanSystemFile(SystemCleanType cleanType) {
-        // 清理
-        Threads.start(() -> FileCleaner.cleanDir(cleanType));
-        // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.LABEL, cleanType.getLabel());
-    }
-
-    @Override
     public void analysisSystemSpace() {
         // 临时文件
         File tempPath = new File(SystemEnvAttr.TEMP_PATH.getValue());
@@ -215,6 +205,38 @@ public class SystemServiceImpl implements SystemService {
         vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
         vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());
         return vo;
+    }
+
+    @Override
+    public void updateSystemOption(SystemEnvAttr env, String value) {
+        String key = env.getKey();
+        String beforeValue = env.getValue();
+        // 更新系统配置
+        SystemEnvDO systemEnv = systemEnvService.selectByName(key);
+        SystemEnvRequest updateEnv = new SystemEnvRequest();
+        updateEnv.setValue(value);
+        systemEnvService.updateEnv(systemEnv, updateEnv);
+        env.setValue(value);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.KEY, env.getDescription());
+        EventParamsHolder.addParam(EventKeys.LABEL, env.getDescription());
+        EventParamsHolder.addParam(EventKeys.BEFORE, beforeValue);
+        EventParamsHolder.addParam(EventKeys.AFTER, value);
+    }
+
+    @Override
+    public SystemOptionVO getSystemOptions() {
+        SystemOptionVO options = new SystemOptionVO();
+        options.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());
+        options.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
+        options.setAllowMultipleLogin(EnableType.of(SystemEnvAttr.ALLOW_MULTIPLE_LOGIN.getValue()).getValue());
+        options.setLoginFailureLock(EnableType.of(SystemEnvAttr.LOGIN_FAILURE_LOCK.getValue()).getValue());
+        options.setLoginIpBind(EnableType.of(SystemEnvAttr.LOGIN_IP_BIND.getValue()).getValue());
+        options.setLoginTokenAutoRenew(EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue());
+        options.setLoginTokenExpire(Integer.valueOf(SystemEnvAttr.LOGIN_TOKEN_EXPIRE.getValue()));
+        options.setLoginFailureLockThreshold(Integer.valueOf(SystemEnvAttr.LOGIN_FAILURE_LOCK_THRESHOLD.getValue()));
+        options.setLoginTokenAutoRenewThreshold(Integer.valueOf(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW_THRESHOLD.getValue()));
+        return options;
     }
 
     /**
