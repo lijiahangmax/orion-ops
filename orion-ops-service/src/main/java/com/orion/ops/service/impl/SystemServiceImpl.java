@@ -8,6 +8,7 @@ import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.system.SystemCleanType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
@@ -19,9 +20,11 @@ import com.orion.ops.entity.vo.SystemOptionVO;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.service.api.SystemService;
+import com.orion.ops.utils.FileCleaner;
 import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.Valid;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
@@ -124,6 +127,14 @@ public class SystemServiceImpl implements SystemService {
         Boolean enableIpFilterValue = enableIpFilter.getValue();
         Boolean enableWhiteIpValue = enableWhiteIp.getValue();
         ipFilterInterceptor.set(enableIpFilterValue, enableWhiteIpValue, enableWhiteIpValue ? whiteIpList : blackIpList);
+    }
+
+    @Override
+    public void cleanSystemFile(SystemCleanType cleanType) {
+        // 清理
+        Threads.start(() -> FileCleaner.cleanDir(cleanType));
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.LABEL, cleanType.getLabel());
     }
 
     @Override

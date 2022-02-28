@@ -32,6 +32,9 @@ public class CommonController {
     @Resource
     private CommonService commonService;
 
+    /**
+     * 菜单
+     */
     @RequestMapping("/menu")
     public List<?> getMenu() throws IOException {
         UserDTO user = Currents.getUser();

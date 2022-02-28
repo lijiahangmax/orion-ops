@@ -5,9 +5,11 @@ import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.event.EventType;
+import com.orion.ops.consts.system.SystemCleanType;
 import com.orion.ops.consts.system.SystemConfigKey;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ConfigIpListRequest;
+import com.orion.ops.entity.request.SystemFileCleanRequest;
 import com.orion.ops.entity.request.SystemOptionRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
@@ -53,6 +55,18 @@ public class SystemController {
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> configIpList(@RequestBody ConfigIpListRequest request) {
         systemService.configIpList(request);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 清理系统文件
+     */
+    @RequestMapping("/clean-system-file")
+    @EventLog(EventType.CLEAN_SYSTEM_FILE)
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public HttpWrapper<?> cleanSystemFile(@RequestBody SystemFileCleanRequest request) {
+        SystemCleanType cleanType = Valid.notNull(SystemCleanType.of(request.getCleanType()));
+        systemService.cleanSystemFile(cleanType);
         return HttpWrapper.ok();
     }
 
