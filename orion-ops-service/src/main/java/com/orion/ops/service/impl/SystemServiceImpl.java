@@ -1,26 +1,40 @@
 package com.orion.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.orion.location.region.LocationRegions;
 import com.orion.location.region.core.Region;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.system.SystemCleanType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.SystemEnvDO;
+import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
 import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
+import com.orion.ops.entity.vo.SystemAnalysisVO;
+import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.service.api.SystemService;
+import com.orion.ops.utils.FileCleaner;
 import com.orion.ops.utils.Utils;
+import com.orion.remote.channel.SessionHolder;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.Valid;
+import com.orion.utils.convert.Converts;
+import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 系统服务实现
@@ -33,8 +47,17 @@ import javax.annotation.Resource;
 @Service("systemService")
 public class SystemServiceImpl implements SystemService {
 
+    private SystemSpaceAnalysisDTO systemSpace;
+
     @Resource
     private SystemEnvService systemEnvService;
+
+    @Resource
+    private IpFilterInterceptor ipFilterInterceptor;
+
+    public SystemServiceImpl() {
+        this.systemSpace = new SystemSpaceAnalysisDTO();
+    }
 
     @Override
     public IpListConfigVO getIpInfo(String ip) {
@@ -100,7 +123,98 @@ public class SystemServiceImpl implements SystemService {
         // 设置日志参数
         EventParamsHolder.addParams(request);
         // 设置 ip 过滤器
+        Boolean enableIpFilterValue = enableIpFilter.getValue();
+        Boolean enableWhiteIpValue = enableWhiteIp.getValue();
+        ipFilterInterceptor.set(enableIpFilterValue, enableWhiteIpValue, enableWhiteIpValue ? whiteIpList : blackIpList);
+    }
 
+    @Override
+    public void cleanSystemFile(SystemCleanType cleanType) {
+        // 清理
+        Threads.start(() -> FileCleaner.cleanDir(cleanType));
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.LABEL, cleanType.getLabel());
+    }
+
+    @Override
+    public void analysisSystemSpace() {
+        // 临时文件
+        File tempPath = new File(SystemEnvAttr.TEMP_PATH.getValue());
+        List<File> tempFiles = Files1.listFiles(tempPath, true);
+        long tempFilesBytes = tempFiles.stream().mapToLong(File::length).sum();
+        systemSpace.setTempFileCount(tempFiles.size());
+        systemSpace.setTempFileSize(Files1.getSize(tempFilesBytes));
+        tempFiles.clear();
+
+        // 日志文件
+        File logPath = new File(SystemEnvAttr.LOG_PATH.getValue());
+        List<File> logFiles = Files1.listFiles(logPath, true);
+        long logFilesBytes = logFiles.stream().mapToLong(File::length).sum();
+        systemSpace.setLogFileCount(logFiles.size());
+        systemSpace.setLogFileSize(Files1.getSize(logFilesBytes));
+        logFiles.clear();
+
+        // 交换文件
+        File swapPath = new File(SystemEnvAttr.SWAP_PATH.getValue());
+        List<File> swapFiles = Files1.listFiles(swapPath, true);
+        long swapFilesBytes = swapFiles.stream().mapToLong(File::length).sum();
+        systemSpace.setSwapFileCount(swapFiles.size());
+        systemSpace.setSwapFileSize(Files1.getSize(swapFilesBytes));
+        swapFiles.clear();
+
+        // 构建产物
+        File buildPath = new File(SystemEnvAttr.DIST_PATH.getValue() + Const.BUILD_DIR);
+        List<File> buildFiles = Files1.listFiles(buildPath, true);
+        long buildFilesBytes = buildFiles.stream().filter(File::isFile).mapToLong(File::length).sum();
+        int distVersions = Files1.listDirs(buildPath).size();
+        systemSpace.setDistVersionCount(distVersions);
+        systemSpace.setDistFileSize(Files1.getSize(buildFilesBytes));
+        buildFiles.clear();
+
+        // vcs产物
+        File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
+        List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+        int vcsVersionCount = 0;
+        long vcsDirFilesBytes = 0L;
+        for (File vcsDir : vcsPaths) {
+            vcsVersionCount += Files1.listDirs(vcsDir).size();
+            List<File> vcsDirFiles = Files1.listFiles(vcsDir, true);
+            vcsDirFilesBytes += vcsDirFiles.stream().mapToLong(File::length).sum();
+        }
+        systemSpace.setVcsVersionCount(vcsVersionCount);
+        systemSpace.setVcsVersionFileSize(Files1.getSize(vcsDirFilesBytes));
+        log.info("分析占用磁盘空间完成 {}", JSON.toJSONString(systemSpace));
+    }
+
+    @Override
+    public SystemAnalysisVO getSystemAnalysis() {
+        SystemAnalysisVO vo = Converts.to(systemSpace, SystemAnalysisVO.class);
+        // 挂载秘钥数
+        vo.setMountKeyCount(SessionHolder.getLoadKeys().size());
+        // IP黑名单
+        String blackIpList = systemEnvService.getEnvValue(SystemEnvAttr.BLACK_IP_LIST.getKey());
+        if (Strings.isBlank(blackIpList)) {
+            vo.setBlackIpListCount(0L);
+        } else {
+            long validBlackIpCount = Arrays.stream(blackIpList.split(Const.LF))
+                    .filter(Strings::isNotBlank)
+                    .count();
+            vo.setBlackIpListCount(validBlackIpCount);
+        }
+        // IP白名单
+        String whiteIpList = systemEnvService.getEnvValue(SystemEnvAttr.WHITE_IP_LIST.getKey());
+        if (Strings.isBlank(whiteIpList)) {
+            vo.setWhiteIpListCount(0L);
+        } else {
+            long validWhiteIpCount = Arrays.stream(whiteIpList.split(Const.LF))
+                    .filter(Strings::isNotBlank)
+                    .count();
+            vo.setWhiteIpListCount(validWhiteIpCount);
+        }
+        // 文件清理
+        vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
+        vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());
+        return vo;
     }
 
     /**
