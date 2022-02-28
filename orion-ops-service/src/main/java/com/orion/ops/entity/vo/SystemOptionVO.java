@@ -75,4 +75,11 @@ public class SystemOptionVO {
      */
     private Integer loginTokenAutoRenewThreshold;
 
+    /**
+     * 自动恢复启用的调度任务
+     *
+     * @see com.orion.ops.consts.system.SystemEnvAttr#RESUME_ENABLE_SCHEDULER_TASK
+     */
+    private Boolean resumeEnableSchedulerTask;
+
 }

@@ -122,6 +122,11 @@ public enum SystemEnvAttr {
      */
     LOGIN_TOKEN_AUTO_RENEW_THRESHOLD("登陆自动续签阈值", true),
 
+    /**
+     * 自动恢复启用的调度任务
+     */
+    RESUME_ENABLE_SCHEDULER_TASK("自动恢复启用的调度任务", true),
+
     ;
 
     /**

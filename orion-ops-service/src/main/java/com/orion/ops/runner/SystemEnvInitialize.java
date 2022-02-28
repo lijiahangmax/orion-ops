@@ -111,6 +111,7 @@ public class SystemEnvInitialize implements CommandLineRunner {
             case ENABLE_WHITE_IP_LIST:
             case ENABLE_AUTO_CLEAN_FILE:
             case ALLOW_MULTIPLE_LOGIN:
+            case RESUME_ENABLE_SCHEDULER_TASK:
                 return EnableType.DISABLED.getLabel();
             case LOGIN_FAILURE_LOCK:
             case LOGIN_IP_BIND:

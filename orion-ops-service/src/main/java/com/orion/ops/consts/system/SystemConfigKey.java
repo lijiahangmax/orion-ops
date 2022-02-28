@@ -111,6 +111,16 @@ public enum SystemConfigKey {
         }
     },
 
+    /**
+     * 自动恢复启用的调度任务
+     */
+    RESUME_ENABLE_SCHEDULER_TASK(100, SystemEnvAttr.RESUME_ENABLE_SCHEDULER_TASK) {
+        @Override
+        protected String conversionValue(String s) {
+            return ENABLED_TYPE.apply(s);
+        }
+    },
+
     ;
 
     private static final Conversion<String, String> ENABLED_TYPE = s -> EnableType.of(Boolean.valueOf(s)).getLabel();
