@@ -80,7 +80,7 @@
     </div>
     <!-- 事件 -->
     <div class="logger-view-event-container">
-      <RightClickMenu ref="rightMenu" @clickRight="clickRightMenuItem">
+      <RightClickMenu ref="rightMenu" :x="rightMenuX" :y="rightMenuY" @clickRight="clickRightMenuItem">
         <template #items>
           <a-menu-item key="copy">
             <span class="right-menu-item"><a-icon type="copy"/>复制所有</span>
@@ -207,7 +207,9 @@ export default {
           status: true
         }
       }
-    }
+    },
+    rightMenuX: Function,
+    rightMenuY: Function
   },
   data() {
     return {
@@ -361,14 +363,14 @@ export default {
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  padding: 6px 0;
+  padding-bottom: 8px;
 
   .log-tools-fixed-left {
-    width: 50%;
+    min-width: 20%;
   }
 
   .log-tools-fixed-right {
-    width: 50%;
+    min-width: 50%;
     display: flex;
     align-items: center;
     justify-content: flex-end;

@@ -25,13 +25,13 @@
         <!-- 左侧工具 -->
         <template #left-tools>
           <div class="build-log-tools">
-            <a-tag color="#5C7CFA">
+            <a-tag color="#5C7CFA" v-if="detail.seq">
               #{{ detail.seq }}
             </a-tag>
-            <a-tag color="#40C057">
+            <a-tag color="#40C057" v-if="detail.appName">
               {{ detail.appName }}
             </a-tag>
-            <a-tag color="#845EF7">
+            <a-tag color="#845EF7" v-if="detail.profileName">
               {{ detail.profileName }}
             </a-tag>
             <div class="download-bundle-wrapper" v-if="detail.status === $enum.BUILD_STATUS.FINISH.value">
@@ -57,7 +57,7 @@ export default {
   props: {
     appenderHeight: {
       type: String,
-      default: 'calc(100vh - 108px)'
+      default: 'calc(100vh - 112px)'
     }
   },
   computed: {
@@ -98,6 +98,7 @@ export default {
       // 关闭轮询
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
       // 关闭tail
       this.$nextTick(() => {
@@ -107,7 +108,6 @@ export default {
       this.id = null
       this.current = 0
       this.detail = {}
-      this.pollId = null
       this.downloadUrl = null
     },
     pollStatus() {
@@ -115,25 +115,24 @@ export default {
         id: this.id
       }).then(({ data }) => {
         this.detail.status = data.status
-        // 设置action
-        if (data.actions) {
-          for (const actionStatus of data.actions) {
-            if (this.detail.actions && this.detail.actions.length) {
-              for (const action of this.detail.actions) {
-                if (actionStatus.id === action.id) {
-                  action.status = actionStatus.status
-                  action.used = actionStatus.used
-                }
-              }
-            }
-          }
-        }
-        this.setStepsCurrent()
         // 清除状态轮询
         if (this.detail.status !== this.$enum.BUILD_STATUS.WAIT.value &&
           this.detail.status !== this.$enum.BUILD_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
+          this.pollId = null
         }
+        // 设置action
+        if (!data.actions || !data.actions.length || !this.detail.actions || !this.detail.actions.length) {
+          return
+        }
+        for (const actionStatus of data.actions) {
+          this.detail.actions.filter(s => s.id === actionStatus.id).forEach(e => {
+            e.status = actionStatus.status
+            e.used = actionStatus.used
+          })
+        }
+        // 设置当前操作
+        this.setStepsCurrent()
       })
     },
     setStepsCurrent() {
@@ -176,11 +175,11 @@ export default {
 
 .app-build-steps {
   height: 56px;
-  padding: 12px 24px;
+  padding: 12px;
 }
 
 .app-build-log {
-  padding: 0 8px 8px 8px;
+  padding: 8px;
 
   .build-log-tools {
     display: flex;

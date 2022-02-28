@@ -24,8 +24,7 @@
             {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, status).label }}
           </a-tag>
           <!-- used -->
-          <span class="mx8" title="用时"
-                v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === status">
+          <span class="mx8" title="用时" v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === status && keepTime">
             {{ `${keepTime} (${used}ms)` }}
           </span>
           <!-- exitCode -->
@@ -58,7 +57,7 @@ export default {
   props: {
     appenderHeight: {
       type: String,
-      default: 'calc(100vh - 54px)'
+      default: 'calc(100vh - 56px)'
     }
   },
   data() {
@@ -78,6 +77,7 @@ export default {
       // 关闭轮询
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
       // 打开日志
       this.$refs.appender.openTail()
@@ -97,6 +97,7 @@ export default {
       // 关闭轮询
       if (this.pollId) {
         clearInterval(this.pollId)
+        this.pollId = null
       }
       this.status = null
       this.execId = null
@@ -104,7 +105,6 @@ export default {
       this.keepTime = null
       this.used = null
       this.exitCode = null
-      this.pollId = null
     },
     sendCommand() {
       if (!this.command) {
@@ -156,7 +156,7 @@ export default {
 <style lang="less" scoped>
 
 .exec-logger-appender {
-  padding: 0 8px 8px 8px;
+  padding: 8px;
 
   .appender-left-tools {
     display: flex;
