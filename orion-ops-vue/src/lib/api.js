@@ -1604,6 +1604,45 @@ const $api = {
     return $http.$post('/scheduler/manual-trigger', param, {
       loading: '正在触发...'
     })
+  },
+
+  /**
+   * 查询调度任务执行列表
+   */
+  getSchedulerTaskRecordList: param => {
+    return $http.$post('/scheduler-record/list', param)
+  },
+
+  /**
+   * 查询调度任务执行详情
+   */
+  getSchedulerTaskRecordDetail: param => {
+    return $http.$post('/scheduler-record/detail', param)
+  },
+
+  /**
+   * 查询调度任务机器列表
+   */
+  getSchedulerTaskMachinesRecordList: param => {
+    return $http.$post('/scheduler-record/machines', param)
+  },
+
+  /**
+   * 查询调度任务状态
+   */
+  getSchedulerTaskRecordStatus: param => {
+    return $http.$post('/scheduler-record/list-status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 查询调度任务机器状态
+   */
+  getSchedulerTaskMachinesRecordStatus: param => {
+    return $http.$post('/scheduler-record/machines-status', param, {
+      skipErrorMessage: true
+    })
   }
 
 }

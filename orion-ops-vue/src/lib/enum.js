@@ -437,6 +437,10 @@ const $enum = {
     APP_RELEASE_LOG: {
       value: 40,
       label: '应用发布日志'
+    },
+    SCHEDULER_TASK_MACHINE_LOG: {
+      value: 50,
+      label: '调度任务机器日志'
     }
   },
 
@@ -509,6 +513,10 @@ const $enum = {
     APP_RELEASE_ACTION_LOG: {
       value: 100,
       label: '应用发布操作日志'
+    },
+    SCHEDULER_TASK_MACHINE_LOG: {
+      value: 110,
+      label: '调度任务机器日志'
     }
   },
 
@@ -811,11 +819,11 @@ const $enum = {
       color: 'orange',
       label: '已停止'
     },
-    CANCEL: {
-      value: 65,
-      color: 'orange',
-      label: '已取消'
-    },
+    // CANCEL: {
+    //   value: 65,
+    //   color: 'orange',
+    //   label: '已取消'
+    // },
     FAILURE: {
       value: 70,
       color: 'red',
@@ -1259,9 +1267,13 @@ const $enum = {
           value: 5035,
           label: '复制发布'
         },
-        CANCEL_RELEASE: {
+        CANCEL_TIMED_RELEASE: {
           value: 5040,
           label: '取消发布'
+        },
+        SET_TIMED_RELEASE: {
+          value: 5045,
+          label: '设置定时发布'
         }
       }
     },
@@ -1306,6 +1318,32 @@ const $enum = {
         UPDATE_SYSTEM_CONFIG: {
           value: 6120,
           label: '修改系统配置'
+        }
+      }
+    },
+    SCHEDULER: {
+      value: 100,
+      label: '调度任务操作',
+      type: {
+        ADD_SCHEDULER_TASK: {
+          value: 7105,
+          label: '添加调度任务'
+        },
+        UPDATE_SCHEDULER_TASK: {
+          value: 7110,
+          label: '修改调度任务'
+        },
+        UPDATE_SCHEDULER_TASK_STATUS: {
+          value: 7115,
+          label: '更新任务状态'
+        },
+        DELETE_SCHEDULER_TASK: {
+          value: 7120,
+          label: '删除调度任务'
+        },
+        MANUAL_TRIGGER_SCHEDULER_TASK: {
+          value: 7125,
+          label: '手动触发任务'
         }
       }
     }
@@ -1407,6 +1445,11 @@ const $enum = {
       value: 40,
       label: '失败',
       color: 'red'
+    },
+    TERMINATED: {
+      value: 50,
+      label: '已停止',
+      color: 'orange'
     }
   },
 
@@ -1437,6 +1480,11 @@ const $enum = {
     SKIPPED: {
       value: 50,
       label: '已跳过',
+      color: 'orange'
+    },
+    TERMINATED: {
+      value: 60,
+      label: '已停止',
       color: 'orange'
     }
   },
