@@ -20,7 +20,6 @@ import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;
 import com.orion.ops.entity.vo.sftp.CommandTaskSubmitVO;
-import com.orion.ops.handler.exec.ExecHint;
 import com.orion.ops.handler.exec.ExecSessionHolder;
 import com.orion.ops.handler.exec.IExecHandler;
 import com.orion.ops.service.api.CommandExecService;
@@ -114,23 +113,18 @@ public class CommandExecServiceImpl implements CommandExecService {
             }
             commandExecDAO.insert(record);
             // 设置日志路径
-            String logPath = PathBuilders.getExecLogPath(Const.COMMAND_DIR, record.getId(), machine.getId());
+            Long execId = record.getId();
+            String logPath = PathBuilders.getExecLogPath(Const.COMMAND_DIR, execId, machine.getId());
             CommandExecDO update = new CommandExecDO();
-            update.setId(record.getId());
+            update.setId(execId);
             update.setLogPath(logPath);
             record.setLogPath(logPath);
             commandExecDAO.updateById(update);
-            // 设置执行参数
-            ExecHint hint = new ExecHint();
-            hint.setExecType(ExecType.BATCH_EXEC);
-            hint.setRecord(record);
-            hint.setMachineId(mid);
-            hint.setMachine(machine);
             // 提交执行任务
-            IExecHandler.with(hint).exec();
+            IExecHandler.with(execId).exec();
             // 返回
             CommandTaskSubmitVO submitVO = new CommandTaskSubmitVO();
-            submitVO.setExecId(record.getId());
+            submitVO.setExecId(execId);
             submitVO.setMachineId(mid);
             submitVO.setMachineName(machine.getMachineName());
             submitVO.setMachineHost(machine.getMachineHost());
@@ -204,25 +198,16 @@ public class CommandExecServiceImpl implements CommandExecService {
     }
 
     @Override
-    public Integer terminatedExec(Long id) {
+    public void terminatedExec(Long id) {
         CommandExecDO execDO = this.selectById(id);
         Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
-        int effect = 0;
-        if (!execDO.getExecStatus().equals(ExecStatus.WAITING.getStatus())
-                && !execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
-            return effect;
-        }
+        Valid.isTrue(ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         // 获取任务并停止
-        Optional.ofNullable(execSessionHolder.getSession(id)).ifPresent(IExecHandler::close);
-        // 更新状态
-        CommandExecDO updateStatus = new CommandExecDO();
-        updateStatus.setId(id);
-        updateStatus.setExitCode(Const.TERMINATED_EXIT_CODE);
-        updateStatus.setExecStatus(ExecStatus.TERMINATED.getStatus());
-        effect += commandExecDAO.updateById(updateStatus);
+        IExecHandler session = execSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        session.terminated();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
-        return effect;
     }
 
     @Override

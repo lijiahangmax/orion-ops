@@ -55,9 +55,8 @@ public interface CommandExecService {
      * 终止任务
      *
      * @param id id
-     * @return effect
      */
-    Integer terminatedExec(Long id);
+    void terminatedExec(Long id);
 
     /**
      * 删除任务

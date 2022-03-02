@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.event.EventType;
@@ -75,9 +76,10 @@ public class CommandExecController {
      */
     @RequestMapping("/terminated")
     @EventLog(EventType.EXEC_TERMINATED)
-    public Integer terminated(@RequestBody CommandExecRequest request) {
+    public HttpWrapper<?> terminated(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
-        return commandExecService.terminatedExec(id);
+        commandExecService.terminatedExec(id);
+        return HttpWrapper.ok();
     }
 
     /**

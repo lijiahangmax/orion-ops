@@ -2,10 +2,6 @@ package com.orion.ops.handler.exec;
 
 import com.orion.able.Executable;
 import com.orion.able.SafeCloseable;
-import com.orion.function.select.Branches;
-import com.orion.function.select.Selector;
-import com.orion.ops.consts.command.ExecType;
-import com.orion.ops.handler.exec.impl.CommandExecHandler;
 
 /**
  * 命令执行器
@@ -24,16 +20,18 @@ public interface IExecHandler extends Runnable, Executable, SafeCloseable {
     void write(String out);
 
     /**
+     * 停止
+     */
+    void terminated();
+
+    /**
      * 获取实际执行 handler
      *
-     * @param hint hint
+     * @param execId execId
      * @return handler
      */
-    static IExecHandler with(ExecHint hint) {
-        return Selector.<ExecType, IExecHandler>of(hint.getExecType())
-                .test(Branches.eq(ExecType.BATCH_EXEC)
-                        .then(() -> new CommandExecHandler(hint)))
-                .get();
+    static IExecHandler with(Long execId) {
+        return new CommandExecHandler(execId);
     }
 
 }
