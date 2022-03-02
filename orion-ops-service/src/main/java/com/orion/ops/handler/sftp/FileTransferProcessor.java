@@ -1,5 +1,6 @@
 package com.orion.ops.handler.sftp;
 
+import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
@@ -121,6 +122,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
     protected void initProgress(ByteTransferRateProgress progress) {
         this.progress = progress;
         progress.computeRate();
+        progress.rateExecutor(SchedulerPools.SFTP_TRANSFER_RATE_SCHEDULER);
         progress.rateAcceptor(this::transferAccept);
         progress.callback(this::transferDoneCallback);
     }
@@ -143,8 +145,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             // notify progress
             this.notifyProgress(transferRate, transferCurrent, progressRate);
         } catch (Exception e) {
-            log.error("sftp-传输信息回调异常 fileToken: {}, digest: {}", fileToken, Exceptions.getDigest(e));
-            e.printStackTrace();
+            log.error("sftp-传输信息回调异常 fileToken: {}, digest: {}", fileToken, Exceptions.getDigest(e), e);
         }
     }
 

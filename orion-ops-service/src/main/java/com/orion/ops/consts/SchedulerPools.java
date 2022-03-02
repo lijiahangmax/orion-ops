@@ -56,6 +56,19 @@ public class SchedulerPools {
 
 
     /**
+     * sftp 传输进度线程池
+     */
+    public static final ExecutorService SFTP_TRANSFER_RATE_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("sftp-transfer-rate-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+
+    /**
      * sftp 上传线程池
      */
     public static final ExecutorService SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
@@ -127,17 +140,44 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeOut(true)
             .build();
 
+    /**
+     * 调度任务 主进程操作线程池
+     */
+    public static final ExecutorService SCHEDULER_TASK_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("scheduler-task-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
+    /**
+     * 调度任务 机器操作线程池
+     */
+    public static final ExecutorService SCHEDULER_TASK_MACHINE_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("scheduler-task-machine-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(EXEC_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(TAIL_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SFTP_TRANSFER_RATE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_UPLOAD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_DOWNLOAD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_PACKAGE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(APP_BUILD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MACHINE_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SCHEDULER_TASK_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SCHEDULER_TASK_MACHINE_SCHEDULER, Const.MS_S_3);
         });
     }
 
