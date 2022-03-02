@@ -11,6 +11,7 @@ import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
+import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.Date;
 
 /**
@@ -40,7 +42,13 @@ public abstract class AbstractActionHandler implements IActionHandler {
 
     protected ApplicationActionLogDO action;
 
+    protected OutputStream outputSteam;
+
     protected OutputAppender appender;
+
+    protected boolean terminated;
+
+    protected Date startTime, endTime;
 
     @Getter
     protected volatile ActionStatus status;
@@ -50,13 +58,18 @@ public abstract class AbstractActionHandler implements IActionHandler {
         this.relId = store.getRelId();
         this.store = store;
         this.action = store.getActions().get(id);
-        this.status = ActionStatus.WAIT;
+        this.status = ActionStatus.of(action.getRunStatus());
     }
 
     @Override
     public void exec() {
         log.info("应用操作执行-开始: relId: {}, id: {}", relId, id);
+        // 状态检查
+        if (!ActionStatus.WAIT.equals(status)) {
+            return;
+        }
         Exception ex = null;
+        // 执行
         try {
             // 更新状态
             this.updateStatus(ActionStatus.RUNNABLE);
@@ -68,17 +81,22 @@ public abstract class AbstractActionHandler implements IActionHandler {
             log.error("应用操作执行-异常: relId: {}, id: {}", relId, id, e);
             ex = e;
         }
-        if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
-            // 拼接终止日志
-            this.appendTerminatedLog();
-        } else {
-            // 修改状态
-            this.updateStatus(ex == null ? ActionStatus.FINISH : ActionStatus.FAILURE);
-            // 拼接完成日志
-            this.appendFinishedLog(ex);
-            if (ex != null) {
+        // 回调
+        try {
+            if (terminated) {
+                // 停止回调
+                this.terminatedCallback();
+            } else if (ex == null) {
+                // 成功回调
+                this.successCallback();
+            } else {
+                // 异常回调
+                this.exceptionCallback(ex);
                 throw Exceptions.runtime(ex.getMessage(), ex);
             }
+        } finally {
+            // 释放资源
+            this.close();
         }
     }
 
@@ -92,13 +110,16 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @Override
     public void skipped() {
         log.info("应用操作执行-跳过: relId: {}, id: {}", relId, id);
-        this.updateStatus(ActionStatus.SKIPPED);
+        if (ActionStatus.WAIT.equals(status)) {
+            // 只能跳过等待中的任务
+            this.updateStatus(ActionStatus.SKIPPED);
+        }
     }
 
     @Override
     public void terminated() {
         log.info("应用操作执行-终止: relId: {}, id: {}", relId, id);
-        this.updateStatus(ActionStatus.TERMINATED);
+        this.terminated = true;
     }
 
     /**
@@ -109,9 +130,8 @@ public abstract class AbstractActionHandler implements IActionHandler {
         log.info("应用操作执行-打开日志 relId: {}, id: {}, path: {}", relId, id, logPath);
         File logFile = new File(logPath);
         Files1.touch(logFile);
-        this.appender = OutputAppender.create(Files1.openOutputStreamFastSafe(logFile))
-                .then(store.getSuperLogStream())
-                .onClose(true);
+        this.outputSteam = Files1.openOutputStreamFastSafe(logFile);
+        this.appender = OutputAppender.create(outputSteam).then(store.getSuperLogStream());
         // 拼接开始日志
         this.appendStartedLog();
     }
@@ -122,10 +142,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @SneakyThrows
     private void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 操作 [")
-                .append(action.getActionName())
-                .append("] 执行开始")
-                .append(Const.LF);
+                .append("# 操作 [").append(action.getActionName()).append("] 执行开始\n");
         ActionType actionType = ActionType.of(action.getActionType());
         if (ActionType.BUILD_COMMAND.equals(actionType)
                 || ActionType.RELEASE_COMMAND.equals(actionType)) {
@@ -136,17 +153,44 @@ public abstract class AbstractActionHandler implements IActionHandler {
     }
 
     /**
-     * 拼接停止日志
+     * 停止回调
      */
-    private void appendTerminatedLog() {
+    private void terminatedCallback() {
+        log.info("应用操作执行-终止回调: relId: {}, id: {}", relId, id);
+        // 修改状态
+        this.updateStatus(ActionStatus.TERMINATED);
+        // 拼接日志
         StringBuilder log = new StringBuilder()
                 .append("\n# 执行操作手动停止 ")
                 .append(action.getActionName());
         log.append(" used: ")
-                .append(action.getEndTime().getTime() - action.getStartTime().getTime())
+                .append(endTime.getTime() - startTime.getTime())
                 .append("ms\n\n");
-        // 拼接日志
         this.appendLog(log.toString());
+    }
+
+    /**
+     * 成功回调
+     */
+    private void successCallback() {
+        log.info("应用操作执行-成功回调: relId: {}, id: {}", relId, id);
+        // 修改状态
+        this.updateStatus(ActionStatus.FINISH);
+        // 拼接完成日志
+        this.appendFinishedLog(null);
+    }
+
+    /**
+     * 异常回调
+     *
+     * @param ex ex
+     */
+    private void exceptionCallback(Exception ex) {
+        log.info("应用操作执行-异常回调: relId: {}, id: {}", relId, id);
+        // 修改状态
+        this.updateStatus(ActionStatus.FAILURE);
+        // 拼接完成日志
+        this.appendFinishedLog(ex);
     }
 
     /**
@@ -163,22 +207,16 @@ public abstract class AbstractActionHandler implements IActionHandler {
         }
         if (ex != null) {
             // 有异常
-            log.append("# 操作 [")
-                    .append(action.getActionName())
-                    .append("] 执行失败");
+            log.append("# 操作 [").append(action.getActionName()).append("] 执行失败");
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
                 log.append("\texitCode: ").append(exitCode).append(";");
             }
         } else {
             // 无异常
-            log.append("# 操作 [")
-                    .append(action.getActionName())
-                    .append("] 执行完成");
+            log.append("# 操作 [").append(action.getActionName()).append("] 执行完成");
         }
-        log.append(" used: ")
-                .append(action.getEndTime().getTime() - action.getStartTime().getTime())
-                .append("ms\n");
+        log.append(" used: ").append(endTime.getTime() - startTime.getTime()).append("ms\n");
         // 拼接异常
         if (ex != null) {
             if (ex instanceof LogException) {
@@ -198,7 +236,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
      */
     @SneakyThrows
     protected void appendLog(String log) {
-        appender.write(log.getBytes());
+        appender.write(Strings.bytes(log));
     }
 
     /**
@@ -207,32 +245,24 @@ public abstract class AbstractActionHandler implements IActionHandler {
      * @param status status
      */
     protected void updateStatus(ActionStatus status) {
+        Date now = new Date();
+        this.status = status;
         ApplicationActionLogDO update = new ApplicationActionLogDO();
         update.setId(id);
         update.setRunStatus(status.getStatus());
-        action.setRunStatus(status.getStatus());
-        this.status = status;
+        update.setUpdateTime(now);
         switch (status) {
             case RUNNABLE:
-                update.setStartTime(new Date());
-                action.setStartTime(update.getStartTime());
+                this.startTime = now;
+                update.setStartTime(now);
                 break;
             case FINISH:
             case FAILURE:
-                update.setEndTime(new Date());
-                update.setExitCode(this.getExitCode());
-                action.setEndTime(update.getEndTime());
-                action.setExitCode(update.getExitCode());
-                break;
             case TERMINATED:
-                if (action.getStartTime() != null) {
-                    update.setEndTime(new Date());
-                    update.setExitCode(this.getExitCode());
-                    action.setEndTime(update.getEndTime());
-                    action.setExitCode(update.getExitCode());
-                }
+                this.endTime = now;
+                update.setEndTime(now);
+                update.setExitCode(this.getExitCode());
                 break;
-            case SKIPPED:
             default:
                 break;
         }
@@ -243,7 +273,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @Override
     public void close() {
         // 关闭日志
-        Streams.close(appender);
+        Streams.close(outputSteam);
     }
 
 }

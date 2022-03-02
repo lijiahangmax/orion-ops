@@ -5,12 +5,10 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.handler.app.action.IActionHandler;
-import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
-import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
-import com.orion.utils.Threads;
+import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -43,8 +41,6 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
 
     protected Date startTime, endTime;
 
-    protected SessionStore sessionStore;
-
     /**
      * 处理器
      */
@@ -67,6 +63,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
         }
         Exception ex = null;
         boolean isMainError = false;
+        // 执行
         try {
             // 更新状态
             this.updateStatus(MachineProcessorStatus.RUNNABLE);
@@ -81,6 +78,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                         // 执行
                         handler.exec();
                     } catch (Exception e) {
+                        // 强制停止的异常不算异常
                         if (!terminated) {
                             ex = e;
                         }
@@ -94,20 +92,23 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
             // 异常
             ex = e;
             isMainError = true;
+        }
+        // 回调
+        try {
+            if (terminated) {
+                // 停止回调
+                this.terminatedCallback();
+            } else if (ex == null) {
+                // 成功回调
+                this.completeCallback();
+            } else {
+                // 失败回调
+                this.exceptionCallback(isMainError, ex);
+            }
         } finally {
-            // 执行完成回调
-            this.handlerFinishCallback(ex, isMainError);
+            // 释放资源
+            this.close();
         }
-        // 更新状态
-        if (terminated) {
-            this.updateStatus(MachineProcessorStatus.TERMINATED);
-            this.appendFinishedLog(null, false);
-        } else {
-            this.updateStatus(ex == null ? MachineProcessorStatus.FINISH : MachineProcessorStatus.FAILURE);
-            this.appendFinishedLog(ex, isMainError);
-        }
-        // 关闭
-        Streams.close(this);
     }
 
     /**
@@ -116,20 +117,6 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
      * @return 是否可执行
      */
     protected abstract boolean checkCanRunnable();
-
-    /**
-     * 执行器执行完毕回调
-     *
-     * @param ex          e
-     * @param isMainError 是否是主进程执行错误
-     */
-    protected void handlerFinishCallback(Exception ex, boolean isMainError) {
-        if (ex == null) {
-            log.info("机器任务执行-成功 relId: {}", id);
-        } else {
-            log.error("机器任务执行-失败 relId: {}, relId: {}", id, isMainError, ex);
-        }
-    }
 
     /**
      * 打开日志
@@ -169,32 +156,54 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     protected abstract void appendStartedLog();
 
     /**
-     * 拼接完成日志
-     *
-     * @param ex          ex
-     * @param isMainError isMainError
+     * 停止回调
      */
-    protected void appendFinishedLog(Exception ex, boolean isMainError) {
-        StringBuilder log = new StringBuilder();
-        if (ex != null) {
-            // 有异常
-            log.append("# 机器操作执行失败 结束时间: ").append(Dates.format(endTime))
-                    .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                    .append("ms\n");
-        } else {
-            // 无异常
-            if (terminated) {
-                log.append("# 机器操作手动停止 结束时间: ").append(Dates.format(endTime)).append(Const.LF);
-            } else {
-                log.append("# 机器操作执行完成 结束时间: ").append(Dates.format(endTime))
-                        .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                        .append("ms\n");
-            }
-        }
+    protected void terminatedCallback() {
+        log.info("机器任务执行-停止 relId: {}", id);
+        // 修改状态
+        this.updateStatus(MachineProcessorStatus.TERMINATED);
+        // 拼接日志
+        StringBuilder log = new StringBuilder()
+                .append("# 机器操作手动停止 结束时间: ")
+                .append(Dates.format(endTime))
+                .append(Const.LF);
+        this.appendLog(log.toString());
+    }
+
+    /**
+     * 完成回调
+     */
+    protected void completeCallback() {
+        log.info("机器任务执行-成功 relId: {}", id);
+        // 修改状态
+        this.updateStatus(MachineProcessorStatus.FINISH);
+        // 拼接日志
+        StringBuilder log = new StringBuilder()
+                .append("# 机器操作执行完成 结束时间: ").append(Dates.format(endTime))
+                .append("; used: ").append(endTime.getTime() - startTime.getTime())
+                .append("ms\n");
         // 拼接日志
         this.appendLog(log.toString());
+    }
+
+    /**
+     * 异常回调
+     *
+     * @param isMainError isMainError
+     * @param ex          ex
+     */
+    protected void exceptionCallback(boolean isMainError, Exception ex) {
+        log.error("机器任务执行-失败 relId: {}, isMainError: {}", id, isMainError, ex);
+        // 更新状态
+        this.updateStatus(MachineProcessorStatus.FAILURE);
+        // 拼接日志
+        StringBuilder log = new StringBuilder()
+                .append("# 机器操作执行失败 结束时间: ").append(Dates.format(endTime))
+                .append("; used: ").append(endTime.getTime() - startTime.getTime())
+                .append("ms\n");
+        this.appendLog(log.toString());
         // 拼接异常
-        if (ex != null && isMainError) {
+        if (isMainError) {
             if (ex instanceof LogException) {
                 this.appendLog(ex.getMessage() + Const.LF);
             } else {
@@ -210,41 +219,25 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
      */
     @SneakyThrows
     protected void appendLog(String log) {
-        logStream.write(log.getBytes());
+        logStream.write(Strings.bytes(log));
     }
 
     @Override
     public void terminated() {
         // 设置状态为已停止
         this.terminated = true;
-        // 更新状态
-        this.updateStatus(MachineProcessorStatus.TERMINATED);
         // 结束正在执行的action
-        for (IActionHandler handler : handlerList) {
-            if (ActionStatus.RUNNABLE.equals(handler.getStatus())) {
-                handler.terminated();
-            }
-        }
+        Lists.stream(handlerList)
+                .filter(s -> ActionStatus.RUNNABLE.equals(s.getStatus()))
+                .forEach(IActionHandler::terminated);
     }
 
     @Override
     public void close() {
         // 关闭日志流
         Streams.close(logStream);
-        // 关闭handler
-        Lists.stream(handlerList).forEach(Streams::close);
-        // 关闭session
-        Streams.close(sessionStore);
         // 异步关闭正在tail的日志
-        Threads.start(() -> {
-            try {
-                Threads.sleep(Const.MS_S_10);
-                tailSessionHolder.getSession(Const.HOST_MACHINE_ID, logAbsolutePath).forEach(ITailHandler::close);
-            } catch (Exception e) {
-                log.error("MachineProcessor-关闭tail失败 {} {}", id, e);
-                e.printStackTrace();
-            }
-        });
+        tailSessionHolder.asyncCloseTailFile(Const.HOST_MACHINE_ID, logAbsolutePath);
     }
 
 }

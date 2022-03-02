@@ -1,7 +1,6 @@
 package com.orion.ops.handler.app.action;
 
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.utils.ValueMix;
@@ -63,7 +62,7 @@ public class CheckoutActionHandler extends AbstractActionHandler {
             throw Exceptions.vcs(MessageConst.CHECKOUT_ERROR, e);
         }
         // 已停止则关闭
-        if (ActionStatus.TERMINATED.getStatus().equals(action.getRunStatus())) {
+        if (terminated) {
             return;
         }
         // reset

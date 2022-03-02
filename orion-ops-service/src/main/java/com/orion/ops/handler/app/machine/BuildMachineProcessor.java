@@ -2,7 +2,6 @@ package com.orion.ops.handler.app.machine;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
@@ -21,8 +20,8 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
-import com.orion.utils.Valid;
 import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
 import com.orion.utils.io.compress.CompressTypeEnum;
 import com.orion.utils.io.compress.FileCompressor;
 import com.orion.utils.time.Dates;
@@ -77,15 +76,13 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
     private void initData() {
         // 查询build
         this.record = applicationBuildDAO.selectById(id);
-        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
         log.info("应用构建器-获取数据-build buildId: {}, record: {}", id, JSON.toJSONString(record));
         // 检查状态
-        if (!BuildStatus.WAIT.getStatus().equals(record.getBuildStatus())) {
+        if (record == null || !BuildStatus.WAIT.getStatus().equals(record.getBuildStatus())) {
             return;
         }
         // 查询action
         List<ApplicationActionLogDO> actions = applicationActionLogService.selectActionByRelId(id, StageType.BUILD);
-        Valid.notEmpty(actions, MessageConst.UNKNOWN_DATA);
         actions.forEach(s -> store.getActions().put(s.getId(), s));
         log.info("应用构建器-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 插入store
@@ -101,18 +98,15 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
 
     @Override
     protected boolean checkCanRunnable() {
-        return BuildStatus.WAIT.getStatus().equals(record.getBuildStatus());
+        return record != null && BuildStatus.WAIT.getStatus().equals(record.getBuildStatus());
     }
 
     @Override
-    protected void handlerFinishCallback(Exception ex, boolean isMainError) {
-        super.handlerFinishCallback(ex, isMainError);
+    protected void completeCallback() {
+        // 完成回调
+        super.completeCallback();
         // 复制产物文件
-        if (ex == null && !terminated) {
-            this.copyBundleFile();
-        }
-        // 移除session
-        buildSessionHolder.removeSession(id);
+        this.copyBundleFile();
     }
 
     @Override
@@ -219,6 +213,16 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
                     .append("commitId: ").append(record.getCommitId()).append(Const.LF);
         }
         this.appendLog(log.toString());
+    }
+
+    @Override
+    public void close() {
+        // 释放资源
+        super.close();
+        // 释放连接
+        Streams.close(store.getSessionStore());
+        // 移除session
+        buildSessionHolder.removeSession(id);
     }
 
 }
