@@ -41,4 +41,13 @@ public class ApplicationConfigEnvRequest {
      */
     private Integer releaseSerial;
 
+    /**
+     * 异常处理 10跳过所有 20跳过错误
+     *
+     * @see com.orion.ops.consts.app.ApplicationEnvAttr#EXCEPTION_HANDLER
+     * @see com.orion.ops.consts.ExceptionHandlerType
+     * @see com.orion.ops.consts.SerialType#SERIAL
+     */
+    private Integer exceptionHandler;
+
 }

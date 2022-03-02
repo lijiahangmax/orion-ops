@@ -18,6 +18,7 @@
         <result column="release_type" property="releaseType"/>
         <result column="release_status" property="releaseStatus"/>
         <result column="release_serialize" property="releaseSerialize"/>
+        <result column="exception_handler" property="exceptionHandler"/>
         <result column="bundle_path" property="bundlePath"/>
         <result column="transfer_path" property="transferPath"/>
         <result column="rollback_release_id" property="rollbackReleaseId"/>
@@ -42,7 +43,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, release_title, release_description, build_id, build_seq, app_id, app_name, app_tag, profile_id, profile_name, profile_tag,
-        release_type, release_status, release_serialize, bundle_path, transfer_path, rollback_release_id, timed_release, timed_release_time, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason,
+        release_type, release_status, release_serialize, exception_handler, bundle_path, transfer_path, rollback_release_id, timed_release, timed_release_time, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason,
         release_start_time, release_end_time, release_user_id, release_user_name, action_config, deleted, create_time, update_time
     </sql>
 

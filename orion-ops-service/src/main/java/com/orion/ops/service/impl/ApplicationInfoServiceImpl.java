@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.ExceptionHandlerType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SerialType;
 import com.orion.ops.consts.app.ActionType;
@@ -275,6 +276,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         String transferPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_PATH.getKey());
         String transferDirType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
         String releaseSerial = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.RELEASE_SERIAL.getKey());
+        String exceptionHandler = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.EXCEPTION_HANDLER.getKey());
         // 查询发布机器
         List<ApplicationMachineVO> machines = applicationMachineService.getAppProfileMachineDetail(appId, profileId);
         // 查询发布流程
@@ -285,6 +287,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         env.setTransferPath(transferPath);
         env.setTransferDirType(TransferDirType.of(transferDirType).getValue());
         env.setReleaseSerial(SerialType.of(releaseSerial).getType());
+        env.setExceptionHandler(ExceptionHandlerType.of(exceptionHandler).getType());
         List<ApplicationActionVO> buildActions = actions.stream()
                 .filter(s -> ActionType.isBuildAction(s.getActionType()))
                 .map(s -> Converts.to(s, ApplicationActionVO.class))

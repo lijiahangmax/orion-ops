@@ -80,6 +80,13 @@ public class ApplicationReleaseListVO {
     private Integer serializer;
 
     /**
+     * 异常处理 10跳过所有 20跳过错误
+     *
+     * @see com.orion.ops.consts.ExceptionHandlerType
+     */
+    private Integer exceptionHandler;
+
+    /**
      * 是否是定时发布 10普通发布 20定时发布
      *
      * @see com.orion.ops.consts.app.TimedReleaseType
@@ -155,6 +162,7 @@ public class ApplicationReleaseListVO {
             vo.setType(p.getReleaseType());
             vo.setStatus(p.getReleaseStatus());
             vo.setSerializer(p.getReleaseSerialize());
+            vo.setExceptionHandler(p.getExceptionHandler());
             vo.setTimedRelease(p.getTimedRelease());
             vo.setTimedReleaseTime(p.getTimedReleaseTime());
             vo.setCreateUserName(p.getCreateUserName());

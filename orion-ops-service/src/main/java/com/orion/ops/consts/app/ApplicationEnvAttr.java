@@ -40,6 +40,14 @@ public enum ApplicationEnvAttr {
     RELEASE_SERIAL("发布序列方式 (serial/parallel)"),
 
     /**
+     * 异常处理类型
+     *
+     * @see com.orion.ops.consts.SerialType#SERIAL
+     * @see com.orion.ops.consts.ExceptionHandlerType
+     */
+    EXCEPTION_HANDLER("异常处理类型 (skip_all/skip_error)"),
+
+    /**
      * 构建序列号
      */
     BUILD_SEQ("构建序列号 (自增)") {

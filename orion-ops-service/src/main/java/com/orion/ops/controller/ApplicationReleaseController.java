@@ -185,6 +185,30 @@ public class ApplicationReleaseController {
     }
 
     /**
+     * 停止机器
+     */
+    @RequestMapping("/terminated-machine")
+    @EventLog(EventType.TERMINATED_MACHINE_RELEASE)
+    public HttpWrapper<?> terminatedMachine(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
+        applicationReleaseService.terminatedMachine(id, releaseMachineId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 跳过机器
+     */
+    @RequestMapping("/skip-machine")
+    @EventLog(EventType.SKIP_MACHINE_RELEASE)
+    public HttpWrapper<?> skipMachine(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
+        applicationReleaseService.skipMachine(id, releaseMachineId);
+        return HttpWrapper.ok();
+    }
+
+    /**
      * 发布删除
      */
     @RequestMapping("/delete")

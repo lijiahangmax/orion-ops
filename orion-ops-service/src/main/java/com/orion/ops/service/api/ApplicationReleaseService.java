@@ -115,6 +115,22 @@ public interface ApplicationReleaseService {
     /**
      * 终止
      *
+     * @param id               id
+     * @param releaseMachineId releaseMachineId
+     */
+    void terminatedMachine(Long id, Long releaseMachineId);
+
+    /**
+     * 终止
+     *
+     * @param id               id
+     * @param releaseMachineId releaseMachineId
+     */
+    void skipMachine(Long id, Long releaseMachineId);
+
+    /**
+     * 终止
+     *
      * @param id id
      * @return effect
      */

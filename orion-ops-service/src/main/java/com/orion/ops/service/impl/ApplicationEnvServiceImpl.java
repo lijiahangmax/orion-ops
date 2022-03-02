@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.ExceptionHandlerType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SerialType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
@@ -285,6 +286,15 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             releaseSerialEnv.setValue(SerialType.of(releaseSerial).getValue());
             releaseSerialEnv.setDescription(ApplicationEnvAttr.RELEASE_SERIAL.getDescription());
             list.add(releaseSerialEnv);
+        }
+        // 异常处理
+        Integer exceptionHandler = requestEnv.getExceptionHandler();
+        if (exceptionHandler != null) {
+            ApplicationEnvRequest exceptionHandlerEnv = new ApplicationEnvRequest();
+            exceptionHandlerEnv.setKey(ApplicationEnvAttr.EXCEPTION_HANDLER.getKey());
+            exceptionHandlerEnv.setValue(ExceptionHandlerType.of(exceptionHandler).getValue());
+            exceptionHandlerEnv.setDescription(ApplicationEnvAttr.EXCEPTION_HANDLER.getDescription());
+            list.add(exceptionHandlerEnv);
         }
         // 构建检查是否有构建序列
         if (StageType.BUILD.equals(stageType)) {

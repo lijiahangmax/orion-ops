@@ -184,6 +184,8 @@ public class ApplicationInfoController {
         } else if (StageType.RELEASE.equals(stageType)) {
             // 发布序列
             Valid.notNull(env.getReleaseSerial());
+            // 异常处理
+            Valid.notNull(env.getExceptionHandler());
             // 发布检查机器id
             Valid.notEmpty(request.getMachineIdList());
             // 检查操作

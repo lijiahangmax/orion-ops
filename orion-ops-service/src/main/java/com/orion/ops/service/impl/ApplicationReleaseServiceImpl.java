@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.AuditStatus;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.SerialType;
+import com.orion.ops.consts.*;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -272,7 +269,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_AUDIT.equals(status) && !ReleaseStatus.AUDIT_REJECT.equals(status)) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         AuditStatus auditStatus = AuditStatus.of(request.getStatus());
         UserDTO user = Currents.getUser();
@@ -314,7 +311,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_RUNNABLE.equals(status)
                 && !ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 更新发布人
         ApplicationReleaseDO update = new ApplicationReleaseDO();
@@ -346,7 +343,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 更新状态
         ApplicationReleaseDO update = new ApplicationReleaseDO();
@@ -370,7 +367,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(release.getReleaseStatus());
         if (!ReleaseStatus.WAIT_RUNNABLE.equals(status) && !ReleaseStatus.WAIT_SCHEDULE.equals(status)) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 取消调度任务
         taskRegister.cancel(TaskType.RELEASE, id);
@@ -398,7 +395,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         Valid.notNull(rollback, MessageConst.RELEASE_ABSENT);
         ReleaseStatus status = ReleaseStatus.of(rollback.getReleaseStatus());
         if (!ReleaseStatus.FINISH.equals(status)) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 检查产物是否存在
         String path = Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), rollback.getBundlePath());
@@ -452,29 +449,64 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         // 检查状态
-        ApplicationReleaseDO update;
-        switch (ReleaseStatus.of(release.getReleaseStatus())) {
-            case WAIT_RUNNABLE:
-            case RUNNABLE:
-                // 获取实例
-                IReleaseProcessor session = releaseSessionHolder.getSession(id);
-                if (session == null) {
-                    update = new ApplicationReleaseDO();
-                    update.setId(id);
-                    update.setReleaseStatus(ReleaseStatus.TERMINATED.getStatus());
-                    update.setReleaseEndTime(new Date());
-                    applicationReleaseDAO.updateById(update);
-                } else {
-                    // 调用终止
-                    session.terminated();
-                }
-                break;
-            default:
-                break;
-        }
+        Valid.isTrue(ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取实例
+        IReleaseProcessor session = releaseSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        // 调用终止
+        session.terminatedAll();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+    }
+
+    @Override
+    public void terminatedMachine(Long id, Long releaseMachineId) {
+        this.skipOrTerminatedReleaseMachine(id, releaseMachineId, true);
+    }
+
+    @Override
+    public void skipMachine(Long id, Long releaseMachineId) {
+        this.skipOrTerminatedReleaseMachine(id, releaseMachineId, false);
+    }
+
+    /**
+     * 跳过或停止发布机器
+     *
+     * @param id               id
+     * @param releaseMachineId releaseMachineId
+     * @param terminated       terminated / skip
+     */
+    private void skipOrTerminatedReleaseMachine(Long id, Long releaseMachineId, boolean terminated) {
+        // 获取数据
+        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
+        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        // 检查状态
+        Valid.isTrue(ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取发布机器
+        ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
+        Valid.notNull(machine, MessageConst.RELEASE_MACHINE_ABSENT);
+        // 检查状态
+        if (terminated) {
+            Valid.isTrue(ActionStatus.RUNNABLE.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
+        } else {
+            Valid.isTrue(ActionStatus.WAIT.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
+        }
+        // 获取实例
+        IReleaseProcessor session = releaseSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        if (terminated) {
+            // 调用终止
+            session.terminatedMachine(releaseMachineId);
+        } else {
+            // 调用跳过
+            session.skipMachine(releaseMachineId);
+        }
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, releaseMachineId);
+        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
     }
 
     @Override
@@ -484,7 +516,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         if (ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
-            throw Exceptions.argument(MessageConst.RELEASE_ILLEGAL_STATUS);
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         } else if (ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
             // 取消调度任务
             taskRegister.cancel(TaskType.RELEASE, id);
@@ -620,6 +652,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         String transferPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_PATH.getKey());
         // 查询发布序列
         String releaseSerial = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.RELEASE_SERIAL.getKey());
+        // 查询异常处理
+        String exceptionHandler = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.EXCEPTION_HANDLER.getKey());
         // 设置参数
         ApplicationReleaseDO release = new ApplicationReleaseDO();
         release.setReleaseTitle(request.getTitle());
@@ -634,6 +668,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         release.setProfileTag(profile.getProfileTag());
         release.setReleaseType(ReleaseType.NORMAL.getType());
         release.setReleaseSerialize(SerialType.of(releaseSerial).getType());
+        release.setExceptionHandler(ExceptionHandlerType.of(exceptionHandler).getType());
         release.setBundlePath(buildBundlePath);
         release.setTransferPath(transferPath);
         release.setTimedRelease(request.getTimedRelease());
