@@ -78,6 +78,8 @@ public class ApplicationActionLogDO implements Serializable {
 
     /**
      * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
+     *
+     * @see com.orion.ops.consts.app.ActionStatus
      */
     @TableField("run_status")
     private Integer runStatus;

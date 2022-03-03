@@ -113,6 +113,14 @@ public class ApplicationReleaseDO implements Serializable {
     private Integer releaseSerialize;
 
     /**
+     * 异常处理 10跳过所有 20跳过错误
+     *
+     * @see com.orion.ops.consts.ExceptionHandlerType
+     */
+    @TableField("exception_handler")
+    private Integer exceptionHandler;
+
+    /**
      * 构建产物文件
      */
     @TableField("bundle_path")

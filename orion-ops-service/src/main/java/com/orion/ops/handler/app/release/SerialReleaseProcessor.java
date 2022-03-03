@@ -1,8 +1,11 @@
 package com.orion.ops.handler.app.release;
 
+import com.orion.ops.consts.ExceptionHandlerType;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.handler.app.machine.IMachineProcessor;
-import com.orion.utils.io.Streams;
+import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
+
+import java.util.Collection;
 
 /**
  * 串行处理器
@@ -19,30 +22,47 @@ public class SerialReleaseProcessor extends AbstractReleaseProcessor {
 
     @Override
     protected void handler() throws Exception {
+        // 异常处理策略
+        final boolean errorSkipAll = ExceptionHandlerType.SKIP_ALL.getType().equals(release.getExceptionHandler());
         Exception ex = null;
-        for (IMachineProcessor machineProcessor : machineProcessors) {
-            if (ex != null || terminated) {
-                machineProcessor.skipped();
+        Collection<ReleaseMachineProcessor> processors = machineProcessors.values();
+        for (ReleaseMachineProcessor processor : processors) {
+            // 停止则跳过
+            if (terminated) {
+                processor.skipped();
                 continue;
             }
+            // 发生异常并且异常处理策略是跳过所有则跳过
+            if (ex != null && errorSkipAll) {
+                processor.skipped();
+                continue;
+            }
+            // 执行
             try {
-                machineProcessor.run();
+                processor.run();
             } catch (Exception e) {
                 ex = e;
-            } finally {
-                Streams.close(machineProcessor);
             }
         }
-        if (ex != null && !terminated) {
+        // 异常返回
+        if (ex != null) {
             throw ex;
+        }
+        // 全部停止
+        final boolean allTerminated = processors.stream()
+                .map(ReleaseMachineProcessor::getStatus)
+                .filter(s -> !ActionStatus.SKIPPED.equals(s))
+                .allMatch(ActionStatus.TERMINATED::equals);
+        if (allTerminated) {
+            this.terminated = true;
         }
     }
 
     @Override
-    public void terminated() {
-        super.terminated();
+    public void terminatedAll() {
+        super.terminatedAll();
         // 获取当前执行中的机器执行器
-        machineProcessors.stream()
+        machineProcessors.values().stream()
                 .filter(s -> s.getStatus().equals(ActionStatus.RUNNABLE))
                 .forEach(IMachineProcessor::terminated);
     }

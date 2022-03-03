@@ -96,11 +96,8 @@ public class ApplicationActionLogServiceImpl implements ApplicationActionLogServ
             update.setUpdateTime(new Date());
             switch (ActionStatus.of(action.getRunStatus())) {
                 case WAIT:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    break;
                 case RUNNABLE:
                     update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    update.setEndTime(new Date());
                     break;
                 default:
                     break;

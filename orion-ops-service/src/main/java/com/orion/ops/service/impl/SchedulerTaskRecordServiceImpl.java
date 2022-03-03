@@ -31,7 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -206,8 +209,12 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        // 检查状态
+        Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
         // 停止
-        Optional.ofNullable(taskSessionHolder.getSession(id)).ifPresent(ITaskProcessor::terminatedAll);
+        ITaskProcessor session = taskSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        session.terminatedAll();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
@@ -215,31 +222,43 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
 
     @Override
     public void terminatedMachine(Long id, Long machineRecordId) {
-        // 查询数据
-        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
-        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
-        SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
-        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
-        // 停止
-        Optional.ofNullable(taskSessionHolder.getSession(id))
-                .ifPresent(s -> s.terminatedMachine(machineRecordId));
-        // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineRecordId);
-        EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
-        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
+        this.skipOrTerminatedTaskMachine(id, machineRecordId, true);
     }
 
     @Override
     public void skipMachine(Long id, Long machineRecordId) {
+        this.skipOrTerminatedTaskMachine(id, machineRecordId, false);
+    }
+
+    /**
+     * 跳过或终止任务
+     *
+     * @param id              id
+     * @param machineRecordId machineRecordId
+     * @param terminated      终止/跳过
+     */
+    private void skipOrTerminatedTaskMachine(Long id, Long machineRecordId, boolean terminated) {
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        // 检查状态
+        Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
         SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
         Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
-        // 跳过
-        Optional.ofNullable(taskSessionHolder.getSession(id))
-                .ifPresent(s -> s.skipMachine(machineRecordId));
+        // 检查状态
+        if (terminated) {
+            Valid.isTrue(SchedulerTaskMachineStatus.RUNNABLE.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
+        } else {
+            Valid.isTrue(SchedulerTaskMachineStatus.WAIT.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
+        }
+        // 停止
+        ITaskProcessor session = taskSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        if (terminated) {
+            session.terminatedMachine(machineRecordId);
+        } else {
+            session.skipMachine(machineRecordId);
+        }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineRecordId);

@@ -35,7 +35,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 构建服务
@@ -237,26 +240,12 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         ApplicationBuildDO build = applicationBuildDAO.selectById(id);
         Valid.notNull(build, MessageConst.UNKNOWN_DATA);
         // 检查状态
-        ApplicationBuildDO update;
-        switch (BuildStatus.of(build.getBuildStatus())) {
-            case WAIT:
-            case RUNNABLE:
-                // 获取实例
-                IMachineProcessor session = buildSessionHolder.getSession(id);
-                if (session == null) {
-                    update = new ApplicationBuildDO();
-                    update.setId(id);
-                    update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
-                    update.setBuildEndTime(new Date());
-                    applicationBuildDAO.updateById(update);
-                } else {
-                    // 调用终止
-                    session.terminated();
-                }
-                break;
-            default:
-                break;
-        }
+        Valid.isTrue(BuildStatus.RUNNABLE.getStatus().equals(build.getBuildStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取实例
+        IMachineProcessor session = buildSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        // 调用终止
+        session.terminated();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());

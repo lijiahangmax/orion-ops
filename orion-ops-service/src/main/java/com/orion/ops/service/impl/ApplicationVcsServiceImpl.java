@@ -366,27 +366,13 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         }
     }
 
-    /**
-     * 检查是否存在
-     *
-     * @param id   id
-     * @param name name
-     */
-    private void checkNamePresent(Long id, String name) {
-        LambdaQueryWrapper<ApplicationVcsDO> presentWrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .ne(id != null, ApplicationVcsDO::getId, id)
-                .eq(ApplicationVcsDO::getVcsName, name);
-        boolean present = DataQuery.of(applicationVcsDAO).wrapper(presentWrapper).present();
-        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    @Override
+    public ApplicationVcsDO selectById(Long id) {
+        return applicationVcsDAO.selectById(id);
     }
 
-    /**
-     * 获取仓库账号密码
-     *
-     * @param vcs vcs
-     * @return [username, password]
-     */
-    private String[] getVcsUsernamePassword(ApplicationVcsDO vcs) {
+    @Override
+    public String[] getVcsUsernamePassword(ApplicationVcsDO vcs) {
         String username = null;
         String password = null;
         VcsAuthType authType = VcsAuthType.of(vcs.getVcsAuthType());
@@ -416,6 +402,20 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             password = ValueMix.decrypt(vcs.getVcsPrivateToken());
         }
         return new String[]{username, password};
+    }
+
+    /**
+     * 检查是否存在
+     *
+     * @param id   id
+     * @param name name
+     */
+    private void checkNamePresent(Long id, String name) {
+        LambdaQueryWrapper<ApplicationVcsDO> presentWrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
+                .ne(id != null, ApplicationVcsDO::getId, id)
+                .eq(ApplicationVcsDO::getVcsName, name);
+        boolean present = DataQuery.of(applicationVcsDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 }
