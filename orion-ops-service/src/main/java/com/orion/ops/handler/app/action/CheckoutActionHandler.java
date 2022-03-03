@@ -1,9 +1,8 @@
 package com.orion.ops.handler.app.action;
 
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.ops.utils.ValueMix;
+import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Streams;
@@ -24,7 +23,7 @@ import java.io.File;
  */
 public class CheckoutActionHandler extends AbstractActionHandler {
 
-    private static ApplicationVcsDAO applicationVcsDAO = SpringHolder.getBean(ApplicationVcsDAO.class);
+    private static ApplicationVcsService applicationVcsService = SpringHolder.getBean(ApplicationVcsService.class);
 
     private Git git;
 
@@ -34,14 +33,16 @@ public class CheckoutActionHandler extends AbstractActionHandler {
 
     @Override
     protected void handler() {
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(store.getVcsId());
+        ApplicationVcsDO vcs = applicationVcsService.selectById(store.getVcsId());
         // 查询分支
         String fullBranchName = store.getBranchName();
         String remote = fullBranchName.substring(0, fullBranchName.indexOf("/"));
         String branchName = fullBranchName.substring(fullBranchName.indexOf("/") + 1);
         String commitId = store.getCommitId();
         // 拼接日志
-        String log = "*** 检出url: " + vcs.getVscUrl() + "\tremote: " + remote + "\t分支: " + branchName + "\t提交: " + commitId + "\n" +
+        String log = "*** 检出url: " + vcs.getVscUrl() + "\n" +
+                "*** 分支: " + fullBranchName + "\n" +
+                "*** commit: " + commitId + "\n" +
                 "*** 检出目录: " + store.getVcsClonePath() + "\n" +
                 "*** 检出中...\n";
         this.appendLog(log);
@@ -53,8 +54,11 @@ public class CheckoutActionHandler extends AbstractActionHandler {
                     .setRemote(remote)
                     .setBranch(branchName);
             // 设置密码
-            if (vcs.getVscUsername() != null) {
-                clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(vcs.getVscUsername(), ValueMix.decrypt(vcs.getVcsPassword())));
+            String[] pair = applicationVcsService.getVcsUsernamePassword(vcs);
+            String username = pair[0];
+            String password = pair[1];
+            if (username != null) {
+                clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password));
             }
             this.git = clone.call();
             this.appendLog("*** 检出完成\n");

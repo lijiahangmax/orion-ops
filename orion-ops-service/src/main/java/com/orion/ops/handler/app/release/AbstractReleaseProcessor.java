@@ -1,6 +1,5 @@
 package com.orion.ops.handler.app.release;
 
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ReleaseStatus;
 import com.orion.ops.dao.ApplicationReleaseDAO;
@@ -8,16 +7,15 @@ import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.ops.service.api.ApplicationReleaseMachineService;
-import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Threads;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.io.Streams;
+import com.orion.utils.collect.Maps;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 发布处理器基类
@@ -38,18 +36,15 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     @Getter
     private Long releaseId;
 
-    private ApplicationReleaseDO release;
+    protected ApplicationReleaseDO release;
 
-    protected List<ReleaseMachineProcessor> machineProcessors;
+    protected Map<Long, ReleaseMachineProcessor> machineProcessors;
 
-    /**
-     * 是否已结束
-     */
     protected volatile boolean terminated;
 
     public AbstractReleaseProcessor(Long releaseId) {
         this.releaseId = releaseId;
-        this.machineProcessors = Lists.newList();
+        this.machineProcessors = Maps.newLinkedMap();
     }
 
     @Override
@@ -61,37 +56,44 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     @Override
     public void run() {
         log.info("应用发布任务执行开始 id: {}", releaseId);
+        // 执行
+        Exception ex = null;
         try {
             // 查询数据
             this.getReleaseData();
             // 检查状态
-            if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())
+            if (release != null && !ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())
                     && !ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
                 return;
             }
+            // 修改状态
             this.updateStatus(ReleaseStatus.RUNNABLE);
+            // 添加会话
             releaseSessionHolder.addSession(this);
+            // 执行
+            this.handler();
         } catch (Exception e) {
             log.error("应用发布任务执行初始化失败 id: {}, {}", releaseId, e);
-            this.updateStatus(ReleaseStatus.INITIAL_ERROR);
-            return;
+            ex = e;
         }
-        // 执行
+        // 回调
         try {
-            this.handler();
             if (terminated) {
+                // 停止回调
                 log.info("应用发布任务执行执行停止 id: {}", releaseId);
                 this.updateStatus(ReleaseStatus.TERMINATED);
-            } else {
+            } else if (ex == null) {
+                // 成功回调
                 log.info("应用发布任务执行执行完成 id: {}", releaseId);
                 this.updateStatus(ReleaseStatus.FINISH);
+            } else {
+                // 异常回调
+                log.error("应用发布任务执行执行失败 id: {}", releaseId, ex);
+                this.updateStatus(ReleaseStatus.FAILURE);
             }
-        } catch (Exception e) {
-            log.error("应用发布任务执行执行失败 id: {}, {}", releaseId, e);
-            this.updateStatus(ReleaseStatus.FAILURE);
         } finally {
-            releaseSessionHolder.removeSession(releaseId);
-            Streams.close(this);
+            // 释放资源
+            this.close();
         }
     }
 
@@ -103,8 +105,24 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     protected abstract void handler() throws Exception;
 
     @Override
-    public void terminated() {
+    public void terminatedAll() {
         this.terminated = true;
+    }
+
+    @Override
+    public void terminatedMachine(Long releaseMachineId) {
+        ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
+        if (processor != null) {
+            processor.terminated();
+        }
+    }
+
+    @Override
+    public void skipMachine(Long releaseMachineId) {
+        ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
+        if (processor != null) {
+            processor.skipped();
+        }
     }
 
     /**
@@ -113,7 +131,9 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     protected void getReleaseData() {
         // 查询发布信息主表
         this.release = applicationReleaseDAO.selectById(releaseId);
-        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
+        if (release == null) {
+            return;
+        }
         if (!ReleaseStatus.WAIT_RUNNABLE.getStatus().equals(release.getReleaseStatus())
                 && !ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
             return;
@@ -121,7 +141,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         // 查询发布机器
         List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(releaseId);
         for (ApplicationReleaseMachineDO machine : machines) {
-            machineProcessors.add(new ReleaseMachineProcessor(release, machine));
+            machineProcessors.put(machine.getId(), new ReleaseMachineProcessor(release, machine));
         }
     }
 
@@ -142,7 +162,6 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
                 break;
             case FINISH:
             case TERMINATED:
-            case INITIAL_ERROR:
             case FAILURE:
                 update.setReleaseEndTime(now);
                 break;
@@ -154,7 +173,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
 
     @Override
     public void close() {
-        machineProcessors.forEach(Streams::close);
+        releaseSessionHolder.removeSession(releaseId);
     }
 
 }

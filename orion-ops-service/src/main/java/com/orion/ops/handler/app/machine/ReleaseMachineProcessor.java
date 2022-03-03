@@ -2,7 +2,6 @@ package com.orion.ops.handler.app.machine;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationMachineDAO;
@@ -17,7 +16,8 @@ import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Valid;
+import com.orion.utils.Exceptions;
+import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
         super(machine.getId());
         this.release = release;
         this.machine = machine;
-        this.status = ActionStatus.WAIT;
+        this.status = ActionStatus.of(machine.getRunStatus());
         this.store = new MachineActionStore();
         store.setRelId(machine.getId());
         store.setMachineId(machine.getMachineId());
@@ -77,9 +77,8 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
      * 初始化数据
      */
     private void initData() {
-        // 查询action
+        // 查询机器发布操作
         List<ApplicationActionLogDO> actions = applicationActionLogService.selectActionByRelId(id, StageType.RELEASE);
-        Valid.notEmpty(actions, MessageConst.UNKNOWN_DATA);
         actions.forEach(s -> store.getActions().put(s.getId(), s));
         log.info("应用发布器-获取数据-action releaseId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 创建handler
@@ -88,12 +87,15 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
 
     @Override
     public void skipped() {
-        this.updateStatus(MachineProcessorStatus.SKIPPED);
+        if (ActionStatus.WAIT.equals(status)) {
+            // 只能跳过等待中的任务
+            this.updateStatus(MachineProcessorStatus.SKIPPED);
+        }
     }
 
     @Override
     protected boolean checkCanRunnable() {
-        return ActionStatus.WAIT.getStatus().equals(machine.getRunStatus());
+        return ActionStatus.WAIT.equals(status);
     }
 
     @Override
@@ -108,13 +110,17 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
     }
 
     @Override
-    protected void handlerFinishCallback(Exception ex, boolean isMainError) {
-        super.handlerFinishCallback(ex, isMainError);
-        // 更新状态
-        if (ex == null && !terminated) {
-            // 更新应用机器发布版本
-            this.updateAppMachineVersion();
-        }
+    protected void completeCallback() {
+        // 完成回调
+        super.completeCallback();
+        // 更新应用机器发布版本
+        this.updateAppMachineVersion();
+    }
+
+    @Override
+    protected void exceptionCallback(boolean isMainError, Exception ex) {
+        super.exceptionCallback(isMainError, ex);
+        throw Exceptions.runtime(ex);
     }
 
     @Override
@@ -176,4 +182,11 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
         applicationMachineDAO.updateAppVersion(update);
     }
 
+    @Override
+    public void close() {
+        // 释放资源
+        super.close();
+        // 释放连接
+        Streams.close(store.getSessionStore());
+    }
 }

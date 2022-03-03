@@ -7,6 +7,8 @@ import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Threads;
 
+import java.util.Collection;
+
 /**
  * 并行处理器
  *
@@ -22,20 +24,34 @@ public class ParallelReleaseProcessor extends AbstractReleaseProcessor {
 
     @Override
     protected void handler() throws Exception {
-        Threads.blockRun(machineProcessors, SchedulerPools.RELEASE_MACHINE_SCHEDULER);
-        // 检查是否成功
+        Collection<ReleaseMachineProcessor> processor = machineProcessors.values();
+        Threads.blockRun(processor, SchedulerPools.RELEASE_MACHINE_SCHEDULER);
+        // 检查是否停止
         if (terminated) {
             return;
         }
-        if (!machineProcessors.stream().map(ReleaseMachineProcessor::getStatus).allMatch(ActionStatus.FINISH::equals)) {
-            throw Exceptions.log(MessageConst.RELEASE_NOT_ALL_SUCCESS);
+        // 全部停止
+        final boolean allTerminated = processor.stream()
+                .map(ReleaseMachineProcessor::getStatus)
+                .allMatch(ActionStatus.TERMINATED::equals);
+        if (allTerminated) {
+            this.terminated = true;
+            return;
+        }
+        // 全部完成
+        boolean allFinish = processor.stream()
+                .map(ReleaseMachineProcessor::getStatus)
+                .filter(s -> !ActionStatus.TERMINATED.equals(s))
+                .allMatch(ActionStatus.FINISH::equals);
+        if (!allFinish) {
+            throw Exceptions.log(MessageConst.OPERATOR_NOT_ALL_SUCCESS);
         }
     }
 
     @Override
-    public void terminated() {
-        super.terminated();
-        machineProcessors.forEach(ReleaseMachineProcessor::terminated);
+    public void terminatedAll() {
+        super.terminatedAll();
+        machineProcessors.values().forEach(ReleaseMachineProcessor::terminated);
     }
 
 }
