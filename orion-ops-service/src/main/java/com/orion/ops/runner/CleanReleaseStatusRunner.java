@@ -51,7 +51,6 @@ public class CleanReleaseStatusRunner implements CommandLineRunner {
             ApplicationReleaseDO update = new ApplicationReleaseDO();
             update.setId(releaseId);
             update.setReleaseStatus(ReleaseStatus.TERMINATED.getStatus());
-            update.setReleaseEndTime(new Date());
             update.setUpdateTime(new Date());
             applicationReleaseDAO.updateById(update);
             // 设置机器状态
@@ -80,11 +79,8 @@ public class CleanReleaseStatusRunner implements CommandLineRunner {
             update.setUpdateTime(new Date());
             switch (ActionStatus.of(machine.getRunStatus())) {
                 case WAIT:
-                    update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    break;
                 case RUNNABLE:
                     update.setRunStatus(ActionStatus.TERMINATED.getStatus());
-                    update.setEndTime(new Date());
                     break;
                 default:
                     break;

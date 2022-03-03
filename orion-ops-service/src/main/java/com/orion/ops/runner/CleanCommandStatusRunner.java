@@ -1,7 +1,6 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.Const;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
@@ -33,15 +32,11 @@ public class CleanCommandStatusRunner implements CommandLineRunner {
         log.info("重置命令执行状态-开始");
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                 .in(CommandExecDO::getExecStatus, ExecStatus.WAITING.getStatus(), ExecStatus.RUNNABLE.getStatus());
-        commandExecDAO.selectList(wrapper).forEach(c -> {
-            CommandExecDO update = new CommandExecDO();
-            update.setId(c.getId());
-            update.setEndDate(new Date());
-            update.setExitCode(Const.TERMINATED_EXIT_CODE);
-            update.setExecStatus(ExecStatus.TERMINATED.getStatus());
-            commandExecDAO.updateById(update);
-            log.info("重置命令执行状态-重置 {}", c.getId());
-        });
+        // 更新执行状态
+        CommandExecDO update = new CommandExecDO();
+        update.setExecStatus(ExecStatus.TERMINATED.getStatus());
+        update.setUpdateTime(new Date());
+        commandExecDAO.update(update, wrapper);
         log.info("重置命令执行状态-结束");
     }
 

@@ -2,11 +2,13 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.BuildStatus;
 import com.orion.ops.consts.app.StageType;
+import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.dao.ApplicationBuildDAO;
+import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
-import com.orion.ops.service.api.ApplicationActionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 清空构建状态
@@ -32,26 +33,27 @@ public class CleanBuildStatusRunner implements CommandLineRunner {
     private ApplicationBuildDAO applicationBuildDAO;
 
     @Resource
-    private ApplicationActionLogService applicationActionLogService;
+    private ApplicationActionLogDAO applicationActionLogDAO;
 
     @Override
     public void run(String... args) {
         log.info("重置应用构建状态-开始");
-        Wrapper<ApplicationBuildDO> wrapper = new LambdaQueryWrapper<ApplicationBuildDO>()
+        // 更新构建状态
+        Wrapper<ApplicationBuildDO> buildWrapper = new LambdaQueryWrapper<ApplicationBuildDO>()
                 .in(ApplicationBuildDO::getBuildStatus, BuildStatus.WAIT.getStatus(), BuildStatus.RUNNABLE.getStatus());
-        List<ApplicationBuildDO> buildList = applicationBuildDAO.selectList(wrapper);
-        for (ApplicationBuildDO build : buildList) {
-            // 修改状态
-            Long buildId = build.getId();
-            ApplicationBuildDO update = new ApplicationBuildDO();
-            update.setId(buildId);
-            update.setBuildStatus(BuildStatus.TERMINATED.getStatus());
-            update.setBuildEndTime(new Date());
-            update.setUpdateTime(new Date());
-            applicationBuildDAO.updateById(update);
-            applicationActionLogService.resetActionStatus(buildId, StageType.BUILD);
-            log.info("重置应用构建状态-执行 {}", buildId);
-        }
+        ApplicationBuildDO updateBuild = new ApplicationBuildDO();
+        updateBuild.setBuildStatus(BuildStatus.TERMINATED.getStatus());
+        updateBuild.setUpdateTime(new Date());
+        applicationBuildDAO.update(updateBuild, buildWrapper);
+
+        // 更新操作状态
+        LambdaQueryWrapper<ApplicationActionLogDO> actionWrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
+                .eq(ApplicationActionLogDO::getStageType, StageType.BUILD.getType())
+                .in(ApplicationActionLogDO::getRunStatus, ActionStatus.WAIT.getStatus(), ActionStatus.RUNNABLE.getStatus());
+        ApplicationActionLogDO updateAction = new ApplicationActionLogDO();
+        updateAction.setRunStatus(ActionStatus.TERMINATED.getStatus());
+        updateAction.setUpdateTime(new Date());
+        applicationActionLogDAO.update(updateAction, actionWrapper);
         log.info("重置应用构建状态-结束");
     }
 

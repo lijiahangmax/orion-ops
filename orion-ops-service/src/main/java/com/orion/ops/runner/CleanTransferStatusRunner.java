@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 重置传输状态
@@ -30,22 +31,23 @@ public class CleanTransferStatusRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("重置传输状态-开始");
-        LambdaQueryWrapper<FileTransferLogDO> wrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+        // 更新可打包传输状态
+        LambdaQueryWrapper<FileTransferLogDO> packageWrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .eq(FileTransferLogDO::getTransferType, SftpTransferType.PACKAGE.getType())
                 .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus());
-        fileTransferLogDAO.selectList(wrapper).forEach(c -> {
-            FileTransferLogDO update = new FileTransferLogDO();
-            update.setId(c.getId());
-            SftpTransferType transferType = SftpTransferType.of(c.getTransferType());
-            if (SftpTransferType.PACKAGE.equals(transferType)) {
-                // 打包设置为取消
-                update.setTransferStatus(SftpTransferStatus.CANCEL.getStatus());
-            } else {
-                // 其他设置为暂停
-                update.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
-            }
-            fileTransferLogDAO.updateById(update);
-            log.info("重置传输状态-重置 {}", c.getId());
-        });
+        FileTransferLogDO updatePackage = new FileTransferLogDO();
+        updatePackage.setTransferStatus(SftpTransferStatus.CANCEL.getStatus());
+        updatePackage.setUpdateTime(new Date());
+        fileTransferLogDAO.update(updatePackage, packageWrapper);
+
+        // 更新可恢复传输状态
+        LambdaQueryWrapper<FileTransferLogDO> resumeWrapper = new LambdaQueryWrapper<FileTransferLogDO>()
+                .ne(FileTransferLogDO::getTransferType, SftpTransferType.PACKAGE.getType())
+                .in(FileTransferLogDO::getTransferStatus, SftpTransferStatus.WAIT.getStatus(), SftpTransferStatus.RUNNABLE.getStatus());
+        FileTransferLogDO updateResume = new FileTransferLogDO();
+        updateResume.setTransferStatus(SftpTransferStatus.PAUSE.getStatus());
+        updateResume.setUpdateTime(new Date());
+        fileTransferLogDAO.update(updateResume, resumeWrapper);
         log.info("重置传输状态-结束");
     }
 
