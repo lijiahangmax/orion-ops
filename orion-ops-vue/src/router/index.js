@@ -80,6 +80,33 @@ const routes = [
     component: () => import('../views/app/AppReleaseLogView')
   },
   {
+    path: '/app/release/machine/log/view/:id',
+    name: 'AppReleaseMachineLogView',
+    meta: {
+      requireAuth: true,
+      title: '发布日志'
+    },
+    component: () => import('../views/app/AppReleaseMachineLogView')
+  },
+  {
+    path: '/task/machine/log/view/:id',
+    name: 'SchedulerMachineLogView',
+    meta: {
+      requireAuth: true,
+      title: '调度日志'
+    },
+    component: () => import('../views/scheduler/SchedulerMachineLogView')
+  },
+  {
+    path: '/task/log/view/:id',
+    name: 'SchedulerTaskLogView',
+    meta: {
+      requireAuth: true,
+      title: '调度日志'
+    },
+    component: () => import('../views/scheduler/SchedulerTaskLogView')
+  },
+  {
     path: '',
     name: 'layout',
     component: Layout,
@@ -326,6 +353,24 @@ const routes = [
           title: '系统设置'
         },
         component: () => import('../views/system/SystemSetting')
+      },
+      {
+        path: '/schedule/list',
+        name: 'scheduleList',
+        meta: {
+          requireAuth: true,
+          title: '调度任务'
+        },
+        component: () => import('../views/scheduler/ScheduleList')
+      },
+      {
+        path: '/schedule/record/:id?',
+        name: 'scheduleRecord',
+        meta: {
+          requireAuth: true,
+          title: '调度历史'
+        },
+        component: () => import('../views/scheduler/ScheduleRecord')
       },
       {
         path: '*',
