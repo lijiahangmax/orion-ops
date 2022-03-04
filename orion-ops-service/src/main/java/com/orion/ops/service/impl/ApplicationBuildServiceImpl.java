@@ -258,16 +258,14 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         // 获取数据
         List<ApplicationBuildDO> buildList = applicationBuildDAO.selectBatchIds(idList);
         Valid.notEmpty(buildList, MessageConst.UNKNOWN_DATA);
-        boolean noneRunnable = buildList.stream()
+        boolean canDelete = buildList.stream()
                 .map(ApplicationBuildDO::getBuildStatus)
-                .noneMatch(BuildStatus.RUNNABLE.getStatus()::equals);
-        Valid.isTrue(noneRunnable, MessageConst.INVALID_STATUS);
+                .noneMatch(s -> BuildStatus.WAIT.getStatus().equals(s) || BuildStatus.RUNNABLE.getStatus().equals(s));
+        Valid.isTrue(canDelete, MessageConst.ILLEGAL_STATUS);
         // 删除主表
         int effect = applicationBuildDAO.deleteBatchIds(idList);
         // 删除详情
-        for (Long id : idList) {
-            effect += applicationActionLogService.deleteByRelId(id, StageType.BUILD);
-        }
+        effect += applicationActionLogService.deleteByRelIdList(idList, StageType.BUILD);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());

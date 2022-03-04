@@ -515,22 +515,19 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 查询状态
         List<ApplicationReleaseDO> releaseList = applicationReleaseDAO.selectBatchIds(idList);
         Valid.notEmpty(releaseList, MessageConst.RELEASE_ABSENT);
-        boolean noneRunnable = releaseList.stream()
+        boolean canDelete = releaseList.stream()
                 .map(ApplicationReleaseDO::getReleaseStatus)
-                .noneMatch(ReleaseStatus.RUNNABLE.getStatus()::equals);
-        Valid.isTrue(noneRunnable, MessageConst.INVALID_STATUS);
+                .noneMatch(s -> ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(s)
+                        || ReleaseStatus.RUNNABLE.getStatus().equals(s));
+        Valid.isTrue(canDelete, MessageConst.ILLEGAL_STATUS);
+        // 查询机器
+        List<Long> releaseMachineIdList = applicationReleaseMachineService.getReleaseMachineIdList(idList);
         // 删除主表
         int effect = applicationReleaseDAO.deleteBatchIds(idList);
-        for (Long id : idList) {
-            // 查询机器
-            List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
-            // 删除机器
-            effect += applicationReleaseMachineService.deleteByReleaseId(id);
-            // 删除操作
-            for (ApplicationReleaseMachineDO machine : machines) {
-                effect += applicationActionLogService.deleteByRelId(machine.getId(), StageType.RELEASE);
-            }
-        }
+        // 删除机器
+        effect += applicationReleaseMachineDAO.deleteBatchIds(releaseMachineIdList);
+        // 删除操作
+        effect += applicationActionLogService.deleteByRelIdList(releaseMachineIdList, StageType.RELEASE);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -40,6 +41,17 @@ public class ApplicationReleaseMachineServiceImpl implements ApplicationReleaseM
                 .in(ApplicationReleaseMachineDO::getReleaseId, releaseIdList)
                 .orderByAsc(ApplicationReleaseMachineDO::getId);
         return applicationReleaseMachineDAO.selectList(wrapper);
+    }
+
+    @Override
+    public List<Long> getReleaseMachineIdList(List<Long> releaseIdList) {
+        LambdaQueryWrapper<ApplicationReleaseMachineDO> wrapper = new LambdaQueryWrapper<ApplicationReleaseMachineDO>()
+                .select(ApplicationReleaseMachineDO::getId)
+                .in(ApplicationReleaseMachineDO::getReleaseId, releaseIdList)
+                .orderByAsc(ApplicationReleaseMachineDO::getId);
+        return applicationReleaseMachineDAO.selectList(wrapper).stream()
+                .map(ApplicationReleaseMachineDO::getId)
+                .collect(Collectors.toList());
     }
 
     @Override

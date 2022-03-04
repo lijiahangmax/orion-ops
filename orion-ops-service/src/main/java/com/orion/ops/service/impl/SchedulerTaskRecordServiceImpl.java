@@ -205,6 +205,26 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     }
 
     @Override
+    public Integer deleteTaskRecord(List<Long> idList) {
+        // 获取数据
+        List<SchedulerTaskRecordDO> taskList = schedulerTaskRecordDAO.selectBatchIds(idList);
+        Valid.notEmpty(taskList, MessageConst.UNKNOWN_DATA);
+        boolean canDelete = taskList.stream()
+                .map(SchedulerTaskRecordDO::getTaskStatus)
+                .noneMatch(s -> SchedulerTaskStatus.WAIT.getStatus().equals(s)
+                        || SchedulerTaskStatus.RUNNABLE.getStatus().equals(s));
+        Valid.isTrue(canDelete, MessageConst.ILLEGAL_STATUS);
+        // 删除主表
+        int effect = schedulerTaskRecordDAO.deleteBatchIds(idList);
+        // 删除机器执行明细
+        effect += schedulerTaskMachineRecordDAO.deleteByRecordIdList(idList);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
+        return effect;
+    }
+
+    @Override
     public void terminatedAll(Long id) {
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);

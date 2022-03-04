@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.CommandTemplateRequest;
 import com.orion.ops.entity.vo.CommandTemplateVO;
 
+import java.util.List;
+
 /**
  * 命令模板api
  *
@@ -48,9 +50,9 @@ public interface CommandTemplateService {
     /**
      * 删除模板
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteTemplate(Long id);
+    Integer deleteTemplate(List<Long> idList);
 
 }

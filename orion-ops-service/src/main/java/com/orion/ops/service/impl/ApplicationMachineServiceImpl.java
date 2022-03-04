@@ -129,6 +129,11 @@ public class ApplicationMachineServiceImpl implements ApplicationMachineService 
     }
 
     @Override
+    public Integer deleteById(Long id) {
+        return applicationMachineDAO.deleteById(id);
+    }
+
+    @Override
     public List<Long> selectAppProfileMachineIdList(Long appId, Long profileId) {
         LambdaQueryWrapper<ApplicationMachineDO> wrapper = new LambdaQueryWrapper<ApplicationMachineDO>()
                 .eq(ApplicationMachineDO::getAppId, appId)

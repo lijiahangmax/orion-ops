@@ -54,7 +54,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器列表
      */
-    @RequestMapping("/list/machine")
+    @RequestMapping("/list-machine")
     public List<ApplicationReleaseMachineVO> getReleaseMachineList(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.getReleaseMachineList(id);
@@ -72,7 +72,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器详情
      */
-    @RequestMapping("/machine/detail")
+    @RequestMapping("/machine-detail")
     public ApplicationReleaseMachineVO getReleaseMachineDetail(@RequestBody ApplicationReleaseRequest request) {
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
         return applicationReleaseService.getReleaseMachineDetail(releaseMachineId);
@@ -221,7 +221,7 @@ public class ApplicationReleaseController {
     /**
      * 发布状态列表
      */
-    @RequestMapping("/list/status")
+    @RequestMapping("/list-status")
     public List<ApplicationReleaseStatusVO> getReleaseStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationReleaseService.getReleaseStatusList(idList, request.getMachineIdList());
@@ -239,7 +239,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器状态列表
      */
-    @RequestMapping("/list/machine/status")
+    @RequestMapping("/list-machine-status")
     public List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getReleaseMachineIdList());
         return applicationReleaseService.getReleaseMachineStatusList(idList);
@@ -248,7 +248,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器状态
      */
-    @RequestMapping("/machine/status")
+    @RequestMapping("/machine-status")
     public ApplicationReleaseMachineStatusVO getReleaseMachineStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getReleaseMachineId());
         return applicationReleaseService.getReleaseMachineStatus(id);

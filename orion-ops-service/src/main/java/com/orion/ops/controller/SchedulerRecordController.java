@@ -79,6 +79,16 @@ public class SchedulerRecordController {
     }
 
     /**
+     * 删除
+     */
+    @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_TASK_RECORD)
+    public Integer deleteRecord(@RequestBody SchedulerTaskRecordRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return schedulerTaskRecordService.deleteTaskRecord(idList);
+    }
+
+    /**
      * 停止所有
      */
     @RequestMapping("/terminated-all")

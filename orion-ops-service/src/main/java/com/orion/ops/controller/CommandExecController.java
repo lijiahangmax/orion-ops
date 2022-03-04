@@ -88,14 +88,14 @@ public class CommandExecController {
     @RequestMapping("/delete")
     @EventLog(EventType.EXEC_DELETE)
     public Integer delete(@RequestBody CommandExecRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return commandExecService.deleteTask(id);
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return commandExecService.deleteTask(idList);
     }
 
     /**
      * 状态列表
      */
-    @RequestMapping("/list/status")
+    @RequestMapping("/list-status")
     public List<CommandExecStatusVO> getListStatus(@RequestBody CommandExecRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return commandExecService.getExecStatusList(idList);

@@ -34,6 +34,15 @@ public interface ApplicationActionLogService {
     Integer deleteByRelId(Long relId, StageType stageType);
 
     /**
+     * 删除
+     *
+     * @param relIdList relIdList
+     * @param stageType stageType
+     * @return effect
+     */
+    Integer deleteByRelIdList(List<Long> relIdList, StageType stageType);
+
+    /**
      * 通过 relId 查询 action
      *
      * @param relId     relId

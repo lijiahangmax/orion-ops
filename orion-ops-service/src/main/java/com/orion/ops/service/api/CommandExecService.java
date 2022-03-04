@@ -61,10 +61,10 @@ public interface CommandExecService {
     /**
      * 删除任务
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteTask(Long id);
+    Integer deleteTask(List<Long> idList);
 
     /**
      * 查询状态

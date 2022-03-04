@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
 import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
 import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
@@ -114,5 +115,21 @@ public interface ApplicationVcsService {
      * 同步vcs状态
      */
     void syncVcsStatus();
+
+    /**
+     * 查询
+     *
+     * @param id id
+     * @return vcs
+     */
+    ApplicationVcsDO selectById(Long id);
+
+    /**
+     * 获取仓库账号密码
+     *
+     * @param vcs vcs
+     * @return [username, password]
+     */
+    String[] getVcsUsernamePassword(ApplicationVcsDO vcs);
 
 }

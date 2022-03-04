@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -105,15 +106,12 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     }
 
     @Override
-    public Integer deleteTemplate(Long id) {
-        // 查询模板信息
-        CommandTemplateDO beforeTemplate = commandTemplateDAO.selectById(id);
-        Valid.notNull(beforeTemplate, MessageConst.TEMPLATE_ABSENT);
+    public Integer deleteTemplate(List<Long> idList) {
         // 删除
-        int effect = commandTemplateDAO.deleteById(id);
+        int effect = commandTemplateDAO.deleteBatchIds(idList);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, beforeTemplate.getTemplateName());
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 

@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -181,6 +182,16 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(MachineTerminalLogVO.class);
+    }
+
+    @Override
+    public Integer deleteTerminalLog(List<Long> idList) {
+        // 删除
+        int effect = machineTerminalLogDAO.deleteBatchIds(idList);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
+        return effect;
     }
 
     @Override

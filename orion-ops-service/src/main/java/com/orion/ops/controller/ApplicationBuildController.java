@@ -73,7 +73,7 @@ public class ApplicationBuildController {
     /**
      * 查询构建状态列表
      */
-    @RequestMapping("/list/status")
+    @RequestMapping("/list-status")
     public List<ApplicationBuildStatusVO> getListStatus(@RequestBody ApplicationBuildRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationBuildService.getBuildStatusList(idList);
@@ -113,7 +113,7 @@ public class ApplicationBuildController {
     /**
      * 发布构建列表
      */
-    @RequestMapping("/release/list")
+    @RequestMapping("/release-list")
     public List<ApplicationBuildReleaseListVO> getBuildReleaseList(@RequestBody ApplicationBuildRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());

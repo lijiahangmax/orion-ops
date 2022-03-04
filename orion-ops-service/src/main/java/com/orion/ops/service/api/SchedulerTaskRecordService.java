@@ -77,6 +77,14 @@ public interface SchedulerTaskRecordService {
     List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(List<Long> idList);
 
     /**
+     * 删除调度明细
+     *
+     * @param idList idList
+     * @return effect
+     */
+    Integer deleteTaskRecord(List<Long> idList);
+
+    /**
      * 停止所有
      *
      * @param id id

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 终端日志
@@ -21,6 +22,11 @@ public class MachineTerminalLogRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id list
+     */
+    private List<Long> idList;
 
     /**
      * 用户id

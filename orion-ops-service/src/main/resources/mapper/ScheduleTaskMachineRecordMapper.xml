@@ -61,4 +61,13 @@
         </foreach>
     </select>
 
+    <update id="deleteByRecordIdList">
+        UPDATE scheduler_task_machine_record
+        SET deleted = 2
+        WHERE record_id IN
+        <foreach collection="recordIdList" item="recordId" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </update>
+
 </mapper>

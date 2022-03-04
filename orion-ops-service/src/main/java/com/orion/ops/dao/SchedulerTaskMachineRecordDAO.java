@@ -40,4 +40,12 @@ public interface SchedulerTaskMachineRecordDAO extends BaseMapper<SchedulerTaskM
      */
     List<SchedulerTaskMachineRecordDO> selectStatusByRecordIdList(@Param("recordIdList") List<Long> recordIdList);
 
+    /**
+     * 通过 recordIdList 删除明细
+     *
+     * @param recordIdList recordIdList
+     * @return effect
+     */
+    Integer deleteByRecordIdList(@Param("recordIdList") List<Long> recordIdList);
+
 }

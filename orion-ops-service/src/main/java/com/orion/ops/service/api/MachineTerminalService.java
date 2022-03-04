@@ -10,6 +10,7 @@ import com.orion.ops.entity.vo.MachineTerminalVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.utils.ValueMix;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -69,6 +70,14 @@ public interface MachineTerminalService {
      * @return dataGrid
      */
     DataGrid<MachineTerminalLogVO> listAccessLog(MachineTerminalLogRequest request);
+
+    /**
+     * 删除终端日志
+     *
+     * @param idList idList
+     * @return effect
+     */
+    Integer deleteTerminalLog(List<Long> idList);
 
     /**
      * 通过机器id删除终端配置

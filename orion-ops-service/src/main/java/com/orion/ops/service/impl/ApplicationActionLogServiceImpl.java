@@ -51,6 +51,14 @@ public class ApplicationActionLogServiceImpl implements ApplicationActionLogServ
     }
 
     @Override
+    public Integer deleteByRelIdList(List<Long> relIdList, StageType stageType) {
+        LambdaQueryWrapper<ApplicationActionLogDO> wrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
+                .in(ApplicationActionLogDO::getRelId, relIdList)
+                .eq(ApplicationActionLogDO::getStageType, stageType.getType());
+        return applicationActionLogDAO.delete(wrapper);
+    }
+
+    @Override
     public List<ApplicationActionLogDO> selectActionByRelId(Long relId, StageType stageType) {
         LambdaQueryWrapper<ApplicationActionLogDO> wrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
                 .eq(ApplicationActionLogDO::getRelId, relId)

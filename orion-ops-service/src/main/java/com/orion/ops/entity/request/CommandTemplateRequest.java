@@ -4,6 +4,8 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 命令模板请求
  *
@@ -19,6 +21,11 @@ public class CommandTemplateRequest extends PageRequest {
      * id
      */
     private Long id;
+
+    /**
+     * id
+     */
+    private List<Long> idList;
 
     /**
      * name

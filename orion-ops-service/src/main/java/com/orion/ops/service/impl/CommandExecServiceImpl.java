@@ -30,7 +30,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
@@ -211,15 +210,18 @@ public class CommandExecServiceImpl implements CommandExecService {
     }
 
     @Override
-    public Integer deleteTask(Long id) {
-        CommandExecDO execDO = this.selectById(id);
-        Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
-        if (ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus())) {
-            throw Exceptions.argument(MessageConst.INVALID_STATUS);
-        }
-        int effect = commandExecDAO.deleteById(id);
+    public Integer deleteTask(List<Long> idList) {
+        List<CommandExecDO> execList = commandExecDAO.selectBatchIds(idList);
+        Valid.notEmpty(execList, MessageConst.EXEC_TASK_ABSENT);
+        // 检查是否可删除
+        boolean canDelete = execList.stream()
+                .map(CommandExecDO::getExecStatus)
+                .noneMatch(s -> ExecStatus.WAITING.getStatus().equals(s) || ExecStatus.RUNNABLE.getStatus().equals(s));
+        Valid.isTrue(canDelete, MessageConst.ILLEGAL_STATUS);
+        int effect = commandExecDAO.deleteBatchIds(idList);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 

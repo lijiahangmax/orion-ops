@@ -31,6 +31,14 @@ public interface ApplicationReleaseMachineService {
     List<ApplicationReleaseMachineDO> getReleaseMachines(List<Long> releaseIdList);
 
     /**
+     * 查询发布机器id
+     *
+     * @param releaseIdList releaseIdList
+     * @return rows
+     */
+    List<Long> getReleaseMachineIdList(List<Long> releaseIdList);
+
+    /**
      * 通过 releaseId 删除
      *
      * @param releaseId releaseId

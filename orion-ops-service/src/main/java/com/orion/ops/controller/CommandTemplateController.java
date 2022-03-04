@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 命令模板 api
@@ -74,8 +75,8 @@ public class CommandTemplateController {
     @RequestMapping("/delete")
     @EventLog(EventType.DELETE_TEMPLATE)
     public Integer delete(@RequestBody CommandTemplateRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return commandTemplateService.deleteTemplate(id);
+        List<Long> idList = Valid.notNull(request.getIdList());
+        return commandTemplateService.deleteTemplate(idList);
     }
 
 }

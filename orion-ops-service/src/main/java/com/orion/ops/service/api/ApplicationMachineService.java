@@ -90,6 +90,14 @@ public interface ApplicationMachineService {
     Integer deleteAppMachineByAppProfileMachineId(Long appId, Long profileId, Long machineId);
 
     /**
+     * 通过 id 删除
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer deleteById(Long id);
+
+    /**
      * 通过 appId profileId 查询应用机器id列表
      *
      * @param appId     appId

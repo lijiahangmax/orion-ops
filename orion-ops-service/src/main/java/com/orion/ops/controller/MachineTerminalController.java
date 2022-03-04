@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 终端
@@ -103,9 +104,19 @@ public class MachineTerminalController {
     }
 
     /**
+     * 删除日志
+     */
+    @RequestMapping("/log/delete")
+    @EventLog(EventType.DELETE_TERMINATED_LOG)
+    public Integer deleteLog(@RequestBody MachineTerminalLogRequest request) {
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return machineTerminalService.deleteTerminalLog(idList);
+    }
+
+    /**
      * session列表 (管理员)
      */
-    @RequestMapping("/manager/session/list")
+    @RequestMapping("/manager/session")
     @RequireRole(RoleType.ADMINISTRATOR)
     public DataGrid<MachineTerminalManagerVO> sessionList(@RequestBody MachineTerminalManagerRequest request) {
         return terminalSessionManager.getOnlineTerminal(request);
