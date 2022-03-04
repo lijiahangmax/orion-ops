@@ -39,6 +39,9 @@
           {{ $enum.valueOf($enum.RELEASE_TYPE, detail.type).label }}
           -
           {{ $enum.valueOf($enum.SERIAL_TYPE, detail.serializer).label }}
+          <span v-if="detail.serializer === $enum.SERIAL_TYPE.SERIAL.value">
+            ({{ $enum.valueOf($enum.EXCEPTION_HANDLER_TYPE, detail.exceptionHandler).label }})
+          </span>
         </a-descriptions-item>
         <a-descriptions-item label="调度时间" :span="3" v-if="detail.timedReleaseTime !== null">
           {{ detail.timedReleaseTime | formatDate }}

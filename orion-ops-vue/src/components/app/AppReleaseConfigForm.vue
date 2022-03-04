@@ -19,11 +19,22 @@
       <!-- 发布序列 -->
       <div id="app-release-serial-wrapper">
         <span class="label normal-label required-label">发布序列</span>
-        <a-select style="margin-left: 8px; width: 120px" v-model="releaseSerial">
-          <a-select-option v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
+        <a-radio-group class="ml8" v-model="releaseSerial">
+          <a-radio v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
             {{ type.label }}
-          </a-select-option>
-        </a-select>
+          </a-radio>
+        </a-radio-group>
+      </div>
+      <!-- 异常处理 -->
+      <div id="app-release-exception-wrapper" v-show="releaseSerial === $enum.SERIAL_TYPE.SERIAL.value">
+        <span class="label normal-label required-label">异常处理</span>
+        <a-radio-group class="ml8" v-model="exceptionHandler">
+          <a-tooltip v-for="type of $enum.EXCEPTION_HANDLER_TYPE" :key="type.value" :title="type.title">
+            <a-radio :value="type.value">
+              {{ type.label }}
+            </a-radio>
+          </a-tooltip>
+        </a-radio-group>
       </div>
       <!-- 发布操作 -->
       <div id="app-action-container">
@@ -123,8 +134,9 @@ export default {
       loading: false,
       profileId: null,
       transferPath: undefined,
-      transferDirType: _enum.SERIAL_TYPE.PARALLEL.value,
-      releaseSerial: _enum.RELEASE_TRANSFER_DIR_TYPE.DIR.value,
+      transferDirType: _enum.RELEASE_TRANSFER_DIR_TYPE.DIR.value,
+      releaseSerial: _enum.SERIAL_TYPE.PARALLEL.value,
+      exceptionHandler: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
       machines: [],
       actions: [],
       editorConfig
@@ -144,6 +156,7 @@ export default {
       this.transferPath = detail.env && detail.env.transferPath
       this.transferDirType = detail.env && detail.env.transferDirType
       this.releaseSerial = detail.env && detail.env.releaseSerial
+      this.exceptionHandler = detail.env && detail.env.exceptionHandler
       if (detail.releaseMachines && detail.releaseMachines.length) {
         this.machines = detail.releaseMachines.map(s => s.machineId)
       } else {
@@ -224,6 +237,7 @@ export default {
         env: {
           transferPath: this.transferPath,
           releaseSerial: this.releaseSerial,
+          exceptionHandler: this.exceptionHandler,
           transferDirType: this.transferDirType
         },
         machineIdList: this.machines,
@@ -261,8 +275,9 @@ export default {
     align-content: center;
   }
 
-  #app-release-serial-wrapper {
+  #app-release-serial-wrapper, #app-release-exception-wrapper {
     display: flex;
+    align-items: center;
     margin-top: 8px;
   }
 
