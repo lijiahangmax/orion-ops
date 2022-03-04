@@ -68,10 +68,10 @@ public interface ApplicationBuildService {
     /**
      * 删除构建
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteBuildTask(Long id);
+    Integer deleteBuildTask(List<Long> idList);
 
     /**
      * 重新构建

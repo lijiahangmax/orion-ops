@@ -140,6 +140,8 @@ public class MessageConst {
 
     public static final String RELEASE_ABSENT = "发布单不存在";
 
+    public static final String RELEASE_MACHINE_ABSENT = "发布机器不存在";
+
     public static final String OPERATOR_NOT_ALL_SUCCESS = "未全部执行成功";
 
     public static final String UNKNOWN_RELEASE_MACHINE = "未知的发布机器";
@@ -183,5 +185,7 @@ public class MessageConst {
     public static final String TIMED_GREATER_THAN_NOW = "定时操作时间不能小于当前时间";
 
     public static final String TASK_NOT_ENABLED = "调度任务未启用";
+
+    public static final String SESSION_PRESENT = "会话不存在";
 
 }

@@ -121,7 +121,7 @@ public interface ApplicationReleaseService {
     void terminatedMachine(Long id, Long releaseMachineId);
 
     /**
-     * 终止
+     * 跳过
      *
      * @param id               id
      * @param releaseMachineId releaseMachineId
@@ -129,12 +129,12 @@ public interface ApplicationReleaseService {
     void skipMachine(Long id, Long releaseMachineId);
 
     /**
-     * 终止
+     * 删除
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteRelease(Long id);
+    Integer deleteRelease(List<Long> idList);
 
     /**
      * 获取发布状态列表

@@ -214,8 +214,8 @@ public class ApplicationReleaseController {
     @RequestMapping("/delete")
     @EventLog(EventType.DELETE_RELEASE)
     public Integer deleteAppRelease(@RequestBody ApplicationReleaseRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return applicationReleaseService.deleteRelease(id);
+        List<Long> idList = Valid.notNull(request.getIdList());
+        return applicationReleaseService.deleteRelease(idList);
     }
 
     /**

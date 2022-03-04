@@ -24,7 +24,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
@@ -255,22 +254,23 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer deleteBuildTask(Long id) {
+    public Integer deleteBuildTask(List<Long> idList) {
         // 获取数据
-        ApplicationBuildDO build = applicationBuildDAO.selectById(id);
-        Valid.notNull(build, MessageConst.UNKNOWN_DATA);
-        if (BuildStatus.RUNNABLE.getStatus().equals(build.getBuildStatus())) {
-            throw Exceptions.argument(MessageConst.INVALID_STATUS);
-        }
+        List<ApplicationBuildDO> buildList = applicationBuildDAO.selectBatchIds(idList);
+        Valid.notEmpty(buildList, MessageConst.UNKNOWN_DATA);
+        boolean noneRunnable = buildList.stream()
+                .map(ApplicationBuildDO::getBuildStatus)
+                .noneMatch(BuildStatus.RUNNABLE.getStatus()::equals);
+        Valid.isTrue(noneRunnable, MessageConst.INVALID_STATUS);
         // 删除主表
-        int effect = applicationBuildDAO.deleteById(id);
+        int effect = applicationBuildDAO.deleteBatchIds(idList);
         // 删除详情
-        effect += applicationActionLogService.deleteByRelId(id, StageType.BUILD);
+        for (Long id : idList) {
+            effect += applicationActionLogService.deleteByRelId(id, StageType.BUILD);
+        }
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());
-        EventParamsHolder.addParam(EventKeys.APP_NAME, build.getAppName());
-        EventParamsHolder.addParam(EventKeys.PROFILE_NAME, build.getProfileName());
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 

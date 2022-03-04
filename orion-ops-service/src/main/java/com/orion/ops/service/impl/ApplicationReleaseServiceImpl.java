@@ -511,29 +511,29 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer deleteRelease(Long id) {
+    public Integer deleteRelease(List<Long> idList) {
         // 查询状态
-        ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
-        Valid.notNull(release, MessageConst.RELEASE_ABSENT);
-        if (ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
-            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
-        } else if (ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(release.getReleaseStatus())) {
-            // 取消调度任务
-            taskRegister.cancel(TaskType.RELEASE, id);
-        }
+        List<ApplicationReleaseDO> releaseList = applicationReleaseDAO.selectBatchIds(idList);
+        Valid.notEmpty(releaseList, MessageConst.RELEASE_ABSENT);
+        boolean noneRunnable = releaseList.stream()
+                .map(ApplicationReleaseDO::getReleaseStatus)
+                .noneMatch(ReleaseStatus.RUNNABLE.getStatus()::equals);
+        Valid.isTrue(noneRunnable, MessageConst.INVALID_STATUS);
         // 删除主表
-        int effect = applicationReleaseDAO.deleteById(id);
-        // 查询机器
-        List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
-        // 删除机器
-        effect += applicationReleaseMachineService.deleteByReleaseId(id);
-        // 删除操作
-        for (ApplicationReleaseMachineDO machine : machines) {
-            effect += applicationActionLogService.deleteByRelId(machine.getId(), StageType.RELEASE);
+        int effect = applicationReleaseDAO.deleteBatchIds(idList);
+        for (Long id : idList) {
+            // 查询机器
+            List<ApplicationReleaseMachineDO> machines = applicationReleaseMachineService.getReleaseMachines(id);
+            // 删除机器
+            effect += applicationReleaseMachineService.deleteByReleaseId(id);
+            // 删除操作
+            for (ApplicationReleaseMachineDO machine : machines) {
+                effect += applicationActionLogService.deleteByRelId(machine.getId(), StageType.RELEASE);
+            }
         }
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
     }
 

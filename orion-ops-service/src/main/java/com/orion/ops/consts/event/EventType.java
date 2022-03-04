@@ -233,7 +233,7 @@ public enum EventType {
     /**
      * 删除执行
      */
-    EXEC_DELETE(2610, EventClassify.EXEC, "删除执行机器命令"),
+    EXEC_DELETE(2610, EventClassify.EXEC, "删除机器执行命令记录 <sb>${count}</sb>个"),
 
     /**
      * 终止执行
@@ -382,7 +382,7 @@ public enum EventType {
     /**
      * 删除应用构建
      */
-    DELETE_BUILD(4015, EventClassify.BUILD, "删除应用构建 <sb>#${buildSeq}</sb> <sb>${profileName}</sb> <sb>${appName}</sb>"),
+    DELETE_BUILD(4015, EventClassify.BUILD, "删除应用构建记录 <sb>${count}</sb>个"),
 
     /**
      * 重新构建应用
@@ -419,7 +419,7 @@ public enum EventType {
     /**
      * 删除应用发布
      */
-    DELETE_RELEASE(5030, EventClassify.RELEASE, "删除应用发布 <sb>${title}</sb>"),
+    DELETE_RELEASE(5030, EventClassify.RELEASE, "删除应用发布记录 <sb>${count}</sb>个"),
 
     /**
      * 复制应用发布
@@ -435,6 +435,16 @@ public enum EventType {
      * 设置应用定时发布
      */
     SET_TIMED_RELEASE(5045, EventClassify.RELEASE, "应用定时发布时间 <sb>${title}</sb> -> <sb>${time}</sb>"),
+
+    /**
+     * 停止机器发布操作
+     */
+    TERMINATED_MACHINE_RELEASE(5050, EventClassify.RELEASE, "停止机器发布操作 <sb>${title}</sb> <sb>${machineName}</sb>"),
+
+    /**
+     * 跳过机器发布操作
+     */
+    SKIP_MACHINE_RELEASE(5055, EventClassify.RELEASE, "跳过机器发布操作 <sb>${title}</sb> <sb>${machineName}</sb>"),
 
     // -------------------- 系统环境变量操作 --------------------
 

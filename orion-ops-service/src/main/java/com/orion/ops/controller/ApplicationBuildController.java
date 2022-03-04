@@ -96,8 +96,8 @@ public class ApplicationBuildController {
     @RequestMapping("/delete")
     @EventLog(EventType.DELETE_BUILD)
     public Integer deleteTask(@RequestBody ApplicationBuildRequest request) {
-        Long id = Valid.notNull(request.getId());
-        return applicationBuildService.deleteBuildTask(id);
+        List<Long> idList = Valid.notEmpty(request.getIdList());
+        return applicationBuildService.deleteBuildTask(idList);
     }
 
     /**

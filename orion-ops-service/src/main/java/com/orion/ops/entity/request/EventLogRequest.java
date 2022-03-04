@@ -23,6 +23,11 @@ public class EventLogRequest extends PageRequest {
     private Long userId;
 
     /**
+     * 用户名
+     */
+    private String username;
+
+    /**
      * 事件分类
      */
     private Integer classify;
