@@ -41,6 +41,16 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">构建列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <div v-show="selectedRowKeys.length">
+          <a-popconfirm title="确认删除所选中的构建记录吗?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteBuild(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -55,6 +65,7 @@
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
+               :rowSelection="rowSelection"
                rowKey="id"
                @change="getList"
                :scroll="{x: '100%'}"
@@ -69,20 +80,20 @@
         <!-- 版本 -->
         <template v-slot:version="record">
           <span v-if="record.vcsId">
-          <!-- 仓库 -->
-          <span class="mr4" title="仓库">{{ record.vcsName }}</span>
             <!-- 分支 -->
-          <span class="mr4" v-if="record.branchName" style="white-space: nowrap;" title="分支"><a-icon type="branches"/>{{ record.branchName }}</span>
-            <!-- commitId -->
-          <a-tooltip v-if="record.commitId">
-            <template #title>
-              <span style="display: block; word-break: break-all;">commitId: {{ record.commitId }}</span>
-            </template>
-            <span class="span-blue">
-               #{{ record.commitId.substring(0, 7) }}
+            <span class="mr4 nowrap" v-if="record.branchName" title="分支">
+              <a-icon type="branches"/>{{ record.branchName }}
             </span>
-          </a-tooltip>
-        </span>
+            <!-- commitId -->
+            <a-tooltip v-if="record.commitId">
+              <template #title>
+                <span style="display: block; word-break: break-all;">commitId: {{ record.commitId }}</span>
+              </template>
+              <span class="span-blue">
+                 #{{ record.commitId.substring(0, 7) }}
+              </span>
+            </a-tooltip>
+          </span>
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
@@ -126,11 +137,11 @@
           <a-divider type="vertical" v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"/>
           <!-- 删除 -->
           <a-popconfirm v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"
-                        title="是否要删除当前记录?"
+                        title="确认删除当前构建记录吗?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="deleteBuild(record.id)">
+                        @confirm="deleteBuild([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -175,7 +186,7 @@ const columns = [
     sorter: (a, b) => a.appName.localeCompare(b.appName)
   },
   {
-    title: '仓库 / 版本',
+    title: '版本',
     key: 'version',
     width: 300,
     scopedSlots: { customRender: 'version' }
@@ -249,7 +260,23 @@ export default {
       },
       loading: false,
       pollId: null,
-      columns
+      columns,
+      selectedRowKeys: []
+    }
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: e => {
+          this.selectedRowKeys = e
+        },
+        getCheckboxProps: record => ({
+          props: {
+            disabled: record.status === this.$enum.BUILD_STATUS.RUNNABLE.value
+          }
+        })
+      }
     }
   },
   methods: {
@@ -270,6 +297,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.pagination = pagination
+        this.selectedRowKeys = []
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -296,9 +324,9 @@ export default {
         this.$message.success('已提交停止请求')
       })
     },
-    deleteBuild(id) {
+    deleteBuild(idList) {
       this.$api.deleteAppBuild({
-        id
+        idList
       }).then(() => {
         this.$message.success('已删除')
         this.getList({})
@@ -336,6 +364,9 @@ export default {
       this.$api.getAppBuildStatusList({
         idList
       }).then(({ data }) => {
+        if (!data || !data.length) {
+          return
+        }
         for (const build of data) {
           this.rows.filter(s => s.id === parseInt(build.id)).forEach(s => {
             s.status = build.status
@@ -343,6 +374,8 @@ export default {
             s.used = build.used
           })
         }
+        // 强制刷新状态
+        this.$set(this.rows, 0, { ...this.rows[0] })
       })
     }
   },

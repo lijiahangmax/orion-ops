@@ -41,6 +41,16 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">发布列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <div v-show="selectedRowKeys.length">
+          <a-popconfirm title="确认删除所选中的发布记录吗?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -55,6 +65,7 @@
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
+               :rowSelection="rowSelection"
                rowKey="id"
                @change="getList"
                @expand="expandMachine"
@@ -83,7 +94,7 @@
               <a-button class="p0"
                         type="link"
                         style="height: 22px"
-                        :disabled="machine.status === $enum.ACTION_STATUS.WAIT.value">
+                        :disabled="!statusHolder.visibleActionLog(machine.status)">
                 <a target="_blank"
                    title="ctrl 打开新页面"
                    :href="`#/app/release/machine/log/view/${machine.id}`"
@@ -92,6 +103,26 @@
               <a-divider type="vertical"/>
               <!-- 详情 -->
               <a @click="openMachineDetail(machine.id)">详情</a>
+              <a-divider type="vertical" v-if="statusHolder.visibleMachineTerminated(machine.status)"/>
+              <!-- 停止 -->
+              <a-popconfirm v-if="statusHolder.visibleMachineTerminated(machine.status)"
+                            title="是否要停止执行?"
+                            placement="topRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="terminatedMachine(record.id, machine.id)">
+                <span class="span-blue pointer">停止</span>
+              </a-popconfirm>
+              <a-divider type="vertical" v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"/>
+              <!-- 跳过 -->
+              <a-popconfirm v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"
+                            title="是否要跳过执行?"
+                            placement="topRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="skipMachine(record.id, machine.id)">
+                <span class="span-blue pointer">跳过</span>
+              </a-popconfirm>
             </template>
           </a-table>
         </template>
@@ -140,16 +171,6 @@
             <span class="span-blue pointer">复制</span>
           </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
-          <!-- 取消 -->
-          <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
-                        title="是否要取消定时发布?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="cancelTimedRelease(record)">
-            <span class="span-blue pointer">取消</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
           <!-- 发布 -->
           <a-popconfirm v-if="statusHolder.visibleRelease(record.status)"
                         title="是否要执行发布?"
@@ -192,14 +213,24 @@
           <a-divider v-if="statusHolder.visibleLog(record.status)" type="vertical"/>
           <!-- 详情 -->
           <a @click="openReleaseDetail(record.id)">详情</a>
-          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
-                        title="确认删除当前发布任务?"
+          <!-- 取消 -->
+          <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
+          <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
+                        title="是否要取消定时发布?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="remove(record.id)">
+                        @confirm="cancelTimedRelease(record)">
+            <span class="span-blue pointer">取消</span>
+          </a-popconfirm>
+          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
+          <!-- 删除 -->
+          <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
+                        title="确认删除当前发布记录吗?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -220,7 +251,7 @@
       <!-- 机器日志 -->
       <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
       <!-- 定时模态框 -->
-      <AppReleaseTimedModal ref="releaseTimed"/>
+      <AppReleaseTimedModal ref="releaseTimed" @updated="forceUpdateRows"/>
     </div>
   </div>
 </template>
@@ -239,7 +270,7 @@ import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderMo
 function statusHolder() {
   return {
     visibleCopy: (status) => {
-      return status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+      return true
     },
     visibleCancel: (status) => {
       return status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
@@ -260,7 +291,8 @@ function statusHolder() {
       return status === this.$enum.RELEASE_STATUS.RUNNABLE.value
     },
     visibleDelete: (status) => {
-      return status !== this.$enum.RELEASE_STATUS.RUNNABLE.value
+      return status !== this.$enum.RELEASE_STATUS.RUNNABLE.value &&
+        status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleRollback: (status) => {
       return status === this.$enum.RELEASE_STATUS.FINISH.value
@@ -268,8 +300,21 @@ function statusHolder() {
     visibleLog: (status) => {
       return status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
         status === this.$enum.RELEASE_STATUS.FINISH.value ||
-        status === this.$enum.RELEASE_STATUS.TERMINATED.value ||
-        status === this.$enum.RELEASE_STATUS.FAILURE.value
+        status === this.$enum.RELEASE_STATUS.FAILURE.value ||
+        status === this.$enum.RELEASE_STATUS.TERMINATED.value
+    },
+    visibleActionLog: (status) => {
+      return status === this.$enum.ACTION_STATUS.RUNNABLE.value ||
+        status === this.$enum.ACTION_STATUS.FINISH.value ||
+        status === this.$enum.ACTION_STATUS.FAILURE.value ||
+        status === this.$enum.ACTION_STATUS.TERMINATED.value
+    },
+    visibleMachineTerminated: (status) => {
+      return status === this.$enum.ACTION_STATUS.RUNNABLE.value
+    },
+    visibleMachineSkip: (status, machineStatus) => {
+      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value &&
+        machineStatus === this.$enum.ACTION_STATUS.WAIT.value
     }
   }
 }
@@ -310,7 +355,7 @@ const columns = [
     title: '持续时间',
     key: 'keepTime',
     dataIndex: 'keepTime',
-    width: 120,
+    width: 100,
     sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
@@ -374,7 +419,7 @@ const innerColumns = [
   {
     title: '操作',
     key: 'action',
-    width: 120,
+    width: 140,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -416,7 +461,25 @@ export default {
       pollId: null,
       columns,
       innerColumns,
+      selectedRowKeys: [],
       statusHolder: statusHolder.call(this)
+    }
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        columnWidth: '40px',
+        onChange: e => {
+          this.selectedRowKeys = e
+        },
+        getCheckboxProps: record => ({
+          props: {
+            disabled: record.status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
+              record.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+          }
+        })
+      }
     }
   },
   methods: {
@@ -440,6 +503,7 @@ export default {
         this.$utils.defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows || []
         this.pagination = pagination
+        this.selectedRowKeys = []
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -488,6 +552,8 @@ export default {
         record.status = this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
         record.timedRelease = this.$enum.TIMED_RELEASE_TYPE.NORMAL.value
         record.timedReleaseTime = undefined
+        // 强制刷新状态
+        this.forceUpdateRows()
       })
     },
     runnableRelease(record) {
@@ -516,9 +582,9 @@ export default {
         this.getList({})
       })
     },
-    remove(id) {
+    remove(idList) {
       this.$api.deleteAppRelease({
-        id
+        idList
       }).then(() => {
         this.$message.success('已删除')
         this.getList({})
@@ -552,6 +618,22 @@ export default {
     openMachineDetail(id) {
       this.$refs.machineDetail.open(id)
     },
+    terminatedMachine(id, releaseMachineId) {
+      this.$api.terminatedAppReleaseMachine({
+        id,
+        releaseMachineId
+      }).then(() => {
+        this.$message.success('已停止')
+      })
+    },
+    skipMachine(id, releaseMachineId) {
+      this.$api.skipAppReleaseMachine({
+        id,
+        releaseMachineId
+      }).then(() => {
+        this.$message.success('已跳过')
+      })
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.appSelector.reset()
@@ -559,6 +641,9 @@ export default {
       this.query.status = undefined
       this.query.onlyMyself = false
       this.getList({})
+    },
+    forceUpdateRows() {
+      this.$set(this.rows, 0, { ...this.rows[0] })
     },
     pollStatus() {
       if (!this.rows || !this.rows.length) {
@@ -606,6 +691,8 @@ export default {
             }
           })
         }
+        // 强制刷新状态
+        this.forceUpdateRows()
       })
     }
   },
@@ -647,6 +734,11 @@ export default {
     margin-right: 4px;
     display: inline-block;
   }
+}
+
+/deep/ .ant-table-expand-icon-th, /deep/ .ant-table-row-expand-icon-cell {
+  width: 45px;
+  min-width: 45px;
 }
 
 </style>

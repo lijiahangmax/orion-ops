@@ -37,6 +37,16 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">执行列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <div v-show="selectedRowKeys.length">
+          <a-popconfirm title="确认删除所选中的执行记录吗?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteTask(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -74,6 +84,7 @@
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
+               :rowSelection="rowSelection"
                rowKey="id"
                @change="getList"
                :scroll="{x: '100%'}"
@@ -158,7 +169,7 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="deleteTask(record.id)">
+                        @confirm="deleteTask([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -192,13 +203,6 @@ import _filters from '@/lib/filters'
  * 列
  */
 const columns = [
-  {
-    title: '序号',
-    key: 'seq',
-    width: 65,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
   {
     title: '执行机器',
     key: 'machine',
@@ -312,7 +316,23 @@ export default {
       },
       loading: false,
       pollId: null,
-      columns
+      columns,
+      selectedRowKeys: []
+    }
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: e => {
+          this.selectedRowKeys = e
+        },
+        getCheckboxProps: record => ({
+          props: {
+            disabled: record.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+          }
+        })
+      }
     }
   },
   methods: {
@@ -329,6 +349,7 @@ export default {
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
+        this.selectedRowKeys = []
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -361,9 +382,9 @@ export default {
         this.getList({})
       })
     },
-    deleteTask(execId) {
+    deleteTask(idList) {
       this.$api.deleteExecTask({
-        id: execId
+        idList
       }).then(() => {
         this.$message.success('已删除')
         this.getList({})
@@ -390,7 +411,7 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
-      this.$refs.userSelector.reset()
+      this.$refs.userSelector && this.$refs.userSelector.reset()
       this.query.machineId = undefined
       this.query.machineName = undefined
       this.query.userId = undefined
