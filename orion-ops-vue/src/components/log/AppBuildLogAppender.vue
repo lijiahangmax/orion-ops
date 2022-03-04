@@ -34,10 +34,20 @@
             <a-tag color="#845EF7" v-if="detail.profileName">
               {{ detail.profileName }}
             </a-tag>
+            <!-- 停止 -->
+            <a-popconfirm v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+                          title="是否要停止执行?"
+                          placement="bottomLeft"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminated">
+              <a-button size="small" icon="close">停止</a-button>
+            </a-popconfirm>
+            <!-- 下载 -->
             <div class="download-bundle-wrapper" v-if="detail.status === $enum.BUILD_STATUS.FINISH.value">
-              <a-button v-if="!downloadUrl" type="default" icon="link" @click="loadDownloadUrl">获取产物链接</a-button>
+              <a-button v-if="!downloadUrl" icon="link" size="small" @click="loadDownloadUrl">获取产物链接</a-button>
               <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
-                <a-button type="default" icon="download">下载产物</a-button>
+                <a-button size="small" icon="download">下载产物</a-button>
               </a>
             </div>
           </div>
@@ -135,6 +145,13 @@ export default {
         this.setStepsCurrent()
       })
     },
+    terminated() {
+      this.$api.terminatedAppBuild({
+        id: this.detail.id
+      }).then(() => {
+        this.$message.success('已提交停止请求')
+      })
+    },
     setStepsCurrent() {
       const len = this.detail.actions.length
       let curr = len - 1
@@ -175,7 +192,7 @@ export default {
 
 .app-build-steps {
   height: 56px;
-  padding: 12px;
+  padding: 12px 12px 4px 12px;
 }
 
 .app-build-log {
@@ -183,7 +200,7 @@ export default {
 
   .build-log-tools {
     display: flex;
-    align-items: center;
+    align-items: baseline;
   }
 }
 

@@ -7,7 +7,7 @@
           <a-menu-item v-for="machine in record.machines" :key="machine.id" :title="machine.machineName">
             <div class="menu-item-machine-wrapper">
               <!-- 机器名称 -->
-              <span class="menu-item-machine-name">{{ machine.machineName }}</span>
+              <span class="menu-item-machine-name auto-ellipsis-item">{{ machine.machineName }}</span>
               <!-- 状态 -->
               <span class="menu-item-machine-status">
                 <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
@@ -48,6 +48,26 @@
                          :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value"
                          :config="{type: $enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value, relId: machine.id}"
                          :rightMenuX="e => e.offsetX + 298">
+              <template #left-tools>
+                <!-- 停止 -->
+                <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"
+                              title="是否要停止执行?"
+                              placement="bottomLeft"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="terminatedMachine(machine.id)">
+                  <a-button icon="close">停止</a-button>
+                </a-popconfirm>
+                <!-- 跳过 -->
+                <a-popconfirm v-if="$enum.ACTION_STATUS.WAIT.value === machine.status"
+                              title="是否要跳过执行?"
+                              placement="bottomLeft"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="skipMachine(machine.id)">
+                  <a-button icon="stop">跳过</a-button>
+                </a-popconfirm>
+              </template>
             </LogAppender>
           </div>
         </div>
@@ -104,7 +124,8 @@ export default {
       }).then(() => {
         // 打开日志
         for (const machine of this.record.machines) {
-          if (machine.status !== this.$enum.ACTION_STATUS.WAIT.value) {
+          if (machine.status !== this.$enum.ACTION_STATUS.WAIT.value &&
+            machine.status !== this.$enum.ACTION_STATUS.SKIPPED.value) {
             this.$refs[`appender-${machine.id}`][0].openTail()
             this.openedFiles.push(machine.id)
           }
@@ -137,6 +158,22 @@ export default {
       this.openedFiles = []
       this.current = {}
     },
+    terminatedMachine(releaseMachineId) {
+      this.$api.terminatedAppReleaseMachine({
+        id: this.record.id,
+        releaseMachineId: releaseMachineId
+      }).then(() => {
+        this.$message.success('已停止')
+      })
+    },
+    skipMachine(releaseMachineId) {
+      this.$api.skipAppReleaseMachine({
+        id: this.record.id,
+        releaseMachineId: releaseMachineId
+      }).then(() => {
+        this.$message.success('已跳过')
+      })
+    },
     async pollStatus() {
       if (!this.record.machines || !this.record.machines.length) {
         return
@@ -161,7 +198,8 @@ export default {
             s.status = machineStatus.status
             // 检查打开tail
             const opened = this.openedFiles.filter(e => e === s.id).length > 0
-            if (!opened && s.status !== this.$enum.ACTION_STATUS.WAIT.value) {
+            if (!opened && s.status !== this.$enum.ACTION_STATUS.WAIT.value &&
+              s.status !== this.$enum.ACTION_STATUS.SKIPPED.value) {
               // 打开日志
               this.$refs[`appender-${s.id}`][0].openTail()
               this.openedFiles.push(s.id)

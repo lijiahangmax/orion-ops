@@ -8,17 +8,6 @@
       <!-- 左侧工具栏 -->
       <template #left-tools>
         <div class="appender-left-tools">
-          <!-- 命令输入 -->
-          <a-input-search class="command-write-input"
-                          size="default"
-                          v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
-                          v-model="command"
-                          placeholder="输入"
-                          @search="sendCommand">
-            <template #enterButton>
-              <a-icon type="forward"/>
-            </template>
-          </a-input-search>
           <!-- 状态 -->
           <a-tag class="machine-exec-status" v-if="status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, status).color">
             {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, status).label }}
@@ -33,13 +22,26 @@
                 :style="{'color': exitCode === 0 ? '#4263EB' : '#E03131'}">
             {{ exitCode }}
           </span>
+          <!-- 命令输入 -->
+          <a-input-search class="command-write-input"
+                          size="default"
+                          v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
+                          v-model="command"
+                          placeholder="输入"
+                          @search="sendCommand">
+            <template #enterButton>
+              <a-icon type="forward"/>
+            </template>
+          </a-input-search>
           <!-- 停止 -->
-          <a-button class="terminated-button"
-                    v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
-                    icon="close"
-                    @click="terminated">
-            停止
-          </a-button>
+          <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
+                        title="是否要停止执行?"
+                        placement="bottomLeft"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="terminated">
+            <a-button icon="close">停止</a-button>
+          </a-popconfirm>
         </div>
       </template>
     </LogAppender>

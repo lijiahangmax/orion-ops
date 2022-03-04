@@ -2,7 +2,7 @@
   <div class="app-release-container">
     <!-- 步骤 -->
     <div class="app-release-steps">
-      <a-steps :current="current" :status="stepStatus">
+      <a-steps :current="current" :status="$enum.valueOf($enum.ACTION_STATUS, detail.status).stepStatus">
         <template v-for="action in detail.actions">
           <a-step :key="action.id"
                   :title="action.actionName"
@@ -31,6 +31,15 @@
             <a-tag color="#40C057" v-if="detail.machineHost">
               {{ detail.machineHost }}
             </a-tag>
+            <!-- 停止 -->
+            <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === detail.status"
+                          title="是否要停止执行?"
+                          placement="bottomLeft"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminatedMachine">
+              <a-button icon="close" size="small">停止</a-button>
+            </a-popconfirm>
           </div>
         </template>
       </logAppender>
@@ -49,14 +58,6 @@ export default {
     appenderHeight: {
       type: String,
       default: 'calc(100vh - 112px)'
-    }
-  },
-  computed: {
-    stepStatus() {
-      if (this.detail.status) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, this.detail.status).stepStatus
-      }
-      return null
     }
   },
   data() {
@@ -98,6 +99,14 @@ export default {
       this.id = null
       this.current = 0
       this.detail = {}
+    },
+    terminatedMachine() {
+      this.$api.terminatedAppReleaseMachine({
+        id: this.detail.releaseId,
+        releaseMachineId: this.detail.id
+      }).then(() => {
+        this.$message.success('已停止')
+      })
     },
     pollStatus() {
       this.$api.getAppReleaseMachineStatus({
@@ -148,7 +157,7 @@ export default {
 
 .app-release-steps {
   height: 56px;
-  padding: 12px;
+  padding: 12px 12px 4px 12px;
 }
 
 .machine-release-log {
@@ -156,7 +165,7 @@ export default {
 
   .machine-log-tools {
     display: flex;
-    align-items: center;
+    align-items: baseline;
   }
 }
 
