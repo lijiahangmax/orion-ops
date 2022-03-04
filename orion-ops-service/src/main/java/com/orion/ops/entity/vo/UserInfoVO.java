@@ -1,6 +1,7 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.UserInfoDO;
+import com.orion.ops.entity.dto.UserDTO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -95,6 +96,18 @@ public class UserInfoVO {
             Date lastLoginTime = d.getLastLoginTime();
             vo.setLastLoginTime(lastLoginTime);
             Optional.ofNullable(lastLoginTime).map(Dates::ago).ifPresent(vo::setLastLoginAgo);
+            return vo;
+        });
+    }
+
+    static {
+        TypeStore.STORE.register(UserDTO.class, UserInfoVO.class, d -> {
+            UserInfoVO vo = new UserInfoVO();
+            vo.setId(d.getId());
+            vo.setUsername(d.getUsername());
+            vo.setNickname(d.getNickname());
+            vo.setRole(d.getRoleType());
+            vo.setStatus(d.getUserStatus());
             return vo;
         });
     }
