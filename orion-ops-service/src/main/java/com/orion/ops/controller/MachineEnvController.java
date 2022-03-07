@@ -117,7 +117,7 @@ public class MachineEnvController {
     /**
      * 视图保存
      */
-    @RequestMapping("/view/save")
+    @RequestMapping("/view-save")
     public Integer viewSave(@RequestBody MachineEnvRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         String value = Valid.notBlank(request.getValue());

@@ -102,7 +102,7 @@ public class SystemEnvController {
     /**
      * 视图保存
      */
-    @RequestMapping("/view/save")
+    @RequestMapping("/view-save")
     @EventLog(EventType.SAVE_SYSTEM_ENV)
     public Integer viewSave(@RequestBody SystemEnvRequest request) {
         String value = Valid.notBlank(request.getValue());

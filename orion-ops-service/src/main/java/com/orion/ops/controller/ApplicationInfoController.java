@@ -93,7 +93,7 @@ public class ApplicationInfoController {
     /**
      * 应用机器列表
      */
-    @RequestMapping("/list/machine")
+    @RequestMapping("/list-machine")
     public List<ApplicationMachineVO> listAppMachines(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         Long profileId = Valid.notNull(request.getProfileId());
@@ -149,18 +149,16 @@ public class ApplicationInfoController {
     /**
      * 删除发布机器
      */
-    @RequestMapping("/delete/machine")
+    @RequestMapping("/delete-machine")
     public Integer deleteAppMachine(@RequestBody ApplicationInfoRequest request) {
-        Long appId = Valid.notNull(request.getId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        Long machineId = Valid.notNull(request.getMachineId());
-        return applicationMachineService.deleteAppMachineByAppProfileMachineId(appId, profileId, machineId);
+        Long id = Valid.notNull(request.getId());
+        return applicationMachineService.deleteById(id);
     }
 
     /**
      * 获取发布机器id
      */
-    @RequestMapping("/get/machine-id")
+    @RequestMapping("/get-machine-id")
     public List<Long> getAppMachineId(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
         Long profileId = Valid.notNull(request.getProfileId());

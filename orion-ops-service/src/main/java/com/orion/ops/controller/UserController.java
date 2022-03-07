@@ -80,7 +80,7 @@ public class UserController {
     /**
      * 修改头像
      */
-    @RequestMapping("/update/avatar")
+    @RequestMapping("/update-avatar")
     public Integer updateAvatar(@RequestBody UserInfoRequest request) {
         String avatar = Valid.notBlank(request.getAvatar());
         return userService.updateAvatar(avatar);

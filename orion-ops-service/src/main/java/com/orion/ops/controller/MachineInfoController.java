@@ -110,7 +110,7 @@ public class MachineInfoController {
     /**
      * 尝试 ping 主机
      */
-    @RequestMapping("/test/ping")
+    @RequestMapping("/test-ping")
     public Integer ping(@RequestBody MachineInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineInfoService.testPing(id);
@@ -119,7 +119,7 @@ public class MachineInfoController {
     /**
      * 尝试 连接 主机
      */
-    @RequestMapping("/test/connect")
+    @RequestMapping("/test-connect")
     public Integer connect(@RequestBody MachineInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineInfoService.testConnect(id);

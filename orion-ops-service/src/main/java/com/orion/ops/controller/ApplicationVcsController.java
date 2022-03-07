@@ -103,7 +103,7 @@ public class ApplicationVcsController {
     /**
      * 仓库重新初始化
      */
-    @RequestMapping("/re/init")
+    @RequestMapping("/re-init")
     @EventLog(EventType.RE_INIT_VCS)
     public HttpWrapper<?> reInitVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());

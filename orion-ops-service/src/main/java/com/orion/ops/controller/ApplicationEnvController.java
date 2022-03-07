@@ -120,7 +120,7 @@ public class ApplicationEnvController {
     /**
      * 视图保存
      */
-    @RequestMapping("/view/save")
+    @RequestMapping("/view-save")
     public Integer viewSave(@RequestBody ApplicationEnvRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());

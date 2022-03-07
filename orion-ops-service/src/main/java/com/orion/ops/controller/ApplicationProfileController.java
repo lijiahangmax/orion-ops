@@ -77,7 +77,7 @@ public class ApplicationProfileController {
     /**
      * 环境列表 (缓存)
      */
-    @RequestMapping("/fast/list")
+    @RequestMapping("/fast-list")
     public List<ApplicationProfileFastVO> listProfiles() {
         return applicationProfileService.fastListProfiles();
     }
