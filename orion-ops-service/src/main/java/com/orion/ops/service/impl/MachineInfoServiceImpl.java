@@ -97,7 +97,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         entity.setMachineStatus(Const.ENABLE);
         machineInfoDAO.insert(entity);
         if (Strings.isNotBlank(password)) {
-            entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
+            entity.setPassword(ValueMix.encrypt(password));
             machineInfoDAO.updateById(entity);
         }
         Long id = entity.getId();
@@ -117,7 +117,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         String password = request.getPassword();
         this.copyProperties(request, entity);
         if (Strings.isNotBlank(password)) {
-            entity.setPassword(ValueMix.encrypt(password, entity.getId() + Const.ORION_OPS));
+            entity.setPassword(ValueMix.encrypt(password));
         }
         // 修改
         int effect = machineInfoDAO.updateById(entity);
@@ -253,7 +253,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Integer testConnect(Long id) {
         SessionStore s = null;
         try {
-            s = this.openSessionStore(id);
+            s = this.connectSessionStore(Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE));
             return Const.ENABLE;
         } catch (Exception e) {
             return Const.DISABLE;
@@ -310,7 +310,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             session = SessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
             String password = machine.getPassword();
             if (Strings.isNotBlank(password)) {
-                session.setPassword(ValueMix.decrypt(password, machine.getId() + Const.ORION_OPS));
+                session.setPassword(ValueMix.decrypt(password));
             }
             MachineProxyDO proxy = null;
             if (proxyId != null) {

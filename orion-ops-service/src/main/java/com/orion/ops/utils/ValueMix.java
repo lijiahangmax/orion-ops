@@ -1,6 +1,5 @@
 package com.orion.ops.utils;
 
-import com.orion.ops.consts.Const;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
 import com.orion.utils.codec.Base62s;
@@ -22,10 +21,15 @@ import java.util.Optional;
  */
 public class ValueMix {
 
+    /**
+     * 秘钥
+     */
+    public static final String SECRET_KEY = "orion_ops";
+
     private static final EcbSymmetric ECB = SymmetricBuilder.aes()
             .workingMode(WorkingMode.ECB)
             .paddingMode(PaddingMode.PKCS5_PADDING)
-            .generatorSecretKey(Const.ORION_OPS)
+            .generatorSecretKey(SECRET_KEY)
             .buildEcb();
 
     private ValueMix() {
@@ -170,7 +174,7 @@ public class ValueMix {
      * @return token
      */
     public static String createLoginToken(Long uid, Long timestamp) {
-        return ValueMix.base62ecbEnc(uid + "_" + timestamp, Const.LOGIN_TOKEN_ENC_KEY);
+        return ValueMix.base62ecbEnc(uid + "_" + timestamp, SECRET_KEY);
     }
 
     /**
@@ -180,7 +184,7 @@ public class ValueMix {
      * @return true合法
      */
     public static boolean validLoginToken(String token) {
-        return ValueMix.base62ecbDec(token, Const.LOGIN_TOKEN_ENC_KEY) != null;
+        return ValueMix.base62ecbDec(token, SECRET_KEY) != null;
     }
 
     /**
@@ -190,7 +194,7 @@ public class ValueMix {
      * @return uid
      */
     public static Long getLoginTokenUserId(String token) {
-        return Optional.ofNullable(ValueMix.base62ecbDec(token, Const.LOGIN_TOKEN_ENC_KEY))
+        return Optional.ofNullable(ValueMix.base62ecbDec(token, SECRET_KEY))
                 .map(s -> s.split("_"))
                 .map(s -> s[0])
                 .filter(Strings::isInteger)
@@ -205,7 +209,7 @@ public class ValueMix {
      * @return [uid, loginTimestamp]
      */
     public static Long[] getLoginTokenInfo(String token) {
-        return Optional.ofNullable(ValueMix.base62ecbDec(token, Const.LOGIN_TOKEN_ENC_KEY))
+        return Optional.ofNullable(ValueMix.base62ecbDec(token, SECRET_KEY))
                 .map(s -> s.split("_"))
                 .filter(s -> Arrays.stream(s).allMatch(Strings::isInteger))
                 .map(s -> Arrays1.mapper(s, Long[]::new, Long::valueOf))

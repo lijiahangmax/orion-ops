@@ -54,9 +54,13 @@ public class Const extends com.orion.constant.Const {
 
     public static final String EVENT_DIR = "/event";
 
+    public static final String TASK_DIR = "/task";
+
     public static final String BUILD = "build";
 
     public static final String RELEASE = "release";
+
+    public static final String TASK = "task";
 
     public static final String ACTION = "action";
 
@@ -69,8 +73,6 @@ public class Const extends com.orion.constant.Const {
     public static final Integer FORBID_DELETE_NOT = 2;
 
     public static final String LOGIN_TOKEN = "O-Login-Token";
-
-    public static final String LOGIN_TOKEN_ENC_KEY = "LoginToken";
 
     public static final int EXEC_COMMAND_OMIT = 80;
 
@@ -127,6 +129,8 @@ public class Const extends com.orion.constant.Const {
     public static final int DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR = 24 * 2;
 
     public static final String OAUTH2 = "oauth2";
+
+    public static final int SFTP_UPLOAD_THRESHOLD = 512;
 
     /**
      * 不安全的文件夹
