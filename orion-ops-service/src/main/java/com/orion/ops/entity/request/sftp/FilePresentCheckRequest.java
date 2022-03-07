@@ -26,4 +26,9 @@ public class FilePresentCheckRequest extends FileBaseRequest {
      */
     private List<String> names;
 
+    /**
+     * 文件大小
+     */
+    private Long size;
+
 }

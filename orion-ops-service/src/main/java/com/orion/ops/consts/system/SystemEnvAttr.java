@@ -127,6 +127,11 @@ public enum SystemEnvAttr {
      */
     RESUME_ENABLE_SCHEDULER_TASK("自动恢复启用的调度任务", true),
 
+    /**
+     * sftp上传文件最大阈值(MB)
+     */
+    SFTP_UPLOAD_THRESHOLD("sftp 上传文件最大阈值(MB)", true),
+
     ;
 
     /**

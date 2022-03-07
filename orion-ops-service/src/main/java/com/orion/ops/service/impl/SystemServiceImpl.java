@@ -248,6 +248,7 @@ public class SystemServiceImpl implements SystemService {
         options.setLoginFailureLockThreshold(Integer.valueOf(SystemEnvAttr.LOGIN_FAILURE_LOCK_THRESHOLD.getValue()));
         options.setLoginTokenAutoRenewThreshold(Integer.valueOf(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW_THRESHOLD.getValue()));
         options.setResumeEnableSchedulerTask(EnableType.of(SystemEnvAttr.RESUME_ENABLE_SCHEDULER_TASK.getValue()).getValue());
+        options.setSftpUploadThreshold(Integer.valueOf(SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue()));
         return options;
     }
 

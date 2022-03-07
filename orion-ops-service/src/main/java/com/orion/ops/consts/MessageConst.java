@@ -106,8 +106,6 @@ public class MessageConst {
 
     public static final String FILE_TOO_LARGE = "文件过大";
 
-    public static final String INVALID_STATUS = "状态不合法";
-
     public static final String NAME_PRESENT = "名称重复";
 
     public static final String FORBID_DELETE = "禁止删除";
@@ -187,5 +185,7 @@ public class MessageConst {
     public static final String TASK_NOT_ENABLED = "调度任务未启用";
 
     public static final String SESSION_PRESENT = "会话不存在";
+
+    public static final String UPLOAD_TOO_LARGE = "上传文件大小不能大于 {}MB";
 
 }

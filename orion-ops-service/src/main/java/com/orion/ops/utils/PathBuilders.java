@@ -129,6 +129,23 @@ public class PathBuilders {
     }
 
     /**
+     * 获取调度任务机器日志文件
+     *
+     * @param taskId    taskId
+     * @param recordId  recordId
+     * @param machineId machineId
+     * @return path
+     */
+    public static String getSchedulerTaskLogPath(Long taskId, Long recordId, Long machineId) {
+        return Const.TASK_DIR
+                + "/" + taskId
+                + "/" + recordId
+                + "/" + machineId
+                + "." + Const.SUFFIX_LOG;
+    }
+
+
+    /**
      * 获取 sftp upload 文件路径
      *
      * @param fileToken fileToken

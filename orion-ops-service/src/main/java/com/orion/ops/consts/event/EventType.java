@@ -166,6 +166,11 @@ public enum EventType {
      */
     UPDATE_TERMINAL_CONFIG(2410, EventClassify.TERMINAL, "修改机器终端配置 <sb>${name}</sb>"),
 
+    /**
+     * 删除终端日志
+     */
+    DELETE_TERMINATED_LOG(2415, EventClassify.TERMINAL, "删除终端操作日志 <sb>${count}</sb>个"),
+
     // -------------------- sftp 操作 --------------------
 
     /**
@@ -272,7 +277,7 @@ public enum EventType {
     /**
      * 删除模板
      */
-    DELETE_TEMPLATE(2815, EventClassify.TEMPLATE, "删除模板 <sb>${name}</sb>"),
+    DELETE_TEMPLATE(2815, EventClassify.TEMPLATE, "删除模板 <sb>${count}</sb>个"),
 
     // -------------------- 应用操作 --------------------
 
@@ -531,6 +536,11 @@ public enum EventType {
      * 跳过调度任务机器操作
      */
     SKIP_SCHEDULER_TASK_MACHINE(7140, EventClassify.SCHEDULER, "跳过调度任务机器操作 <sb>${name}</sb> <sb>${machineName}</sb>"),
+
+    /**
+     * 删除任务调度明细
+     */
+    DELETE_TASK_RECORD(7145, EventClassify.SCHEDULER, "删除调度任务明细 <sb>${count}</sb>个"),
 
     ;
 

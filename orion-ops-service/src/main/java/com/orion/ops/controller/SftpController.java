@@ -17,6 +17,7 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
+import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
 import org.springframework.web.bind.annotation.*;
@@ -192,10 +193,15 @@ public class SftpController {
     /**
      * 检查文件是否存在
      */
-    @RequestMapping("/check/present")
+    @RequestMapping("/check-present")
     public List<String> checkFilePresent(@RequestBody FilePresentCheckRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notEmpty(request.getNames());
+        Long size = Valid.notNull(request.getSize());
+        String uploadThreshold = SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue();
+        if (size / Const.BUFFER_KB_1 / Const.BUFFER_KB_1 > Long.parseLong(uploadThreshold)) {
+            throw Exceptions.argument(Strings.format(MessageConst.UPLOAD_TOO_LARGE, uploadThreshold));
+        }
         return sftpService.checkFilePresent(request);
     }
 
@@ -280,7 +286,7 @@ public class SftpController {
     /**
      * 重新上传
      */
-    @RequestMapping("/transfer/{fileToken}/re/upload")
+    @RequestMapping("/transfer/{fileToken}/re-upload")
     public void transferReUpload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReUpload(fileToken);
     }
@@ -288,7 +294,7 @@ public class SftpController {
     /**
      * 重新下载
      */
-    @RequestMapping("/transfer/{fileToken}/re/download")
+    @RequestMapping("/transfer/{fileToken}/re-download")
     public void transferReDownload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReDownload(fileToken);
     }
@@ -296,7 +302,7 @@ public class SftpController {
     /**
      * 批量暂停所有传输
      */
-    @RequestMapping("/transfer/{sessionToken}/pause/all")
+    @RequestMapping("/transfer/{sessionToken}/pause-all")
     public void transferPauseAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferPauseAll(sessionToken);
     }
@@ -304,7 +310,7 @@ public class SftpController {
     /**
      * 批量恢复所有传输
      */
-    @RequestMapping("/transfer/{sessionToken}/resume/all")
+    @RequestMapping("/transfer/{sessionToken}/resume-all")
     public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferResumeAll(sessionToken);
     }
@@ -312,7 +318,7 @@ public class SftpController {
     /**
      * 批量失败重试所有
      */
-    @RequestMapping("/transfer/{sessionToken}/retry/all")
+    @RequestMapping("/transfer/{sessionToken}/retry-all")
     public void transferRetryAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferRetryAll(sessionToken);
     }

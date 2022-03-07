@@ -125,6 +125,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return Const.N_2 + Const.EMPTY;
             case FILE_CLEAN_THRESHOLD:
                 return Const.DEFAULT_FILE_CLEAN_THRESHOLD + Const.EMPTY;
+            case SFTP_UPLOAD_THRESHOLD:
+                return Const.SFTP_UPLOAD_THRESHOLD + Const.EMPTY;
             default:
                 return null;
         }

@@ -1,8 +1,10 @@
 package com.orion.ops.consts.system;
 
+import com.orion.exception.argument.InvalidArgumentException;
 import com.orion.function.Conversion;
 import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.MessageConst;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Valid;
 import lombok.AllArgsConstructor;
@@ -27,7 +29,12 @@ public enum SystemConfigKey {
     FILE_CLEAN_THRESHOLD(10, SystemEnvAttr.FILE_CLEAN_THRESHOLD) {
         @Override
         protected boolean valid(String s) {
-            return Strings.isInteger(s) && Integer.parseInt(s) >= 0;
+            return Strings.isInteger(s) && Integer.parseInt(s) >= 0 && Integer.parseInt(s) <= 1000;
+        }
+
+        @Override
+        protected String validTips() {
+            return FILE_CLEAN_THRESHOLD_TIPS;
         }
     },
 
@@ -87,7 +94,12 @@ public enum SystemConfigKey {
     LOGIN_TOKEN_EXPIRE(70, SystemEnvAttr.LOGIN_TOKEN_EXPIRE) {
         @Override
         protected boolean valid(String s) {
-            return Strings.isInteger(s) && Integer.parseInt(s) > 0;
+            return Strings.isInteger(s) && Integer.parseInt(s) > 0 && Integer.parseInt(s) <= 720;
+        }
+
+        @Override
+        protected String validTips() {
+            return LOGIN_TOKEN_EXPIRE_TIPS;
         }
     },
 
@@ -97,7 +109,12 @@ public enum SystemConfigKey {
     LOGIN_FAILURE_LOCK_THRESHOLD(80, SystemEnvAttr.LOGIN_FAILURE_LOCK_THRESHOLD) {
         @Override
         protected boolean valid(String s) {
-            return Strings.isInteger(s) && Integer.parseInt(s) > 0;
+            return Strings.isInteger(s) && Integer.parseInt(s) > 0 && Integer.parseInt(s) <= 100;
+        }
+
+        @Override
+        protected String validTips() {
+            return LOGIN_FAILURE_LOCK_THRESHOLD_TIPS;
         }
     },
 
@@ -107,7 +124,12 @@ public enum SystemConfigKey {
     LOGIN_TOKEN_AUTO_RENEW_THRESHOLD(90, SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW_THRESHOLD) {
         @Override
         protected boolean valid(String s) {
-            return Strings.isInteger(s) && Integer.parseInt(s) > 0;
+            return Strings.isInteger(s) && Integer.parseInt(s) > 0 && Integer.parseInt(s) <= 720;
+        }
+
+        @Override
+        protected String validTips() {
+            return LOGIN_TOKEN_AUTO_RENEW_THRESHOLD_TIPS;
         }
     },
 
@@ -121,7 +143,32 @@ public enum SystemConfigKey {
         }
     },
 
+    /**
+     * sftp上传文件最大阈值(MB)
+     */
+    SFTP_UPLOAD_THRESHOLD(110, SystemEnvAttr.SFTP_UPLOAD_THRESHOLD) {
+        @Override
+        protected boolean valid(String s) {
+            return Strings.isInteger(s) && Integer.parseInt(s) >= 10 && Integer.parseInt(s) <= 2048;
+        }
+
+        @Override
+        protected String validTips() {
+            return SFTP_UPLOAD_THRESHOLD_TIPS;
+        }
+    },
+
     ;
+
+    private static final String FILE_CLEAN_THRESHOLD_TIPS = "文件清理阈值需要在 10 ~ 2048 之间";
+
+    private static final String LOGIN_TOKEN_EXPIRE_TIPS = "登陆凭证有效期需要在 1 ~ 720 之间";
+
+    private static final String LOGIN_FAILURE_LOCK_THRESHOLD_TIPS = "登陆失败锁定阈值需要在 1 ~ 100 之间";
+
+    private static final String LOGIN_TOKEN_AUTO_RENEW_THRESHOLD_TIPS = "登陆自动续签阈值需要在 1 ~ 720 之间";
+
+    private static final String SFTP_UPLOAD_THRESHOLD_TIPS = "上传文件阈值需要在 10 ~ 2048 之间";
 
     private static final Conversion<String, String> ENABLED_TYPE = s -> EnableType.of(Boolean.valueOf(s)).getLabel();
 
@@ -137,6 +184,15 @@ public enum SystemConfigKey {
      */
     protected boolean valid(String s) {
         return true;
+    }
+
+    /**
+     * 验证失败提示
+     *
+     * @return 验证失败提示
+     */
+    protected String validTips() {
+        return MessageConst.INVALID_CONFIG;
     }
 
     /**
@@ -156,7 +212,13 @@ public enum SystemConfigKey {
      */
     public String getValue(String s) {
         // 验证
-        Valid.isTrue(this.valid(s), MessageConst.INVALID_CONFIG);
+        try {
+            Valid.isTrue(this.valid(s), this.validTips());
+        } catch (InvalidArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw Exceptions.argument(this.validTips());
+        }
         // 转化
         return this.conversionValue(s);
     }
