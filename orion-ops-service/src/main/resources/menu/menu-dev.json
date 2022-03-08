@@ -36,11 +36,29 @@
     "children": [
       {
         "name": "批量执行",
+        "path": "/batch/exec/add"
+      },
+      {
+        "name": "执行记录",
         "path": "/batch/exec/list"
       },
       {
         "name": "日志面板",
         "path": "/log/list"
+      }
+    ]
+  },
+  {
+    "name": "调度任务",
+    "icon": "schedule",
+    "children": [
+      {
+        "name": "任务列表",
+        "path": "/schedule/list"
+      },
+      {
+        "name": "执行记录",
+        "path": "/schedule/record"
       }
     ]
   },
@@ -95,12 +113,16 @@
     ]
   },
   {
-    "name": "设置",
+    "name": "系统管理",
     "icon": "control",
     "children": [
       {
         "name": "模板配置",
         "path": "/template/list"
+      },
+      {
+        "name": "系统变量",
+        "path": "/system/env"
       }
     ]
   }
