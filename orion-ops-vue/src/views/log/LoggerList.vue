@@ -91,7 +91,7 @@
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
-          <a-popconfirm title="确认要删除该行记录?"
+          <a-popconfirm title="是否要删除当前日志记录?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"

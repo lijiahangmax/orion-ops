@@ -10,10 +10,10 @@
           </div>
         </div>
         <!-- tail文件列表菜单 -->
-        <a-menu theme="dark" mode="inline" :defaultSelectedKeys="defaultSelectedTailFile">
-          <a-menu-item v-for="item of tailList" :key="item.id" :title="item.name" @click="chooseFile(item.id)">
+        <a-menu theme="dark" mode="inline" :selectedKeys="selectedKeys">
+          <a-menu-item v-for="item of tailList" :key="item.id" :title="item.name" @dblclick="chooseFile(item.id)">
             <a-icon type="file-text"/>
-            <span class="nav-text">{{ item.name }}</span>
+            <span class="usn">{{ item.name }}</span>
           </a-menu-item>
         </a-menu>
       </a-spin>
@@ -32,8 +32,12 @@
             <a-tab-pane v-for="selectedTailFile of selectedTailFiles"
                         size="default"
                         :key="selectedTailFile.id"
-                        :forceRender="true"
-                        :tab="selectedTailFile.name">
+                        :forceRender="true">
+              <!-- tab -->
+              <template #tab>
+                <span class="usn">{{ selectedTailFile.name }}</span>
+              </template>
+              <!-- 日志 -->
               <div class="file-log-view">
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
@@ -98,7 +102,7 @@ export default {
   data() {
     return {
       listLoading: false,
-      defaultSelectedTailFile: [],
+      selectedKeys: [],
       selectedTailFiles: [],
       tailList: [],
       activeTab: 0
@@ -141,7 +145,10 @@ export default {
       this.listLoading = false
     },
     chooseFile(id) {
+      console.log('choose')
+      this.selectedKeys[0] = id
       this.activeTab = id
+      this.$forceUpdate()
       const filterTailFiles = this.tailList.filter(s => s.id === id)
       if (!filterTailFiles.length) {
         // 不存在与列表
@@ -198,7 +205,7 @@ export default {
     const chooseId = this.$route.params.id
     if (chooseId) {
       const id = parseInt(chooseId)
-      this.defaultSelectedTailFile.push(id)
+      this.selectedKeys.push(id)
       this.chooseFile(id)
     }
   }
