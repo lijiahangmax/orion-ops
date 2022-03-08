@@ -124,9 +124,9 @@
                         @confirm="rebuild(record.id)">
             <span class="span-blue pointer">重新构建</span>
           </a-popconfirm>
-          <a-divider type="vertical" v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"/>
+          <a-divider type="vertical" v-if="visibleHolder.visibleTerminated(record.status)"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="record.status === $enum.BUILD_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="visibleHolder.visibleTerminated(record.status)"
                         title="是否要停止构建?"
                         placement="topRight"
                         ok-text="确定"
@@ -134,9 +134,9 @@
                         @confirm="terminated(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
-          <a-divider type="vertical" v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"/>
+          <a-divider type="vertical" v-if="visibleHolder.visibleDelete(record.status)"/>
           <!-- 删除 -->
-          <a-popconfirm v-if="record.status !== $enum.BUILD_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
                         title="确认删除当前构建记录吗?"
                         placement="topRight"
                         ok-text="确定"
@@ -165,6 +165,19 @@ import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
 import _filters from '@/lib/filters'
+import _enum from '@/lib/enum'
+
+/**
+ * 状态判断
+ */
+const visibleHolder = {
+  visibleTerminated(status) {
+    return status === _enum.BUILD_STATUS.RUNNABLE.value
+  },
+  visibleDelete(status) {
+    return status !== _enum.BUILD_STATUS.WAIT.value && status !== _enum.BUILD_STATUS.RUNNABLE.value
+  }
+}
 
 /**
  * 列
@@ -261,7 +274,8 @@ export default {
       loading: false,
       pollId: null,
       columns,
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      visibleHolder
     }
   },
   computed: {
@@ -273,7 +287,7 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.BUILD_STATUS.RUNNABLE.value
+            disabled: record.status === this.$enum.BUILD_STATUS.WAIT.value || record.status === this.$enum.BUILD_STATUS.RUNNABLE.value
           }
         })
       }
@@ -375,7 +389,7 @@ export default {
           })
         }
         // 强制刷新状态
-        this.$set(this.rows, 0, { ...this.rows[0] })
+        this.$set(this.rows, 0, this.rows[0])
       })
     }
   },

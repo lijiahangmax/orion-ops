@@ -643,7 +643,7 @@ export default {
       this.getList({})
     },
     forceUpdateRows() {
-      this.$set(this.rows, 0, { ...this.rows[0] })
+      this.$set(this.rows, 0, this.rows[0])
     },
     pollStatus() {
       if (!this.rows || !this.rows.length) {

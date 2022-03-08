@@ -27,6 +27,16 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">日志列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <div v-show="selectedRowKeys.length">
+          <a-popconfirm title="确认删除所选中的操作日志吗?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteLog(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
+        </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -39,6 +49,7 @@
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
+               :rowSelection="rowSelection"
                rowKey="id"
                @change="getList"
                :scroll="{x: '100%'}"
@@ -65,8 +76,18 @@
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
+          <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
           <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
+          <a-divider type="vertical"/>
+          <!-- 删除 -->
+          <a-popconfirm title="确认删除当前终端日志?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="deleteLog([record.id])">
+            <span class="span-blue pointer">删除</span>
+          </a-popconfirm>
         </template>
       </a-table>
     </div>
@@ -83,13 +104,6 @@ import _filters from '@/lib/filters'
  * 列
  */
 const columns = [
-  {
-    title: '序号',
-    key: 'seq',
-    width: 65,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
   {
     title: '连接机器',
     key: 'machine',
@@ -134,9 +148,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 120,
+    width: 165,
     fixed: 'right',
-    align: 'center',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -166,7 +179,19 @@ export default {
         }
       },
       loading: false,
+      selectedRowKeys: [],
       columns
+    }
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        columnWidth: '50px',
+        onChange: e => {
+          this.selectedRowKeys = e
+        }
+      }
     }
   },
   methods: {
@@ -183,6 +208,7 @@ export default {
         this.$utils.defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
+        this.selectedRowKeys = []
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -206,10 +232,18 @@ export default {
         this.query.username = name
       }
     },
+    deleteLog(idList) {
+      this.$api.deleteTerminalLog({
+        idList: idList
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.getList({})
+      })
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
-      this.$refs.userSelector.reset()
+      this.$refs.userSelector && this.$refs.userSelector.reset()
       this.query.machineId = undefined
       this.query.machineName = undefined
       this.query.userId = undefined

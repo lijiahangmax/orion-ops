@@ -27,6 +27,15 @@
       <!-- 左侧 -->
       <div class="tools-fixed-left">
         <span class="table-title">模板列表</span>
+        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+        <a-popconfirm v-show="selectedRowKeys.length"
+                      placement="topRight"
+                      title="是否删除选中模板?"
+                      ok-text="确定"
+                      cancel-text="取消"
+                      @confirm="remove(selectedRowKeys)">
+          <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+        </a-popconfirm>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -41,6 +50,7 @@
       <a-table :columns="columns"
                :dataSource="rows"
                :pagination="pagination"
+               :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
                rowKey="id"
                @change="getList"
                :scroll="{x: '100%'}"
@@ -66,7 +76,7 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="remove(record.id)">
+                        @confirm="remove([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -92,13 +102,6 @@ import _filters from '@/lib/filters'
  * 列
  */
 const columns = [
-  {
-    title: '序号',
-    key: 'seq',
-    width: 65,
-    align: 'center',
-    customRender: (text, record, index) => `${index + 1}`
-  },
   {
     title: '模板名称',
     dataIndex: 'name',
@@ -179,6 +182,7 @@ export default {
         }
       },
       loading: false,
+      selectedRowKeys: [],
       columns
     }
   },
@@ -210,12 +214,13 @@ export default {
     update(id) {
       this.$refs.addModal.update(id)
     },
-    remove(id) {
-      this.$api.deleteTemplate({ id })
-        .then(() => {
-          this.$message.success('删除成功')
-          this.getList({})
-        })
+    remove(idList) {
+      this.$api.deleteTemplate({
+        idList
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.getList({})
+      })
     },
     preview(value) {
       this.$refs.preview.preview(value)

@@ -42,9 +42,14 @@
       <div class="tools-fixed-left">
         <span class="table-title">代理列表</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <a-button-group class="ml8" v-show="selectedRowKeys.length">
-          <a-button type="danger" icon="delete" @click="batchRemove()">删除</a-button>
-        </a-button-group>
+        <a-popconfirm v-show="selectedRowKeys.length"
+                      placement="topRight"
+                      title="是否删除选中代理?"
+                      ok-text="确定"
+                      cancel-text="取消"
+                      @confirm="remove(selectedRowKeys)">
+          <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+        </a-popconfirm>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
@@ -88,7 +93,7 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="remove(record.id)">
+                        @confirm="remove([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -198,30 +203,12 @@ export default {
         this.loading = false
       })
     },
-    remove(id) {
+    remove(idList) {
       this.$api.deleteMachineProxy({
-        idList: [id]
+        idList
       }).then(() => {
         this.$message.success('删除成功')
         this.getList({})
-      })
-    },
-    batchRemove() {
-      this.$confirm({
-        title: '确认删除',
-        content: '是否删除选中代理? 将会清除是所有关联机器的代理!',
-        okText: '确认',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.deleteMachineProxy({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('删除成功')
-            this.getList({})
-          })
-          this.selectedRowKeys = []
-        }
       })
     },
     add() {

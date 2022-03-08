@@ -152,9 +152,9 @@
                         @confirm="redo(record)">
             <span class="span-blue pointer">再次执行</span>
           </a-popconfirm>
-          <a-divider v-if="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
+          <a-divider v-if="visibleHolder.visibleTerminated(record.status)" type="vertical"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="visibleHolder.visibleTerminated(record.status)"
                         title="确认停止当前任务?"
                         placement="topRight"
                         ok-text="确定"
@@ -162,9 +162,9 @@
                         @confirm="terminated(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
-          <a-divider v-if="record.status !== $enum.BATCH_EXEC_STATUS.RUNNABLE.value" type="vertical"/>
+          <a-divider v-if="visibleHolder.visibleDelete(record.status)" type="vertical"/>
           <!-- 删除 -->
-          <a-popconfirm v-if="record.status !== $enum.BATCH_EXEC_STATUS.RUNNABLE.value"
+          <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
                         title="确认删除当前任务?"
                         placement="topRight"
                         ok-text="确定"
@@ -198,6 +198,19 @@ import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import _filters from '@/lib/filters'
+import _enum from '@/lib/enum'
+
+/**
+ * 状态判断
+ */
+const visibleHolder = {
+  visibleTerminated(status) {
+    return status === _enum.BATCH_EXEC_STATUS.RUNNABLE.value
+  },
+  visibleDelete(status) {
+    return status !== _enum.BATCH_EXEC_STATUS.WAITING.value && status !== _enum.BATCH_EXEC_STATUS.RUNNABLE.value
+  }
+}
 
 /**
  * 列
@@ -278,7 +291,6 @@ const columns = [
     key: 'action',
     fixed: 'right',
     width: 175,
-    align: 'center',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -317,7 +329,8 @@ export default {
       loading: false,
       pollId: null,
       columns,
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      visibleHolder
     }
   },
   computed: {
@@ -329,7 +342,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+            disabled: record.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
+              record.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
           }
         })
       }
@@ -478,6 +492,8 @@ export default {
             s.used = status.used
           })
         }
+        // 强制刷新状态
+        this.$set(this.rows, 0, this.rows[0])
       })
     }
   },
