@@ -1,5 +1,5 @@
 <template>
-  <a-layout id="common-layout">
+  <a-layout id="common-layout" v-if="validToken">
     <!-- 左侧 -->
     <a-layout-sider id="common-sider" v-model="collapsed" :trigger="null">
       <!--  <div class="logo"/> -->
@@ -40,7 +40,8 @@ export default {
   },
   data() {
     return {
-      collapsed: false
+      collapsed: false,
+      validToken: false
     }
   },
   methods: {
@@ -50,6 +51,13 @@ export default {
     onHeaderEvent(e) {
       this.$refs.route && this.$refs.route.onHeaderEvent && this.$refs.route.onHeaderEvent(e)
     }
+  },
+  async beforeCreate() {
+    await this.$api.validToken().then(() => {
+      this.validToken = true
+    }).catch(() => {
+      this.validToken = false
+    })
   }
 }
 </script>
