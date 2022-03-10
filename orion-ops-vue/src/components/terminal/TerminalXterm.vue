@@ -1,7 +1,8 @@
 <template>
-  <div id="terminal-container">
+  <div class="terminal-container" :style="{height: wrapperHeight}">
     <!-- 头部 -->
-    <TerminalHeader :machineId="machineId"
+    <TerminalHeader v-if="visibleHeader"
+                    :machineId="machineId"
                     :machine="machine"
                     @inputCommand='inputCommand'
                     @reload='reload'
@@ -10,7 +11,10 @@
     <!-- terminal主体 -->
     <TerminalMain ref="terminalMain"
                   :machineId="machineId"
-                  @closeLoading="closeLoading"
+                  :rightMenuX="rightMenuX"
+                  :rightMenuY="rightMenuY"
+                  :terminalHeight="terminalHeight"
+                  @initFinish="initFinish"
                   @terminalStatusChange="terminalStatusChange"/>
     <!-- sftp侧栏 -->
     <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId"/>
@@ -30,7 +34,12 @@ export default {
     MachineSftpDrawer
   },
   props: {
-    machineId: null
+    machineId: Number,
+    wrapperHeight: String,
+    terminalHeight: String,
+    visibleHeader: Boolean,
+    rightMenuX: Function,
+    rightMenuY: Function
   },
   data: function() {
     return {
@@ -46,10 +55,11 @@ export default {
     }
   },
   methods: {
-    closeLoading() {
+    initFinish(r) {
       if (this.loading) {
         this.loading()
       }
+      this.$emit('initFinish', r)
     },
     inputCommand(e) {
       this.$refs.terminalMain.writerCommand(e)
@@ -63,10 +73,11 @@ export default {
     },
     reload() {
       this.dispose()
+      this.disconnect()
       this.getAccessToken()
     },
-    disconnect(e) {
-      this.$refs.terminalMain.disconnect(e)
+    disconnect() {
+      this.$refs.terminalMain && this.$refs.terminalMain.disconnect()
     },
     terminalStatusChange(status) {
       this.machine.status = status

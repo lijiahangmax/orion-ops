@@ -1,6 +1,6 @@
 <template>
   <div class="terminal-header-container">
-    <div class="terminal-header-main">
+    <div class="terminal-header-main" :style="{background}">
       <!-- 左侧菜单 -->
       <div class="terminal-header-fixed-left">
         <!-- ssh信息 -->
@@ -30,11 +30,7 @@
             <p v-if="machine.status === $enum.TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
-          <a-badge :count="this.statusLabel" :number-style="{
-                backgroundColor: this.statusColor,
-                cursor: 'pointer',
-                boxShadow: '0 0 0 1px #D9D9D9 inset',
-                'margin-right': '15px'}"/>
+          <a-badge :count="statusLabel" :number-style="statusStyle"/>
         </a-popconfirm>
         <!-- 提示 -->
         <a-popover placement="bottom">
@@ -78,7 +74,11 @@ export default {
   name: 'TerminalHeader',
   props: {
     machineId: Number,
-    machine: Object
+    machine: Object,
+    background: {
+      type: String,
+      default: '#E9ECEF'
+    }
   },
   components: {
     TerminalSettingModal
@@ -93,8 +93,13 @@ export default {
     statusLabel: function() {
       return this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).label
     },
-    statusColor: function() {
-      return this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).color
+    statusStyle: function() {
+      return {
+        backgroundColor: this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).color,
+        cursor: 'pointer',
+        boxShadow: '0 0 0 1px #D9D9D9 inset',
+        'margin-right': '15px'
+      }
     }
   },
   methods: {
@@ -143,7 +148,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #E9ECEF;
 
   .terminal-header-fixed-left {
     display: flex;
@@ -152,7 +156,7 @@ export default {
 
     .terminal-ssh {
       min-width: 160px;
-      margin: 0 16px;
+      margin: 0 16px 0 8px;
       cursor: pointer;
       color: #364FC7;
     }
@@ -167,7 +171,7 @@ export default {
     align-items: center;
 
     #sftp-trigger {
-      margin-right: 15px
+      margin-right: 8px
     }
 
     .trigger-icon {

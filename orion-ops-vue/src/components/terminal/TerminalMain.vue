@@ -1,15 +1,15 @@
 <template>
-  <div class="terminal-main" :style="{background: this.options.theme.background}">
+  <div class="terminal-main" :style="{height: terminalHeight, background: this.options.theme.background}">
     <!-- terminal -->
     <div class="terminal-content">
-      <div id="terminal" ref="terminal" @contextmenu.prevent="$refs.rightMenu.openRightMenu"></div>
+      <div class="terminal" ref="terminal" @contextmenu.prevent="$refs.rightMenu.openRightMenu"></div>
     </div>
     <!-- 事件 -->
     <div class="terminal-event-container">
       <!-- 右键菜单 -->
       <RightClickMenu ref="rightMenu"
-                      :x="e => e.offsetX + 10"
-                      :y="e => e.offsetY + 80"
+                      :x="rightMenuX"
+                      :y="rightMenuY"
                       @clickRight="clickRightMenuItem">
         <template #items>
           <a-menu-item key="selectAll">
@@ -160,17 +160,17 @@ const terminalEventHandler = {
     const _this = this
     this.term.attachCustomKeyEventHandler(function(ev) {
       // 注册复制键 ctrl + insert
-      if (ev.keyCode === 45 && ev.ctrlKey && ev.type === 'keydown') {
-        terminalEventHandler.copy.call(_this)
-      }
+      // if (ev.keyCode === 45 && ev.ctrlKey && ev.type === 'keydown') {
+      //   terminalEventHandler.copy.call(_this)
+      // }
       // 注册粘贴键 shift + insert
-      if (ev.keyCode === 45 && ev.shiftKey && ev.type === 'keydown') {
-        terminalEventHandler.paste.call(_this)
-      }
+      // if (ev.keyCode === 45 && ev.shiftKey && ev.type === 'keydown') {
+      //   terminalEventHandler.paste.call(_this)
+      // }
       // 注册粘贴键 ctrl + shift + v
-      if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-        terminalEventHandler.paste.call(_this)
-      }
+      // if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+      //   terminalEventHandler.paste.call(_this)
+      // }
       // 注册搜索键 ctrl + shift + f
       if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
         const visible = _this.search.visible
@@ -205,7 +205,7 @@ const clientHandler = {
   onopen() {
     console.log('open')
     this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
-    this.$emit('closeLoading')
+    this.$emit('initFinish', true)
     // 建立连接
     terminalOperator.connect.call(this)
     // 注册窗口大小监听器
@@ -223,7 +223,7 @@ const clientHandler = {
   onerror() {
     console.log('error')
     this.status = this.$enum.TERMINAL_STATUS.ERROR.value
-    this.$emit('closeLoading')
+    this.$emit('initFinish', false)
     this.$message.error('无法连接至服务器', 2)
     this.term.write('\x1B[1;3;31m\r\nfailed to establish connection\x1B[0m')
   },
@@ -248,8 +248,8 @@ const terminalOperator = {
   connect() {
     console.log('connect')
     // xx|cols|rows|width|height|loginToken
-    const width = parseInt(document.getElementById('terminal').offsetWidth)
-    const height = parseInt(document.getElementById('terminal').offsetHeight)
+    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
+    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
     const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
     const body = `${this.$enum.TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
     this.client.send(body)
@@ -261,8 +261,8 @@ const terminalOperator = {
     }
     console.log('resize', cols, rows)
     // xx|cols|rows|width|height
-    const width = parseInt(document.getElementById('terminal').offsetWidth)
-    const height = parseInt(document.getElementById('terminal').offsetHeight)
+    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
+    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
     const body = `${this.$enum.TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
     this.client.send(body)
   },
@@ -350,7 +350,16 @@ export default {
   name: 'TerminalMain',
   components: { RightClickMenu },
   props: {
-    machineId: Number
+    machineId: Number,
+    terminalHeight: String,
+    rightMenuX: {
+      type: Function,
+      default: e => e.offsetX + 10
+    },
+    rightMenuY: {
+      type: Function,
+      default: e => e.offsetY + 80
+    }
   },
   data: function() {
     return {
@@ -382,6 +391,7 @@ export default {
         cursorBlink: true,
         fastScrollModifier: 'shift',
         fontSize: 14,
+        rendererType: 'canvas',
         fontFamily: 'courier-new, courier, monospace',
         theme: {
           foreground: '#FFFFFF',
@@ -455,16 +465,15 @@ export default {
 
 .terminal-main {
   background: #212529;
-  height: calc(100vh - 81px);
+  width: 100%;
 
   .terminal-content {
     height: 100%;
 
-    #terminal {
+    .terminal {
       height: 100%;
     }
   }
-
 }
 
 #search-card {

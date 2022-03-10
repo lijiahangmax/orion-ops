@@ -2,8 +2,8 @@
   <a-layout id="terminal-layout-container">
     <!-- 机器列表 -->
     <MachineListMenu ref="machineList"
+                     theme="light"
                      :selectedMachine="selectedMachine"
-                     :hideBack="true"
                      :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
                      @chooseMachine="addTerminal"
                      @changeCollapse="fit"/>
@@ -17,9 +17,17 @@
                 type="editable-card"
                 @edit="removeTab"
                 :tabBarStyle="{margin: 0}">
-          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key" :tab="machineTab.name">
+          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key">
+            <!-- tab -->
+            <template #tab>
+              <span class="usn">{{ machineTab.name }}</span>
+            </template>
             <!-- 终端 -->
-            <TerminalXterm :ref="'terminal' + machineTab.key" :machineId="machineTab.machineId"/>
+            <TerminalXterm :ref="'terminal' + machineTab.key"
+                           wrapperHeight="calc(100vh - 40px)"
+                           terminalHeight="calc(100vh - 80px)"
+                           :machineId="machineTab.machineId"
+                           :visibleHeader="true"/>
           </a-tab-pane>
         </a-tabs>
         <!-- 无终端承载页 -->

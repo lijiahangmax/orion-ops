@@ -43,9 +43,27 @@
         <span class="table-title">机器列表</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
         <div v-show="selectedRowKeys.length">
-          <a-button class="ml8" type="primary" icon="build" @click="batchStatus(1)">启用</a-button>
-          <a-button class="ml8" type="primary" icon="fork" @click="batchStatus(2)">停用</a-button>
-          <a-button class="ml8" type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+          <a-popconfirm title="是否要启用选中机器?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="batchStatus(1)">
+            <a-button class="ml8" type="primary" icon="build">启用</a-button>
+          </a-popconfirm>
+          <a-popconfirm title="是否要停用选中机器?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="batchStatus(2)">
+            <a-button class="ml8" type="primary" icon="fork">停用</a-button>
+          </a-popconfirm>
+          <a-popconfirm title="是否删除选择中机器? 将会删除机器相关联的所有数据!?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="batchRemove()">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
         </div>
       </div>
       <!-- 右侧 -->
@@ -98,29 +116,32 @@
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a v-if="record.id !== 1" :title="record.status === 1 ? '停用机器' : '启用机器'">
-            <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="changeStatus(record)">
-              <a-badge
-                v-if="record.status"
-                :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
-                :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
-            </a-popconfirm>
-          </a>
-          <span v-else>
-            <a-badge v-if="record.status"
-                     :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
-                     :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
-        </span>
+          <a-badge v-if="record.status"
+                   :status='$enum.valueOf($enum.ENABLE_STATUS, record.status).status'
+                   :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
+          <!-- 启用 -->
+          <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="changeStatus(record)"
+                        :disabled="record.id === 1">
+            <a-button class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="record.id === 1">
+              {{ $enum.valueOf($enum.ENABLE_STATUS, record.status === 1 ? 2 : 1).label }}
+            </a-button>
+          </a-popconfirm>
+          <a-divider type="vertical"/>
+          <!-- 详情 -->
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
-          <a target="_blank" :href="`#/machine/terminal/${record.id}`">
-            <a-button title="打开终端"
+          <!-- 终端 -->
+          <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record.id)">
+            <a-button title="ctrl 新页面打开终端"
                       class="p0"
                       type="link"
                       style="height: 22px"
@@ -129,6 +150,7 @@
             </a-button>
           </a>
           <a-divider type="vertical"/>
+          <!-- sftp -->
           <a :href="`#/machine/sftp/${record.id}`">
             <a-button title="打开sftp"
                       class="p0"
@@ -175,6 +197,8 @@
       <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
+      <!-- 终端模态框 -->
+      <TerminalModal ref="terminalModal"/>
     </div>
   </div>
 </template>
@@ -182,6 +206,7 @@
 <script>
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
+import TerminalModal from '@/components/terminal/TerminalModal'
 
 const columns = [
   {
@@ -231,7 +256,7 @@ const columns = [
     key: 'operation',
     fixed: 'right',
     align: 'center',
-    width: 230,
+    width: 280,
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -316,6 +341,7 @@ const moreMenuHandler = {
 export default {
   name: 'MachineList',
   components: {
+    TerminalModal,
     MachineDetailModal,
     AddMachineModal
   },
@@ -405,45 +431,37 @@ export default {
     },
     batchStatus(status) {
       const label = status === 1 ? '启用' : '停用'
-      this.$confirm({
-        title: `确认${label}`,
-        content: `是否${label}选中机器?`,
-        okText: '确认',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk: () => {
-          const pending = this.$message.loading(`正在${label}...`)
-          this.$api.updateMachineStatus({
-            idList: this.selectedRowKeys,
-            status
-          }).then(() => {
-            pending()
-            this.$message.success(`已${label}`)
-            this.getList()
-          }).catch(() => {
-            pending()
-          })
-          this.selectedRowKeys = []
-        }
+      const pending = this.$message.loading(`正在${label}...`)
+      this.$api.updateMachineStatus({
+        idList: this.selectedRowKeys,
+        status
+      }).then(() => {
+        pending()
+        this.$message.success(`已${label}`)
+        this.selectedRowKeys = []
+        this.getList()
+      }).catch(() => {
+        pending()
       })
     },
     batchRemove() {
-      this.$confirm({
-        title: '确认删除',
-        content: '是否删除选择中机器? 将会删除机器相关联的所有数据!',
-        okText: '确认',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.deleteMachine({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('删除成功')
-            this.getList({})
-          })
-          this.selectedRowKeys = []
-        }
+      this.$api.deleteMachine({
+        idList: this.selectedRowKeys
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.getList({})
       })
+    },
+    openTerminal(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.terminalModal.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
     },
     resetForm() {
       this.$refs.query.resetFields()
