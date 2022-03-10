@@ -83,7 +83,9 @@ export default {
   },
   computed: {
     visibleAddCheckout() {
-      return this.vcsId !== null && this.actions.map(s => s.type).filter(t => t === this.$enum.BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
+      return this.vcsId &&
+        this.vcsId !== null &&
+        this.actions.map(s => s.type).filter(t => t === this.$enum.BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
     }
   },
   data() {
