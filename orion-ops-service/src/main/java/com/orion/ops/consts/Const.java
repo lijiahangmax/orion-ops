@@ -82,6 +82,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final Long HOST_MACHINE_ID = 1L;
 
+    public static final String HOST_MACHINE_TAG = "host";
+
     public static final String SWAP_FILE_SUFFIX = ".swp";
 
     public static final String SECRET_KEY_SUFFIX = "_id_rsa";

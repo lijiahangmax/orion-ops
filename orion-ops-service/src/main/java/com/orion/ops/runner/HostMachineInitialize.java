@@ -50,9 +50,10 @@ public class HostMachineInitialize implements CommandLineRunner {
         if (machineInfo == null) {
             // 插入机器
             MachineInfoDO insert = new MachineInfoDO();
+            insert.setMachineName(Systems.HOST_NAME);
+            insert.setMachineTag(Const.HOST_MACHINE_TAG);
             insert.setMachineHost(IPs.IP);
             insert.setSshPort(22);
-            insert.setMachineName(Systems.HOST_NAME);
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
             insert.setAuthType(MachineAuthType.PASSWORD.getType());

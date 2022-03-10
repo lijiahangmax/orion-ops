@@ -364,7 +364,7 @@ public class SftpServiceImpl implements SftpService {
         // 判断状态是否为进行中
         Integer status = transferLog.getTransferStatus();
         Valid.isTrue(SftpTransferStatus.WAIT.getStatus().equals(status)
-                || SftpTransferStatus.RUNNABLE.getStatus().equals(status), MessageConst.INVALID_STATUS);
+                || SftpTransferStatus.RUNNABLE.getStatus().equals(status), MessageConst.ILLEGAL_STATUS);
         // 获取执行器
         IFileTransferProcessor processor = transferProcessorManager.getProcessor(fileToken);
         if (processor != null) {
@@ -394,7 +394,7 @@ public class SftpServiceImpl implements SftpService {
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
         Long machineId = transferLog.getMachineId();
         // 判断状态是否为暂停
-        Valid.eq(SftpTransferStatus.PAUSE.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
+        Valid.eq(SftpTransferStatus.PAUSE.getStatus(), transferLog.getTransferStatus(), MessageConst.ILLEGAL_STATUS);
         this.transferResumeRetry(transferLog, machineId);
     }
 
@@ -405,7 +405,7 @@ public class SftpServiceImpl implements SftpService {
         Valid.notNull(transferLog, MessageConst.UNSELECTED_TRANSFER_LOG);
         Long machineId = transferLog.getMachineId();
         // 判断状态是否为失败
-        Valid.eq(SftpTransferStatus.ERROR.getStatus(), transferLog.getTransferStatus(), MessageConst.INVALID_STATUS);
+        Valid.eq(SftpTransferStatus.ERROR.getStatus(), transferLog.getTransferStatus(), MessageConst.ILLEGAL_STATUS);
         this.transferResumeRetry(transferLog, machineId);
     }
 
