@@ -3,18 +3,23 @@
     <div class="transfer-list-container">
       <!-- 工具栏 -->
       <div class="transfer-list-bar" ref="transferListBar">
+        <!-- 刷新 -->
         <div class="transfer-list-action" @click="getTransferList" title="刷新">
           <a-icon type="sync"/>
         </div>
+        <!-- 开始所有 -->
         <div class="transfer-list-action" @click="resumeAll" title="开始所有">
           <a-icon type="caret-right"/>
         </div>
+        <!-- 暂停所有 -->
         <div class="transfer-list-action" @click="pauseAll" title="暂停所有">
           <a-icon type="pause"/>
         </div>
+        <!-- 重试所有 -->
         <div class="transfer-list-action" @click="retryAll" title="重试所有">
           <a-icon type="issues-close"/>
         </div>
+        <!-- 打包 -->
         <a-popconfirm placement="bottomRight"
                       v-model="packageVisible"
                       :getPopupContainer="() => $refs.transferListBar">
@@ -36,9 +41,16 @@
             <a-icon type="file-zip"/>
           </div>
         </a-popconfirm>
-        <div class="transfer-list-action" @click="clearAll" title="清空">
-          <a-icon type="delete"/>
-        </div>
+        <!-- 清空 -->
+        <a-popconfirm title="确定要清空传输记录吗?"
+                      placement="bottomRight"
+                      ok-text="确定"
+                      cancel-text="取消"
+                      @confirm="clearAll">
+          <div class="transfer-list-action" title="清空">
+            <a-icon type="delete"/>
+          </div>
+        </a-popconfirm>
       </div>
       <!-- 传输列表 -->
       <div class="transfer-list-items" v-if="transferList.length === 0">

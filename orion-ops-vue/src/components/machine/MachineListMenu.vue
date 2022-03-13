@@ -9,7 +9,9 @@
       </div>
       <!-- 机器列表菜单 -->
       <a-menu :theme="theme" mode="inline" :selectedKeys="selectedMachine">
-        <a-menu-item v-for="item of list" :key="item.id" :title="item.host" @dblclick="chooseMachine(item.id)">
+        <a-menu-item v-for="item of list" :key="item.id"
+                     :title="`双击打开 ${item.host}`"
+                     @dblclick="chooseMachine(item.id)">
           <a-icon type="desktop"/>
           <span class="usn">{{ item.name }}</span>
         </a-menu-item>

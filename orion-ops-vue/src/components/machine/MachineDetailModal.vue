@@ -28,7 +28,7 @@
           <a-descriptions-item label="状态" :span="1">
             <a-badge
               v-if="detail.status"
-              :status='$enum.valueOf($enum.ENABLE_STATUS, detail.status)["badge-status"]'
+              :status='$enum.valueOf($enum.ENABLE_STATUS, detail.status).status'
               :text="$enum.valueOf($enum.ENABLE_STATUS, detail.status).label"/>
           </a-descriptions-item>
           <a-descriptions-item label="描述" :span="3">

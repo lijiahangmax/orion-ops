@@ -94,7 +94,10 @@ export default {
       return this.$refs.editor.editor.getValue()
     },
     setValue(value) {
-      return this.$refs.editor.editor.setValue(value)
+      this.$refs.editor.editor.session.setValue(value)
+    },
+    clear() {
+      this.$refs.editor.editor.session.setValue('')
     }
   }
 }

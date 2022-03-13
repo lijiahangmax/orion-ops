@@ -192,6 +192,9 @@ export default {
         })
     },
     initRecord(row) {
+      this.cron.next = null
+      this.cron.nextArr = null
+      this.cron.valid = undefined
       this.form.resetFields()
       this.visible = true
       this.id = row.id

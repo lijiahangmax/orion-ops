@@ -193,12 +193,12 @@ const $enum = {
     ENABLE: {
       value: 1,
       label: '启用',
-      'badge-status': 'processing'
+      status: 'processing'
     },
     DISABLE: {
       value: 2,
       label: '停用',
-      'badge-status': 'default'
+      status: 'default'
     }
   },
 
@@ -403,17 +403,17 @@ const $enum = {
     },
     COMPLETE: {
       value: 30,
-      label: '执行完成',
+      label: '已完成',
       color: 'blue'
     },
     EXCEPTION: {
       value: 40,
-      label: '执行异常',
+      label: '异常',
       color: 'red'
     },
     TERMINATED: {
       value: 50,
-      label: '执行停止',
+      label: '已停止',
       color: 'orange'
     }
   },
@@ -770,13 +770,13 @@ const $enum = {
       value: 50,
       color: 'orange',
       label: '已跳过',
-      stepStatus: 'finish'
+      stepStatus: 'wait'
     },
     TERMINATED: {
       value: 60,
       color: 'orange',
       label: '已停止',
-      stepStatus: 'finish'
+      stepStatus: 'wait'
     }
   },
 
@@ -988,6 +988,10 @@ const $enum = {
         UPDATE_TERMINAL_CONFIG: {
           value: 2410,
           label: '修改配置'
+        },
+        DELETE_TERMINATED_LOG: {
+          value: 2415,
+          label: '删除终端日志'
         }
       }
     },
@@ -1274,6 +1278,14 @@ const $enum = {
         SET_TIMED_RELEASE: {
           value: 5045,
           label: '设置定时发布'
+        },
+        TERMINATED_MACHINE_RELEASE: {
+          value: 5050,
+          label: '停止机器发布操作'
+        },
+        SKIP_MACHINE_RELEASE: {
+          value: 5055,
+          label: '跳过机器发布操作'
         }
       }
     },
@@ -1305,7 +1317,7 @@ const $enum = {
       type: {
         CONFIG_IP_LIST: {
           value: 6105,
-          label: '配置IP名单'
+          label: '配置IP过滤器'
         },
         RE_ANALYSIS_SYSTEM: {
           value: 6110,
@@ -1344,6 +1356,22 @@ const $enum = {
         MANUAL_TRIGGER_SCHEDULER_TASK: {
           value: 7125,
           label: '手动触发任务'
+        },
+        TERMINATED_ALL_SCHEDULER_TASK: {
+          value: 7130,
+          label: '停止任务'
+        },
+        TERMINATED_SCHEDULER_TASK_MACHINE: {
+          value: 7135,
+          label: '停止机器操作'
+        },
+        SKIP_SCHEDULER_TASK_MACHINE: {
+          value: 7140,
+          label: '跳过机器操作'
+        },
+        DELETE_TASK_RECORD: {
+          value: 7145,
+          label: '删除任务调度明细'
         }
       }
     }
@@ -1419,6 +1447,14 @@ const $enum = {
     LOGIN_TOKEN_AUTO_RENEW_THRESHOLD: {
       key: 'loginTokenAutoRenewThreshold',
       value: 90
+    },
+    RESUME_ENABLE_SCHEDULER_TASK: {
+      key: 'resumeEnableSchedulerTask',
+      value: 100
+    },
+    SFTP_UPLOAD_THRESHOLD: {
+      key: 'sftpUploadThreshold',
+      value: 110
     }
   },
 
@@ -1493,13 +1529,15 @@ const $enum = {
    * 异常处理类型
    */
   EXCEPTION_HANDLER_TYPE: {
-    BREAK: {
+    SKIP_ALL: {
       value: 10,
-      label: '跳过'
+      label: '跳过所有',
+      title: '跳过所有项, 中断执行'
     },
-    CONTINUE: {
+    SKIP_ERROR: {
       value: 20,
-      label: '继续'
+      label: '跳过错误',
+      title: '跳过错误项, 继续执行'
     }
   }
 

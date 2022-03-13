@@ -175,6 +175,7 @@ export default {
       this.app = app
       this.appId = app.id
       this.cleanData()
+      this.submit.title = `发布 ${app.name}`
       this.loadReleaseMachine()
       this.loadBuildList()
     },

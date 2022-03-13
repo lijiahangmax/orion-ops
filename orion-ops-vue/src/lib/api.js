@@ -76,6 +76,13 @@ const $api = {
   },
 
   /**
+   * 检查token是否有效
+   */
+  validToken: param => {
+    return $http.$post('/auth/valid', param)
+  },
+
+  /**
    * 获取菜单
    */
   getMenu: () => {
@@ -118,7 +125,7 @@ const $api = {
    * 更新用户
    */
   updateAvatar: param => {
-    return $http.$post('/user/update/avatar', param, {
+    return $http.$post('/user/update-avatar', param, {
       timeout: 600000
     })
   },
@@ -210,7 +217,7 @@ const $api = {
    * 测试机器ping
    */
   machineTestPing: param => {
-    return $http.$post('/machine/test/ping', param, {
+    return $http.$post('/machine/test-ping', param, {
       skipErrorMessage: true
     })
   },
@@ -219,7 +226,7 @@ const $api = {
    * 测试机器连接
    */
   machineTestConnect: param => {
-    return $http.$post('/machine/test/connect', param, {
+    return $http.$post('/machine/test-connect', param, {
       skipErrorMessage: true
     })
   },
@@ -265,10 +272,19 @@ const $api = {
   },
 
   /**
+   * 删除终端日志
+   */
+  deleteTerminalLog: param => {
+    return $http.$post('/terminal/log/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
    * 终端会话列表
    */
   terminalSessionList: param => {
-    return $http.$post('/terminal/manager/session/list', param)
+    return $http.$post('/terminal/manager/session', param)
   },
 
   /**
@@ -375,7 +391,7 @@ const $api = {
    * sftp 检查文件是否存在
    */
   sftpCheckFilePresent: param => {
-    return $http.$post('/sftp/check/present', param)
+    return $http.$post('/sftp/check-present', param)
   },
 
   /**
@@ -440,21 +456,21 @@ const $api = {
    * sftp 重新上传
    */
   sftpTransferReUpload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re/upload`, param)
+    return $http.$post(`/sftp/transfer/${param.fileToken}/re-upload`, param)
   },
 
   /**
    * sftp 重新下载
    */
   sftpTransferReDownload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re/download`, param)
+    return $http.$post(`/sftp/transfer/${param.fileToken}/re-download`, param)
   },
 
   /**
    * sftp 传输暂停全部
    */
   sftpTransferPauseAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause/all`, param, {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause-all`, param, {
       timeout: 180000
     })
   },
@@ -463,7 +479,7 @@ const $api = {
    * sftp 传输恢复全部
    */
   sftpTransferResumeAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume/all`, param, {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume-all`, param, {
       timeout: 180000
     })
   },
@@ -472,7 +488,7 @@ const $api = {
    * sftp 传输失败重试全部
    */
   sftpTransferRetryAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/retry/all`, param, {
+    return $http.$post(`/sftp/transfer/${param.sessionToken}/retry-all`, param, {
       timeout: 180000
     })
   },
@@ -689,7 +705,7 @@ const $api = {
    * 保存机器环境变量视图
    */
   saveMachineEnvView: param => {
-    return $http.$post('/machine-env/view/save', param, {
+    return $http.$post('/machine-env/view-save', param, {
       skipErrorMessage: true,
       timeout: 600000,
       loading: '正在保存...'
@@ -775,7 +791,7 @@ const $api = {
    * 获取执行状态
    */
   getExecTaskStatus: param => {
-    return $http.$post('/exec/list/status', param, {
+    return $http.$post('/exec/list-status', param, {
       skipErrorMessage: true
     })
   },
@@ -887,7 +903,7 @@ const $api = {
    * 应用环境列表 (快速)
    */
   fastGetProfileList: param => {
-    return $http.$post('/app-profile/fast/list', param)
+    return $http.$post('/app-profile/fast-list', param)
   },
 
   /**
@@ -986,7 +1002,7 @@ const $api = {
    * 应用环境变量视图保存
    */
   saveAppEnvView: param => {
-    return $http.$post('/app-env/view/save', param, {
+    return $http.$post('/app-env/view-save', param, {
       skipErrorMessage: true,
       timeout: 600000,
       loading: '正在保存...'
@@ -1050,7 +1066,7 @@ const $api = {
    * 重新初始化版本仓库
    */
   reInitVcs: param => {
-    return $http.$post('/app-vcs/re/init', param, {
+    return $http.$post('/app-vcs/re-init', param, {
       timeout: 600000,
       loading: '正在初始化...'
     })
@@ -1132,7 +1148,7 @@ const $api = {
    * 应用机器列表
    */
   getAppMachineList: param => {
-    return $http.$post('/app-info/list/machine', param)
+    return $http.$post('/app-info/list-machine', param)
   },
 
   /**
@@ -1176,7 +1192,7 @@ const $api = {
    * 删除应用机器
    */
   deleteAppMachine: param => {
-    return $http.$post('/app-info/delete/machine', param, {
+    return $http.$post('/app-info/delete-machine', param, {
       loading: '正在删除...'
     })
   },
@@ -1185,7 +1201,7 @@ const $api = {
    * 获取应用机器id
    */
   getAppMachineId: param => {
-    return $http.$post('/app-info/get/machine-id', param)
+    return $http.$post('/app-info/get-machine-id', param)
   },
 
   /**
@@ -1253,14 +1269,14 @@ const $api = {
    * 获取发布构建列表
    */
   getBuildReleaseList: param => {
-    return $http.$post('/app-build/release/list', param)
+    return $http.$post('/app-build/release-list', param)
   },
 
   /**
    * 应用构建状态列表
    */
   getAppBuildStatusList: param => {
-    return $http.$post('/app-build/list/status', param, {
+    return $http.$post('/app-build/list-status', param, {
       skipErrorMessage: true
     })
   },
@@ -1276,7 +1292,7 @@ const $api = {
    * 应用发布机器列表
    */
   getAppReleaseMachineList: param => {
-    return $http.$post('/app-release/list/machine', param)
+    return $http.$post('/app-release/list-machine', param)
   },
 
   /**
@@ -1290,7 +1306,7 @@ const $api = {
    * 应用发布机器详情
    */
   getAppReleaseMachineDetail: param => {
-    return $http.$post('/app-release/machine/detail', param)
+    return $http.$post('/app-release/machine-detail', param)
   },
 
   /**
@@ -1378,10 +1394,28 @@ const $api = {
   },
 
   /**
+   * 应用发布机器停止
+   */
+  terminatedAppReleaseMachine: param => {
+    return $http.$post('/app-release/terminated-machine', param, {
+      loading: '正在停止...'
+    })
+  },
+
+  /**
+   * 应用发布机器跳过
+   */
+  skipAppReleaseMachine: param => {
+    return $http.$post('/app-release/skip-machine', param, {
+      loading: '正在跳过...'
+    })
+  },
+
+  /**
    * 应用发布列表状态
    */
   getAppReleaseListStatus: param => {
-    return $http.$post('/app-release/list/status', param, {
+    return $http.$post('/app-release/list-status', param, {
       skipErrorMessage: true
     })
   },
@@ -1399,7 +1433,7 @@ const $api = {
    * 应用发布机器列表状态
    */
   getAppReleaseMachineListStatus: param => {
-    return $http.$post('/app-release/list/machine/status', param, {
+    return $http.$post('/app-release/list-machine-status', param, {
       skipErrorMessage: true
     })
   },
@@ -1408,7 +1442,7 @@ const $api = {
    * 应用发布机器状态
    */
   getAppReleaseMachineStatus: param => {
-    return $http.$post('/app-release/machine/status', param, {
+    return $http.$post('/app-release/machine-status', param, {
       skipErrorMessage: true
     })
   },
@@ -1480,7 +1514,7 @@ const $api = {
    * 保存系统环境变量视图
    */
   saveSystemEnvView: param => {
-    return $http.$post('/system-env/view/save', param, {
+    return $http.$post('/system-env/view-save', param, {
       skipErrorMessage: true,
       timeout: 600000,
       loading: '正在保存...'
@@ -1637,11 +1671,47 @@ const $api = {
   },
 
   /**
-   * 查询调度任务机器状态
+   * 查询调度任务机器明细状态
    */
   getSchedulerTaskMachinesRecordStatus: param => {
     return $http.$post('/scheduler-record/machines-status', param, {
       skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 删除调度任务明细
+   */
+  deleteSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 停止所有调度任务机器
+   */
+  terminatedAllSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/terminated-all', param, {
+      loading: '正在停止...'
+    })
+  },
+
+  /**
+   * 停止单个调度任务机器
+   */
+  terminatedMachineSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/terminated-machine', param, {
+      loading: '正在停止...'
+    })
+  },
+
+  /**
+   * 跳过单个调度任务机器
+   */
+  skipMachineSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/skip-machine', param, {
+      loading: '正在跳过...'
     })
   }
 

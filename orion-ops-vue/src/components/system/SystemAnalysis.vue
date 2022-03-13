@@ -293,7 +293,7 @@ export default {
   }
 
   .clean-threshold-input {
-    width: 180px;
+    width: 200px;
   }
 }
 

@@ -76,13 +76,15 @@ export default {
         this.$message.error('上传文件夹不能为空')
         return
       }
+      const size = this.fileList.map(s => s.size).reduce((t, v) => t + v, 0)
       this.loading = true
       var presentFiles
       try {
         const checkPresentRes = await this.$api.sftpCheckFilePresent({
           sessionToken: this.sessionToken,
           path: this.path,
-          names: this.fileList.map(s => s.name)
+          names: this.fileList.map(s => s.name),
+          size
         })
         presentFiles = checkPresentRes.data
       } catch (e) {
