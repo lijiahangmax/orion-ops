@@ -6,7 +6,7 @@ Github: https://github.com/lijiahangmax/orion-ops
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
 CSDN: https://blog.csdn.net/qq_41011894  
 文档: https://lijiahangmax.github.io/orion-ops/#/    
-Demo: http://116.62.194.246/ops/  
+Demo: http://101.43.254.243/ops/#/  
 演示账号: `orionadmin`    
 演示密码: `orionadmin`
 
