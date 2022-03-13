@@ -5,6 +5,7 @@
 Github: https://github.com/lijiahangmax/orion-ops  
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
 CSDN: https://blog.csdn.net/qq_41011894  
+文档: https://lijiahangmax.github.io/orion-ops/#/    
 Demo: http://116.62.194.246/ops/  
 演示账号: `orionadmin`    
 演示密码: `orionadmin`
@@ -80,4 +81,4 @@ Demo: http://116.62.194.246/ops/
 
 ## License
 
-[Apache-2.0](https://gitee.com/lijiahangmax/orion-ops/blob/main/LICENSE)
+[Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE)
