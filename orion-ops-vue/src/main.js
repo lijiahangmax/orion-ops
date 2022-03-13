@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './store'
 import $api from './lib/api'
 import $http from './lib/http'
 import $utils from './lib/utils'
@@ -82,6 +81,5 @@ Vue.prototype.$getUserId = function() {
 
 new Vue({
   router,
-  store,
   render: h => h(App)
 }).$mount('#app')
