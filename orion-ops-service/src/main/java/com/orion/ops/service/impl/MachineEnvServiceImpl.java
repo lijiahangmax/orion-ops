@@ -274,11 +274,12 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.MACHINE_NAME, machine.getMachineName());
-        env.put(EnvConst.MACHINE_TAG, machine.getMachineTag());
-        env.put(EnvConst.MACHINE_HOST, machine.getMachineHost());
-        env.put(EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
-        env.put(EnvConst.MACHINE_USERNAME, machine.getUsername());
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_ID, machine.getId() + Strings.EMPTY);
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_NAME, machine.getMachineName());
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_TAG, machine.getMachineTag());
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_HOST, machine.getMachineHost());
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_PORT, machine.getSshPort() + Strings.EMPTY);
+        env.put(EnvConst.MACHINE_PREFIX + EnvConst.MACHINE_USERNAME, machine.getUsername());
         // 查询环境变量
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                 .eq(MachineEnvDO::getMachineId, machineId)

@@ -329,19 +329,14 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                                                              Long vcsId, ApplicationBuildRequest request) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.BUILD_ID, buildId + Strings.EMPTY);
-        env.put(EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
-        env.put(EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
-        env.put(EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_ID, buildId + Strings.EMPTY);
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
         if (vcsId != null) {
-            env.put(EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
         }
-        // 设置前缀
-        MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();
-        env.forEach((k, v) -> {
-            fullEnv.put(EnvConst.BUILD_PREFIX + k, v);
-        });
-        return fullEnv;
+        return env;
     }
 
 }

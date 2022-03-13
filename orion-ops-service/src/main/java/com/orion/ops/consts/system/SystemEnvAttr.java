@@ -18,29 +18,29 @@ import java.util.stream.Collectors;
 public enum SystemEnvAttr {
 
     /**
-     * 存放秘钥文件目录
+     * 秘钥存放目录
      */
-    KEY_PATH("秘钥目录", false),
+    KEY_PATH("秘钥存放目录", false),
 
     /**
-     * 存放图片目录
+     * 图片存放目录
      */
-    PIC_PATH("图片目录", false),
+    PIC_PATH("图片存放目录", false),
 
     /**
-     * 交换目录
+     * 交换分区目录
      */
-    SWAP_PATH("交换目录", false),
+    SWAP_PATH("交换分区目录", false),
 
     /**
-     * 日志目录
+     * 日志存放目录
      */
-    LOG_PATH("日志目录", false),
+    LOG_PATH("日志存放目录", false),
 
     /**
      * 临时文件目录
      */
-    TEMP_PATH("临时目录", false),
+    TEMP_PATH("临时文件目录", false),
 
     /**
      * 应用版本仓库目录
@@ -80,7 +80,7 @@ public enum SystemEnvAttr {
     /**
      * 文件清理阈值 (天)
      */
-    FILE_CLEAN_THRESHOLD("文件清理阈值", true),
+    FILE_CLEAN_THRESHOLD("文件清理阈值 (天)", true),
 
     /**
      * 是否启用自动清理

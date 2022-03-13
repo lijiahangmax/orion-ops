@@ -20,7 +20,7 @@ public enum ApplicationEnvAttr {
     /**
      * 构建产物路径
      */
-    BUNDLE_PATH("主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"),
+    BUNDLE_PATH("宿主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"),
 
     /**
      * 产物传输路径

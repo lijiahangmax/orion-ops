@@ -220,12 +220,12 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         ApplicationProfileDO profile = Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.APP_ID, app.getId() + Const.EMPTY);
-        env.put(EnvConst.APP_NAME, app.getAppName());
-        env.put(EnvConst.APP_TAG, app.getAppTag());
-        env.put(EnvConst.PROFILE_ID, profile.getId() + Const.EMPTY);
-        env.put(EnvConst.PROFILE_NAME, profile.getProfileName());
-        env.put(EnvConst.PROFILE_TAG, profile.getProfileTag());
+        env.put(EnvConst.APP_PREFIX + EnvConst.APP_ID, app.getId() + Const.EMPTY);
+        env.put(EnvConst.APP_PREFIX + EnvConst.APP_NAME, app.getAppName());
+        env.put(EnvConst.APP_PREFIX + EnvConst.APP_TAG, app.getAppTag());
+        env.put(EnvConst.APP_PREFIX + EnvConst.PROFILE_ID, profile.getId() + Const.EMPTY);
+        env.put(EnvConst.APP_PREFIX + EnvConst.PROFILE_NAME, profile.getProfileName());
+        env.put(EnvConst.APP_PREFIX + EnvConst.PROFILE_TAG, profile.getProfileTag());
         // 插入应用环境变量
         Map<String, String> appProfileEnv = this.getAppProfileEnv(app.getId(), profile.getId());
         appProfileEnv.forEach((k, v) -> {

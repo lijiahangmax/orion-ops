@@ -838,19 +838,14 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private Map<String, String> getReleaseEnv(ApplicationBuildDO build, ApplicationReleaseDO release) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
-        env.put(EnvConst.BUILD_ID, build.getId() + Const.EMPTY);
-        env.put(EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
-        env.put(EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
-        env.put(EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_TITLE, release.getReleaseTitle());
-        env.put(EnvConst.TRANSFER_PATH, release.getTransferPath());
-        // 设置前缀
-        MutableLinkedHashMap<String, String> fullEnv = Maps.newMutableLinkedMap();
-        env.forEach((k, v) -> {
-            fullEnv.put(EnvConst.RELEASE_PREFIX + k, v);
-        });
-        return fullEnv;
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_ID, build.getId() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_TITLE, release.getReleaseTitle());
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.TRANSFER_PATH, release.getTransferPath());
+        return env;
     }
 
 }

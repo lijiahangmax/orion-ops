@@ -91,20 +91,20 @@ public class SystemEnvInitialize implements CommandLineRunner {
      */
     private String getAttrValue(SystemEnvAttr attr) {
         switch (attr) {
-            case LOG_PATH:
-                return createOrionOpsPath(Const.LOG_PATH);
             case KEY_PATH:
                 return createOrionOpsPath(Const.KEYS_PATH);
-            case DIST_PATH:
-                return createOrionOpsPath(Const.DIST_PATH);
             case PIC_PATH:
                 return createOrionOpsPath(Const.PIC_PATH);
-            case TEMP_PATH:
-                return createOrionOpsPath(Const.TEMP_PATH);
             case SWAP_PATH:
                 return createOrionOpsPath(Const.SWAP_PATH);
+            case LOG_PATH:
+                return createOrionOpsPath(Const.LOG_PATH);
+            case TEMP_PATH:
+                return createOrionOpsPath(Const.TEMP_PATH);
             case VCS_PATH:
                 return createOrionOpsPath(Const.VCS_PATH);
+            case DIST_PATH:
+                return createOrionOpsPath(Const.DIST_PATH);
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
             case ENABLE_IP_FILTER:

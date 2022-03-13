@@ -30,6 +30,8 @@ public class EnvConst {
 
     // -------------------- machine --------------------
 
+    public static final String MACHINE_ID = "machine_id";
+
     public static final String MACHINE_NAME = "machine_name";
 
     public static final String MACHINE_TAG = "machine_tag";

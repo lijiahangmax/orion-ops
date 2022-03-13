@@ -476,9 +476,9 @@ public enum EventType {
     // -------------------- 系统操作 --------------------
 
     /**
-     * 配置 ip 名单
+     * 配置 ip 过滤器
      */
-    CONFIG_IP_LIST(6105, EventClassify.SYSTEM, "配置IP名单"),
+    CONFIG_IP_LIST(6105, EventClassify.SYSTEM, "配置 IP 过滤器"),
 
     /**
      * 重新进行系统统计分析
