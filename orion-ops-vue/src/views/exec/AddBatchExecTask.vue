@@ -1,169 +1,173 @@
 <template>
-  <div>
-    <div class="batch-exec-task-container">
-      <!-- 添加 -->
-      <div class="task-add-container">
-        <!-- 执行机器 -->
-        <div class="machine-field-container">
-          <span class="machine-field-label normal-label">执行机器</span>
-          <div class="machine-checker-wrapper">
-            <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
-              <template #trigger>
-                <a :disabled="isRun">已选择 {{ selectedMachines.length }} 台机器</a>
-              </template>
-              <template #footer>
-                <a-button type="primary" size="small" @click="chooseMachines">确定</a-button>
-              </template>
-            </MachineChecker>
-          </div>
-        </div>
-        <!-- 状态 -->
-        <div class="status-container">
-          <!-- label -->
-          <span class="normal-label">执行命令</span>
-          <!-- status -->
-          <a-tag :color="isRun ? '#4C6EF5' : '#40C057'">
-            {{ isRun ? '已执行' : '未执行' }}
-          </a-tag>
-        </div>
-        <!-- editor -->
-        <div class="editor-container">
-          <Editor ref="editor" :value="command" :readOnly="isRun"/>
-        </div>
-        <!-- 执行描述 -->
-        <div class="machine-field-container machine-description-container">
-          <span class="machine-field-label normal-label">执行描述</span>
-          <div class="machine-field-input">
-            <a-input v-model="description" allowClear/>
-          </div>
-        </div>
-        <!-- 模板选择 -->
-        <div class="exec-buttons">
-          <div>
-            <a-button class="mr8" type="primary" :disabled="isRun" @click="exec" icon="caret-right">执行</a-button>
-            <a-popconfirm placement="top"
-                          title="确定要重置当前任务吗?"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="resetTask">
-              <a-button type="primary" v-if="isRun" icon="undo">重置</a-button>
-            </a-popconfirm>
-          </div>
-          <a-button type="primary" :disabled="isRun" @click="openTemplate" icon="unordered-list">模板选择</a-button>
-        </div>
-      </div>
-      <!-- 日志 -->
-      <div v-if="isRun && execMachines.length" class="task-logger-view-container">
-        <a-tabs v-model="activeTab"
-                :tabBarStyle="{margin: 0}"
-                :hideAdd="true"
-                type="editable-card"
-                @edit="removeTab"
-                :animated="false">
-          <a-tab-pane v-for="execMachine of execMachines"
-                      :key="execMachine.execId"
-                      :forceRender="true"
-                      :tab="execMachine.machineName">
-            <div class="machine-log-view">
-              <LogAppender :ref="'appender' + execMachine.execId"
-                           :relId="execMachine.execId"
-                           :appendStyle="{height: 'calc(100vh - 188px)'}"
-                           :rightToolsProps="{line: false, download: false}"
-                           :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}">
-                <!-- 左侧工具栏 -->
-                <template #left-tools>
-                  <div class="appender-left-tools">
-                    <!-- 状态 -->
-                    <a-tag class="machine-exec-status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).color">
-                      {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, execMachine.status).label }}
-                    </a-tag>
-                    <!-- 命令输入 -->
-                    <a-input-search class="command-write-input"
-                                    v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
-                                    v-model="execMachine.inputCommand"
-                                    size="small"
-                                    placeholder="输入"
-                                    @search="sendCommand(execMachine)">
-                      <template #enterButton>
-                        <a-icon type="forward"/>
-                      </template>
-                    </a-input-search>
-                    <!-- 停止 -->
-                    <a-button class="terminated-button"
-                              v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
-                              size="small"
-                              icon="close"
-                              @click="terminated(execMachine)">
-                      停止
-                    </a-button>
-                    <!-- used -->
-                    <span class="mx8 nowrap" title="用时"
-                          v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
-                    {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
-                    </span>
-                    <!-- exitCode -->
-                    <span class="mx8" title="退出码"
-                          v-if="execMachine.exitCode !== null"
-                          :style="{'color': execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
-                      {{ execMachine.exitCode }}
-                    </span>
-                  </div>
+  <div class="batch-exec-task-container">
+    <!-- 左侧 -->
+    <div class="task-left-container" :style="leftContainerStyle">
+      <!-- 执行配置 -->
+      <transition name="fade">
+        <div class="exec-config-container" v-show="visibleCommand">
+          <!-- 执行机器 -->
+          <div class="exec-machine-checker-container">
+            <span class="normal-label exec-label">执行机器</span>
+            <div class="machine-checker-wrapper">
+              <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+                <template #trigger>
+                  <span class="span-blue pointer">已选择 {{ config.machineIdList.length }} 台机器</span>
                 </template>
-              </LogAppender>
+                <template #footer>
+                  <a-button type="primary" size="small" @click="chooseMachines">确定</a-button>
+                </template>
+              </MachineChecker>
             </div>
-          </a-tab-pane>
-        </a-tabs>
+          </div>
+          <!-- 执行命令 -->
+          <div class="exec-command-container">
+            <!-- lable 头 -->
+            <div class="command-label-wrapper">
+              <span class="normal-label exec-label">执行命令</span>
+              <span class="span-blue pointer mr8" title="选择模板" @click="openTemplate">选择模板</span>
+            </div>
+            <!-- 编辑器 -->
+            <div class="editor-wrapper">
+              <Editor ref="editor" :value="config.command"/>
+            </div>
+          </div>
+          <!-- 执行描述 -->
+          <div class="exex-description-container">
+            <span class="normal-label exec-label">执行描述</span>
+            <div class="exec-description-wrapper flex-1">
+              <a-input v-model="config.description" allowClear/>
+            </div>
+          </div>
+          <!-- 执行按钮 -->
+          <div class="exec-button-wrapper">
+            <a-button type="primary" icon="caret-right" @click="execCommand">执行</a-button>
+          </div>
+        </div>
+      </transition>
+      <!-- 执行机器 -->
+      <transition name="fade">
+        <div class="exec-machine-menu-container" v-show="!visibleCommand">
+          <!-- 重置 -->
+          <div class="reset-button-wrapper">
+            <div class="reset-button" title="重置" @click="reset">
+              <a-icon type="reload"/>
+            </div>
+          </div>
+          <!-- 机器列表 -->
+          <a-menu mode="inline" v-model="selectedMachineKeys">
+            <a-menu-item v-for="item of execMachines" :key="item.execId" :title="item.machineName">
+              <div class="machine-menu-item">
+                <!-- 文本 -->
+                <a-icon type="desktop"/>
+                <span class="machine-menu-item-text">{{ item.machineName }}</span>
+                <!-- 状态 -->
+                <a-tag class="m0" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, item.status).color">
+                  {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, item.status).label }}
+                </a-tag>
+              </div>
+            </a-menu-item>
+          </a-menu>
+        </div>
+      </transition>
+    </div>
+    <!-- 右侧 -->
+    <div class="exec-logger-container">
+      <!-- 日志 -->
+      <div v-if="runnable" class="logger-appender-container">
+        <div v-for="execMachine in execMachines"
+             v-show="execMachine.execId === selectedMachineKeys[0]"
+             :key="execMachine.execId">
+          <LogAppender :ref="'appender' + execMachine.execId"
+                       :relId="execMachine.execId"
+                       :appendStyle="{height: 'calc(100vh - 148px)'}"
+                       size="default"
+                       :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}"
+                       :rightMenuX="e => e.offsetX + 500">
+            <!-- 左侧工具栏 -->
+            <template #left-tools>
+              <div class="appender-left-tools">
+                <!-- 命令输入 -->
+                <a-input-search class="command-write-input"
+                                v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                                v-model="execMachine.inputCommand"
+                                placeholder="输入"
+                                @search="sendCommand(execMachine)">
+                  <template #enterButton>
+                    <a-icon type="forward"/>
+                  </template>
+                </a-input-search>
+                <!-- 停止 -->
+                <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                              title="是否要停止执行?"
+                              placement="bottomLeft"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="terminated(execMachine)">
+                  <a-button class="ml8" icon="close">停止</a-button>
+                </a-popconfirm>
+                <!-- used -->
+                <span class="mx8 nowrap" title="用时"
+                      v-if="execMachine.keepTime && $enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
+                  {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
+                </span>
+                <!-- exitCode -->
+                <span class="mx8" title="退出码"
+                      v-if="execMachine.exitCode !== null"
+                      :style="{color: execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
+                  {{ execMachine.exitCode }}
+                </span>
+              </div>
+            </template>
+          </LogAppender>
+        </div>
       </div>
-      <!-- 日志空状态 -->
-      <div v-else class="task-logger-view-empty-container">
-        <a-empty class="empty-status" description="执行命令以查看日志"/>
+      <!-- 空 -->
+      <div v-else class="logger-empty-container">
+        <a-empty description="执行命令以查看日志"/>
       </div>
-      <!-- 事件 -->
-      <div class="exec-event">
-        <TemplateSelector ref="templateSelector" @selected="selectedTemplate"/>
-      </div>
+    </div>
+    <!-- 事件 -->
+    <div class="exec-event-container">
+      <TemplateSelector ref="templateSelector" @selected="selectedTemplate"/>
     </div>
   </div>
 </template>
 
 <script>
+
 import MachineChecker from '@/components/machine/MachineChecker'
+import Editor from '@/components/editor/Editor'
 import TemplateSelector from '@/components/template/TemplateSelector'
 import LogAppender from '@/components/log/LogAppender'
-import Editor from '@/components/editor/Editor'
 
 export default {
   name: 'AddBatchExecTask.vue',
   components: {
-    MachineChecker,
-    TemplateSelector,
     LogAppender,
-    Editor
+    TemplateSelector,
+    Editor,
+    MachineChecker
+  },
+  computed: {
+    leftContainerStyle() {
+      return {
+        width: this.runnable ? '240px' : '580px',
+        padding: this.visibleCommand ? '16px 20px 20px 20px' : '0'
+      }
+    }
   },
   data() {
     return {
-      command: null,
-      description: null,
-      selectedMachines: [],
-      activeTab: 0,
-      isRun: false,
+      runnable: false,
+      visibleCommand: true,
+      pollId: null,
+      config: {
+        machineIdList: [],
+        command: '',
+        description: undefined
+      },
       execMachines: [],
-      pollId: null
-    }
-  },
-  watch: {
-    activeTab(b, a) {
-      if (!a) {
-        return
-      }
-      const $refAfter = this.$refs['appender' + a]
-      if ($refAfter) {
-        $refAfter[0].storeScroll()
-      }
-      const $refBefore = this.$refs['appender' + b]
-      if ($refBefore) {
-        $refBefore[0].toScroll()
-      }
+      selectedMachineKeys: [-1]
     }
   },
   methods: {
@@ -173,11 +177,18 @@ export default {
         this.$message.warning('请选择执行的机器')
         return
       }
-      this.selectedMachines = ref.checkedList
+      this.config.machineIdList = ref.checkedList
       ref.hide()
     },
-    exec() {
-      if (!this.selectedMachines.length) {
+    openTemplate() {
+      this.$refs.templateSelector.open()
+    },
+    selectedTemplate(command) {
+      this.config.command = command
+      this.$refs.templateSelector.close()
+    },
+    execCommand() {
+      if (!this.config.machineIdList.length) {
         this.$message.warn('请选择执行机器')
         return
       }
@@ -186,13 +197,11 @@ export default {
         this.$message.warn('请输入执行命令')
         return
       }
-      this.isRun = true
+      this.config.command = command
+      // 执行
       this.$api.submitExecTask({
-        machineIdList: this.selectedMachines,
-        command: command,
-        description: this.description
+        ...this.config
       }).then(({ data }) => {
-        this.activeTab = data[0].execId
         for (const exec of data) {
           exec.inputCommand = null
           exec.status = this.$enum.BATCH_EXEC_STATUS.WAITING.value
@@ -200,36 +209,29 @@ export default {
           exec.used = null
         }
         this.execMachines = data
+        this.selectedMachineKeys[0] = this.execMachines[0].execId
         // 轮询状态
         this.pollId = setInterval(this.pollExecStatus, 2000)
       }).then(() => {
         // 打开日志
-        this.execMachines.forEach(m => {
-          this.$refs['appender' + m.execId][0].openTail()
+        this.$forceUpdate()
+        this.$nextTick(() => {
+          this.execMachines.forEach(m => {
+            this.$refs['appender' + m.execId][0].openTail()
+          })
         })
+        this.runnable = true
+        this.visibleCommand = false
       }).catch(() => {
-        this.isRun = false
+        this.runnable = false
+        this.visibleCommand = true
       })
-    },
-    resetTask() {
-      // 关闭轮询
-      if (this.pollId) {
-        clearInterval(this.pollId)
-        this.pollId = null
-      }
-      // 关闭日志
-      this.execMachines.forEach(m => {
-        this.$refs['appender' + m.execId][0].close()
-      })
-      this.activeTab = 0
-      this.isRun = false
-      this.execMachines = []
     },
     pollExecStatus() {
-      const idList = this.execMachines.filter(s => {
-        return s.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
-          s.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
-      }).map(s => s.execId)
+      const idList = this.execMachines.filter(s =>
+        s.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
+        s.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+      ).map(s => s.execId)
       if (!idList.length) {
         return
       }
@@ -246,12 +248,19 @@ export default {
         }
       })
     },
-    openTemplate() {
-      this.$refs.templateSelector.open()
-    },
-    selectedTemplate(command) {
-      this.command = command
-      this.$refs.templateSelector.close()
+    reset() {
+      // 关闭轮询
+      if (this.pollId) {
+        clearInterval(this.pollId)
+        this.pollId = null
+      }
+      // 关闭日志
+      this.execMachines.forEach(m => {
+        this.$refs['appender' + m.execId][0].close()
+      })
+      this.runnable = false
+      this.visibleCommand = true
+      this.execMachines = []
     },
     sendCommand(execMachine) {
       const id = execMachine.execId
@@ -273,32 +282,6 @@ export default {
       }).then(() => {
         this.$message.success('已停止')
       })
-    },
-    removeTab(targetTab) {
-      let activeTab = this.activeTab
-      let lastIndex
-      this.execMachines.forEach((appenderTab, i) => {
-        if (appenderTab.execId === targetTab) {
-          lastIndex = i - 1
-        }
-      })
-      const $ref = this.$refs['appender' + targetTab]
-      if ($ref && $ref.length) {
-        $ref[0].close()
-      }
-      const execMachines = this.execMachines.filter(tailFile => tailFile.execId !== targetTab)
-      if (execMachines.length && activeTab === targetTab) {
-        if (lastIndex >= 0) {
-          activeTab = execMachines[lastIndex].execId
-        } else {
-          activeTab = execMachines[0].execId
-        }
-      }
-      if (!execMachines.length) {
-        activeTab = null
-      }
-      this.execMachines = execMachines
-      this.activeTab = activeTab
     }
   },
   beforeDestroy() {
@@ -314,91 +297,114 @@ export default {
   display: flex;
   height: calc(100vh - 84px);
 
-  .task-add-container {
-    width: 45%;
-    margin-right: 16px;
-    padding: 8px;
+  .task-left-container {
+    transition: width 0.3s;
+    background: #FFFFFF;
+    padding: 16px 20px 20px 20px;
     border-radius: 4px;
-    background-color: #FFF;
+    margin-right: 16px;
 
-    .machine-field-container {
-      display: flex;
-
-      .machine-field-label {
-        font-weight: 600;
-        width: 64px;
-        margin: 4px 8px;
+    .exec-config-container {
+      .exec-machine-checker-container {
+        display: flex;
+        margin-bottom: 16px;
+        height: 16px;
       }
 
-      .machine-checker-wrapper {
+      .exec-command-container {
+        margin-bottom: 16px;
+
+        .command-label-wrapper {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        }
+
+        .editor-wrapper {
+          height: calc(100vh - 274px);
+        }
+      }
+
+      .exex-description-container {
         display: flex;
         align-items: center;
+        margin-bottom: 16px;
       }
 
-      .machine-field-input {
-        width: calc(100% - 78px);
-        padding-right: 8px;
+      .exec-button-wrapper {
+        text-align: right;
       }
     }
 
-    .status-container {
-      display: flex;
-      margin: 8px 0 0 8px;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .exec-machine-menu-container {
+      .reset-button-wrapper {
+        height: 32px;
+        margin: 8px 8px 4px 8px;
+        display: flex;
+        background: #118AFA;
+        border-radius: 4px;
 
-    .editor-container {
-      height: 78%;
-      padding: 8px;
-    }
+        .reset-button {
+          width: 100%;
+          height: 100%;
+          color: #FFFCFC;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+          border-radius: 4px;
+          cursor: pointer;
 
-    .machine-description-container {
-      margin: 4px 0 12px 0;
-    }
+          i {
+            font-size: 20px;
+          }
+        }
 
-    .exec-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin: 0 8px 8px 8px;
-    }
+        .reset-button:hover {
+          background-color: #1890FF;
+          color: #FFFFFF;
+        }
+      }
 
+      /deep/ .ant-menu-item {
+        padding: 0 8px 0 12px !important;
+      }
+
+      .machine-menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .machine-menu-item-text {
+          font-size: 15px;
+          width: 144px;
+          color: rgba(0, 0, 0, .95)
+        }
+      }
+    }
   }
 
-  .task-logger-view-container, .task-logger-view-empty-container {
-    width: 54%;
+  .exec-logger-container {
+    background: #FFFFFF;
     border-radius: 4px;
-    background-color: #FFF;
-  }
+    flex: 1;
 
-  .task-logger-view-container {
-    padding: 12px;
+    .logger-appender-container {
+      padding: 8px 16px 16px 16px;
 
-    .machine-log-view {
-      height: calc(100vh - 144px);
-      padding-top: 8px;
+      .appender-left-tools {
+        display: flex;
+      }
+    }
+
+    .logger-empty-container {
+      margin-top: 25%;
     }
   }
 
-  .task-logger-view-empty-container {
-    padding: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .empty-status {
-      margin-bottom: 20%;
-    }
-  }
-
-  .appender-left-tools {
-    display: flex;
-    align-items: center;
-
-    .command-write-input {
-      margin-right: 8px;
-      width: 65%;
-    }
+  .exec-label {
+    font-weight: 600;
+    margin-right: 8px;
   }
 
 }
