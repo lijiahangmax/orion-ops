@@ -67,12 +67,12 @@
     "icon": "appstore",
     "children": [
       {
-        "name": "应用列表",
-        "path": "/app/list"
-      },
-      {
         "name": "环境管理",
         "path": "/app/profile"
+      },
+      {
+        "name": "应用列表",
+        "path": "/app/list"
       },
       {
         "name": "环境变量",
