@@ -41,7 +41,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
             return true;
         }
         // 是否跳过
-        boolean ignore = ((HandlerMethod) handler).hasMethodAnnotation(IgnoreAuth.class);
+        final boolean ignore = ((HandlerMethod) handler).hasMethodAnnotation(IgnoreAuth.class);
         HttpWrapper<?> rejectWrapper = null;
         String loginToken = Currents.getLoginToken(request);
         if (!Strings.isEmpty(loginToken)) {
@@ -61,6 +61,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
             } else {
                 rejectWrapper = HttpWrapper.of(ResultCode.UNAUTHORIZED);
             }
+        } else if (!ignore) {
+            rejectWrapper = HttpWrapper.of(ResultCode.UNAUTHORIZED);
         }
         // 匿名接口直接返回
         if (ignore) {
