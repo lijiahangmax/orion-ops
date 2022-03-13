@@ -11,7 +11,9 @@
         </div>
         <!-- tail文件列表菜单 -->
         <a-menu theme="dark" mode="inline" :selectedKeys="selectedKeys">
-          <a-menu-item v-for="item of tailList" :key="item.id" :title="item.name" @dblclick="chooseFile(item.id)">
+          <a-menu-item v-for="item of tailList" :key="item.id"
+                       :title="`双击打开 ${item.name}`"
+                       @dblclick="chooseFile(item.id)">
             <a-icon type="file-text"/>
             <span class="usn">{{ item.name }}</span>
           </a-menu-item>

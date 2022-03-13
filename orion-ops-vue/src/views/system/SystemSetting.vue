@@ -10,7 +10,7 @@
         <SecurityConfig/>
       </a-tab-pane>
       <!-- IP 操作 -->
-      <a-tab-pane key="3" tab="IP名单配置">
+      <a-tab-pane key="3" tab="IP 过滤器配置">
         <IpConfig/>
       </a-tab-pane>
       <!-- 其他设置 -->

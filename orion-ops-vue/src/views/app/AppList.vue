@@ -399,9 +399,7 @@ export default {
     },
     removeAppMachine(record, machineId) {
       this.$api.deleteAppMachine({
-        id: record.id,
-        profileId: this.query.profileId,
-        machineId
+        id: machineId
       }).then(() => {
         this.$message.success('已删除')
         for (let i = 0; i < record.machines.length; i++) {

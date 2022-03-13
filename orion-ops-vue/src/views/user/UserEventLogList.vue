@@ -14,7 +14,7 @@
               <a-input v-model="query.log" placeholder="日志关键字" allowClear/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="5">
+          <a-col :span="6">
             <a-form-model-item label="分类" prop="classify">
               <a-input-group compact>
                 <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
@@ -35,7 +35,7 @@
               <a-range-picker v-model="dateRange" @change="selectedDate"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="3">
+          <a-col :span="2">
             <div class="table-tools-bar p0 log-search-bar">
               <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
@@ -289,7 +289,7 @@ export default {
 
     .log-item-type {
       margin: 0 12px 0 12px;
-      width: 180px;
+      width: 186px;
       display: inline-block;
     }
 

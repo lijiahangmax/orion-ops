@@ -2,6 +2,7 @@
   <a-layout id="sftp-layout-container">
     <!-- 机器列表 -->
     <MachineListMenu ref="machineList"
+                     theme="light"
                      :selectedMachine="selectedMachine"
                      :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
                      @chooseMachine="changeSftpMain"/>

@@ -33,16 +33,52 @@
         <span class="table-title">机器秘钥</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
         <div v-show="selectedRowKeys.length">
-          <a-button class="ml8" type="primary" icon="pull-request" @click="batchMount()">挂载</a-button>
-          <a-button class="ml8" type="danger" icon="poweroff" @click="batchDump()">卸载</a-button>
-          <a-button class="ml8" type="danger" icon="delete" @click="batchRemove()">删除</a-button>
+          <!-- 挂载 -->
+          <a-popconfirm title="是否挂载选中秘钥?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="batchMount">
+            <a-button class="ml8" type="primary" icon="pull-request">挂载</a-button>
+          </a-popconfirm>
+          <!-- 卸载 -->
+          <a-popconfirm title="是否卸载选中秘钥? 可能会导致机器无法连接!"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="batchDump">
+            <a-button class="ml8" type="danger" icon="poweroff">卸载</a-button>
+          </a-popconfirm>
+          <!-- 删除 -->
+          <a-popconfirm title="确认删除选中秘钥?"
+                        placement="topRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
         </div>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <!-- 临时挂载 -->
         <a-button class="mr8" type="primary" @click="tempMount">临时挂载</a-button>
-        <a-button class="mr8" type="primary" @click="mountAll">挂载全部</a-button>
-        <a-button class="mr8" type="primary" @click="dumpAll">卸载全部</a-button>
+        <!-- 挂载全部 -->
+        <a-popconfirm title="是否挂载全部秘钥?"
+                      placement="topRight"
+                      ok-text="确定"
+                      cancel-text="取消"
+                      @confirm="mountAll">
+          <a-button class="mr8" type="primary">挂载全部</a-button>
+        </a-popconfirm>
+        <!-- 卸载全部 -->
+        <a-popconfirm title="是否卸载全部秘钥? 可能会导致机器无法连接!"
+                      placement="topRight"
+                      ok-text="确定"
+                      cancel-text="取消"
+                      @confirm="dumpAll">
+          <a-button class="mr8" type="primary">卸载全部</a-button>
+        </a-popconfirm>
         <a-divider type="vertical"/>
         <a-button class="mx8" type="primary" icon="plus" @click="add">新建</a-button>
         <a-divider type="vertical"/>
@@ -75,25 +111,9 @@
         </template>
         <!-- 挂载状态 -->
         <template v-slot:mountStatus="record">
-          <!-- 未找到 -->
-          <div v-if="record.mountStatus === 1">
-            <a-tag :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-              {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
-            </a-tag>
-          </div>
-          <!-- 可操作 -->
-          <div v-else>
-            <a-popconfirm :title="record.mountStatus === 2 ? '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="changeMountStatus(record.id, record.mountStatus)">
-              <a-tag class="m0 pointer"
-                     :title="record.mountStatus === 2 ? '卸载秘钥' : '挂载秘钥'"
-                     :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-                {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
-              </a-tag>
-            </a-popconfirm>
-          </div>
+          <a-tag :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
+            {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+          </a-tag>
         </template>
         <!-- 创建时间 -->
         <template v-slot:createTime="record">
@@ -101,6 +121,18 @@
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
+          <!-- 挂载 -->
+          <a-button v-if="record.mountStatus === 1" type="link" disabled style="height: 22px; padding: 0">
+            挂载
+          </a-button>
+          <a-popconfirm v-else
+                        :title="record.mountStatus === 2 ? '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="changeMountStatus(record.id, record.mountStatus)">
+            <span class="span-blue pointer" v-text="record.mountStatus === 2 ? '卸载' : '挂载'"/>
+          </a-popconfirm>
+          <a-divider type="vertical"/>
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -109,7 +141,7 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="remove(record.id)">
+                        @confirm="remove([record.id])">
             <span class="span-blue pointer">删除</span>
           </a-popconfirm>
         </template>
@@ -145,7 +177,7 @@ const columns = [
   {
     title: '秘钥路径',
     key: 'path',
-    width: 240,
+    width: 265,
     scopedSlots: { customRender: 'path' }
   },
   {
@@ -173,7 +205,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 120,
+    width: 160,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -270,103 +302,49 @@ export default {
       }
     },
     batchMount() {
-      this.$confirm({
-        title: '确认挂载',
-        content: '是否挂载选中秘钥?',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.mountMachineKey({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('挂载成功')
-            this.getList()
-          }).catch(() => {
-            this.$message.error('挂载失败')
-          })
-          this.selectedRowKeys = []
-        }
+      this.$api.mountMachineKey({
+        idList: this.selectedRowKeys
+      }).then(() => {
+        this.$message.success('挂载成功')
+        this.getList()
+      }).catch(() => {
+        this.$message.error('挂载失败')
       })
     },
     mountAll() {
-      this.$confirm({
-        title: '确认挂载全部',
-        content: '是否挂载全部秘钥?',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.mountAllMachineKey()
-            .then(() => {
-              this.$message.success('挂载成功')
-              this.getList()
-            }).catch(() => {
-            this.$message.error('挂载失败')
-          })
-        }
+      this.$api.mountAllMachineKey()
+        .then(() => {
+          this.$message.success('挂载成功')
+          this.getList()
+        }).catch(() => {
+        this.$message.error('挂载失败')
       })
     },
     batchDump() {
-      this.$confirm({
-        title: '确认卸载全部',
-        content: '是否卸载选中秘钥? 可能会导致机器无法连接!',
-        okType: 'danger',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.dumpMachineKey({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('卸载成功')
-            this.getList()
-          }).catch(() => {
-            this.$message.error('卸载失败')
-          })
-          this.selectedRowKeys = []
-        }
+      this.$api.dumpMachineKey({
+        idList: this.selectedRowKeys
+      }).then(() => {
+        this.$message.success('卸载成功')
+        this.getList()
+      }).catch(() => {
+        this.$message.error('卸载失败')
       })
     },
     dumpAll() {
-      this.$confirm({
-        title: '确认卸载全部',
-        content: '是否卸载全部秘钥? 可能会导致机器无法连接!',
-        okType: 'danger',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.dumpAllMachineKey()
-            .then(() => {
-              this.$message.success('卸载成功')
-              this.getList()
-            }).catch(() => {
-            this.$message.error('卸载失败')
-          })
-        }
+      this.$api.dumpAllMachineKey()
+        .then(() => {
+          this.$message.success('卸载成功')
+          this.getList()
+        }).catch(() => {
+        this.$message.error('卸载失败')
       })
     },
-    remove(id) {
+    remove(idList) {
       this.$api.removeMachineKey({
-        idList: [id]
+        idList
       }).then(() => {
         this.$message.success('删除成功')
         this.getList({})
-      })
-    },
-    batchRemove() {
-      this.$confirm({
-        title: '确认删除',
-        content: '是否删除选中秘钥?',
-        okType: 'danger',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.removeMachineKey({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('删除成功')
-            this.getList({})
-          })
-          this.selectedRowKeys = []
-        }
       })
     },
     tempMount() {

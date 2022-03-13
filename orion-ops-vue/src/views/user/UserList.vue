@@ -100,7 +100,7 @@
         <!-- 状态 -->
         <template v-slot:status="record">
           <a-badge
-            :status='$enum.valueOf($enum.ENABLE_STATUS, record.status)["badge-status"]'
+            :status='$enum.valueOf($enum.ENABLE_STATUS, record.status).status'
             :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
         </template>
         <!-- 登陆时间 -->
@@ -138,7 +138,7 @@
             <a @click="resetPassword(record.id)">重置密码</a>
             <a-divider type="vertical"/>
             <!-- 删除 -->
-            <a-popconfirm title="确认要删除该行记录?"
+            <a-popconfirm title="是否要删除当前用户?"
                           placement="topRight"
                           ok-text="确定"
                           cancel-text="取消"

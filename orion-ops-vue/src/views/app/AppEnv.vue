@@ -69,12 +69,14 @@
             </div>
             <a-divider v-show="selectedRowKeys.length" type="vertical"/>
             <!-- 删除 -->
-            <a-button class="ml8" v-show="selectedRowKeys.length && viewType === $enum.VIEW_TYPE.TABLE.value"
-                      type="danger"
-                      icon="delete"
-                      @click="batchRemove()">
-              删除
-            </a-button>
+            <a-popconfirm v-show="selectedRowKeys.length && viewType === $enum.VIEW_TYPE.TABLE.value"
+                          placement="topRight"
+                          title="是否删除选中环境变量?"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
           </div>
           <!-- 右侧 -->
           <div class="tools-fixed-right">
@@ -159,7 +161,7 @@
                             title="是否删除当前变量?"
                             ok-text="确定"
                             cancel-text="取消"
-                            @confirm="remove(record.id)">
+                            @confirm="remove([record.id])">
                 <a-button class="p0"
                           type="link"
                           style="height: 22px"
@@ -174,7 +176,7 @@
       <!-- 环境变量视图 -->
       <div class="table-main-container env-editor-container" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value">
         <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
-          <Editor ref="editor" :value="viewValue" :lang="viewLang"/>
+          <Editor ref="editor" :lang="viewLang"/>
         </a-spin>
       </div>
     </div>
@@ -274,8 +276,7 @@ export default {
       selectedRowKeys: [],
       columns,
       viewType: _$enum.VIEW_TYPE.TABLE.value,
-      viewLang: null,
-      viewValue: null
+      viewLang: null
     }
   },
   computed: {
@@ -318,10 +319,6 @@ export default {
     changeView(view) {
       this.viewLang = view.lang
       this.viewType = view.value
-      // 表格
-      if (this.viewType === this.$enum.VIEW_TYPE.TABLE.value) {
-        this.viewValue = null
-      }
       this.getAppEnv({})
     },
     getAppEnv(page = this.pagination) {
@@ -348,7 +345,7 @@ export default {
           ...this.query,
           viewType: this.viewType
         }).then(({ data }) => {
-          this.viewValue = data
+          this.$refs.editor.setValue(data)
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -382,30 +379,12 @@ export default {
     update(id) {
       this.$refs.addModal.update(id)
     },
-    remove(id) {
+    remove(idList) {
       this.$api.deleteAppEnv({
-        idList: [id]
+        idList
       }).then(() => {
         this.$message.success('删除成功')
         this.getAppEnv({})
-      })
-    },
-    batchRemove() {
-      this.$confirm({
-        title: '确认删除',
-        content: '是否删除所选环境变量?',
-        okType: 'danger',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.$api.deleteAppEnv({
-            idList: this.selectedRowKeys
-          }).then(() => {
-            this.$message.success('删除成功')
-            this.getAppEnv({})
-          })
-          this.selectedRowKeys = []
-        }
       })
     },
     preview(value) {
