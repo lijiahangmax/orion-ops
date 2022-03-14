@@ -35,46 +35,46 @@ Demo: http://101.43.254.243/ops/#/
 
 > 机器列表
 
-![机器列表](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/machine_list.png "机器列表")
+![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8512578085516682386.png "机器列表")
 
 > 在线终端
 
-![在线终端](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/web_terminal.png "在线终端")
+![在线终端](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4787611964158821533.png "在线终端")
 
 > 在线文件管理
 
-![在线文件管理](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/sftp_1.png "在线文件管理")  
-![在线文件管理](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/sftp_2.png "在线文件管理")
+![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files6081069371629929397.png "在线文件管理")  
+![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4411594441981208271.png "在线文件管理")
 
 > 批量执行
 
-![批量执行](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/batch_exec.png "批量执行")
+![批量执行](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8195883496604225112.png "批量执行")
 
 > 日志文件
 
-![日志文件](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/log_view.png "日志文件")
+![日志文件](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8456725984172369436.png "日志文件")
 
 > 调度任务
 
-![调度任务](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/scheduler.png "调度任务")  
-![调度执行列表](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/scheduler_record.png "调度执行列表")  
-![调度执行日志](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/scheduler_record_log.png "调度执行日志")
+![调度任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files7140183316009047038.png "调度任务")  
+![调度执行列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files5875226043882871962.png "调度执行列表")  
+![调度执行日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files285645083754039026.png "调度执行日志")
 
 > 应用配置
 
-![应用列表](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/app_list.png "应用列表")  
-![构建配置](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/app_build_config.png "构建配置")  
-![发布配置](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/app_release_config.png "发布配置")
+![应用列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files3132678810569551460.png "应用列表")  
+![构建配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8930817600030460.png "构建配置")  
+![发布配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4557512125504191404.png "发布配置")
 
 > 构建列表
 
-![构建列表](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/build_list.png "构建列表")  
-![构建日志](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/build_log.png "构建日志")
+![构建列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4960287647322644132.png "构建列表")  
+![构建日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files6245253907567338465.png "构建日志")
 
 > 发布列表
 
-![发布列表](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/release_list.png "发布列表")
-![发布日志](https://github.com/lijiahangmax/orion-ops/raw/main/docs/assert/img/release_log.png "发布日志")
+![发布列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4322661961526641390.png "发布列表")
+![发布日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4699926352889499394.png "发布日志")
 
 ## 支持
 
