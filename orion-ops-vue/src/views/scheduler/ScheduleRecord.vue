@@ -109,10 +109,11 @@
                             type="link"
                             style="height: 22px"
                             :disabled="!visibleHolder.visibleMachineLog(machine.status)">
-                    <a target="_blank"
-                       title="ctrl 打开新页面"
-                       :href="`#/task/machine/log/view/${machine.id}`"
-                       @click="openMachineLog($event, machine.id)">日志</a>
+                    <a-tooltip title="ctrl 点击打开新页面">
+                      <a target="_blank"
+                         :href="`#/task/machine/log/view/${machine.id}`"
+                         @click="openMachineLog($event, machine.id)">日志</a>
+                    </a-tooltip>
                   </a-button>
                   <a-divider type="vertical"/>
                   <!-- 命令 -->
@@ -163,10 +164,11 @@
                         type="link"
                         style="height: 22px"
                         :disabled="!visibleHolder.visibleRecordLog(record.status)">
-                <a target="_blank"
-                   title="ctrl 打开新页面"
-                   :href="`#/task/log/view/${record.id}`"
-                   @click="openTaskLog($event, record.id)">日志</a>
+                <a-tooltip title="ctrl 点击打开新页面">
+                  <a target="_blank"
+                     :href="`#/task/log/view/${record.id}`"
+                     @click="openTaskLog($event, record.id)">日志</a>
+                </a-tooltip>
               </a-button>
               <a-divider type="vertical" v-if="visibleHolder.visibleRecordTerminated(record.status)"/>
               <!-- 停止 -->

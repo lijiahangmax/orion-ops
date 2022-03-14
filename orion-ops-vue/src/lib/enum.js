@@ -981,13 +981,17 @@ const $enum = {
       value: 30,
       label: '终端操作',
       type: {
+        OPEN_TERMINAL: {
+          value: 2400,
+          label: '打开机器终端'
+        },
         FORCE_OFFLINE_TERMINAL: {
           value: 2405,
-          label: '强制下线'
+          label: '强制下线终端'
         },
         UPDATE_TERMINAL_CONFIG: {
           value: 2410,
-          label: '修改配置'
+          label: '修改终端配置'
         },
         DELETE_TERMINATED_LOG: {
           value: 2415,
@@ -999,6 +1003,10 @@ const $enum = {
       value: 35,
       label: '远程文件操作',
       type: {
+        OPEN_SFTP: {
+          value: 2500,
+          label: '打开机器SFTP'
+        },
         SFTP_MKDIR: {
           value: 2505,
           label: '创建文件夹'

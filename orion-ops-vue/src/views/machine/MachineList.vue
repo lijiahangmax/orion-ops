@@ -91,9 +91,7 @@
         <!-- 名称 -->
         <template v-slot:name="record">
           {{ record.name }}
-          <a-tag v-if="record.id === 1" color="#5C7CFA">
-            宿主机
-          </a-tag>
+          <span v-if="record.id === 1" class="host-machine-label">#宿主机</span>
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
@@ -140,15 +138,16 @@
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <!-- 终端 -->
-          <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record.id)">
-            <a-button title="ctrl 新页面打开终端"
-                      class="p0"
-                      type="link"
-                      style="height: 22px"
-                      :disabled="record.status !== 1">
-              Terminal
-            </a-button>
-          </a>
+          <a-button class="p0"
+                    type="link"
+                    style="height: 22px"
+                    :disabled="record.status !== 1">
+            <a-tooltip title="ctrl 点击新页面打开终端">
+              <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record.id)">
+                Terminal
+              </a>
+            </a-tooltip>
+          </a-button>
           <a-divider type="vertical"/>
           <!-- sftp -->
           <a :href="`#/machine/sftp/${record.id}`">
@@ -475,5 +474,10 @@ export default {
 </script>
 
 <style scoped>
+
+.host-machine-label {
+  color: #5C7CFA;
+  margin-left: 2px;
+}
 
 </style>

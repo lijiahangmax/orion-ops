@@ -69,7 +69,7 @@
           <a-button class="mx8"
                     type="primary"
                     icon="code"
-                    title="ctrl 打开新页面"
+                    title="ctrl 点击打开新页面"
                     @click="openExecute">
             批量执行
           </a-button>
@@ -130,10 +130,11 @@
         <!-- 日志 -->
         <template v-slot:log="record">
           <!-- 日志面板 -->
-          <a target="_blank"
-             title="ctrl 打开新页面"
-             :href="`#/batch/exec/log/view/${record.id}`"
-             @click="openLogView($event, record.id)">日志</a>
+          <a-tooltip title="ctrl 点击打开新页面">
+            <a target="_blank"
+               :href="`#/batch/exec/log/view/${record.id}`"
+               @click="openLogView($event, record.id)">日志</a>
+          </a-tooltip>
           <a-divider type="vertical"/>
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>

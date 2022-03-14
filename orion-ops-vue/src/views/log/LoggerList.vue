@@ -82,10 +82,11 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 打开 -->
-          <a target="_blank"
-             title="ctrl 打开新页面"
-             :href="`#/log/view/${record.id}`"
-             @click="openLogView($event, record.id)">打开</a>
+          <a-tooltip title="ctrl 点击打开新页面">
+            <a target="_blank"
+               :href="`#/log/view/${record.id}`"
+               @click="openLogView($event, record.id)">打开</a>
+          </a-tooltip>
           <a-divider type="vertical"/>
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>

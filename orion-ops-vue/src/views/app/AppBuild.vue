@@ -111,10 +111,11 @@
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <!-- 日志 -->
-          <a target="_blank"
-             title="ctrl 打开新页面"
-             :href="`#/app/build/log/view/${record.id}`"
-             @click="openLogView($event, record.id)">日志</a>
+          <a-tooltip title="ctrl 点击打开新页面">
+            <a target="_blank"
+               :href="`#/app/build/log/view/${record.id}`"
+               @click="openLogView($event, record.id)">日志</a>
+          </a-tooltip>
           <a-divider type="vertical"/>
           <!-- 重新构建 -->
           <a-popconfirm title="是否要重新构建?"
