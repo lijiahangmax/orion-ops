@@ -4,8 +4,8 @@
                  size="default"
                  :appendStyle="{height: appenderHeight}"
                  :relId="id"
-                 :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
-                 :config="{type: $enum.FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value, relId: id}">
+                 :tailType="$enum.FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
+                 :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
       <!-- 左侧工具栏 -->
       <template #left-tools>
         <div class="appender-left-tools">

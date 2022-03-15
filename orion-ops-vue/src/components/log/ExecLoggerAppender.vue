@@ -4,7 +4,8 @@
                  size="default"
                  :appendStyle="{height: appenderHeight}"
                  :relId="execId"
-                 :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execId}">
+                 :tailType="$enum.FILE_TAIL_TYPE.EXEC_LOG.value"
+                 :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
       <!-- 左侧工具栏 -->
       <template #left-tools>
         <div class="appender-left-tools">
