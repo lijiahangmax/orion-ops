@@ -155,7 +155,7 @@ export default {
     justify-content: space-between;
 
     .terminal-ssh {
-      min-width: 160px;
+      max-width: 160px;
       margin: 0 16px 0 8px;
       cursor: pointer;
       color: #364FC7;

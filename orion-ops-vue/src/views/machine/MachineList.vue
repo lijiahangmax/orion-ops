@@ -143,7 +143,7 @@
                     style="height: 22px"
                     :disabled="record.status !== 1">
             <a-tooltip title="ctrl 点击新页面打开终端">
-              <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record.id)">
+              <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record)">
                 Terminal
               </a>
             </a-tooltip>
@@ -197,7 +197,30 @@
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
       <!-- 终端模态框 -->
-      <TerminalModal ref="terminalModal"/>
+      <div v-if="openTerminalArr.length">
+        <TerminalModal v-for="openTerminal of openTerminalArr"
+                       :key="openTerminal.symbol"
+                       :ref='`terminalModal${openTerminal.symbol}`'
+                       @close="closedTerminal"
+                       @minimize="minimizeTerminal"/>
+      </div>
+      <!-- 终端最小化 -->
+      <div class="terminal-minimize-container">
+        <a-card v-for="minimizeTerminal of minimizeTerminalArr"
+                :key="minimizeTerminal.symbol"
+                :title="`${minimizeTerminal.name} (${minimizeTerminal.host})`"
+                class="terminal-minimize-item pointer"
+                size="small"
+                @click="maximizeTerminal(minimizeTerminal.symbol)">
+          <!-- 关闭按钮 -->
+          <template #extra>
+            <a-icon class="ml4 pointer"
+                    type="close"
+                    title="关闭"
+                    @click.stop="closeMinimizeTerminal(minimizeTerminal.symbol)"/>
+          </template>
+        </a-card>
+      </div>
     </div>
   </div>
 </template>
@@ -211,7 +234,6 @@ const columns = [
   {
     title: '名称',
     key: 'name',
-    width: 200,
     ellipsis: true,
     sorter: (a, b) => a.name.localeCompare(b.name),
     scopedSlots: { customRender: 'name' }
@@ -247,8 +269,7 @@ const columns = [
     title: '描述',
     dataIndex: 'description',
     key: 'description',
-    ellipsis: true,
-    width: 200
+    ellipsis: true
   },
   {
     title: '操作',
@@ -364,7 +385,9 @@ export default {
       },
       columns,
       loading: false,
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      openTerminalArr: [],
+      minimizeTerminalArr: []
     }
   },
   computed: {
@@ -451,16 +474,51 @@ export default {
         this.getList({})
       })
     },
-    openTerminal(e, id) {
+    openTerminal(e, record) {
       if (!e.ctrlKey) {
         e.preventDefault()
         // 打开模态框
-        this.$refs.terminalModal.open(id)
+        const now = Date.now()
+        this.openTerminalArr.push({
+          name: record.name,
+          symbol: now
+        })
+        this.$nextTick(() => {
+          this.$refs[`terminalModal${now}`][0].open(record, now)
+        })
         return false
       } else {
         // 跳转页面
         return true
       }
+    },
+    closedTerminal(symbol) {
+      for (let i = 0; i < this.openTerminalArr.length; i++) {
+        if (this.openTerminalArr[i].symbol === symbol) {
+          this.openTerminalArr.splice(i, 1)
+        }
+      }
+    },
+    minimizeTerminal(m) {
+      this.minimizeTerminalArr.push(m)
+    },
+    maximizeTerminal(symbol) {
+      const refs = this.$refs[`terminalModal${symbol}`]
+      for (let i = 0; i < this.minimizeTerminalArr.length; i++) {
+        if (this.minimizeTerminalArr[i].symbol === symbol) {
+          this.minimizeTerminalArr.splice(i, 1)
+        }
+      }
+      refs && refs[0] && refs[0].maximize()
+    },
+    closeMinimizeTerminal(symbol) {
+      const refs = this.$refs[`terminalModal${symbol}`]
+      for (let i = 0; i < this.minimizeTerminalArr.length; i++) {
+        if (this.minimizeTerminalArr[i].symbol === symbol) {
+          this.minimizeTerminalArr.splice(i, 1)
+        }
+      }
+      refs && refs[0] && refs[0].close()
     },
     resetForm() {
       this.$refs.query.resetFields()
@@ -473,11 +531,34 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 
 .host-machine-label {
   color: #5C7CFA;
   margin-left: 2px;
+}
+
+.terminal-minimize-container {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+
+  /deep/ .ant-card-head {
+    padding: 0 8px;
+    font-weight: 400;
+  }
+
+  .terminal-minimize-item {
+    width: 200px;
+    box-shadow: 0 3px 4px #DEE2E6;
+    border-radius: 4px;
+    margin: 1px 0.5px;
+  }
+
 }
 
 </style>

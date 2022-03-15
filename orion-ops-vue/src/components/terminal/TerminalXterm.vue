@@ -88,6 +88,9 @@ export default {
     fitTerminal() {
       this.$refs.terminalMain.fitTerminal()
     },
+    focus() {
+      this.$refs.terminalMain.term.focus()
+    },
     async getAccessToken() {
       this.loading = this.$message.loading('建立连接中...')
       try {
