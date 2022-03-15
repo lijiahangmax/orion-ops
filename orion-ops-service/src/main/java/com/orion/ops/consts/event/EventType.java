@@ -157,7 +157,12 @@ public enum EventType {
     // -------------------- 终端操作 --------------------
 
     /**
-     * 强制下线
+     * 打开机器终端
+     */
+    OPEN_TERMINAL(2400, EventClassify.TERMINAL, "打开机器终端 <sb>${machineName}</sb>"),
+
+    /**
+     * 强制下线终端
      */
     FORCE_OFFLINE_TERMINAL(2405, EventClassify.TERMINAL, "强制下线终端 <sb>${username}</sb> <sb>${name}</sb>"),
 
@@ -172,6 +177,11 @@ public enum EventType {
     DELETE_TERMINATED_LOG(2415, EventClassify.TERMINAL, "删除终端操作日志 <sb>${count}</sb>个"),
 
     // -------------------- sftp 操作 --------------------
+
+    /**
+     * 打开机器 SFTP
+     */
+    OPEN_SFTP(2500, EventClassify.SFTP, "打开机器 SFTP <sb>${machineName}</sb>"),
 
     /**
      * 创建文件夹

@@ -48,6 +48,7 @@ public class SftpController {
      * 打开
      */
     @RequestMapping("/open")
+    @EventLog(EventType.OPEN_SFTP)
     public FileOpenVO open(@RequestBody FileOpenRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return sftpService.open(machineId);
