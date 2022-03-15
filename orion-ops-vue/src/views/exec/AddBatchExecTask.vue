@@ -78,10 +78,11 @@
              v-show="execMachine.execId === selectedMachineKeys[0]"
              :key="execMachine.execId">
           <LogAppender :ref="'appender' + execMachine.execId"
-                       :relId="execMachine.execId"
                        :appendStyle="{height: 'calc(100vh - 148px)'}"
                        size="default"
-                       :config="{type: $enum.FILE_TAIL_TYPE.EXEC_LOG.value, relId: execMachine.execId}"
+                       :relId="execMachine.execId"
+                       :tailType="$enum.FILE_TAIL_TYPE.EXEC_LOG.value"
+                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value"
                        :rightMenuX="e => e.offsetX + 500">
             <!-- 左侧工具栏 -->
             <template #left-tools>

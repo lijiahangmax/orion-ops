@@ -132,4 +132,12 @@ public interface MachineInfoService {
      */
     String getCommandResultSync(Long id, String command);
 
+    /**
+     * 获取机器名称
+     *
+     * @param id id
+     * @return name
+     */
+    String getMachineName(Long id);
+
 }

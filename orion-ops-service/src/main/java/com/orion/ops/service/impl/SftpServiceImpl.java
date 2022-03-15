@@ -25,6 +25,7 @@ import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.SftpBasicExecutorHolder;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.ops.handler.sftp.hint.FileTransferHint;
+import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
@@ -57,6 +58,9 @@ import java.util.stream.Collectors;
 public class SftpServiceImpl implements SftpService {
 
     @Resource
+    private MachineInfoService machineInfoService;
+
+    @Resource
     private TransferProcessorManager transferProcessorManager;
 
     @Resource
@@ -85,6 +89,8 @@ public class SftpServiceImpl implements SftpService {
         openVO.setCharset(executor.getCharset());
         openVO.setPath(list.getPath());
         openVO.setFiles(list.getFiles());
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machineInfoService.getMachineName(machineId));
         return openVO;
     }
 

@@ -49,9 +49,10 @@ public class MachineTerminalController {
     private TerminalSessionManager terminalSessionManager;
 
     /**
-     * 获取accessToken
+     * 获取终端 accessToken
      */
     @RequestMapping("/access")
+    @EventLog(EventType.OPEN_TERMINAL)
     public TerminalAccessVO access(@RequestBody MachineTerminalRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return machineTerminalService.getAccessConfig(machineId);

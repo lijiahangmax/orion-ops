@@ -96,6 +96,8 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         redisTemplate.opsForValue().set(cacheKey, machineId + Strings.EMPTY,
                 KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         log.info("用户获取terminal uid: {} machineId: {} token: {}", userId, machineId, token);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
         return access;
     }
 

@@ -107,7 +107,6 @@
 </template>
 
 <script>
-import _enum from '@/lib/enum'
 import RightClickMenu from '@/components/common/RightClickMenu'
 
 const stain = {
@@ -181,10 +180,8 @@ export default {
       default: 'small'
     },
     relId: Number,
-    downloadType: {
-      type: Number,
-      default: _enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value
-    },
+    tailType: Number,
+    downloadType: Number,
     toolsProps: {
       type: Object,
       default: () => {
@@ -226,10 +223,12 @@ export default {
   methods: {
     openTail() {
       this.$nextTick(() => {
-        this.$api.getTailToken(this.config)
-          .then(({ data }) => {
-            this.initLogTailView(data)
-          })
+        this.$api.getTailToken({
+          type: this.tailType,
+          relId: this.relId
+        }).then(({ data }) => {
+          this.initLogTailView(data)
+        })
       })
     },
     initLogTailView(data) {

@@ -11,10 +11,10 @@
     <div style="padding: 8px;">
       <LogAppender ref="appender"
                    size="default"
-                   :relId="id"
                    :appendStyle="{height: 'calc(100vh - 92px)'}"
+                   :relId="id"
+                   :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
                    :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
-                   :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: id}"
                    :rightMenuX="e => e.offsetX + 24"
                    :rightMenuY="e => e.clientY - 10">
         <!-- 左侧工具栏 -->

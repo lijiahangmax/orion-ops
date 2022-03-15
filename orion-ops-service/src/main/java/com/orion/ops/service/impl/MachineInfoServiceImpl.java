@@ -364,6 +364,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         return res;
     }
 
+    @Override
+    public String getMachineName(Long id) {
+        return machineInfoDAO.selectMachineName(id);
+    }
+
     /**
      * 执行本地命令
      */

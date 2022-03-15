@@ -95,10 +95,11 @@
                         type="link"
                         style="height: 22px"
                         :disabled="!statusHolder.visibleActionLog(machine.status)">
-                <a target="_blank"
-                   title="ctrl 打开新页面"
-                   :href="`#/app/release/machine/log/view/${machine.id}`"
-                   @click="openMachineLog($event, machine.id)">日志</a>
+                <a-tooltip title="ctrl 点击打开新页面">
+                  <a target="_blank"
+                     :href="`#/app/release/machine/log/view/${machine.id}`"
+                     @click="openMachineLog($event, machine.id)">日志</a>
+                </a-tooltip>
               </a-button>
               <a-divider type="vertical"/>
               <!-- 详情 -->
@@ -205,11 +206,11 @@
           </a-popconfirm>
           <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
           <!-- 日志 -->
-          <a v-if="statusHolder.visibleLog(record.status)"
-             target="_blank"
-             title="ctrl 打开新页面"
-             :href="`#/app/release/log/view/${record.id}`"
-             @click="openReleaseLog($event, record.id)">日志</a>
+          <a-tooltip v-if="statusHolder.visibleLog(record.status)" title="ctrl 点击打开新页面">
+            <a target="_blank"
+               :href="`#/app/release/log/view/${record.id}`"
+               @click="openReleaseLog($event, record.id)">日志</a>
+          </a-tooltip>
           <a-divider v-if="statusHolder.visibleLog(record.status)" type="vertical"/>
           <!-- 详情 -->
           <a @click="openReleaseDetail(record.id)">详情</a>

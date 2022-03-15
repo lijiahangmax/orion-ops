@@ -43,10 +43,10 @@
               <div class="file-log-view">
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
-                             :relId="selectedTailFile.id"
                              :appendStyle="{height: 'calc(100vh - 100px)'}"
-                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
-                             :config="{type: $enum.FILE_TAIL_TYPE.TAIL_LIST.value, relId: selectedTailFile.id}">
+                             :relId="selectedTailFile.id"
+                             :tailType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
+                             :downloadType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value">
                   <!-- 左侧工具栏 -->
                   <template #left-tools>
                     <div class="appender-left-tools">

@@ -43,4 +43,10 @@
         WHERE machine_host LIKE CONCAT('%', #{host},'%')
     </select>
 
+    <select id="selectMachineName" resultType="java.lang.String">
+        SELECT machine_name
+        FROM machine_info
+        WHERE id = #{id}
+    </select>
+
 </mapper>
