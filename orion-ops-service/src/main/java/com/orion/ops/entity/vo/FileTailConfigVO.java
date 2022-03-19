@@ -29,7 +29,7 @@ public class FileTailConfigVO {
     /**
      * command
      *
-     * @see com.orion.ops.consts.command.CommandConst#TAIL_FILE_DEFAULT
+     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_DEFAULT_COMMAND
      */
     private String command;
 

@@ -72,6 +72,13 @@ public class FileTailVO {
     private String command;
 
     /**
+     * 宿主机文件追踪类型 tacker/tail
+     *
+     * @see com.orion.ops.consts.tail.FileTailMode
+     */
+    private String tailMode;
+
+    /**
      * 更新时间
      */
     private Date updateTime;
@@ -91,6 +98,7 @@ public class FileTailVO {
             vo.setOffset(p.getFileOffset());
             vo.setCharset(p.getFileCharset());
             vo.setCommand(p.getTailCommand());
+            vo.setTailMode(p.getTailMode());
             vo.setUpdateTime(p.getUpdateTime());
             vo.setUpdateTimeAgo(Dates.ago(p.getUpdateTime()));
             return vo;

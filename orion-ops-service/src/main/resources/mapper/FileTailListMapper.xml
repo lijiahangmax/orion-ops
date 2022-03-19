@@ -11,6 +11,7 @@
         <result column="file_charset" property="fileCharset"/>
         <result column="file_offset" property="fileOffset"/>
         <result column="tail_command" property="tailCommand"/>
+        <result column="tail_mode" property="tailMode"/>
         <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -18,7 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, machine_id, alias_name, file_path, file_charset, file_offset, tail_command, deleted, create_time, update_time
+        id, machine_id, alias_name, file_path, file_charset, file_offset, tail_command, tail_mode, deleted, create_time, update_time
     </sql>
 
 </mapper>

@@ -9,10 +9,10 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.tail.FileTailType;
 import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.entity.domain.FileTailListDO;
@@ -88,7 +88,7 @@ public class FileTailServiceImpl implements FileTailService {
             res.setPath(path);
             res.setOffset(machineEnvService.getTailOffset(Const.HOST_MACHINE_ID));
             res.setCharset(machineEnvService.getTailCharset(Const.HOST_MACHINE_ID));
-            res.setCommand(CommandConst.TAIL_FILE_DEFAULT);
+            res.setCommand(machineEnvService.getTailDefaultCommand(Const.HOST_MACHINE_ID));
         } else {
             // tail list
             FileTailListDO fileTail = fileTailListDAO.selectById(relId);
@@ -109,7 +109,9 @@ public class FileTailServiceImpl implements FileTailService {
         // 设置缓存
         FileTailDTO tail = Converts.to(res, FileTailDTO.class);
         tail.setUserId(Currents.getUserId());
-        tail.setMode(systemEnvService.getMachineTailMode(machine.getId()));
+        // 追踪模式
+        String tailMode = isLocal ? systemEnvService.getTailMode() : res.getTailMode();
+        tail.setMode(tailMode);
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
         // 非列表不返回命令和路径
@@ -122,14 +124,16 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Override
     public Long insertTailFile(FileTailRequest request) {
+        Long machineId = request.getMachineId();
         // 插入
         FileTailListDO insert = new FileTailListDO();
         insert.setAliasName(request.getName());
-        insert.setMachineId(request.getMachineId());
+        insert.setMachineId(machineId);
         insert.setFilePath(request.getPath());
         insert.setFileCharset(request.getCharset());
         insert.setFileOffset(request.getOffset());
         insert.setTailCommand(request.getCommand());
+        insert.setTailMode(FileTailMode.of(request.getTailMode(), Const.HOST_MACHINE_ID.equals(machineId)).getMode());
         fileTailListDAO.insert(insert);
         // 设置日志参数
         EventParamsHolder.addParams(insert);
@@ -142,15 +146,17 @@ public class FileTailServiceImpl implements FileTailService {
         Long id = request.getId();
         FileTailListDO beforeTail = fileTailListDAO.selectById(id);
         Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
+        Long machineId = request.getMachineId();
         // 修改
         FileTailListDO update = new FileTailListDO();
         update.setId(id);
         update.setAliasName(request.getName());
-        update.setMachineId(request.getMachineId());
+        update.setMachineId(machineId);
         update.setFilePath(request.getPath());
-        update.setFileCharset(request.getCharset());
         update.setFileOffset(request.getOffset());
+        update.setFileCharset(request.getCharset());
         update.setTailCommand(request.getCommand());
+        update.setTailMode(FileTailMode.of(request.getTailMode(), Const.HOST_MACHINE_ID.equals(machineId)).getMode());
         update.setUpdateTime(new Date());
         int effect = fileTailListDAO.updateById(update);
         // 设置日志参数
@@ -255,7 +261,7 @@ public class FileTailServiceImpl implements FileTailService {
     }
 
     /**
-     * 替换tail命令
+     * 替换 tail 命令
      *
      * @param res res
      */
@@ -285,7 +291,7 @@ public class FileTailServiceImpl implements FileTailService {
         String charset = machineEnvService.getTailCharset(machineId);
         config.setCharset(charset);
         // command
-        config.setCommand(CommandConst.TAIL_FILE_DEFAULT);
+        config.setCommand(machineEnvService.getTailDefaultCommand(machineId));
         return config;
     }
 

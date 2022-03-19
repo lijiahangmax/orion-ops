@@ -55,6 +55,13 @@ public class FileTailRequest extends PageRequest {
     private String command;
 
     /**
+     * 宿主机文件追踪类型 tacker/tail
+     *
+     * @see com.orion.ops.consts.tail.FileTailMode
+     */
+    private String tailMode;
+
+    /**
      * relId
      */
     private Long relId;
