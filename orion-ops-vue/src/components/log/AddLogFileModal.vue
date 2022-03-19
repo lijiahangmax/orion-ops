@@ -2,6 +2,7 @@
   <a-modal v-model="visible"
            :title="title"
            :width="650"
+           :dialogStyle="{top: '64px', padding: 0}"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
            @ok="check"
@@ -13,6 +14,16 @@
                            placeholder="请选择"
                            @change="setDefaultConfig"
                            v-decorator="decorators.machineId"/>
+        </a-form-item>
+        <!-- 追踪模式 -->
+        <a-form-item v-if="form.getFieldValue('machineId') === 1" label="追踪模式">
+          <a-radio-group v-decorator="decorators.tailMode">
+            <a-tooltip v-for="type of $enum.FILE_TAIL_MODE" :key="type.value" :title="type.tips">
+              <a-radio :value="type.value">
+                {{ type.label }}
+              </a-radio>
+            </a-tooltip>
+          </a-radio-group>
         </a-form-item>
         <a-form-item label="名称" hasFeedback>
           <a-input v-decorator="decorators.name" allowClear/>
@@ -38,6 +49,7 @@
 
 import { pick } from 'lodash'
 import MachineSelector from '@/components/machine/MachineSelector'
+import _enum from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -60,6 +72,13 @@ function getDecorators() {
         required: true,
         message: '请选择机器'
       }]
+    }],
+    tailMode: ['tailMode', {
+      rules: [{
+        required: true,
+        message: '请选择追踪模式'
+      }],
+      initialValue: _enum.FILE_TAIL_MODE.TRACKER.value
     }],
     path: ['path', {
       rules: [{
@@ -165,8 +184,22 @@ export default {
       this.visible = true
       this.id = row.id
       this.record = pick(Object.assign({}, row), 'machineId', 'name', 'path', 'command', 'offset', 'charset')
-      this.$nextTick(() => {
-        this.form.setFieldsValue(this.record)
+      // 设置数据
+      new Promise((resolve) => {
+        // 加载数据
+        this.$nextTick(() => {
+          this.form.setFieldsValue(this.record)
+        })
+        resolve()
+      }).then(() => {
+        // 设置追踪类型
+        if (this.record.machineId === 1) {
+          this.$nextTick(() => {
+            const tailMode = row.tailMode
+            this.record.tailMode = tailMode
+            this.form.setFieldsValue({ tailMode })
+          })
+        }
       })
       setTimeout(() => {
         this.updateConfig = true

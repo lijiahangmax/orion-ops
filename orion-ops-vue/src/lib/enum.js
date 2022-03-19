@@ -419,6 +419,22 @@ const $enum = {
   },
 
   /**
+   * 文件 tail 模式
+   */
+  FILE_TAIL_MODE: {
+    TRACKER: {
+      value: 'tracker',
+      label: 'tracker',
+      tips: '本地文件推荐选择 (IO)'
+    },
+    TAIL: {
+      value: 'tail',
+      label: 'tail',
+      tips: '远程文件必须选择 (命令)'
+    }
+  },
+
+  /**
    * 文件 tail 类型
    */
   FILE_TAIL_TYPE: {

@@ -136,7 +136,6 @@ const columns = [
   {
     title: '机器',
     key: 'machine',
-    width: 180,
     ellipsis: true,
     sorter: (a, b) => a.machineName.localeCompare(b.machineName),
     scopedSlots: { customRender: 'machine' }
@@ -146,14 +145,12 @@ const columns = [
     key: 'name',
     dataIndex: 'name',
     ellipsis: true,
-    width: 160,
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
     title: '路径',
     key: 'path',
     ellipsis: true,
-    width: 270,
     sorter: (a, b) => a.path.localeCompare(b.path),
     scopedSlots: { customRender: 'path' }
   },
@@ -161,7 +158,6 @@ const columns = [
     title: '命令',
     key: 'command',
     ellipsis: true,
-    width: 230,
     scopedSlots: { customRender: 'command' }
   },
   {
