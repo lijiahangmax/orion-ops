@@ -229,13 +229,9 @@ public class SystemEnvServiceImpl implements SystemEnvService {
     }
 
     @Override
-    public String getMachineTailMode(Long machineId) {
-        if (Const.HOST_MACHINE_ID.equals(machineId)) {
-            String mode = this.getEnvValue(SystemEnvAttr.TAIL_MODE.getKey());
-            return FileTailMode.of(mode, true).getMode();
-        } else {
-            return FileTailMode.TAIL.getMode();
-        }
+    public String getTailMode() {
+        String mode = this.getEnvValue(SystemEnvAttr.TAIL_MODE.getKey());
+        return FileTailMode.of(mode, true).getMode();
     }
 
 }

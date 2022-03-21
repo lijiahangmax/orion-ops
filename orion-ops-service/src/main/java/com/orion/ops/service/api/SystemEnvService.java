@@ -107,9 +107,9 @@ public interface SystemEnvService {
     /**
      * 获取文件 tail 模型
      *
-     * @param machineId 机器id
      * @return mode
+     * @see com.orion.ops.consts.tail.FileTailMode
      */
-    String getMachineTailMode(Long machineId);
+    String getTailMode();
 
 }

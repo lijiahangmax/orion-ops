@@ -31,6 +31,11 @@ public enum MachineEnvAttr {
      */
     TAIL_CHARSET("文件追踪编码格式"),
 
+    /**
+     * 文件追踪默认命令
+     */
+    TAIL_DEFAULT_COMMAND("文件追踪默认命令"),
+
     ;
 
     /**

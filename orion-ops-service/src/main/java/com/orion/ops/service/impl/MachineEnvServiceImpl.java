@@ -5,6 +5,7 @@ import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.command.CommandConst;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
@@ -305,6 +306,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 case SFTP_CHARSET:
                     env.setAttrValue(Const.UTF_8);
                     break;
+                case TAIL_DEFAULT_COMMAND:
+                    env.setAttrValue(CommandConst.TAIL_FILE_DEFAULT);
+                    break;
                 default:
                     break;
             }
@@ -323,32 +327,26 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public String getSftpCharset(Long machineId) {
-        // 查询环境
         String charset = this.getMachineEnv(machineId, MachineEnvAttr.SFTP_CHARSET.getKey());
-        if (!Charsets.isSupported(charset)) {
-            charset = Const.UTF_8;
-        }
-        return charset;
+        return Charsets.isSupported(charset) ? charset : Const.UTF_8;
     }
 
     @Override
     public Integer getTailOffset(Long machineId) {
         String offset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
-        if (Strings.isInteger(offset)) {
-            return Integer.valueOf(offset);
-        } else {
-            return Const.TAIL_OFFSET_LINE;
-        }
+        return Strings.isInteger(offset) ? Integer.parseInt(offset) : Const.TAIL_OFFSET_LINE;
     }
 
     @Override
     public String getTailCharset(Long machineId) {
         String charset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_CHARSET.getKey());
-        if (Charsets.isSupported(charset)) {
-            return charset;
-        } else {
-            return Const.UTF_8;
-        }
+        return Charsets.isSupported(charset) ? charset : Const.UTF_8;
+    }
+
+    @Override
+    public String getTailDefaultCommand(Long machineId) {
+        String command = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_DEFAULT_COMMAND.getKey());
+        return Strings.isBlank(command) ? CommandConst.TAIL_FILE_DEFAULT : command;
     }
 
 }
