@@ -83,10 +83,17 @@ public class SystemOptionVO {
     private Boolean resumeEnableSchedulerTask;
 
     /**
-     * sftp上传文件最大阈值(MB)
+     * SFTP 上传文件最大阈值 (MB)
      *
      * @see com.orion.ops.consts.system.SystemEnvAttr#SFTP_UPLOAD_THRESHOLD
      */
     private Integer sftpUploadThreshold;
+
+    /**
+     * 统计缓存有效时间 (分)
+     *
+     * @see com.orion.ops.consts.system.SystemEnvAttr#STATISTICS_CACHE_EXPIRE
+     */
+    private Integer statisticsCacheExpire;
 
 }

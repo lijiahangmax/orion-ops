@@ -11,6 +11,7 @@ import com.orion.utils.io.FileReaders;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.net.IPs;
+import com.orion.utils.time.Dates;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,6 +149,16 @@ public class Utils {
      */
     public static String getVcsEventDir(Long id) {
         return Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), Const.EVENT_DIR + "/" + id);
+    }
+
+    /**
+     * 获取时差
+     *
+     * @param ms ms
+     * @return 时差
+     */
+    public static String interval(long ms) {
+        return Dates.interval(ms, false, "d ", "h ", "m ", "s");
     }
 
 }

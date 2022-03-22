@@ -10,6 +10,7 @@ import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
@@ -206,14 +207,14 @@ public class CommandExecHandler implements IExecHandler {
         this.updateStatus(ExecStatus.COMPLETE);
         // 拼接日志
         Date endDate = new Date();
-        String interval = Dates.interval(endDate, record.getStartDate(), "d", "h", "m", "s");
+        long used = endDate.getTime() - record.getStartDate().getTime();
         StringBuilder sb = new StringBuilder()
                 .append(Letters.LF)
                 .append("# 命令执行完毕\n")
                 .append("exit code: ").append(exitCode).append(Letters.LF)
                 .append("结束时间: ").append(Dates.format(endDate))
-                .append("; used ").append(interval).append(" (")
-                .append(endDate.getTime() - record.getStartDate().getTime())
+                .append("; used ").append(Utils.interval(used)).append(" (")
+                .append(used)
                 .append(" ms)\n");
         this.appendLog(sb.toString());
     }

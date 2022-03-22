@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.CommandExecDO;
+import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import lombok.Data;
 
 /**
@@ -48,7 +48,7 @@ public class CommandExecStatusVO {
             vo.setStatus(p.getExecStatus());
             if (p.getStartDate() != null && p.getEndDate() != null) {
                 vo.setUsed(p.getEndDate().getTime() - p.getStartDate().getTime());
-                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
+                vo.setKeepTime(Utils.interval(vo.getUsed()));
             }
             return vo;
         });

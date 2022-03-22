@@ -1,6 +1,7 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.SchedulerTaskRecordDO;
+import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -89,7 +90,7 @@ public class SchedulerTaskRecordVO {
             vo.setEndTime(endTime);
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
-                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
+                vo.setKeepTime(Utils.interval(vo.getUsed()));
             }
             Optional.ofNullable(startTime)
                     .map(Dates::ago)

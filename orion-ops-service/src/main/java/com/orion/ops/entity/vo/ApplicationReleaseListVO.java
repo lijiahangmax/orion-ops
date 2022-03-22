@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
+import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
@@ -176,7 +176,7 @@ public class ApplicationReleaseListVO {
             Date endTime = p.getReleaseEndTime();
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
-                vo.setKeepTime(Dates.interval(vo.getUsed(), false, "d", "h", "m", "s"));
+                vo.setKeepTime(Utils.interval(vo.getUsed()));
             }
             return vo;
         });
