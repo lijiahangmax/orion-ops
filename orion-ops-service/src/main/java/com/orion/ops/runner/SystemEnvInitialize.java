@@ -120,6 +120,7 @@ public class SystemEnvInitialize implements CommandLineRunner {
             case LOGIN_TOKEN_EXPIRE:
                 return Const.DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR + Const.EMPTY;
             case LOGIN_FAILURE_LOCK_THRESHOLD:
+            case STATISTICS_CACHE_EXPIRE:
                 return Const.N_5 + Const.EMPTY;
             case LOGIN_TOKEN_AUTO_RENEW_THRESHOLD:
                 return Const.N_2 + Const.EMPTY;

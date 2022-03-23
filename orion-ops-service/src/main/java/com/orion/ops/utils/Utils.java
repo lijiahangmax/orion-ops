@@ -157,7 +157,10 @@ public class Utils {
      * @param ms ms
      * @return 时差
      */
-    public static String interval(long ms) {
+    public static String interval(Long ms) {
+        if (ms == null) {
+            return null;
+        }
         return Dates.interval(ms, false, "d ", "h ", "m ", "s");
     }
 

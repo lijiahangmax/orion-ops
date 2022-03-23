@@ -249,6 +249,7 @@ public class SystemServiceImpl implements SystemService {
         options.setLoginTokenAutoRenewThreshold(Integer.valueOf(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW_THRESHOLD.getValue()));
         options.setResumeEnableSchedulerTask(EnableType.of(SystemEnvAttr.RESUME_ENABLE_SCHEDULER_TASK.getValue()).getValue());
         options.setSftpUploadThreshold(Integer.valueOf(SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue()));
+        options.setStatisticsCacheExpire(Integer.valueOf(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()));
         return options;
     }
 

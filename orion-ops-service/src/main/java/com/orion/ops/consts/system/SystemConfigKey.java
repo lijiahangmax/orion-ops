@@ -144,7 +144,7 @@ public enum SystemConfigKey {
     },
 
     /**
-     * sftp上传文件最大阈值(MB)
+     * SFTP 上传文件最大阈值 (MB)
      */
     SFTP_UPLOAD_THRESHOLD(110, SystemEnvAttr.SFTP_UPLOAD_THRESHOLD) {
         @Override
@@ -155,6 +155,21 @@ public enum SystemConfigKey {
         @Override
         protected String validTips() {
             return SFTP_UPLOAD_THRESHOLD_TIPS;
+        }
+    },
+
+    /**
+     * 统计缓存有效时间 (分)
+     */
+    STATISTICS_CACHE_EXPIRE(120, SystemEnvAttr.STATISTICS_CACHE_EXPIRE) {
+        @Override
+        protected boolean valid(String s) {
+            return Strings.isInteger(s) && Integer.parseInt(s) > 0 && Integer.parseInt(s) <= 10080;
+        }
+
+        @Override
+        protected String validTips() {
+            return STATISTICS_CACHE_EXPIRE_TIPS;
         }
     },
 
@@ -169,6 +184,8 @@ public enum SystemConfigKey {
     private static final String LOGIN_TOKEN_AUTO_RENEW_THRESHOLD_TIPS = "登陆自动续签阈值需要在 1 ~ 720 之间";
 
     private static final String SFTP_UPLOAD_THRESHOLD_TIPS = "上传文件阈值需要在 10 ~ 2048 之间";
+
+    private static final String STATISTICS_CACHE_EXPIRE_TIPS = "统计缓存有效时间需要在 1 ~ 10080 之间";
 
     private static final Conversion<String, String> ENABLED_TYPE = s -> EnableType.of(Boolean.valueOf(s)).getLabel();
 

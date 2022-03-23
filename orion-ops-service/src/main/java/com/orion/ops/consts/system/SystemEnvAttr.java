@@ -110,7 +110,7 @@ public enum SystemEnvAttr {
     /**
      * 登陆凭证有效期 (时)
      */
-    LOGIN_TOKEN_EXPIRE("登陆凭证有效期", true),
+    LOGIN_TOKEN_EXPIRE("登陆凭证有效期 (时)", true),
 
     /**
      * 登陆失败锁定阈值 (次)
@@ -120,7 +120,7 @@ public enum SystemEnvAttr {
     /**
      * 登陆自动续签阈值 (时)
      */
-    LOGIN_TOKEN_AUTO_RENEW_THRESHOLD("登陆自动续签阈值", true),
+    LOGIN_TOKEN_AUTO_RENEW_THRESHOLD("登陆自动续签阈值 (时)", true),
 
     /**
      * 自动恢复启用的调度任务
@@ -128,9 +128,14 @@ public enum SystemEnvAttr {
     RESUME_ENABLE_SCHEDULER_TASK("自动恢复启用的调度任务", true),
 
     /**
-     * sftp上传文件最大阈值(MB)
+     * SFTP 上传文件最大阈值 (MB)
      */
-    SFTP_UPLOAD_THRESHOLD("sftp 上传文件最大阈值(MB)", true),
+    SFTP_UPLOAD_THRESHOLD("sftp 上传文件最大阈值 (MB)", true),
+
+    /**
+     * 统计缓存有效时间 (分)
+     */
+    STATISTICS_CACHE_EXPIRE("统计缓存有效时间 (分)", true),
 
     ;
 
