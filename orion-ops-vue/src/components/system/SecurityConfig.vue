@@ -144,9 +144,9 @@ export default {
         loginFailureLock: false,
         loginIpBind: false,
         loginTokenAutoRenew: false,
-        loginTokenExpire: null,
-        loginFailureLockThreshold: null,
-        loginTokenAutoRenewThreshold: null
+        loginTokenExpire: false,
+        loginFailureLockThreshold: false,
+        loginTokenAutoRenewThreshold: false
       }
     }
   },

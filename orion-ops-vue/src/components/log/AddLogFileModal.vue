@@ -32,7 +32,10 @@
           <a-input v-decorator="decorators.path" allowClear/>
         </a-form-item>
         <a-form-item label="命令" style="margin-bottom: 12px">
-          <a-textarea v-decorator="decorators.command" allowClear/>
+          <a-textarea v-decorator="decorators.command"
+                      :disabled="form.getFieldValue('machineId') === 1 &&
+                       form.getFieldValue('tailMode') === $enum.FILE_TAIL_MODE.TRACKER.value"
+                      allowClear/>
         </a-form-item>
         <a-form-item label="文件偏移量(行)" hasFeedback>
           <a-input v-decorator="decorators.offset" allowClear/>

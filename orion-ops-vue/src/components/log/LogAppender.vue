@@ -52,7 +52,7 @@
           </div>
           <!-- 状态 -->
           <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
-            <!-- 状态 可关闭 -->
+            <!-- 状态 执行中 -->
             <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
               <a-popconfirm title="确认关闭当前日志连接?"
                             placement="topRight"
@@ -60,9 +60,16 @@
                             cancel-text="取消"
                             @confirm="close">
                 <a-badge class="pointer"
-                         :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
-                         :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
+                         :status="$enum.LOG_TAIL_STATUS.RUNNABLE.status"
+                         :text="$enum.LOG_TAIL_STATUS.RUNNABLE.label"/>
               </a-popconfirm>
+            </template>
+            <!-- 状态 已关闭 -->
+            <template v-else-if="$enum.LOG_TAIL_STATUS.CLOSE.value === status">
+              <a-tooltip :title="`code: ${closeCode}${closeReason ? '; reason: ' + closeReason: ''}`">
+                <a-badge :status="$enum.LOG_TAIL_STATUS.CLOSE.status"
+                         :text="$enum.LOG_TAIL_STATUS.CLOSE.label"/>
+              </a-tooltip>
             </template>
             <!-- 状态 其他 -->
             <template v-else>
@@ -217,7 +224,9 @@ export default {
       downloadUrl: null,
       lines: 0,
       linesThresholdTemp: undefined,
-      linesThreshold: -1
+      linesThreshold: -1,
+      closeCode: null,
+      closeReason: null
     }
   },
   methods: {
@@ -240,7 +249,10 @@ export default {
       this.client.onerror = () => {
         this.status = this.$enum.LOG_TAIL_STATUS.ERROR.value
       }
-      this.client.onclose = () => {
+      this.client.onclose = (e) => {
+        console.log('log close:', e.code, e.reason)
+        this.closeCode = e.code
+        this.closeReason = e.reason
         this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
         this.$emit('close')
       }
