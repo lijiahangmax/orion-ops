@@ -47,13 +47,16 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 Strings.format(KeyConst.SFTP_SESSION_TOKEN, "*"),
                 // sftp上传请求token
                 Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*"),
-                // 统计数量key
-                KeyConst.STATISTICS_COUNT_KEY,
+                // 首页统计key
+                KeyConst.HOME_STATISTICS_COUNT_KEY,
+                // 调度统计key
+                Strings.format(KeyConst.SCHEDULER_TASK_STATISTIC_KEY, "*"),
                 // 环境缓存key
                 KeyConst.DATA_PROFILE_KEY
         );
         // 查询删除缓存key
-        scanKeys.stream().map(key -> RedisUtils.scanKeys(redisTemplate, key, Const.N_10000))
+        scanKeys.stream()
+                .map(key -> RedisUtils.scanKeys(redisTemplate, key, Const.N_10000))
                 .filter(Lists::isNotEmpty)
                 .peek(keys -> keys.forEach(key -> log.info("重启清除缓存-处理 key: {}", key)))
                 .forEach(keys -> redisTemplate.delete(keys));

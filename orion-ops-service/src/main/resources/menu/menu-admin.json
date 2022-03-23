@@ -63,6 +63,10 @@
       {
         "name": "执行记录",
         "path": "/schedule/record"
+      },
+      {
+        "name": "执行统计",
+        "path": "/schedule/statistic"
       }
     ]
   },
