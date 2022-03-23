@@ -1,8 +1,12 @@
 package com.orion.ops.controller;
 
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
+import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
 import com.orion.ops.entity.vo.StatisticsVO;
 import com.orion.ops.service.api.StatisticsService;
+import com.orion.ops.utils.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +33,15 @@ public class StatisticsController {
     @RequestMapping("/home")
     public StatisticsVO homeStatistics() {
         return statisticsService.homeStatistics();
+    }
+
+    /**
+     * 调度任务统计
+     */
+    @RequestMapping("/scheduler-task")
+    public SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(@RequestBody SchedulerTaskStatisticsRequest request) {
+        Long taskId = Valid.notNull(request.getTaskId());
+        return statisticsService.schedulerTaskStatistic(taskId);
     }
 
 }

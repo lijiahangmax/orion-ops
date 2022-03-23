@@ -15,6 +15,17 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
+    <!-- 统计查询映射结果 -->
+    <resultMap id="StatisticsResultMap" type="com.orion.ops.entity.dto.SchedulerTaskRecordStatisticsDTO">
+        <result column="scheduled_count" property="scheduledCount"/>
+        <result column="success_count" property="successCount"/>
+        <result column="failure_count" property="failureCount"/>
+        <result column="date" property="date"/>
+        <result column="avg_used" property="avgUsed"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, task_id, task_name, task_status, deleted, start_time, end_time, create_time, update_time
@@ -33,6 +44,65 @@
         <foreach collection="idList" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </select>
+
+    <select id="getTaskRecordStatistic" resultMap="StatisticsResultMap">
+        SELECT
+            COUNT(1) scheduled_count,
+            COUNT(task_status = 30 OR NULL) success_count,
+            COUNT(task_status = 40 OR NULL) failure_count,
+            FLOOR(
+                AVG(
+                    IF(
+                        task_status = 30
+                        AND end_time IS NOT NULL
+                        AND start_time IS NOT NULL,
+                        UNIX_TIMESTAMP(end_time) * 1000 - UNIX_TIMESTAMP(start_time) * 1000,
+                        NULL
+                    )
+                )
+            ) avg_used
+        FROM scheduler_task_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+    </select>
+
+    <select id="getTaskMachineRecordStatistic" resultMap="StatisticsResultMap">
+        SELECT
+            machine_name,
+            machine_id,
+            COUNT(1) scheduled_count,
+            COUNT(exec_status = 30 OR NULL) success_count,
+            COUNT(exec_status = 40 OR NULL) failure_count,
+            FLOOR(
+                AVG(
+                    IF(
+                        exec_status = 30
+                        AND end_time IS NOT NULL
+                        AND start_time IS NOT NULL,
+                        UNIX_TIMESTAMP( end_time ) * 1000 - UNIX_TIMESTAMP( start_time ) * 1000,
+                        NULL
+                    )
+                )
+            ) avg_used
+        FROM scheduler_task_machine_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+        GROUP BY machine_id
+        ORDER BY id DESC
+    </select>
+
+    <select id="getTaskRecordDateStatistic" resultMap="StatisticsResultMap">
+        SELECT
+            COUNT(1) scheduled_count,
+            COUNT(task_status = 30 OR NULL) success_count,
+            COUNT(task_status = 40 OR NULL) failure_count,
+            DATE_FORMAT(create_time, '%Y-%m-%d') date
+        FROM scheduler_task_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+        AND create_time >= #{rangeStartDate}
+        GROUP BY date
     </select>
 
 </mapper>

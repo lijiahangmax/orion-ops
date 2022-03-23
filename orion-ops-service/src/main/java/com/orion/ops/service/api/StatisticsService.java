@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.vo.StatisticCountVO;
+import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
 import com.orion.ops.entity.vo.StatisticsVO;
 
 /**
@@ -20,10 +20,11 @@ public interface StatisticsService {
     StatisticsVO homeStatistics();
 
     /**
-     * 统计数量信息
+     * 获取调度任务统计
      *
-     * @return 数量
+     * @param taskId 任务id
+     * @return 统计
      */
-    StatisticCountVO statisticsCount();
+    SchedulerTaskRecordStatisticsVO schedulerTaskStatistic(Long taskId);
 
 }

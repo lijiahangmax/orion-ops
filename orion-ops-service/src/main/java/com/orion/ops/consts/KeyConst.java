@@ -111,16 +111,18 @@ public class KeyConst {
     public static final int SFTP_UPLOAD_ACCESS_EXPIRE = 60 * 60 * 5;
 
     /**
-     * 统计数量 key
+     * 主页统计数量 key
      * <p>
-     * data:statistics:count
+     * data:statistics:home:count
      */
-    public static final String STATISTICS_COUNT_KEY = "data:statistics:count";
+    public static final String HOME_STATISTICS_COUNT_KEY = "data:statistics:home:count";
 
     /**
-     * 5 min
+     * 调度任务统计 key
+     * <p>
+     * data:statistics:scheduler:task:{id}
      */
-    public static final int STATISTICS_COUNT_EXPIRE = 60 * 5;
+    public static final String SCHEDULER_TASK_STATISTIC_KEY = "data:statistics:scheduler:task:{}";
 
     /**
      * 环境缓存 key
