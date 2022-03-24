@@ -13,7 +13,7 @@
           </template>
         </a-page-header>
       </div>
-      <!-- 机器菜单 -->
+      <!-- 任务菜单 -->
       <a-spin :spinning="taskLoading">
         <div class="task-list-wrapper">
           <a-menu mode="inline" v-model="selectedTaskIds">

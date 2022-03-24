@@ -1479,6 +1479,10 @@ const $enum = {
     SFTP_UPLOAD_THRESHOLD: {
       key: 'sftpUploadThreshold',
       value: 110
+    },
+    STATISTICS_CACHE_EXPIRE: {
+      key: 'statisticsCacheExpire',
+      value: 120
     }
   },
 

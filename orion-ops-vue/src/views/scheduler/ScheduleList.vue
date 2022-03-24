@@ -241,11 +241,6 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         this.rows = data.rows || []
-        for (const row of this.rows) {
-          if (row.enableStatus === 2) {
-            row.nextTime = null
-          }
-        }
         this.pagination = pagination
         this.loading = false
       }).catch(() => {

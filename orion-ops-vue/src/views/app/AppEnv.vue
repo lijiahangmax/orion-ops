@@ -13,9 +13,9 @@
           </template>
         </a-page-header>
       </div>
-      <!-- 机器菜单 -->
+      <!-- 应用菜单 -->
       <a-spin :spinning="appLoading">
-        <div class="app-env-app-list">
+        <div class="app-list-wrapper">
           <a-menu mode="inline" :defaultSelectedKeys="defaultSelectedAppIds">
             <a-menu-item v-for="app in appList" :key="app.id" :title="app.host" @click="chooseApp(app.id)">
               <a-icon type="code-sandbox"/>
@@ -481,7 +481,7 @@ export default {
   }
 }
 
-.app-env-app-list {
+.app-list-wrapper {
   width: 200px;
   height: calc(100vh - 162px);
   border-radius: 5px;

@@ -37,6 +37,25 @@
             </span>
           </template>
         </a-form-model-item>
+        <!-- 统计缓存有效时间 -->
+        <a-form-model-item label="统计缓存有效时间">
+          <a-input-search class="option-input"
+                          v-model="option.statisticsCacheExpire"
+                          v-limit-integer
+                          placeholder="统计缓存有效时间"
+                          :disabled="loading.statisticsCacheExpire"
+                          :loading="loading.statisticsCacheExpire"
+                          @search="changeOption($enum.SYSTEM_OPTION_KEY.STATISTICS_CACHE_EXPIRE)">
+            <template #enterButton>
+              <a-icon type="check"/>
+            </template>
+          </a-input-search>
+          <template #extra>
+            <span class="help-text">
+              设置统计缓存有效时间(分) (首页, 调度任务, 应用构建, 应用发布)
+            </span>
+          </template>
+        </a-form-model-item>
       </a-form-model>
     </div>
   </div>
@@ -54,11 +73,13 @@ export default {
       layout,
       option: {
         resumeEnableSchedulerTask: false,
-        sftpUploadThreshold: null
+        sftpUploadThreshold: null,
+        statisticsCacheExpire: null
       },
       loading: {
         resumeEnableSchedulerTask: false,
-        sftpUploadThreshold: null
+        sftpUploadThreshold: false,
+        statisticsCacheExpire: false
       }
     }
   },
