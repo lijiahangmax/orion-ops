@@ -65,6 +65,7 @@
         FROM scheduler_task_record
         WHERE deleted = 1
         AND task_id = #{taskId}
+        AND create_time >= #{rangeStartDate}
     </select>
 
     <select id="getTaskMachineRecordStatistic" resultMap="StatisticsResultMap">

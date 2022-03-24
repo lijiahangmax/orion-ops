@@ -29,10 +29,11 @@ public interface SchedulerTaskRecordDAO extends BaseMapper<SchedulerTaskRecordDO
     /**
      * 获取调度任务统计
      *
-     * @param taskId taskId
+     * @param taskId         taskId
+     * @param rangeStartDate 统计开始时间
      * @return 统计信息
      */
-    SchedulerTaskRecordStatisticsDTO getTaskRecordStatistic(@Param("taskId") Long taskId);
+    SchedulerTaskRecordStatisticsDTO getTaskRecordStatistic(@Param("taskId") Long taskId, @Param("rangeStartDate") Date rangeStartDate);
 
     /**
      * 获取调度任务机器统计

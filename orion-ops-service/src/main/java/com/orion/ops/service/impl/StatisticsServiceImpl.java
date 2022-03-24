@@ -67,17 +67,18 @@ public class StatisticsServiceImpl implements StatisticsService {
         String cacheKey = Strings.format(KeyConst.SCHEDULER_TASK_STATISTIC_KEY, taskId);
         String cacheData = redisTemplate.opsForValue().get(cacheKey);
         if (Strings.isBlank(cacheData)) {
+            // 获取图表时间
+            Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
+            Date rangeStartDate = Arrays1.last(chartDates);
             // 获取任务统计信息
-            SchedulerTaskRecordStatisticsDTO taskStatisticDTO = schedulerTaskRecordDAO.getTaskRecordStatistic(taskId);
+            SchedulerTaskRecordStatisticsDTO taskStatisticDTO = schedulerTaskRecordDAO.getTaskRecordStatistic(taskId, rangeStartDate);
             SchedulerTaskRecordStatisticsVO statisticTask = Converts.to(taskStatisticDTO, SchedulerTaskRecordStatisticsVO.class);
             // 获取机器统计信息
             // List<SchedulerTaskRecordStatisticsDTO> machines = schedulerTaskRecordDAO.getTaskMachineRecordStatistic(taskId);
             // List<SchedulerTaskMachineRecordStatisticsVO> statisticMachines = Converts.toList(machines, SchedulerTaskMachineRecordStatisticsVO.class);
             // statisticTask.setMachineList(statisticMachines);
-            // 获取图表时间
-            Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
             // 获取任务统计图表
-            List<SchedulerTaskRecordStatisticsDTO> dateStatistic = schedulerTaskRecordDAO.getTaskRecordDateStatistic(taskId, Arrays1.last(chartDates));
+            List<SchedulerTaskRecordStatisticsDTO> dateStatistic = schedulerTaskRecordDAO.getTaskRecordDateStatistic(taskId, rangeStartDate);
             Map<String, SchedulerTaskRecordStatisticsDTO> dateStatisticMap = dateStatistic.stream()
                     .collect(Collectors.toMap(s -> Dates.format(s.getDate(), Dates.YMD), Function.identity(), (e1, e2) -> e2));
             // 填充数据
