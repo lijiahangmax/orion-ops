@@ -373,6 +373,15 @@ const routes = [
         component: () => import('../views/scheduler/ScheduleRecord')
       },
       {
+        path: '/schedule/statistic/:id?',
+        name: 'scheduleStatistic',
+        meta: {
+          requireAuth: true,
+          title: '调度统计'
+        },
+        component: () => import('../views/scheduler/SchedulerStatistic')
+      },
+      {
         path: '*',
         name: '404',
         meta: {

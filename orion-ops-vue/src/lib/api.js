@@ -1455,6 +1455,13 @@ const $api = {
   },
 
   /**
+   * 调度任务统计信息
+   */
+  getSchedulerTaskStatistics: param => {
+    return $http.$post('/statistics/scheduler-task', param)
+  },
+
+  /**
    * 获取日志列表
    */
   getLogList: param => {
