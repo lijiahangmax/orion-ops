@@ -34,11 +34,12 @@ java -jar xxx.jar --spring.profiles.active=dev
 
 机器创建后系统会生成几个默认的环境变量, 用于部分功能的交互。
 
-| key           | 示例       | 描述               |
-| :----         | :---      | :----              |
-| tail_charset  | UTF-8     | 文件追踪编码格式      |
-| tail_offset   | 400       | 文件追踪偏移量(行)    |
-| sftp_charset  | UTF-8     | sftp 文件名称编码格式 |
+| key                    | 示例                           | 描述                |
+| :----                  | :---                          | :----              |
+| sftp_charset           | UTF-8                         | sftp 文件名称编码格式 |
+| tail_charset           | UTF-8                         | 文件追踪编码格式      |
+| tail_offset            | 400                           | 文件追踪偏移量(行)    |
+| tail_default_command   | tail -f -n @{offset} @{file}  | 文件追踪默认命令      |
 
 ⚡ 注意: 切换视图后保存只会增量保存, 并不会删除变量
 

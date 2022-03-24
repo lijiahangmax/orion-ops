@@ -1,6 +1,7 @@
 * 关于
-    * [更新日志](about/change-log.md)
     * [Roadmap](about/roadmap.md)
+    * [更新日志](about/change-log.md)
+    * [如何升级](about/update.md)
     * [设计概念](about/concepts.md)
 
 * 快速开始
@@ -16,3 +17,5 @@
     * [用户管理](operator/user.md)
     * [系统管理](operator/system.md)
 
+* 进阶指南
+    * [二次开发](advance/second-dev.md)
