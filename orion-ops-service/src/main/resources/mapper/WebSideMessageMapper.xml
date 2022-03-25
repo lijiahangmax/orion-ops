@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.WebSideMessageDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.WebSideMessageDO">
+        <id column="id" property="id"/>
+        <result column="message_classify" property="messageClassify"/>
+        <result column="message_type" property="messageType"/>
+        <result column="read_status" property="readStatus"/>
+        <result column="to_user_id" property="toUserId"/>
+        <result column="to_user_name" property="toUserName"/>
+        <result column="send_message" property="sendMessage"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, message_classify, message_type, read_status, to_user_id, to_user_name, send_message, deleted, create_time, update_time
+    </sql>
+
+</mapper>
