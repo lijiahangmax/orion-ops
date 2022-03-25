@@ -41,7 +41,7 @@ public class SchedulerTaskImpl implements Runnable {
         Long recordId = schedulerTaskRecordService.createTaskRecord(id);
         // 执行任务
         ITaskProcessor processor = ITaskProcessor.with(recordId, SerialType.of(task.getSerializeType()));
-        SchedulerPools.SCHEDULER_TASK_SCHEDULER.execute(processor);
+        SchedulerPools.SCHEDULER_TASK_MAIN_SCHEDULER.execute(processor);
     }
 
 }

@@ -4,9 +4,9 @@ import com.orion.lang.thread.ExecutorBuilder;
 import com.orion.utils.Systems;
 import com.orion.utils.Threads;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author Jiahang Li
@@ -21,7 +21,7 @@ public class SchedulerPools {
     /**
      * terminal 调度线程池
      */
-    public static final ExecutorService TERMINAL_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor TERMINAL_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("terminal-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -33,7 +33,7 @@ public class SchedulerPools {
     /**
      * 命令执行 调度线程池
      */
-    public static final ExecutorService EXEC_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor EXEC_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("exec-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -45,7 +45,7 @@ public class SchedulerPools {
     /**
      * tail 调度线程池
      */
-    public static final ExecutorService TAIL_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor TAIL_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("tail-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -58,7 +58,7 @@ public class SchedulerPools {
     /**
      * sftp 传输进度线程池
      */
-    public static final ExecutorService SFTP_TRANSFER_RATE_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor SFTP_TRANSFER_RATE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-transfer-rate-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -71,7 +71,7 @@ public class SchedulerPools {
     /**
      * sftp 上传线程池
      */
-    public static final ExecutorService SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-upload-thread-")
             .setCorePoolSize(6)
             .setMaxPoolSize(6)
@@ -83,7 +83,7 @@ public class SchedulerPools {
     /**
      * sftp 下载线程池
      */
-    public static final ExecutorService SFTP_DOWNLOAD_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor SFTP_DOWNLOAD_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-download-thread-")
             .setCorePoolSize(6)
             .setMaxPoolSize(6)
@@ -95,7 +95,7 @@ public class SchedulerPools {
     /**
      * sftp 打包线程池
      */
-    public static final ExecutorService SFTP_PACKAGE_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor SFTP_PACKAGE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("sftp-package-thread-")
             .setCorePoolSize(4)
             .setMaxPoolSize(4)
@@ -107,7 +107,7 @@ public class SchedulerPools {
     /**
      * 应用构建线程池
      */
-    public static final ExecutorService APP_BUILD_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor APP_BUILD_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("app-build-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -119,7 +119,7 @@ public class SchedulerPools {
     /**
      * 应用发布 主线程操作线程池
      */
-    public static final ExecutorService RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-main-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -131,7 +131,7 @@ public class SchedulerPools {
     /**
      * 应用发布 机器操作线程池
      */
-    public static final ExecutorService RELEASE_MACHINE_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor RELEASE_MACHINE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("release-machine-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -143,8 +143,8 @@ public class SchedulerPools {
     /**
      * 调度任务 主进程操作线程池
      */
-    public static final ExecutorService SCHEDULER_TASK_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("scheduler-task-thread-")
+    public static final ThreadPoolExecutor SCHEDULER_TASK_MAIN_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("scheduler-task-main-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
@@ -155,7 +155,7 @@ public class SchedulerPools {
     /**
      * 调度任务 机器操作线程池
      */
-    public static final ExecutorService SCHEDULER_TASK_MACHINE_SCHEDULER = ExecutorBuilder.create()
+    public static final ThreadPoolExecutor SCHEDULER_TASK_MACHINE_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("scheduler-task-machine-thread-")
             .setCorePoolSize(1)
             .setMaxPoolSize(Integer.MAX_VALUE)
@@ -176,7 +176,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(APP_BUILD_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(RELEASE_MACHINE_SCHEDULER, Const.MS_S_3);
-            Threads.shutdownPoolNow(SCHEDULER_TASK_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(SCHEDULER_TASK_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SCHEDULER_TASK_MACHINE_SCHEDULER, Const.MS_S_3);
         });
     }

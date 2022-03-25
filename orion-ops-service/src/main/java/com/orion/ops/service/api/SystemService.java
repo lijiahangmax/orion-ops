@@ -6,6 +6,9 @@ import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
 import com.orion.ops.entity.vo.SystemOptionVO;
+import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
+
+import java.util.List;
 
 /**
  * 系统服务
@@ -64,5 +67,12 @@ public interface SystemService {
      * @return 配置项
      */
     SystemOptionVO getSystemOptions();
+
+    /**
+     * 获取线程池指标
+     *
+     * @return 指标
+     */
+    List<ThreadPoolMetricsVO> getThreadPoolMetrics();
 
 }

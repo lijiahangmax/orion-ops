@@ -3,6 +3,8 @@ package com.orion.ops.utils;
 import com.orion.id.UUIds;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.consts.system.ThreadPoolMetricsType;
+import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -16,6 +18,7 @@ import com.orion.utils.time.Dates;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 工具类
@@ -162,6 +165,23 @@ public class Utils {
             return null;
         }
         return Dates.interval(ms, false, "d ", "h ", "m ", "s");
+    }
+
+    /**
+     * 获取线程池指标
+     *
+     * @param metricsType 指标类型
+     * @return 指标
+     */
+    public static ThreadPoolMetricsVO getThreadPoolMetrics(ThreadPoolMetricsType metricsType) {
+        ThreadPoolMetricsVO metrics = new ThreadPoolMetricsVO();
+        metrics.setType(metricsType.getType());
+        ThreadPoolExecutor executor = metricsType.getExecutor();
+        metrics.setActiveThreadCount(executor.getActiveCount());
+        metrics.setTotalTaskCount(executor.getTaskCount());
+        metrics.setCompletedTaskCount(executor.getCompletedTaskCount());
+        metrics.setQueueSize(executor.getQueue().size());
+        return metrics;
     }
 
 }

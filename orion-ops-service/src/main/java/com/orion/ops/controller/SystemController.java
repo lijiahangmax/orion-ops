@@ -14,6 +14,7 @@ import com.orion.ops.entity.request.SystemOptionRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
 import com.orion.ops.entity.vo.SystemOptionVO;
+import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
 import com.orion.ops.service.api.SystemService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 系统配置
@@ -109,6 +111,15 @@ public class SystemController {
     @RequireRole(RoleType.ADMINISTRATOR)
     public SystemOptionVO getSystemOptions() {
         return systemService.getSystemOptions();
+    }
+
+    /**
+     * 获取线程池指标
+     */
+    @RequestMapping("/get-thread-metrics")
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public List<ThreadPoolMetricsVO> getThreadMetrics() {
+        return systemService.getThreadPoolMetrics();
     }
 
 }

@@ -10,6 +10,7 @@ import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.system.SystemCleanType;
 import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.consts.system.ThreadPoolMetricsType;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
 import com.orion.ops.entity.request.ConfigIpListRequest;
@@ -17,6 +18,7 @@ import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;
 import com.orion.ops.entity.vo.SystemOptionVO;
+import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.service.api.SystemService;
@@ -36,6 +38,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 系统服务实现
@@ -251,6 +254,13 @@ public class SystemServiceImpl implements SystemService {
         options.setSftpUploadThreshold(Integer.valueOf(SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue()));
         options.setStatisticsCacheExpire(Integer.valueOf(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()));
         return options;
+    }
+
+    @Override
+    public List<ThreadPoolMetricsVO> getThreadPoolMetrics() {
+        return Arrays.stream(ThreadPoolMetricsType.values())
+                .map(Utils::getThreadPoolMetrics)
+                .collect(Collectors.toList());
     }
 
     /**
