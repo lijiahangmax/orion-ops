@@ -1567,6 +1567,60 @@ const $enum = {
       label: '跳过错误',
       title: '跳过错误项, 继续执行'
     }
+  },
+
+  /**
+   * 线程池指标类型
+   */
+  THREAD_POOL_METRICS_TYPE: {
+    TERMINAL: {
+      value: 10,
+      label: '远程终端线程池'
+    },
+    EXEC: {
+      value: 20,
+      label: '批量执行线程池'
+    },
+    TAIL: {
+      value: 30,
+      label: '文件追踪线程池'
+    },
+    SFTP_TRANSFER_RATE: {
+      value: 40,
+      label: '传输进度线程池'
+    },
+    SFTP_UPLOAD: {
+      value: 50,
+      label: '文件上传线程池'
+    },
+    SFTP_DOWNLOAD: {
+      value: 60,
+      label: '文件下载线程池'
+    },
+    SFTP_PACKAGE: {
+      value: 70,
+      label: '文件打包线程池'
+    },
+    APP_BUILD: {
+      value: 80,
+      label: '应用构建线程池'
+    },
+    RELEASE_MAIN: {
+      value: 90,
+      label: '应用发布主线程池'
+    },
+    RELEASE_MACHINE: {
+      value: 100,
+      label: '应用发布机器线程池'
+    },
+    SCHEDULER_TASK_MAIN: {
+      value: 110,
+      label: '调度任务主线程池'
+    },
+    SCHEDULER_TASK_MACHINE: {
+      value: 120,
+      label: '调度任务机器线程池'
+    }
   }
 
 }

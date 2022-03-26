@@ -1582,6 +1582,13 @@ const $api = {
   },
 
   /**
+   * 获取系统线程池指标
+   */
+  getSystemThreadMetrics: param => {
+    return $http.$post('/system/get-thread-metrics', param)
+  },
+
+  /**
    * 获取 cron 下几次执行时间
    */
   getCronNextTime: param => {

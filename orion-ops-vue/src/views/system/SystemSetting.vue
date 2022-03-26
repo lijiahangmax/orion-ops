@@ -17,6 +17,10 @@
       <a-tab-pane key="4" tab="其他设置">
         <OtherConfig/>
       </a-tab-pane>
+      <!-- 线程池指标 -->
+      <a-tab-pane key="5" tab="线程池指标">
+        <ThreadMetrics/>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -31,7 +35,8 @@ export default {
     SystemAnalysis,
     SecurityConfig: () => import('@/components/system/SecurityConfig'),
     IpConfig: () => import('@/components/system/IpConfig'),
-    OtherConfig: () => import('@/components/system/OtherConfig')
+    OtherConfig: () => import('@/components/system/OtherConfig'),
+    ThreadMetrics: () => import('@/components/system/ThreadMetrics')
   }
 }
 </script>

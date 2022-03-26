@@ -43,7 +43,7 @@
       </div>
     </div>
     <!-- 系统统计分析 -->
-    <div class="system-analysis-descriptions" style="margin-top: 18px;">
+    <div class="system-analysis-descriptions">
       <a-descriptions title="系统统计分析">
         <!-- 已挂载秘钥数量 -->
         <a-descriptions-item label="已挂载秘钥数量" :span="3">
@@ -299,6 +299,10 @@ export default {
 
 .system-analysis-container {
   margin-top: 16px;
+
+  .system-analysis-descriptions {
+    margin-top: 18px;
+  }
 
   /deep/ .ant-descriptions-title {
     margin: 0 0 24px 16px;
