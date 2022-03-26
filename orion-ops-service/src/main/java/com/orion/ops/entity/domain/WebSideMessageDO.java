@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,18 +30,24 @@ public class WebSideMessageDO implements Serializable {
 
     /**
      * 消息分类
+     *
+     * @see com.orion.ops.consts.message.MessageClassify
      */
     @TableField("message_classify")
     private Integer messageClassify;
 
     /**
      * 消息类型
+     *
+     * @see com.orion.ops.consts.message.MessageType
      */
     @TableField("message_type")
     private Integer messageType;
 
     /**
      * 是否已读 1未读 2已读
+     *
+     * @see com.orion.ops.consts.message.ReadStatus
      */
     @TableField("read_status")
     private Integer readStatus;
@@ -68,9 +71,18 @@ public class WebSideMessageDO implements Serializable {
     private String sendMessage;
 
     /**
-     * 是否删除 1未删除 2已删除
+     * 参数
      */
-    @TableField("deleted")
+    @TableField("params_json")
+    private String paramsJson;
+
+    /**
+     * 是否删除 1未删除 2已删除
+     *
+     * @see com.orion.ops.consts.Const#NOT_DELETED
+     * @see com.orion.ops.consts.Const#IS_DELETED
+     */
+    @TableLogic
     private Integer deleted;
 
     /**

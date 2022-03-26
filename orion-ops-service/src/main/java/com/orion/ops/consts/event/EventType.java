@@ -1,5 +1,6 @@
 package com.orion.ops.consts.event;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -10,6 +11,7 @@ import lombok.Getter;
  * @since 2022/4/20 22:25
  */
 @Getter
+@AllArgsConstructor
 public enum EventType {
 
     // -------------------- 认证操作 --------------------
@@ -553,12 +555,6 @@ public enum EventType {
     DELETE_TASK_RECORD(7145, EventClassify.SCHEDULER, "删除调度任务明细 <sb>${count}</sb>个"),
 
     ;
-
-    EventType(Integer type, EventClassify classify, String template) {
-        this.type = type;
-        this.classify = classify;
-        this.template = template;
-    }
 
     /**
      * 类型
