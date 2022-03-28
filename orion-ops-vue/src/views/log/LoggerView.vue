@@ -45,8 +45,8 @@
                              size="default"
                              :appendStyle="{height: 'calc(100vh - 100px)'}"
                              :relId="selectedTailFile.id"
-                             :tailType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
-                             :downloadType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value">
+                             :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
+                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST.value">
                   <!-- 左侧工具栏 -->
                   <template #left-tools>
                     <div class="appender-left-tools">
@@ -86,7 +86,7 @@
         </div>
         <!-- 日志空状态 -->
         <div v-else class="log-view-tabs-empty-container">
-          <a-empty class="empty-status" description="点击左侧菜单查看日志"/>
+          <a-empty class="empty-status" description="双击左侧菜单查看日志"/>
         </div>
       </a-layout-content>
     </a-layout>
