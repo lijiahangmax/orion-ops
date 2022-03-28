@@ -4,8 +4,8 @@
 
 ### SFTP 文件下载
 
-![文件下载](../assert/img/download-arch.png "文件下载")
+![文件下载](../assert/img/download_arch.png "文件下载")
 
 ### 应用构建&发布
 
-![应用构建&发布](../assert/img/release-arch.png "应用构建&发布")
+![应用构建&发布](../assert/img/release_arch.png "应用构建&发布")

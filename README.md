@@ -1,12 +1,13 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务等功能, 帮助开发人员快速定位问题, 致力于企业级应用。
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD) 等功能, 帮助开发人员快速定位问题,
+致力于企业级应用。
 
 Github: https://github.com/lijiahangmax/orion-ops  
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
 CSDN: https://blog.csdn.net/qq_41011894  
-文档: https://lijiahangmax.github.io/orion-ops/#/    
-Demo: http://101.43.254.243/ops/#/    
+文档: https://lijiahangmax.gitee.io/orion-ops/#/    
+Demo: http://101.43.254.243/ops/#/
 
 演示账号: `orionadmin`    
 演示密码: `orionadmin`
@@ -17,7 +18,7 @@ Demo: http://101.43.254.243/ops/#/
 * 在线终端: 支持 Web 终端登录远程机器, 记录操作日志, 管理端可强制下线
 * 文件管理: 支持远程机器文件批量上传、批量下载、暂停断点续传、实时传输速率、实时进度、打包传输等功能
 * 环境变量: 基于不同 Profile 有着不同的应用环境变量, 命令执行时使用占位符自动替换
-* 高兼容性: 自定义 CI/CD 操作, 不论是什么项目, 都是基于 Linux 命令执行, 灵活操作
+* 高兼容性: 自定义 CI/CD 操作, 不论是什么项目, 都是基于 SSH 命令执行, 灵活操作
 * 功能强大: 命令批量执行, 任务定时调度, 远程日志查看, 操作日志全记录等
 * 高扩展性: 前后端代码规范统一, 代码质量高, 易读好拓展
 * 免费开源: 前后端代码完全开源
@@ -30,6 +31,18 @@ Demo: http://101.43.254.243/ops/#/
 * Redis 5.0.5
 * Vue 2.6.11
 * Ant Design 1.7.8
+
+## 系统架构
+
+> 总体架构
+
+![总体架构](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files1661632709499769734.png "总体架构")
+
+> 发布架构 (CI / CD)
+
+![发布架构](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files6312827529386043725.png "发布架构")
+
+<br/>
 
 ## 功能预览
 
@@ -76,10 +89,21 @@ Demo: http://101.43.254.243/ops/#/
 ![发布列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4322661961526641390.png "发布列表")
 ![发布日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4699926352889499394.png "发布日志")
 
-## 支持
+<br/>
 
-......
+## 联系我
+
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="微信" width="350px"/>
+
+<br/>
+
+## 支持一下
+
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files7884174196576690325.png" alt="微信" width="350px"/>
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files8581952463146065537.jpg" alt="支付宝" width="350px"/>
+
+<br/>
 
 ## License
 
-[Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE)
+使用 [Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE) 开源许可证, 请自觉遵循。

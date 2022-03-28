@@ -1,12 +1,13 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务等功能, 帮助开发人员快速定位问题, 致力于企业级应用。
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD) 等功能, 帮助开发人员快速定位问题, 致力于企业级应用。
 
 Github: https://github.com/lijiahangmax/orion-ops  
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
 CSDN: https://blog.csdn.net/qq_41011894  
-文档: https://lijiahangmax.github.io/orion-ops/#/    
-Demo: http://101.43.254.243/ops/#/  
+文档: https://lijiahangmax.gitee.io/orion-ops/#/    
+Demo: http://101.43.254.243/ops/#/
+
 演示账号: `orionadmin`    
 演示密码: `orionadmin`
 
@@ -75,10 +76,13 @@ Demo: http://101.43.254.243/ops/#/
 ![发布列表](./assert/img/release_list.png "发布列表")
 ![发布日志](./assert/img/release_log.png "发布日志")
 
-## 支持
+## 联系我
+<img src="./assert/img/concat_wx.jpg" alt="微信" width="350px"/>
 
-......
+## 支持一下
+<img src="./assert/img/support_wx.png" alt="微信" width="350px"/>
+<img src="./assert/img/support_zfb.jpg" alt="支付宝" width="350px"/>
 
 ## License
 
-[Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE)
+使用 [Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE) 开源许可证, 请自觉遵循。

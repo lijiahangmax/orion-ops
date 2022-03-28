@@ -15,7 +15,8 @@
 ### 应用配置
 
 配置应用的基本信息, 以及不同环境下的构建与发布配置。  
-配置时 `机器环境变量` `系统环境变量` `应用环境变量` 都可以在命令执行前进行替换。
+配置时 `机器环境变量` `系统环境变量` `应用环境变量` 都可以在命令执行前进行替换。  
+⚡ 注意: 如果不配置应用的构建与发布配置, 则不能进行构建 (CI) 和发布 (CD) 操作
 
 应用在配置后系统会将部分配置信息存储到环境变量中。
 
@@ -25,6 +26,7 @@
 | transfer_path     | /data/projects/build.jar | 产物传输目标机器绝对路径                          |
 | transfer_dir_type | dir                      | 产物为文件夹传输类型 (dir/zip)                   |
 | release_serial    | parallel                 | 发布序列方式 (serial/parallel)                  |
+| exception_handler | skip_all                 | 异常处理类型 (skip_all/skip_error)              |
 
 > ##### 构建配置
 
