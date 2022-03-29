@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.WebSideMessageRequest;
+import com.orion.ops.entity.vo.WebSideMessagePollVO;
 import com.orion.ops.entity.vo.WebSideMessageVO;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Valid;
@@ -34,6 +35,14 @@ public class WebSideMessageController {
     @RequestMapping("/unread-count")
     public Integer getUnreadCount() {
         return webSideMessageService.getUnreadCount();
+    }
+
+    /**
+     * 轮询站内信
+     */
+    @RequestMapping("/poll-message")
+    public WebSideMessagePollVO pollMessage(@RequestBody WebSideMessageRequest request) {
+        return webSideMessageService.pollMessage(request.getMaxId());
     }
 
     /**

@@ -48,4 +48,9 @@ public class WebSideMessageRequest extends PageRequest {
      */
     private Integer status;
 
+    /**
+     * 最大id
+     */
+    private Long maxId;
+
 }
