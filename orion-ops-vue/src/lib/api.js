@@ -1727,6 +1727,54 @@ const $api = {
     return $http.$post('/scheduler-record/skip-machine', param, {
       loading: '正在跳过...'
     })
+  },
+
+  /**
+   * 获取站内信未读数量
+   */
+  getWebSideMessageUnreadCount: param => {
+    return $http.$post('/message/unread-count', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 轮询获取站内信
+   */
+  pollWebSideMessage: param => {
+    return $http.$post('/message/poll-message', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 设置站内信全部已读
+   */
+  setWebSideMessageAllRead: param => {
+    return $http.$post('/message/set-all-read', param)
+  },
+
+  /**
+   * 获取站内信列表
+   */
+  getWebSideMessageList: param => {
+    return $http.$post('/message/list', param)
+  },
+
+  /**
+   * 获取站内信详情
+   */
+  getWebSideMessageDetail: param => {
+    return $http.$post('/message/detail', param)
+  },
+
+  /**
+   * 删除站内信
+   */
+  deleteWebSideMessage: param => {
+    return $http.$post('/message/delete', param, {
+      loading: '正在删除...'
+    })
   }
 
 }

@@ -1621,6 +1621,82 @@ const $enum = {
       value: 120,
       label: '调度任务机器线程池'
     }
+  },
+
+  /**
+   * 阅读状态
+   */
+  READ_STATUS: {
+    UNREAD: {
+      value: 1,
+      label: '未读'
+    },
+    READ: {
+      value: 2,
+      label: 'READ'
+    }
+  },
+
+  /**
+   * 消息分类
+   */
+  MESSAGE_CLASSIFY: {
+    SYSTEM: {
+      value: 10,
+      label: '系统消息',
+      type: {
+        EXEC_SUCCESS: {
+          value: 1010,
+          label: '命令执行完成',
+          notify: 'success'
+        },
+        EXEC_FAILURE: {
+          value: 1020,
+          label: '命令执行失败',
+          notify: 'error'
+        },
+        VCS_INIT_SUCCESS: {
+          value: 1030,
+          label: '版本仓库初始化成功',
+          notify: 'success'
+        },
+        VCS_INIT_FAILURE: {
+          value: 1040,
+          label: '版本仓库初始化失败',
+          notify: 'error'
+        },
+        BUILD_SUCCESS: {
+          value: 1050,
+          label: '构建执行成功',
+          notify: 'success'
+        },
+        BUILD_FAILURE: {
+          value: 1060,
+          label: '构建执行失败',
+          notify: 'error'
+        },
+        RELEASE_AUDIT_RESOLVE: {
+          value: 1070,
+          label: '发布审批通过',
+          notify: 'success'
+        },
+        RELEASE_AUDIT_REJECT: {
+          value: 1080,
+          label: '发布审批驳回',
+          notify: 'warning'
+        },
+        RELEASE_SUCCESS: {
+          value: 1090,
+          label: '发布执行成功',
+          notify: 'success'
+        },
+        RELEASE_FAILURE: {
+          value: 1100,
+          label: '发布执行失败',
+          notify: 'error'
+        }
+      }
+    }
   }
 
 }
