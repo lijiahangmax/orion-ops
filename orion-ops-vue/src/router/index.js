@@ -300,7 +300,7 @@ const routes = [
         name: 'userDetail',
         meta: {
           requireAuth: true,
-          title: '个人信息'
+          title: '基本信息'
         },
         component: () => import('../views/user/UserDetail')
       },
@@ -355,26 +355,26 @@ const routes = [
         component: () => import('../views/system/SystemSetting')
       },
       {
-        path: '/schedule/list',
-        name: 'scheduleList',
+        path: '/scheduler/list',
+        name: 'schedulerList',
         meta: {
           requireAuth: true,
           title: '调度任务'
         },
-        component: () => import('../views/scheduler/ScheduleList')
+        component: () => import('../views/scheduler/SchedulerList')
       },
       {
-        path: '/schedule/record/:id?',
-        name: 'scheduleRecord',
+        path: '/scheduler/record/:id?',
+        name: 'schedulerRecord',
         meta: {
           requireAuth: true,
           title: '调度历史'
         },
-        component: () => import('../views/scheduler/ScheduleRecord')
+        component: () => import('../views/scheduler/SchedulerRecord')
       },
       {
-        path: '/schedule/statistic/:id?',
-        name: 'scheduleStatistic',
+        path: '/scheduler/statistics/:id?',
+        name: 'schedulerStatistic',
         meta: {
           requireAuth: true,
           title: '调度统计'

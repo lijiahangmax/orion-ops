@@ -336,7 +336,7 @@ const visibleHolder = {
 }
 
 export default {
-  name: 'ScheduleRecord',
+  name: 'SchedulerRecord',
   components: {
     SchedulerTaskLogAppenderModal,
     SchedulerTaskMachineLogAppenderModal,

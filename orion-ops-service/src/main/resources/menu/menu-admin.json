@@ -58,15 +58,15 @@
     "children": [
       {
         "name": "任务列表",
-        "path": "/schedule/list"
+        "path": "/scheduler/list"
       },
       {
         "name": "执行记录",
-        "path": "/schedule/record"
+        "path": "/scheduler/record"
       },
       {
         "name": "执行统计",
-        "path": "/schedule/statistic"
+        "path": "/scheduler/statistics"
       }
     ]
   },
