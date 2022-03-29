@@ -296,6 +296,36 @@ function cleanXss(s) {
   return s
 }
 
+/**
+ * 替换高亮关键字
+ */
+function replaceStainKeywords(message) {
+  return cleanXss(message)
+    .replaceAll('&lt;sb 0&gt;', '<span class="span-blue mx0">')
+    .replaceAll('&lt;sb 2&gt;', '<span class="span-blue mx2">')
+    .replaceAll('&lt;sb&gt;', '<span class="span-blue mx4">')
+    .replaceAll('&lt;/sb&gt;', '</span>')
+    .replaceAll('&lt;sr 0&gt;', '<span class="span-red mx0">')
+    .replaceAll('&lt;sr 2&gt;', '<span class="span-red mx2">')
+    .replaceAll('&lt;sr&gt;', '<span class="span-red mx4">')
+    .replaceAll('&lt;/sr&gt;', '</span>')
+}
+
+/**
+ * 清除高亮关键字
+ */
+function clearStainKeywords(message) {
+  return cleanXss(message)
+    .replaceAll('&lt;sb 0&gt;', '')
+    .replaceAll('&lt;sb 2&gt;', '')
+    .replaceAll('&lt;sb&gt;', '')
+    .replaceAll('&lt;/sb&gt;', '')
+    .replaceAll('&lt;sr 0&gt;', '')
+    .replaceAll('&lt;sr 2&gt;', '')
+    .replaceAll('&lt;sr&gt;', '')
+    .replaceAll('&lt;/sr&gt;', '')
+}
+
 export default {
   isEmptyStr,
   copyToClipboard,
@@ -317,5 +347,7 @@ export default {
   getPathAnalysis,
   getPath,
   detectZoom,
-  cleanXss
+  cleanXss,
+  replaceStainKeywords,
+  clearStainKeywords
 }

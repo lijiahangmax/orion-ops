@@ -154,9 +154,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.rows.forEach((row) => {
-          row.log = this.$utils.cleanXss(row.log)
-            .replaceAll('&lt;sb&gt;', '<span class="span-blue mx4">')
-            .replaceAll('&lt;/sb&gt;', '</span>')
+          row.log = this.$utils.replaceStainKeywords(row.log)
         })
         this.pagination = pagination
         this.loading = false

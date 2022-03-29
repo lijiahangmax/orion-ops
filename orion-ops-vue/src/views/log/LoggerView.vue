@@ -46,7 +46,7 @@
                              :appendStyle="{height: 'calc(100vh - 100px)'}"
                              :relId="selectedTailFile.id"
                              :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST.value">
+                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value">
                   <!-- 左侧工具栏 -->
                   <template #left-tools>
                     <div class="appender-left-tools">
