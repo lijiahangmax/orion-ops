@@ -1633,7 +1633,7 @@ const $enum = {
     },
     READ: {
       value: 2,
-      label: 'READ'
+      label: '已读'
     }
   },
 
@@ -1648,52 +1648,62 @@ const $enum = {
         EXEC_SUCCESS: {
           value: 1010,
           label: '命令执行完成',
-          notify: 'success'
+          notify: 'success',
+          redirect: '#/batch/exec/list'
         },
         EXEC_FAILURE: {
           value: 1020,
           label: '命令执行失败',
-          notify: 'error'
+          notify: 'error',
+          redirect: '#/batch/exec/list'
         },
         VCS_INIT_SUCCESS: {
           value: 1030,
           label: '版本仓库初始化成功',
-          notify: 'success'
+          notify: 'success',
+          redirect: '#/app/vcs'
         },
         VCS_INIT_FAILURE: {
           value: 1040,
           label: '版本仓库初始化失败',
-          notify: 'error'
+          notify: 'error',
+          redirect: '#/app/vcs'
         },
         BUILD_SUCCESS: {
           value: 1050,
           label: '构建执行成功',
-          notify: 'success'
+          notify: 'success',
+          redirect: '#/app/build'
         },
         BUILD_FAILURE: {
           value: 1060,
           label: '构建执行失败',
-          notify: 'error'
+          notify: 'error',
+          redirect: '#/app/build'
         },
         RELEASE_AUDIT_RESOLVE: {
           value: 1070,
           label: '发布审批通过',
-          notify: 'success'
+          notify: 'success',
+          redirect: '#/app/release'
         },
         RELEASE_AUDIT_REJECT: {
           value: 1080,
           label: '发布审批驳回',
-          notify: 'warning'
+          notify: 'warning',
+          redirect: '#/app/release'
         },
         RELEASE_SUCCESS: {
           value: 1090,
           label: '发布执行成功',
-          notify: 'success'
+          notify: 'success',
+          redirect: '#/app/release'
         },
         RELEASE_FAILURE: {
           value: 1100,
           label: '发布执行失败',
-          notify: 'error'
+          notify: 'error',
+          redirect: '#/app/release'
         }
       }
     }

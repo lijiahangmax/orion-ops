@@ -4,9 +4,10 @@ const $storage = {
 
   keys: {
     LOGIN_TOKEN: 'O-Login-Token',
-    USER: 'User',
+    CURRENT_USER: 'currentUser',
     ACTIVE_PROFILE: 'activeProfile',
-    LINES_THRESHOLD: 'linesThreshold'
+    LINES_THRESHOLD: 'linesThreshold',
+    MESSAGE_ID: 'messageId'
   },
 
   /**

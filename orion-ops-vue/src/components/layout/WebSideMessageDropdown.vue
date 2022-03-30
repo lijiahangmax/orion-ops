@@ -1,5 +1,6 @@
 <template>
   <a-dropdown :trigger="['click']"
+              title="站内信"
               overlayClassName="web-side-message-item"
               @visibleChange="visibleChange">
     <!-- 触发器 -->
@@ -39,7 +40,7 @@
         <div class="message-handler">
           <span class="span-blue pointer" v-if="rows.length > 0" @click="readAll">已读全部</span>
           <span v-else/>
-          <a>查看更多</a>
+          <a href="#/user/detail?key=3">查看更多</a>
         </div>
       </div>
     </template>
@@ -93,11 +94,13 @@ export default {
         if (newMessages && newMessages.length) {
           // 通知新消息
           for (const newMessage of newMessages) {
-            const messageType = this.$enum.valueOf(this.$enum.valueOf(this.$enum.MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
-            this.$notification[messageType.notify]({
-              message: messageType.label,
-              description: () => this.$utils.clearStainKeywords(newMessage.message),
-              duration: 3
+            setTimeout(() => {
+              const messageType = this.$enum.valueOf(this.$enum.valueOf(this.$enum.MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
+              this.$notification[messageType.notify]({
+                message: messageType.label,
+                description: () => this.$utils.clearStainKeywords(newMessage.message),
+                duration: 3
+              })
             })
           }
         }
@@ -109,6 +112,13 @@ export default {
     },
     toMessageDetail(id) {
       this.unreadCount -= 1
+      this.$storage.setSession(this.$storage.keys.MESSAGE_ID, id)
+      this.$router.push({
+        path: '/user/detail',
+        query: {
+          key: 3
+        }
+      })
     }
   },
   mounted() {

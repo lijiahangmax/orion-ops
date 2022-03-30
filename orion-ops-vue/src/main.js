@@ -62,7 +62,7 @@ Vue.prototype.$copy = function(value, tips = '已复制') {
  */
 Vue.prototype.$isAdmin = function() {
   try {
-    return JSON.parse($storage.get($storage.keys.USER)).roleType === 10
+    return JSON.parse($storage.get($storage.keys.CURRENT_USER)).roleType === 10
   } catch (e) {
     return false
   }
@@ -73,7 +73,7 @@ Vue.prototype.$isAdmin = function() {
  */
 Vue.prototype.$getUserId = function() {
   try {
-    return JSON.parse($storage.get($storage.keys.USER)).userId
+    return JSON.parse($storage.get($storage.keys.CURRENT_USER)).userId
   } catch (e) {
     return false
   }
