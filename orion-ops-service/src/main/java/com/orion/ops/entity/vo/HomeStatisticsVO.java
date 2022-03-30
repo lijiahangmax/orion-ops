@@ -10,11 +10,11 @@ import lombok.Data;
  * @since 2022/1/20 14:07
  */
 @Data
-public class StatisticsVO {
+public class HomeStatisticsVO {
 
     /**
      * 数量统计
      */
-    private StatisticCountVO count;
+    private HomeStatisticsCountVO count;
 
 }

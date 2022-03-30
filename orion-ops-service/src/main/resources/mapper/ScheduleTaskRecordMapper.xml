@@ -46,21 +46,23 @@
         </foreach>
     </select>
 
-    <select id="getTaskRecordStatistic" resultMap="StatisticsResultMap">
+    <select id="getTaskRecordStatistics" resultMap="StatisticsResultMap">
         SELECT
             COUNT(1) scheduled_count,
             COUNT(task_status = 30 OR NULL) success_count,
             COUNT(task_status = 40 OR NULL) failure_count,
-            FLOOR(
-                AVG(
-                    IF(
-                        task_status = 30
-                        AND end_time IS NOT NULL
-                        AND start_time IS NOT NULL,
-                        UNIX_TIMESTAMP(end_time) * 1000 - UNIX_TIMESTAMP(start_time) * 1000,
-                        NULL
+            IFNULL(
+                FLOOR(
+                    AVG(
+                        IF(
+                            task_status = 30
+                            AND end_time IS NOT NULL
+                            AND start_time IS NOT NULL,
+                            UNIX_TIMESTAMP(end_time) * 1000 - UNIX_TIMESTAMP(start_time) * 1000,
+                            NULL
+                        )
                     )
-                )
+                ), 0
             ) avg_used
         FROM scheduler_task_record
         WHERE deleted = 1
@@ -68,7 +70,7 @@
         AND create_time >= #{rangeStartDate}
     </select>
 
-    <select id="getTaskMachineRecordStatistic" resultMap="StatisticsResultMap">
+    <select id="getTaskMachineRecordStatistics" resultMap="StatisticsResultMap">
         SELECT
             machine_name,
             machine_id,
@@ -93,7 +95,7 @@
         ORDER BY id DESC
     </select>
 
-    <select id="getTaskRecordDateStatistic" resultMap="StatisticsResultMap">
+    <select id="getTaskRecordDateStatistics" resultMap="StatisticsResultMap">
         SELECT
             COUNT(1) scheduled_count,
             COUNT(task_status = 30 OR NULL) success_count,

@@ -17,32 +17,32 @@ public enum MessageType {
     /**
      * 命令执行完成
      */
-    EXEC_SUCCESS(1010, MessageClassify.SYSTEM, "<sb>${name}</sb> 命令执行完成"),
+    EXEC_SUCCESS(1010, MessageClassify.SYSTEM, "<sb 0>${name}</sb> 命令执行完成"),
 
     /**
      * 命令执行失败
      */
-    EXEC_FAILURE(1020, MessageClassify.SYSTEM, "<sb>${name}</sb> 命令执行失败"),
+    EXEC_FAILURE(1020, MessageClassify.SYSTEM, "<sb 0>${name}</sb> 命令执行失败"),
 
     /**
      * 版本仓库初始化成功
      */
-    VCS_INIT_SUCCESS(1030, MessageClassify.SYSTEM, "<sb>${name}</sb> 仓库初始化成功"),
+    VCS_INIT_SUCCESS(1030, MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化成功"),
 
     /**
      * 版本仓库初始化失败
      */
-    VCS_INIT_FAILURE(1040, MessageClassify.SYSTEM, "<sb>${name}</sb> 仓库初始化失败"),
+    VCS_INIT_FAILURE(1040, MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化失败"),
 
     /**
      * 构建执行成功
      */
-    BUILD_SUCCESS(1050, MessageClassify.SYSTEM, "<sb>${appName}</sb> <sb>#${seq}</sb> 构建成功"),
+    BUILD_SUCCESS(1050, MessageClassify.SYSTEM, "<sb 0>${appName}</sb> <sb>#${seq}</sb> 构建成功"),
 
     /**
      * 构建执行失败
      */
-    BUILD_FAILURE(1060, MessageClassify.SYSTEM, "<sb>${appName}</sb> <sb>#${seq}</sb> 构建失败"),
+    BUILD_FAILURE(1060, MessageClassify.SYSTEM, "<sb 0>${appName}</sb> <sb>#${seq}</sb> 构建失败"),
 
     /**
      * 发布审批通过

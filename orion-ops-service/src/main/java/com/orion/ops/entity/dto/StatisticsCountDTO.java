@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2022/1/20 14:24
  */
 @Data
-public class StatisticCountDTO {
+public class StatisticsCountDTO {
 
     /**
      * 机器数量

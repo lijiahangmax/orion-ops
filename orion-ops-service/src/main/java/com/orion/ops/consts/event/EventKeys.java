@@ -143,6 +143,11 @@ public class EventKeys {
     public static final String OPERATOR = "operator";
 
     /**
+     * 序列
+     */
+    public static final String SEQ = "seq";
+
+    /**
      * 构建序列
      */
     public static final String BUILD_SEQ = "buildSeq";

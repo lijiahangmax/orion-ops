@@ -4,6 +4,7 @@ import com.orion.lang.wrapper.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,8 +50,23 @@ public class WebSideMessageRequest extends PageRequest {
     private Integer status;
 
     /**
+     * 消息
+     */
+    private String message;
+
+    /**
      * 最大id
      */
     private Long maxId;
+
+    /**
+     * 开始时间区间-开始
+     */
+    private Date rangeStart;
+
+    /**
+     * 开始时间区间-结束
+     */
+    private Date rangeEnd;
 
 }

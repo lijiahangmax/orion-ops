@@ -33,7 +33,7 @@ public interface SchedulerTaskRecordDAO extends BaseMapper<SchedulerTaskRecordDO
      * @param rangeStartDate 统计开始时间
      * @return 统计信息
      */
-    SchedulerTaskRecordStatisticsDTO getTaskRecordStatistic(@Param("taskId") Long taskId, @Param("rangeStartDate") Date rangeStartDate);
+    SchedulerTaskRecordStatisticsDTO getTaskRecordStatistics(@Param("taskId") Long taskId, @Param("rangeStartDate") Date rangeStartDate);
 
     /**
      * 获取调度任务机器统计
@@ -41,7 +41,7 @@ public interface SchedulerTaskRecordDAO extends BaseMapper<SchedulerTaskRecordDO
      * @param taskId taskId
      * @return 统计信息
      */
-    List<SchedulerTaskRecordStatisticsDTO> getTaskMachineRecordStatistic(@Param("taskId") Long taskId);
+    List<SchedulerTaskRecordStatisticsDTO> getTaskMachineRecordStatistics(@Param("taskId") Long taskId);
 
     /**
      * 获取调度任务时间线统计
@@ -50,6 +50,6 @@ public interface SchedulerTaskRecordDAO extends BaseMapper<SchedulerTaskRecordDO
      * @param rangeStartDate 统计开始时间
      * @return 统计信息
      */
-    List<SchedulerTaskRecordStatisticsDTO> getTaskRecordDateStatistic(@Param("taskId") Long taskId, @Param("rangeStartDate") Date rangeStartDate);
+    List<SchedulerTaskRecordStatisticsDTO> getTaskRecordDateStatistics(@Param("taskId") Long taskId, @Param("rangeStartDate") Date rangeStartDate);
 
 }
