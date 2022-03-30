@@ -98,7 +98,7 @@ export default {
           roleType: data.roleType
         }
         this.$storage.set(this.$storage.keys.LOGIN_TOKEN, data.token)
-        this.$storage.set(this.$storage.keys.USER, JSON.stringify(user))
+        this.$storage.set(this.$storage.keys.CURRENT_USER, JSON.stringify(user))
         this.$router.push({ path: '/' })
       }).catch(() => {
         this.isSubmit = false

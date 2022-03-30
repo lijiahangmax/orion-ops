@@ -45,11 +45,11 @@
               :pagination="pagination"
               :dataSource="rows">
         <template v-slot:renderItem="item">
-          <a-list-item key="item.title">
+          <a-list-item>
             <!-- 日志主体 -->
             <div class="log-item-container">
               <div class="log-item-container-left">
-                <span class="log-info" v-html="item.log"></span>
+                <span class="log-info" v-html="item.log"/>
               </div>
               <div class="log-item-container-right">
                 <!-- 操作类型 -->

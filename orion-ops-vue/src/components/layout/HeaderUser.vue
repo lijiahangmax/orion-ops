@@ -42,6 +42,7 @@ const menuItemHandler = {
   async logout() {
     await this.$api.logout()
     this.$storage.clear()
+    this.$storage.clearSession()
     this.$router.push({ path: '/login' })
   }
 }
@@ -66,6 +67,7 @@ export default {
     },
     resetSuccess() {
       this.$storage.clear()
+      this.$storage.clearSession()
       this.$router.push('/login')
     }
   },

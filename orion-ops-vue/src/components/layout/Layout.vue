@@ -53,11 +53,20 @@ export default {
     }
   },
   async beforeCreate() {
-    await this.$api.validToken().then(() => {
-      this.validToken = true
-    }).catch(() => {
+    if (this.$getUserId()) {
+      await this.$api.validToken().then(() => {
+        this.validToken = true
+      }).catch(() => {
+        this.validToken = false
+      })
+    } else {
       this.validToken = false
-    })
+    }
+    if (!this.validToken) {
+      this.$storage.clear()
+      this.$storage.clearSession()
+      this.$router.push('/login')
+    }
   }
 }
 </script>

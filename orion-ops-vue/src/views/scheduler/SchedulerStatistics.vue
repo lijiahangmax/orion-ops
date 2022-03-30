@@ -25,10 +25,10 @@
         </div>
       </a-spin>
     </div>
-    <!-- 调度明细表格 -->
+    <!-- 调度明细图表 -->
     <div class="scheduler-task-statistic-container">
       <a-spin :spinning="loading">
-        <!-- 统计信息 -->
+        <!-- 统计指标容器 -->
         <div class="scheduler-statistic-header-wrapper">
           <div class="clean"/>
           <!-- 统计指标 -->
@@ -44,7 +44,7 @@
           <div class="clean"/>
         </div>
         <div class="scheduler-statistic-main-wrapper">
-          <!-- 统计表格 -->
+          <!-- 统计图表 -->
           <div class="scheduler-statistic-chart-wrapper">
             <p class="scheduler-statistic-title">近七天调度统计</p>
             <div id="scheduler-statistic-chart"/>
@@ -59,7 +59,7 @@
 import { Chart } from '@antv/g2'
 
 export default {
-  name: 'SchedulerStatistic',
+  name: 'SchedulerStatistics',
   data() {
     return {
       taskLoading: false,
