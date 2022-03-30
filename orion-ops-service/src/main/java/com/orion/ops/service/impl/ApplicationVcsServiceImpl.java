@@ -10,6 +10,7 @@ import com.orion.ops.consts.app.VcsTokenType;
 import com.orion.ops.consts.app.VcsType;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
@@ -21,6 +22,7 @@ import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
 import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
@@ -28,6 +30,7 @@ import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -61,6 +64,9 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
 
     @Resource
     private ApplicationInfoDAO applicationInfoDAO;
+
+    @Resource
+    private WebSideMessageService webSideMessageService;
 
     @Override
     public Long addAppVcs(ApplicationVcsRequest request) {
@@ -213,12 +219,18 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         } finally {
             Streams.close(gits);
         }
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, vcs.getId());
+        params.put(EventKeys.NAME, vcs.getVcsName());
         // 修改状态
         if (ex == null) {
             update.setVcsStatus(VcsStatus.OK.getStatus());
+            webSideMessageService.addMessage(MessageType.VCS_INIT_SUCCESS, params);
         } else {
             Files1.delete(clonePath);
             update.setVcsStatus(VcsStatus.ERROR.getStatus());
+            webSideMessageService.addMessage(MessageType.VCS_INIT_FAILURE, params);
         }
         applicationVcsDAO.updateById(update);
         // 设置日志参数

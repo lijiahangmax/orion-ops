@@ -17,6 +17,7 @@ import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Objects1;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
@@ -102,6 +103,9 @@ public class WebSideMessageServiceImpl implements WebSideMessageService {
                 .eq(Objects.nonNull(request.getClassify()), WebSideMessageDO::getMessageClassify, request.getClassify())
                 .eq(Objects.nonNull(request.getType()), WebSideMessageDO::getMessageType, request.getType())
                 .eq(Objects.nonNull(request.getStatus()), WebSideMessageDO::getReadStatus, request.getStatus())
+                .like(Strings.isNotBlank(request.getMessage()), WebSideMessageDO::getSendMessage, request.getMessage())
+                .between(Objects1.isNoneNull(request.getRangeStart(), request.getRangeEnd()), WebSideMessageDO::getCreateTime,
+                        request.getRangeStart(), request.getRangeEnd())
                 .orderByDesc(WebSideMessageDO::getId);
         return DataQuery.of(webSideMessageDAO)
                 .page(request)
@@ -113,6 +117,13 @@ public class WebSideMessageServiceImpl implements WebSideMessageService {
     public WebSideMessageVO getMessageDetail(Long id) {
         WebSideMessageDO message = webSideMessageDAO.selectById(id);
         Valid.notNull(message, MessageConst.UNKNOWN_DATA);
+        // 设为已读
+        if (ReadStatus.UNREAD.getStatus().equals(message.getReadStatus())) {
+            WebSideMessageDO update = new WebSideMessageDO();
+            update.setId(message.getId());
+            update.setReadStatus(ReadStatus.READ.getStatus());
+            webSideMessageDAO.updateById(update);
+        }
         return Converts.to(message, WebSideMessageVO.class);
     }
 

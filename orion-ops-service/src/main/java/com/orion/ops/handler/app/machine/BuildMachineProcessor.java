@@ -6,6 +6,8 @@ import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
 import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
@@ -16,10 +18,12 @@ import com.orion.ops.handler.app.build.BuildSessionHolder;
 import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.io.compress.CompressTypeEnum;
@@ -31,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 构建机器执行器
@@ -51,6 +56,8 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
     private static ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
 
     private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
+
+    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     private ApplicationBuildDO record;
 
@@ -107,6 +114,27 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
         super.completeCallback();
         // 复制产物文件
         this.copyBundleFile();
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.SEQ, record.getBuildSeq());
+        params.put(EventKeys.PROFILE_NAME, record.getProfileName());
+        params.put(EventKeys.APP_NAME, record.getAppName());
+        params.put(EventKeys.BUILD_SEQ, record.getBuildSeq());
+        webSideMessageService.addMessage(MessageType.BUILD_SUCCESS, record.getCreateUserId(), record.getCreateUserName(), params);
+    }
+
+    @Override
+    protected void exceptionCallback(boolean isMainError, Exception ex) {
+        super.exceptionCallback(isMainError, ex);
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.SEQ, record.getBuildSeq());
+        params.put(EventKeys.APP_NAME, record.getAppName());
+        params.put(EventKeys.PROFILE_NAME, record.getProfileName());
+        params.put(EventKeys.BUILD_SEQ, record.getBuildSeq());
+        webSideMessageService.addMessage(MessageType.BUILD_FAILURE, record.getCreateUserId(), record.getCreateUserName(), params);
     }
 
     @Override

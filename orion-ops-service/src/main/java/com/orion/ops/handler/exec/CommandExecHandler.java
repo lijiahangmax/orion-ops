@@ -4,12 +4,15 @@ import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.command.ExecStatus;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.CommandExecutor;
@@ -17,6 +20,7 @@ import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import com.orion.utils.time.Dates;
@@ -26,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 命令执行器 基类
@@ -44,6 +49,8 @@ public class CommandExecHandler implements IExecHandler {
     private static ExecSessionHolder execSessionHolder = SpringHolder.getBean(ExecSessionHolder.class);
 
     private static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+
+    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     private Long execId;
 
@@ -217,6 +224,11 @@ public class CommandExecHandler implements IExecHandler {
                 .append(used)
                 .append(" ms)\n");
         this.appendLog(sb.toString());
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.NAME, record.getMachineName());
+        webSideMessageService.addMessage(MessageType.EXEC_SUCCESS, record.getUserId(), record.getUserName(), params);
     }
 
     /**
@@ -232,6 +244,11 @@ public class CommandExecHandler implements IExecHandler {
                 .append(Exceptions.getStackTraceAsString(e))
                 .append(Const.LF);
         this.appendLog(log.toString());
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.NAME, record.getMachineName());
+        webSideMessageService.addMessage(MessageType.EXEC_FAILURE, record.getUserId(), record.getUserName(), params);
     }
 
     @SneakyThrows

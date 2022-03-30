@@ -9,6 +9,7 @@ import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.*;
@@ -97,6 +98,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
 
     @Resource
     private SystemEnvService systemEnvService;
+
+    @Resource
+    private WebSideMessageService webSideMessageService;
 
     @Resource
     private ReleaseSessionHolder releaseSessionHolder;
@@ -281,6 +285,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         update.setAuditTime(new Date());
         update.setAuditReason(request.getReason());
         final boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, release.getId());
+        params.put(EventKeys.TITLE, release.getReleaseTitle());
         if (resolve) {
             // 通过
             final boolean timedRelease = TimedReleaseType.TIMED.getType().equals(release.getTimedRelease());
@@ -291,9 +299,11 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 // 提交任务
                 taskRegister.submit(TaskType.RELEASE, release.getTimedReleaseTime(), id);
             }
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_RESOLVE, release.getCreateUserId(), release.getCreateUserName(), params);
         } else {
             // 驳回
             update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_REJECT, release.getCreateUserId(), release.getCreateUserName(), params);
         }
         int effect = applicationReleaseDAO.updateById(update);
         // 设置日志参数

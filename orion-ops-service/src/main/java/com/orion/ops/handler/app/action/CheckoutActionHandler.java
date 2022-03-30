@@ -5,6 +5,7 @@ import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
+import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
@@ -39,18 +40,20 @@ public class CheckoutActionHandler extends AbstractActionHandler {
         String remote = fullBranchName.substring(0, fullBranchName.indexOf("/"));
         String branchName = fullBranchName.substring(fullBranchName.indexOf("/") + 1);
         String commitId = store.getCommitId();
+        String vcsClonePath = store.getVcsClonePath();
+        Files1.delete(vcsClonePath);
         // 拼接日志
         String log = "*** 检出url: " + vcs.getVscUrl() + "\n" +
                 "*** 分支: " + fullBranchName + "\n" +
                 "*** commit: " + commitId + "\n" +
-                "*** 检出目录: " + store.getVcsClonePath() + "\n" +
+                "*** 检出目录: " + vcsClonePath + "\n" +
                 "*** 检出中...\n";
         this.appendLog(log);
         // clone
         try {
             CloneCommand clone = Git.cloneRepository()
                     .setURI(vcs.getVscUrl())
-                    .setDirectory(new File(store.getVcsClonePath()))
+                    .setDirectory(new File(vcsClonePath))
                     .setRemote(remote)
                     .setBranch(branchName);
             // 设置密码

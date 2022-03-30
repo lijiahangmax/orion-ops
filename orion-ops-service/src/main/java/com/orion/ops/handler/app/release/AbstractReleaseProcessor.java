@@ -2,11 +2,14 @@ package com.orion.ops.handler.app.release;
 
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ReleaseStatus;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.dao.ApplicationReleaseDAO;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.ops.service.api.ApplicationReleaseMachineService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
@@ -32,6 +35,8 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     protected static ApplicationReleaseMachineService applicationReleaseMachineService = SpringHolder.getBean(ApplicationReleaseMachineService.class);
 
     protected static ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
+
+    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     @Getter
     private Long releaseId;
@@ -80,16 +85,13 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         try {
             if (terminated) {
                 // 停止回调
-                log.info("应用发布任务执行执行停止 id: {}", releaseId);
-                this.updateStatus(ReleaseStatus.TERMINATED);
+                this.terminatedCallback();
             } else if (ex == null) {
                 // 成功回调
-                log.info("应用发布任务执行执行完成 id: {}", releaseId);
-                this.updateStatus(ReleaseStatus.FINISH);
+                this.completeCallback();
             } else {
                 // 异常回调
-                log.error("应用发布任务执行执行失败 id: {}", releaseId, ex);
-                this.updateStatus(ReleaseStatus.FAILURE);
+                this.exceptionCallback(ex);
             }
         } finally {
             // 释放资源
@@ -143,6 +145,42 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         for (ApplicationReleaseMachineDO machine : machines) {
             machineProcessors.put(machine.getId(), new ReleaseMachineProcessor(release, machine));
         }
+    }
+
+    /**
+     * 停止回调
+     */
+    protected void terminatedCallback() {
+        log.info("应用发布任务执行执行停止 id: {}", releaseId);
+        this.updateStatus(ReleaseStatus.TERMINATED);
+    }
+
+    /**
+     * 完成回调
+     */
+    protected void completeCallback() {
+        log.info("应用发布任务执行执行完成 id: {}", releaseId);
+        this.updateStatus(ReleaseStatus.FINISH);
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, release.getId());
+        params.put(EventKeys.TITLE, release.getReleaseTitle());
+        webSideMessageService.addMessage(MessageType.RELEASE_SUCCESS, release.getReleaseUserId(), release.getReleaseUserName(), params);
+    }
+
+    /**
+     * 异常回调
+     *
+     * @param ex ex
+     */
+    protected void exceptionCallback(Exception ex) {
+        log.error("应用发布任务执行执行失败 id: {}", releaseId, ex);
+        this.updateStatus(ReleaseStatus.FAILURE);
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, release.getId());
+        params.put(EventKeys.TITLE, release.getReleaseTitle());
+        webSideMessageService.addMessage(MessageType.RELEASE_FAILURE, release.getReleaseUserId(), release.getReleaseUserName(), params);
     }
 
     /**
