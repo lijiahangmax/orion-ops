@@ -1,7 +1,8 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
+import com.orion.ops.entity.vo.HomeStatisticsVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
-import com.orion.ops.entity.vo.StatisticsVO;
 
 /**
  * 统计service
@@ -17,7 +18,7 @@ public interface StatisticsService {
      *
      * @return 统计信息
      */
-    StatisticsVO homeStatistics();
+    HomeStatisticsVO homeStatistics();
 
     /**
      * 获取调度任务统计
@@ -25,6 +26,16 @@ public interface StatisticsService {
      * @param taskId 任务id
      * @return 统计
      */
-    SchedulerTaskRecordStatisticsVO schedulerTaskStatistic(Long taskId);
+    SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(Long taskId);
+
+    /**
+     * 获取应用构建统计
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 统计
+     */
+    ApplicationBuildStatisticsVO appBuildStatistics(Long appId, Long profileId);
+
 
 }

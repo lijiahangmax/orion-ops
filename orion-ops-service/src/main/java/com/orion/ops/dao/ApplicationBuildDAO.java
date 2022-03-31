@@ -2,8 +2,10 @@ package com.orion.ops.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
+import com.orion.ops.entity.dto.ApplicationBuildStatisticsDTO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,5 +69,25 @@ public interface ApplicationBuildDAO extends BaseMapper<ApplicationBuildDO> {
      * @return rows
      */
     List<ApplicationBuildDO> selectBuildReleaseList(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("limit") Integer limit);
+
+    /**
+     * 获取构建统计
+     *
+     * @param appId          appId
+     * @param profileId      profileId
+     * @param rangeStartDate rangeStartDate
+     * @return 统计信息
+     */
+    ApplicationBuildStatisticsDTO getBuildStatistics(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("rangeStartDate") Date rangeStartDate);
+
+    /**
+     * 获取构建时间线统计
+     *
+     * @param appId          appId
+     * @param profileId      profileId
+     * @param rangeStartDate rangeStartDate
+     * @return 时间线统计信息
+     */
+    List<ApplicationBuildStatisticsDTO> getBuildDateStatistics(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("rangeStartDate") Date rangeStartDate);
 
 }

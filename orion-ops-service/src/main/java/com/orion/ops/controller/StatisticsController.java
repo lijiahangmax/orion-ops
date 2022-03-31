@@ -1,9 +1,11 @@
 package com.orion.ops.controller;
 
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.entity.request.AppBuildStatisticsRequest;
 import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
+import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
+import com.orion.ops.entity.vo.HomeStatisticsVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
-import com.orion.ops.entity.vo.StatisticsVO;
 import com.orion.ops.service.api.StatisticsService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +33,7 @@ public class StatisticsController {
      * 首页统计
      */
     @RequestMapping("/home")
-    public StatisticsVO homeStatistics() {
+    public HomeStatisticsVO homeStatistics() {
         return statisticsService.homeStatistics();
     }
 
@@ -41,7 +43,17 @@ public class StatisticsController {
     @RequestMapping("/scheduler-task")
     public SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(@RequestBody SchedulerTaskStatisticsRequest request) {
         Long taskId = Valid.notNull(request.getTaskId());
-        return statisticsService.schedulerTaskStatistic(taskId);
+        return statisticsService.schedulerTaskStatistics(taskId);
+    }
+
+    /**
+     * 应用构建统计
+     */
+    @RequestMapping("/app-build")
+    public ApplicationBuildStatisticsVO appBuildStatistics(@RequestBody AppBuildStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appBuildStatistics(appId, profileId);
     }
 
 }
