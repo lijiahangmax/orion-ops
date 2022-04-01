@@ -94,11 +94,19 @@
     "children": [
       {
         "name": "应用构建",
-        "path": "/app/build"
+        "path": "/app/build/list"
       },
       {
         "name": "应用发布",
-        "path": "/app/release"
+        "path": "/app/release/list"
+      },
+      {
+        "name": "构建统计",
+        "path": "/app/build/statistics"
+      },
+      {
+        "name": "发布统计",
+        "path": "/app/release/statistics"
       }
     ]
   },
