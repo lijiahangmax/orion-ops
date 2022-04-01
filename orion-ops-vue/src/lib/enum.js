@@ -762,37 +762,75 @@ const $enum = {
       value: 10,
       color: '',
       label: '未开始',
-      stepStatus: 'wait'
+      stepStatus: 'wait',
+      actionStyle: {
+        background: '#63E6BE'
+      },
+      actionValue() {
+        return '未开始'
+      }
     },
     RUNNABLE: {
       value: 20,
       color: 'green',
       label: '进行中',
-      stepStatus: 'process'
+      stepStatus: 'process',
+      actionStyle: {
+        background: '#A9E34B'
+      },
+      actionValue() {
+        return '进行中'
+      }
     },
     FINISH: {
       value: 30,
       color: 'blue',
       label: '已完成',
-      stepStatus: 'finish'
+      stepStatus: 'finish',
+      actionStyle: {
+        background: '#A5D8FF',
+        'font-size': '14px'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已完成'
+      }
     },
     FAILURE: {
       value: 40,
       color: 'red',
       label: '已失败',
-      stepStatus: 'error'
+      stepStatus: 'error',
+      actionStyle: {
+        background: '#FF6B6B',
+        'font-size': '14px'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已失败'
+      }
     },
     SKIPPED: {
       value: 50,
       color: 'orange',
       label: '已跳过',
-      stepStatus: 'wait'
+      stepStatus: 'wait',
+      actionStyle: {
+        background: '#FFE066'
+      },
+      actionValue() {
+        return '已跳过'
+      }
     },
     TERMINATED: {
       value: 60,
       color: 'orange',
       label: '已停止',
-      stepStatus: 'wait'
+      stepStatus: 'wait',
+      actionStyle: {
+        background: '#FFC078'
+      },
+      actionValue() {
+        return '已停止'
+      }
     }
   },
 
@@ -1673,37 +1711,37 @@ const $enum = {
           value: 1050,
           label: '构建执行成功',
           notify: 'success',
-          redirect: '#/app/build'
+          redirect: '#/app/build/list'
         },
         BUILD_FAILURE: {
           value: 1060,
           label: '构建执行失败',
           notify: 'error',
-          redirect: '#/app/build'
+          redirect: '#/app/build/list'
         },
         RELEASE_AUDIT_RESOLVE: {
           value: 1070,
           label: '发布审批通过',
           notify: 'success',
-          redirect: '#/app/release'
+          redirect: '#/app/release/list'
         },
         RELEASE_AUDIT_REJECT: {
           value: 1080,
           label: '发布审批驳回',
           notify: 'warning',
-          redirect: '#/app/release'
+          redirect: '#/app/release/list'
         },
         RELEASE_SUCCESS: {
           value: 1090,
           label: '发布执行成功',
           notify: 'success',
-          redirect: '#/app/release'
+          redirect: '#/app/release/list'
         },
         RELEASE_FAILURE: {
           value: 1100,
           label: '发布执行失败',
           notify: 'error',
-          redirect: '#/app/release'
+          redirect: '#/app/release/list'
         }
       }
     }
