@@ -93,14 +93,14 @@ Demo: http://101.43.254.243/ops/#/
 
 ## 联系我
 
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="微信" width="298px"/>
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="联系微信" width="268px"/>
 
 <br/>
 
 ## 支持一下
 
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files7884174196576690325.png" alt="微信" width="268px"/>
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files8581952463146065537.jpg" alt="支付宝" width="268px"/>
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files7884174196576690325.png" alt="微信收款码" width="268px"/>
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files8581952463146065537.jpg" alt="支付宝收款码" width="268px"/>
 
 <br/>
 
