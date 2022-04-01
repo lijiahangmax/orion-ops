@@ -2,8 +2,10 @@ package com.orion.ops.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
+import com.orion.ops.entity.dto.ApplicationReleaseStatisticsDTO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,5 +41,25 @@ public interface ApplicationReleaseDAO extends BaseMapper<ApplicationReleaseDO> 
      * @return effect
      */
     Integer setTimedReleaseTimeNull(@Param("id") Long id);
+
+    /**
+     * 获取发布统计
+     *
+     * @param appId          appId
+     * @param profileId      profileId
+     * @param rangeStartDate rangeStartDate
+     * @return 统计信息
+     */
+    ApplicationReleaseStatisticsDTO getReleaseStatistics(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("rangeStartDate") Date rangeStartDate);
+
+    /**
+     * 获取发布时间线统计
+     *
+     * @param appId          appId
+     * @param profileId      profileId
+     * @param rangeStartDate rangeStartDate
+     * @return 时间线统计信息
+     */
+    List<ApplicationReleaseStatisticsDTO> getReleaseDateStatistics(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("rangeStartDate") Date rangeStartDate);
 
 }

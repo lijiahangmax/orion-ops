@@ -2,8 +2,10 @@ package com.orion.ops.controller;
 
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.AppBuildStatisticsRequest;
+import com.orion.ops.entity.request.AppReleaseStatisticsRequest;
 import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
 import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
+import com.orion.ops.entity.vo.ApplicationReleaseStatisticsVO;
 import com.orion.ops.entity.vo.HomeStatisticsVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
 import com.orion.ops.service.api.StatisticsService;
@@ -54,6 +56,16 @@ public class StatisticsController {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
         return statisticsService.appBuildStatistics(appId, profileId);
+    }
+
+    /**
+     * 应用发布统计
+     */
+    @RequestMapping("/app-release")
+    public ApplicationReleaseStatisticsVO appReleaseStatistics(@RequestBody AppReleaseStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appReleaseStatistic(appId, profileId);
     }
 
 }

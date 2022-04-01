@@ -97,7 +97,7 @@ public class ApplicationReleaseDO implements Serializable {
     private Integer releaseType;
 
     /**
-     * 发布状态 10待审核 20审核驳回 30待发布 40发布中 50发布完成 60发布停止 70初始化失败 80发布失败
+     * 发布状态 10待审核 20审核驳回 30待发布 35待调度 40发布中 50发布完成 60发布停止 70发布失败
      *
      * @see com.orion.ops.consts.app.ReleaseStatus
      */

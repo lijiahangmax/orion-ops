@@ -50,11 +50,6 @@ public enum ReleaseStatus {
     TERMINATED(60),
 
     /**
-     * 发布取消
-     */
-    CANCEL(65),
-
-    /**
      * 发布失败
      */
     FAILURE(70),

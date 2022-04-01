@@ -1,6 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
+import com.orion.ops.entity.vo.ApplicationReleaseStatisticsVO;
 import com.orion.ops.entity.vo.HomeStatisticsVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
 
@@ -37,5 +38,13 @@ public interface StatisticsService {
      */
     ApplicationBuildStatisticsVO appBuildStatistics(Long appId, Long profileId);
 
+    /**
+     * 获取应用发布统计
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 统计
+     */
+    ApplicationReleaseStatisticsVO appReleaseStatistic(Long appId, Long profileId);
 
 }
