@@ -267,8 +267,8 @@ const routes = [
         component: () => import('../views/app/AppVcs')
       },
       {
-        path: '/app/build',
-        name: 'appBuild',
+        path: '/app/build/list',
+        name: 'appBuildList',
         meta: {
           requireAuth: true,
           title: '应用构建',
@@ -277,14 +277,34 @@ const routes = [
         component: () => import('../views/app/AppBuild')
       },
       {
-        path: '/app/release',
-        name: 'appRelease',
+        path: '/app/release/list',
+        name: 'appReleaseList',
         meta: {
           requireAuth: true,
           title: '应用发布',
           visibleProfile: true
         },
         component: () => import('../views/app/AppRelease')
+      },
+      {
+        path: '/app/build/statistics',
+        name: 'appBuildStatistics',
+        meta: {
+          requireAuth: true,
+          title: '构建统计',
+          visibleProfile: true
+        },
+        component: () => import('../views/app/AppBuildStatistics')
+      },
+      {
+        path: '/app/release/statistics',
+        name: 'appReleaseStatistics',
+        meta: {
+          requireAuth: true,
+          title: '发布统计',
+          visibleProfile: true
+        },
+        component: () => import('../views/app/AppReleaseStatistics')
       },
       {
         path: '/user/list',
@@ -374,12 +394,12 @@ const routes = [
       },
       {
         path: '/scheduler/statistics/:id?',
-        name: 'schedulerStatistic',
+        name: 'schedulerStatistics',
         meta: {
           requireAuth: true,
           title: '调度统计'
         },
-        component: () => import('../views/scheduler/SchedulerStatistic')
+        component: () => import('../views/scheduler/SchedulerStatistics')
       },
       {
         path: '*',

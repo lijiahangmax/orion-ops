@@ -392,6 +392,7 @@ export default {
       align-items: flex-start;
       flex-direction: column;
       justify-content: center;
+      border-top: 2px solid #F8F9FA;
 
       .app-build-record-status {
         margin-bottom: 8px;
@@ -409,11 +410,10 @@ export default {
       .app-build-action-log-action-wrapper {
         width: 148px;
         border-radius: 4px;
-        border-top: 2px solid #F8F9FA;
 
         .app-build-action-log-action {
           margin: 2px 1px;
-          height: 100%;
+          height: calc(100% - 2px);
           border-radius: 4px;
           font-size: 12px;
           display: flex;

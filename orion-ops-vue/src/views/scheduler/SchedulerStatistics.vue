@@ -46,7 +46,7 @@
         <div class="scheduler-statistic-main-wrapper">
           <!-- 统计图表 -->
           <div class="scheduler-statistic-chart-wrapper">
-            <p class="scheduler-statistic-title">近七天调度统计</p>
+            <a-divider class="scheduler-statistic-title">近七天调度统计</a-divider>
             <div id="scheduler-statistic-chart"/>
           </div>
         </div>
@@ -210,12 +210,11 @@ export default {
 }
 
 .scheduler-statistic-title {
-  opacity: 0.8;
-  color: rgba(0, 0, 0, 0.85);
+  margin: 36px 0;
 }
 
 .scheduler-statistic-chart-wrapper {
-  margin: 0 24px;
+  margin: 0 24px 16px 24px;
 
   #scheduler-statistic-chart {
     height: calc(100vh - 228px);

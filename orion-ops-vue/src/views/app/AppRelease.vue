@@ -723,8 +723,7 @@ export default {
 <style lang="less" scoped>
 
 .timed-wrapper {
-  display: flex;
-  align-items: center;
+  display: contents;
 
   .timed-icon {
     background: #03A9F4;
@@ -732,7 +731,7 @@ export default {
     font-size: 16px;
     padding: 4px;
     border-radius: 3px;
-    margin-right: 4px;
+    margin-right: 2px;
     display: inline-block;
   }
 }
