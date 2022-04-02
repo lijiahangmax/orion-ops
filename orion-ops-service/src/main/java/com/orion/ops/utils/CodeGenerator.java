@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("web_side_message");
+                .setInclude("application_pipeline", "application_pipeline_detail");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()
