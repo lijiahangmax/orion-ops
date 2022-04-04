@@ -1,9 +1,6 @@
 package com.orion.ops.entity.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -51,8 +48,11 @@ public class ApplicationPipelineDO implements Serializable {
 
     /**
      * 是否删除 1未删除 2已删除
+     *
+     * @see com.orion.ops.consts.Const#NOT_DELETED
+     * @see com.orion.ops.consts.Const#IS_DELETED
      */
-    @TableField("deleted")
+    @TableLogic
     private Integer deleted;
 
     /**

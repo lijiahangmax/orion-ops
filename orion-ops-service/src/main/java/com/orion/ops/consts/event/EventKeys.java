@@ -207,4 +207,9 @@ public class EventKeys {
      */
     public static final String TIME = "time";
 
+    /**
+     * details
+     */
+    public static final String DETAILS = "details";
+
 }

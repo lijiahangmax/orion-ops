@@ -22,7 +22,7 @@ public class KeyConst {
     /**
      * 登陆token绑定 token
      * <p>
-     * auth:login:{id}
+     * auth:login:{id}:{timestamp}
      */
     public static final String LOGIN_TOKEN_BIND_KEY = "auth:bind:{}:{}";
 

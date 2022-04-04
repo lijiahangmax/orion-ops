@@ -463,6 +463,23 @@ public enum EventType {
      */
     SKIP_MACHINE_RELEASE(5055, EventClassify.RELEASE, "跳过机器发布操作 <sb>${title}</sb> <sb>${machineName}</sb>"),
 
+    // -------------------- 应用流水线 --------------------
+
+    /**
+     * 添加应用流水线
+     */
+    ADD_PIPELINE(5505, EventClassify.PIPELINE, "添加应用流水线 <sb>${pipelineName}</sb>"),
+
+    /**
+     * 修改应用流水线
+     */
+    UPDATE_PIPELINE(5510, EventClassify.PIPELINE, "修改应用流水线 <sb>${pipelineName}</sb>"),
+
+    /**
+     * 删除应用流水线
+     */
+    DELETE_PIPELINE(5515, EventClassify.PIPELINE, "删除应用流水线 <sb>${count}</sb>个"),
+
     // -------------------- 系统环境变量操作 --------------------
 
     /**

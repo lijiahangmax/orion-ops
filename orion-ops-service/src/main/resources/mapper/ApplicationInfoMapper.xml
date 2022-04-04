@@ -34,4 +34,21 @@
         AND deleted = 1
     </update>
 
+    <select id="selectNameById" resultType="java.lang.String">
+        SELECT app_name
+        FROM application_info
+        WHERE id = #{id}
+        AND deleted = 1
+    </select>
+
+    <select id="selectNameByIdList" resultMap="BaseResultMap">
+        SELECT id, app_name, app_tag
+        FROM application_info
+        WHERE deleted = 1
+        AND id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>

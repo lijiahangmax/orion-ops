@@ -100,6 +100,11 @@ public enum EventClassify {
     RELEASE(85),
 
     /**
+     * 应用流水线
+     */
+    PIPELINE(88),
+
+    /**
      * 系统环境变量操作
      */
     SYSTEM_ENV(90),
