@@ -63,13 +63,11 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         if (user == null) {
             return;
         }
-        Long userId = user.getId();
-        String username = user.getUsername();
         long now = System.currentTimeMillis();
-        Long before = activeUsers.put(userId, now);
+        Long before = activeUsers.put(user.getId(), now);
         if (before == null) {
             // 应用启动/多端登陆(单端登出) token有效
-            this.refreshActive(userId, username);
+            this.refreshActive(user);
             return;
         }
         // 获取活跃域值
@@ -77,17 +75,18 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         long activeThreshold = TimeUnit.HOURS.toMillis(activeThresholdHour);
         if (before + activeThreshold < now) {
             // 超过活跃域值
-            this.refreshActive(userId, username);
+            this.refreshActive(user);
         }
     }
 
     /**
      * 刷新活跃
      *
-     * @param userId   userId
-     * @param username username
+     * @param user user
      */
-    private void refreshActive(Long userId, String username) {
+    private void refreshActive(UserDTO user) {
+        Long userId = user.getId();
+        String username = user.getUsername();
         // 刷新登陆时间
         userInfoDAO.updateLastLoginTime(userId);
         // 记录日志
@@ -95,11 +94,13 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
         EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
         userEventLogService.recordLog(EventType.LOGIN, true);
-        // 如果开启自动续签 刷新登陆token
+        // 如果开启自动续签 刷新登陆token 绑定token
         if (EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue()) {
             long expire = Long.parseLong(SystemEnvAttr.LOGIN_TOKEN_EXPIRE.getValue());
             String loginKey = Strings.format(KeyConst.LOGIN_TOKEN_KEY, userId);
+            String bindKey = Strings.format(KeyConst.LOGIN_TOKEN_BIND_KEY, userId, user.getCurrentBindTimestamp());
             redisTemplate.expire(loginKey, expire, TimeUnit.HOURS);
+            redisTemplate.expire(bindKey, expire, TimeUnit.HOURS);
         }
     }
 
