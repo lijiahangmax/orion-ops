@@ -227,7 +227,7 @@ function getColumns() {
     {
       title: '最后登录时间',
       key: 'lastLoginTime',
-      width: 210,
+      width: 220,
       ellipsis: true,
       align: 'center',
       sorter: (a, b) => (a.lastLoginTime || 0) - (b.lastLoginTime || 0),

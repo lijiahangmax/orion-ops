@@ -199,6 +199,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.pagination = pagination
+        this.selectedRowKeys = []
         this.loading = false
       }).catch(() => {
         this.loading = false

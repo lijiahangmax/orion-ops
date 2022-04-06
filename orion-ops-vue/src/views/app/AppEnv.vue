@@ -88,7 +88,7 @@
               保存
             </a-button>
             <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
-            <AppProfileChecker ref="profileChecker-1">
+            <AppProfileChecker ref="profileChecker-1" v-if="query.profileId">
               <template #trigger>
                 <a-button class="mx8" type="primary" icon="sync">同步</a-button>
               </template>
@@ -96,7 +96,7 @@
                 <a-button type="primary" size="small" @click="syncEnv(-1)">确定</a-button>
               </template>
             </AppProfileChecker>
-            <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+            <a-button v-if="query.profileId" class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
             <a-divider type="vertical"/>
             <a-icon type="search" class="tools-icon" title="查询" @click="getAppEnv({})"/>
             <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>

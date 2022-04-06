@@ -54,7 +54,7 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary" icon="deployment-unit" @click="openRelease">应用发布</a-button>
+        <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="deployment-unit" @click="openRelease">应用发布</a-button>
         <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>

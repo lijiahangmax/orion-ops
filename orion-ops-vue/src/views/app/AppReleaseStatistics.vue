@@ -463,7 +463,7 @@ export default {
 
         .app-release-machine-info {
           display: flex;
-          height: 54px;
+          height: 64px;
           flex-direction: column;
           justify-content: space-around;
 
@@ -499,7 +499,7 @@ export default {
       flex-direction: column;
 
       .app-release-machine-actions {
-        height: 54px;
+        height: 64px;
 
         .app-release-action-log-actions-wrapper {
           display: flex;
