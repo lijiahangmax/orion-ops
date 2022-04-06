@@ -234,6 +234,16 @@ const routes = [
         component: () => import('../views/app/AppConfig')
       },
       {
+        path: '/app/pipeline/list',
+        name: 'appPipelineList',
+        meta: {
+          requireAuth: true,
+          title: '流水线配置',
+          visibleProfile: true
+        },
+        component: () => import('../views/app/AppPipeline')
+      },
+      {
         path: '/app/profile',
         name: 'appProfile',
         meta: {
