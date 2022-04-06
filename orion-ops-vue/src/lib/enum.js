@@ -873,11 +873,6 @@ const $enum = {
       color: 'orange',
       label: '已停止'
     },
-    // CANCEL: {
-    //   value: 65,
-    //   color: 'orange',
-    //   label: '已取消'
-    // },
     FAILURE: {
       value: 70,
       color: 'red',
@@ -910,6 +905,20 @@ const $enum = {
     TIMED: {
       value: 20,
       label: '定时发布'
+    }
+  },
+
+  /**
+   * 操作阶段类型
+   */
+  STAGE_TYPE: {
+    BUILD: {
+      value: 10,
+      label: '构建'
+    },
+    RELEASE: {
+      value: 20,
+      label: '发布'
     }
   },
 
@@ -1348,6 +1357,24 @@ const $enum = {
         SKIP_MACHINE_RELEASE: {
           value: 5055,
           label: '跳过机器发布操作'
+        }
+      }
+    },
+    APP_PIPELINE: {
+      value: 88,
+      label: '应用流水线',
+      type: {
+        ADD_PIPELINE: {
+          value: 5505,
+          label: '添加流水线'
+        },
+        UPDATE_PIPELINE: {
+          value: 5510,
+          label: '修改流水线'
+        },
+        DELETE_PIPELINE: {
+          value: 5515,
+          label: '删除流水线'
         }
       }
     },

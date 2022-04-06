@@ -1789,6 +1789,47 @@ const $api = {
     return $http.$post('/message/delete', param, {
       loading: '正在删除...'
     })
+  },
+
+  /**
+   * 新增应用流水线
+   */
+  addAppPipeline: param => {
+    return $http.$post('/app-pipeline/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改应用流水线
+   */
+  updateAppPipeline: param => {
+    return $http.$post('/app-pipeline/update', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 获取应用流水线列表
+   */
+  getAppPipelineList: param => {
+    return $http.$post('/app-pipeline/list', param)
+  },
+
+  /**
+   * 获取应用流水线详情
+   */
+  getAppPipelineDetail: param => {
+    return $http.$post('/app-pipeline/get', param)
+  },
+
+  /**
+   * 删除应用流水线
+   */
+  deleteAppPipeline: param => {
+    return $http.$post('/app-pipeline/delete', param, {
+      loading: '正在删除...'
+    })
   }
 
 }
