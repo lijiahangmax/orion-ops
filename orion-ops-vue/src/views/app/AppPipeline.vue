@@ -66,6 +66,9 @@
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
+          <!-- 执行 -->
+          <span class="span-blue pointer" @click="execPipeline(record.id)">执行</span>
+          <a-divider type="vertical"/>
           <!-- 详情 -->
           <span class="span-blue pointer" @click="openDetail(record.id)">详情</span>
           <a-divider type="vertical"/>
@@ -89,6 +92,8 @@
       <AppPipelineDetailViewDrawer ref="detailViewDrawer"/>
       <!-- 添加/修改模态框 -->
       <AddPipelineModal ref="addModal" @added="getList({})" @updated="getList"/>
+      <!-- 流水线执行模态框 -->
+      <AppPipelineExecModal ref="execModal"/>
     </div>
   </div>
 </template>
@@ -98,6 +103,7 @@
 import AppPipelineDetailViewDrawer from '@/components/app/AppPipelineDetailViewDrawer'
 import _filters from '@/lib/filters'
 import AddPipelineModal from '@/components/app/AddPipelineModal'
+import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 
 /**
  * 列
@@ -135,7 +141,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 240,
+    width: 220,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -144,6 +150,7 @@ const columns = [
 export default {
   name: 'AppPipeline',
   components: {
+    AppPipelineExecModal,
     AddPipelineModal,
     AppPipelineDetailViewDrawer
   },
@@ -205,6 +212,9 @@ export default {
     },
     update(id) {
       this.$refs.addModal.update(id)
+    },
+    execPipeline(id) {
+      this.$refs.execModal.open(id)
     },
     openDetail(id) {
       this.$refs.detailViewDrawer.open(id)
