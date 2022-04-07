@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationPipelineRecordDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationPipelineRecordDO">
+        <id column="id" property="id"/>
+        <result column="profile_id" property="profileId"/>
+        <result column="pipeline_id" property="pipelineId"/>
+        <result column="exec_title" property="execTitle"/>
+        <result column="exec_description" property="execDescription"/>
+        <result column="exec_status" property="execStatus"/>
+        <result column="timed_exec" property="timedExec"/>
+        <result column="timed_exec_time" property="timedExecTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="audit_user_id" property="auditUserId"/>
+        <result column="audit_user_name" property="auditUserName"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_reason" property="auditReason"/>
+        <result column="exec_user_id" property="execUserId"/>
+        <result column="exec_user_name" property="execUserName"/>
+        <result column="exec_start_time" property="execStartTime"/>
+        <result column="exec_end_time" property="execEndTime"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, profile_id, pipeline_id, exec_title, exec_description, exec_status, timed_exec, timed_exec_time, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason, exec_user_id, exec_user_name, exec_start_time, exec_end_time, deleted, create_time, update_time
+    </sql>
+
+</mapper>
