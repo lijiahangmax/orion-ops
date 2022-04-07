@@ -1,9 +1,11 @@
 <template>
   <a-modal v-model="visible"
-           :width="1000"
+           v-drag-modal
+           :width="1024"
            :dialogStyle="{top: '64px'}"
            :bodyStyle="{padding: '8px'}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @cancel="close">
     <!-- 历史值表格 -->
     <div class="table-main-container table-scroll-x-auto">

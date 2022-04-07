@@ -1,8 +1,10 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="创建"
            width="450px"
-           :maskClosable="false">
+           :maskClosable="false"
+           :destroyOnClose="true">
     <!-- 输入框 -->
     <a-spin :spinning="loading">
       <a-input-group compact>

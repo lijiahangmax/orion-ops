@@ -1,5 +1,10 @@
 <template>
-  <a-modal v-model="visible" title="详情" width="700px" :maskClosable="false">
+  <a-modal v-model="visible"
+           v-drag-modal
+           title="详情"
+           width="700px"
+           :maskClosable="false"
+           :destroyOnClose="true">
     <a-spin :spinning="loading">
       <div id="machine-descriptions">
         <a-descriptions bordered size="middle">

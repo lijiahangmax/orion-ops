@@ -1,5 +1,10 @@
 <template>
-  <a-modal v-model="visible" :width="450" :footer="null" @close="close">
+  <a-modal v-model="visible"
+           v-drag-modal
+           :width="450"
+           :footer="null"
+           :destroyOnClose="true"
+           @close="close">
     <div>{{ value }}</div>
     <!-- 标题 -->
     <template #title>

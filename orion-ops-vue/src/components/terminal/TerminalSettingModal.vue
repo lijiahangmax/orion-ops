@@ -1,8 +1,10 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :width="500"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            title="终端配置"
            okText="修改"
            cancelText="关闭"

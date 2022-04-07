@@ -1,10 +1,12 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="文件移动"
            :width="450"
            okText="移动"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @cancel="close"
            @ok="move">
     <a-spin :spinning="loading">

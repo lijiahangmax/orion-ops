@@ -1,5 +1,6 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :closable="false"
            :footer="null"
            :keyboard="false"

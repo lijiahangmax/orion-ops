@@ -1,10 +1,12 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :title="title"
            :width="700"
            :dialogStyle="{top: '32px'}"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @ok="check"
            @cancel="close">
     <!-- 表单 -->

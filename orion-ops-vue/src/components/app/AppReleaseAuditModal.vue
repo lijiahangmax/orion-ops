@@ -1,7 +1,9 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="发布审核"
            :maskClosable="false"
+           :destroyOnClose="true"
            :width="550">
     <a-spin :spinning="loading">
       <div class="audit-description">

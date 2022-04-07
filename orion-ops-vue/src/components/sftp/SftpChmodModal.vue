@@ -1,9 +1,11 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="文件提权"
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @cancel="close"
            @ok="chmod">
     <a-spin :spinning="loading">

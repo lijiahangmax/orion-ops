@@ -1,9 +1,11 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="详情"
            width="700px"
            :dialogStyle="{top: '16px'}"
-           :maskClosable="false">
+           :maskClosable="false"
+           :destroyOnClose="true">
     <a-spin :spinning="loading">
       <div id="exec-task-descriptions">
         <a-descriptions bordered size="middle">

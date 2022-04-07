@@ -1,22 +1,26 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :title="title"
-           :width="620"
+           :width="578"
            :maskStyle="{opacity: 0.8, animation: 'none'}"
            :dialogStyle="{top: '64px', padding: 0}"
            :maskClosable="false"
+           :destroyOnClose="true"
            :footer="false"
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form-model v-bind="layout">
+        <!-- 流水线名称 -->
         <a-form-model-item label="名称" class="name-form-item" required>
           <a-input class="name-input" v-model="record.name" :maxLength="32" allowClear/>
         </a-form-model-item>
+        <!-- 流水线描述 -->
         <a-form-model-item label="描述" class="description-form-item">
           <a-textarea class="description-input" v-model="record.description" :maxLength="64" allowClear/>
         </a-form-model-item>
+        <!-- 流水线操作 -->
         <a-form-model-item label="操作" class="detail-form-item" required>
-          <!-- 流水线操作 -->
           <div class="pipeline-details-wrapper">
             <template v-for="(detail, index) of record.details">
               <div class="pipeline-detail" :key="detail.id" v-if="detail.visible">
@@ -68,7 +72,7 @@
 
 const layout = {
   labelCol: { span: 3 },
-  wrapperCol: { span: 20 }
+  wrapperCol: { span: 21 }
 }
 
 export default {

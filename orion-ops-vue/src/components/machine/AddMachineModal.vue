@@ -1,81 +1,81 @@
 <template>
-  <div>
+  <div class="machine-wrapper">
     <!-- 机器模态框 -->
-    <div class="machine-add-modal-container">
-      <a-modal v-model="visible"
-               :title="title"
-               :width="750"
-               :zIndex="805"
-               :okButtonProps="{props: {disabled: loading}}"
-               :dialogStyle="{ top: '90px' }"
-               :maskClosable="false"
-               @ok="check"
-               @cancel="close">
-        <a-spin :spinning="loading">
-          <div class="machine-info-form">
-            <a-form :form="form" v-bind="layout">
-              <a-form-item label="名称" hasFeedback>
-                <a-input v-decorator="decorators.name" allowClear/>
+    <a-modal v-model="visible"
+             v-drag-modal
+             :title="title"
+             :width="750"
+             :zIndex="805"
+             :okButtonProps="{props: {disabled: loading}}"
+             :dialogStyle="{ top: '90px' }"
+             :maskClosable="false"
+             :destroyOnClose="true"
+             @ok="check"
+             @cancel="close">
+      <a-spin :spinning="loading">
+        <div class="machine-info-form">
+          <a-form :form="form" v-bind="layout">
+            <a-form-item label="名称" hasFeedback>
+              <a-input v-decorator="decorators.name" allowClear/>
+            </a-form-item>
+            <a-form-item label="标签" hasFeedback>
+              <a-input v-decorator="decorators.tag" allowClear/>
+            </a-form-item>
+            <a-form-item label="ssh信息" style="margin-bottom: 0">
+              <a-form-item style="display: inline-block; width: 35%">
+                <a-input addon-before="user"
+                         placeholder="用户"
+                         v-decorator="decorators.username"/>
               </a-form-item>
-              <a-form-item label="标签" hasFeedback>
-                <a-input v-decorator="decorators.tag" allowClear/>
+              <a-form-item style="display: inline-block; width: 40%">
+                <a-input addon-before="@"
+                         placeholder="主机"
+                         v-decorator="decorators.host"/>
               </a-form-item>
-              <a-form-item label="ssh信息" style="margin-bottom: 0">
-                <a-form-item style="display: inline-block; width: 35%">
-                  <a-input addon-before="user"
-                           placeholder="用户"
-                           v-decorator="decorators.username"/>
-                </a-form-item>
-                <a-form-item style="display: inline-block; width: 40%">
-                  <a-input addon-before="@"
-                           placeholder="主机"
-                           v-decorator="decorators.host"/>
-                </a-form-item>
-                <a-form-item hasFeedback style="display: inline-block; width: 25%">
-                  <a-input addon-before="-p"
-                           placeholder="端口"
-                           v-decorator="decorators.sshPort"/>
-                </a-form-item>
+              <a-form-item hasFeedback style="display: inline-block; width: 25%">
+                <a-input addon-before="-p"
+                         placeholder="端口"
+                         v-decorator="decorators.sshPort"/>
               </a-form-item>
-              <a-form-item label="认证方式" style="margin-bottom: 0">
-                <a-form-item style="display: inline-block; width: 30%">
-                  <a-select v-decorator="decorators.authType">
-                    <a-select-option :value="type.value" v-for="type in $enum.MACHINE_AUTH_TYPE" :key="type.value">
-                      {{ type.label }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-                <a-form-item style="display: inline-block; width: 70%">
-                  <a-input-password v-if="form.getFieldValue('authType') === 1"
-                                    v-decorator="decorators.password"
-                                    placeholder="密码"
-                                    allowClear/>
-                  <a class="add-secret-key" v-else @click="addKey">添加秘钥</a>
-                </a-form-item>
-              </a-form-item>
-              <a-form-item label="代理">
-                <a-select class="proxy-selector" placeholder="请选择" v-decorator="decorators.proxyId" style="width: 75%" allowClear>
-                  <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
-                    <div class="proxy-select-option">
-                      <span>{{ proxy.host }}:{{ proxy.port }}</span>
-                      <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).color">
-                        {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).label }}
-                      </a-tag>
-                    </div>
+            </a-form-item>
+            <a-form-item label="认证方式" style="margin-bottom: 0">
+              <a-form-item style="display: inline-block; width: 30%">
+                <a-select v-decorator="decorators.authType">
+                  <a-select-option :value="type.value" v-for="type in $enum.MACHINE_AUTH_TYPE" :key="type.value">
+                    {{ type.label }}
                   </a-select-option>
                 </a-select>
-                <a class="reload-proxy" title="刷新" @click="getProxyList">
-                  <a-icon type="reload"/>
-                </a>
               </a-form-item>
-              <a-form-item label="描述">
-                <a-textarea v-decorator="decorators.description" allowClear/>
+              <a-form-item style="display: inline-block; width: 70%">
+                <a-input-password v-if="form.getFieldValue('authType') === 1"
+                                  v-decorator="decorators.password"
+                                  placeholder="密码"
+                                  allowClear/>
+                <a class="add-secret-key" v-else @click="addKey">添加秘钥</a>
               </a-form-item>
-            </a-form>
-          </div>
-        </a-spin>
-      </a-modal>
-    </div>
+            </a-form-item>
+            <a-form-item label="代理">
+              <a-select class="proxy-selector" placeholder="请选择" v-decorator="decorators.proxyId" style="width: 75%" allowClear>
+                <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
+                  <div class="proxy-select-option">
+                    <span>{{ proxy.host }}:{{ proxy.port }}</span>
+                    <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).color">
+                      {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).label }}
+                    </a-tag>
+                  </div>
+                </a-select-option>
+              </a-select>
+              <a class="reload-proxy" title="刷新" @click="getProxyList">
+                <a-icon type="reload"/>
+              </a>
+            </a-form-item>
+            <a-form-item label="描述">
+              <a-textarea v-decorator="decorators.description" allowClear/>
+            </a-form-item>
+          </a-form>
+        </div>
+      </a-spin>
+    </a-modal>
     <!-- 事件 -->
     <div class="machine-add-modal-event-container">
       <!-- 添加秘钥 -->

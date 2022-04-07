@@ -1,8 +1,10 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :width="1000"
            :dialogStyle="{top: '16px'}"
            :bodyStyle="{padding: '8px'}"
+           :destroyOnClose="true"
            title="模板列表">
     <!-- 搜索列 -->
     <div class="table-tools-bar">

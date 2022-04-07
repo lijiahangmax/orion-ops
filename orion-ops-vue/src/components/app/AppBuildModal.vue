@@ -1,9 +1,11 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            okText="构建"
            :width="550"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @ok="build"
            @cancel="close">
     <!-- 标题 -->

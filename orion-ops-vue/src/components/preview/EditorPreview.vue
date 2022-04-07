@@ -1,5 +1,10 @@
 <template>
-  <a-modal v-model="visible" :width="650" :footer="null" @close="close">
+  <a-modal v-model="visible"
+           v-drag-modal
+           :width="650"
+           :footer="null"
+           :destroyOnClose="true"
+           @close="close">
     <!-- 编辑器 -->
     <Editor v-bind="editorConfig" :value="value" :height="350" :readOnly="true"/>
     <!-- 标题 -->

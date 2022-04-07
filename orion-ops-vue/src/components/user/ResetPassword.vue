@@ -1,8 +1,10 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="修改密码"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            okText="修改"
            cancelText="取消"
            @ok="check"

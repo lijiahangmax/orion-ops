@@ -1,9 +1,11 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            title="临时挂载"
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">

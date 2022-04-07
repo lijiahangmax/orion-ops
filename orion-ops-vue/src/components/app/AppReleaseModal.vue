@@ -1,10 +1,11 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            okText="发布"
            :width="550"
-           :destroyOnClose="true"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
+           :destroyOnClose="true"
            @ok="release"
            @cancel="close">
     <!-- 标题 -->
@@ -74,13 +75,13 @@
         <div class="release-form-item">
           <span class="release-form-item-label normal-label required-label">发布类型</span>
           <a-radio-group v-model="submit.timedRelease" buttonStyle="solid">
-            <a-radio-button :value="type.value" v-for="type in $enum.TIMED_RELEASE_TYPE" :key="type.value">
-              {{ type.label }}
+            <a-radio-button :value="type.value" v-for="type in $enum.TIMED_TYPE" :key="type.value">
+              {{ type.releaseLabel }}
             </a-radio-button>
           </a-radio-group>
         </div>
         <!-- 调度时间 -->
-        <div class="release-form-item" v-if="submit.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
+        <div class="release-form-item" v-if="submit.timedRelease === $enum.TIMED_TYPE.TIMED.value">
           <span class="release-form-item-label normal-label required-label">调度时间</span>
           <a-date-picker v-model="submit.timedReleaseTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
         </div>
@@ -103,7 +104,7 @@
         <!-- 描述 -->
         <div class="release-form-item" style="margin: 8px 0;">
           <span class="release-form-item-label normal-label">发布描述</span>
-          <a-textarea class="build-form-item-input"
+          <a-textarea class="release-form-item-input"
                       v-model="submit.description"
                       style="height: 50px; width: 430px"
                       :maxLength="64"
@@ -138,7 +139,7 @@ export default {
         title: null,
         buildId: null,
         description: null,
-        timedRelease: _enum.TIMED_RELEASE_TYPE.NORMAL.value,
+        timedRelease: _enum.TIMED_TYPE.NORMAL.value,
         timedReleaseTime: null,
         machineIdList: []
       },
@@ -185,7 +186,7 @@ export default {
       this.submit.title = null
       this.submit.buildId = null
       this.submit.description = null
-      this.submit.timedRelease = this.$enum.TIMED_RELEASE_TYPE.NORMAL.value
+      this.submit.timedRelease = this.$enum.TIMED_TYPE.NORMAL.value
       this.submit.timedReleaseTime = null
       this.submit.machineIdList = []
     },
@@ -263,7 +264,7 @@ export default {
         this.$message.warning('请选择发布机器')
         return
       }
-      if (this.submit.timedRelease === this.$enum.TIMED_RELEASE_TYPE.TIMED.value) {
+      if (this.submit.timedRelease === this.$enum.TIMED_TYPE.TIMED.value) {
         if (!this.submit.timedReleaseTime) {
           this.$message.warning('请选择调度时间')
           return
