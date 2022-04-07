@@ -66,6 +66,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Resource
     private ApplicationActionService applicationActionService;
 
+    @Resource
+    private ApplicationPipelineDetailService applicationPipelineDetailService;
+
     @Override
     public Long insertApp(ApplicationInfoRequest request) {
         // 检查是否存在
@@ -168,8 +171,10 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(id, null);
         // 删除机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(id, null);
-        // 删除发布流程
+        // 删除构建发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(id, null);
+        // 删除应用流水线
+        effect += applicationPipelineDetailService.deleteByAppId(id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, app.getAppName());

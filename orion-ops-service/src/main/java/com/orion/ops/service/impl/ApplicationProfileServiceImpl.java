@@ -12,10 +12,7 @@ import com.orion.ops.entity.dto.ApplicationProfileDTO;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
-import com.orion.ops.service.api.ApplicationActionService;
-import com.orion.ops.service.api.ApplicationEnvService;
-import com.orion.ops.service.api.ApplicationMachineService;
-import com.orion.ops.service.api.ApplicationProfileService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
@@ -54,6 +51,9 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
 
     @Resource
     private ApplicationActionService applicationActionService;
+
+    @Resource
+    private ApplicationPipelineService applicationPipelineService;
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -117,8 +117,10 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         effect += applicationEnvService.deleteAppProfileEnvByAppProfileId(null, id);
         // 删除环境机器
         effect += applicationMachineService.deleteAppMachineByAppProfileId(null, id);
-        // 删除环境发布流程
+        // 删除环境构建发布流程
         effect += applicationActionService.deleteAppActionByAppProfileId(null, id);
+        // 删除应用流水线
+        effect += applicationPipelineService.deleteByProfileId(id);
         // 删除缓存
         redisTemplate.opsForHash().delete(KeyConst.DATA_PROFILE_KEY, id.toString());
         // 设置日志参数
