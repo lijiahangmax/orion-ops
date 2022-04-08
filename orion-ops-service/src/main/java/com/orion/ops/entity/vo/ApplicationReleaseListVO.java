@@ -89,7 +89,7 @@ public class ApplicationReleaseListVO {
     /**
      * 是否是定时发布 10普通发布 20定时发布
      *
-     * @see com.orion.ops.consts.app.TimedReleaseType
+     * @see com.orion.ops.consts.app.TimedType
      */
     private Integer timedRelease;
 

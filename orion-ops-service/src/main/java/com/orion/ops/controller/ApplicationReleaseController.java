@@ -7,7 +7,8 @@ import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.TimedReleaseType;
+import com.orion.ops.consts.app.ReleaseStatus;
+import com.orion.ops.consts.app.TimedType;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationReleaseAuditRequest;
@@ -89,15 +90,15 @@ public class ApplicationReleaseController {
         Valid.notNull(request.getProfileId());
         Valid.notNull(request.getBuildId());
         Valid.notEmpty(request.getMachineIdList());
-        TimedReleaseType timedReleaseType = Valid.notNull(TimedReleaseType.of(request.getTimedRelease()));
-        if (TimedReleaseType.TIMED.equals(timedReleaseType)) {
+        TimedType timedType = Valid.notNull(TimedType.of(request.getTimedRelease()));
+        if (TimedType.TIMED.equals(timedType)) {
             Date timedReleaseTime = Valid.notNull(request.getTimedReleaseTime());
             Valid.isTrue(timedReleaseTime.compareTo(new Date()) > 0, MessageConst.TIMED_GREATER_THAN_NOW);
         }
         // 提交
         Long id = applicationReleaseService.submitAppRelease(request);
         // 提交任务
-        if (TimedReleaseType.TIMED.equals(timedReleaseType)) {
+        if (ReleaseStatus.WAIT_SCHEDULE.getStatus().equals(request.getStatus())) {
             taskRegister.submit(TaskType.RELEASE, request.getTimedReleaseTime(), id);
         }
         return id;

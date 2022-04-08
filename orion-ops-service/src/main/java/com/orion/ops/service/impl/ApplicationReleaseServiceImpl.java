@@ -291,7 +291,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         params.put(EventKeys.TITLE, release.getReleaseTitle());
         if (resolve) {
             // 通过
-            final boolean timedRelease = TimedReleaseType.TIMED.getType().equals(release.getTimedRelease());
+            final boolean timedRelease = TimedType.TIMED.getType().equals(release.getTimedRelease());
             if (!timedRelease) {
                 update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
             } else {
@@ -359,7 +359,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseDO update = new ApplicationReleaseDO();
         update.setId(id);
         update.setUpdateTime(new Date());
-        update.setTimedRelease(TimedReleaseType.NORMAL.getType());
+        update.setTimedRelease(TimedType.NORMAL.getType());
         update.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
         applicationReleaseDAO.updateById(update);
         applicationReleaseDAO.setTimedReleaseTimeNull(id);
@@ -386,7 +386,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         update.setId(id);
         update.setUpdateTime(new Date());
         update.setReleaseStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
-        update.setTimedRelease(TimedReleaseType.TIMED.getType());
+        update.setTimedRelease(TimedType.TIMED.getType());
         update.setTimedReleaseTime(releaseTime);
         applicationReleaseDAO.updateById(update);
         // 提交任务
@@ -685,6 +685,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         release.setActionConfig(JSON.toJSONString(actions));
         // 设置审核信息
         this.setCreateAuditInfo(release, user, Const.ENABLE.equals(profile.getReleaseAudit()));
+        // 设置状态
+        request.setStatus(release.getReleaseStatus());
         return release;
     }
 
@@ -700,7 +702,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         rollback.setReleaseTitle(rollback.getReleaseTitle() + " - " + Const.ROLLBACK);
         rollback.setReleaseType(ReleaseType.ROLLBACK.getType());
         rollback.setRollbackReleaseId(rollback.getId());
-        rollback.setTimedRelease(TimedReleaseType.NORMAL.getType());
+        rollback.setTimedRelease(TimedType.NORMAL.getType());
         rollback.setTimedReleaseTime(null);
         rollback.setCreateUserId(user.getId());
         rollback.setCreateUserName(user.getUsername());
@@ -822,7 +824,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         if (needAudit && !isAdmin) {
             release.setReleaseStatus(ReleaseStatus.WAIT_AUDIT.getStatus());
         } else {
-            if (TimedReleaseType.TIMED.getType().equals(release.getTimedRelease())) {
+            if (TimedType.TIMED.getType().equals(release.getTimedRelease())) {
                 release.setReleaseStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
             } else {
                 release.setReleaseStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());

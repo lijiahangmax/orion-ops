@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 定时发布类型
+ * 定时类型
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,15 +12,15 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum TimedReleaseType {
+public enum TimedType {
 
     /**
-     * 普通发布
+     * 普通
      */
     NORMAL(10),
 
     /**
-     * 定时发布
+     * 定时
      */
     TIMED(20),
 
@@ -28,11 +28,11 @@ public enum TimedReleaseType {
 
     private final Integer type;
 
-    public static TimedReleaseType of(Integer type) {
+    public static TimedType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (TimedReleaseType value : values()) {
+        for (TimedType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
