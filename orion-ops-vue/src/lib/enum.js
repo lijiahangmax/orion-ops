@@ -897,14 +897,16 @@ const $enum = {
   /**
    * 发布状态
    */
-  TIMED_RELEASE_TYPE: {
+  TIMED_TYPE: {
     NORMAL: {
       value: 10,
-      label: '普通发布'
+      releaseLabel: '普通发布',
+      execLabel: '普通执行'
     },
     TIMED: {
       value: 20,
-      label: '定时发布'
+      releaseLabel: '定时发布',
+      execLabel: '定时执行'
     }
   },
 

@@ -142,7 +142,7 @@ export default {
         // 构建
         if (detail.vcsId) {
           if (detail.branchName) {
-            return `构建分支: ${detail.branchName}/${detail.commitId.substring(0, 7)}`
+            return `${detail.branchName} ${detail.commitId.substring(0, 7)}`
           } else {
             return '请选择构建版本'
           }

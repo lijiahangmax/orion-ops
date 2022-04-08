@@ -137,7 +137,7 @@
         <template v-slot:releaseTitle="record">
           <div class="timed-wrapper">
             <!-- 定时图标 -->
-            <a-tooltip v-if="record.timedRelease === $enum.TIMED_RELEASE_TYPE.TIMED.value">
+            <a-tooltip v-if="record.timedRelease === $enum.TIMED_TYPE.TIMED.value">
               <template #title>
                 调度时间: {{ record.timedReleaseTime | formatDate }}
               </template>
@@ -551,7 +551,7 @@ export default {
       }).then(() => {
         this.$message.success('已取消定时发布')
         record.status = this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
-        record.timedRelease = this.$enum.TIMED_RELEASE_TYPE.NORMAL.value
+        record.timedRelease = this.$enum.TIMED_TYPE.NORMAL.value
         record.timedReleaseTime = undefined
         // 强制刷新状态
         this.forceUpdateRows()
