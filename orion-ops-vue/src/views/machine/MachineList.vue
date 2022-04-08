@@ -527,6 +527,13 @@ export default {
   },
   mounted() {
     this.getList({})
+  },
+  beforeDestroy() {
+    // 关闭所有最小化的终端
+    for (const { symbol } of this.minimizeTerminalArr) {
+      const refs = this.$refs[`terminalModal${symbol}`]
+      refs && refs[0] && refs[0].close()
+    }
   }
 }
 </script>
