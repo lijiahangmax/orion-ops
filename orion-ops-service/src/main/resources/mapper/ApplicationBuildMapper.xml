@@ -102,6 +102,20 @@
         LIMIT #{limit}
     </select>
 
+    <select id="selectBuildReleaseGroupList" resultMap="BaseResultMap">
+        SELECT id, app_id,
+        FROM application_build
+        WHERE app_id IN
+        <foreach collection="appIdList" item="appId" open="(" separator="," close=")">
+            #{appId}
+        </foreach>
+        AND profile_id = #{profileId}
+        AND build_status = 30
+        AND deleted = 1
+        GROUP BY app_id
+        ORDER by id DESC
+    </select>
+
     <select id="getBuildStatistics" resultMap="StatisticsResultMap">
         SELECT
             COUNT(1) build_count,

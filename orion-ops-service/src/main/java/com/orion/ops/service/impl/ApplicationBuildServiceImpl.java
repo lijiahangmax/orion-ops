@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -308,6 +309,25 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .filter(Strings::isNotBlank)
                 .map(s -> Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), s))
                 .orElse(null);
+    }
+
+    @Override
+    public String checkBuildBundlePath(ApplicationBuildDO build) {
+        // 构建产物
+        String buildBundlePath = build.getBundlePath();
+        File bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+        Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_FILE_ABSENT);
+        if (bundleFile.isFile()) {
+            return buildBundlePath;
+        }
+        // 如果是文件夹则需要检查传输文件是文件夹还是压缩文件
+        String transferDirValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
+        if (TransferDirType.ZIP.equals(TransferDirType.of(transferDirValue))) {
+            buildBundlePath = build.getBundlePath() + "." + Const.SUFFIX_ZIP;
+            bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
+            Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_ZIP_FILE_ABSENT);
+        }
+        return buildBundlePath;
     }
 
     @Override

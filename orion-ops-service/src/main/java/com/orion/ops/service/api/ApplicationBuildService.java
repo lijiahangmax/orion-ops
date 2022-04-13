@@ -106,6 +106,14 @@ public interface ApplicationBuildService {
     String getBuildBundlePath(Long id);
 
     /**
+     * 检查并且获取构建目录
+     *
+     * @param build build
+     * @return 构建产物路径
+     */
+    String checkBuildBundlePath(ApplicationBuildDO build);
+
+    /**
      * 获取构建发布序列
      *
      * @param appId     appId

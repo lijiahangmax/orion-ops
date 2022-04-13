@@ -42,7 +42,7 @@
     </select>
 
     <select id="selectNameByIdList" resultMap="BaseResultMap">
-        SELECT id, app_name, app_tag
+        SELECT id, app_name
         FROM application_info
         WHERE deleted = 1
         AND id IN

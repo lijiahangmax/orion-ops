@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -91,7 +92,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private ApplicationBuildDAO applicationBuildDAO;
 
     @Resource
-    private MachineInfoService machineInfoService;
+    private ApplicationBuildService applicationBuildService;
+
+    @Resource
+    private MachineInfoDAO machineInfoDAO;
 
     @Resource
     private MachineEnvService machineEnvService;
@@ -630,13 +634,10 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      * @return machine
      */
     private Map<Long, MachineInfoDO> getReleaseMachineInfo(ApplicationReleaseRequest request) {
-        Map<Long, MachineInfoDO> map = Maps.newMap();
-        for (Long machineId : request.getMachineIdList()) {
-            MachineInfoDO machine = machineInfoService.selectById(machineId);
-            Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-            map.put(machineId, machine);
-        }
-        return map;
+        List<Long> machineIdList = request.getMachineIdList();
+        List<MachineInfoDO> machines = machineInfoDAO.selectBatchIds(machineIdList);
+        Valid.isTrue(machineIdList.size() == machines.size());
+        return machines.stream().collect(Collectors.toMap(MachineInfoDO::getId, Function.identity()));
     }
 
     /**
@@ -654,7 +655,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                                                 ApplicationBuildDO build,
                                                 List<ApplicationActionDO> actions) {
         UserDTO user = Currents.getUser();
-        String buildBundlePath = this.getBuildBundlePath(build);
+        String buildBundlePath = applicationBuildService.checkBuildBundlePath(build);
         // 查询产物传输路径
         String transferPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_PATH.getKey());
         // 查询发布序列
@@ -785,30 +786,6 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             }
         }
         return releaseActions;
-    }
-
-    /**
-     * 检查并且获取构建目录
-     *
-     * @param build build
-     * @return 构建产物路径
-     */
-    private String getBuildBundlePath(ApplicationBuildDO build) {
-        // 构建产物
-        String buildBundlePath = build.getBundlePath();
-        File bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
-        Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_FILE_ABSENT);
-        if (bundleFile.isFile()) {
-            return buildBundlePath;
-        }
-        // 如果是文件夹则需要检查传输文件是文件夹还是压缩文件
-        String transferDirValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
-        if (TransferDirType.ZIP.equals(TransferDirType.of(transferDirValue))) {
-            buildBundlePath = build.getBundlePath() + "." + Const.SUFFIX_ZIP;
-            bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
-            Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_ZIP_FILE_ABSENT);
-        }
-        return buildBundlePath;
     }
 
     /**

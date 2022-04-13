@@ -71,6 +71,15 @@ public interface ApplicationBuildDAO extends BaseMapper<ApplicationBuildDO> {
     List<ApplicationBuildDO> selectBuildReleaseList(@Param("appId") Long appId, @Param("profileId") Long profileId, @Param("limit") Integer limit);
 
     /**
+     * 查询构建发布列表
+     *
+     * @param appIdList appIdList
+     * @param profileId profileId
+     * @return rows
+     */
+    List<ApplicationBuildDO> selectBuildReleaseGroupList(@Param("appIdList") List<Long> appIdList, @Param("profileId") Long profileId);
+
+    /**
      * 获取构建统计
      *
      * @param appId          appId
