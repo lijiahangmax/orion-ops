@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
@@ -126,6 +127,10 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(ApplicationPipelineVO.class);
+        // 不查询详情直接返回
+        if (!Const.ENABLE.equals(request.getQueryDetail())) {
+            return dataGrid;
+        }
         // 获取流水线详情
         List<Long> pipelineIdList = dataGrid.stream()
                 .map(ApplicationPipelineVO::getId)
@@ -141,14 +146,17 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
                     .map(ApplicationPipelineDetailVO::getAppId)
                     .distinct()
                     .collect(Collectors.toList());
-            List<ApplicationInfoDO> appNameList = applicationInfoDAO.selectNameByIdList(appIdList);
+            List<ApplicationInfoDO> appNameList = applicationInfoDAO.selectBatchIds(appIdList);
             // 设置应用名称
             for (ApplicationPipelineDetailVO detail : details) {
                 appNameList.stream()
                         .filter(s -> s.getId().equals(detail.getAppId()))
                         .findFirst()
-                        .map(ApplicationInfoDO::getAppName)
-                        .ifPresent(detail::setAppName);
+                        .ifPresent(app -> {
+                            detail.setVcsId(app.getVcsId());
+                            detail.setAppName(app.getAppName());
+                            detail.setAppTag(app.getAppTag());
+                        });
             }
         }
         // 设置流水线详情

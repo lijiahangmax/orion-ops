@@ -1,5 +1,9 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.vo.ApplicationPipelineDetailRecordVO;
+
+import java.util.List;
+
 /**
  * 应用流水线详情明细服务
  *
@@ -9,5 +13,12 @@ package com.orion.ops.service.api;
  */
 public interface ApplicationPipelineDetailRecordService {
 
+    /**
+     * 获取流水线详情明细
+     *
+     * @param id id
+     * @return 明细
+     */
+    List<ApplicationPipelineDetailRecordVO> getRecordDetails(Long id);
 
 }

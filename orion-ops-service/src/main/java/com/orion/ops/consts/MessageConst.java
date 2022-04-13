@@ -188,4 +188,12 @@ public class MessageConst {
 
     public static final String UPLOAD_TOO_LARGE = "上传文件大小不能大于 {}MB";
 
+    public static final String PIPELINE_ABSENT = "流水线不存在";
+
+    public static final String PIPELINE_DETAIL_EMPTY = "流水线操作为空";
+
+    public static final String PIPELINE_DETAIL_ABSENT = "未查询到流水线操作";
+
+    public static final String APP_LAST_BUILD_VERSION_PRESENT = "{} 无构建版本";
+
 }

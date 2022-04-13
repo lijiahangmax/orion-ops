@@ -29,16 +29,34 @@ public class ApplicationPipelineRecordDO implements Serializable {
     private Long id;
 
     /**
+     * 流水线id
+     */
+    @TableField("pipeline_id")
+    private Long pipelineId;
+
+    /**
+     * 流水线名称
+     */
+    @TableField("pipeline_name")
+    private String pipelineName;
+
+    /**
      * 环境id
      */
     @TableField("profile_id")
     private Long profileId;
 
     /**
-     * 流水线id
+     * 环境名称
      */
-    @TableField("pipeline_id")
-    private Long pipelineId;
+    @TableField("profile_name")
+    private String profileName;
+
+    /**
+     * 环境tag
+     */
+    @TableField("profile_tag")
+    private String profileTag;
 
     /**
      * 执行标题
@@ -53,7 +71,9 @@ public class ApplicationPipelineRecordDO implements Serializable {
     private String execDescription;
 
     /**
-     * 执行状态 10待审核 20审核驳回 30待发布 35待调度 40执行中 50执行完成 60执行停止 70执行失败
+     * 执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败
+     *
+     * @see com.orion.ops.consts.app.PipelineStatus
      */
     @TableField("exec_status")
     private Integer execStatus;

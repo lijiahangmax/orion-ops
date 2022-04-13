@@ -25,6 +25,11 @@ public class ApplicationPipelineDetailVO {
     private Long pipelineId;
 
     /**
+     * 环境id
+     */
+    private Long profileId;
+
+    /**
      * 应用id
      */
     private Long appId;
@@ -33,6 +38,16 @@ public class ApplicationPipelineDetailVO {
      * 应用名称
      */
     private String appName;
+
+    /**
+     * 应用tag
+     */
+    private String appTag;
+
+    /**
+     * 版本控制id
+     */
+    private Long vcsId;
 
     /**
      * 阶段类型 10构建 20发布
@@ -45,6 +60,7 @@ public class ApplicationPipelineDetailVO {
             vo.setId(p.getId());
             vo.setPipelineId(p.getPipelineId());
             vo.setAppId(p.getAppId());
+            vo.setProfileId(p.getProfileId());
             vo.setStageType(p.getStageType());
             return vo;
         });

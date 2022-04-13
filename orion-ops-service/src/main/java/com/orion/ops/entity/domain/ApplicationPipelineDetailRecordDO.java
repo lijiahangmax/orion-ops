@@ -65,24 +65,6 @@ public class ApplicationPipelineDetailRecordDO implements Serializable {
     private String appTag;
 
     /**
-     * 环境id
-     */
-    @TableField("profile_id")
-    private Long profileId;
-
-    /**
-     * 环境名称
-     */
-    @TableField("profile_name")
-    private String profileName;
-
-    /**
-     * 环境tag
-     */
-    @TableField("profile_tag")
-    private String profileTag;
-
-    /**
      * 阶段类型 10构建 20发布
      */
     @TableField("stage_type")
@@ -95,7 +77,9 @@ public class ApplicationPipelineDetailRecordDO implements Serializable {
     private String stageConfig;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
+     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止
+     *
+     * @see com.orion.ops.consts.app.PipelineDetailStatus
      */
     @TableField("exec_status")
     private Integer execStatus;

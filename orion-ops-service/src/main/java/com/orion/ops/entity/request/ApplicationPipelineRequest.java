@@ -48,6 +48,13 @@ public class ApplicationPipelineRequest extends PageRequest {
     private String description;
 
     /**
+     * 是否查询详情
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     */
+    private Integer queryDetail;
+
+    /**
      * 详情
      */
     private List<ApplicationPipelineDetailRequest> details;

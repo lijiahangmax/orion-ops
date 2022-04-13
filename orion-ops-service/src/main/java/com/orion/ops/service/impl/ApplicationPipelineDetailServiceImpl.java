@@ -42,13 +42,16 @@ public class ApplicationPipelineDetailServiceImpl implements ApplicationPipeline
         List<Long> appIdList = details.stream()
                 .map(ApplicationPipelineDetailVO::getAppId)
                 .collect(Collectors.toList());
-        List<ApplicationInfoDO> appList = applicationInfoDAO.selectNameByIdList(appIdList);
+        List<ApplicationInfoDO> appList = applicationInfoDAO.selectBatchIds(appIdList);
         for (ApplicationPipelineDetailVO detail : details) {
             appList.stream()
                     .filter(s -> s.getId().equals(detail.getAppId()))
                     .findFirst()
-                    .map(ApplicationInfoDO::getAppName)
-                    .ifPresent(detail::setAppName);
+                    .ifPresent(app -> {
+                        detail.setAppName(app.getAppName());
+                        detail.setAppTag(app.getAppTag());
+                        detail.setVcsId(app.getVcsId());
+                    });
         }
         return details;
     }

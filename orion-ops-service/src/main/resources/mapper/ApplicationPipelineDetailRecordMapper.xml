@@ -11,9 +11,6 @@
         <result column="app_id" property="appId"/>
         <result column="app_name" property="appName"/>
         <result column="app_tag" property="appTag"/>
-        <result column="profile_id" property="profileId"/>
-        <result column="profile_name" property="profileName"/>
-        <result column="profile_tag" property="profileTag"/>
         <result column="stage_type" property="stageType"/>
         <result column="stage_config" property="stageConfig"/>
         <result column="exec_status" property="execStatus"/>
@@ -26,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, pipeline_id, pipeline_detail_id, record_id, app_id, app_name, app_tag, profile_id, profile_name, profile_tag, stage_type, stage_config, exec_status, exec_start_time, exec_end_time, deleted, create_time, update_time
+        id, pipeline_id, pipeline_detail_id, record_id, app_id, app_name, app_tag, stage_type, stage_config, exec_status, exec_start_time, exec_end_time, deleted, create_time, update_time
     </sql>
 
 </mapper>
