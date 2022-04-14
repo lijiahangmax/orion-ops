@@ -87,7 +87,7 @@
             <!-- commitId -->
             <a-tooltip v-if="record.commitId">
               <template #title>
-                <span style="display: block; word-break: break-all;">commitId: {{ record.commitId }}</span>
+                {{ record.commitId }}
               </template>
               <span class="span-blue">
                  #{{ record.commitId.substring(0, 7) }}

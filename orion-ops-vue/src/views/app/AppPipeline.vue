@@ -184,6 +184,7 @@ export default {
       this.loading = true
       this.$api.getAppPipelineList({
         ...this.query,
+        queryDetail: 1,
         page: page.current,
         limit: page.pageSize
       }).then(({ data }) => {

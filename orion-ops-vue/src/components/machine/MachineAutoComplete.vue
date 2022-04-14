@@ -33,7 +33,6 @@ export default {
       value: undefined
     }
   },
-  watch: {},
   methods: {
     change(value) {
       let id

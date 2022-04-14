@@ -101,7 +101,7 @@ export default {
       id: null,
       visible: false,
       loading: false,
-      profileId: null,
+      pipelineId: null,
       record: {},
       submit: {
         title: null,
@@ -121,9 +121,12 @@ export default {
       }).then(({ data }) => {
         this.record = data
         this.visible = true
-        this.profileId = data.profileId
+        this.pipelineId = data.id
         this.details = data.details
         this.submit.title = `执行${data.name}`
+        this.submit.description = null
+        this.submit.timedExec = this.$enum.TIMED_TYPE.NORMAL.value
+        this.submit.timedExecTime = null
       })
     },
     visibleConfigDot(detail) {
@@ -174,16 +177,60 @@ export default {
       this.$set(this.details, 0, this.details[0])
     },
     execPipeline() {
-      console.log(this.submit)
-      console.log(this.details)
+      // 检查参数
+      if (!this.submit.title) {
+        this.$message.warning('请输入执行标题')
+        return
+      }
+      if (this.submit.timedExec === this.$enum.TIMED_TYPE.TIMED.value) {
+        if (!this.submit.timedExecTime) {
+          this.$message.warning('请选择调度时间')
+          return
+        }
+        if (this.submit.timedExecTime.unix() * 1000 < Date.now()) {
+          this.$message.warning('调度时间需要大于当前时间')
+          return
+        }
+      } else {
+        this.submit.timedExecTime = undefined
+      }
+      for (const detail of this.details) {
+        if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value && detail.vcsId && !detail.branchName) {
+          this.$message.warning(`请选择 ${detail.appName} 构建版本`)
+          return
+        }
+      }
+      // 封装数据
+      const request = {
+        pipelineId: this.pipelineId,
+        ...this.submit,
+        details: []
+      }
+      for (const detail of this.details) {
+        request.details.push({
+          id: detail.id,
+          branchName: detail.branchName,
+          commitId: detail.commitId,
+          buildId: detail.buildId,
+          title: detail.title,
+          description: detail.description,
+          machineIdList: detail.machineIdList
+        })
+      }
+      this.loading = true
+      this.$api.submitAppPipelineExec(request).then(() => {
+        this.loading = false
+        this.$message.success('已提交')
+        this.$emit('submit')
+        this.close()
+      }).catch(() => {
+        this.loading = false
+      })
     },
     close() {
       this.visible = false
       this.loading = false
     }
-  },
-  mounted() {
-    // this.open(3)
   }
 }
 </script>

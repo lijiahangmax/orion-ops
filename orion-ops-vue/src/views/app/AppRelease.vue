@@ -133,7 +133,7 @@
             #{{ record.buildSeq }}
           </a-tag>
         </template>
-        <!-- 构建标题 -->
+        <!-- 发布标题 -->
         <template v-slot:releaseTitle="record">
           <div class="timed-wrapper">
             <!-- 定时图标 -->
@@ -224,8 +224,8 @@
                         @confirm="cancelTimedRelease(record)">
             <span class="span-blue pointer">取消</span>
           </a-popconfirm>
-          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
           <!-- 删除 -->
+          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
           <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
                         title="确认删除当前发布记录吗?"
                         placement="topRight"
@@ -570,7 +570,7 @@ export default {
     },
     terminated(id) {
       this.$api.terminatedAppRelease({
-        id: id
+        id
       }).then(() => {
         this.$message.success('已提交停止请求')
       })
