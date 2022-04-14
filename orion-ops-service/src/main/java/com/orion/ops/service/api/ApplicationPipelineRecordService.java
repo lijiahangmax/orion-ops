@@ -79,4 +79,11 @@ public interface ApplicationPipelineRecordService {
      */
     void cancelPipelineTimedExec(Long id);
 
+    /**
+     * 停止执行流水线
+     *
+     * @param id id
+     */
+    void terminatedExec(Long id);
+
 }

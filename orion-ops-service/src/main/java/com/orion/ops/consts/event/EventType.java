@@ -451,7 +451,7 @@ public enum EventType {
     /**
      * 设置应用定时发布
      */
-    SET_TIMED_RELEASE(5045, EventClassify.RELEASE, "应用定时发布时间 <sb>${title}</sb> -> <sb>${time}</sb>"),
+    SET_TIMED_RELEASE(5045, EventClassify.RELEASE, "设置应用定时发布 <sb>${title}</sb> -> <sb>${time}</sb>"),
 
     /**
      * 停止机器发布操作
@@ -479,6 +479,46 @@ public enum EventType {
      * 删除应用流水线
      */
     DELETE_PIPELINE(5515, EventClassify.PIPELINE, "删除应用流水线 <sb>${count}</sb>个"),
+
+    /**
+     * 提交执行应用流水线
+     */
+    SUBMIT_PIPELINE_EXEC(5605, EventClassify.PIPELINE, "提交执行应用流水线 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
+
+    /**
+     * 审核执行应用流水线
+     */
+    AUDIT_PIPELINE_EXEC(5610, EventClassify.PIPELINE, "审核执行应用流水线${operator} <sb>${name}</sb> <sb>${title}</sb>"),
+
+    /**
+     * 复制执行应用流水线
+     */
+    COPY_PIPELINE_EXEC(5615, EventClassify.PIPELINE, "复制执行应用流水线 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
+
+    /**
+     * 执行应用流水线
+     */
+    EXEC_PIPELINE_EXEC(5620, EventClassify.PIPELINE, "执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+
+    /**
+     * 删除执行应用流水线
+     */
+    DELETE_PIPELINE_EXEC(5625, EventClassify.PIPELINE, "删除执行应用流水线 <sb>${count}</sb>个"),
+
+    /**
+     * 设置定时执行流水线
+     */
+    SET_PIPELINE_TIMED_EXEC(5630, EventClassify.PIPELINE, "设置定时执行应用流水线 <sb>${name}</sb> <sb>${title}</sb> -> <sb>${time}</sb>"),
+
+    /**
+     * 取消定时执行流水线
+     */
+    CANCEL_PIPELINE_TIMED_EXEC(5635, EventClassify.PIPELINE, "取消定时执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+
+    /**
+     * 停止执行应用流水线
+     */
+    TERMINATED_PIPELINE_EXEC(5640, EventClassify.PIPELINE, "停止执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
 
     // -------------------- 系统环境变量操作 --------------------
 

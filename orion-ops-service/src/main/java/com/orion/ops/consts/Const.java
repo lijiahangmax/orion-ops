@@ -60,6 +60,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String RELEASE = "release";
 
+    public static final String PIPELINE = "pipeline";
+
     public static final String TASK = "task";
 
     public static final String ACTION = "action";

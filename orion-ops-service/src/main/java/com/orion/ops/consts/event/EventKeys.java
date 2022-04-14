@@ -212,4 +212,9 @@ public class EventKeys {
      */
     public static final String DETAILS = "details";
 
+    /**
+     * 流水线id
+     */
+    public static final String PIPELINE_ID = "pipelineId";
+
 }

@@ -2,12 +2,14 @@ package com.orion.ops.controller;
 
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.PipelineStatus;
 import com.orion.ops.consts.app.TimedType;
+import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.request.ApplicationPipelineDetailRecordRequest;
 import com.orion.ops.entity.request.ApplicationPipelineRecordRequest;
@@ -69,6 +71,7 @@ public class ApplicationPipelineRecordController {
      * 提交
      */
     @RequestMapping("/submit")
+    @EventLog(EventType.SUBMIT_PIPELINE_EXEC)
     public Long submitPipelineExec(@RequestBody ApplicationPipelineRecordRequest request) {
         Valid.notNull(request.getPipelineId());
         Valid.notBlank(request.getTitle());
@@ -94,6 +97,7 @@ public class ApplicationPipelineRecordController {
      */
     @RequestMapping("/audit")
     @RequireRole(RoleType.ADMINISTRATOR)
+    @EventLog(EventType.AUDIT_PIPELINE_EXEC)
     public Integer auditPipeline(@RequestBody ApplicationPipelineRecordRequest request) {
         Valid.notNull(request.getId());
         AuditStatus status = Valid.notNull(AuditStatus.of(request.getAuditStatus()));
@@ -107,6 +111,7 @@ public class ApplicationPipelineRecordController {
      * 复制
      */
     @RequestMapping("/copy")
+    @EventLog(EventType.COPY_PIPELINE_EXEC)
     public Long copyPipeline(@RequestBody ApplicationPipelineRecordRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationPipelineRecordService.copyPipeline(id);
@@ -116,6 +121,7 @@ public class ApplicationPipelineRecordController {
      * 执行
      */
     @RequestMapping("/exec")
+    @EventLog(EventType.EXEC_PIPELINE_EXEC)
     public HttpWrapper<?> execPipeline(@RequestBody ApplicationPipelineRecordRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationPipelineRecordService.execPipeline(id, false);
@@ -126,6 +132,7 @@ public class ApplicationPipelineRecordController {
      * 删除
      */
     @RequestMapping("/delete")
+    @EventLog(EventType.DELETE_PIPELINE_EXEC)
     public Integer deletePipeline(@RequestBody ApplicationPipelineRecordRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationPipelineRecordService.deletePipeline(idList);
@@ -135,6 +142,7 @@ public class ApplicationPipelineRecordController {
      * 设置定时
      */
     @RequestMapping("/set-timed")
+    @EventLog(EventType.SET_PIPELINE_TIMED_EXEC)
     public HttpWrapper<?> setTimedExec(@RequestBody ApplicationPipelineRecordRequest request) {
         Long id = Valid.notNull(request.getId());
         Date timedExecTime = Valid.notNull(request.getTimedExecTime());
@@ -147,15 +155,26 @@ public class ApplicationPipelineRecordController {
      * 取消定时
      */
     @RequestMapping("/cancel-timed")
+    @EventLog(EventType.CANCEL_PIPELINE_TIMED_EXEC)
     public HttpWrapper<?> cancelTimedExec(@RequestBody ApplicationPipelineRecordRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationPipelineRecordService.cancelPipelineTimedExec(id);
         return HttpWrapper.ok();
     }
 
+    /**
+     * 停止
+     */
+    @RequestMapping("/terminated")
+    @EventLog(EventType.TERMINATED_PIPELINE_EXEC)
+    public HttpWrapper<?> terminatedExec(@RequestBody ApplicationPipelineRecordRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationPipelineRecordService.terminatedExec(id);
+        return HttpWrapper.ok();
+    }
+
     // 详情
     // 状态
-    // 停止
     // 日志
 
     // 操作详情

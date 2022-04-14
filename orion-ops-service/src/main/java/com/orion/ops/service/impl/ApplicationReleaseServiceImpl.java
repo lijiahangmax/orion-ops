@@ -332,8 +332,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         update.setId(id);
         update.setUpdateTime(new Date());
         if (systemSchedule) {
-            update.setReleaseUserId(release.getAuditUserId());
-            update.setReleaseUserName(release.getAuditUserName());
+            update.setReleaseUserId(release.getCreateUserId());
+            update.setReleaseUserName(release.getCreateUserName());
         } else {
             UserDTO user = Currents.getUser();
             update.setReleaseUserId(user.getId());

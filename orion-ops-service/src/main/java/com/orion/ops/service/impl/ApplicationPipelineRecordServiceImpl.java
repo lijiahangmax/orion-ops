@@ -148,6 +148,9 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         // 设置详情
         List<ApplicationPipelineDetailRecordDO> recordDetailList = this.setPipelineDetailRecords(recordId, appInfoMap, pipelineDetails, requestDetailsMap);
         recordDetailList.forEach(applicationPipelineDetailRecordDAO::insert);
+        // 设置日志参数
+        EventParamsHolder.addParams(pipelineRecord);
+        EventParamsHolder.addParam(EventKeys.DETAILS, recordDetailList);
         return recordId;
     }
 
@@ -187,10 +190,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
             update.setExecStatus(PipelineStatus.AUDIT_REJECT.getStatus());
         }
         int effect = applicationPipelineRecordDAO.updateById(update);
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
-        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
-        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
+        this.setEventLogParams(record);
         EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? Const.RESOLVE_LABEL : Const.REJECT_LABEL);
         return effect;
     }
@@ -208,6 +208,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         request.setPipelineId(record.getPipelineId());
         request.setTitle(record.getExecTitle());
         request.setDescription(record.getExecDescription());
+        request.setTimedExec(TimedType.NORMAL.getType());
         // 设置详情
         List<ApplicationPipelineDetailRecordRequest> details = recordDetails.stream().map(s -> {
             ApplicationPipelineStageConfigDTO config = JSON.parseObject(s.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
@@ -221,7 +222,32 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public void execPipeline(Long id, boolean isSystem) {
-
+        // 查询状态
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        if (!PipelineStatus.WAIT_RUNNABLE.equals(status)
+                && !PipelineStatus.WAIT_SCHEDULE.equals(status)) {
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
+        }
+        // 更新执行人
+        ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        if (isSystem) {
+            update.setExecUserId(record.getCreateUserId());
+            update.setExecUserName(record.getCreateUserName());
+        } else {
+            UserDTO user = Currents.getUser();
+            update.setExecUserId(user.getId());
+            update.setExecUserName(user.getUsername());
+            // 移除
+            taskRegister.cancel(TaskType.PIPELINE, id);
+        }
+        applicationPipelineRecordDAO.updateById(update);
+        // 执行
+        // 设置日志参数
+        this.setEventLogParams(record);
     }
 
     @Override
@@ -266,10 +292,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         // 提交任务
         taskRegister.submit(TaskType.PIPELINE, timedExecDate, id);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
-        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
-        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
+        this.setEventLogParams(record);
         EventParamsHolder.addParam(EventKeys.TIME, Dates.format(timedExecDate));
     }
 
@@ -293,10 +316,22 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         // 取消调度任务
         taskRegister.cancel(TaskType.PIPELINE, id);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
-        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
-        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
+        this.setEventLogParams(record);
+    }
+
+    @Override
+    public void terminatedExec(Long id) {
+        // 查询状态
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        if (!PipelineStatus.RUNNABLE.equals(status)) {
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
+        }
+        // 获取实例
+        // 调用终止
+        // 设置日志参数
+        this.setEventLogParams(record);
     }
 
     /**
@@ -408,6 +443,18 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
                 pipelineRecord.setAuditReason(MessageConst.AUDIT_NOT_REQUIRED);
             }
         }
+    }
+
+    /**
+     * 设置操作日志参数
+     *
+     * @param record record
+     */
+    private void setEventLogParams(ApplicationPipelineRecordDO record) {
+        EventParamsHolder.addParam(EventKeys.ID, record.getId());
+        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
+        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
+        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
     }
 
 }
