@@ -1,6 +1,7 @@
 package com.orion.ops.task;
 
 import com.orion.ops.consts.Const;
+import com.orion.ops.task.impl.PipelineTaskImpl;
 import com.orion.ops.task.impl.ReleaseTaskImpl;
 import com.orion.ops.task.impl.SchedulerTaskImpl;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,16 @@ public enum TaskType {
         @Override
         public String getKey(Object params) {
             return Const.TASK + "-" + params;
+        }
+    },
+
+    /**
+     * 流水线任务
+     */
+    PIPELINE(id -> new PipelineTaskImpl((Long) id)) {
+        @Override
+        public String getKey(Object params) {
+            return Const.PIPELINE + "-" + params;
         }
     },
 
