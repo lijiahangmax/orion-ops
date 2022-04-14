@@ -35,4 +35,10 @@
         id, pipeline_id, pipeline_name, profile_id, profile_name, profile_tag, exec_title, exec_description, exec_status, timed_exec, timed_exec_time, create_user_id, create_user_name, audit_user_id, audit_user_name, audit_time, audit_reason, exec_user_id, exec_user_name, exec_start_time, exec_end_time, deleted, create_time, update_time
     </sql>
 
+    <update id="setTimedExecTimeNull">
+        UPDATE application_pipeline_record
+        SET timed_exec_time = NULL
+        WHERE id = #{id}
+    </update>
+
 </mapper>

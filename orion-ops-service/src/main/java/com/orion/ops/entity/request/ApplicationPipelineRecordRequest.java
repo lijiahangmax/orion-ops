@@ -73,6 +73,18 @@ public class ApplicationPipelineRecordRequest extends PageRequest {
     private Integer status;
 
     /**
+     * 审核状态 10通过 20驳回
+     *
+     * @see com.orion.ops.consts.AuditStatus
+     */
+    private Integer auditStatus;
+
+    /**
+     * 审核描述
+     */
+    private String auditReason;
+
+    /**
      * 执行明细
      */
     private List<ApplicationPipelineDetailRecordRequest> details;

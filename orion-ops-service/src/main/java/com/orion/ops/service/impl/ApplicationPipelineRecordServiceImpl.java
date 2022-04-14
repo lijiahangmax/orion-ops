@@ -3,12 +3,15 @@ package com.orion.ops.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.PipelineDetailStatus;
-import com.orion.ops.consts.app.ReleaseStatus;
+import com.orion.ops.consts.app.PipelineStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.consts.app.TimedType;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -21,13 +24,17 @@ import com.orion.ops.service.api.ApplicationBuildService;
 import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
 import com.orion.ops.service.api.ApplicationPipelineDetailService;
 import com.orion.ops.service.api.ApplicationPipelineRecordService;
+import com.orion.ops.task.TaskRegister;
+import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
+import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
+import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +83,9 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
     @Resource
     private ApplicationBuildService applicationBuildService;
 
+    @Resource
+    private TaskRegister taskRegister;
+
     @Override
     public DataGrid<ApplicationPipelineRecordListVO> getPipelineRecordList(ApplicationPipelineRecordRequest request) {
         LambdaQueryWrapper<ApplicationPipelineRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineRecordDO>()
@@ -111,6 +121,13 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
                 .map(requestDetailsMap::get)
                 .allMatch(Objects::nonNull);
         Valid.isTrue(detailAllPresent, MessageConst.PIPELINE_DETAIL_ABSENT);
+        // 设置详情信息
+        for (ApplicationPipelineDetailDO pipelineDetail : pipelineDetails) {
+            ApplicationPipelineDetailRecordRequest requestDetail = requestDetailsMap.get(pipelineDetail.getId());
+            requestDetail.setAppId(pipelineDetail.getAppId());
+            requestDetail.setProfileId(pipelineDetail.getProfileId());
+            requestDetail.setStageType(pipelineDetail.getStageType());
+        }
         // 查询环境信息
         Long profileId = pipeline.getProfileId();
         ApplicationProfileDO profile = applicationProfileDAO.selectById(profileId);
@@ -132,6 +149,154 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         List<ApplicationPipelineDetailRecordDO> recordDetailList = this.setPipelineDetailRecords(recordId, appInfoMap, pipelineDetails, requestDetailsMap);
         recordDetailList.forEach(applicationPipelineDetailRecordDAO::insert);
         return recordId;
+    }
+
+    @Override
+    public Integer auditPipeline(ApplicationPipelineRecordRequest request) {
+        // 查询状态
+        Long id = request.getId();
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        if (!PipelineStatus.WAIT_AUDIT.equals(status) && !PipelineStatus.AUDIT_REJECT.equals(status)) {
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
+        }
+        AuditStatus auditStatus = AuditStatus.of(request.getAuditStatus());
+        UserDTO user = Currents.getUser();
+        // 更新
+        ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
+        update.setId(id);
+        update.setAuditUserId(user.getId());
+        update.setAuditUserName(user.getUsername());
+        update.setAuditTime(new Date());
+        update.setAuditReason(request.getAuditReason());
+        final boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
+        // 发送站内信
+        if (resolve) {
+            // 通过
+            final boolean timedExec = TimedType.TIMED.getType().equals(record.getTimedExec());
+            if (!timedExec) {
+                update.setExecStatus(PipelineStatus.WAIT_RUNNABLE.getStatus());
+            } else {
+                update.setExecStatus(PipelineStatus.WAIT_SCHEDULE.getStatus());
+                // 提交任务
+                taskRegister.submit(TaskType.PIPELINE, record.getTimedExecTime(), id);
+            }
+        } else {
+            // 驳回
+            update.setExecStatus(PipelineStatus.AUDIT_REJECT.getStatus());
+        }
+        int effect = applicationPipelineRecordDAO.updateById(update);
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
+        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
+        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
+        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? Const.RESOLVE_LABEL : Const.REJECT_LABEL);
+        return effect;
+    }
+
+    @Override
+    public Long copyPipeline(Long id) {
+        // 查询状态
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        // 查询详情
+        List<ApplicationPipelineDetailRecordDO> recordDetails = applicationPipelineDetailRecordService.selectRecordDetails(id);
+        Valid.notEmpty(recordDetails, MessageConst.PIPELINE_DETAIL_ABSENT);
+        // 提交
+        ApplicationPipelineRecordRequest request = new ApplicationPipelineRecordRequest();
+        request.setPipelineId(record.getPipelineId());
+        request.setTitle(record.getExecTitle());
+        request.setDescription(record.getExecDescription());
+        // 设置详情
+        List<ApplicationPipelineDetailRecordRequest> details = recordDetails.stream().map(s -> {
+            ApplicationPipelineStageConfigDTO config = JSON.parseObject(s.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
+            ApplicationPipelineDetailRecordRequest detail = Converts.to(config, ApplicationPipelineDetailRecordRequest.class);
+            detail.setId(s.getPipelineDetailId());
+            return detail;
+        }).collect(Collectors.toList());
+        request.setDetails(details);
+        return SpringHolder.getBean(ApplicationPipelineRecordService.class).submitPipelineExec(request);
+    }
+
+    @Override
+    public void execPipeline(Long id, boolean isSystem) {
+
+    }
+
+    @Override
+    public Integer deletePipeline(List<Long> idList) {
+        // 查询状态
+        List<ApplicationPipelineRecordDO> pipelineStatus = applicationPipelineRecordDAO.selectBatchIds(idList);
+        Valid.notEmpty(pipelineStatus, MessageConst.PIPELINE_ABSENT);
+        boolean canDelete = pipelineStatus.stream()
+                .map(ApplicationPipelineRecordDO::getExecStatus)
+                .noneMatch(s -> PipelineStatus.WAIT_SCHEDULE.getStatus().equals(s)
+                        || PipelineStatus.RUNNABLE.getStatus().equals(s));
+        Valid.isTrue(canDelete, MessageConst.ILLEGAL_STATUS);
+        // 删除主表
+        int effect = applicationPipelineRecordDAO.deleteBatchIds(idList);
+        // 删除详情
+        effect += applicationPipelineDetailRecordService.deleteByRecordIdList(idList);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
+        return effect;
+    }
+
+    @Override
+    public void setPipelineTimedExec(Long id, Date timedExecDate) {
+        // 查询状态
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        if (!PipelineStatus.WAIT_RUNNABLE.equals(status) && !PipelineStatus.WAIT_SCHEDULE.equals(status)) {
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
+        }
+        // 取消调度任务
+        taskRegister.cancel(TaskType.PIPELINE, id);
+        // 更新状态
+        ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        update.setExecStatus(PipelineStatus.WAIT_SCHEDULE.getStatus());
+        update.setTimedExec(TimedType.TIMED.getType());
+        update.setTimedExecTime(timedExecDate);
+        applicationPipelineRecordDAO.updateById(update);
+        // 提交任务
+        taskRegister.submit(TaskType.PIPELINE, timedExecDate, id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
+        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
+        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
+        EventParamsHolder.addParam(EventKeys.TIME, Dates.format(timedExecDate));
+    }
+
+    @Override
+    public void cancelPipelineTimedExec(Long id) {
+        // 查询状态
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        if (!PipelineStatus.WAIT_SCHEDULE.equals(status)) {
+            throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
+        }
+        // 更新状态
+        ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
+        update.setId(id);
+        update.setUpdateTime(new Date());
+        update.setTimedExec(TimedType.NORMAL.getType());
+        update.setExecStatus(PipelineStatus.WAIT_RUNNABLE.getStatus());
+        applicationPipelineRecordDAO.updateById(update);
+        applicationPipelineRecordDAO.setTimedExecTimeNull(id);
+        // 取消调度任务
+        taskRegister.cancel(TaskType.PIPELINE, id);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.PIPELINE_ID, record.getPipelineId());
+        EventParamsHolder.addParam(EventKeys.NAME, record.getPipelineName());
+        EventParamsHolder.addParam(EventKeys.TITLE, record.getExecTitle());
     }
 
     /**
@@ -227,12 +392,12 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         boolean isAdmin = RoleType.isAdministrator(user.getRoleType());
         // 需要审核 & 不是管理员
         if (needAudit && !isAdmin) {
-            pipelineRecord.setExecStatus(ReleaseStatus.WAIT_AUDIT.getStatus());
+            pipelineRecord.setExecStatus(PipelineStatus.WAIT_AUDIT.getStatus());
         } else {
             if (TimedType.TIMED.getType().equals(pipelineRecord.getTimedExec())) {
-                pipelineRecord.setExecStatus(ReleaseStatus.WAIT_SCHEDULE.getStatus());
+                pipelineRecord.setExecStatus(PipelineStatus.WAIT_SCHEDULE.getStatus());
             } else {
-                pipelineRecord.setExecStatus(ReleaseStatus.WAIT_RUNNABLE.getStatus());
+                pipelineRecord.setExecStatus(PipelineStatus.WAIT_RUNNABLE.getStatus());
             }
             pipelineRecord.setAuditUserId(user.getId());
             pipelineRecord.setAuditUserName(user.getUsername());

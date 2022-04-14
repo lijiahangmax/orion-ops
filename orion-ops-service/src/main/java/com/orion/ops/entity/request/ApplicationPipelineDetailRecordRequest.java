@@ -51,16 +51,22 @@ public class ApplicationPipelineDetailRecordRequest {
 
     /**
      * 应用id
+     * <p>
+     * 手动设置
      */
     private Long appId;
 
     /**
      * 环境id
+     * <p>
+     * 手动设置
      */
     private Long profileId;
 
     /**
      * 阶段类型 10构建 20发布
+     * <p>
+     * 手动设置
      */
     private Integer stageType;
 

@@ -2,6 +2,7 @@ package com.orion.ops.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -12,5 +13,13 @@ import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
  * @since 2022-04-07
  */
 public interface ApplicationPipelineRecordDAO extends BaseMapper<ApplicationPipelineRecordDO> {
+
+    /**
+     * 设置定时执行时间为空
+     *
+     * @param id id
+     * @return effect
+     */
+    Integer setTimedExecTimeNull(@Param("id") Long id);
 
 }

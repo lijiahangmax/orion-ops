@@ -72,6 +72,8 @@ public class ApplicationPipelineDetailRecordDO implements Serializable {
 
     /**
      * 阶段操作配置
+     *
+     * @see com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO
      */
     @TableField("stage_config")
     private String stageConfig;

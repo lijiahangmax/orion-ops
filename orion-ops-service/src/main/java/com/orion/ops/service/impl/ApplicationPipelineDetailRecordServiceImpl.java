@@ -1,5 +1,6 @@
 package com.orion.ops.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationPipelineDetailRecordDAO;
@@ -41,9 +42,9 @@ public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPi
     private MachineInfoDAO machineInfoDAO;
 
     @Override
-    public List<ApplicationPipelineDetailRecordVO> getRecordDetails(Long id) {
+    public List<ApplicationPipelineDetailRecordVO> getRecordDetails(Long recordId) {
         LambdaQueryWrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
-                .eq(ApplicationPipelineDetailRecordDO::getRecordId, id);
+                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
         // 查询列表
         List<ApplicationPipelineDetailRecordVO> details = DataQuery.of(applicationPipelineDetailRecordDAO)
                 .wrapper(wrapper)
@@ -92,6 +93,27 @@ public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPi
             }
         }
         return details;
+    }
+
+    @Override
+    public List<ApplicationPipelineDetailRecordDO> selectRecordDetails(Long recordId) {
+        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
+                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
+        return applicationPipelineDetailRecordDAO.selectList(wrapper);
+    }
+
+    @Override
+    public Integer deleteByRecordId(Long recordId) {
+        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
+                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
+        return applicationPipelineDetailRecordDAO.delete(wrapper);
+    }
+
+    @Override
+    public Integer deleteByRecordIdList(List<Long> recordIdList) {
+        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
+                .in(ApplicationPipelineDetailRecordDO::getRecordId, recordIdList);
+        return applicationPipelineDetailRecordDAO.delete(wrapper);
     }
 
 }

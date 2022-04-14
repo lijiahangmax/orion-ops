@@ -57,6 +57,17 @@ public class ApplicationPipelineStageConfigDTO {
             dto.setMachineIdList(p.getMachineIdList());
             return dto;
         });
+
+        TypeStore.STORE.register(ApplicationPipelineStageConfigDTO.class, ApplicationPipelineDetailRecordRequest.class, p -> {
+            ApplicationPipelineDetailRecordRequest req = new ApplicationPipelineDetailRecordRequest();
+            req.setBranchName(p.getBranchName());
+            req.setCommitId(p.getCommitId());
+            req.setBuildId(p.getBuildId());
+            req.setTitle(p.getTitle());
+            req.setDescription(p.getDescription());
+            req.setMachineIdList(p.getMachineIdList());
+            return req;
+        });
     }
 
 }
