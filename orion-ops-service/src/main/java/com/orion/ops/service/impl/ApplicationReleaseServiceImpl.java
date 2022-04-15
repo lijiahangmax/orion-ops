@@ -700,7 +700,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     private void setRollbackReleaseInfo(ApplicationReleaseDO rollback, ApplicationProfileDO profile) {
         UserDTO user = Currents.getUser();
         rollback.setId(null);
-        rollback.setReleaseTitle(rollback.getReleaseTitle() + " - " + Const.ROLLBACK);
+        rollback.setReleaseTitle(rollback.getReleaseTitle());
         rollback.setReleaseType(ReleaseType.ROLLBACK.getType());
         rollback.setRollbackReleaseId(rollback.getId());
         rollback.setTimedRelease(TimedType.NORMAL.getType());

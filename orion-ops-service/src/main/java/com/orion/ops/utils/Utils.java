@@ -38,7 +38,7 @@ public class Utils {
      * @return suffix
      */
     public static String getCopySuffix() {
-        return getSymbolSuffix(Const.COPY);
+        return UUIds.random32().substring(0, 5).toUpperCase();
     }
 
     /**

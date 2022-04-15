@@ -6,9 +6,11 @@ import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.time.Dates;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 流水线明细详情
@@ -68,19 +70,19 @@ public class ApplicationPipelineDetailRecordVO {
     private Date startTime;
 
     /**
+     * 执行开始时间
+     */
+    private String startTimeAgo;
+
+    /**
      * 执行结束时间
      */
-    private Date entTime;
+    private Date endTime;
 
     /**
-     * 创建时间
+     * 执行结束时间
      */
-    private Date createTime;
-
-    /**
-     * 修改时间
-     */
-    private Date updateTime;
+    private String endTimeAgo;
 
     /**
      * 使用时间 ms
@@ -107,9 +109,9 @@ public class ApplicationPipelineDetailRecordVO {
             Date startTime = p.getExecStartTime();
             Date endTime = p.getExecEndTime();
             vo.setStartTime(startTime);
-            vo.setEntTime(endTime);
-            vo.setCreateTime(p.getCreateTime());
-            vo.setUpdateTime(p.getUpdateTime());
+            vo.setEndTime(endTime);
+            Optional.ofNullable(startTime).map(Dates::ago).ifPresent(vo::setStartTimeAgo);
+            Optional.ofNullable(endTime).map(Dates::ago).ifPresent(vo::setEndTimeAgo);
             if (startTime != null && endTime != null) {
                 vo.setUsed(endTime.getTime() - startTime.getTime());
                 vo.setKeepTime(Utils.interval(vo.getUsed()));
