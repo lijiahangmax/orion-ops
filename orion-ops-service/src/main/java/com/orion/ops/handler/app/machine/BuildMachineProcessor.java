@@ -110,10 +110,17 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
 
     @Override
     protected void completeCallback() {
-        // 完成回调
+        if (!terminated) {
+            // 复制产物文件
+            this.copyBundleFile();
+        }
         super.completeCallback();
-        // 复制产物文件
-        this.copyBundleFile();
+    }
+
+    @Override
+    protected void successCallback() {
+        // 完成回调
+        super.successCallback();
         // 发送站内信
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.ID, record.getId());

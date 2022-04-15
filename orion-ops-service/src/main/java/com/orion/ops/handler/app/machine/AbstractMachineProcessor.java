@@ -88,6 +88,8 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                     handler.skipped();
                 }
             }
+            // 完成回调
+            this.completeCallback();
         } catch (Exception e) {
             // 异常
             ex = e;
@@ -100,7 +102,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                 this.terminatedCallback();
             } else if (ex == null) {
                 // 成功回调
-                this.completeCallback();
+                this.successCallback();
             } else {
                 // 失败回调
                 this.exceptionCallback(isMainError, ex);
@@ -156,6 +158,13 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     protected abstract void appendStartedLog();
 
     /**
+     * 完成回调
+     */
+    protected void completeCallback() {
+        log.info("机器任务执行-完成 relId: {}", id);
+    }
+
+    /**
      * 停止回调
      */
     protected void terminatedCallback() {
@@ -171,9 +180,9 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     }
 
     /**
-     * 完成回调
+     * 成功回调
      */
-    protected void completeCallback() {
+    protected void successCallback() {
         log.info("机器任务执行-成功 relId: {}", id);
         // 修改状态
         this.updateStatus(MachineProcessorStatus.FINISH);

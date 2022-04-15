@@ -110,9 +110,9 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
     }
 
     @Override
-    protected void completeCallback() {
+    protected void successCallback() {
         // 完成回调
-        super.completeCallback();
+        super.successCallback();
         // 更新应用机器发布版本
         this.updateAppMachineVersion();
     }
