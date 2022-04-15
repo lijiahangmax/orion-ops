@@ -1377,6 +1377,38 @@ const $enum = {
         DELETE_PIPELINE: {
           value: 5515,
           label: '删除流水线'
+        },
+        SUBMIT_PIPELINE_EXEC: {
+          value: 5605,
+          label: '提交执行流水线'
+        },
+        AUDIT_PIPELINE_EXEC: {
+          value: 5610,
+          label: '审核流水线明细'
+        },
+        COPY_PIPELINE_EXEC: {
+          value: 5615,
+          label: '复制流水线明细'
+        },
+        EXEC_PIPELINE_EXEC: {
+          value: 5620,
+          label: '执行流水线明细'
+        },
+        DELETE_PIPELINE_EXEC: {
+          value: 5625,
+          label: '删除流水线明细'
+        },
+        SET_PIPELINE_TIMED_EXEC: {
+          value: 5630,
+          label: '定时执行流水线'
+        },
+        CANCEL_PIPELINE_TIMED_EXEC: {
+          value: 5635,
+          label: '取消执行流水线'
+        },
+        TERMINATED_PIPELINE_EXEC: {
+          value: 5640,
+          label: '停止执行流水线'
         }
       }
     },
@@ -1773,6 +1805,88 @@ const $enum = {
           redirect: '#/app/release/list'
         }
       }
+    }
+  },
+
+  /**
+   * 流水线状态
+   */
+  PIPELINE_STATUS: {
+    WAIT_AUDIT: {
+      value: 10,
+      color: '',
+      label: '待审核'
+    },
+    AUDIT_REJECT: {
+      value: 20,
+      color: 'orange',
+      label: '已驳回'
+    },
+    WAIT_RUNNABLE: {
+      value: 30,
+      color: 'cyan',
+      label: '待执行'
+    },
+    WAIT_SCHEDULE: {
+      value: 35,
+      color: 'cyan',
+      label: '待调度'
+    },
+    RUNNABLE: {
+      value: 40,
+      color: 'green',
+      label: '执行中'
+    },
+    FINISH: {
+      value: 50,
+      color: 'blue',
+      label: '已完成'
+    },
+    TERMINATED: {
+      value: 60,
+      color: 'orange',
+      label: '已停止'
+    },
+    FAILURE: {
+      value: 70,
+      color: 'red',
+      label: '已失败'
+    }
+  },
+
+  /**
+   * 流水线操作状态
+   */
+  PIPELINE_DETAIL_STATUS: {
+    WAIT: {
+      value: 10,
+      color: '',
+      label: '未开始'
+    },
+    RUNNABLE: {
+      value: 20,
+      color: 'green',
+      label: '进行中'
+    },
+    FINISH: {
+      value: 30,
+      color: 'blue',
+      label: '已完成'
+    },
+    FAILURE: {
+      value: 40,
+      color: 'red',
+      label: '已失败'
+    },
+    SKIPPED: {
+      value: 50,
+      color: 'orange',
+      label: '已跳过'
+    },
+    TERMINATED: {
+      value: 60,
+      color: 'orange',
+      label: '已停止'
     }
   }
 

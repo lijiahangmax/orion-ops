@@ -744,7 +744,7 @@ const $api = {
   submitExecTask: param => {
     return $http.$post('/exec/submit', param, {
       timeout: 600000,
-      loading: '正在提交执行...'
+      loading: '正在提交...'
     })
   },
 
@@ -1210,7 +1210,7 @@ const $api = {
   submitAppBuild: param => {
     return $http.$post('/app-build/submit', param, {
       timeout: 600000,
-      loading: '正在提交构建请求...'
+      loading: '正在提交...'
     })
   },
 
@@ -1242,7 +1242,7 @@ const $api = {
    */
   terminatedAppBuild: param => {
     return $http.$post('/app-build/terminated', param, {
-      loading: '正在提交停止请求...'
+      loading: '正在停止...'
     })
   },
 
@@ -1261,7 +1261,7 @@ const $api = {
   rebuildApp: param => {
     return $http.$post('/app-build/rebuild', param, {
       timeout: 600000,
-      loading: '正在提交构建请求...'
+      loading: '正在重新构建...'
     })
   },
 
@@ -1315,7 +1315,7 @@ const $api = {
   submitAppRelease: param => {
     return $http.$post('/app-release/submit', param, {
       timeout: 600000,
-      loading: '正在提交发布请求...'
+      loading: '正在提交...'
     })
   },
 
@@ -1325,7 +1325,7 @@ const $api = {
   copyAppRelease: param => {
     return $http.$post('/app-release/copy', param, {
       timeout: 600000,
-      loading: '正在提交复制请求...'
+      loading: '正在复制...'
     })
   },
 
@@ -1343,7 +1343,7 @@ const $api = {
    */
   runnableAppRelease: param => {
     return $http.$post('/app-release/runnable', param, {
-      loading: '正在提交执行请求...'
+      loading: '正在执行...'
     })
   },
 
@@ -1352,7 +1352,7 @@ const $api = {
    */
   cancelAppTimedRelease: param => {
     return $http.$post('/app-release/cancel-timed', param, {
-      loading: '正在取消定时发布...'
+      loading: '正在取消...'
     })
   },
 
@@ -1371,7 +1371,7 @@ const $api = {
   rollbackAppRelease: param => {
     return $http.$post('/app-release/rollback', param, {
       timeout: 600000,
-      loading: '正在提交回滚请求...'
+      loading: '正在提交...'
     })
   },
 
@@ -1389,7 +1389,7 @@ const $api = {
    */
   terminatedAppRelease: param => {
     return $http.$post('/app-release/terminated', param, {
-      loading: '正在提交停止请求...'
+      loading: '正在停止...'
     })
   },
 
@@ -1829,6 +1829,101 @@ const $api = {
   deleteAppPipeline: param => {
     return $http.$post('/app-pipeline/delete', param, {
       loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取应用流水线执行列表
+   */
+  getAppPipelineRecordList: param => {
+    return $http.$post('/app-pipeline-record/list', param)
+  },
+
+  /**
+   * 获取应用流水线执行详情
+   */
+  getAppPipelineRecordDetail: param => {
+    return $http.$post('/app-pipeline-record/detail', param)
+  },
+
+  /**
+   * 获取应用流水线执行详情
+   */
+  getAppPipelineRecordDetails: param => {
+    return $http.$post('/app-pipeline-record/record-details', param)
+  },
+
+  /**
+   * 提交执行应用流水线
+   */
+  submitAppPipelineExec: param => {
+    return $http.$post('/app-pipeline-record/submit', param, {
+      timeout: 600000,
+      loading: '正在提交...'
+    })
+  },
+
+  /**
+   * 审核应用流水线执行
+   */
+  auditAppPipelineRecord: param => {
+    return $http.$post('/app-pipeline-record/audit', param, {
+      loading: '正在操作...'
+    })
+  },
+
+  /**
+   * 复制应用流水线执行
+   */
+  copyAppPipelineRecord: param => {
+    return $http.$post('/app-pipeline-record/copy', param, {
+      timeout: 600000,
+      loading: '正在复制...'
+    })
+  },
+
+  /**
+   * 执行应用流水线
+   */
+  execAppPipelineRecord: param => {
+    return $http.$post('/app-pipeline-record/exec', param, {
+      loading: '正在执行...'
+    })
+  },
+
+  /**
+   * 删除应用流水线执行
+   */
+  deleteAppPipelineRecord: param => {
+    return $http.$post('/app-pipeline-record/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 设置应用流水线定时执行
+   */
+  setAppPipelineRecordTimedExec: param => {
+    return $http.$post('/app-pipeline-record/set-timed', param, {
+      loading: '正在设置...'
+    })
+  },
+
+  /**
+   * 取消应用流水线定时执行
+   */
+  cancelAppPipelineRecordTimedExec: param => {
+    return $http.$post('/app-pipeline-record/cancel-timed', param, {
+      loading: '正在取消...'
+    })
+  },
+
+  /**
+   * 停止执行应用流水线
+   */
+  terminatedAppPipelineRecordExec: param => {
+    return $http.$post('/app-pipeline-record/terminated', param, {
+      loading: '正在停止...'
     })
   }
 
