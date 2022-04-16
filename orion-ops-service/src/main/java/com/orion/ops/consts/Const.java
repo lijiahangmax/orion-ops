@@ -136,6 +136,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final int SFTP_UPLOAD_THRESHOLD = 512;
 
+    public static final String APP_CN = "应用";
+
+    public static final String RELEASE_CN = "发布";
+
     /**
      * 不安全的文件夹
      */

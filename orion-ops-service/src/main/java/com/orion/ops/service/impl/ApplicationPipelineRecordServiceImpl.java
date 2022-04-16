@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.constant.Letters;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.AuditStatus;
 import com.orion.ops.consts.Const;
@@ -19,7 +20,12 @@ import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationPipelineDetailRecordRequest;
 import com.orion.ops.entity.request.ApplicationPipelineRecordRequest;
+import com.orion.ops.entity.vo.ApplicationPipelineDetailRecordVO;
 import com.orion.ops.entity.vo.ApplicationPipelineRecordListVO;
+import com.orion.ops.entity.vo.ApplicationPipelineRecordVO;
+import com.orion.ops.handler.app.pipeline.IPipelineProcessor;
+import com.orion.ops.handler.app.pipeline.PipelineProcessor;
+import com.orion.ops.handler.app.pipeline.PipelineSessionHolder;
 import com.orion.ops.service.api.ApplicationBuildService;
 import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
 import com.orion.ops.service.api.ApplicationPipelineDetailService;
@@ -33,16 +39,14 @@ import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Sets;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -84,6 +88,9 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
     private ApplicationBuildService applicationBuildService;
 
     @Resource
+    private PipelineSessionHolder pipelineSessionHolder;
+
+    @Resource
     private TaskRegister taskRegister;
 
     @Override
@@ -101,6 +108,18 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(ApplicationPipelineRecordListVO.class);
+    }
+
+    @Override
+    public ApplicationPipelineRecordVO getPipelineRecordDetail(Long id) {
+        // 查询明细
+        ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
+        ApplicationPipelineRecordVO res = Converts.to(record, ApplicationPipelineRecordVO.class);
+        // 查询详情
+        List<ApplicationPipelineDetailRecordVO> details = applicationPipelineDetailRecordService.getRecordDetails(id);
+        res.setDetails(details);
+        return res;
     }
 
     @Override
@@ -156,7 +175,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public Integer auditPipeline(ApplicationPipelineRecordRequest request) {
-        // 查询状态
+        // 查询明细
         Long id = request.getId();
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
@@ -197,7 +216,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public Long copyPipeline(Long id) {
-        // 查询状态
+        // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
         // 查询详情
@@ -222,7 +241,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public void execPipeline(Long id, boolean isSystem) {
-        // 查询状态
+        // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
         PipelineStatus status = PipelineStatus.of(record.getExecStatus());
@@ -230,6 +249,8 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
                 && !PipelineStatus.WAIT_SCHEDULE.equals(status)) {
             throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
+        // 检查构建版本
+        this.checkPipelineExecutable(record);
         // 更新执行人
         ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
         update.setId(id);
@@ -246,13 +267,71 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         }
         applicationPipelineRecordDAO.updateById(update);
         // 执行
+        new PipelineProcessor(id).exec();
         // 设置日志参数
         this.setEventLogParams(record);
     }
 
+    /**
+     * 检查流水线是否可执行
+     *
+     * @param record record
+     */
+    private void checkPipelineExecutable(ApplicationPipelineRecordDO record) {
+        // 检查环境是否存在
+        Long profileId = record.getProfileId();
+        Valid.notNull(applicationProfileDAO.selectById(profileId), MessageConst.PROFILE_ABSENT);
+        // 查询详情
+        List<ApplicationPipelineDetailRecordDO> details = applicationPipelineDetailRecordService.selectRecordDetails(record.getId());
+        Valid.notEmpty(details, MessageConst.PIPELINE_DETAIL_ABSENT);
+        // 检查应用是否存在
+        Set<Long> appIdList = details.stream()
+                .map(ApplicationPipelineDetailRecordDO::getAppId)
+                .collect(Collectors.toSet());
+        Map<Long, ApplicationInfoDO> appMap = applicationInfoDAO.selectBatchIds(appIdList).stream()
+                .collect(Collectors.toMap(ApplicationInfoDO::getId, Function.identity()));
+        // 检查操作详情
+        Set<Long> appBuildStage = Sets.newSet();
+        for (ApplicationPipelineDetailRecordDO detail : details) {
+            // 检查应用是否存在
+            Long appId = detail.getAppId();
+            ApplicationInfoDO appInfo = appMap.get(appId);
+            Valid.notNull(appInfo, detail.getAppName() + MessageConst.ABSENT);
+            String appSymbol = Const.APP_CN + Strings.SPACE + appInfo.getAppName() + Strings.SPACE;
+            // 检查构建版本
+            if (StageType.BUILD.getType().equals(detail.getStageType())) {
+                appBuildStage.add(appId);
+            } else if (StageType.RELEASE.getType().equals(detail.getStageType())) {
+                ApplicationPipelineStageConfigDTO stageConfig = JSON.parseObject(detail.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
+                Long checkBuildId = stageConfig.getBuildId();
+                ApplicationBuildDO checkBuild;
+                if (checkBuildId == null) {
+                    // 查询最新版本 如果上面有构建操作则跳过
+                    boolean hasBuildDetail = appBuildStage.stream().anyMatch(appId::equals);
+                    if (hasBuildDetail) {
+                        continue;
+                    }
+                    // 如果没有构建流水线操作则查询最后的构建版本
+                    List<ApplicationBuildDO> lastBuild = applicationBuildDAO.selectBuildReleaseList(appId, profileId, 1);
+                    Valid.notEmpty(lastBuild, Strings.format(MessageConst.APP_LAST_BUILD_VERSION_ABSENT, appSymbol));
+                    checkBuildId = lastBuild.get(0).getId();
+                }
+                // 查询构建版本
+                checkBuild = applicationBuildDAO.selectById(checkBuildId);
+                Valid.notNull(checkBuild, appSymbol + MessageConst.BUILD_ABSENT);
+                try {
+                    // 检查产物是否存在
+                    applicationBuildService.checkBuildBundlePath(checkBuild);
+                } catch (Exception e) {
+                    throw Exceptions.argument(appSymbol + Letters.POUND + checkBuild.getBuildSeq() + Strings.SPACE + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
     @Override
     public Integer deletePipeline(List<Long> idList) {
-        // 查询状态
+        // 查询明细
         List<ApplicationPipelineRecordDO> pipelineStatus = applicationPipelineRecordDAO.selectBatchIds(idList);
         Valid.notEmpty(pipelineStatus, MessageConst.PIPELINE_ABSENT);
         boolean canDelete = pipelineStatus.stream()
@@ -272,7 +351,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public void setPipelineTimedExec(Long id, Date timedExecDate) {
-        // 查询状态
+        // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
         PipelineStatus status = PipelineStatus.of(record.getExecStatus());
@@ -298,7 +377,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public void cancelPipelineTimedExec(Long id) {
-        // 查询状态
+        // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
         PipelineStatus status = PipelineStatus.of(record.getExecStatus());
@@ -321,7 +400,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Override
     public void terminatedExec(Long id) {
-        // 查询状态
+        // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
         PipelineStatus status = PipelineStatus.of(record.getExecStatus());
@@ -329,7 +408,10 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
             throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 获取实例
+        IPipelineProcessor session = pipelineSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
         // 调用终止
+        session.terminated();
         // 设置日志参数
         this.setEventLogParams(record);
     }

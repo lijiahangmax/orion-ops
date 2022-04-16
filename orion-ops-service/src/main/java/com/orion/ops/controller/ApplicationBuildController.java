@@ -40,7 +40,7 @@ public class ApplicationBuildController {
     @EventLog(EventType.SUBMIT_BUILD)
     public Long submitAppBuild(@RequestBody ApplicationBuildRequest request) {
         Valid.allNotNull(request.getAppId(), request.getProfileId());
-        return applicationBuildService.submitBuildTask(request);
+        return applicationBuildService.submitBuildTask(request, true);
     }
 
     /**

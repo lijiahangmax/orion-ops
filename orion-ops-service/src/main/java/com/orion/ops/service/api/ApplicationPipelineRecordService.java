@@ -3,6 +3,7 @@ package com.orion.ops.service.api;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.entity.request.ApplicationPipelineRecordRequest;
 import com.orion.ops.entity.vo.ApplicationPipelineRecordListVO;
+import com.orion.ops.entity.vo.ApplicationPipelineRecordVO;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,14 @@ public interface ApplicationPipelineRecordService {
      * @return rows
      */
     DataGrid<ApplicationPipelineRecordListVO> getPipelineRecordList(ApplicationPipelineRecordRequest request);
+
+    /**
+     * 获取详情
+     *
+     * @param id id
+     * @return record
+     */
+    ApplicationPipelineRecordVO getPipelineRecordDetail(Long id);
 
     /**
      * 提交流水线执行

@@ -124,7 +124,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> sftpExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("sftpExceptionHandler url: {}, sftp处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
-        return HttpWrapper.error().msg(MessageConst.SFTP_OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = EncryptException.class)

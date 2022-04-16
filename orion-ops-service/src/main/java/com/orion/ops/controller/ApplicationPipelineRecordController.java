@@ -15,6 +15,7 @@ import com.orion.ops.entity.request.ApplicationPipelineDetailRecordRequest;
 import com.orion.ops.entity.request.ApplicationPipelineRecordRequest;
 import com.orion.ops.entity.vo.ApplicationPipelineDetailRecordVO;
 import com.orion.ops.entity.vo.ApplicationPipelineRecordListVO;
+import com.orion.ops.entity.vo.ApplicationPipelineRecordVO;
 import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
 import com.orion.ops.service.api.ApplicationPipelineRecordService;
 import com.orion.ops.task.TaskRegister;
@@ -56,6 +57,15 @@ public class ApplicationPipelineRecordController {
     public DataGrid<ApplicationPipelineRecordListVO> getPipelineRecordList(@RequestBody ApplicationPipelineRecordRequest request) {
         Valid.notNull(request.getProfileId());
         return applicationPipelineRecordService.getPipelineRecordList(request);
+    }
+
+    /**
+     * 详情
+     */
+    @RequestMapping("/detail")
+    public ApplicationPipelineRecordVO getPipelineRecordDetail(@RequestBody ApplicationPipelineRecordRequest request) {
+        Long id = Valid.notNull(request.getId());
+        return applicationPipelineRecordService.getPipelineRecordDetail(id);
     }
 
     /**
@@ -173,7 +183,6 @@ public class ApplicationPipelineRecordController {
         return HttpWrapper.ok();
     }
 
-    // 详情
     // 状态
     // 日志
 
@@ -186,5 +195,7 @@ public class ApplicationPipelineRecordController {
 
     // 恢复runner
     // 状态runner
+
+    // 调度线程池指标
 
 }

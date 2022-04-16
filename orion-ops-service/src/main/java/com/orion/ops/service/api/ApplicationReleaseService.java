@@ -79,8 +79,9 @@ public interface ApplicationReleaseService {
      *
      * @param id             id
      * @param systemSchedule 是否为系统调度
+     * @param execute        是否立即执行
      */
-    void runnableAppRelease(Long id, boolean systemSchedule);
+    void runnableAppRelease(Long id, boolean systemSchedule, boolean execute);
 
     /**
      * 取消执行

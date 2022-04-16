@@ -318,7 +318,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public void runnableAppRelease(Long id, boolean systemSchedule) {
+    public void runnableAppRelease(Long id, boolean systemSchedule, boolean execute) {
         // 查询状态
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
@@ -343,7 +343,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         }
         applicationReleaseDAO.updateById(update);
         // 发布
-        IReleaseProcessor.with(release).exec();
+        if (execute) {
+            IReleaseProcessor.with(release).exec();
+        }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
@@ -514,7 +516,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
             session.terminatedMachine(releaseMachineId);
         } else {
             // 调用跳过
-            session.skipMachine(releaseMachineId);
+            session.skippedMachine(releaseMachineId);
         }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);

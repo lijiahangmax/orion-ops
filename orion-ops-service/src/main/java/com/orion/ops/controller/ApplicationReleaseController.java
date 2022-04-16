@@ -136,7 +136,7 @@ public class ApplicationReleaseController {
     @EventLog(EventType.RUNNABLE_RELEASE)
     public HttpWrapper<?> runnableAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationReleaseService.runnableAppRelease(id, false);
+        applicationReleaseService.runnableAppRelease(id, false, true);
         return HttpWrapper.ok();
     }
 

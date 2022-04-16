@@ -26,7 +26,7 @@ public class ReleaseTaskImpl implements Runnable {
     @Override
     public void run() {
         log.info("定时执行发布任务-触发 releaseId: {}, time: {}", releaseId, Dates.current());
-        applicationReleaseService.runnableAppRelease(releaseId, true);
+        applicationReleaseService.runnableAppRelease(releaseId, true, true);
     }
 
 }

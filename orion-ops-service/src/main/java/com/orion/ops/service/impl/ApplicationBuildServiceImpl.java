@@ -5,7 +5,6 @@ import com.orion.lang.collect.MutableLinkedHashMap;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -25,7 +24,6 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
-import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
@@ -85,7 +83,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     private BuildSessionHolder buildSessionHolder;
 
     @Override
-    public Long submitBuildTask(ApplicationBuildRequest request) {
+    public Long submitBuildTask(ApplicationBuildRequest request, boolean execute) {
         Long appId = request.getAppId();
         Long profileId = request.getProfileId();
         // 查询应用
@@ -163,8 +161,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         }
         // 提交构建任务
         log.info("提交应用构建任务 buildId: {}", buildId);
-        BuildMachineProcessor buildProcessor = new BuildMachineProcessor(buildId);
-        Threads.start(buildProcessor, SchedulerPools.APP_BUILD_SCHEDULER);
+        if (execute) {
+            new BuildMachineProcessor(buildId).exec();
+        }
         // 设置日志参数
         EventParamsHolder.addParams(buildTask);
         return buildId;
@@ -285,7 +284,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         request.setBranchName(build.getBranchName());
         request.setCommitId(build.getCommitId());
         request.setDescription(build.getDescription());
-        return this.submitBuildTask(request);
+        return this.submitBuildTask(request, true);
     }
 
     @Override

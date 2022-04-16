@@ -22,9 +22,10 @@ public interface ApplicationBuildService {
      * 提交执行
      *
      * @param request request
+     * @param execute 是否提交任务
      * @return id
      */
-    Long submitBuildTask(ApplicationBuildRequest request);
+    Long submitBuildTask(ApplicationBuildRequest request, boolean execute);
 
     /**
      * 获取构建列表

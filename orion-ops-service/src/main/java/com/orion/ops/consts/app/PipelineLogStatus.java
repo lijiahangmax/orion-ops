@@ -1,5 +1,7 @@
 package com.orion.ops.consts.app;
 
+import com.orion.ops.utils.Valid;
+import com.orion.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,8 +25,8 @@ public enum PipelineLogStatus {
     /**
      * 开始执行
      */
-    EXEC(20, "应用 <sb>{}</sb> 构建任务开始执行",
-            "应用 <sb>{}</sb> 发布任务开始执行"),
+    EXEC(20, "开始执行应用 <sb>{}</sb> 构建任务",
+            "开始执行应用 <sb>{}</sb> 发布任务"),
 
     /**
      * 执行成功
@@ -66,5 +68,23 @@ public enum PipelineLogStatus {
      * 发布模板
      */
     private final String releaseTemplate;
+
+    /**
+     * 格式日志
+     *
+     * @param stage stage
+     * @param args  参数
+     * @return log
+     */
+    public String format(StageType stage, Object... args) {
+        Valid.notNull(stage);
+        if (StageType.BUILD.equals(stage)) {
+            return Strings.format(buildTemplate, args);
+        } else if (StageType.RELEASE.equals(stage)) {
+            return Strings.format(releaseTemplate, args);
+        } else {
+            return Strings.EMPTY;
+        }
+    }
 
 }

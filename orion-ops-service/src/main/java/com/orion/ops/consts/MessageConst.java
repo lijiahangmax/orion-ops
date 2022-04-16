@@ -12,6 +12,8 @@ public class MessageConst {
     private MessageConst() {
     }
 
+    public static final String ABSENT = "不存在";
+
     public static final String UNAUTHORIZED = "会话过期";
 
     public static final String NO_PERMISSION = "无操作权限";
@@ -26,7 +28,7 @@ public class MessageConst {
 
     public static final String PARSE_ERROR = "解析失败";
 
-    public static final String SFTP_OPERATOR_ERROR = "操作失败";
+    public static final String OPERATOR_ERROR = "操作失败";
 
     public static final String VCS_OPERATOR_ERROR = "版本控制仓库操作执行失败";
 
@@ -194,6 +196,6 @@ public class MessageConst {
 
     public static final String PIPELINE_DETAIL_ABSENT = "未查询到流水线操作";
 
-    public static final String APP_LAST_BUILD_VERSION_PRESENT = "{} 无构建版本";
+    public static final String APP_LAST_BUILD_VERSION_ABSENT = "{} 无构建版本";
 
 }
