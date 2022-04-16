@@ -164,6 +164,18 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeOut(true)
             .build();
 
+    /**
+     * 应用流水线 线程池
+     */
+    public static final ThreadPoolExecutor PIPELINE_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("pipeline-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
@@ -178,6 +190,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(RELEASE_MACHINE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SCHEDULER_TASK_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SCHEDULER_TASK_MACHINE_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(PIPELINE_SCHEDULER, Const.MS_S_3);
         });
     }
 
