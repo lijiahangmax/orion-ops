@@ -1,7 +1,9 @@
 package com.orion.ops.handler.app.machine;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.able.Executable;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
@@ -23,6 +25,7 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
@@ -45,7 +48,7 @@ import java.util.Map;
  * @since 2022/2/12 14:44
  */
 @Slf4j
-public class BuildMachineProcessor extends AbstractMachineProcessor {
+public class BuildMachineProcessor extends AbstractMachineProcessor implements Executable {
 
     private static ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
 
@@ -69,6 +72,12 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
     }
 
     @Override
+    public void exec() {
+        log.info("应用构建任务执行提交 buildId: {}", id);
+        Threads.start(this, SchedulerPools.APP_BUILD_SCHEDULER);
+    }
+
+    @Override
     public void run() {
         log.info("应用构建任务执行开始 buildId: {}", id);
         // 初始化数据
@@ -83,7 +92,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
     private void initData() {
         // 查询build
         this.record = applicationBuildDAO.selectById(id);
-        log.info("应用构建器-获取数据-build buildId: {}, record: {}", id, JSON.toJSONString(record));
+        log.info("应用构建任务-获取数据-build buildId: {}, record: {}", id, JSON.toJSONString(record));
         // 检查状态
         if (record == null || !BuildStatus.WAIT.getStatus().equals(record.getBuildStatus())) {
             return;
@@ -91,7 +100,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor {
         // 查询action
         List<ApplicationActionLogDO> actions = applicationActionLogService.selectActionByRelId(id, StageType.BUILD);
         actions.forEach(s -> store.getActions().put(s.getId(), s));
-        log.info("应用构建器-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
+        log.info("应用构建任务-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 插入store
         store.setRelId(id);
         store.setVcsId(record.getVcsId());

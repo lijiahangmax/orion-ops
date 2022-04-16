@@ -40,7 +40,7 @@ public interface IReleaseProcessor extends Executable, Runnable, SafeCloseable {
      *
      * @param releaseMachineId 机器id
      */
-    void skipMachine(Long releaseMachineId);
+    void skippedMachine(Long releaseMachineId);
 
     /**
      * 获取发布执行器

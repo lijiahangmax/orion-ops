@@ -56,7 +56,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
 
     private Integer exitCode;
 
-    private boolean terminated;
+    private volatile boolean terminated;
 
     @Getter
     private volatile SchedulerTaskMachineStatus status;
@@ -99,15 +99,12 @@ public class TaskMachineHandler implements ITaskMachineHandler {
         try {
             if (terminated) {
                 // 停止回调
-                log.error("调度任务-机器操作-停止 machineRecordId: {}", machineRecordId);
                 this.terminatedCallback();
             } else if (ex == null) {
                 // 完成回调
-                log.info("调度任务-机器操作-完成 machineRecordId: {}, exitCode: {}", machineRecordId, exitCode);
                 this.completeCallback();
             } else {
                 // 异常回调
-                log.error("调度任务-机器操作-失败 machineRecordId: {}", machineRecordId, ex);
                 this.exceptionCallback(ex);
                 throw Exceptions.runtime(ex);
             }
@@ -121,6 +118,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
      * 停止回调
      */
     private void terminatedCallback() {
+        log.error("调度任务-机器操作-停止 machineRecordId: {}", machineRecordId);
         // 更新状态
         this.updateStatus(SchedulerTaskMachineStatus.TERMINATED);
         // 拼接日志
@@ -136,6 +134,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
      * 完成回调
      */
     private void completeCallback() {
+        log.info("调度任务-机器操作-完成 machineRecordId: {}, exitCode: {}", machineRecordId, exitCode);
         final boolean execSuccess = ExitCode.SUCCESS.getCode().equals(exitCode);
         // 更新状态
         if (execSuccess) {
@@ -161,6 +160,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
      * 异常回调
      */
     private void exceptionCallback(Exception e) {
+        log.error("调度任务-机器操作-失败 machineRecordId: {}", machineRecordId, e);
         // 更新状态
         this.updateStatus(SchedulerTaskMachineStatus.FAILURE);
         // 拼接日志

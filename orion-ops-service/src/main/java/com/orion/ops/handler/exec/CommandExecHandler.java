@@ -68,7 +68,7 @@ public class CommandExecHandler implements IExecHandler {
 
     private OutputStream logOutputStream;
 
-    private boolean terminated;
+    private volatile boolean terminated;
 
     protected CommandExecHandler(Long execId) {
         this.execId = execId;
@@ -120,7 +120,6 @@ public class CommandExecHandler implements IExecHandler {
                 this.completeCallback();
             } else {
                 // 失败回调
-                log.error("execHandler-执行失败 execId: {}", execId, ex);
                 this.exceptionCallback(ex);
             }
         } finally {
@@ -237,6 +236,7 @@ public class CommandExecHandler implements IExecHandler {
      * @param e e
      */
     private void exceptionCallback(Exception e) {
+        log.error("execHandler-执行失败 execId: {}", execId, e);
         // 更新状态
         this.updateStatus(ExecStatus.EXCEPTION);
         // 拼接日志

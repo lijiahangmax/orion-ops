@@ -46,7 +46,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
 
     protected OutputAppender appender;
 
-    protected boolean terminated;
+    protected volatile boolean terminated;
 
     protected Date startTime, endTime;
 
@@ -78,7 +78,6 @@ public abstract class AbstractActionHandler implements IActionHandler {
             // 执行
             this.handler();
         } catch (Exception e) {
-            log.error("应用操作执行-异常: relId: {}, id: {}", relId, id, e);
             ex = e;
         }
         // 回调
@@ -186,7 +185,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
      * @param ex ex
      */
     private void exceptionCallback(Exception ex) {
-        log.info("应用操作执行-异常回调: relId: {}, id: {}", relId, id);
+        log.error("应用操作执行-异常回调: relId: {}, id: {}", relId, id, ex);
         // 修改状态
         this.updateStatus(ActionStatus.FAILURE);
         // 拼接完成日志

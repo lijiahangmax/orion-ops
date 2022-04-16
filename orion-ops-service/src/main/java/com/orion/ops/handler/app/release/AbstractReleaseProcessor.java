@@ -120,7 +120,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     }
 
     @Override
-    public void skipMachine(Long releaseMachineId) {
+    public void skippedMachine(Long releaseMachineId) {
         ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
         if (processor != null) {
             processor.skipped();
