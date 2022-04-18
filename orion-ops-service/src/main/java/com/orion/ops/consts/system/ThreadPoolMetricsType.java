@@ -77,6 +77,11 @@ public enum ThreadPoolMetricsType {
      */
     SCHEDULER_TASK_MACHINE(120, SchedulerPools.SCHEDULER_TASK_MACHINE_SCHEDULER),
 
+    /**
+     * 应用流水线
+     */
+    PIPELINE(130, SchedulerPools.PIPELINE_SCHEDULER),
+
     ;
 
     private final Integer type;

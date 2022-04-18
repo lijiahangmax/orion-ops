@@ -12,9 +12,9 @@ import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.ops.entity.request.ApplicationReleaseRequest;
 import com.orion.ops.handler.app.release.IReleaseProcessor;
+import com.orion.ops.handler.app.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.ApplicationReleaseService;
-import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -43,6 +43,10 @@ public class ReleaseStageHandler extends AbstractStageHandler {
 
     private static ApplicationMachineService applicationMachineService = SpringHolder.getBean(ApplicationMachineService.class);
 
+    private static ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
+
+    private Long releaseId;
+
     private ApplicationReleaseDO release;
 
     public ReleaseStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
@@ -53,19 +57,17 @@ public class ReleaseStageHandler extends AbstractStageHandler {
     @Override
     protected void execStageTask() {
         // 创建
-        Long releaseId = this.createStageTask();
+        this.createReleaseTask();
         // 审核
-        this.auditStageTask(releaseId);
+        this.auditReleaseTask();
         // 执行
-        this.execStageTask(releaseId);
+        this.execReleaseTask();
     }
 
     /**
      * 创建发布任务
-     *
-     * @return releaseId
      */
-    protected Long createStageTask() {
+    protected void createReleaseTask() {
         // 设置用户上下文
         this.setExecuteUserContext();
         Long profileId = record.getProfileId();
@@ -111,45 +113,40 @@ public class ReleaseStageHandler extends AbstractStageHandler {
         String configJson = JSON.toJSONString(config);
         detail.setStageConfig(configJson);
         ApplicationPipelineDetailRecordDO updateConfig = new ApplicationPipelineDetailRecordDO();
-        updateConfig.setId(id);
+        updateConfig.setId(detailId);
         updateConfig.setStageConfig(configJson);
         applicationPipelineDetailRecordDAO.updateById(updateConfig);
         // 创建发布任务
-        log.info("执行流水线任务-发布阶段-开始创建 detailId: {}, 参数: {}", id, JSON.toJSONString(request));
-        Long releaseId = applicationReleaseService.submitAppRelease(request);
+        log.info("执行流水线任务-发布阶段-开始创建 detailId: {}, 参数: {}", detailId, JSON.toJSONString(request));
+        this.releaseId = applicationReleaseService.submitAppRelease(request);
         // 插入日志
         this.addLog(PipelineLogStatus.CREATE, detail.getAppName(), build.getBuildSeq());
-        // 查询发布任务
-        this.release = applicationReleaseDAO.selectById(releaseId);
-        return releaseId;
     }
 
     /**
      * 审核发布任务
-     *
-     * @param releaseId releaseId
      */
-    private void auditStageTask(Long releaseId) {
+    private void auditReleaseTask() {
+        // 查询发布任务
+        this.release = applicationReleaseDAO.selectById(releaseId);
         if (!ReleaseStatus.WAIT_AUDIT.getStatus().equals(release.getReleaseStatus())) {
             return;
         }
         ApplicationReleaseDO update = new ApplicationReleaseDO();
-        update.setId(id);
+        update.setId(releaseId);
         update.setAuditUserId(record.getAuditUserId());
         update.setAuditUserName(record.getAuditUserName());
         update.setAuditReason(MessageConst.AUTO_AUDIT_RESOLVE);
         update.setAuditTime(new Date());
-        log.info("执行流水线任务-发布阶段-审核 detailId: {}, releaseId: {}, 参数: {}", id, releaseId, JSON.toJSONString(update));
+        log.info("执行流水线任务-发布阶段-审核 detailId: {}, releaseId: {}, 参数: {}", detailId, releaseId, JSON.toJSONString(update));
         applicationReleaseDAO.updateById(update);
     }
 
     /**
      * 执行发布任务
-     *
-     * @param releaseId releaseId
      */
-    private void execStageTask(Long releaseId) {
-        log.info("执行流水线任务-发布阶段-开始执行 detailId: {}, releaseId: {}", id, releaseId);
+    private void execReleaseTask() {
+        log.info("执行流水线任务-发布阶段-开始执行 detailId: {}, releaseId: {}", detailId, releaseId);
         // 提交发布任务
         applicationReleaseService.runnableAppRelease(releaseId, true, false);
         // 插入执行日志
@@ -158,7 +155,31 @@ public class ReleaseStageHandler extends AbstractStageHandler {
         IReleaseProcessor.with(release).run();
         // 检查执行结果
         this.release = applicationReleaseDAO.selectById(releaseId);
-        Valid.isFalse(ReleaseStatus.FAILURE.getStatus().equals(release.getReleaseStatus()), MessageConst.OPERATOR_ERROR);
+        if (ReleaseStatus.FAILURE.getStatus().equals(release.getReleaseStatus())) {
+            // 异常抛出
+            throw Exceptions.runtime(MessageConst.OPERATOR_ERROR);
+        } else if (ReleaseStatus.TERMINATED.getStatus().equals(release.getReleaseStatus())) {
+            // 停止
+            this.terminated = true;
+        }
+    }
+
+    @Override
+    public void terminated() {
+        super.terminated();
+        // 获取数据
+        this.release = applicationReleaseDAO.selectById(releaseId);
+        // 检查状态
+        if (!ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus())) {
+            return;
+        }
+        // 获取实例
+        IReleaseProcessor session = releaseSessionHolder.getSession(releaseId);
+        if (session == null) {
+            return;
+        }
+        // 调用终止
+        session.terminatedAll();
     }
 
 }

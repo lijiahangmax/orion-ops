@@ -4,11 +4,14 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.app.PipelineDetailStatus;
 import com.orion.ops.consts.app.PipelineStatus;
+import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.dao.ApplicationPipelineRecordDAO;
 import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
 import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
 import com.orion.ops.handler.app.pipeline.stage.IStageHandler;
 import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Threads;
@@ -36,6 +39,8 @@ public class PipelineProcessor implements IPipelineProcessor {
     private static ApplicationPipelineDetailRecordService applicationPipelineDetailRecordService = SpringHolder.getBean(ApplicationPipelineDetailRecordService.class);
 
     private static PipelineSessionHolder pipelineSessionHolder = SpringHolder.getBean(PipelineSessionHolder.class);
+
+    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     @Getter
     private Long recordId;
@@ -169,7 +174,13 @@ public class PipelineProcessor implements IPipelineProcessor {
     private void completeCallback() {
         log.info("应用流水线执行完成 id: {}", recordId);
         this.updateStatus(PipelineStatus.FINISH);
-        // TODO 发送站内信
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.NAME, record.getPipelineName());
+        params.put(EventKeys.TITLE, record.getExecTitle());
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_SUCCESS, record.getExecUserId(), record.getExecUserName(), params);
+
     }
 
     /**
@@ -180,7 +191,12 @@ public class PipelineProcessor implements IPipelineProcessor {
     private void exceptionCallback(Exception ex) {
         log.error("应用流水线执行失败 id: {}", recordId, ex);
         this.updateStatus(PipelineStatus.FAILURE);
-        // TODO 发送站内信
+        // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.NAME, record.getPipelineName());
+        params.put(EventKeys.TITLE, record.getExecTitle());
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_FAILURE, record.getExecUserId(), record.getExecUserName(), params);
     }
 
     /**

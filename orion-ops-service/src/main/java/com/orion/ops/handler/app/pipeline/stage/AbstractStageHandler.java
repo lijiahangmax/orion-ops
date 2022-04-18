@@ -37,7 +37,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
 
     protected static UserInfoDAO userInfoDAO = SpringHolder.getBean(UserInfoDAO.class);
 
-    protected Long id;
+    protected Long detailId;
 
     protected ApplicationPipelineRecordDO record;
 
@@ -53,13 +53,13 @@ public abstract class AbstractStageHandler implements IStageHandler {
     public AbstractStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
         this.record = record;
         this.detail = detail;
-        this.id = detail.getId();
+        this.detailId = detail.getId();
         this.status = PipelineDetailStatus.WAIT;
     }
 
     @Override
     public void exec() {
-        log.info("流水线阶段操作-开始执行 id: {}", id);
+        log.info("流水线阶段操作-开始执行 detailId: {}", detailId);
         // 状态检查
         if (!PipelineDetailStatus.WAIT.equals(status)) {
             return;
@@ -101,7 +101,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
      * 停止回调
      */
     protected void terminatedCallback() {
-        log.info("流水线阶段操作-终止回调 id: {}", id);
+        log.info("流水线阶段操作-终止回调 detailId: {}", detailId);
         // 修改状态
         this.updateStatus(PipelineDetailStatus.TERMINATED);
     }
@@ -110,7 +110,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
      * 成功回调
      */
     protected void successCallback() {
-        log.info("流水线阶段操作-成功回调 id: {}", id);
+        log.info("流水线阶段操作-成功回调 detailId: {}", detailId);
         // 修改状态
         this.updateStatus(PipelineDetailStatus.FINISH);
     }
@@ -121,7 +121,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
      * @param ex ex
      */
     protected void exceptionCallback(Exception ex) {
-        log.error("流水线阶段操作-异常回调 id: {}", id, ex);
+        log.error("流水线阶段操作-异常回调 detailId: {}", detailId, ex);
         // 修改状态
         this.updateStatus(PipelineDetailStatus.FAILURE);
     }
@@ -134,7 +134,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
     protected void updateStatus(PipelineDetailStatus status) {
         Date now = new Date();
         ApplicationPipelineDetailRecordDO update = new ApplicationPipelineDetailRecordDO();
-        update.setId(id);
+        update.setId(detailId);
         update.setExecStatus(status.getStatus());
         update.setUpdateTime(now);
         switch (status) {
@@ -173,13 +173,13 @@ public abstract class AbstractStageHandler implements IStageHandler {
 
     @Override
     public void terminated() {
-        log.info("流水线阶段操作-终止 id: {}", id);
+        log.info("流水线阶段操作-终止 detailId: {}", detailId);
         this.terminated = true;
     }
 
     @Override
     public void skipped() {
-        log.info("流水线阶段操作-跳过 id: {}", id);
+        log.info("流水线阶段操作-跳过 detailId: {}", detailId);
         if (PipelineDetailStatus.WAIT.equals(status)) {
             // 只能跳过等待中的任务
             this.updateStatus(PipelineDetailStatus.SKIPPED);

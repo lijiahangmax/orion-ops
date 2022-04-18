@@ -11,10 +11,12 @@ import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
 import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
 import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
+import com.orion.ops.handler.app.build.BuildSessionHolder;
 import com.orion.ops.handler.app.machine.BuildMachineProcessor;
+import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.ops.service.api.ApplicationBuildService;
-import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
+import com.orion.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,9 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BuildStageHandler extends AbstractStageHandler {
 
+    private Long buildId;
+
     private static ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
 
     private static ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
+
+    private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
 
     public BuildStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
         super(record, detail);
@@ -49,20 +55,43 @@ public class BuildStageHandler extends AbstractStageHandler {
         request.setBranchName(config.getBranchName());
         request.setCommitId(config.getCommitId());
         request.setDescription(config.getDescription());
-        log.info("执行流水线任务-构建阶段-开始创建 detailId: {}, 参数: {}", id, JSON.toJSONString(request));
+        log.info("执行流水线任务-构建阶段-开始创建 detailId: {}, 参数: {}", detailId, JSON.toJSONString(request));
         // 创建构建任务
-        Long buildId = applicationBuildService.submitBuildTask(request, false);
+        this.buildId = applicationBuildService.submitBuildTask(request, false);
         // 插入创建日志
         ApplicationBuildDO build = applicationBuildDAO.selectById(buildId);
         this.addLog(PipelineLogStatus.CREATE, detail.getAppName(), build.getBuildSeq());
-        log.info("执行流水线任务-构建阶段-创建完成开始执行 detailId: {}, id: {}", id, buildId);
+        log.info("执行流水线任务-构建阶段-创建完成开始执行 detailId: {}, buildId: {}", detailId, buildId);
         // 插入执行日志
         this.addLog(PipelineLogStatus.EXEC, detail.getAppName());
         // 执行构建任务
         new BuildMachineProcessor(buildId).run();
         // 检查执行结果
         build = applicationBuildDAO.selectById(buildId);
-        Valid.isFalse(BuildStatus.FAILURE.getStatus().equals(build.getBuildStatus()), MessageConst.OPERATOR_ERROR);
+        if (BuildStatus.FAILURE.getStatus().equals(build.getBuildStatus())) {
+            // 异常抛出
+            throw Exceptions.runtime(MessageConst.OPERATOR_ERROR);
+        } else if (BuildStatus.TERMINATED.getStatus().equals(build.getBuildStatus())) {
+            this.terminated = true;
+        }
+    }
+
+    @Override
+    public void terminated() {
+        super.terminated();
+        // 获取数据
+        ApplicationBuildDO build = applicationBuildDAO.selectById(buildId);
+        // 检查状态
+        if (!BuildStatus.RUNNABLE.getStatus().equals(build.getBuildStatus())) {
+            return;
+        }
+        // 获取实例
+        IMachineProcessor session = buildSessionHolder.getSession(buildId);
+        if (session == null) {
+            return;
+        }
+        // 调用终止
+        session.terminated();
     }
 
 }
