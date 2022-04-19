@@ -237,7 +237,7 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             return request.getNames().stream()
                     .filter(Strings::isNotBlank)
-                    .filter(s -> executor.isExist(Files1.getPath(request.getPath(), s)))
+                    .filter(s -> executor.getFile(Files1.getPath(request.getPath(), s)) != null)
                     .collect(Collectors.toList());
         }
     }
