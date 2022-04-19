@@ -45,6 +45,7 @@
             <div class="app-action-wrapper">
               <!-- 操作 -->
               <div class="app-action">
+                <!-- 名称 -->
                 <div class="action-name-wrapper">
                   <span class="label action-label normal-label required-label">操作名称</span>
                   <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
@@ -63,7 +64,7 @@
                 </div>
                 <!-- 文件夹类型选择 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  <span class="label action-label normal-label required-label" title="如果构建产物为文件夹 传输的文件是文件夹还是打包后的文件">
+                  <span class="label action-label normal-label required-label">
                       文件夹传输类型
                   </span>
                   <a-select class="transfer-input" v-model="transferDirType">
@@ -72,6 +73,10 @@
                     </a-select-option>
                   </a-select>
                 </div>
+                <!-- 文件夹类型描述 -->
+                <span class="transfer-dir-type-description" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                  构建产物为文件夹时可选 &nbsp;&nbsp;如产物不是文件夹则忽略
+                </span>
               </div>
               <!-- 操作 -->
               <div class="app-action-handler">
@@ -282,7 +287,7 @@ export default {
   }
 
   #app-action-container {
-    width: 660px;
+    width: 724px;
     margin-top: 16px;
 
     .app-action-wrapper {
@@ -323,6 +328,13 @@ export default {
           .transfer-input {
             width: 430px;
           }
+        }
+
+        .transfer-dir-type-description {
+          display: block;
+          padding-left: 160px;
+          color: rgba(0, 0, 0, .65);
+          font-size: 13px;
         }
       }
 

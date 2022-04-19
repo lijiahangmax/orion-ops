@@ -4,7 +4,7 @@
       <!-- 产物路径 -->
       <div id="app-bundle-wrapper">
         <span class="label normal-label required-label">构建产物路径</span>
-        <a-input class="bundle-input" v-model="bundlePath" :maxLength="512" placeholder="主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"/>
+        <a-textarea class="bundle-input" v-model="bundlePath" :maxLength="512" placeholder="主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"/>
       </div>
       <!-- 构建操作 -->
       <div id="app-action-container">
@@ -205,7 +205,7 @@ export default {
 
   #app-bundle-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     align-content: center;
 
@@ -216,7 +216,7 @@ export default {
   }
 
   #app-action-container {
-    width: 660px;
+    width: 724px;
     margin-top: 16px;
 
     .app-action-wrapper {

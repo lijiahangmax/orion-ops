@@ -136,6 +136,10 @@
         <!-- 发布标题 -->
         <template v-slot:releaseTitle="record">
           <div class="timed-wrapper">
+            <!-- 回滚图标 -->
+            <a-tooltip v-if="record.timedRelease === $enum.TIMED_TYPE.TIMED.value" title="回滚发布">
+              <a-icon class="rollback-icon" type="pull-request"/>
+            </a-tooltip>
             <!-- 定时图标 -->
             <a-tooltip v-if="record.timedRelease === $enum.TIMED_TYPE.TIMED.value">
               <template #title>
@@ -144,7 +148,9 @@
               <a-icon class="timed-icon" type="hourglass"/>
             </a-tooltip>
             <!-- 标题 -->
-            {{ record.title }}
+            <span :title="record.title">
+              {{ record.title }}
+            </span>
           </div>
         </template>
         <!-- 状态 -->
@@ -725,14 +731,22 @@ export default {
 .timed-wrapper {
   display: contents;
 
-  .timed-icon {
-    background: #03A9F4;
-    color: #FAFAFA;
-    font-size: 16px;
+  .rollback-icon, .timed-icon {
+    font-size: 14px;
     padding: 4px;
     border-radius: 3px;
     margin-right: 2px;
     display: inline-block;
+  }
+
+  .rollback-icon {
+    background: #B197FC;
+    color: #FAFAFA;
+  }
+
+  .timed-icon {
+    background: #03A9F4;
+    color: #FAFAFA;
   }
 }
 
