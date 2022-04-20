@@ -40,7 +40,7 @@ CREATE TABLE `application_action_log`
     `action_type`    int(11)                                                  NULL DEFAULT NULL COMMENT '操作类型',
     `action_command` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作命令',
     `log_path`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '操作日志路径',
-    `run_status`     tinyint(4)                                               NULL DEFAULT 10 COMMENT '状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消',
+    `run_status`     tinyint(4)                                               NULL DEFAULT 10 COMMENT '状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止',
     `exit_code`      int(11)                                                  NULL DEFAULT NULL COMMENT '退出码',
     `start_time`     datetime(4)                                              NULL DEFAULT NULL COMMENT '开始时间',
     `end_time`       datetime(4)                                              NULL DEFAULT NULL COMMENT '结束时间',
@@ -158,6 +158,138 @@ CREATE TABLE `application_machine`
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci COMMENT = '应用依赖机器表'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for application_pipeline
+-- ----------------------------
+DROP TABLE IF EXISTS `application_pipeline`;
+CREATE TABLE `application_pipeline`
+(
+    `id`            bigint(20)                                             NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `profile_id`    bigint(20)                                             NULL DEFAULT NULL COMMENT '环境id',
+    `pipeline_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '流水线名称',
+    `description`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
+    `deleted`       tinyint(4)                                             NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time`   datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+    `update_time`   datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '应用流水线'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for application_pipeline_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `application_pipeline_detail`;
+CREATE TABLE `application_pipeline_detail`
+(
+    `id`          bigint(20)  NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `pipeline_id` bigint(20)  NULL DEFAULT NULL COMMENT '流水线id',
+    `app_id`      bigint(20)  NULL DEFAULT NULL COMMENT '应用id',
+    `profile_id`  bigint(20)  NULL DEFAULT NULL COMMENT '环境id',
+    `stage_type`  tinyint(4)  NULL DEFAULT NULL COMMENT '阶段类型 10构建 20发布',
+    `deleted`     tinyint(4)  NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `pipeline_id_idx` (`pipeline_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '应用流水线详情'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for application_pipeline_detail_record
+-- ----------------------------
+DROP TABLE IF EXISTS `application_pipeline_detail_record`;
+CREATE TABLE `application_pipeline_detail_record`
+(
+    `id`                 bigint(20)                                               NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `pipeline_id`        bigint(20)                                               NULL DEFAULT NULL COMMENT '流水线id',
+    `pipeline_detail_id` bigint(20)                                               NULL DEFAULT NULL COMMENT '流水线详情id',
+    `record_id`          bigint(20)                                               NULL DEFAULT NULL COMMENT '流水线操作明细id',
+    `app_id`             bigint(20)                                               NULL DEFAULT NULL COMMENT '应用id',
+    `app_name`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '应用名称',
+    `app_tag`            varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '应用tag',
+    `stage_type`         tinyint(4)                                               NULL DEFAULT NULL COMMENT '阶段类型 10构建 20发布',
+    `stage_config`       varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '阶段操作配置',
+    `exec_status`        int(11)                                                  NULL DEFAULT NULL COMMENT '状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止',
+    `exec_start_time`    datetime(4)                                              NULL DEFAULT NULL COMMENT '执行开始时间',
+    `exec_end_time`      datetime(4)                                              NULL DEFAULT NULL COMMENT '执行结束时间',
+    `deleted`            tinyint(4)                                               NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time`        datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time`        datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `rel_id_idx` (`pipeline_id`, `pipeline_detail_id`, `record_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '应用流水线执行明细详情'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for application_pipeline_record
+-- ----------------------------
+DROP TABLE IF EXISTS `application_pipeline_record`;
+CREATE TABLE `application_pipeline_record`
+(
+    `id`               bigint(20)                                             NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `pipeline_id`      bigint(20)                                             NULL DEFAULT NULL COMMENT '流水线id',
+    `pipeline_name`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '流水线名称',
+    `profile_id`       bigint(20)                                             NULL DEFAULT NULL COMMENT '环境id',
+    `profile_name`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境名称',
+    `profile_tag`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境tag',
+    `exec_title`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '执行标题',
+    `exec_description` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '执行描述',
+    `exec_status`      int(11)                                                NULL DEFAULT NULL COMMENT '执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败',
+    `timed_exec`       tinyint(4)                                             NULL DEFAULT NULL COMMENT '是否是定时执行 10普通执行 20定时执行',
+    `timed_exec_time`  datetime(4)                                            NULL DEFAULT NULL COMMENT '定时执行时间',
+    `create_user_id`   bigint(20)                                             NULL DEFAULT NULL COMMENT '创建人id',
+    `create_user_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人名称',
+    `audit_user_id`    bigint(20)                                             NULL DEFAULT NULL COMMENT '审核人id',
+    `audit_user_name`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核人名称',
+    `audit_time`       datetime(4)                                            NULL DEFAULT NULL COMMENT '审核时间',
+    `audit_reason`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '审核备注',
+    `exec_user_id`     bigint(20)                                             NULL DEFAULT NULL COMMENT '执行人id',
+    `exec_user_name`   varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '执行人名称',
+    `exec_start_time`  datetime(4)                                            NULL DEFAULT NULL COMMENT '执行开始时间',
+    `exec_end_time`    datetime(4)                                            NULL DEFAULT NULL COMMENT '执行结束时间',
+    `deleted`          tinyint(4)                                             NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time`      datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time`      datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `pipeline_id_idx` (`pipeline_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '应用流水线执行明细'
+  ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for application_pipeline_record_log
+-- ----------------------------
+DROP TABLE IF EXISTS `application_pipeline_record_log`;
+CREATE TABLE `application_pipeline_record_log`
+(
+    `id`               bigint(20)                                               NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `record_id`        bigint(20)                                               NULL DEFAULT NULL COMMENT '流水线明细id',
+    `record_detail_id` bigint(20)                                               NULL DEFAULT NULL COMMENT '流水线详情明细id',
+    `log_status`       tinyint(4)                                               NULL DEFAULT NULL COMMENT '日志状态 10创建 20执行 30成功 40失败 50停止 60跳过',
+    `stage_type`       tinyint(4)                                               NULL DEFAULT NULL COMMENT '阶段类型 10构建 20发布',
+    `log_info`         varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '日志详情',
+    `deleted`          tinyint(4)                                               NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time`      datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time`      datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `record_idx` (`record_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '应用流水线执行日志'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -753,8 +885,8 @@ CREATE TABLE `web_side_message`
     `send_message`     text CHARACTER SET utf8 COLLATE utf8_general_ci          NULL COMMENT '消息',
     `params_json`      varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '消息参数',
     `deleted`          tinyint(4)                                               NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
-    `create_time`      datetime(0)                                              NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
-    `update_time`      datetime(0)                                              NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '修改时间',
+    `create_time`      datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time`      datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `to_user_id_idx` (`to_user_id`) USING BTREE
 ) ENGINE = InnoDB
