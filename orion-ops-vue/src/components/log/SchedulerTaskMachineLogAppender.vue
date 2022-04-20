@@ -31,7 +31,7 @@
                         placement="bottomLeft"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated">
+                        @confirm="terminate">
             <a-button class="ml8" icon="close" size="small">停止</a-button>
           </a-popconfirm>
         </div>
@@ -98,13 +98,13 @@ export default {
       this.used = null
       this.exitCode = null
     },
-    terminated() {
+    terminate() {
       this.status = this.$enum.SCHEDULER_TASK_MACHINE_STATUS.TERMINATED.value
-      // this.$api.terminatedExecTask({
-      //   id: this.execId
-      // }).then(() => {
-      //   this.$message.success('已停止')
-      // })
+      this.$api.terminateMachineSchedulerTaskRecord({
+        id: this.id
+      }).then(() => {
+        this.$message.success('已停止')
+      })
     },
     async getStatus() {
       await this.$api.getSchedulerTaskMachinesRecordStatus({

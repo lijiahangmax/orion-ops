@@ -103,7 +103,7 @@
                               placement="bottomLeft"
                               ok-text="确定"
                               cancel-text="取消"
-                              @confirm="terminated(execMachine)">
+                              @confirm="terminate(execMachine)">
                   <a-button class="ml8" icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- used -->
@@ -276,9 +276,9 @@ export default {
         execMachine.inputCommand = null
       })
     },
-    terminated(execMachine) {
+    terminate(execMachine) {
       execMachine.status = this.$enum.BATCH_EXEC_STATUS.TERMINATED.value
-      this.$api.terminatedExecTask({
+      this.$api.terminateExecTask({
         id: execMachine.execId
       }).then(() => {
         this.$message.success('已停止')

@@ -40,7 +40,7 @@
                           placement="bottomLeft"
                           ok-text="确定"
                           cancel-text="取消"
-                          @confirm="terminated">
+                          @confirm="terminate">
               <a-button size="small" icon="close">停止</a-button>
             </a-popconfirm>
             <!-- 下载 -->
@@ -145,8 +145,8 @@ export default {
         this.setStepsCurrent()
       })
     },
-    terminated() {
-      this.$api.terminatedAppBuild({
+    terminate() {
+      this.$api.terminateAppBuild({
         id: this.detail.id
       }).then(() => {
         this.$message.success('已提交停止请求')

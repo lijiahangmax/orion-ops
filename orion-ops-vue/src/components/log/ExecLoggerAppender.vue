@@ -40,7 +40,7 @@
                         placement="bottomLeft"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated">
+                        @confirm="terminate">
             <a-button icon="close">停止</a-button>
           </a-popconfirm>
         </div>
@@ -120,9 +120,9 @@ export default {
         command
       })
     },
-    terminated() {
+    terminate() {
       this.status = this.$enum.BATCH_EXEC_STATUS.TERMINATED.value
-      this.$api.terminatedExecTask({
+      this.$api.terminateExecTask({
         id: this.execId
       }).then(() => {
         this.$message.success('已停止')

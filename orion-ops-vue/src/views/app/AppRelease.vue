@@ -104,14 +104,14 @@
               <a-divider type="vertical"/>
               <!-- 详情 -->
               <a @click="openMachineDetail(machine.id)">详情</a>
-              <a-divider type="vertical" v-if="statusHolder.visibleMachineTerminated(machine.status)"/>
+              <a-divider type="vertical" v-if="statusHolder.visibleMachineTerminate(machine.status)"/>
               <!-- 停止 -->
-              <a-popconfirm v-if="statusHolder.visibleMachineTerminated(machine.status)"
+              <a-popconfirm v-if="statusHolder.visibleMachineTerminate(machine.status)"
                             title="是否要停止执行?"
                             placement="topRight"
                             ok-text="确定"
                             cancel-text="取消"
-                            @confirm="terminatedMachine(record.id, machine.id)">
+                            @confirm="terminateMachine(record.id, machine.id)">
                 <span class="span-blue pointer">停止</span>
               </a-popconfirm>
               <a-divider type="vertical" v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"/>
@@ -192,15 +192,15 @@
           <a v-if="statusHolder.visibleTimed(record.status)" @click="openTimedRelease(record)" title="设置定时发布">定时</a>
           <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="statusHolder.visibleTerminated(record.status)"
+          <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
                         title="是否要停止发布?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated(record.id)">
+                        @confirm="terminate(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
+          <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
           <!-- 回滚 -->
           <a-popconfirm v-if="statusHolder.visibleRollback(record.status)"
                         title="是否要回滚发布?"
@@ -294,7 +294,7 @@ function statusHolder() {
       return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
         status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
     },
-    visibleTerminated: (status) => {
+    visibleTerminate: (status) => {
       return status === this.$enum.RELEASE_STATUS.RUNNABLE.value
     },
     visibleDelete: (status) => {
@@ -316,7 +316,7 @@ function statusHolder() {
         status === this.$enum.ACTION_STATUS.FAILURE.value ||
         status === this.$enum.ACTION_STATUS.TERMINATED.value
     },
-    visibleMachineTerminated: (status) => {
+    visibleMachineTerminate: (status) => {
       return status === this.$enum.ACTION_STATUS.RUNNABLE.value
     },
     visibleMachineSkip: (status, machineStatus) => {
@@ -574,8 +574,8 @@ export default {
     openTimedRelease(record) {
       this.$refs.releaseTimed.open(record)
     },
-    terminated(id) {
-      this.$api.terminatedAppRelease({
+    terminate(id) {
+      this.$api.terminateAppRelease({
         id
       }).then(() => {
         this.$message.success('已提交停止请求')
@@ -625,8 +625,8 @@ export default {
     openMachineDetail(id) {
       this.$refs.machineDetail.open(id)
     },
-    terminatedMachine(id, releaseMachineId) {
-      this.$api.terminatedAppReleaseMachine({
+    terminateMachine(id, releaseMachineId) {
+      this.$api.terminateAppReleaseMachine({
         id,
         releaseMachineId
       }).then(() => {

@@ -153,14 +153,14 @@
                         @confirm="redo(record)">
             <span class="span-blue pointer">再次执行</span>
           </a-popconfirm>
-          <a-divider v-if="visibleHolder.visibleTerminated(record.status)" type="vertical"/>
+          <a-divider v-if="visibleHolder.visibleTerminate(record.status)" type="vertical"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="visibleHolder.visibleTerminated(record.status)"
+          <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
                         title="确认停止当前任务?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated(record.id)">
+                        @confirm="terminate(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
           <a-divider v-if="visibleHolder.visibleDelete(record.status)" type="vertical"/>
@@ -205,7 +205,7 @@ import _enum from '@/lib/enum'
  * 状态判断
  */
 const visibleHolder = {
-  visibleTerminated(status) {
+  visibleTerminate(status) {
     return status === _enum.BATCH_EXEC_STATUS.RUNNABLE.value
   },
   visibleDelete(status) {
@@ -389,8 +389,8 @@ export default {
         this.getList({})
       })
     },
-    terminated(execId) {
-      this.$api.terminatedExecTask({
+    terminate(execId) {
+      this.$api.terminateExecTask({
         id: execId
       }).then(() => {
         this.$message.success('已停止')

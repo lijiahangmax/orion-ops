@@ -181,13 +181,13 @@
           <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>
           <span class="span-blue pointer" v-if="statusHolder.visibleLog(record.status)" @click="openLog(record.id)">日志</span>
           <!-- 停止 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleTerminated(record.status)"/>
-          <a-popconfirm v-if="statusHolder.visibleTerminated(record.status)"
+          <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
+          <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
                         title="是否要取消停止执行?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminatedPipeline(record.id)">
+                        @confirm="terminatePipeline(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
           <!-- 详情 -->
@@ -262,7 +262,7 @@ function statusHolder() {
     visibleDetail: (status) => {
       return true
     },
-    visibleTerminated: (status) => {
+    visibleTerminate: (status) => {
       return status === this.$enum.PIPELINE_STATUS.RUNNABLE.value
     },
     visibleDelete: (status) => {
@@ -281,7 +281,7 @@ function statusHolder() {
         status === this.$enum.PIPELINE_DETAIL_STATUS.FAILURE.value ||
         status === this.$enum.PIPELINE_DETAIL_STATUS.TERMINATED.value
     },
-    visibleDetailTerminated: (status) => {
+    visibleDetailTerminate: (status) => {
       return status === this.$enum.PIPELINE_DETAIL_STATUS.RUNNABLE.value
     },
     visibleDetailSkip: (status, machineStatus) => {
@@ -542,8 +542,8 @@ export default {
     openDetail(id) {
       this.$refs.detailDrawer.open(id)
     },
-    terminatedPipeline(id) {
-      this.$api.terminatedAppPipelineRecordExec({
+    terminatePipeline(id) {
+      this.$api.terminateAppPipelineRecordExec({
         id
       }).then(() => {
         this.$message.success('已提交停止请求')

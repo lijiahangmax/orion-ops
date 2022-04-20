@@ -118,14 +118,14 @@
                   <a-divider type="vertical"/>
                   <!-- 命令 -->
                   <span class="span-blue pointer" @click="previewCommand(machine.command)">命令</span>
-                  <a-divider type="vertical" v-if="visibleHolder.visibleMachineTerminated(machine.status)"/>
+                  <a-divider type="vertical" v-if="visibleHolder.visibleMachineTerminate(machine.status)"/>
                   <!-- 停止 -->
-                  <a-popconfirm v-if="visibleHolder.visibleMachineTerminated(machine.status)"
+                  <a-popconfirm v-if="visibleHolder.visibleMachineTerminate(machine.status)"
                                 title="是否要停止执行?"
                                 placement="topRight"
                                 ok-text="确定"
                                 cancel-text="取消"
-                                @confirm="terminatedMachine(record.id, machine.id)">
+                                @confirm="terminateMachine(record.id, machine.id)">
                     <span class="span-blue pointer">停止</span>
                   </a-popconfirm>
                   <a-divider type="vertical" v-if="visibleHolder.visibleMachineSkip(machine.status)"/>
@@ -170,14 +170,14 @@
                      @click="openTaskLog($event, record.id)">日志</a>
                 </a-tooltip>
               </a-button>
-              <a-divider type="vertical" v-if="visibleHolder.visibleRecordTerminated(record.status)"/>
+              <a-divider type="vertical" v-if="visibleHolder.visibleRecordTerminate(record.status)"/>
               <!-- 停止 -->
-              <a-popconfirm v-if="visibleHolder.visibleRecordTerminated(record.status)"
+              <a-popconfirm v-if="visibleHolder.visibleRecordTerminate(record.status)"
                             title="是否要停止执行?"
                             placement="topRight"
                             ok-text="确定"
                             cancel-text="取消"
-                            @confirm="terminated(record.id)">
+                            @confirm="terminate(record.id)">
                 <span class="span-blue pointer">停止</span>
               </a-popconfirm>
               <a-divider type="vertical" v-if="visibleHolder.visibleRecordDelete(record.status)"/>
@@ -316,7 +316,7 @@ const visibleHolder = {
   visibleRecordLog(status) {
     return status !== _enum.SCHEDULER_TASK_STATUS.WAIT.value
   },
-  visibleRecordTerminated(status) {
+  visibleRecordTerminate(status) {
     return status === _enum.SCHEDULER_TASK_STATUS.RUNNABLE.value
   },
   visibleRecordDelete(status) {
@@ -327,7 +327,7 @@ const visibleHolder = {
     return status !== _enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
       status !== _enum.SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value
   },
-  visibleMachineTerminated(status) {
+  visibleMachineTerminate(status) {
     return status === _enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value
   },
   visibleMachineSkip(status) {
@@ -469,15 +469,15 @@ export default {
         this.getList({})
       })
     },
-    terminated(id) {
-      this.$api.terminatedAllSchedulerTaskRecord({
+    terminate(id) {
+      this.$api.terminateAllSchedulerTaskRecord({
         id
       }).then(() => {
         this.$message.success('已停止')
       })
     },
-    terminatedMachine(id, machineRecordId) {
-      this.$api.terminatedMachineSchedulerTaskRecord({
+    terminateMachine(id, machineRecordId) {
+      this.$api.terminateMachineSchedulerTaskRecord({
         id,
         machineRecordId
       }).then(() => {

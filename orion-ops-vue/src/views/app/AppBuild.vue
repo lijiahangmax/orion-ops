@@ -125,14 +125,14 @@
                         @confirm="rebuild(record.id)">
             <span class="span-blue pointer">重新构建</span>
           </a-popconfirm>
-          <a-divider type="vertical" v-if="visibleHolder.visibleTerminated(record.status)"/>
+          <a-divider type="vertical" v-if="visibleHolder.visibleTerminate(record.status)"/>
           <!-- 停止 -->
-          <a-popconfirm v-if="visibleHolder.visibleTerminated(record.status)"
+          <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
                         title="是否要停止构建?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="terminated(record.id)">
+                        @confirm="terminate(record.id)">
             <span class="span-blue pointer">停止</span>
           </a-popconfirm>
           <a-divider type="vertical" v-if="visibleHolder.visibleDelete(record.status)"/>
@@ -172,7 +172,7 @@ import _enum from '@/lib/enum'
  * 状态判断
  */
 const visibleHolder = {
-  visibleTerminated(status) {
+  visibleTerminate(status) {
     return status === _enum.BUILD_STATUS.RUNNABLE.value
   },
   visibleDelete(status) {
@@ -332,8 +332,8 @@ export default {
         this.getList({})
       })
     },
-    terminated(id) {
-      this.$api.terminatedAppBuild({
+    terminate(id) {
+      this.$api.terminateAppBuild({
         id
       }).then(() => {
         this.$message.success('已提交停止请求')

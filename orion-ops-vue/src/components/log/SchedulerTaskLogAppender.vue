@@ -52,7 +52,7 @@
                               placement="bottomLeft"
                               ok-text="确定"
                               cancel-text="取消"
-                              @confirm="terminatedMachine(record.id, machine.id)">
+                              @confirm="terminateMachine(record.id, machine.id)">
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- 跳过 -->
@@ -151,8 +151,8 @@ export default {
       this.selectedKeys = []
       this.openedFiles = []
     },
-    terminatedMachine(id, machineRecordId) {
-      this.$api.terminatedMachineSchedulerTaskRecord({
+    terminateMachine(id, machineRecordId) {
+      this.$api.terminateMachineSchedulerTaskRecord({
         id,
         machineRecordId
       }).then(() => {

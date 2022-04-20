@@ -772,8 +772,8 @@ const $api = {
   /**
    * 执行停止
    */
-  terminatedExecTask: param => {
-    return $http.$post('/exec/terminated', param, {
+  terminateExecTask: param => {
+    return $http.$post('/exec/terminate', param, {
       loading: '正在停止...'
     })
   },
@@ -1240,8 +1240,8 @@ const $api = {
   /**
    * 停止应用构建
    */
-  terminatedAppBuild: param => {
-    return $http.$post('/app-build/terminated', param, {
+  terminateAppBuild: param => {
+    return $http.$post('/app-build/terminate', param, {
       loading: '正在停止...'
     })
   },
@@ -1387,8 +1387,8 @@ const $api = {
   /**
    * 应用发布停止
    */
-  terminatedAppRelease: param => {
-    return $http.$post('/app-release/terminated', param, {
+  terminateAppRelease: param => {
+    return $http.$post('/app-release/terminate', param, {
       loading: '正在停止...'
     })
   },
@@ -1396,8 +1396,8 @@ const $api = {
   /**
    * 应用发布机器停止
    */
-  terminatedAppReleaseMachine: param => {
-    return $http.$post('/app-release/terminated-machine', param, {
+  terminateAppReleaseMachine: param => {
+    return $http.$post('/app-release/terminate-machine', param, {
       loading: '正在停止...'
     })
   },
@@ -1719,8 +1719,8 @@ const $api = {
   /**
    * 停止所有调度任务机器
    */
-  terminatedAllSchedulerTaskRecord: param => {
-    return $http.$post('/scheduler-record/terminated-all', param, {
+  terminateAllSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/terminate-all', param, {
       loading: '正在停止...'
     })
   },
@@ -1728,8 +1728,8 @@ const $api = {
   /**
    * 停止单个调度任务机器
    */
-  terminatedMachineSchedulerTaskRecord: param => {
-    return $http.$post('/scheduler-record/terminated-machine', param, {
+  terminateMachineSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/terminate-machine', param, {
       loading: '正在停止...'
     })
   },
@@ -1921,9 +1921,27 @@ const $api = {
   /**
    * 停止执行应用流水线
    */
-  terminatedAppPipelineRecordExec: param => {
-    return $http.$post('/app-pipeline-record/terminated', param, {
+  terminateAppPipelineRecordExec: param => {
+    return $http.$post('/app-pipeline-record/terminate', param, {
       loading: '正在停止...'
+    })
+  },
+
+  /**
+   * 停止执行应用流水线部分操作
+   */
+  terminateAppPipelineRecordExecDetail: param => {
+    return $http.$post('/app-pipeline-record/terminate-detail', param, {
+      loading: '正在停止...'
+    })
+  },
+
+  /**
+   * 停止执行应用流水线部分操作
+   */
+  skipAppPipelineRecordExecDetail: param => {
+    return $http.$post('/app-pipeline-record/skip-detail', param, {
+      loading: '正在跳过...'
     })
   }
 

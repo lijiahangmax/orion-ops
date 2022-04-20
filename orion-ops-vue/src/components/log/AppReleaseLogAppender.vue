@@ -55,7 +55,7 @@
                               placement="bottomLeft"
                               ok-text="确定"
                               cancel-text="取消"
-                              @confirm="terminatedMachine(machine.id)">
+                              @confirm="terminateMachine(machine.id)">
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- 跳过 -->
@@ -158,8 +158,8 @@ export default {
       this.openedFiles = []
       this.current = {}
     },
-    terminatedMachine(releaseMachineId) {
-      this.$api.terminatedAppReleaseMachine({
+    terminateMachine(releaseMachineId) {
+      this.$api.terminateAppReleaseMachine({
         id: this.record.id,
         releaseMachineId: releaseMachineId
       }).then(() => {

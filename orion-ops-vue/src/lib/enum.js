@@ -1058,7 +1058,7 @@ const $enum = {
           value: 2410,
           label: '修改终端配置'
         },
-        DELETE_TERMINATED_LOG: {
+        DELETE_TERMINAL_LOG: {
           value: 2415,
           label: '删除终端日志'
         }
@@ -1130,7 +1130,7 @@ const $enum = {
           value: 2610,
           label: '删除执行'
         },
-        EXEC_TERMINATED: {
+        EXEC_TERMINATE: {
           value: 2615,
           label: '停止执行'
         }
@@ -1298,7 +1298,7 @@ const $enum = {
           value: 4005,
           label: '提交构建'
         },
-        BUILD_TERMINATED: {
+        BUILD_TERMINATE: {
           value: 4010,
           label: '停止构建'
         },
@@ -1332,7 +1332,7 @@ const $enum = {
           value: 5020,
           label: '回滚发布'
         },
-        TERMINATED_RELEASE: {
+        TERMINATE_RELEASE: {
           value: 5025,
           label: '停止发布'
         },
@@ -1352,7 +1352,7 @@ const $enum = {
           value: 5045,
           label: '设置定时发布'
         },
-        TERMINATED_MACHINE_RELEASE: {
+        TERMINATE_MACHINE_RELEASE: {
           value: 5050,
           label: '停止机器发布操作'
         },
@@ -1406,9 +1406,17 @@ const $enum = {
           value: 5635,
           label: '取消执行流水线'
         },
-        TERMINATED_PIPELINE_EXEC: {
+        TERMINATE_PIPELINE_EXEC: {
           value: 5640,
           label: '停止执行流水线'
+        },
+        TERMINATE_PIPELINE_EXEC_DETAIL: {
+          value: 5645,
+          label: '停止执行部分操作'
+        },
+        SKIP_PIPELINE_EXEC_DETAIL: {
+          value: 5650,
+          label: '跳过执行部分操作'
         }
       }
     },
@@ -1480,11 +1488,11 @@ const $enum = {
           value: 7125,
           label: '手动触发任务'
         },
-        TERMINATED_ALL_SCHEDULER_TASK: {
+        TERMINATE_ALL_SCHEDULER_TASK: {
           value: 7130,
           label: '停止任务'
         },
-        TERMINATED_SCHEDULER_TASK_MACHINE: {
+        TERMINATE_SCHEDULER_TASK_MACHINE: {
           value: 7135,
           label: '停止机器操作'
         },
@@ -1719,6 +1727,10 @@ const $enum = {
     SCHEDULER_TASK_MACHINE: {
       value: 120,
       label: '调度任务机器线程池'
+    },
+    PIPELINE: {
+      value: 130,
+      label: '应用流水线线程池'
     }
   },
 
@@ -1803,6 +1815,30 @@ const $enum = {
           label: '发布执行失败',
           notify: 'error',
           redirect: '#/app/release/list'
+        },
+        PIPELINE_AUDIT_RESOLVE: {
+          value: 1110,
+          label: '应用流水线审批通过',
+          notify: 'success',
+          redirect: '#/app/pipeline/record'
+        },
+        PIPELINE_AUDIT_REJECT: {
+          value: 1120,
+          label: '应用流水线审批驳回',
+          notify: 'warning',
+          redirect: '#/app/pipeline/record'
+        },
+        PIPELINE_EXEC_SUCCESS: {
+          value: 1130,
+          label: '流水线执行成功',
+          notify: 'success',
+          redirect: '#/app/pipeline/record'
+        },
+        PIPELINE_EXEC_FAILURE: {
+          value: 1140,
+          label: '流水线执行失败',
+          notify: 'error',
+          redirect: '#/app/pipeline/record'
         }
       }
     }
@@ -1887,6 +1923,36 @@ const $enum = {
       value: 60,
       color: 'orange',
       label: '已停止'
+    }
+  },
+
+  /**
+   * 流水线日志状态
+   */
+  PIPELINE_LOG_STATUS: {
+    CREATE: {
+      value: 10,
+      label: '创建'
+    },
+    EXEC: {
+      value: 20,
+      label: '执行'
+    },
+    SUCCESS: {
+      value: 30,
+      label: '成功'
+    },
+    FAILURE: {
+      value: 40,
+      label: '失败'
+    },
+    TERMINATED: {
+      value: 50,
+      label: '停止'
+    },
+    SKIPPED: {
+      value: 60,
+      label: '跳过'
     }
   }
 

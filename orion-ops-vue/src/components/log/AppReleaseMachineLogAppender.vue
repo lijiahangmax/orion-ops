@@ -37,7 +37,7 @@
                           placement="bottomLeft"
                           ok-text="确定"
                           cancel-text="取消"
-                          @confirm="terminatedMachine">
+                          @confirm="terminateMachine">
               <a-button icon="close" size="small">停止</a-button>
             </a-popconfirm>
           </div>
@@ -100,8 +100,8 @@ export default {
       this.current = 0
       this.detail = {}
     },
-    terminatedMachine() {
-      this.$api.terminatedAppReleaseMachine({
+    terminateMachine() {
+      this.$api.terminateAppReleaseMachine({
         id: this.detail.releaseId,
         releaseMachineId: this.detail.id
       }).then(() => {
