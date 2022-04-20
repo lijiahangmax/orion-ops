@@ -63,6 +63,7 @@
                 <a-button :disabled="!sessionToken" @click="$copy(path)" title="复制路径" icon="link"/>
                 <a-button :disabled="!sessionToken" @click="listFiles()" title="刷新" icon="reload"/>
                 <a-button :disabled="!sessionToken" @click="openTouch" title="创建" icon="file-add"/>
+                <!-- 文件上传 -->
                 <a-popover v-model="uploadVisible" trigger="click" placement="bottomRight" overlayClassName="sftp-upload-list-popover">
                   <template #content>
                     <SftpUpload ref="upload"
@@ -72,6 +73,7 @@
                   </template>
                   <a-button :disabled="!sessionToken" title="上传" icon="cloud-upload"/>
                 </a-popover>
+                <!-- 传输列表 -->
                 <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-transfer-list-popover">
                   <template #content>
                     <FileTransferList ref="transferList" :sessionToken="sessionToken"/>

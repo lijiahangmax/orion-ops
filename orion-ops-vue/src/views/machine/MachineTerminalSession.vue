@@ -193,7 +193,7 @@ export default {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
           type: this.$enum.FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
-          id: record.id
+          id: record.logId
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
       } catch (e) {

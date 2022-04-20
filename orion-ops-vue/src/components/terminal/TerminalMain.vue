@@ -2,82 +2,42 @@
   <div class="terminal-main" :style="{height: terminalHeight, background: this.options.theme.background}">
     <!-- terminal -->
     <div class="terminal-content">
-      <div class="terminal" ref="terminal" @contextmenu.prevent="$refs.rightMenu.openRightMenu"></div>
+      <!-- 右键菜单 -->
+      <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
+        <!-- 终端 -->
+        <div class="terminal" ref="terminal" @click="clickTerminal"/>
+        <!-- 下拉菜单 -->
+        <template #overlay>
+          <a-menu @click="clickRightMenuItem">
+            <a-menu-item key="selectAll">
+              <span class="right-menu-item"><a-icon type="profile"/>全选</span>
+            </a-menu-item>
+            <a-menu-item key="copy">
+              <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+            </a-menu-item>
+            <a-menu-item key="paste">
+              <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
+            </a-menu-item>
+            <a-menu-item key="clear">
+              <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+            </a-menu-item>
+            <a-menu-item key="openSearch">
+              <span class="right-menu-item"><a-icon type="search"/>搜索</span>
+            </a-menu-item>
+            <a-menu-item key="toTop">
+              <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+            </a-menu-item>
+            <a-menu-item key="toBottom">
+              <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
     </div>
     <!-- 事件 -->
     <div class="terminal-event-container">
-      <!-- 右键菜单 -->
-      <RightClickMenu ref="rightMenu"
-                      :x="rightMenuX"
-                      :y="rightMenuY"
-                      @clickRight="clickRightMenuItem">
-        <template #items>
-          <a-menu-item key="selectAll">
-            <span class="right-menu-item"><a-icon type="profile"/>全选</span>
-          </a-menu-item>
-          <a-menu-item key="copy">
-            <span class="right-menu-item"><a-icon type="copy"/>复制</span>
-          </a-menu-item>
-          <a-menu-item key="paste">
-            <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
-          </a-menu-item>
-          <a-menu-item key="clear">
-            <span class="right-menu-item"><a-icon type="stop"/>清空</span>
-          </a-menu-item>
-          <a-menu-item key="openSearch">
-            <span class="right-menu-item"><a-icon type="search"/>搜索</span>
-          </a-menu-item>
-          <a-menu-item key="toTop">
-            <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
-          </a-menu-item>
-          <a-menu-item key="toBottom">
-            <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
-          </a-menu-item>
-        </template>
-      </RightClickMenu>
       <!-- 搜索框 -->
-      <div id="search-card" v-show="search.visible" @keydown.esc="closeSearch">
-        <a-card title="搜索" size="small">
-          <template #extra>
-            <a-icon class="span-blue pointer" type="close" title="关闭" @click="closeSearch"/>
-          </template>
-          <a-input class="search-input"
-                   ref="searchInput"
-                   placeholder="请输入查找内容"
-                   v-model="search.value"
-                   @keyup.enter.native="searchKeywords(true)"
-                   allowClear>
-          </a-input>
-          <div class="search-options">
-            <a-row>
-              <a-col :span="12">
-                <a-checkbox v-model="search.regex">
-                  正则匹配
-                </a-checkbox>
-              </a-col>
-              <a-col :span="12">
-                <a-checkbox v-model="search.words">
-                  单词全匹配
-                </a-checkbox>
-              </a-col>
-              <a-col :span="12">
-                <a-checkbox v-model="search.matchCase">
-                  区分大小写
-                </a-checkbox>
-              </a-col>
-              <a-col :span="12">
-                <a-checkbox v-model="search.incremental">
-                  增量查找
-                </a-checkbox>
-              </a-col>
-            </a-row>
-          </div>
-          <div class="search-buttons">
-            <a-button class="terminal-search-button search-button-prev" type="primary" @click="searchKeywords(false)">上一个</a-button>
-            <a-button class="terminal-search-button search-button-next" type="primary" @click="searchKeywords(true)">下一个</a-button>
-          </div>
-        </a-card>
-      </div>
+      <TerminalSearch ref="search" :searchPlugin="plugin.search" @close="focus"/>
     </div>
   </div>
 </template>
@@ -92,6 +52,7 @@ import { WebglAddon } from 'xterm-addon-webgl'
 
 import 'xterm/css/xterm.css'
 import RightClickMenu from '@/components/common/RightClickMenu'
+import TerminalSearch from '@/components/terminal/TerminalSearch'
 
 /**
  * 初始化terminal
@@ -157,29 +118,22 @@ const terminalEventHandler = {
   },
   registerCustomerKey() {
     // 注册自定义按键
-    const _this = this
-    this.term.attachCustomKeyEventHandler(function(ev) {
+    this.term.attachCustomKeyEventHandler((ev) => {
       // 注册复制键 ctrl + insert
       // if (ev.keyCode === 45 && ev.ctrlKey && ev.type === 'keydown') {
-      //   terminalEventHandler.copy.call(_this)
+      //   terminalEventHandler.copy.call(this)
       // }
       // 注册粘贴键 shift + insert
       // if (ev.keyCode === 45 && ev.shiftKey && ev.type === 'keydown') {
-      //   terminalEventHandler.paste.call(_this)
+      //   terminalEventHandler.paste.call(this)
       // }
       // 注册粘贴键 ctrl + shift + v
       // if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-      //   terminalEventHandler.paste.call(_this)
+      //   terminalEventHandler.paste.call(this)
       // }
       // 注册搜索键 ctrl + shift + f
       if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-        const visible = _this.search.visible
-        _this.search.visible = !visible
-        if (!visible) {
-          _this.$nextTick(() => {
-            _this.$refs.searchInput.focus()
-          })
-        }
+        this.$refs.search.open()
       }
     })
   },
@@ -212,7 +166,7 @@ const clientHandler = {
     window.addEventListener('resize', this.debouncedWindowResize)
     // 注册心跳
     const _this = this
-    this.pingThread = setInterval(function() {
+    this.pingThread = setInterval(() => {
       terminalOperator.ping.call(_this)
     }, 30000)
   },
@@ -312,10 +266,7 @@ const rightMenuHandler = {
     this.term.focus()
   },
   openSearch() {
-    this.search.visible = true
-    this.$nextTick(() => {
-      this.$refs.searchInput.focus()
-    })
+    this.$refs.search.open()
   }
 }
 
@@ -348,18 +299,12 @@ function parseProtocol(msg) {
 
 export default {
   name: 'TerminalMain',
-  components: { RightClickMenu },
+  components: {
+    TerminalSearch
+  },
   props: {
     machineId: Number,
-    terminalHeight: String,
-    rightMenuX: {
-      type: Function,
-      default: e => e.offsetX + 10
-    },
-    rightMenuY: {
-      type: Function,
-      default: e => e.offsetY + 80
-    }
+    terminalHeight: String
   },
   data: function() {
     return {
@@ -370,14 +315,6 @@ export default {
         search: null,
         links: null,
         webgl: null
-      },
-      search: {
-        visible: false,
-        value: '',
-        regex: false,
-        words: false,
-        matchCase: false,
-        incremental: false
       },
       status: 0,
       pingThread: null,
@@ -398,6 +335,7 @@ export default {
           background: '#212529'
         }
       },
+      visibleRightMenu: false,
       debouncedWindowResize: debounce(this.fitTerminal, 150)
     }
   },
@@ -418,10 +356,16 @@ export default {
       initTerminal.call(this)
     },
     fitTerminal() {
-      this.plugin.fit.fit()
-      this.term.resize(this.term.cols, this.term.rows)
+      if (this.plugin.fit) {
+        this.plugin.fit.fit()
+        this.term.resize(this.term.cols, this.term.rows)
+      }
     },
-    clickRightMenuItem(key) {
+    clickTerminal() {
+      this.visibleRightMenu = false
+    },
+    clickRightMenuItem({ key }) {
+      this.visibleRightMenu = false
       rightMenuHandler[key].call(this)
     },
     writerCommand(command) {
@@ -429,40 +373,17 @@ export default {
         terminalOperator.key.call(this, command)
       }
     },
-    closeSearch() {
-      this.search.visible = false
-      this.search.value = ''
-      this.term.focus()
-    },
     disconnect() {
       terminalOperator.disconnect.call(this)
     },
-    searchKeywords(direction) {
-      if (!this.search.value) {
-        return
-      }
-      const option = {
-        regex: this.search.regex,
-        wholeWord: this.search.words,
-        caseSensitive: this.search.matchCase,
-        incremental: this.search.incremental
-      }
-      let res
-      if (direction) {
-        res = this.plugin.search.findNext(this.search.value, option)
-      } else {
-        res = this.plugin.search.findPrevious(this.search.value, option)
-      }
-      if (!res) {
-        this.$message.info('未查询到匹配项', 0.3)
-      }
+    focus() {
+      this.term.focus()
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-
 .terminal-main {
   background: #212529;
   width: 100%;
@@ -475,31 +396,4 @@ export default {
     }
   }
 }
-
-#search-card {
-  position: fixed;
-  top: 94px;
-  right: 20px;
-  z-index: 200;
-  width: 290px;
-
-  .search-input {
-    width: 260px;
-  }
-
-  .search-options {
-    margin: 12px 0;
-  }
-
-  .search-buttons {
-    margin-top: 5px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .terminal-search-button {
-    margin-left: 10px;
-  }
-}
-
 </style>

@@ -11,8 +11,6 @@
     <!-- terminal主体 -->
     <TerminalMain ref="terminalMain"
                   :machineId="machineId"
-                  :rightMenuX="rightMenuX"
-                  :rightMenuY="rightMenuY"
                   :terminalHeight="terminalHeight"
                   @initFinish="initFinish"
                   @terminalStatusChange="terminalStatusChange"/>
@@ -37,9 +35,7 @@ export default {
     machineId: Number,
     wrapperHeight: String,
     terminalHeight: String,
-    visibleHeader: Boolean,
-    rightMenuX: Function,
-    rightMenuY: Function
+    visibleHeader: Boolean
   },
   data: function() {
     return {

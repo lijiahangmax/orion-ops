@@ -114,7 +114,7 @@ export default {
           }
         })
       } else {
-        this.uploadFile()
+        await this.uploadFile()
       }
     },
     async uploadFile() {
