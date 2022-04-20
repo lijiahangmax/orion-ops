@@ -33,7 +33,8 @@ import MachineSftpMain from './MachineSftpMain'
 export default {
   name: 'MachineSftpDrawer',
   props: {
-    machineId: Number
+    machineId: Number,
+    machineName: String
   },
   components: {
     MachineSftpMain
@@ -51,7 +52,7 @@ export default {
         return
       }
       // 初始化
-      this.$refs.sftpMain.openSftp()
+      this.$refs.sftpMain.openSftp(this.machineName)
     },
     changeFolderVisible() {
       this.folderTreeVisible = !this.folderTreeVisible

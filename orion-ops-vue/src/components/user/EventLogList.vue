@@ -17,7 +17,7 @@
                     {{ classify.label }}
                   </a-select-option>
                 </a-select>
-                <a-select v-model="query.type" placeholder="操作类型" style="width: 50%;" allowClear>
+                <a-select v-model="query.type" :disabled="!query.classify" placeholder="操作类型" style="width: 50%;" allowClear>
                   <a-select-option :value="typeInfo.value" v-for="typeInfo in typeArray" :key="typeInfo.value">
                     {{ typeInfo.label }}
                   </a-select-option>
@@ -136,7 +136,8 @@ export default {
         this.query.type = undefined
         this.typeArray = { ...classify.type }
       } else {
-        this.loadAllType()
+        this.query.type = undefined
+        this.typeArray = {}
       }
     }
   },
@@ -193,12 +194,6 @@ export default {
       this.query.rangeEnd = undefined
       this.dateRange = undefined
       this.getEventLog()
-    },
-    loadAllType() {
-      this.typeArray = {}
-      for (const classifyKey in this.$enum.EVENT_CLASSIFY) {
-        this.typeArray = { ...this.typeArray, ...this.$enum.EVENT_CLASSIFY[classifyKey].type }
-      }
     }
   },
   filters: {
@@ -215,7 +210,6 @@ export default {
     }
   },
   mounted() {
-    this.loadAllType()
     this.getEventLog()
   }
 }

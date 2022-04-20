@@ -1354,11 +1354,11 @@ const $enum = {
         },
         TERMINATE_MACHINE_RELEASE: {
           value: 5050,
-          label: '停止机器发布操作'
+          label: '停止机器操作'
         },
         SKIP_MACHINE_RELEASE: {
           value: 5055,
-          label: '跳过机器发布操作'
+          label: '跳过机器操作'
         }
       }
     },
@@ -1380,35 +1380,35 @@ const $enum = {
         },
         SUBMIT_PIPELINE_EXEC: {
           value: 5605,
-          label: '提交执行流水线'
+          label: '提交执行任务'
         },
         AUDIT_PIPELINE_EXEC: {
           value: 5610,
-          label: '审核流水线明细'
+          label: '审核任务'
         },
         COPY_PIPELINE_EXEC: {
           value: 5615,
-          label: '复制流水线明细'
+          label: '复制任务'
         },
         EXEC_PIPELINE_EXEC: {
           value: 5620,
-          label: '执行流水线明细'
+          label: '执行任务'
         },
         DELETE_PIPELINE_EXEC: {
           value: 5625,
-          label: '删除流水线明细'
+          label: '删除任务'
         },
         SET_PIPELINE_TIMED_EXEC: {
           value: 5630,
-          label: '定时执行流水线'
+          label: '设置定时执行'
         },
         CANCEL_PIPELINE_TIMED_EXEC: {
           value: 5635,
-          label: '取消执行流水线'
+          label: '取消定时执行'
         },
         TERMINATE_PIPELINE_EXEC: {
           value: 5640,
-          label: '停止执行流水线'
+          label: '停止执行任务'
         },
         TERMINATE_PIPELINE_EXEC_DETAIL: {
           value: 5645,
@@ -1502,7 +1502,7 @@ const $enum = {
         },
         DELETE_TASK_RECORD: {
           value: 7145,
-          label: '删除任务调度明细'
+          label: '删除调度明细'
         }
       }
     }

@@ -406,7 +406,7 @@ export default {
     }
   },
   methods: {
-    openSftp() {
+    openSftp(machineName) {
       // 清除数据
       this.cleanData()
       // 初始化
@@ -426,7 +426,7 @@ export default {
         })
       }).catch(() => {
         this.loading = false
-        this.$message.error('加载sftp失败')
+        this.$message.error(`机器 ${machineName} sftp加载失败`)
       })
     },
     changeToken(session) {
@@ -646,7 +646,7 @@ export default {
   .sftp-folder-left-fixed {
     overflow: auto;
     min-height: 25vh;
-    max-height: calc(100vh - 130px);
+    max-height: calc(100vh - 148px);
     margin-top: 4px;
   }
 }

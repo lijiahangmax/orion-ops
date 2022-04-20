@@ -74,7 +74,7 @@ export default {
         if (session) {
           this.$refs.sftpMain.changeToken(session)
         } else {
-          this.$refs.sftpMain.openSftp()
+          this.$refs.sftpMain.openSftp(this.currentMachine.name)
         }
       })
     },

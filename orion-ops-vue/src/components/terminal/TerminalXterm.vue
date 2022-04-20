@@ -17,7 +17,7 @@
                   @initFinish="initFinish"
                   @terminalStatusChange="terminalStatusChange"/>
     <!-- sftp侧栏 -->
-    <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId"/>
+    <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId" :machineName="machine.machineName"/>
   </div>
 </template>
 
