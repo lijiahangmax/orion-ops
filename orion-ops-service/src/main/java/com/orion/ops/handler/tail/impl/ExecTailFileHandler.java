@@ -1,7 +1,6 @@
 package com.orion.ops.handler.tail.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.ws.WsCloseCode;
@@ -116,31 +115,35 @@ public class ExecTailFileHandler implements ITailHandler {
     @SneakyThrows
     private void handler(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_8);
-        char[] buffer = new char[Const.BUFFER_KB_4];
-        int read;
-        StringBuilder sb = new StringBuilder();
-        // tail命令结合BufferedReader对CR处理有问题 所以不能使用readLine
-        while ((read = reader.read(buffer)) != -1) {
-            int mark = -1;
-            for (int i = 0; i < read; i++) {
-                // 读取到行结尾
-                if (buffer[i] == Letters.LF) {
-                    sb.append(buffer, mark + 1, i - mark - 1);
-                    if (session.isOpen()) {
-                        String payload = sb.toString().replaceAll(Const.CR, Const.EMPTY);
-                        session.sendMessage(new TextMessage(payload));
-                    }
-                    sb = new StringBuilder();
-                    mark = i;
-                }
-            }
-            // 不是完整的一行
-            if (mark == -1) {
-                sb.append(buffer, 0, read);
-            } else if (mark != read - 1) {
-                sb.append(buffer, mark + 1, read - mark - 1);
-            }
+        String line;
+        while ((line = reader.readLine()) != null) {
+            session.sendMessage(new TextMessage(line));
         }
+        // char[] buffer = new char[Const.BUFFER_KB_4];
+        // int read;
+        // StringBuilder sb = new StringBuilder();
+        // // tail命令结合BufferedReader对CR处理有问题 所以不能使用readLine
+        // while ((read = reader.read(buffer)) != -1) {
+        //     int mark = -1;
+        //     for (int i = 0; i < read; i++) {
+        //         // 读取到行结尾
+        //         if (buffer[i] == Letters.LF) {
+        //             sb.append(buffer, mark + 1, i - mark - 1);
+        //             if (session.isOpen()) {
+        //                 String payload = sb.toString().replaceAll(Const.CR, Const.EMPTY);
+        //                 session.sendMessage(new TextMessage(payload));
+        //             }
+        //             sb = new StringBuilder();
+        //             mark = i;
+        //         }
+        //     }
+        //     // 不是完整的一行
+        //     if (mark == -1) {
+        //         sb.append(buffer, 0, read);
+        //     } else if (mark != read - 1) {
+        //         sb.append(buffer, mark + 1, read - mark - 1);
+        //     }
+        // }
     }
 
     @Override
