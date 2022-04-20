@@ -2,6 +2,7 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.utils.convert.TypeStore;
+import com.orion.utils.io.Files1;
 import com.orion.utils.time.Dates;
 import lombok.Data;
 
@@ -53,6 +54,11 @@ public class FileTailVO {
     private String path;
 
     /**
+     * 文件名称
+     */
+    private String fileName;
+
+    /**
      * offset
      *
      * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
@@ -95,6 +101,7 @@ public class FileTailVO {
             vo.setName(p.getAliasName());
             vo.setMachineId(p.getMachineId());
             vo.setPath(p.getFilePath());
+            vo.setFileName(Files1.getFileName(p.getFilePath()));
             vo.setOffset(p.getFileOffset());
             vo.setCharset(p.getFileCharset());
             vo.setCommand(p.getTailCommand());

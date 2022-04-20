@@ -52,9 +52,9 @@ public class TransferActionHandler extends AbstractActionHandler {
             File localFile = entity.getKey();
             String remoteFile = entity.getValue();
             if (localFile.isDirectory()) {
-                super.appendLog("*** 开始传输创建文件夹 " + remoteFile);
+                super.appendLog("*** 开始创建文件夹 " + remoteFile);
                 executor.mkdirs(remoteFile);
-                return;
+                continue;
             }
             super.appendLog("*** 开始传输文件 " + localFile.getAbsolutePath() + " >>> " + remoteFile + "  size: " + Files1.getSize(localFile.length()) + "\n");
             executor.uploadFile(remoteFile, Files1.openInputStreamFast(localFile), true);

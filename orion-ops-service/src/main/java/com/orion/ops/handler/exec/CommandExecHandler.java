@@ -3,6 +3,7 @@ package com.orion.ops.handler.exec;
 import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.command.ExecStatus;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.message.MessageType;
@@ -169,26 +170,42 @@ public class CommandExecHandler implements IExecHandler {
         File logFile = new File(logPath);
         this.logOutputStream = Files1.openOutputStreamFast(logFile);
         StringBuilder sb = new StringBuilder()
-                .append("# 准备执行命令\n")
-                .append("@ssh: ").append(machine.getUsername()).append("@")
+                .append(Utils.getStainKeyWords("# 准备执行命令", StainCode.GLOSS_GREEN))
+                .append(Letters.LF)
+                .append("@ssh:     ")
+                .append(StainCode.prefix(StainCode.GLOSS_BLUE))
+                .append(machine.getUsername()).append("@")
                 .append(machine.getMachineHost()).append(":")
-                .append(machine.getSshPort()).append(Letters.LF)
-                .append("执行用户: ").append(record.getUserId()).append(Letters.TAB)
-                .append(record.getUserName()).append(Letters.LF)
-                .append("执行任务: ").append(execId).append(Letters.LF)
-                .append("执行机器: ").append(machine.getId()).append(Letters.TAB)
-                .append(machine.getMachineName()).append(Letters.LF)
-                .append("开始时间: ").append(Dates.format(record.getStartDate()))
+                .append(machine.getSshPort())
+                .append(StainCode.SUFFIX)
+                .append(Letters.LF);
+        sb.append("执行用户: ")
+                .append(Utils.getStainKeyWords(record.getUserName(), StainCode.GLOSS_BLUE))
+                .append(Letters.LF);
+        sb.append("执行任务: ")
+                .append(Utils.getStainKeyWords(execId, StainCode.GLOSS_BLUE))
+                .append(StainCode.SUFFIX)
+                .append(Letters.LF);
+        sb.append("执行机器: ")
+                .append(Utils.getStainKeyWords(machine.getMachineName(), StainCode.GLOSS_BLUE))
+                .append(Letters.LF);
+        sb.append("开始时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(record.getStartDate()), StainCode.GLOSS_BLUE))
                 .append(Letters.LF);
         String description = record.getDescription();
         if (!Strings.isBlank(description)) {
-            sb.append("描述: ").append(description).append(Letters.LF);
+            sb.append("执行描述: ")
+                    .append(Utils.getStainKeyWords(description, StainCode.GLOSS_BLUE))
+                    .append(Letters.LF);
         }
         sb.append(Letters.LF)
-                .append("# 执行命令\n")
-                .append(record.getExecCommand()).append(Letters.LF)
+                .append(Utils.getStainKeyWords("# 执行命令", StainCode.GLOSS_GREEN))
                 .append(Letters.LF)
-                .append("# 开始执行\n");
+                .append(record.getExecCommand())
+                .append(Letters.LF)
+                .append(Letters.LF)
+                .append(Utils.getStainKeyWords("# 开始执行", StainCode.GLOSS_GREEN))
+                .append(Letters.LF);
         logOutputStream.write(Strings.bytes(sb.toString()));
         logOutputStream.flush();
     }
@@ -216,12 +233,21 @@ public class CommandExecHandler implements IExecHandler {
         long used = endDate.getTime() - record.getStartDate().getTime();
         StringBuilder sb = new StringBuilder()
                 .append(Letters.LF)
-                .append("# 命令执行完毕\n")
-                .append("exit code: ").append(exitCode).append(Letters.LF)
-                .append("结束时间: ").append(Dates.format(endDate))
-                .append("; used ").append(Utils.interval(used)).append(" (")
+                .append(Utils.getStainKeyWords("# 命令执行完毕", StainCode.GLOSS_GREEN))
+                .append(Letters.LF);
+        sb.append("exit code: ")
+                .append(exitCode == 0 ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE) : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
+                .append(Letters.LF);
+        sb.append("结束时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(endDate), StainCode.GLOSS_BLUE))
+                .append("; used ")
+                .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
+                .append(" (")
+                .append(StainCode.prefix(StainCode.GLOSS_BLUE))
                 .append(used)
-                .append(" ms)\n");
+                .append("ms")
+                .append(StainCode.SUFFIX)
+                .append(")\n");
         this.appendLog(sb.toString());
         // 发送站内信
         Map<String, Object> params = Maps.newMap();
@@ -240,7 +266,9 @@ public class CommandExecHandler implements IExecHandler {
         // 更新状态
         this.updateStatus(ExecStatus.EXCEPTION);
         // 拼接日志
-        StringBuilder log = new StringBuilder("\n--------------------------------------------------\n# 命令执行异常\n")
+        StringBuilder log = new StringBuilder("\n--------------------------------------------------\n")
+                .append(Utils.getStainKeyWords("# 命令执行异常", StainCode.GLOSS_RED))
+                .append(Letters.LF)
                 .append(Exceptions.getStackTraceAsString(e))
                 .append(Const.LF);
         this.appendLog(log.toString());

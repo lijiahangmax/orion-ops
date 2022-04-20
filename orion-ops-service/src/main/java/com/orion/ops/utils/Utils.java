@@ -2,6 +2,7 @@ package com.orion.ops.utils;
 
 import com.orion.id.UUIds;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.consts.system.ThreadPoolMetricsType;
 import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
@@ -182,6 +183,18 @@ public class Utils {
         metrics.setCompletedTaskCount(executor.getCompletedTaskCount());
         metrics.setQueueSize(executor.getQueue().size());
         return metrics;
+    }
+
+    /**
+     * 获取高亮字体
+     *
+     * @param key  key
+     * @param code code
+     * @return 高亮字体
+     * @see com.orion.ops.consts.StainCode
+     */
+    public static String getStainKeyWords(Object key, int code) {
+        return StainCode.prefix(code) + key + StainCode.SUFFIX;
     }
 
 }
