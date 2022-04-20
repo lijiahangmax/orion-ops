@@ -225,7 +225,7 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     }
 
     @Override
-    public void terminatedAll(Long id) {
+    public void terminateAll(Long id) {
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
@@ -234,20 +234,20 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
         // 停止
         ITaskProcessor session = taskSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
-        session.terminatedAll();
+        session.terminateAll();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, record.getTaskName());
     }
 
     @Override
-    public void terminatedMachine(Long id, Long machineRecordId) {
-        this.skipOrTerminatedTaskMachine(id, machineRecordId, true);
+    public void terminateMachine(Long id, Long machineRecordId) {
+        this.skipOrTerminateTaskMachine(id, machineRecordId, true);
     }
 
     @Override
     public void skipMachine(Long id, Long machineRecordId) {
-        this.skipOrTerminatedTaskMachine(id, machineRecordId, false);
+        this.skipOrTerminateTaskMachine(id, machineRecordId, false);
     }
 
     /**
@@ -255,9 +255,9 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
      *
      * @param id              id
      * @param machineRecordId machineRecordId
-     * @param terminated      终止/跳过
+     * @param terminate       终止/跳过
      */
-    private void skipOrTerminatedTaskMachine(Long id, Long machineRecordId, boolean terminated) {
+    private void skipOrTerminateTaskMachine(Long id, Long machineRecordId, boolean terminate) {
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.UNKNOWN_DATA);
@@ -266,7 +266,7 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
         SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
         Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
         // 检查状态
-        if (terminated) {
+        if (terminate) {
             Valid.isTrue(SchedulerTaskMachineStatus.RUNNABLE.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         } else {
             Valid.isTrue(SchedulerTaskMachineStatus.WAIT.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
@@ -274,8 +274,8 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
         // 停止
         ITaskProcessor session = taskSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
-        if (terminated) {
-            session.terminatedMachine(machineRecordId);
+        if (terminate) {
+            session.terminateMachine(machineRecordId);
         } else {
             session.skipMachine(machineRecordId);
         }

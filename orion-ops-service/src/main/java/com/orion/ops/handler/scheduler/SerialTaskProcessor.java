@@ -29,12 +29,12 @@ public class SerialTaskProcessor extends AbstractTaskProcessor {
         for (ITaskMachineHandler handler : handlers) {
             // 停止跳过
             if (terminated) {
-                handler.skipped();
+                handler.skip();
                 continue;
             }
             // 发生异常并且异常处理策略是跳过所有则跳过
             if (ex != null && errorSkipAll) {
-                handler.skipped();
+                handler.skip();
                 continue;
             }
             // 执行
@@ -59,12 +59,12 @@ public class SerialTaskProcessor extends AbstractTaskProcessor {
     }
 
     @Override
-    public void terminatedAll() {
-        super.terminatedAll();
+    public void terminateAll() {
+        super.terminateAll();
         // 获取当前执行中的机器执行器
         handlers.values().stream()
                 .filter(s -> s.getStatus().equals(SchedulerTaskMachineStatus.RUNNABLE))
-                .forEach(ITaskMachineHandler::terminated);
+                .forEach(ITaskMachineHandler::terminate);
     }
 
 }

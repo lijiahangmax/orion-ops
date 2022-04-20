@@ -108,7 +108,7 @@ public class MachineTerminalController {
      * 删除日志
      */
     @RequestMapping("/log/delete")
-    @EventLog(EventType.DELETE_TERMINATED_LOG)
+    @EventLog(EventType.DELETE_TERMINAL_LOG)
     public Integer deleteLog(@RequestBody MachineTerminalLogRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineTerminalService.deleteTerminalLog(idList);

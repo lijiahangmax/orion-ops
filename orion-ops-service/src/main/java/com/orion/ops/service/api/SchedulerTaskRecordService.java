@@ -89,7 +89,7 @@ public interface SchedulerTaskRecordService {
      *
      * @param id id
      */
-    void terminatedAll(Long id);
+    void terminateAll(Long id);
 
     /**
      * 停止单个
@@ -97,7 +97,7 @@ public interface SchedulerTaskRecordService {
      * @param id              id
      * @param machineRecordId machineRecordId
      */
-    void terminatedMachine(Long id, Long machineRecordId);
+    void terminateMachine(Long id, Long machineRecordId);
 
     /**
      * 跳过单个

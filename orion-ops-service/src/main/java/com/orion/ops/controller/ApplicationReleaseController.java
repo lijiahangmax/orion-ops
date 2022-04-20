@@ -177,23 +177,23 @@ public class ApplicationReleaseController {
     /**
      * 发布停止
      */
-    @RequestMapping("/terminated")
-    @EventLog(EventType.TERMINATED_RELEASE)
-    public HttpWrapper<?> terminatedAppRelease(@RequestBody ApplicationReleaseRequest request) {
+    @RequestMapping("/terminate")
+    @EventLog(EventType.TERMINATE_RELEASE)
+    public HttpWrapper<?> terminateAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationReleaseService.terminatedRelease(id);
+        applicationReleaseService.terminateRelease(id);
         return HttpWrapper.ok();
     }
 
     /**
      * 停止机器
      */
-    @RequestMapping("/terminated-machine")
-    @EventLog(EventType.TERMINATED_MACHINE_RELEASE)
-    public HttpWrapper<?> terminatedMachine(@RequestBody ApplicationReleaseRequest request) {
+    @RequestMapping("/terminate-machine")
+    @EventLog(EventType.TERMINATE_MACHINE_RELEASE)
+    public HttpWrapper<?> terminateMachine(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
-        applicationReleaseService.terminatedMachine(id, releaseMachineId);
+        applicationReleaseService.terminateMachine(id, releaseMachineId);
         return HttpWrapper.ok();
     }
 

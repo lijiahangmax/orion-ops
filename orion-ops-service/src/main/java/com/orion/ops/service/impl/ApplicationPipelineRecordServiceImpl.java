@@ -13,6 +13,7 @@ import com.orion.ops.consts.app.StageType;
 import com.orion.ops.consts.app.TimedType;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -26,10 +27,7 @@ import com.orion.ops.entity.vo.ApplicationPipelineRecordVO;
 import com.orion.ops.handler.app.pipeline.IPipelineProcessor;
 import com.orion.ops.handler.app.pipeline.PipelineProcessor;
 import com.orion.ops.handler.app.pipeline.PipelineSessionHolder;
-import com.orion.ops.service.api.ApplicationBuildService;
-import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
-import com.orion.ops.service.api.ApplicationPipelineDetailService;
-import com.orion.ops.service.api.ApplicationPipelineRecordService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Currents;
@@ -39,6 +37,7 @@ import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
+import com.orion.utils.collect.Maps;
 import com.orion.utils.collect.Sets;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.time.Dates;
@@ -92,6 +91,9 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
 
     @Resource
     private TaskRegister taskRegister;
+
+    @Resource
+    private WebSideMessageService webSideMessageService;
 
     @Override
     public DataGrid<ApplicationPipelineRecordListVO> getPipelineRecordList(ApplicationPipelineRecordRequest request) {
@@ -194,6 +196,10 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         update.setAuditReason(request.getAuditReason());
         final boolean resolve = AuditStatus.RESOLVE.equals(auditStatus);
         // 发送站内信
+        Map<String, Object> params = Maps.newMap();
+        params.put(EventKeys.ID, record.getId());
+        params.put(EventKeys.NAME, record.getPipelineName());
+        params.put(EventKeys.TITLE, record.getExecTitle());
         if (resolve) {
             // 通过
             final boolean timedExec = TimedType.TIMED.getType().equals(record.getTimedExec());
@@ -204,9 +210,11 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
                 // 提交任务
                 taskRegister.submit(TaskType.PIPELINE, record.getTimedExecTime(), id);
             }
+            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_RESOLVE, record.getCreateUserId(), record.getCreateUserName(), params);
         } else {
             // 驳回
             update.setExecStatus(PipelineStatus.AUDIT_REJECT.getStatus());
+            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_REJECT, record.getCreateUserId(), record.getCreateUserName(), params);
         }
         int effect = applicationPipelineRecordDAO.updateById(update);
         this.setEventLogParams(record);
@@ -399,7 +407,7 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
     }
 
     @Override
-    public void terminatedExec(Long id) {
+    public void terminateExec(Long id) {
         // 查询明细
         ApplicationPipelineRecordDO record = applicationPipelineRecordDAO.selectById(id);
         Valid.notNull(record, MessageConst.PIPELINE_ABSENT);
@@ -411,9 +419,19 @@ public class ApplicationPipelineRecordServiceImpl implements ApplicationPipeline
         IPipelineProcessor session = pipelineSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
         // 调用终止
-        session.terminated();
+        session.terminate();
         // 设置日志参数
         this.setEventLogParams(record);
+    }
+
+    @Override
+    public void terminateExecDetail(Long id, Long detailId) {
+
+    }
+
+    @Override
+    public void skipExecDetail(Long id, Long detailId) {
+
     }
 
     /**

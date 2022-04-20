@@ -107,7 +107,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     protected abstract void handler() throws Exception;
 
     @Override
-    public void skipped() {
+    public void skip() {
         log.info("应用操作执行-跳过: relId: {}, id: {}", relId, id);
         if (ActionStatus.WAIT.equals(status)) {
             // 只能跳过等待中的任务
@@ -116,7 +116,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         log.info("应用操作执行-终止: relId: {}, id: {}", relId, id);
         this.terminated = true;
     }

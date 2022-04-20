@@ -17,14 +17,14 @@ public interface ITaskProcessor extends Runnable, SafeCloseable {
     /**
      * 停止全部
      */
-    void terminatedAll();
+    void terminateAll();
 
     /**
      * 停止机器操作
      *
      * @param recordMachineId recordMachineId
      */
-    void terminatedMachine(Long recordMachineId);
+    void terminateMachine(Long recordMachineId);
 
     /**
      * 跳过机器操作

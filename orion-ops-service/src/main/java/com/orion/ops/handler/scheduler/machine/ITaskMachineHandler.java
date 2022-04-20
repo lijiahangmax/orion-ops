@@ -15,12 +15,12 @@ public interface ITaskMachineHandler extends Runnable, SafeCloseable {
     /**
      * 跳过 (未开始)
      */
-    void skipped();
+    void skip();
 
     /**
      * 停止 (进行中)
      */
-    void terminated();
+    void terminate();
 
     /**
      * 状态

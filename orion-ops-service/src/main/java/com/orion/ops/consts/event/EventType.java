@@ -176,7 +176,7 @@ public enum EventType {
     /**
      * 删除终端日志
      */
-    DELETE_TERMINATED_LOG(2415, EventClassify.TERMINAL, "删除终端操作日志 <sb>${count}</sb>个"),
+    DELETE_TERMINAL_LOG(2415, EventClassify.TERMINAL, "删除终端操作日志 <sb>${count}</sb>个"),
 
     // -------------------- sftp 操作 --------------------
 
@@ -255,7 +255,7 @@ public enum EventType {
     /**
      * 终止执行
      */
-    EXEC_TERMINATED(2615, EventClassify.EXEC, "终止执行机器命令"),
+    EXEC_TERMINATE(2615, EventClassify.EXEC, "终止执行机器命令"),
 
     // -------------------- 日志操作 --------------------
 
@@ -394,7 +394,7 @@ public enum EventType {
     /**
      * 停止应用构建
      */
-    BUILD_TERMINATED(4010, EventClassify.BUILD, "停止应用构建 <sb>#${buildSeq}</sb> <sb>${profileName}</sb> <sb>${appName}</sb>"),
+    BUILD_TERMINATE(4010, EventClassify.BUILD, "停止应用构建 <sb>#${buildSeq}</sb> <sb>${profileName}</sb> <sb>${appName}</sb>"),
 
     /**
      * 删除应用构建
@@ -431,7 +431,7 @@ public enum EventType {
     /**
      * 停止应用发布
      */
-    TERMINATED_RELEASE(5025, EventClassify.RELEASE, "停止应用发布 <sb>${title}</sb>"),
+    TERMINATE_RELEASE(5025, EventClassify.RELEASE, "停止应用发布 <sb>${title}</sb>"),
 
     /**
      * 删除应用发布
@@ -456,7 +456,7 @@ public enum EventType {
     /**
      * 停止机器发布操作
      */
-    TERMINATED_MACHINE_RELEASE(5050, EventClassify.RELEASE, "停止机器发布操作 <sb>${title}</sb> <sb>${machineName}</sb>"),
+    TERMINATE_MACHINE_RELEASE(5050, EventClassify.RELEASE, "停止机器发布操作 <sb>${title}</sb> <sb>${machineName}</sb>"),
 
     /**
      * 跳过机器发布操作
@@ -518,7 +518,17 @@ public enum EventType {
     /**
      * 停止执行应用流水线
      */
-    TERMINATED_PIPELINE_EXEC(5640, EventClassify.PIPELINE, "停止执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+    TERMINATE_PIPELINE_EXEC(5640, EventClassify.PIPELINE, "停止执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+
+    /**
+     * 停止执行应用流水线操作
+     */
+    TERMINATE_PIPELINE_EXEC_DETAIL(5645, EventClassify.PIPELINE, "停止执行应用流水线部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb>${stage} ${appName}</sb>)"),
+
+    /**
+     * 跳过执行应用流水线操作
+     */
+    SKIP_PIPELINE_EXEC_DETAIL(5650, EventClassify.PIPELINE, "跳过执行应用流水线部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb>${stage} ${appName}</sb>)"),
 
     // -------------------- 系统环境变量操作 --------------------
 
@@ -594,12 +604,12 @@ public enum EventType {
     /**
      * 停止调度任务
      */
-    TERMINATED_ALL_SCHEDULER_TASK(7130, EventClassify.SCHEDULER, "停止调度任务 <sb>${name}</sb>"),
+    TERMINATE_ALL_SCHEDULER_TASK(7130, EventClassify.SCHEDULER, "停止调度任务 <sb>${name}</sb>"),
 
     /**
      * 停止调度任务机器操作
      */
-    TERMINATED_SCHEDULER_TASK_MACHINE(7135, EventClassify.SCHEDULER, "停止调度任务机器操作 <sb>${name}</sb> <sb>${machineName}</sb>"),
+    TERMINATE_SCHEDULER_TASK_MACHINE(7135, EventClassify.SCHEDULER, "停止调度任务机器操作 <sb>${name}</sb> <sb>${machineName}</sb>"),
 
     /**
      * 跳过调度任务机器操作

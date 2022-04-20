@@ -19,12 +19,12 @@ public interface IStageHandler extends Executable {
     /**
      * 停止执行
      */
-    void terminated();
+    void terminate();
 
     /**
      * 跳过执行
      */
-    void skipped();
+    void skip();
 
     /**
      * 获取状态

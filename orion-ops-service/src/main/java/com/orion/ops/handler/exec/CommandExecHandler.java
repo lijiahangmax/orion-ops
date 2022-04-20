@@ -153,7 +153,7 @@ public class CommandExecHandler implements IExecHandler {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         log.info("execHandler-停止 execId: {}", execId);
         this.terminated = true;
         Streams.close(executor);

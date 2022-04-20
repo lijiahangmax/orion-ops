@@ -14,12 +14,12 @@ public interface IMachineProcessor extends Runnable, SafeCloseable {
     /**
      * 终止
      */
-    void terminated();
+    void terminate();
 
     /**
      * 跳过
      */
-    default void skipped() {
+    default void skip() {
     }
 
 }

@@ -135,7 +135,7 @@ public class PipelineProcessor implements IPipelineProcessor {
             this.currentHandler = stageHandler;
             // 停止或异常则跳过
             if (terminated || ex != null) {
-                stageHandler.skipped();
+                stageHandler.skip();
                 continue;
             }
             // 执行
@@ -226,27 +226,27 @@ public class PipelineProcessor implements IPipelineProcessor {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         log.info("应用流水线执行停止 id: {}", recordId);
         this.terminated = true;
         if (currentHandler != null) {
-            currentHandler.terminated();
+            currentHandler.terminate();
         }
     }
 
     @Override
-    public void terminatedDetail(Long id) {
+    public void terminateDetail(Long id) {
         IStageHandler stageHandler = stageHandlers.get(id);
         if (stageHandler != null) {
-            stageHandler.terminated();
+            stageHandler.terminate();
         }
     }
 
     @Override
-    public void skippedDetail(Long id) {
+    public void skipDetail(Long id) {
         IStageHandler stageHandler = stageHandlers.get(id);
         if (stageHandler != null) {
-            stageHandler.skipped();
+            stageHandler.skip();
         }
     }
 

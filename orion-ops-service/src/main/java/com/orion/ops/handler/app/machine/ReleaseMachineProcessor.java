@@ -86,7 +86,7 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
     }
 
     @Override
-    public void skipped() {
+    public void skip() {
         if (ActionStatus.WAIT.equals(status)) {
             // 只能跳过等待中的任务
             this.updateStatus(MachineProcessorStatus.SKIPPED);

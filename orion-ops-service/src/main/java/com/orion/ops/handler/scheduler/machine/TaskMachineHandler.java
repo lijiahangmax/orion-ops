@@ -174,7 +174,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
     }
 
     @Override
-    public void skipped() {
+    public void skip() {
         log.info("调度任务-机器操作-跳过 machineRecordId: {}, status: {}", machineRecordId, status);
         if (SchedulerTaskMachineStatus.WAIT.equals(status)) {
             // 只能跳过等待中的任务
@@ -183,7 +183,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         log.info("调度任务-机器操作-停止 machineRecordId: {}", machineRecordId);
         // 只能停止进行中的任务
         if (SchedulerTaskMachineStatus.RUNNABLE.equals(status)) {

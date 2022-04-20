@@ -107,23 +107,23 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
     protected abstract void handler() throws Exception;
 
     @Override
-    public void terminatedAll() {
+    public void terminateAll() {
         this.terminated = true;
     }
 
     @Override
-    public void terminatedMachine(Long releaseMachineId) {
+    public void terminateMachine(Long releaseMachineId) {
         ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
         if (processor != null) {
-            processor.terminated();
+            processor.terminate();
         }
     }
 
     @Override
-    public void skippedMachine(Long releaseMachineId) {
+    public void skipMachine(Long releaseMachineId) {
         ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
         if (processor != null) {
-            processor.skipped();
+            processor.skip();
         }
     }
 

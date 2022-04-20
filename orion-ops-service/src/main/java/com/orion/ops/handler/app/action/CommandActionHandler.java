@@ -43,8 +43,8 @@ public class CommandActionHandler extends AbstractActionHandler {
     }
 
     @Override
-    public void terminated() {
-        super.terminated();
+    public void terminate() {
+        super.terminate();
         // 关闭executor
         Streams.close(executor);
     }

@@ -158,15 +158,15 @@ public abstract class AbstractTaskProcessor implements ITaskProcessor {
     }
 
     @Override
-    public void terminatedAll() {
+    public void terminateAll() {
         this.terminated = true;
     }
 
     @Override
-    public void terminatedMachine(Long recordMachineId) {
+    public void terminateMachine(Long recordMachineId) {
         ITaskMachineHandler machineHandler = handlers.get(recordMachineId);
         if (machineHandler != null) {
-            machineHandler.terminated();
+            machineHandler.terminate();
         }
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractTaskProcessor implements ITaskProcessor {
     public void skipMachine(Long recordMachineId) {
         ITaskMachineHandler machineHandler = handlers.get(recordMachineId);
         if (machineHandler != null) {
-            machineHandler.skipped();
+            machineHandler.skip();
         }
     }
 

@@ -64,7 +64,7 @@ public interface ApplicationBuildService {
      *
      * @param id id
      */
-    void terminatedBuildTask(Long id);
+    void terminateBuildTask(Long id);
 
     /**
      * 删除构建

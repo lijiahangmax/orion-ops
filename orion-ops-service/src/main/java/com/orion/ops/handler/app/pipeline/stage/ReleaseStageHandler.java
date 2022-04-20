@@ -165,8 +165,8 @@ public class ReleaseStageHandler extends AbstractStageHandler {
     }
 
     @Override
-    public void terminated() {
-        super.terminated();
+    public void terminate() {
+        super.terminate();
         // 获取数据
         this.release = applicationReleaseDAO.selectById(releaseId);
         // 检查状态
@@ -179,7 +179,7 @@ public class ReleaseStageHandler extends AbstractStageHandler {
             return;
         }
         // 调用终止
-        session.terminatedAll();
+        session.terminateAll();
     }
 
 }

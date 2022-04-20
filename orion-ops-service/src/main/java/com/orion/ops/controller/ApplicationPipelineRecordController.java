@@ -175,27 +175,46 @@ public class ApplicationPipelineRecordController {
     /**
      * 停止
      */
-    @RequestMapping("/terminated")
-    @EventLog(EventType.TERMINATED_PIPELINE_EXEC)
-    public HttpWrapper<?> terminatedExec(@RequestBody ApplicationPipelineRecordRequest request) {
+    @RequestMapping("/terminate")
+    @EventLog(EventType.TERMINATE_PIPELINE_EXEC)
+    public HttpWrapper<?> terminateExec(@RequestBody ApplicationPipelineRecordRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationPipelineRecordService.terminatedExec(id);
+        applicationPipelineRecordService.terminateExec(id);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 停止部分操作
+     */
+    @RequestMapping("/terminate-detail")
+    @EventLog(EventType.TERMINATE_PIPELINE_EXEC_DETAIL)
+    public HttpWrapper<?> terminateExecDetail(@RequestBody ApplicationPipelineRecordRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long detailId = Valid.notNull(request.getDetailId());
+        applicationPipelineRecordService.terminateExecDetail(id, detailId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 跳过部分操作
+     */
+    @RequestMapping("/skip-detail")
+    @EventLog(EventType.SKIP_PIPELINE_EXEC_DETAIL)
+    public HttpWrapper<?> skipExecDetail(@RequestBody ApplicationPipelineRecordRequest request) {
+        Long id = Valid.notNull(request.getId());
+        Long detailId = Valid.notNull(request.getDetailId());
+        applicationPipelineRecordService.skipExecDetail(id, detailId);
         return HttpWrapper.ok();
     }
 
     // 状态
     // 日志
 
-    // 操作详情
-    // 部分停止
-    // 跳过
+    // 删除时删除log
 
-    // 注入站内信
     // 注入操作日志
 
     // 恢复runner
     // 状态runner
-
-    // 调度线程池指标
 
 }

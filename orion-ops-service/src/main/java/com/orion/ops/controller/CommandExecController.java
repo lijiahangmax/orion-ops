@@ -74,11 +74,11 @@ public class CommandExecController {
     /**
      * 停止任务
      */
-    @RequestMapping("/terminated")
-    @EventLog(EventType.EXEC_TERMINATED)
-    public HttpWrapper<?> terminated(@RequestBody CommandExecRequest request) {
+    @RequestMapping("/terminate")
+    @EventLog(EventType.EXEC_TERMINATE)
+    public HttpWrapper<?> terminate(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
-        commandExecService.terminatedExec(id);
+        commandExecService.terminateExec(id);
         return HttpWrapper.ok();
     }
 

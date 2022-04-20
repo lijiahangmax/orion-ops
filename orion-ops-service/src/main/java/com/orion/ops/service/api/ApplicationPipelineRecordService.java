@@ -93,6 +93,22 @@ public interface ApplicationPipelineRecordService {
      *
      * @param id id
      */
-    void terminatedExec(Long id);
+    void terminateExec(Long id);
+
+    /**
+     * 停止执行流水线
+     *
+     * @param id       id
+     * @param detailId detailId
+     */
+    void terminateExecDetail(Long id, Long detailId);
+
+    /**
+     * 停止执行流水线
+     *
+     * @param id       id
+     * @param detailId detailId
+     */
+    void skipExecDetail(Long id, Long detailId);
 
 }

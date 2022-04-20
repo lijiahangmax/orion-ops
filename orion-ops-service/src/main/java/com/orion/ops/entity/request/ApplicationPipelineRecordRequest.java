@@ -29,6 +29,11 @@ public class ApplicationPipelineRecordRequest extends PageRequest {
     private Long id;
 
     /**
+     * detailId
+     */
+    private Long detailId;
+
+    /**
      * id
      */
     private List<Long> idList;

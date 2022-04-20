@@ -56,7 +56,7 @@ public interface CommandExecService {
      *
      * @param id id
      */
-    void terminatedExec(Long id);
+    void terminateExec(Long id);
 
     /**
      * 删除任务

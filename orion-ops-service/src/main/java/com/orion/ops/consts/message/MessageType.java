@@ -65,14 +65,24 @@ public enum MessageType {
     RELEASE_FAILURE(1100, MessageClassify.SYSTEM, "发布单 <sb>${title}</sb> 发布失败"),
 
     /**
+     * 应用流水线审批通过
+     */
+    PIPELINE_AUDIT_RESOLVE(1110, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 审核已通过"),
+
+    /**
+     * 应用流水线审批驳回
+     */
+    PIPELINE_AUDIT_REJECT(1120, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 审核已被驳回"),
+
+    /**
      * 应用流水线执行成功
      */
-    PIPELINE_EXEC_SUCCESS(1110, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行成功"),
+    PIPELINE_EXEC_SUCCESS(1130, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行成功"),
 
     /**
      * 应用流水线执行失败
      */
-    PIPELINE_EXEC_FAILURE(1120, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行失败"),
+    PIPELINE_EXEC_FAILURE(1140, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行失败"),
 
     ;
 

@@ -82,11 +82,11 @@ public class ApplicationBuildController {
     /**
      * 终止构建
      */
-    @RequestMapping("/terminated")
-    @EventLog(EventType.BUILD_TERMINATED)
-    public HttpWrapper<?> terminatedTask(@RequestBody ApplicationBuildRequest request) {
+    @RequestMapping("/terminate")
+    @EventLog(EventType.BUILD_TERMINATE)
+    public HttpWrapper<?> terminateTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationBuildService.terminatedBuildTask(id);
+        applicationBuildService.terminateBuildTask(id);
         return HttpWrapper.ok();
     }
 

@@ -197,14 +197,14 @@ public class CommandExecServiceImpl implements CommandExecService {
     }
 
     @Override
-    public void terminatedExec(Long id) {
+    public void terminateExec(Long id) {
         CommandExecDO execDO = this.selectById(id);
         Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
         Valid.isTrue(ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         // 获取任务并停止
         IExecHandler session = execSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
-        session.terminated();
+        session.terminate();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
     }

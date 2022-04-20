@@ -29,12 +29,12 @@ public class SerialReleaseProcessor extends AbstractReleaseProcessor {
         for (ReleaseMachineProcessor processor : processors) {
             // 停止则跳过
             if (terminated) {
-                processor.skipped();
+                processor.skip();
                 continue;
             }
             // 发生异常并且异常处理策略是跳过所有则跳过
             if (ex != null && errorSkipAll) {
-                processor.skipped();
+                processor.skip();
                 continue;
             }
             // 执行
@@ -59,12 +59,12 @@ public class SerialReleaseProcessor extends AbstractReleaseProcessor {
     }
 
     @Override
-    public void terminatedAll() {
-        super.terminatedAll();
+    public void terminateAll() {
+        super.terminateAll();
         // 获取当前执行中的机器执行器
         machineProcessors.values().stream()
                 .filter(s -> s.getStatus().equals(ActionStatus.RUNNABLE))
-                .forEach(IMachineProcessor::terminated);
+                .forEach(IMachineProcessor::terminate);
     }
 
 }

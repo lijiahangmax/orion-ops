@@ -50,9 +50,9 @@ public class ParallelTaskProcessor extends AbstractTaskProcessor {
     }
 
     @Override
-    public void terminatedAll() {
-        super.terminatedAll();
-        handlers.values().forEach(ITaskMachineHandler::terminated);
+    public void terminateAll() {
+        super.terminateAll();
+        handlers.values().forEach(ITaskMachineHandler::terminate);
     }
 
 }

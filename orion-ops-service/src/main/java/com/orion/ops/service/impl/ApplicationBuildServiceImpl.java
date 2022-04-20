@@ -19,10 +19,7 @@ import com.orion.ops.handler.app.build.BuildSessionHolder;
 import com.orion.ops.handler.app.machine.BuildMachineProcessor;
 import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.ops.service.api.*;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.*;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
@@ -234,7 +231,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     }
 
     @Override
-    public void terminatedBuildTask(Long id) {
+    public void terminateBuildTask(Long id) {
         // 获取数据
         ApplicationBuildDO build = applicationBuildDAO.selectById(id);
         Valid.notNull(build, MessageConst.UNKNOWN_DATA);
@@ -244,7 +241,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         IMachineProcessor session = buildSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
         // 调用终止
-        session.terminated();
+        session.terminate();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.BUILD_SEQ, build.getBuildSeq());
@@ -354,6 +351,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
         if (vcsId != null) {
             env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_EVENT_HOME, Utils.getVcsEventDir(vcsId));
         }
         return env;
     }

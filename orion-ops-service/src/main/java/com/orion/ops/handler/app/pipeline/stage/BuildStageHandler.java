@@ -77,8 +77,8 @@ public class BuildStageHandler extends AbstractStageHandler {
     }
 
     @Override
-    public void terminated() {
-        super.terminated();
+    public void terminate() {
+        super.terminate();
         // 获取数据
         ApplicationBuildDO build = applicationBuildDAO.selectById(buildId);
         // 检查状态
@@ -91,7 +91,7 @@ public class BuildStageHandler extends AbstractStageHandler {
             return;
         }
         // 调用终止
-        session.terminated();
+        session.terminate();
     }
 
 }

@@ -111,7 +111,7 @@ public interface ApplicationReleaseService {
      *
      * @param id id
      */
-    void terminatedRelease(Long id);
+    void terminateRelease(Long id);
 
     /**
      * 终止
@@ -119,7 +119,7 @@ public interface ApplicationReleaseService {
      * @param id               id
      * @param releaseMachineId releaseMachineId
      */
-    void terminatedMachine(Long id, Long releaseMachineId);
+    void terminateMachine(Long id, Long releaseMachineId);
 
     /**
      * 跳过

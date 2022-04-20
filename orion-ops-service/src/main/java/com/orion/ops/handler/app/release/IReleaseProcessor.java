@@ -26,21 +26,21 @@ public interface IReleaseProcessor extends Executable, Runnable, SafeCloseable {
     /**
      * 终止
      */
-    void terminatedAll();
+    void terminateAll();
 
     /**
      * 终止机器操作
      *
      * @param releaseMachineId releaseMachineId
      */
-    void terminatedMachine(Long releaseMachineId);
+    void terminateMachine(Long releaseMachineId);
 
     /**
      * 跳过机器操作
      *
      * @param releaseMachineId 机器id
      */
-    void skippedMachine(Long releaseMachineId);
+    void skipMachine(Long releaseMachineId);
 
     /**
      * 获取发布执行器

@@ -31,12 +31,12 @@ public interface IActionHandler extends Executable, SafeCloseable {
     /**
      * 跳过
      */
-    void skipped();
+    void skip();
 
     /**
      * 终止
      */
-    void terminated();
+    void terminate();
 
     /**
      * 获取退出码

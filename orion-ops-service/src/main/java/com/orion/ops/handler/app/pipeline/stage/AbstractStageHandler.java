@@ -172,13 +172,13 @@ public abstract class AbstractStageHandler implements IStageHandler {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         log.info("流水线阶段操作-终止 detailId: {}", detailId);
         this.terminated = true;
     }
 
     @Override
-    public void skipped() {
+    public void skip() {
         log.info("流水线阶段操作-跳过 detailId: {}", detailId);
         if (PipelineDetailStatus.WAIT.equals(status)) {
             // 只能跳过等待中的任务

@@ -460,7 +460,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
     }
 
     @Override
-    public void terminatedRelease(Long id) {
+    public void terminateRelease(Long id) {
         // 获取数据
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
@@ -470,20 +470,20 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         IReleaseProcessor session = releaseSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
         // 调用终止
-        session.terminatedAll();
+        session.terminateAll();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
     }
 
     @Override
-    public void terminatedMachine(Long id, Long releaseMachineId) {
-        this.skipOrTerminatedReleaseMachine(id, releaseMachineId, true);
+    public void terminateMachine(Long id, Long releaseMachineId) {
+        this.skipOrTerminateReleaseMachine(id, releaseMachineId, true);
     }
 
     @Override
     public void skipMachine(Long id, Long releaseMachineId) {
-        this.skipOrTerminatedReleaseMachine(id, releaseMachineId, false);
+        this.skipOrTerminateReleaseMachine(id, releaseMachineId, false);
     }
 
     /**
@@ -491,9 +491,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
      *
      * @param id               id
      * @param releaseMachineId releaseMachineId
-     * @param terminated       terminated / skip
+     * @param terminate        terminate / skip
      */
-    private void skipOrTerminatedReleaseMachine(Long id, Long releaseMachineId, boolean terminated) {
+    private void skipOrTerminateReleaseMachine(Long id, Long releaseMachineId, boolean terminate) {
         // 获取数据
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
@@ -503,7 +503,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
         Valid.notNull(machine, MessageConst.RELEASE_MACHINE_ABSENT);
         // 检查状态
-        if (terminated) {
+        if (terminate) {
             Valid.isTrue(ActionStatus.RUNNABLE.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
         } else {
             Valid.isTrue(ActionStatus.WAIT.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
@@ -511,12 +511,12 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 获取实例
         IReleaseProcessor session = releaseSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.SESSION_PRESENT);
-        if (terminated) {
+        if (terminate) {
             // 调用终止
-            session.terminatedMachine(releaseMachineId);
+            session.terminateMachine(releaseMachineId);
         } else {
             // 调用跳过
-            session.skippedMachine(releaseMachineId);
+            session.skipMachine(releaseMachineId);
         }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);

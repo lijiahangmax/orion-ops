@@ -91,23 +91,23 @@ public class SchedulerRecordController {
     /**
      * 停止所有
      */
-    @RequestMapping("/terminated-all")
-    @EventLog(EventType.TERMINATED_ALL_SCHEDULER_TASK)
-    public HttpWrapper<?> terminatedAll(@RequestBody SchedulerTaskRecordRequest request) {
+    @RequestMapping("/terminate-all")
+    @EventLog(EventType.TERMINATE_ALL_SCHEDULER_TASK)
+    public HttpWrapper<?> terminateAll(@RequestBody SchedulerTaskRecordRequest request) {
         Long id = Valid.notNull(request.getId());
-        schedulerTaskRecordService.terminatedAll(id);
+        schedulerTaskRecordService.terminateAll(id);
         return HttpWrapper.ok();
     }
 
     /**
      * 停止单个
      */
-    @RequestMapping("/terminated-machine")
-    @EventLog(EventType.TERMINATED_SCHEDULER_TASK_MACHINE)
-    public HttpWrapper<?> terminatedMachine(@RequestBody SchedulerTaskRecordRequest request) {
+    @RequestMapping("/terminate-machine")
+    @EventLog(EventType.TERMINATE_SCHEDULER_TASK_MACHINE)
+    public HttpWrapper<?> terminateMachine(@RequestBody SchedulerTaskRecordRequest request) {
         Long id = Valid.notNull(request.getId());
         Long machineRecordId = Valid.notNull(request.getMachineRecordId());
-        schedulerTaskRecordService.terminatedMachine(id, machineRecordId);
+        schedulerTaskRecordService.terminateMachine(id, machineRecordId);
         return HttpWrapper.ok();
     }
 

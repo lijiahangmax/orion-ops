@@ -21,21 +21,21 @@ public interface IPipelineProcessor extends Executable, Runnable {
     /**
      * 停止执行
      */
-    void terminated();
+    void terminate();
 
     /**
      * 停止执行详情
      *
      * @param id id
      */
-    void terminatedDetail(Long id);
+    void terminateDetail(Long id);
 
     /**
      * 跳过执行详情
      *
      * @param id id
      */
-    void skippedDetail(Long id);
+    void skipDetail(Long id);
 
     /**
      * 获取流水线执行器

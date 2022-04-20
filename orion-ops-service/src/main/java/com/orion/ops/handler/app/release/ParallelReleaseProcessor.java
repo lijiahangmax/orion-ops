@@ -49,9 +49,9 @@ public class ParallelReleaseProcessor extends AbstractReleaseProcessor {
     }
 
     @Override
-    public void terminatedAll() {
-        super.terminatedAll();
-        machineProcessors.values().forEach(ReleaseMachineProcessor::terminated);
+    public void terminateAll() {
+        super.terminateAll();
+        machineProcessors.values().forEach(ReleaseMachineProcessor::terminate);
     }
 
 }

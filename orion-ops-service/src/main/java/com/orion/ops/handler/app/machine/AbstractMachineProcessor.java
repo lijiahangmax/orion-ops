@@ -85,7 +85,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                     }
                 } else {
                     // 跳过
-                    handler.skipped();
+                    handler.skip();
                 }
             }
             // 完成回调
@@ -232,13 +232,13 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     }
 
     @Override
-    public void terminated() {
+    public void terminate() {
         // 设置状态为已停止
         this.terminated = true;
         // 结束正在执行的action
         Lists.stream(handlerList)
                 .filter(s -> ActionStatus.RUNNABLE.equals(s.getStatus()))
-                .forEach(IActionHandler::terminated);
+                .forEach(IActionHandler::terminate);
     }
 
     @Override

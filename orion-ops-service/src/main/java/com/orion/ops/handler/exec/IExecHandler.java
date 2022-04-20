@@ -22,7 +22,7 @@ public interface IExecHandler extends Runnable, Executable, SafeCloseable {
     /**
      * 停止
      */
-    void terminated();
+    void terminate();
 
     /**
      * 获取实际执行 handler
