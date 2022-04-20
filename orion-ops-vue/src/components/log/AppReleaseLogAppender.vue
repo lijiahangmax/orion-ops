@@ -46,8 +46,7 @@
                          :appendStyle="{height: appenderHeight}"
                          :relId="machine.id"
                          :tailType="$enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
-                         :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value"
-                         :rightMenuX="e => e.offsetX + 298">
+                         :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
               <template #left-tools>
                 <!-- 停止 -->
                 <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"

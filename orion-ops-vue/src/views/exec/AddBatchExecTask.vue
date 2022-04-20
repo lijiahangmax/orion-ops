@@ -55,7 +55,10 @@
           </div>
           <!-- 机器列表 -->
           <a-menu mode="inline" v-model="selectedMachineKeys">
-            <a-menu-item v-for="item of execMachines" :key="item.execId" :title="item.machineName">
+            <a-menu-item v-for="item of execMachines"
+                         :key="item.execId"
+                         :title="item.machineName"
+                         @click="chooseExecMachine(item.execId)">
               <div class="machine-menu-item">
                 <!-- 文本 -->
                 <a-icon type="desktop"/>
@@ -82,8 +85,7 @@
                        size="default"
                        :relId="execMachine.execId"
                        :tailType="$enum.FILE_TAIL_TYPE.EXEC_LOG.value"
-                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value"
-                       :rightMenuX="e => e.offsetX + 500">
+                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
             <!-- 左侧工具栏 -->
             <template #left-tools>
               <div class="appender-left-tools">
@@ -227,6 +229,11 @@ export default {
         this.runnable = false
         this.visibleCommand = true
       })
+    },
+    chooseExecMachine(k) {
+      setTimeout(() => {
+        this.$refs['appender' + k][0].fitTerminal()
+      }, 50)
     },
     pollExecStatus() {
       const idList = this.execMachines.filter(s =>

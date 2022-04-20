@@ -5,6 +5,7 @@
            :footer="null"
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '4px'}"
+           :destroyOnClose="true"
            @cancel="close"
            width="98%">
     <!-- 日志面板 -->

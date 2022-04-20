@@ -10,16 +10,6 @@
         </div>
         <!-- 右侧工具 -->
         <div class="log-tools-fixed-right" v-if="toolsProps.visibleRight !== false">
-          <!-- 行数 -->
-          <div class="mr8 line-tool-container" v-if="rightToolsProps.line !== false">
-            <a-tooltip title="防止内容太多而造成浏览器卡死, 设置行数保留阈值">
-              <a-input v-model="linesThresholdTemp" :size="size" v-limit-integer addon-before="行数">
-                <template #addonAfter>
-                  <a-icon class="pointer" type="check" title="保存" @click="saveLinesThreshold"/>
-                </template>
-              </a-input>
-            </a-tooltip>
-          </div>
           <!-- 复制 -->
           <a-button class="mr8"
                     v-if="rightToolsProps.copy !== false"
@@ -66,10 +56,8 @@
             </template>
             <!-- 状态 已关闭 -->
             <template v-else-if="$enum.LOG_TAIL_STATUS.CLOSE.value === status">
-              <a-tooltip :title="`code: ${closeCode}${closeReason ? '; reason: ' + closeReason: ''}`">
-                <a-badge :status="$enum.LOG_TAIL_STATUS.CLOSE.status"
-                         :text="$enum.LOG_TAIL_STATUS.CLOSE.label"/>
-              </a-tooltip>
+              <a-badge :status="$enum.LOG_TAIL_STATUS.CLOSE.status"
+                       :text="$enum.LOG_TAIL_STATUS.CLOSE.label"/>
             </template>
             <!-- 状态 其他 -->
             <template v-else>
@@ -80,98 +68,85 @@
         </div>
       </div>
       <!-- 日志容器 -->
-      <div class="log-container"
-           ref="logContainer"
-           :style="appendStyle"
-           @contextmenu.prevent="$refs.rightMenu.openRightMenu"/>
+      <div class="log-container" ref="logContainer" :style="appendStyle">
+        <!-- 右键菜单 -->
+        <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
+          <!-- 日志终端 -->
+          <div class="log-terminal" ref="logTerminal" @click="clickTerminal"/>
+          <!-- 下拉菜单 -->
+          <template #overlay>
+            <a-menu @click="clickRightMenu">
+              <a-menu-item key="selectAll">
+                <span class="right-menu-item"><a-icon type="profile"/>全选</span>
+              </a-menu-item>
+              <a-menu-item key="copy">
+                <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+              </a-menu-item>
+              <a-menu-item key="clear">
+                <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+              </a-menu-item>
+              <a-menu-item key="toTop">
+                <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+              </a-menu-item>
+              <a-menu-item key="toBottom">
+                <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="logger-view-event-container">
-      <RightClickMenu ref="rightMenu" :x="rightMenuX" :y="rightMenuY" @clickRight="clickRightMenuItem">
-        <template #items>
-          <a-menu-item key="copy">
-            <span class="right-menu-item"><a-icon type="copy"/>复制所有</span>
-          </a-menu-item>
-          <a-menu-item key="clear">
-            <span class="right-menu-item"><a-icon type="stop"/>清空</span>
-          </a-menu-item>
-          <a-menu-item key="lock" v-if="!fixedLog">
-            <span class="right-menu-item"><a-icon type="lock"/>锁定</span>
-          </a-menu-item>
-          <a-menu-item key="unlock" v-if="fixedLog">
-            <span class="right-menu-item"><a-icon type="unlock"/>滚动</span>
-          </a-menu-item>
-          <a-menu-item key="toTop">
-            <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
-          </a-menu-item>
-          <a-menu-item key="toBottom">
-            <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
-          </a-menu-item>
-        </template>
-      </RightClickMenu>
+      <!-- 搜索框 -->
+      <TerminalSearch ref="search" :searchPlugin="plugin.search"/>
     </div>
   </div>
 </template>
 
 <script>
-import RightClickMenu from '@/components/common/RightClickMenu'
 
-const stain = {
-  DEBUG: {
-    class: 'color-debug',
-    reg: new RegExp('debug', 'ig')
-  },
-  INFO: {
-    class: 'color-info',
-    reg: new RegExp('info', 'ig')
-  },
-  WARN: {
-    class: 'color-warn',
-    reg: new RegExp('warn', 'ig')
-  },
-  ERROR: {
-    class: 'color-error',
-    reg: new RegExp('error', 'ig')
-  },
-  DATE_TIME: {
-    class: 'color-date',
-    reg: new RegExp('[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])\\s+(20|21|22|23|[0-1]\\d):[0-5]\\d:[0-5]\\d(\\.\\d{1,4})?', 'ig')
-  },
-  DATE: {
-    class: 'color-date',
-    reg: new RegExp('[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])(\\.\\d{1,4})?', 'ig')
+import { Terminal } from 'xterm'
+import { FitAddon } from 'xterm-addon-fit'
+import { SearchAddon } from 'xterm-addon-search'
+import { WebLinksAddon } from 'xterm-addon-web-links'
+
+import 'xterm/css/xterm.css'
+import { debounce } from 'lodash'
+import TerminalSearch from '@/components/terminal/TerminalSearch'
+
+function c(s) {
+  const l = []
+  for (let i = 0; i < s.length; i++) {
+    l.push(s.codePointAt(i))
   }
+  return l
 }
-
-const urlPattern = new RegExp('(http|https)://([\\w.]+/?)\\S*\\b', 'ig')
 
 /**
  * 右键菜单操作
  */
 const rightMenuHandler = {
+  selectAll() {
+    this.term.selectAll()
+  },
   copy() {
-    this.copy()
+    this.copySelection()
   },
   clear() {
     this.clear()
   },
-  lock() {
-    this.fixedLog = true
-  },
-  unlock() {
-    this.fixedLog = false
-  },
   toTop() {
-    this.$refs.logContainer.scrollTop = 0
+    this.term.scrollToTop()
   },
   toBottom() {
-    this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
+    this.term.scrollToBottom()
   }
 }
 
 export default {
   name: 'LogAppender',
-  components: { RightClickMenu },
+  components: { TerminalSearch },
   props: {
     config: Object,
     appendStyle: {
@@ -203,7 +178,6 @@ export default {
       type: Object,
       default: () => {
         return {
-          line: true,
           copy: true,
           clean: true,
           fixed: true,
@@ -211,22 +185,35 @@ export default {
           status: true
         }
       }
-    },
-    rightMenuX: Function,
-    rightMenuY: Function
+    }
   },
   data() {
     return {
       client: null,
       fixedLog: false,
       status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
-      scroll: 0,
       downloadUrl: null,
-      lines: 0,
-      linesThresholdTemp: undefined,
-      linesThreshold: -1,
-      closeCode: null,
-      closeReason: null
+      visibleRightMenu: false,
+      term: null,
+      termConfig: {
+        cursorStyle: 'bar',
+        cursorBlink: true,
+        fastScrollModifier: 'shift',
+        fontSize: 13,
+        rendererType: 'canvas',
+        fontFamily: 'courier-new, courier, monospace',
+        lineHeight: 1.14,
+        theme: {
+          foreground: '#FFFFFF',
+          background: '#212529'
+        }
+      },
+      plugin: {
+        fit: null,
+        search: null,
+        links: null
+      },
+      debouncedWindowResize: debounce(this.fitTerminal, 150)
     }
   },
   methods: {
@@ -241,6 +228,32 @@ export default {
       })
     },
     initLogTailView(data) {
+      // 打开日志模块
+      this.term = new Terminal(this.termConfig)
+      this.term.open(this.$refs.logTerminal)
+      // 注册自适应组件
+      this.plugin.fit = new FitAddon(this.termConfig)
+      this.term.loadAddon(this.plugin.fit)
+      this.plugin.fit.fit()
+      // 注册搜索组件
+      this.plugin.search = new SearchAddon()
+      this.term.loadAddon(this.plugin.search)
+      // 注册 url link组件
+      this.plugin.links = new WebLinksAddon()
+      this.term.loadAddon(this.plugin.links)
+      // 注册自适应监听器
+      window.addEventListener('resize', this.debouncedWindowResize)
+      // 注册快捷键
+      this.term.attachCustomKeyEventHandler((ev) => {
+        // 注册复制键 ctrl + c
+        if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
+          this.copySelection()
+        }
+        // 注册搜索键 ctrl + shift + f
+        if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+          this.$refs.search.open()
+        }
+      })
       // 打开websocket
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
@@ -250,55 +263,47 @@ export default {
         this.status = this.$enum.LOG_TAIL_STATUS.ERROR.value
       }
       this.client.onclose = (e) => {
-        console.log('log close:', e.code, e.reason)
-        this.closeCode = e.code
-        this.closeReason = e.reason
+        console.log('closed', e.code, e.reason)
         this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
+        this.term.write('\r\n\x1b[31m已断开连接...\x1b[0m')
         this.$emit('close')
       }
       this.client.onmessage = event => {
-        this.lines++
-        if (this.linesThreshold !== -1 && this.lines > this.linesThreshold) {
-          this.$refs.logContainer.removeChild(this.$refs.logContainer.childNodes[0])
-          this.lines--
-        }
         let msg
         if (event.data.length) {
           msg = event.data
         } else {
           msg = ' '
         }
-        const pre = document.createElement('pre')
-        pre.className = 'log-line'
-        pre.innerHTML = this.stainKeywords(msg)
-        this.$refs.logContainer.appendChild(pre)
+        this.term.writeln(msg)
         if (!this.fixedLog) {
-          this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
+          this.term.scrollToBottom()
         }
       }
     },
+    fitTerminal() {
+      this.plugin.fit && this.plugin.fit.fit()
+    },
+    clickTerminal() {
+      this.visibleRightMenu = false
+    },
     copy() {
-      this.$copy(this.$refs.logContainer.innerText)
+      this.term.selectAll()
+      this.$copy(this.term.getSelection())
+      this.term.clearSelection()
+    },
+    copySelection() {
+      this.$copy(this.term.getSelection())
     },
     clear() {
-      this.$refs.logContainer.innerHTML = ''
-      this.scroll = 0
-      this.lines = 0
+      this.term && this.term.clear()
     },
     close() {
-      if (this.client) {
-        this.client.close()
-      }
+      this.client && this.client.close()
     },
-    storeScroll() {
-      this.scroll = this.$refs.logContainer.scrollTop
-    },
-    toScroll() {
-      if (this.fixedLog) {
-        this.$refs.logContainer.scrollTop = this.scroll
-      } else {
-        this.$refs.logContainer.scrollTop = this.$refs.logContainer.scrollHeight
-      }
+    clickRightMenu({ key }) {
+      this.visibleRightMenu = false
+      rightMenuHandler[key].call(this)
     },
     async loadDownloadUrl() {
       try {
@@ -315,56 +320,18 @@ export default {
       setTimeout(() => {
         this.downloadUrl = null
       })
-    },
-    stainKeywords(msg) {
-      msg = this.$utils.cleanXss(msg)
-      // 高亮
-      for (const stainKey in stain) {
-        msg = msg.replace(stain[stainKey].reg, (keyword) => {
-          return `<span class="${stain[stainKey].class}">${keyword}</span>`
-        })
-      }
-      // url
-      msg = msg.replace(urlPattern, (keyword) => {
-        return `<a target="_blank" class="color-url" href="${keyword}">${keyword}</a>`
-      })
-      return msg
-    },
-    saveLinesThreshold() {
-      this.linesThreshold = this.linesThresholdTemp
-      this.$storage.set(this.$storage.keys.LINES_THRESHOLD, this.linesThreshold)
-      const effect = this.lines - this.linesThreshold
-      if (effect > 0) {
-        for (let i = 0; i < effect; i++) {
-          this.$refs.logContainer.removeChild(this.$refs.logContainer.childNodes[0])
-          this.lines--
-        }
-      }
-      this.$message.success('已生效')
-    },
-    clickRightMenuItem(key) {
-      rightMenuHandler[key].call(this)
-    }
-  },
-  mounted() {
-    if (this.rightToolsProps.line) {
-      const _lineThreshold = ~~this.$storage.get(this.$storage.keys.LINES_THRESHOLD) || 1000
-      this.linesThreshold = _lineThreshold
-      this.linesThresholdTemp = _lineThreshold
-      this.$storage.set(this.$storage.keys.LINES_THRESHOLD, _lineThreshold)
-    } else {
-      this.linesThreshold = -1
     }
   },
   beforeDestroy() {
     this.clear()
     this.close()
+    this.term && this.term.dispose()
+    window.removeEventListener('resize', this.debouncedWindowResize)
   }
 }
 </script>
 
 <style lang="less" scoped>
-
 .logger-view-container {
   height: 100%;
 }
@@ -378,6 +345,7 @@ export default {
 
   .log-tools-fixed-left {
     min-width: 20%;
+    white-space: nowrap;
   }
 
   .log-tools-fixed-right {
@@ -385,10 +353,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
-    .line-tool-container {
-      width: 160px;
-    }
 
     .log-fixed-wrapper {
       display: flex;
@@ -406,49 +370,14 @@ export default {
 }
 
 .log-container {
-  overflow-y: auto;
-  white-space: pre;
-  padding: 8px;
   border-radius: 4px;
   width: 100%;
   background: #212529;
-  font-size: 13px;
-  line-height: 17px;
-}
+  padding: 4px 0 0 4px;
 
-/deep/ .log-line {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-all;
-  color: lightgrey;
-
-  .color-debug {
-    color: #757575;
-    font-weight: 700;
-  }
-
-  .color-info {
-    color: #58C612;
-    font-weight: 700;
-  }
-
-  .color-warn {
-    color: #FFCA28;
-    font-weight: 700;
-  }
-
-  .color-error {
-    color: #DD2C00;
-    font-weight: 700;
-  }
-
-  .color-date {
-    color: #80DEEA;
-    font-weight: 700;
-  }
-
-  .color-url {
-    text-decoration: underline;
+  .log-terminal {
+    width: 100%;
+    height: 100%;
   }
 }
 

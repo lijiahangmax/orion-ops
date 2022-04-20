@@ -52,28 +52,31 @@
                     <div class="appender-left-tools">
                       <!-- 信息 -->
                       <a-breadcrumb>
+                        <!-- 机器名称 -->
                         <a-breadcrumb-item v-if="selectedTailFile.machineName">
                           <a-tag color="#7950F2" class="m0">
                             {{ selectedTailFile.machineName }}
                           </a-tag>
                         </a-breadcrumb-item>
+                        <!-- 机器主机 -->
                         <a-breadcrumb-item v-if="selectedTailFile.machineHost">
                           <a-tag color="#5C7CFA" class="m0">
                             {{ selectedTailFile.machineHost }}
                           </a-tag>
                         </a-breadcrumb-item>
+                        <!-- 名称 -->
                         <a-breadcrumb-item v-if="selectedTailFile.name">
                           <a-tag color="#15AABF" class="m0">
                             {{ selectedTailFile.name }}
                           </a-tag>
                         </a-breadcrumb-item>
+                        <!-- 文件名称 -->
                         <a-breadcrumb-item v-if="selectedTailFile.path">
-                          <a-tag class="pointer"
-                                 color="#40C057"
-                                 style="margin: 0; max-width: calc(47% - 19px)"
-                                 @click="$copy(selectedTailFile.path)"
-                                 :title="selectedTailFile.path">
-                            {{ selectedTailFile.path }}
+                          <a-tag color="#40C057"
+                                 class="pointer mr8"
+                                 :title="selectedTailFile.path"
+                                 @click="$copy(selectedTailFile.path)">
+                            {{ selectedTailFile.fileName }}
                           </a-tag>
                         </a-breadcrumb-item>
                       </a-breadcrumb>
@@ -111,19 +114,19 @@ export default {
     }
   },
   watch: {
-    activeTab(b, a) {
-      if (!a) {
-        return
-      }
-      const $refAfter = this.$refs['appender' + a]
-      if ($refAfter) {
-        $refAfter[0].storeScroll()
-      }
-      const $refBefore = this.$refs['appender' + b]
-      if ($refBefore) {
-        $refBefore[0].toScroll()
-      }
-    }
+    // activeTab(b, a) {
+    //   if (!a) {
+    //     return
+    //   }
+    //   const $refAfter = this.$refs['appender' + a]
+    //   if ($refAfter) {
+    //     $refAfter[0].storeScroll()
+    //   }
+    //   const $refBefore = this.$refs['appender' + b]
+    //   if ($refBefore) {
+    //     $refBefore[0].toScroll()
+    //   }
+    // }
   },
   methods: {
     async getTailList() {
@@ -137,6 +140,7 @@ export default {
             id: i.id,
             name: i.name,
             path: i.path,
+            fileName: i.fileName,
             machineName: i.machineName,
             machineHost: i.machineHost
           }
@@ -165,6 +169,7 @@ export default {
         id: id,
         name: filterTailFile.name,
         path: filterTailFile.path,
+        fileName: filterTailFile.fileName,
         machineName: filterTailFile.machineName,
         machineHost: filterTailFile.machineHost
       })

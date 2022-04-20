@@ -29,8 +29,7 @@
                        :appendStyle="{height: appenderHeight}"
                        :relId="machine.id"
                        :tailType="$enum.FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
-                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
-                       :rightMenuX="e => e.offsetX + 268">
+                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
             <!-- 左侧工具栏 -->
             <template #left-tools>
               <div class="appender-left-tools">

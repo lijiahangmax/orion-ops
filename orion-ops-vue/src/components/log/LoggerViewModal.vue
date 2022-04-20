@@ -5,6 +5,7 @@
            :footer="null"
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '0 4px 4px 4px'}"
+           :destroyOnClose="true"
            @cancel="close"
            width="98%">
     <!-- 日志面板 -->
@@ -14,25 +15,40 @@
                    :appendStyle="{height: 'calc(100vh - 92px)'}"
                    :relId="id"
                    :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
-                   :rightMenuX="e => e.offsetX + 24"
-                   :rightMenuY="e => e.clientY - 10">
+                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value">
         <!-- 左侧工具栏 -->
         <template #left-tools>
           <div class="fixed-left-tools">
             <!-- 文件名称 -->
-            <a-tag v-if="file.path"
-                   color="#40C057"
-                   style="max-width: 95%"
-                   :title="file.path">
-              {{ file.path }}
-            </a-tag>
-            <!-- 复制 -->
-            <a-icon v-if="file.path"
-                    class="span-blue pointer"
-                    type="copy"
-                    title="复制"
-                    @click="$copy(file.path)"/>
+            <a-breadcrumb>
+              <!-- 机器名称 -->
+              <a-breadcrumb-item v-if="file.machineName">
+                <a-tag color="#7950F2" class="m0">
+                  {{ file.machineName }}
+                </a-tag>
+              </a-breadcrumb-item>
+              <!-- 机器主机 -->
+              <a-breadcrumb-item v-if="file.machineHost">
+                <a-tag color="#5C7CFA" class="m0">
+                  {{ file.machineHost }}
+                </a-tag>
+              </a-breadcrumb-item>
+              <!-- 名称 -->
+              <a-breadcrumb-item v-if="file.name">
+                <a-tag color="#15AABF" class="m0">
+                  {{ file.name }}
+                </a-tag>
+              </a-breadcrumb-item>
+              <!-- 文件名称 -->
+              <a-breadcrumb-item v-if="file.path">
+                <a-tag color="#40C057"
+                       class="pointer"
+                       :title="file.path"
+                       @click="$copy(file.path)">
+                  {{ file.fileName }}
+                </a-tag>
+              </a-breadcrumb-item>
+            </a-breadcrumb>
           </div>
         </template>
       </LogAppender>
