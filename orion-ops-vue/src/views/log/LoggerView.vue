@@ -151,7 +151,6 @@ export default {
       this.listLoading = false
     },
     chooseFile(id) {
-      console.log('choose')
       this.selectedKeys[0] = id
       this.activeTab = id
       this.$forceUpdate()

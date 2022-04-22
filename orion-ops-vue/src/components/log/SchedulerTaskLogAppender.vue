@@ -4,7 +4,10 @@
       <!-- 菜单 -->
       <div class="task-machines-menu">
         <a-menu mode="inline" v-model="selectedKeys">
-          <a-menu-item v-for="machine in record.machines" :key="machine.id" :title="machine.machineName">
+          <a-menu-item v-for="machine in record.machines"
+                       :key="machine.id"
+                       :title="machine.machineName"
+                       @click="chooseMachineLog(machine.id)">
             <div class="menu-item-machine-wrapper">
               <!-- 机器名称 -->
               <span class="menu-item-machine-name auto-ellipsis-item">{{ machine.machineName }}</span>
@@ -149,6 +152,9 @@ export default {
       this.record = {}
       this.selectedKeys = []
       this.openedFiles = []
+    },
+    chooseMachineLog(id) {
+      this.$refs[`appender-${id}`][0].fitTerminal()
     },
     terminateMachine(id, machineRecordId) {
       this.$api.terminateMachineSchedulerTaskRecord({

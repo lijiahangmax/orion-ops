@@ -6,6 +6,7 @@
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '0px 4px 4px 4px'}"
            :destroyOnClose="true"
+           :forceRender="true"
            @cancel="close"
            width="98%">
     <!-- 日志面板 -->
@@ -29,9 +30,9 @@ export default {
   methods: {
     open(id) {
       this.visible = true
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.logger.open(id)
-      })
+      }, 100)
     },
     close() {
       this.visible = true

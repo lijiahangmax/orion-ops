@@ -6,6 +6,7 @@
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '0 4px 4px 4px'}"
            :destroyOnClose="true"
+           :forceRender="true"
            @cancel="close"
            width="98%">
     <!-- 日志面板 -->

@@ -231,9 +231,7 @@ export default {
       })
     },
     chooseExecMachine(k) {
-      setTimeout(() => {
-        this.$refs['appender' + k][0].fitTerminal()
-      }, 50)
+      this.$refs['appender' + k][0].fitTerminal()
     },
     pollExecStatus() {
       const idList = this.execMachines.filter(s =>

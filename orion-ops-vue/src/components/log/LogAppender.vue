@@ -112,16 +112,7 @@ import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 
 import 'xterm/css/xterm.css'
-import { debounce } from 'lodash'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
-
-function c(s) {
-  const l = []
-  for (let i = 0; i < s.length; i++) {
-    l.push(s.codePointAt(i))
-  }
-  return l
-}
 
 /**
  * 右键菜单操作
@@ -190,7 +181,7 @@ export default {
   data() {
     return {
       client: null,
-      fixedLog: false,
+      fixedLog: true,
       status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
       downloadUrl: null,
       visibleRightMenu: false,
@@ -202,7 +193,7 @@ export default {
         fontSize: 13,
         rendererType: 'canvas',
         fontFamily: 'courier-new, courier, monospace',
-        lineHeight: 1.14,
+        lineHeight: 1.08,
         theme: {
           foreground: '#FFFFFF',
           background: '#212529'
@@ -212,8 +203,7 @@ export default {
         fit: null,
         search: null,
         links: null
-      },
-      debouncedWindowResize: debounce(this.fitTerminal, 150)
+      }
     }
   },
   methods: {
@@ -231,10 +221,11 @@ export default {
       // 打开日志模块
       this.term = new Terminal(this.termConfig)
       this.term.open(this.$refs.logTerminal)
+      // 需要先设置一下 不然modal会闪一下
+      this.term.resize(80, 5)
       // 注册自适应组件
       this.plugin.fit = new FitAddon(this.termConfig)
       this.term.loadAddon(this.plugin.fit)
-      this.plugin.fit.fit()
       // 注册搜索组件
       this.plugin.search = new SearchAddon()
       this.term.loadAddon(this.plugin.search)
@@ -242,9 +233,15 @@ export default {
       this.plugin.links = new WebLinksAddon()
       this.term.loadAddon(this.plugin.links)
       // 注册自适应监听器
-      window.addEventListener('resize', this.debouncedWindowResize)
+      window.addEventListener('resize', this.fitTerminal)
       // 注册快捷键
       this.term.attachCustomKeyEventHandler((ev) => {
+        // 注册全选键 ctrl + a
+        if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+          setTimeout(() => {
+            this.term.selectAll()
+          }, 10)
+        }
         // 注册复制键 ctrl + c
         if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
           this.copySelection()
@@ -254,6 +251,15 @@ export default {
           this.$refs.search.open()
         }
       })
+      setTimeout(() => {
+        // fit 这里就是调用两次 不然modal的字体有毛病
+        this.fitTerminal()
+        this.fitTerminal()
+        // 建立连接
+        this.initSocket(data)
+      }, 50)
+    },
+    initSocket(data) {
       // 打开websocket
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
@@ -282,7 +288,9 @@ export default {
       }
     },
     fitTerminal() {
-      this.plugin.fit && this.plugin.fit.fit()
+      setTimeout(() => {
+        this.plugin.fit && this.plugin.fit.fit()
+      }, 40)
     },
     clickTerminal() {
       this.visibleRightMenu = false
@@ -326,7 +334,7 @@ export default {
     this.clear()
     this.close()
     this.term && this.term.dispose()
-    window.removeEventListener('resize', this.debouncedWindowResize)
+    window.removeEventListener('resize', this.fitTerminal)
   }
 }
 </script>

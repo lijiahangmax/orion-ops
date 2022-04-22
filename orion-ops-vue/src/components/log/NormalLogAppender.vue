@@ -215,7 +215,7 @@ export default {
   data() {
     return {
       client: null,
-      fixedLog: false,
+      fixedLog: true,
       status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
       scroll: 0,
       downloadUrl: null,
