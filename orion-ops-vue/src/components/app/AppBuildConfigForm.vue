@@ -4,7 +4,10 @@
       <!-- 产物路径 -->
       <div id="app-bundle-wrapper">
         <span class="label normal-label required-label">构建产物路径</span>
-        <a-textarea class="bundle-input" v-model="bundlePath" :maxLength="512" placeholder="主机构建产物路径 (绝对路径/基于版本仓库的相对路径)"/>
+        <a-textarea class="bundle-input"
+                    v-model="bundlePath"
+                    :maxLength="512"
+                    placeholder="宿主机构建产物路径 (绝对路径[以 '/' 开头] 或 基于版本仓库的相对路径)"/>
       </div>
       <!-- 构建操作 -->
       <div id="app-action-container">
@@ -192,10 +195,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@config-container-width: 1030px;
+@bundle-input-width: 700px;
+@app-action-container-width: 994px;
+@app-action-width: 876px;
+@action-name-input-width: 700px;
+@app-action-editor-width: 700px;
+@app-action-editor-height: 250px;
+@action-type-name-width: 700px;
+@action-divider-min-width: 830px;
+@action-divider-width: 990px;
+@app-action-footer-width: 700px;
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
-  width: 760px;
+  width: @config-container-width;
 
   .label {
     width: 160px;
@@ -210,13 +224,13 @@ export default {
     align-content: center;
 
     .bundle-input {
-      width: 430px;
+      width: @bundle-input-width;
       margin-left: 8px;
     }
   }
 
   #app-action-container {
-    width: 724px;
+    width: @app-action-container-width;
     margin-top: 16px;
 
     .app-action-wrapper {
@@ -228,7 +242,7 @@ export default {
       }
 
       .app-action {
-        width: 606px;
+        width: @app-action-width;
         padding: 0 8px 8px 8px;
 
         .action-name-wrapper {
@@ -236,7 +250,7 @@ export default {
           align-items: center;
 
           .action-name-input {
-            width: 430px;
+            width: @action-name-input-width;
           }
         }
 
@@ -244,8 +258,8 @@ export default {
           display: flex;
 
           .app-action-editor {
-            width: 430px;
-            height: 200px;
+            width: @app-action-editor-width;
+            height: @app-action-editor-height;
             margin-top: 8px;
           }
         }
@@ -255,7 +269,7 @@ export default {
           align-items: center;
 
           .action-type-name {
-            width: 430px;
+            width: @action-type-name-width;
           }
         }
       }
@@ -267,15 +281,15 @@ export default {
     }
 
     .action-divider {
-      width: 720px;
-      min-width: 560px;
+      min-width: @action-divider-min-width;
+      width: @action-divider-width;
       margin: 16px 0;
     }
   }
 
   #app-action-footer {
     margin: 16px 0 8px 168px;
-    width: 430px;
+    width: @app-action-footer-width;
 
     .app-action-footer-button {
       width: 100%;

@@ -8,7 +8,7 @@
         <a-input v-decorator="decorators.tag" allowClear/>
       </a-form-item>
       <a-form-item label="版本仓库">
-        <a-select placeholder="请选择" v-decorator="decorators.vcsId" style="width: 85%" allowClear>
+        <a-select placeholder="请选择" v-decorator="decorators.vcsId" style="width: calc(100% - 45px)" allowClear>
           <a-select-option v-for="vcs in vcsList" :key="vcs.id" :value="vcs.id">
             <span>{{ vcs.name }}</span>
           </a-select-option>
@@ -64,8 +64,8 @@ export default {
       type: Object,
       default: () => {
         return {
-          labelCol: { span: 5 },
-          wrapperCol: { span: 16 }
+          labelCol: { span: 3 },
+          wrapperCol: { span: 19 }
         }
       }
     }

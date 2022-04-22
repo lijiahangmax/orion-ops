@@ -60,7 +60,7 @@
                 <!-- 传输路径 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">产物传输路径</span>
-                  <a-input class="transfer-input" placeholder="目标机器产物传输绝对路径" :maxLength="512" v-model="transferPath"/>
+                  <a-textarea class="transfer-input" placeholder="目标机器产物传输绝对路径" :maxLength="512" v-model="transferPath"/>
                 </div>
                 <!-- 文件夹类型选择 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
@@ -75,7 +75,7 @@
                 </div>
                 <!-- 文件夹类型描述 -->
                 <span class="transfer-dir-type-description" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  构建产物为文件夹时可选 &nbsp;&nbsp;如产物不是文件夹则忽略
+                  如构建产物为文件夹时可选 (传输整个文件夹 / 传输zip压缩文件) &nbsp;&nbsp;&nbsp;如产物不是文件夹则忽略
                 </span>
               </div>
               <!-- 操作 -->
@@ -262,10 +262,20 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@app-conf-container-width: 1030px;
+@app-action-container-width: 994px;
+@app-action-width: 876px;
+@action-name-input-width: 700px;
+@app-action-editor-width: 700px;
+@app-action-editor-height: 250px;
+@transfer-input-width: 700px;
+@action-divider-min-width: 830px;
+@action-divider-width: 990px;
+@app-action-footer-width: 700px;
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
-  width: 760px;
+  width: @app-conf-container-width;
 
   .label {
     width: 160px;
@@ -287,7 +297,7 @@ export default {
   }
 
   #app-action-container {
-    width: 724px;
+    width: @app-action-container-width;
     margin-top: 16px;
 
     .app-action-wrapper {
@@ -299,7 +309,7 @@ export default {
       }
 
       .app-action {
-        width: 606px;
+        width: @app-action-width;
         padding: 0 8px 8px 8px;
 
         .action-name-wrapper {
@@ -307,7 +317,7 @@ export default {
           align-items: center;
 
           .action-name-input {
-            width: 430px;
+            width: @action-name-input-width;
           }
         }
 
@@ -315,8 +325,8 @@ export default {
           display: flex;
 
           .app-action-editor {
-            width: 430px;
-            height: 200px;
+            width: @app-action-editor-width;
+            height: @app-action-editor-height;
             margin-top: 8px;
           }
         }
@@ -326,14 +336,14 @@ export default {
           align-items: center;
 
           .transfer-input {
-            width: 430px;
+            width: @transfer-input-width;
           }
         }
 
         .transfer-dir-type-description {
           display: block;
           padding-left: 160px;
-          color: rgba(0, 0, 0, .65);
+          color: rgba(0, 0, 0, .45);
           font-size: 13px;
         }
       }
@@ -345,15 +355,15 @@ export default {
     }
 
     .action-divider {
-      width: 720px;
-      min-width: 560px;
+      min-width: @action-divider-min-width;
+      width: @action-divider-width;
       margin: 16px 0;
     }
   }
 
   #app-action-footer {
     margin: 16px 0 8px 168px;
-    width: 430px;
+    width: @app-action-footer-width;
 
     .app-action-footer-button {
       width: 100%;

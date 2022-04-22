@@ -2,7 +2,7 @@
   <a-modal v-model="visible"
            v-drag-modal
            :title="title"
-           :width="550"
+           :width="640"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
            :destroyOnClose="true"
