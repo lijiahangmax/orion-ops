@@ -20,6 +20,7 @@
       <!-- 环境选择 -->
       <HeaderProfileSelect id="header-profile-selector"
                            class="header-block-container"
+                           ref="profileSelect"
                            v-show="profileSelectorVisible"
                            @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
       <!-- 站内信 -->
@@ -66,6 +67,9 @@ export default {
     checkVisible(e = this.$route) {
       this.profileSelectorVisible = e.meta.visibleProfile === true
       this.leftProps = e.meta.leftProps || []
+    },
+    reloadProfile() {
+      this.$refs.profileSelect.loadProfile()
     }
   },
   created() {

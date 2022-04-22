@@ -28,17 +28,14 @@ export default {
       this.currentProfile = JSON.parse(key)
       this.$storage.set(this.$storage.keys.ACTIVE_PROFILE, key)
       this.$emit('chooseProfile', this.currentProfile)
-    }
-  },
-  mounted() {
-    this.$api.fastGetProfileList()
-      .then(e => {
-        if (!e.data || !e.data.length) {
+    },
+    loadProfile() {
+      this.$api.fastGetProfileList().then(({ data }) => {
+        if (!data || !data.length) {
           return
         }
-        e.data.forEach(d => this.profileList.push(d))
-      })
-      .then(() => {
+        this.profileList = data
+      }).then(() => {
         if (!this.profileList.length) {
           this.$storage.remove(this.$storage.keys.ACTIVE_PROFILE)
           return
@@ -62,6 +59,10 @@ export default {
         this.$storage.set(this.$storage.keys.ACTIVE_PROFILE, JSON.stringify(storageProfile))
         this.currentProfile = storageProfile
       })
+    }
+  },
+  mounted() {
+    this.loadProfile()
   }
 }
 </script>

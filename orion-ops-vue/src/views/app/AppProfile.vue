@@ -180,6 +180,7 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+      this.$emit('reloadProfile')
     },
     changePage(page) {
       const pagination = { ...this.pagination }

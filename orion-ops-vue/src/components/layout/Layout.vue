@@ -15,7 +15,7 @@
               @onHeaderEvent="onHeaderEvent"/>
       <!-- 主体部分 -->
       <a-layout-content id="common-content">
-        <router-view ref="route"/>
+        <router-view ref="route" @reloadProfile="reloadProfile"/>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -50,6 +50,9 @@ export default {
     },
     onHeaderEvent(e) {
       this.$refs.route && this.$refs.route.onHeaderEvent && this.$refs.route.onHeaderEvent(e)
+    },
+    reloadProfile() {
+      this.$refs.header.reloadProfile()
     }
   },
   async beforeCreate() {
