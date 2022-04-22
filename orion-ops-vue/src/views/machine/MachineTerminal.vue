@@ -17,7 +17,7 @@
                 type="editable-card"
                 @edit="removeTab"
                 :tabBarStyle="{margin: 0}">
-          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key">
+          <a-tab-pane v-for="machineTab in machineTabs" :key="machineTab.key" :forceRender="true">
             <!-- tab -->
             <template #tab>
               <span class="usn">{{ machineTab.name }}</span>
@@ -68,6 +68,15 @@ export default {
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key === k)
       if (machineTabs.length) {
         document.title = `${machineTabs[0].name} | ${machineTabs[0].host}`
+      }
+      const $ref = this.$refs['terminal' + k]
+      if ($ref && $ref.length) {
+        setTimeout(() => {
+          // 先上再下 防止界面在最下进度条在最上面
+          $ref[0].focus()
+          $ref[0].toTop()
+          $ref[0].toBottom()
+        }, 50)
       }
     }
   },

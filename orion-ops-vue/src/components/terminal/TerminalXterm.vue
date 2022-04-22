@@ -84,6 +84,12 @@ export default {
     fitTerminal() {
       this.$refs.terminalMain.fitTerminal()
     },
+    toTop() {
+      this.$refs.terminalMain.term.scrollToTop()
+    },
+    toBottom() {
+      this.$refs.terminalMain.term.scrollToBottom()
+    },
     focus() {
       this.$refs.terminalMain.term.focus()
     },
@@ -110,7 +116,7 @@ export default {
           enableWebGL: data.enableWebGL
         }
         // 初始化terminal
-        this.$refs.terminalMain.initTerminal(options, setting)
+        this.$refs.terminalMain.init(options, setting)
       } catch (e) {
         this.loading()
         this.$message.error('初始化失败')

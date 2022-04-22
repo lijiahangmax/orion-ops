@@ -5,6 +5,7 @@
            :footer="null"
            :keyboard="false"
            :maskClosable="false"
+           :forceRender="true"
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '4px'}"
            @cancel="close"
@@ -36,7 +37,6 @@
                      wrapperHeight="100%"
                      terminalHeight="100%"
                      :machineId="machineId"
-                     :rightMenuY="(e) => e.offsetY + 50"
                      :visibleHeader="false"/>
     </div>
   </a-modal>
@@ -84,9 +84,11 @@ export default {
     maximize() {
       this.visible = true
       setTimeout(() => {
+        // fit 两次可能会超出modal不然有问题
+        this.$refs.terminal.fitTerminal()
         this.$refs.terminal.fitTerminal()
         this.$refs.terminal.focus()
-      }, 400)
+      }, 450)
     },
     copySshCommand() {
       const command = this.$utils.getSshCommand(this.machine.username, this.machine.host, this.machine.sshPort)

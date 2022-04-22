@@ -61,6 +61,8 @@ function initTerminal() {
   // 打开terminal
   this.term = new Terminal(this.options)
   this.term.open(this.$refs.terminal)
+  // 需要先设置一下 不然modal会闪一下
+  this.term.resize(80, 5)
   // 注册terminal事件
   this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
   this.term.onData(event => terminalEventHandler.onData.call(this, event))
@@ -69,7 +71,8 @@ function initTerminal() {
   // 注册自适应组件
   this.plugin.fit = new FitAddon()
   this.term.loadAddon(this.plugin.fit)
-  this.plugin.fit.fit()
+  // 如果不是modal 这里fit没问题
+  // this.plugin.fit.fit()
   // 注册搜索组件
   this.plugin.search = new SearchAddon()
   this.term.loadAddon(this.plugin.search)
@@ -88,20 +91,13 @@ function initTerminal() {
     }
   }
 
-  // 打开websocket
-  this.client = new WebSocket(this.$api.terminal({ token: this.setting.accessToken }))
-  this.client.onopen = event => {
-    clientHandler.onopen.call(this, event)
-  }
-  this.client.onerror = event => {
-    clientHandler.onerror.call(this, event)
-  }
-  this.client.onclose = event => {
-    clientHandler.onclose.call(this, event)
-  }
-  this.client.onmessage = event => {
-    clientHandler.onmessage.call(this, event)
-  }
+  setTimeout(() => {
+    // fit 这里就是调用两次 不然modal的字体有毛病
+    this.fitTerminal()
+    this.fitTerminal()
+    // 建立连接
+    this.initSocket()
+  }, 50)
 }
 
 /**
@@ -131,6 +127,12 @@ const terminalEventHandler = {
       // if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
       //   terminalEventHandler.paste.call(this)
       // }
+      // 注册全选键 ctrl + a
+      if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+        setTimeout(() => {
+          this.term.selectAll()
+        }, 10)
+      }
       // 注册搜索键 ctrl + shift + f
       if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
         this.$refs.search.open()
@@ -179,12 +181,12 @@ const clientHandler = {
     this.status = this.$enum.TERMINAL_STATUS.ERROR.value
     this.$emit('initFinish', false)
     this.$message.error('无法连接至服务器', 2)
-    this.term.write('\x1B[1;3;31m\r\nfailed to establish connection\x1B[0m')
+    this.term.write('\r\n\x1b[91mfailed to establish connection\x1b[0m')
   },
   onclose(e) {
     console.log('close')
     this.status = this.$enum.TERMINAL_STATUS.DISCONNECTED.value
-    this.term.write('\x1B[1;3;31m\r\n' + e.reason + '\x1B[0m')
+    this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
     // 关闭窗口大小监听器
     window.removeEventListener('resize', this.debouncedWindowResize)
     // 关闭心跳
@@ -336,7 +338,7 @@ export default {
         }
       },
       visibleRightMenu: false,
-      debouncedWindowResize: debounce(this.fitTerminal, 150)
+      debouncedWindowResize: debounce(this.fitTerminal, 100)
     }
   },
   watch: {
@@ -345,7 +347,7 @@ export default {
     }
   },
   methods: {
-    initTerminal(options, setting) {
+    init(options, setting) {
       this.options.fontSize = options.fontSize || this.options.fontSize
       this.options.fontFamily = options.fontFamily || this.options.fontFamily
       this.options.theme.foreground = options.fontColor || this.options.theme.foreground
@@ -355,11 +357,29 @@ export default {
       this.setting.enableWebGL = setting.enableWebGL
       initTerminal.call(this)
     },
-    fitTerminal() {
-      if (this.plugin.fit) {
-        this.plugin.fit.fit()
-        this.term.resize(this.term.cols, this.term.rows)
+    initSocket() {
+      // 打开websocket
+      this.client = new WebSocket(this.$api.terminal({ token: this.setting.accessToken }))
+      this.client.onopen = event => {
+        clientHandler.onopen.call(this, event)
       }
+      this.client.onerror = event => {
+        clientHandler.onerror.call(this, event)
+      }
+      this.client.onclose = event => {
+        clientHandler.onclose.call(this, event)
+      }
+      this.client.onmessage = event => {
+        clientHandler.onmessage.call(this, event)
+      }
+    },
+    fitTerminal() {
+      setTimeout(() => {
+        const dimensions = this.$utils.fitDimensions(this.term, this.$refs.terminal)
+        if (dimensions?.cols && dimensions?.rows) {
+          this.term.resize(dimensions.cols, dimensions.rows)
+        }
+      }, 40)
     },
     clickTerminal() {
       this.visibleRightMenu = false
