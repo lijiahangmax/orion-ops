@@ -266,7 +266,7 @@ export default {
     },
     historyRecord(id) {
       this.$router.push({
-        path: `/schedule/record/${id}`
+        path: `/scheduler/record/${id}`
       })
     },
     manualTrigger(id) {

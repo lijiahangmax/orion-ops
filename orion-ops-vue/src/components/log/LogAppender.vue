@@ -76,11 +76,11 @@
           <!-- 下拉菜单 -->
           <template #overlay>
             <a-menu @click="clickRightMenu">
-              <a-menu-item key="selectAll">
-                <span class="right-menu-item"><a-icon type="profile"/>全选</span>
-              </a-menu-item>
               <a-menu-item key="copy">
                 <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+              </a-menu-item>
+              <a-menu-item key="selectAll">
+                <span class="right-menu-item"><a-icon type="profile"/>全选</span>
               </a-menu-item>
               <a-menu-item key="clear">
                 <span class="right-menu-item"><a-icon type="stop"/>清空</span>
@@ -122,7 +122,7 @@ const rightMenuHandler = {
     this.term.selectAll()
   },
   copy() {
-    this.copySelection()
+    this.copySelection(false)
   },
   clear() {
     this.clear()
@@ -187,6 +187,8 @@ export default {
       visibleRightMenu: false,
       term: null,
       termConfig: {
+        rightClickSelectsWord: true,
+        disableStdin: true,
         cursorStyle: 'bar',
         cursorBlink: true,
         fastScrollModifier: 'shift',
@@ -244,7 +246,7 @@ export default {
         }
         // 注册复制键 ctrl + c
         if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
-          this.copySelection()
+          this.copySelection(false)
         }
         // 注册搜索键 ctrl + shift + f
         if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
@@ -271,7 +273,7 @@ export default {
       this.client.onclose = (e) => {
         console.log('closed', e.code, e.reason)
         this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
-        this.term.write('\r\n\x1b[31m已断开连接...\x1b[0m')
+        // this.term.write('\r\n\x1b[31m已断开连接...\x1b[0m')
         this.$emit('close')
       }
       this.client.onmessage = event => {
@@ -300,8 +302,8 @@ export default {
       this.$copy(this.term.getSelection())
       this.term.clearSelection()
     },
-    copySelection() {
-      this.$copy(this.term.getSelection())
+    copySelection(tips = undefined) {
+      this.$copy(this.term.getSelection(), tips)
     },
     clear() {
       this.term && this.term.clear()

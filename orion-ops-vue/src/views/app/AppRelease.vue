@@ -137,7 +137,7 @@
         <template v-slot:releaseTitle="record">
           <div class="timed-wrapper">
             <!-- 回滚图标 -->
-            <a-tooltip v-if="record.timedRelease === $enum.TIMED_TYPE.TIMED.value" title="回滚发布">
+            <a-tooltip v-if="record.type === $enum.RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
               <a-icon class="rollback-icon" type="pull-request"/>
             </a-tooltip>
             <!-- 定时图标 -->

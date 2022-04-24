@@ -282,7 +282,7 @@ export default {
         profileId: this.profileId,
         ...this.submit
       }).then(() => {
-        this.$message.success('已提交发布请求')
+        this.$message.success('已提交发布任务')
         this.$emit('submit')
         this.close()
       }).catch(() => {

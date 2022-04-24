@@ -120,22 +120,22 @@
           </div>
         </a-descriptions-item>
         <!-- 旧版本应用仓库 -->
-        <a-descriptions-item label="旧版本应用仓库" :span="3">
-          <span class="analysis-count">
-            <span class="analysis-field">{{ analysis.vcsVersionCount }}</span>个
-          </span>
-          <span class="analysis-size">
-            <span class="analysis-field">{{ analysis.vcsVersionFileSize }}</span>
-          </span>
-          <div class="analysis-func" v-if="analysis.vcsVersionCount > 0">
-            <span class="clear-button"
-                  title="清理"
-                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.VCS_FILE.key]"
-                  @click="clear($enum.SYSTEM_CLEAR_TYPE.VCS_FILE)">
-            清理
-           </span>
-          </div>
-        </a-descriptions-item>
+        <!--        <a-descriptions-item label="旧版本应用仓库" :span="3">-->
+        <!--          <span class="analysis-count">-->
+        <!--            <span class="analysis-field">{{ analysis.vcsVersionCount }}</span>个-->
+        <!--          </span>-->
+        <!--          <span class="analysis-size">-->
+        <!--            <span class="analysis-field">{{ analysis.vcsVersionFileSize }}</span>-->
+        <!--          </span>-->
+        <!--          <div class="analysis-func" v-if="analysis.vcsVersionCount > 0">-->
+        <!--            <span class="clear-button"-->
+        <!--                  title="清理"-->
+        <!--                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.VCS_FILE.key]"-->
+        <!--                  @click="clear($enum.SYSTEM_CLEAR_TYPE.VCS_FILE)">-->
+        <!--            清理-->
+        <!--           </span>-->
+        <!--          </div>-->
+        <!--        </a-descriptions-item>-->
         <!-- IP白名单数 -->
         <a-descriptions-item label="IP白名单数" :span="3">
         <span class="analysis-count">

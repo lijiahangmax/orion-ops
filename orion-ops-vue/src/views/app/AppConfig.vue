@@ -8,10 +8,7 @@
           <div class="app-basic-form-wrapper">
             <a-spin :spinning="loading">
               <!-- 表单 -->
-              <AddAppForm ref="basicForm" :layout="{
-              labelCol: { span: 5 },
-              wrapperCol: { span: 19 }
-            }"/>
+              <AddAppForm ref="basicForm" :layout="{ labelCol: { span: 3 }, wrapperCol: { span: 21 }}"/>
               <div class="app-basic-form-footer">
                 <a-button type="primary" @click="updateBasic">修改</a-button>
               </div>
@@ -115,7 +112,7 @@ export default {
 
   .app-basic-form-wrapper {
     padding: 16px 16px 8px 16px;
-    width: 400px;
+    width: 550px;
 
     /deep/ .ant-row.ant-form-item {
       margin-bottom: 18px;
