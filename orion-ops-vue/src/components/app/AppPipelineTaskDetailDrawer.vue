@@ -37,13 +37,13 @@
           {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="创建时间" :span="3" v-if="detail.createTime !== null">
-          {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
+          {{ detail.createTime | formatDate }}
         </a-descriptions-item>
         <a-descriptions-item label="审核用户" :span="3" v-if="detail.auditUserName !== null">
           {{ detail.auditUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="审核时间" :span="3" v-if="detail.auditTime !== null">
-          {{ detail.auditTime | formatDate }} ({{ detail.auditTimeAgo }})
+          {{ detail.auditTime | formatDate }}
         </a-descriptions-item>
         <a-descriptions-item label="审核批注" :span="3" v-if="detail.auditReason !== null">
           {{ detail.auditReason }}
@@ -107,8 +107,8 @@
               <a-descriptions-item label="结束时间" :span="3" v-if="item.endTime !== null">
                 {{ item.endTime | formatDate }} ({{ item.endTimeAgo }})
               </a-descriptions-item>
-              <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
-                {{ `${detail.keepTime} (${detail.used}ms)` }}
+              <a-descriptions-item label="持续时间" :span="3" v-if="item.keepTime !== null">
+                {{ `${item.keepTime} (${item.used}ms)` }}
               </a-descriptions-item>
             </a-descriptions>
           </a-list-item>
@@ -122,30 +122,87 @@
 import _filters from '@/lib/filters'
 
 export default {
-  name: 'AppPipelineRecordDetailDrawer',
+  name: 'AppPipelineTaskDetailDrawer',
   data() {
     return {
       visible: false,
       loading: true,
+      pollId: null,
       detail: {}
     }
   },
   methods: {
     open(id) {
+      // 关闭轮询状态
+      if (this.pollId) {
+        clearInterval(this.pollId)
+        this.pollId = null
+      }
       this.detail = {}
       this.visible = true
       this.loading = true
-      this.$api.getAppPipelineRecordDetail({
+      this.$api.getAppPipelineTaskDetail({
         id
       }).then(({ data }) => {
         this.loading = false
         this.detail = data
+        // 轮询状态
+        if (data.status === this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value ||
+          data.status === this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value ||
+          data.status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+          data.status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value ||
+          data.status === this.$enum.PIPELINE_STATUS.RUNNABLE.value) {
+          this.pollId = setInterval(this.pollStatus, 5000)
+        }
       }).catch(() => {
         this.loading = false
       })
     },
     onClose() {
       this.visible = false
+      // 关闭轮询状态
+      if (this.pollId) {
+        clearInterval(this.pollId)
+        this.pollId = null
+      }
+    },
+    pollStatus() {
+      if (!this.detail || !this.detail.status) {
+        return
+      }
+      if (this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value &&
+        this.detail.status !== this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value &&
+        this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value &&
+        this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value &&
+        this.detail.status !== this.$enum.PIPELINE_STATUS.RUNNABLE.value) {
+        clearInterval(this.pollId)
+        this.pollId = null
+        return
+      }
+      this.$api.geAppPipelineTaskStatus({
+        id: this.detail.id
+      }).then(({ data }) => {
+        this.detail.status = data.status
+        this.detail.used = data.used
+        this.detail.keepTime = data.keepTime
+        this.detail.execStartTime = data.startTime
+        this.detail.execStartTimeAgo = data.startTimeAgo
+        this.detail.execEndTime = data.endTime
+        this.detail.execEndTimeAgo = data.endTimeAgo
+        if (data.details && data.details.length) {
+          for (const detail of data.details) {
+            this.detail.details.filter(s => s.id === detail.id).forEach(s => {
+              s.status = detail.status
+              s.keepTime = detail.keepTime
+              s.used = detail.used
+              s.startTime = detail.startTime
+              s.startTimeAgo = detail.startTimeAgo
+              s.endTime = detail.endTime
+              s.endTimeAgo = detail.endTimeAgo
+            })
+          }
+        }
+      })
     }
   },
   filters: {

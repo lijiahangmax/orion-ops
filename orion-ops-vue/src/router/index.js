@@ -297,14 +297,14 @@ const routes = [
         component: () => import('../views/app/AppRelease')
       },
       {
-        path: '/app/pipeline/record',
-        name: 'appPipelineRecord',
+        path: '/app/pipeline/task',
+        name: 'appPipelineTask',
         meta: {
           requireAuth: true,
-          title: '应用流水线',
+          title: '流水线任务',
           visibleProfile: true
         },
-        component: () => import('../views/app/AppPipelineRecord')
+        component: () => import('../views/app/AppPipelineTask')
       },
       {
         path: '/app/build/statistics',

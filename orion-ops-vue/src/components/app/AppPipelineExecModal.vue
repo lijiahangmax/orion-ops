@@ -218,9 +218,9 @@ export default {
         })
       }
       this.loading = true
-      this.$api.submitAppPipelineExec(request).then(() => {
+      this.$api.submitAppPipelineTask(request).then(() => {
         this.loading = false
-        this.$message.success('已提交')
+        this.$message.success('已提交流水线任务')
         this.$emit('submit')
         this.close()
       }).catch(() => {

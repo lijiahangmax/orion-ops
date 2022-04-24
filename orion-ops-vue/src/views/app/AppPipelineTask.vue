@@ -1,8 +1,8 @@
 <template>
-  <div class="app-pipeline-record-container">
+  <div class="app-pipeline-task-container">
     <!-- 搜索列 -->
     <div class="table-search-columns">
-      <a-form-model class="app-pipeline-record-search-form" ref="query" :model="query">
+      <a-form-model class="app-pipeline-task-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="流水线" prop="pipeline">
@@ -35,7 +35,7 @@
     <div class="table-tools-bar">
       <!-- 左侧 -->
       <div class="tools-fixed-left">
-        <span class="table-title">流水线列表</span>
+        <span class="table-title">任务列表</span>
         <a-divider v-show="selectedRowKeys.length" type="vertical"/>
         <a-popconfirm v-show="selectedRowKeys.length"
                       placement="topRight"
@@ -106,11 +106,16 @@
                 </span>
                 <!-- 发布机器 -->
                 <span class="stage-config-release-machine">
-                    发布机器:
-                    <span v-if="detail.config.machineIdList && detail.config.machineIdList.length" class="span-blue ml4">
+                  发布机器:
+                  <a-tooltip v-if="detail.config.machineIdList && detail.config.machineIdList.length">
+                    <template #title>
+                      {{ detail.config.machineList.map(s => s.name).join(', ') }}
+                    </template>
+                    <span class="span-blue ml4">
                       {{ detail.config.machineList.map(s => s.name).join(', ') }}
                     </span>
-                    <span v-else class="span-blue ml4">全部机器</span>
+                  </a-tooltip>
+                  <span v-else class="span-blue ml4">全部机器</span>
                 </span>
               </div>
             </template>
@@ -122,7 +127,32 @@
             </template>
             <!-- 操作 -->
             <template v-slot:action="detail">
-              {{ detail.id }}
+              <!-- 日志 -->
+              <a-tooltip :disabled="!statusHolder.visibleDetailLog(detail.status)" title="ctrl 点击打开新页面">
+                <a target="_blank"
+                   :href="`#/app/${detail.stageType === $enum.STAGE_TYPE.BUILD.value ? 'build' : 'release'}/log/view/${detail.relId}`"
+                   @click="openDetailLog($event, detail.relId, detail.stageType)">日志</a>
+              </a-tooltip>
+              <!-- 停止 -->
+              <a-divider type="vertical" v-if="statusHolder.visibleDetailTerminate(detail.status)"/>
+              <a-popconfirm v-if="statusHolder.visibleDetailTerminate(detail.status)"
+                            title="是否要停止执行?"
+                            placement="bottomLeft"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="terminatePipelineDetail(record.id, detail.id)">
+                <span class="span-blue pointer">停止</span>
+              </a-popconfirm>
+              <!-- 跳过 -->
+              <a-divider type="vertical" v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"/>
+              <a-popconfirm v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"
+                            title="是否要跳过执行?"
+                            placement="bottomLeft"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="skipPipelineDetail(record.id, detail.id)">
+                <span class="span-blue pointer">跳过</span>
+              </a-popconfirm>
             </template>
           </a-table>
         </template>
@@ -177,9 +207,9 @@
           <!-- 定时 -->
           <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
           <span class="span-blue pointer" v-if="statusHolder.visibleTimed(record.status)" @click="openTimed(record)">定时</span>
-          <!-- 日志 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>
-          <span class="span-blue pointer" v-if="statusHolder.visibleLog(record.status)" @click="openLog(record.id)">日志</span>
+          <!--          &lt;!&ndash; 日志 &ndash;&gt;-->
+          <!--          <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>-->
+          <!--          <span class="span-blue pointer" v-if="statusHolder.visibleLog(record.status)" @click="openLog(record.id)">日志</span>-->
           <!-- 停止 -->
           <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
           <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
@@ -225,7 +255,11 @@
       <!-- 定时模态框 -->
       <AppPipelineExecTimedModal ref="execTimedModal" @updated="forceUpdateRows"/>
       <!-- 详情 -->
-      <AppPipelineRecordDetailDrawer ref="detailDrawer"/>
+      <AppPipelineTaskDetailDrawer ref="detailDrawer"/>
+      <!-- 构建日志 -->
+      <AppBuildLogAppenderModal ref="buildAppender"/>
+      <!-- 发布日志 -->
+      <AppReleaseLogAppenderModal ref="releaseAppender"/>
     </div>
   </div>
 </template>
@@ -237,7 +271,9 @@ import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
 import AppPipelineExecAuditModal from '@/components/app/AppPipelineExecAuditModal'
 import AppPipelineExecTimedModal from '@/components/app/AppPipelineExecTimedModal'
-import AppPipelineRecordDetailDrawer from '@/components/app/AppPipelineRecordDetailDrawer'
+import AppPipelineTaskDetailDrawer from '@/components/app/AppPipelineTaskDetailDrawer'
+import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
+import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 
 function statusHolder() {
   return {
@@ -284,9 +320,9 @@ function statusHolder() {
     visibleDetailTerminate: (status) => {
       return status === this.$enum.PIPELINE_DETAIL_STATUS.RUNNABLE.value
     },
-    visibleDetailSkip: (status, machineStatus) => {
+    visibleDetailSkip: (status, detailStatus) => {
       return status === this.$enum.PIPELINE_STATUS.RUNNABLE.value &&
-        machineStatus === this.$enum.PIPELINE_DETAIL_STATUS.WAIT.value
+        detailStatus === this.$enum.PIPELINE_DETAIL_STATUS.WAIT.value
     }
   }
 }
@@ -302,7 +338,7 @@ const columns = [
     ellipsis: true
   },
   {
-    title: '标题',
+    title: '任务标题',
     key: 'title',
     ellipsis: true,
     scopedSlots: { customRender: 'pipelineTitle' }
@@ -359,8 +395,7 @@ const innerColumns = [
   {
     title: '应用名称',
     key: 'appName',
-    dataIndex: 'appName',
-    width: 230
+    dataIndex: 'appName'
   },
   {
     title: '配置',
@@ -371,7 +406,6 @@ const innerColumns = [
   {
     title: '状态',
     key: 'status',
-    width: 200,
     align: 'center',
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
@@ -380,7 +414,6 @@ const innerColumns = [
     title: '持续时间',
     key: 'keepTime',
     dataIndex: 'keepTime',
-    width: 200,
     sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
@@ -393,9 +426,11 @@ const innerColumns = [
 ]
 
 export default {
-  name: 'AppPipelineRecord',
+  name: 'AppPipelineTask',
   components: {
-    AppPipelineRecordDetailDrawer,
+    AppReleaseLogAppenderModal,
+    AppBuildLogAppenderModal,
+    AppPipelineTaskDetailDrawer,
     AppPipelineExecTimedModal,
     AppPipelineExecAuditModal,
     PipelineAutoComplete,
@@ -440,6 +475,7 @@ export default {
       selectedRowKeys: [],
       expandedRowKeys: [],
       loading: false,
+      pollId: null,
       columns,
       innerColumns,
       statusHolder: statusHolder.call(this)
@@ -454,7 +490,7 @@ export default {
     getList(page = this.pagination) {
       this.loading = true
       this.expandedRowKeys = []
-      this.$api.getAppPipelineRecordList({
+      this.$api.getAppPipelineTaskList({
         ...this.query,
         page: page.current,
         limit: page.pageSize
@@ -487,7 +523,7 @@ export default {
       }
       // 加载机器
       record.loading = true
-      this.$api.getAppPipelineRecordDetails({
+      this.$api.getAppPipelineTaskDetails({
         id: record.id
       }).then(({ data }) => {
         record.loading = false
@@ -506,7 +542,7 @@ export default {
       }
     },
     copyPipeline(id) {
-      this.$api.copyAppPipelineRecord({
+      this.$api.copyAppPipelineTask({
         id
       }).then(() => {
         this.$message.success('已复制')
@@ -514,10 +550,10 @@ export default {
       })
     },
     execPipeline(record) {
-      this.$api.execAppPipelineRecord({
+      this.$api.execAppPipelineTask({
         id: record.id
       }).then(() => {
-        this.$message.success('已提交执行请求')
+        this.$message.success('已开始执行')
         record.status = this.$enum.PIPELINE_STATUS.RUNNABLE.value
       })
     },
@@ -525,7 +561,7 @@ export default {
       this.$refs.execTimedModal.open(id)
     },
     cancelTimed(record) {
-      this.$api.cancelAppPipelineRecordTimedExec({
+      this.$api.cancelAppPipelineTaskTimedExec({
         id: record.id
       }).then(() => {
         this.$message.success('已取消定时执行')
@@ -537,24 +573,54 @@ export default {
       })
     },
     openLog(id) {
-      this.$message.success('日志' + id)
     },
     openDetail(id) {
       this.$refs.detailDrawer.open(id)
     },
     terminatePipeline(id) {
-      this.$api.terminateAppPipelineRecordExec({
+      this.$api.terminateAppPipelineTask({
         id
       }).then(() => {
-        this.$message.success('已提交停止请求')
+        this.$message.success('已停止')
       })
     },
     remove(idList) {
-      this.$api.deleteAppPipelineRecord({
+      this.$api.deleteAppPipelineTask({
         idList
       }).then(() => {
         this.$message.success('已删除')
         this.getList({})
+      })
+    },
+    openDetailLog(e, id, stageType) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        if (stageType === this.$enum.STAGE_TYPE.BUILD.value) {
+          this.$refs.buildAppender.open(id)
+        } else {
+          this.$refs.releaseAppender.open(id)
+        }
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
+    },
+    terminatePipelineDetail(id, detailId) {
+      this.$api.terminateAppPipelineTaskDetail({
+        id,
+        detailId
+      }).then(() => {
+        this.$message.success('已停止')
+      })
+    },
+    skipPipelineDetail(id, detailId) {
+      this.$api.skipAppPipelineTaskDetail({
+        id,
+        detailId
+      }).then(() => {
+        this.$message.success('已跳过')
       })
     },
     resetForm() {
@@ -567,6 +633,57 @@ export default {
     },
     forceUpdateRows() {
       this.$set(this.rows, 0, this.rows[0])
+    },
+    pollStatus() {
+      if (!this.rows || !this.rows.length) {
+        return
+      }
+      const pollItems = this.rows.filter(r => r.status === this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value ||
+        r.status === this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value ||
+        r.status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+        r.status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value ||
+        r.status === this.$enum.PIPELINE_STATUS.RUNNABLE.value)
+      if (!pollItems.length) {
+        return
+      }
+      const idList = pollItems.map(s => s.id)
+      if (!idList.length) {
+        return
+      }
+      const detailIdList = pollItems.map(s => s.details)
+        .filter(s => s && s.length)
+        .flat()
+        .map(s => s.id)
+      this.$api.getAppPipelineTaskListStatus({
+        idList,
+        detailIdList
+      }).then(({ data }) => {
+        if (!data || !data.length) {
+          return
+        }
+        for (const status of data) {
+          // 发布状态
+          this.rows.filter(s => s.id === status.id).forEach(row => {
+            row.status = status.status
+            row.keepTime = status.keepTime
+            row.used = status.used
+            if (!status.details || !status.details.length || !row.details || !row.details.length) {
+              return
+            }
+            // 机器状态
+            for (const detail of status.details) {
+              row.details.filter(m => m.id === detail.id).forEach(m => {
+                m.relId = detail.relId
+                m.status = detail.status
+                m.keepTime = detail.keepTime
+                m.used = detail.used
+              })
+            }
+          })
+        }
+        // 强制刷新状态
+        this.forceUpdateRows()
+      })
     }
   },
   async mounted() {
@@ -578,7 +695,14 @@ export default {
     }
     this.query.profileId = JSON.parse(activeProfile).id
     this.$refs.pipelineSelector.loadData(this.query.profileId)
+    // 设置轮询
+    this.pollId = setInterval(this.pollStatus, 5000)
+    // 查询列表
     this.getList({})
+  },
+  beforeDestroy() {
+    this.pollId !== null && clearInterval(this.pollId)
+    this.pollId = null
   },
   filters: {
     ..._filters
@@ -608,6 +732,6 @@ export default {
 
 .stage-config-release-version {
   display: inline-block;
-  width: 148px;
+  width: 120px;
 }
 </style>

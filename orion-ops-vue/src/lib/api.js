@@ -1833,116 +1833,141 @@ const $api = {
   },
 
   /**
-   * 获取应用流水线执行列表
+   * 获取应用流水线任务列表
    */
-  getAppPipelineRecordList: param => {
-    return $http.$post('/app-pipeline-record/list', param)
+  getAppPipelineTaskList: param => {
+    return $http.$post('/app-pipeline-task/list', param)
   },
 
   /**
-   * 获取应用流水线执行详情
+   * 获取应用流水线任务详情
    */
-  getAppPipelineRecordDetail: param => {
-    return $http.$post('/app-pipeline-record/detail', param)
+  getAppPipelineTaskDetail: param => {
+    return $http.$post('/app-pipeline-task/detail', param)
   },
 
   /**
-   * 获取应用流水线执行详情
+   * 获取应用流水线任务详情
    */
-  getAppPipelineRecordDetails: param => {
-    return $http.$post('/app-pipeline-record/record-details', param)
+  getAppPipelineTaskDetails: param => {
+    return $http.$post('/app-pipeline-task/task-details', param)
   },
 
   /**
-   * 提交执行应用流水线
+   * 提交执行应用流水线任务
    */
-  submitAppPipelineExec: param => {
-    return $http.$post('/app-pipeline-record/submit', param, {
+  submitAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/submit', param, {
       timeout: 600000,
       loading: '正在提交...'
     })
   },
 
   /**
-   * 审核应用流水线执行
+   * 审核应用流水线任务
    */
-  auditAppPipelineRecord: param => {
-    return $http.$post('/app-pipeline-record/audit', param, {
+  auditAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/audit', param, {
       loading: '正在操作...'
     })
   },
 
   /**
-   * 复制应用流水线执行
+   * 复制应用流水线任务
    */
-  copyAppPipelineRecord: param => {
-    return $http.$post('/app-pipeline-record/copy', param, {
+  copyAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/copy', param, {
       timeout: 600000,
       loading: '正在复制...'
     })
   },
 
   /**
-   * 执行应用流水线
+   * 执行应用流水线任务
    */
-  execAppPipelineRecord: param => {
-    return $http.$post('/app-pipeline-record/exec', param, {
+  execAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/exec', param, {
       loading: '正在执行...'
     })
   },
 
   /**
-   * 删除应用流水线执行
+   * 删除应用流水线任务
    */
-  deleteAppPipelineRecord: param => {
-    return $http.$post('/app-pipeline-record/delete', param, {
+  deleteAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/delete', param, {
       loading: '正在删除...'
     })
   },
 
   /**
-   * 设置应用流水线定时执行
+   * 设置应用流水线定时任务
    */
-  setAppPipelineRecordTimedExec: param => {
-    return $http.$post('/app-pipeline-record/set-timed', param, {
+  setAppPipelineTaskTimedExec: param => {
+    return $http.$post('/app-pipeline-task/set-timed', param, {
       loading: '正在设置...'
     })
   },
 
   /**
-   * 取消应用流水线定时执行
+   * 取消应用流水线定时任务
    */
-  cancelAppPipelineRecordTimedExec: param => {
-    return $http.$post('/app-pipeline-record/cancel-timed', param, {
+  cancelAppPipelineTaskTimedExec: param => {
+    return $http.$post('/app-pipeline-task/cancel-timed', param, {
       loading: '正在取消...'
     })
   },
 
   /**
-   * 停止执行应用流水线
+   * 停止执行应用流水线任务
    */
-  terminateAppPipelineRecordExec: param => {
-    return $http.$post('/app-pipeline-record/terminate', param, {
+  terminateAppPipelineTask: param => {
+    return $http.$post('/app-pipeline-task/terminate', param, {
       loading: '正在停止...'
     })
   },
 
   /**
-   * 停止执行应用流水线部分操作
+   * 停止执行应用流水线任务部分操作
    */
-  terminateAppPipelineRecordExecDetail: param => {
-    return $http.$post('/app-pipeline-record/terminate-detail', param, {
+  terminateAppPipelineTaskDetail: param => {
+    return $http.$post('/app-pipeline-task/terminate-detail', param, {
       loading: '正在停止...'
     })
   },
 
   /**
-   * 停止执行应用流水线部分操作
+   * 停止执行应用流水线任务部分操作
    */
-  skipAppPipelineRecordExecDetail: param => {
-    return $http.$post('/app-pipeline-record/skip-detail', param, {
+  skipAppPipelineTaskDetail: param => {
+    return $http.$post('/app-pipeline-task/skip-detail', param, {
       loading: '正在跳过...'
     })
+  },
+
+  /**
+   * 应用流水线任务状态
+   */
+  geAppPipelineTaskStatus: param => {
+    return $http.$post('/app-pipeline-task/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 应用流水线任务状态列表
+   */
+  getAppPipelineTaskListStatus: param => {
+    return $http.$post('/app-pipeline-task/list-status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 应用流水线任务日志
+   */
+  getAppPipelineTaskLog: param => {
+    return $http.$post('/app-pipeline-task/log', param)
   }
 
 }

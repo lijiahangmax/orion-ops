@@ -43,7 +43,7 @@ export default {
         return
       }
       this.loading = true
-      this.$api.auditAppPipelineRecord({
+      this.$api.auditAppPipelineTask({
         id: this.id,
         auditStatus: res ? this.$enum.AUDIT_STATUS.RESOLVE.value : this.$enum.AUDIT_STATUS.REJECT.value,
         auditReason: this.description

@@ -47,7 +47,7 @@ export default {
     submit() {
       const time = this.timedExecTime.unix() * 1000
       this.loading = true
-      this.$api.setAppPipelineRecordTimedExec({
+      this.$api.setAppPipelineTaskTimedExec({
         id: this.record.id,
         timedExecTime: time
       }).then(() => {
