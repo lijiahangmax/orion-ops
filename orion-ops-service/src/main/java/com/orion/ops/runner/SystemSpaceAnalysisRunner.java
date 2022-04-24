@@ -1,6 +1,7 @@
 package com.orion.ops.runner;
 
 import com.orion.ops.service.api.SystemService;
+import com.orion.utils.Threads;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +30,7 @@ public class SystemSpaceAnalysisRunner implements CommandLineRunner {
         try {
             log.info("runner-执行占用磁盘空间统计-开始 {}", Dates.current());
             // 不考虑多线程计算
-            systemService.analysisSystemSpace();
+            Threads.start(systemService::analysisSystemSpace);
             log.info("runner-执行占用磁盘空间统计-结束 {}", Dates.current());
         } catch (Exception e) {
             log.error("runner-执行占用磁盘空间统计-失败 {}", Dates.current(), e);

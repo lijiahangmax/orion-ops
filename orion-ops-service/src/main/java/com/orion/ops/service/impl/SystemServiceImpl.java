@@ -175,18 +175,20 @@ public class SystemServiceImpl implements SystemService {
         systemSpace.setDistFileSize(Files1.getSize(buildFilesBytes));
         buildFiles.clear();
 
-        // vcs产物
-        File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
-        List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
-        int vcsVersionCount = 0;
-        long vcsDirFilesBytes = 0L;
-        for (File vcsDir : vcsPaths) {
-            vcsVersionCount += Files1.listDirs(vcsDir).size();
-            List<File> vcsDirFiles = Files1.listFiles(vcsDir, true);
-            vcsDirFilesBytes += vcsDirFiles.stream().mapToLong(File::length).sum();
-        }
-        systemSpace.setVcsVersionCount(vcsVersionCount);
-        systemSpace.setVcsVersionFileSize(Files1.getSize(vcsDirFilesBytes));
+        // 文件太多会导致 oom
+        // // vcs产物
+        // File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
+        // List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+        // int vcsVersionCount = 0;
+        // long vcsDirFilesBytes = 0L;
+        // for (File vcsDir : vcsPaths) {
+        //     vcsVersionCount += Files1.listDirs(vcsDir).size();
+        //     List<File> vcsDirFiles = Files1.listFiles(vcsDir, true);
+        //     vcsDirFilesBytes += vcsDirFiles.stream().mapToLong(File::length).sum();
+        // }
+        // systemSpace.setVcsVersionCount(vcsVersionCount);
+        // systemSpace.setVcsVersionFileSize(Files1.getSize(vcsDirFilesBytes));
+        // vcsPaths.clear();
         log.info("分析占用磁盘空间完成 {}", JSON.toJSONString(systemSpace));
     }
 
