@@ -49,8 +49,8 @@ public class ReleaseStageHandler extends AbstractStageHandler {
 
     private ApplicationReleaseDO release;
 
-    public ReleaseStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
-        super(record, detail);
+    public ReleaseStageHandler(ApplicationPipelineTaskDO task, ApplicationPipelineTaskDetailDO detail) {
+        super(task, detail);
         this.stageType = StageType.RELEASE;
     }
 
@@ -70,7 +70,7 @@ public class ReleaseStageHandler extends AbstractStageHandler {
     protected void createReleaseTask() {
         // 设置用户上下文
         this.setExecuteUserContext();
-        Long profileId = record.getProfileId();
+        Long profileId = task.getProfileId();
         Long appId = detail.getAppId();
         // 创建发布任务参数
         ApplicationReleaseRequest request = new ApplicationReleaseRequest();
@@ -112,13 +112,15 @@ public class ReleaseStageHandler extends AbstractStageHandler {
         // 更新详情配置
         String configJson = JSON.toJSONString(config);
         detail.setStageConfig(configJson);
-        ApplicationPipelineDetailRecordDO updateConfig = new ApplicationPipelineDetailRecordDO();
+        ApplicationPipelineTaskDetailDO updateConfig = new ApplicationPipelineTaskDetailDO();
         updateConfig.setId(detailId);
         updateConfig.setStageConfig(configJson);
-        applicationPipelineDetailRecordDAO.updateById(updateConfig);
+        applicationPipelineTaskDetailDAO.updateById(updateConfig);
         // 创建发布任务
         log.info("执行流水线任务-发布阶段-开始创建 detailId: {}, 参数: {}", detailId, JSON.toJSONString(request));
         this.releaseId = applicationReleaseService.submitAppRelease(request);
+        // 设置发布id
+        this.setRelId(releaseId);
         // 插入日志
         this.addLog(PipelineLogStatus.CREATE, detail.getAppName(), build.getBuildSeq());
     }
@@ -134,8 +136,8 @@ public class ReleaseStageHandler extends AbstractStageHandler {
         }
         ApplicationReleaseDO update = new ApplicationReleaseDO();
         update.setId(releaseId);
-        update.setAuditUserId(record.getAuditUserId());
-        update.setAuditUserName(record.getAuditUserName());
+        update.setAuditUserId(task.getAuditUserId());
+        update.setAuditUserName(task.getAuditUserName());
         update.setAuditReason(MessageConst.AUTO_AUDIT_RESOLVE);
         update.setAuditTime(new Date());
         log.info("执行流水线任务-发布阶段-审核 detailId: {}, releaseId: {}, 参数: {}", detailId, releaseId, JSON.toJSONString(update));

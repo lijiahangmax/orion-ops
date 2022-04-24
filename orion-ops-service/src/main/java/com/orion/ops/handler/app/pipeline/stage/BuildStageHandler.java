@@ -7,8 +7,8 @@ import com.orion.ops.consts.app.PipelineLogStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
-import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.ops.entity.request.ApplicationBuildRequest;
 import com.orion.ops.handler.app.build.BuildSessionHolder;
@@ -37,8 +37,8 @@ public class BuildStageHandler extends AbstractStageHandler {
 
     private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
 
-    public BuildStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
-        super(record, detail);
+    public BuildStageHandler(ApplicationPipelineTaskDO task, ApplicationPipelineTaskDetailDO detail) {
+        super(task, detail);
         this.stageType = StageType.BUILD;
     }
 
@@ -49,7 +49,7 @@ public class BuildStageHandler extends AbstractStageHandler {
         // 参数
         ApplicationBuildRequest request = new ApplicationBuildRequest();
         request.setAppId(detail.getAppId());
-        request.setProfileId(record.getProfileId());
+        request.setProfileId(task.getProfileId());
         // 配置
         ApplicationPipelineStageConfigDTO config = JSON.parseObject(detail.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
         request.setBranchName(config.getBranchName());
@@ -58,6 +58,8 @@ public class BuildStageHandler extends AbstractStageHandler {
         log.info("执行流水线任务-构建阶段-开始创建 detailId: {}, 参数: {}", detailId, JSON.toJSONString(request));
         // 创建构建任务
         this.buildId = applicationBuildService.submitBuildTask(request, false);
+        // 设置构建id
+        this.setRelId(buildId);
         // 插入创建日志
         ApplicationBuildDO build = applicationBuildDAO.selectById(buildId);
         this.addLog(PipelineLogStatus.CREATE, detail.getAppName(), build.getBuildSeq());

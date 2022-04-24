@@ -134,17 +134,15 @@ public class Const extends com.orion.constant.Const {
 
     public static final String OAUTH2 = "oauth2";
 
-    public static final String NONE = "none";
-
     public static final int SFTP_UPLOAD_THRESHOLD = 512;
 
     public static final String APP_CN = "应用";
 
     public static final String RELEASE_CN = "发布";
 
-    public static final String SUCCESS_CN = "成功";
+    public static final String LF_2 = "\n\n";
 
-    public static final String FAILURE_CN = "失败";
+    public static final String LF_3 = "\n\n\n";
 
     /**
      * 不安全的文件夹

@@ -26,7 +26,7 @@ public class PipelineSessionHolder {
      * @param processor processor
      */
     public void addSession(IPipelineProcessor processor) {
-        session.put(processor.getRecordId(), processor);
+        session.put(processor.getTaskId(), processor);
     }
 
     /**

@@ -14,9 +14,9 @@ public interface IPipelineProcessor extends Executable, Runnable {
     /**
      * 获取明细id
      *
-     * @return recordId
+     * @return taskId
      */
-    Long getRecordId();
+    Long getTaskId();
 
     /**
      * 停止执行

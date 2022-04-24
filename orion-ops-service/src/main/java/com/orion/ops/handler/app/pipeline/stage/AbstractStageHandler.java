@@ -5,12 +5,12 @@ import com.orion.ops.consts.app.PipelineLogStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.consts.user.UserHolder;
-import com.orion.ops.dao.ApplicationPipelineDetailRecordDAO;
-import com.orion.ops.dao.ApplicationPipelineRecordLogDAO;
+import com.orion.ops.dao.ApplicationPipelineTaskDetailDAO;
+import com.orion.ops.dao.ApplicationPipelineTaskLogDAO;
 import com.orion.ops.dao.UserInfoDAO;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
-import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
-import com.orion.ops.entity.domain.ApplicationPipelineRecordLogDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskLogDO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.spring.SpringHolder;
@@ -31,17 +31,17 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractStageHandler implements IStageHandler {
 
-    protected static ApplicationPipelineDetailRecordDAO applicationPipelineDetailRecordDAO = SpringHolder.getBean(ApplicationPipelineDetailRecordDAO.class);
+    protected static ApplicationPipelineTaskDetailDAO applicationPipelineTaskDetailDAO = SpringHolder.getBean(ApplicationPipelineTaskDetailDAO.class);
 
-    protected static ApplicationPipelineRecordLogDAO applicationPipelineRecordLogDAO = SpringHolder.getBean(ApplicationPipelineRecordLogDAO.class);
+    protected static ApplicationPipelineTaskLogDAO applicationPipelineTaskLogDAO = SpringHolder.getBean(ApplicationPipelineTaskLogDAO.class);
 
     protected static UserInfoDAO userInfoDAO = SpringHolder.getBean(UserInfoDAO.class);
 
     protected Long detailId;
 
-    protected ApplicationPipelineRecordDO record;
+    protected ApplicationPipelineTaskDO task;
 
-    protected ApplicationPipelineDetailRecordDO detail;
+    protected ApplicationPipelineTaskDetailDO detail;
 
     protected StageType stageType;
 
@@ -50,8 +50,8 @@ public abstract class AbstractStageHandler implements IStageHandler {
 
     protected volatile boolean terminated;
 
-    public AbstractStageHandler(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
-        this.record = record;
+    public AbstractStageHandler(ApplicationPipelineTaskDO task, ApplicationPipelineTaskDetailDO detail) {
+        this.task = task;
         this.detail = detail;
         this.detailId = detail.getId();
         this.status = PipelineDetailStatus.WAIT;
@@ -61,7 +61,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
     public void exec() {
         log.info("流水线阶段操作-开始执行 detailId: {}", detailId);
         // 状态检查
-        if (!PipelineDetailStatus.WAIT.equals(status)) {
+        if (!this.checkCanRunnable()) {
             return;
         }
         Exception ex = null;
@@ -98,6 +98,19 @@ public abstract class AbstractStageHandler implements IStageHandler {
     protected abstract void execStageTask();
 
     /**
+     * 检查是否可执行
+     *
+     * @return 是否可执行
+     */
+    protected boolean checkCanRunnable() {
+        ApplicationPipelineTaskDetailDO detail = applicationPipelineTaskDetailDAO.selectById(detailId);
+        if (detail == null) {
+            return false;
+        }
+        return PipelineDetailStatus.WAIT.getStatus().equals(detail.getExecStatus());
+    }
+
+    /**
      * 停止回调
      */
     protected void terminatedCallback() {
@@ -132,8 +145,9 @@ public abstract class AbstractStageHandler implements IStageHandler {
      * @param status 状态
      */
     protected void updateStatus(PipelineDetailStatus status) {
+        this.status = status;
         Date now = new Date();
-        ApplicationPipelineDetailRecordDO update = new ApplicationPipelineDetailRecordDO();
+        ApplicationPipelineTaskDetailDO update = new ApplicationPipelineTaskDetailDO();
         update.setId(detailId);
         update.setExecStatus(status.getStatus());
         update.setUpdateTime(now);
@@ -150,7 +164,7 @@ public abstract class AbstractStageHandler implements IStageHandler {
                 break;
         }
         // 更新
-        applicationPipelineDetailRecordDAO.updateById(update);
+        applicationPipelineTaskDetailDAO.updateById(update);
         // 插入日志
         String appName = detail.getAppName();
         switch (status) {
@@ -187,32 +201,45 @@ public abstract class AbstractStageHandler implements IStageHandler {
     }
 
     /**
+     * 设置引用id
+     *
+     * @param relId relId
+     */
+    protected void setRelId(Long relId) {
+        ApplicationPipelineTaskDetailDO update = new ApplicationPipelineTaskDetailDO();
+        update.setId(detailId);
+        update.setRelId(relId);
+        update.setUpdateTime(new Date());
+        applicationPipelineTaskDetailDAO.updateById(update);
+    }
+
+    /**
      * 添加日志
      *
      * @param logStatus logStatus
      * @param params    日志参数
      */
     protected void addLog(PipelineLogStatus logStatus, Object... params) {
-        ApplicationPipelineRecordLogDO log = new ApplicationPipelineRecordLogDO();
-        log.setRecordId(record.getId());
-        log.setRecordDetailId(detail.getId());
+        ApplicationPipelineTaskLogDO log = new ApplicationPipelineTaskLogDO();
+        log.setTaskId(task.getId());
+        log.setTaskDetailId(detail.getId());
         log.setLogStatus(logStatus.getStatus());
         log.setStageType(stageType.getType());
         log.setLogInfo(logStatus.format(stageType, params));
-        applicationPipelineRecordLogDAO.insert(log);
+        applicationPipelineTaskLogDAO.insert(log);
     }
 
     /**
      * 设置执行人用户上下文
      */
     protected void setExecuteUserContext() {
-        UserInfoDO userInfo = userInfoDAO.selectById(record.getExecUserId());
+        UserInfoDO userInfo = userInfoDAO.selectById(task.getExecUserId());
         UserDTO user = new UserDTO();
-        user.setId(record.getExecUserId());
-        user.setUsername(record.getExecUserName());
+        user.setId(task.getExecUserId());
+        user.setUsername(task.getExecUserName());
         Integer roleType = Optional.ofNullable(userInfo)
                 .map(UserInfoDO::getRoleType)
-                .orElseGet(() -> record.getExecUserId().equals(record.getAuditUserId())
+                .orElseGet(() -> task.getExecUserId().equals(task.getAuditUserId())
                         ? RoleType.ADMINISTRATOR.getType()
                         : RoleType.DEVELOPER.getType());
         user.setRoleType(roleType);

@@ -17,16 +17,18 @@ public enum StageType {
     /**
      * 构建
      */
-    BUILD(10),
+    BUILD(10, "构建"),
 
     /**
      * 发布
      */
-    RELEASE(20),
+    RELEASE(20, "发布"),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static StageType of(Integer type) {
         if (type == null) {

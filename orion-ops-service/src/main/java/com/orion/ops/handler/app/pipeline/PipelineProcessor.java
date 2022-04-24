@@ -6,11 +6,11 @@ import com.orion.ops.consts.app.PipelineDetailStatus;
 import com.orion.ops.consts.app.PipelineStatus;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.message.MessageType;
-import com.orion.ops.dao.ApplicationPipelineRecordDAO;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
-import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
+import com.orion.ops.dao.ApplicationPipelineTaskDAO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.handler.app.pipeline.stage.IStageHandler;
-import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
+import com.orion.ops.service.api.ApplicationPipelineTaskDetailService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -34,18 +34,18 @@ import java.util.Map;
 @Slf4j
 public class PipelineProcessor implements IPipelineProcessor {
 
-    private static ApplicationPipelineRecordDAO applicationPipelineRecordDAO = SpringHolder.getBean(ApplicationPipelineRecordDAO.class);
+    private static ApplicationPipelineTaskDAO applicationPipelineTaskDAO = SpringHolder.getBean(ApplicationPipelineTaskDAO.class);
 
-    private static ApplicationPipelineDetailRecordService applicationPipelineDetailRecordService = SpringHolder.getBean(ApplicationPipelineDetailRecordService.class);
+    private static ApplicationPipelineTaskDetailService applicationPipelineTaskDetailService = SpringHolder.getBean(ApplicationPipelineTaskDetailService.class);
 
     private static PipelineSessionHolder pipelineSessionHolder = SpringHolder.getBean(PipelineSessionHolder.class);
 
     private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     @Getter
-    private Long recordId;
+    private Long taskId;
 
-    private ApplicationPipelineRecordDO record;
+    private ApplicationPipelineTaskDO task;
 
     private Map<Long, IStageHandler> stageHandlers;
 
@@ -53,27 +53,27 @@ public class PipelineProcessor implements IPipelineProcessor {
 
     private volatile boolean terminated;
 
-    public PipelineProcessor(Long recordId) {
-        this.recordId = recordId;
+    public PipelineProcessor(Long taskId) {
+        this.taskId = taskId;
         this.stageHandlers = Maps.newLinkedMap();
     }
 
     @Override
     public void exec() {
-        log.info("已提交应用流水线任务 id: {}", recordId);
+        log.info("已提交应用流水线任务 id: {}", taskId);
         Threads.start(this, SchedulerPools.PIPELINE_SCHEDULER);
     }
 
     @Override
     public void run() {
-        log.info("开始执行应用流水线 id: {}", recordId);
+        log.info("开始执行应用流水线 id: {}", taskId);
         Exception ex = null;
         try {
             // 获取流水线数据
             this.getPipelineData();
             // 检查状态
-            if (record != null && !PipelineStatus.WAIT_RUNNABLE.getStatus().equals(record.getExecStatus())
-                    && !PipelineStatus.WAIT_SCHEDULE.getStatus().equals(record.getExecStatus())) {
+            if (task != null && !PipelineStatus.WAIT_RUNNABLE.getStatus().equals(task.getExecStatus())
+                    && !PipelineStatus.WAIT_SCHEDULE.getStatus().equals(task.getExecStatus())) {
                 return;
             }
             // 修改状态
@@ -98,7 +98,7 @@ public class PipelineProcessor implements IPipelineProcessor {
                 this.exceptionCallback(ex);
             }
         } finally {
-            pipelineSessionHolder.removeSession(recordId);
+            pipelineSessionHolder.removeSession(taskId);
         }
     }
 
@@ -107,19 +107,19 @@ public class PipelineProcessor implements IPipelineProcessor {
      */
     private void getPipelineData() {
         // 获取主表
-        this.record = applicationPipelineRecordDAO.selectById(recordId);
-        if (record == null) {
+        this.task = applicationPipelineTaskDAO.selectById(taskId);
+        if (task == null) {
             return;
         }
-        PipelineStatus status = PipelineStatus.of(record.getExecStatus());
+        PipelineStatus status = PipelineStatus.of(task.getExecStatus());
         if (!PipelineStatus.WAIT_RUNNABLE.equals(status)
                 && !PipelineStatus.WAIT_SCHEDULE.equals(status)) {
             throw Exceptions.argument(MessageConst.ILLEGAL_STATUS);
         }
         // 获取详情
-        List<ApplicationPipelineDetailRecordDO> details = applicationPipelineDetailRecordService.selectRecordDetails(recordId);
-        for (ApplicationPipelineDetailRecordDO detail : details) {
-            stageHandlers.put(detail.getId(), IStageHandler.with(record, detail));
+        List<ApplicationPipelineTaskDetailDO> details = applicationPipelineTaskDetailService.selectTaskDetails(taskId);
+        for (ApplicationPipelineTaskDetailDO detail : details) {
+            stageHandlers.put(detail.getId(), IStageHandler.with(task, detail));
         }
     }
 
@@ -164,7 +164,7 @@ public class PipelineProcessor implements IPipelineProcessor {
      * 停止回调
      */
     private void terminatedCallback() {
-        log.info("应用流水线执行停止 id: {}", recordId);
+        log.info("应用流水线执行停止 id: {}", taskId);
         this.updateStatus(PipelineStatus.TERMINATED);
     }
 
@@ -172,14 +172,14 @@ public class PipelineProcessor implements IPipelineProcessor {
      * 完成回调
      */
     private void completeCallback() {
-        log.info("应用流水线执行完成 id: {}", recordId);
+        log.info("应用流水线执行完成 id: {}", taskId);
         this.updateStatus(PipelineStatus.FINISH);
         // 发送站内信
         Map<String, Object> params = Maps.newMap();
-        params.put(EventKeys.ID, record.getId());
-        params.put(EventKeys.NAME, record.getPipelineName());
-        params.put(EventKeys.TITLE, record.getExecTitle());
-        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_SUCCESS, record.getExecUserId(), record.getExecUserName(), params);
+        params.put(EventKeys.ID, task.getId());
+        params.put(EventKeys.NAME, task.getPipelineName());
+        params.put(EventKeys.TITLE, task.getExecTitle());
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_SUCCESS, task.getExecUserId(), task.getExecUserName(), params);
 
     }
 
@@ -189,14 +189,14 @@ public class PipelineProcessor implements IPipelineProcessor {
      * @param ex ex
      */
     private void exceptionCallback(Exception ex) {
-        log.error("应用流水线执行失败 id: {}", recordId, ex);
+        log.error("应用流水线执行失败 id: {}", taskId, ex);
         this.updateStatus(PipelineStatus.FAILURE);
         // 发送站内信
         Map<String, Object> params = Maps.newMap();
-        params.put(EventKeys.ID, record.getId());
-        params.put(EventKeys.NAME, record.getPipelineName());
-        params.put(EventKeys.TITLE, record.getExecTitle());
-        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_FAILURE, record.getExecUserId(), record.getExecUserName(), params);
+        params.put(EventKeys.ID, task.getId());
+        params.put(EventKeys.NAME, task.getPipelineName());
+        params.put(EventKeys.TITLE, task.getExecTitle());
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_FAILURE, task.getExecUserId(), task.getExecUserName(), params);
     }
 
     /**
@@ -206,8 +206,8 @@ public class PipelineProcessor implements IPipelineProcessor {
      */
     private void updateStatus(PipelineStatus status) {
         Date now = new Date();
-        ApplicationPipelineRecordDO update = new ApplicationPipelineRecordDO();
-        update.setId(recordId);
+        ApplicationPipelineTaskDO update = new ApplicationPipelineTaskDO();
+        update.setId(taskId);
         update.setExecStatus(status.getStatus());
         update.setUpdateTime(now);
         switch (status) {
@@ -222,12 +222,12 @@ public class PipelineProcessor implements IPipelineProcessor {
             default:
                 break;
         }
-        applicationPipelineRecordDAO.updateById(update);
+        applicationPipelineTaskDAO.updateById(update);
     }
 
     @Override
     public void terminate() {
-        log.info("应用流水线执行停止 id: {}", recordId);
+        log.info("应用流水线执行停止 id: {}", taskId);
         this.terminated = true;
         if (currentHandler != null) {
             currentHandler.terminate();

@@ -68,6 +68,11 @@ public class EventKeys {
     public static final String PROFILE_ID = "profileId";
 
     /**
+     * detail id
+     */
+    public static final String DETAIL_ID = "detailId";
+
+    /**
      * type
      */
     public static final String TYPE = "type";
@@ -166,6 +171,11 @@ public class EventKeys {
      * 标题
      */
     public static final String TITLE = "title";
+
+    /**
+     * 阶段
+     */
+    public static final String STAGE = "stage";
 
     /**
      * 系统

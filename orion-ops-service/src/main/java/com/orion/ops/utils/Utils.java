@@ -206,7 +206,7 @@ public class Utils {
      * @return lf
      */
     public static String getEndLfWithEof(String s) {
-        return s.endsWith(Const.LF) ? s + Const.LF : s + "\n\n";
+        return s.endsWith(Const.LF) ? s + Const.LF : s + Const.LF_2;
     }
 
 }

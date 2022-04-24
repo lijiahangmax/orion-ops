@@ -3,8 +3,8 @@ package com.orion.ops.handler.app.pipeline.stage;
 import com.orion.able.Executable;
 import com.orion.ops.consts.app.PipelineDetailStatus;
 import com.orion.ops.consts.app.StageType;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
-import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.utils.Exceptions;
 
 /**
@@ -36,17 +36,17 @@ public interface IStageHandler extends Executable {
     /**
      * 获取阶段处理器
      *
-     * @param record record
+     * @param task   task
      * @param detail detail
      * @return 阶段处理器
      */
-    static IStageHandler with(ApplicationPipelineRecordDO record, ApplicationPipelineDetailRecordDO detail) {
+    static IStageHandler with(ApplicationPipelineTaskDO task, ApplicationPipelineTaskDetailDO detail) {
         StageType stageType = StageType.of(detail.getStageType());
         switch (stageType) {
             case BUILD:
-                return new BuildStageHandler(record, detail);
+                return new BuildStageHandler(task, detail);
             case RELEASE:
-                return new ReleaseStageHandler(record, detail);
+                return new ReleaseStageHandler(task, detail);
             default:
                 throw Exceptions.argument();
         }
