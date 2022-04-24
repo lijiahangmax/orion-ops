@@ -115,21 +115,21 @@
               删除
             </a-button>
           </a-popconfirm>
-          <a-divider type="vertical"/>
-          <!-- 清空 -->
-          <a-popconfirm title="确认要清空历史应用构建仓库?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"
-                        @confirm="clean(record.id)">
-            <a-button class="p0"
-                      type="link"
-                      style="height: 22px"
-                      :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">
-              清空
-            </a-button>
-          </a-popconfirm>
+          <!--          <a-divider type="vertical"/>-->
+          <!--          &lt;!&ndash; 清空 &ndash;&gt;-->
+          <!--          <a-popconfirm title="确认要清空历史应用构建仓库?"-->
+          <!--                        placement="topRight"-->
+          <!--                        ok-text="确定"-->
+          <!--                        cancel-text="取消"-->
+          <!--                        :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status"-->
+          <!--                        @confirm="clean(record.id)">-->
+          <!--            <a-button class="p0"-->
+          <!--                      type="link"-->
+          <!--                      style="height: 22px"-->
+          <!--                      :disabled="$enum.VCS_STATUS.INITIALIZING.value === record.status">-->
+          <!--              清空-->
+          <!--            </a-button>-->
+          <!--          </a-popconfirm>-->
         </template>
       </a-table>
     </div>
@@ -269,10 +269,7 @@ export default {
       this.$api.initVcs({
         id: record.id
       }).then(() => {
-        this.$message.success('初始化成功')
-        record.status = this.$enum.VCS_STATUS.OK.value
-      }).catch(() => {
-        record.status = this.$enum.VCS_STATUS.ERROR.value
+        this.$message.success('正在初始化')
       })
     },
     reInit(record) {
@@ -280,10 +277,7 @@ export default {
       this.$api.reInitVcs({
         id: record.id
       }).then(() => {
-        this.$message.success('重新初始化成功')
-        record.status = this.$enum.VCS_STATUS.OK.value
-      }).catch(() => {
-        record.status = this.$enum.VCS_STATUS.ERROR.value
+        this.$message.success('正在重新初始化')
       })
     },
     add() {

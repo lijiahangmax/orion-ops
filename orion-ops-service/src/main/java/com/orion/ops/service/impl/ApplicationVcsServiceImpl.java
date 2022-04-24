@@ -16,6 +16,7 @@ import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
 import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
 import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
@@ -23,13 +24,11 @@ import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.service.api.WebSideMessageService;
-import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.Utils;
-import com.orion.ops.utils.Valid;
-import com.orion.ops.utils.ValueMix;
+import com.orion.ops.utils.*;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.Threads;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
@@ -166,7 +165,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
                 .like(Objects.nonNull(request.getUsername()), ApplicationVcsDO::getVscUsername, request.getUsername())
                 .eq(Objects.nonNull(request.getType()), ApplicationVcsDO::getVcsType, request.getType())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationVcsDO::getVcsStatus, request.getStatus())
-                .orderByDesc(ApplicationVcsDO::getUpdateTime);
+                .orderByAsc(ApplicationVcsDO::getId);
         return DataQuery.of(applicationVcsDAO)
                 .page(request)
                 .wrapper(wrapper)
@@ -193,52 +192,63 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         } else if (!VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()) && isReInit) {
             throw Exceptions.runtime(MessageConst.VCS_UNINITIALIZED);
         }
+        // 获取当前用户
+        UserDTO user = Currents.getUser();
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
         // 修改状态
         ApplicationVcsDO update = new ApplicationVcsDO();
         update.setId(id);
         update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
-        // 删除
-        File clonePath = new File(Utils.getVcsEventDir(id));
-        Files1.delete(clonePath);
-        // 初始化
-        Exception ex = null;
-        Gits gits = null;
-        try {
-            // clone
-            String[] pair = this.getVcsUsernamePassword(vcs);
-            String username = pair[0];
-            String password = pair[1];
-            if (username == null) {
-                gits = Gits.clone(vcs.getVscUrl(), clonePath);
-            } else {
-                gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
-            }
-        } catch (Exception e) {
-            ex = e;
-        } finally {
-            Streams.close(gits);
-        }
-        // 发送站内信
-        Map<String, Object> params = Maps.newMap();
-        params.put(EventKeys.ID, vcs.getId());
-        params.put(EventKeys.NAME, vcs.getVcsName());
-        // 修改状态
-        if (ex == null) {
-            update.setVcsStatus(VcsStatus.OK.getStatus());
-            webSideMessageService.addMessage(MessageType.VCS_INIT_SUCCESS, params);
-        } else {
+        // 提交线程异步处理
+        log.info("开始初始化应用仓库 id: {}", id);
+        Threads.start(() -> {
+            // 删除
+            File clonePath = new File(Utils.getVcsEventDir(id));
             Files1.delete(clonePath);
-            update.setVcsStatus(VcsStatus.ERROR.getStatus());
-            webSideMessageService.addMessage(MessageType.VCS_INIT_FAILURE, params);
-        }
-        applicationVcsDAO.updateById(update);
-        // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
-        if (ex != null) {
-            throw Exceptions.argument(MessageConst.VCS_INIT_ERROR, ex);
-        }
+            // 初始化
+            Exception ex = null;
+            Gits gits = null;
+            try {
+                // clone
+                String[] pair = this.getVcsUsernamePassword(vcs);
+                String username = pair[0];
+                String password = pair[1];
+                if (username == null) {
+                    gits = Gits.clone(vcs.getVscUrl(), clonePath);
+                } else {
+                    gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
+                }
+            } catch (Exception e) {
+                ex = e;
+            } finally {
+                Streams.close(gits);
+            }
+            MessageType message;
+            // 修改状态
+            if (ex == null) {
+                message = MessageType.VCS_INIT_SUCCESS;
+                update.setVcsStatus(VcsStatus.OK.getStatus());
+            } else {
+                Files1.delete(clonePath);
+                message = MessageType.VCS_INIT_FAILURE;
+                update.setVcsStatus(VcsStatus.ERROR.getStatus());
+            }
+            applicationVcsDAO.updateById(update);
+            // 发送站内信
+            Map<String, Object> params = Maps.newMap();
+            params.put(EventKeys.ID, vcs.getId());
+            params.put(EventKeys.NAME, vcs.getVcsName());
+            webSideMessageService.addMessage(message, user.getId(), user.getUsername(), params);
+            if (ex == null) {
+                log.info("应用仓库初始化成功 id: {}", id);
+            } else {
+                log.error("应用仓库初始化失败 id: {}", id, ex);
+                throw Exceptions.argument(MessageConst.VCS_INIT_ERROR, ex);
+            }
+        });
     }
 
     @Override
