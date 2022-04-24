@@ -197,4 +197,16 @@ public class Utils {
         return StainCode.prefix(code) + key + StainCode.SUFFIX;
     }
 
+    /**
+     * 判断是否为 \n 结尾
+     * 是则返回 \n
+     * 否则返回 \n\n
+     *
+     * @param s s
+     * @return lf
+     */
+    public static String getEndLfWithEof(String s) {
+        return s.endsWith(Const.LF) ? s + Const.LF : s + "\n\n";
+    }
+
 }

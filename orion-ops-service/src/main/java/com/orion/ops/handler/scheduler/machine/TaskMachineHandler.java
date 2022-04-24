@@ -1,12 +1,15 @@
 package com.orion.ops.handler.scheduler.machine;
 
+import com.orion.constant.Letters;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.SchedulerTaskMachineRecordDAO;
 import com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.utils.Utils;
 import com.orion.remote.ExitCode;
 import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.ssh.CommandExecutor;
@@ -122,11 +125,11 @@ public class TaskMachineHandler implements ITaskMachineHandler {
         // 更新状态
         this.updateStatus(SchedulerTaskMachineStatus.TERMINATED);
         // 拼接日志
-        StringBuilder log = new StringBuilder()
-                .append("\n调度任务执行停止\n结束时间: ")
-                .append(Dates.format(endTime))
-                .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                .append("ms\n");
+        StringBuilder log = new StringBuilder(Const.LF)
+                .append(Utils.getStainKeyWords("# 调度任务执行停止", StainCode.GLOSS_YELLOW))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         this.appendLog(log.toString());
     }
 
@@ -143,16 +146,31 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             this.updateStatus(SchedulerTaskMachineStatus.FAILURE);
         }
         // 拼接日志
+        long used = endTime.getTime() - startTime.getTime();
         StringBuilder log = new StringBuilder()
-                .append("\n调度任务执行完成\n结束时间: ")
-                .append(Dates.format(endTime))
-                .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                .append("ms\n");
+                .append(Letters.LF)
+                .append(Utils.getStainKeyWords("# 调度任务执行完成", StainCode.GLOSS_GREEN))
+                .append(Letters.LF);
+        log.append("exit code: ")
+                .append(execSuccess
+                        ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
+                        : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
+                .append(Letters.LF);
         log.append("执行结果: ")
-                .append(execSuccess ? "成功" : "失败")
-                .append(" exitCode: ")
-                .append(exitCode)
-                .append(Const.LF);
+                .append(execSuccess
+                        ? Utils.getStainKeyWords(Const.SUCCESS_CN, StainCode.GLOSS_BLUE)
+                        : Utils.getStainKeyWords(Const.FAILURE_CN, StainCode.GLOSS_RED))
+                .append(Letters.LF);
+        log.append("结束时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append("; used ")
+                .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
+                .append(" (")
+                .append(StainCode.prefix(StainCode.GLOSS_BLUE))
+                .append(used)
+                .append("ms")
+                .append(StainCode.SUFFIX)
+                .append(")\n");
         this.appendLog(log.toString());
     }
 
@@ -165,11 +183,13 @@ public class TaskMachineHandler implements ITaskMachineHandler {
         this.updateStatus(SchedulerTaskMachineStatus.FAILURE);
         // 拼接日志
         StringBuilder log = new StringBuilder()
-                .append("\n调度任务执行失败\n结束时间: ")
-                .append(Dates.format(endTime))
-                .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                .append("ms\n")
-                .append(Exceptions.getStackTraceAsString(e));
+                .append(Const.LF)
+                .append(Utils.getStainKeyWords("# 调度任务执行失败", StainCode.GLOSS_RED))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Letters.LF)
+                .append(Exceptions.getStackTraceAsString(e))
+                .append(Const.LF);
         this.appendLog(log.toString());
     }
 
@@ -204,15 +224,21 @@ public class TaskMachineHandler implements ITaskMachineHandler {
         this.logOutputStream = Files1.openOutputStreamFastSafe(logFile);
         // 拼接开始日志
         StringBuilder log = new StringBuilder()
-                .append("开始执行调度任务 ")
-                .append(machineRecord.getMachineName())
-                .append(Const.LF)
-                .append("开始时间: ")
-                .append(Dates.format(startTime))
+                .append(Utils.getStainKeyWords("# 开始执行调度任务 ", StainCode.GLOSS_GREEN))
                 .append(Const.LF);
-        log.append("执行命令:\n")
-                .append(machineRecord.getExecCommand())
+        log.append("执行机器: ")
+                .append(Utils.getStainKeyWords(machineRecord.getMachineName(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("开始时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
                 .append(Const.LF)
+                .append(Const.LF);
+        log.append(Utils.getStainKeyWords("# 执行命令", StainCode.GLOSS_GREEN))
+                .append(Const.LF)
+                .append(StainCode.prefix(StainCode.GLOSS_CYAN))
+                .append(Utils.getEndLfWithEof(machineRecord.getExecCommand()))
+                .append(StainCode.SUFFIX)
+                .append(Utils.getStainKeyWords("# 开始执行", StainCode.GLOSS_GREEN))
                 .append(Const.LF);
         this.appendLog(log.toString());
     }
@@ -225,6 +251,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
     @SneakyThrows
     private void appendLog(String log) {
         logOutputStream.write(Strings.bytes(log));
+        logOutputStream.flush();
     }
 
     /**

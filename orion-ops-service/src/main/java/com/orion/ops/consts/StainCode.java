@@ -45,9 +45,9 @@ public class StainCode {
     public static final int BLUE = 34;
 
     /**
-     * 品红色
+     * 紫色
      */
-    public static final int MAGENTA = 35;
+    public static final int PURPLE = 35;
 
     /**
      * 青色
@@ -87,9 +87,9 @@ public class StainCode {
     public static final int BG_BLUE = 44;
 
     /**
-     * 品红色 背景色
+     * 紫色 背景色
      */
-    public static final int BG_MAGENTA = 45;
+    public static final int BG_PURPLE = 45;
 
     /**
      * 青色 背景色
@@ -129,9 +129,9 @@ public class StainCode {
     public static final int GLOSS_BLUE = 94;
 
     /**
-     * 亮品红色
+     * 亮紫色
      */
-    public static final int GLOSS_MAGENTA = 95;
+    public static final int GLOSS_PURPLE = 95;
 
     /**
      * 亮青色
@@ -171,9 +171,9 @@ public class StainCode {
     public static final int BG_GLOSS_BLUE = 104;
 
     /**
-     * 亮品红色 背景色
+     * 亮紫色 背景色
      */
-    public static final int BG_GLOSS_MAGENTA = 105;
+    public static final int BG_GLOSS_PURPLE = 105;
 
     /**
      * 亮青色 背景色
