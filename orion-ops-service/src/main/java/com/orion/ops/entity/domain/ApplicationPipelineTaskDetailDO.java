@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 应用流水线执行明细详情
+ * 应用流水线任务详情
  * </p>
  *
  * @author Jiahang Li
@@ -17,8 +17,8 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("application_pipeline_detail_record")
-public class ApplicationPipelineDetailRecordDO implements Serializable {
+@TableName("application_pipeline_task_detail")
+public class ApplicationPipelineTaskDetailDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,10 +41,16 @@ public class ApplicationPipelineDetailRecordDO implements Serializable {
     private Long pipelineDetailId;
 
     /**
-     * 流水线操作明细id
+     * 流水线操作任务id
      */
-    @TableField("record_id")
-    private Long recordId;
+    @TableField("task_id")
+    private Long taskId;
+
+    /**
+     * 引用id
+     */
+    @TableField("rel_id")
+    private Long relId;
 
     /**
      * 应用id

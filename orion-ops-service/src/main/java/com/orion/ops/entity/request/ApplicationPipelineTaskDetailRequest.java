@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2022/4/7 10:46
  */
 @Data
-public class ApplicationPipelineDetailRecordRequest {
+public class ApplicationPipelineTaskDetailRequest {
 
     /**
      * id

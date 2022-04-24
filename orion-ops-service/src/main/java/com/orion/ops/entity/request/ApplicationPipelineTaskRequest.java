@@ -16,7 +16,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ApplicationPipelineRecordRequest extends PageRequest {
+public class ApplicationPipelineTaskRequest extends PageRequest {
 
     /**
      * 环境id
@@ -37,6 +37,11 @@ public class ApplicationPipelineRecordRequest extends PageRequest {
      * id
      */
     private List<Long> idList;
+
+    /**
+     * detail id
+     */
+    private List<Long> detailIdList;
 
     /**
      * 流水线id
@@ -92,6 +97,6 @@ public class ApplicationPipelineRecordRequest extends PageRequest {
     /**
      * 执行明细
      */
-    private List<ApplicationPipelineDetailRecordRequest> details;
+    private List<ApplicationPipelineTaskDetailRequest> details;
 
 }

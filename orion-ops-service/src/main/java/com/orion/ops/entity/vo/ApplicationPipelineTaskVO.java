@@ -1,6 +1,6 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.domain.ApplicationPipelineRecordDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
@@ -18,7 +18,7 @@ import java.util.Optional;
  * @since 2022/4/14 9:47
  */
 @Data
-public class ApplicationPipelineRecordVO {
+public class ApplicationPipelineTaskVO {
 
     /**
      * id
@@ -165,11 +165,11 @@ public class ApplicationPipelineRecordVO {
     /**
      * 详情
      */
-    private List<ApplicationPipelineDetailRecordVO> details;
+    private List<ApplicationPipelineTaskDetailVO> details;
 
     static {
-        TypeStore.STORE.register(ApplicationPipelineRecordDO.class, ApplicationPipelineRecordVO.class, p -> {
-            ApplicationPipelineRecordVO vo = new ApplicationPipelineRecordVO();
+        TypeStore.STORE.register(ApplicationPipelineTaskDO.class, ApplicationPipelineTaskVO.class, p -> {
+            ApplicationPipelineTaskVO vo = new ApplicationPipelineTaskVO();
             vo.setId(p.getId());
             vo.setPipelineId(p.getPipelineId());
             vo.setPipelineName(p.getPipelineName());

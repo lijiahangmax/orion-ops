@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 应用流水线执行日志
+ * 应用流水线任务日志
  * </p>
  *
  * @author Jiahang Li
@@ -17,8 +17,8 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("application_pipeline_record_log")
-public class ApplicationPipelineRecordLogDO implements Serializable {
+@TableName("application_pipeline_task_log")
+public class ApplicationPipelineTaskLogDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,16 +29,16 @@ public class ApplicationPipelineRecordLogDO implements Serializable {
     private Long id;
 
     /**
-     * 流水线明细id
+     * 流水线任务id
      */
-    @TableField("record_id")
-    private Long recordId;
+    @TableField("task_id")
+    private Long taskId;
 
     /**
-     * 流水线详情明细id
+     * 流水线任务详情id
      */
-    @TableField("record_detail_id")
-    private Long recordDetailId;
+    @TableField("task_detail_id")
+    private Long taskDetailId;
 
     /**
      * 日志状态 10创建 20执行 30成功 40失败 50停止 60跳过

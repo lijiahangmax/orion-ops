@@ -1,10 +1,7 @@
 package com.orion.ops.entity.vo;
 
-import com.alibaba.fastjson.JSON;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
-import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.Converts;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import lombok.Data;
@@ -13,49 +10,28 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * 流水线明细详情
+ * 应用流水线任务详情状态
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2022/4/8 10:37
+ * @since 2022/4/24 16:53
  */
 @Data
-public class ApplicationPipelineDetailRecordVO {
-
+public class ApplicationPipelineTaskDetailStatusVO {
     /**
      * id
      */
     private Long id;
 
     /**
-     * 流水线操作明细id
+     * 流水线任务id
      */
-    private Long recordId;
+    private Long taskId;
 
     /**
-     * 应用id
+     * relId
      */
-    private Long appId;
-
-    /**
-     * 应用名称
-     */
-    private String appName;
-
-    /**
-     * 应用tag
-     */
-    private String appTag;
-
-    /**
-     * 阶段类型 10构建 20发布
-     */
-    private Integer stageType;
-
-    /**
-     * 阶段操作配置
-     */
-    private ApplicationPipelineStageConfigVO config;
+    private Long relId;
 
     /**
      * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止
@@ -95,16 +71,11 @@ public class ApplicationPipelineDetailRecordVO {
     private String keepTime;
 
     static {
-        TypeStore.STORE.register(ApplicationPipelineDetailRecordDO.class, ApplicationPipelineDetailRecordVO.class, p -> {
-            ApplicationPipelineDetailRecordVO vo = new ApplicationPipelineDetailRecordVO();
+        TypeStore.STORE.register(ApplicationPipelineTaskDetailDO.class, ApplicationPipelineTaskDetailStatusVO.class, p -> {
+            ApplicationPipelineTaskDetailStatusVO vo = new ApplicationPipelineTaskDetailStatusVO();
             vo.setId(p.getId());
-            vo.setRecordId(p.getRecordId());
-            vo.setAppId(p.getAppId());
-            vo.setAppName(p.getAppName());
-            vo.setAppTag(p.getAppTag());
-            vo.setStageType(p.getStageType());
-            ApplicationPipelineStageConfigDTO config = JSON.parseObject(p.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
-            vo.setConfig(Converts.to(config, ApplicationPipelineStageConfigVO.class));
+            vo.setTaskId(p.getTaskId());
+            vo.setRelId(p.getRelId());
             vo.setStatus(p.getExecStatus());
             Date startTime = p.getExecStartTime();
             Date endTime = p.getExecEndTime();

@@ -481,54 +481,54 @@ public enum EventType {
     DELETE_PIPELINE(5515, EventClassify.PIPELINE, "删除应用流水线 <sb>${count}</sb>个"),
 
     /**
-     * 提交执行应用流水线
+     * 提交应用流水线任务
      */
-    SUBMIT_PIPELINE_EXEC(5605, EventClassify.PIPELINE, "提交执行应用流水线 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
+    SUBMIT_PIPELINE_TASK(5605, EventClassify.PIPELINE, "提交应用流水线任务 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
 
     /**
-     * 审核执行应用流水线
+     * 审核应用流水线任务
      */
-    AUDIT_PIPELINE_EXEC(5610, EventClassify.PIPELINE, "审核执行应用流水线${operator} <sb>${name}</sb> <sb>${title}</sb>"),
+    AUDIT_PIPELINE_TASK(5610, EventClassify.PIPELINE, "审核应用流水线任务${operator} <sb>${name}</sb> <sb>${title}</sb>"),
 
     /**
-     * 复制执行应用流水线
+     * 复制应用流水线任务
      */
-    COPY_PIPELINE_EXEC(5615, EventClassify.PIPELINE, "复制执行应用流水线 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
+    COPY_PIPELINE_TASK(5615, EventClassify.PIPELINE, "复制应用流水线任务 <sb>${pipelineName}</sb> <sb>${execTitle}</sb>"),
 
     /**
-     * 执行应用流水线
+     * 执行应用流水线任务
      */
-    EXEC_PIPELINE_EXEC(5620, EventClassify.PIPELINE, "执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+    EXEC_PIPELINE_TASK(5620, EventClassify.PIPELINE, "执行应用流水线任务 <sb>${name}</sb> <sb>${title}</sb>"),
 
     /**
-     * 删除执行应用流水线
+     * 删除应用流水线任务
      */
-    DELETE_PIPELINE_EXEC(5625, EventClassify.PIPELINE, "删除执行应用流水线 <sb>${count}</sb>个"),
+    DELETE_PIPELINE_TASK(5625, EventClassify.PIPELINE, "删除应用流水线任务 <sb>${count}</sb>个"),
 
     /**
-     * 设置定时执行流水线
+     * 设置定时执行应用流水线任务
      */
-    SET_PIPELINE_TIMED_EXEC(5630, EventClassify.PIPELINE, "设置定时执行应用流水线 <sb>${name}</sb> <sb>${title}</sb> -> <sb>${time}</sb>"),
+    SET_PIPELINE_TIMED_TASK(5630, EventClassify.PIPELINE, "设置定时执行应用流水线任务 <sb>${name}</sb> <sb>${title}</sb> -> <sb>${time}</sb>"),
 
     /**
-     * 取消定时执行流水线
+     * 取消定时执行应用流水线任务
      */
-    CANCEL_PIPELINE_TIMED_EXEC(5635, EventClassify.PIPELINE, "取消定时执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+    CANCEL_PIPELINE_TIMED_TASK(5635, EventClassify.PIPELINE, "取消定时执行应用流水线任务 <sb>${name}</sb> <sb>${title}</sb>"),
 
     /**
-     * 停止执行应用流水线
+     * 停止执行应用流水线任务
      */
-    TERMINATE_PIPELINE_EXEC(5640, EventClassify.PIPELINE, "停止执行应用流水线 <sb>${name}</sb> <sb>${title}</sb>"),
+    TERMINATE_PIPELINE_TASK(5640, EventClassify.PIPELINE, "停止执行应用流水线任务 <sb>${name}</sb> <sb>${title}</sb>"),
 
     /**
-     * 停止执行应用流水线操作
+     * 停止执行应用流水线任务操作
      */
-    TERMINATE_PIPELINE_EXEC_DETAIL(5645, EventClassify.PIPELINE, "停止执行应用流水线部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb>${stage} ${appName}</sb>)"),
+    TERMINATE_PIPELINE_TASK_DETAIL(5645, EventClassify.PIPELINE, "停止执行应用流水线任务部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb 0>${stage} ${appName}</sb>)"),
 
     /**
-     * 跳过执行应用流水线操作
+     * 跳过执行应用流水线任务操作
      */
-    SKIP_PIPELINE_EXEC_DETAIL(5650, EventClassify.PIPELINE, "跳过执行应用流水线部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb>${stage} ${appName}</sb>)"),
+    SKIP_PIPELINE_TASK_DETAIL(5650, EventClassify.PIPELINE, "跳过执行应用流水线任务部分操作 <sb>${name}</sb> <sb>${title}</sb> (<sb 0>${stage} ${appName}</sb>)"),
 
     // -------------------- 系统环境变量操作 --------------------
 

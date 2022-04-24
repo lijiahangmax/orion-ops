@@ -1,6 +1,6 @@
 package com.orion.ops.task.impl;
 
-import com.orion.ops.service.api.ApplicationPipelineRecordService;
+import com.orion.ops.service.api.ApplicationPipelineTaskService;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipelineTaskImpl implements Runnable {
 
-    protected static ApplicationPipelineRecordService applicationPipelineRecordService = SpringHolder.getBean(ApplicationPipelineRecordService.class);
+    protected static ApplicationPipelineTaskService applicationPipelineTaskService = SpringHolder.getBean(ApplicationPipelineTaskService.class);
 
     private Long pipelineRecordId;
 
@@ -26,7 +26,7 @@ public class PipelineTaskImpl implements Runnable {
     @Override
     public void run() {
         log.info("定时执行流水线任务-触发 releaseId: {}, time: {}", pipelineRecordId, Dates.current());
-        applicationPipelineRecordService.execPipeline(pipelineRecordId, true);
+        applicationPipelineTaskService.execPipeline(pipelineRecordId, true);
     }
 
 }

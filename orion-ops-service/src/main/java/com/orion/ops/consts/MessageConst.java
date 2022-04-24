@@ -192,6 +192,8 @@ public class MessageConst {
 
     public static final String PIPELINE_ABSENT = "流水线不存在";
 
+    public static final String PIPELINE_TASK_ABSENT = "流水线任务不存在";
+
     public static final String PIPELINE_DETAIL_EMPTY = "流水线操作为空";
 
     public static final String PIPELINE_DETAIL_ABSENT = "未查询到流水线操作";

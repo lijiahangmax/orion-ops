@@ -3,15 +3,15 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.dao.ApplicationBuildDAO;
-import com.orion.ops.dao.ApplicationPipelineDetailRecordDAO;
+import com.orion.ops.dao.ApplicationPipelineTaskDetailDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
-import com.orion.ops.entity.domain.ApplicationPipelineDetailRecordDO;
+import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.vo.ApplicationPipelineDetailRecordVO;
 import com.orion.ops.entity.vo.ApplicationPipelineStageConfigVO;
+import com.orion.ops.entity.vo.ApplicationPipelineTaskDetailVO;
 import com.orion.ops.entity.vo.MachineInfoVO;
-import com.orion.ops.service.api.ApplicationPipelineDetailRecordService;
+import com.orion.ops.service.api.ApplicationPipelineTaskDetailService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
@@ -23,17 +23,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * 应用流水线详情明细服务
+ * 应用流水线任务详情服务
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/7 8:56
  */
-@Service("applicationPipelineDetailRecordService")
-public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPipelineDetailRecordService {
+@Service("applicationPipelineTaskDetailService")
+public class ApplicationPipelineTaskDetailServiceImpl implements ApplicationPipelineTaskDetailService {
 
     @Resource
-    private ApplicationPipelineDetailRecordDAO applicationPipelineDetailRecordDAO;
+    private ApplicationPipelineTaskDetailDAO applicationPipelineTaskDetailDAO;
 
     @Resource
     private ApplicationBuildDAO applicationBuildDAO;
@@ -42,16 +42,16 @@ public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPi
     private MachineInfoDAO machineInfoDAO;
 
     @Override
-    public List<ApplicationPipelineDetailRecordVO> getRecordDetails(Long recordId) {
-        LambdaQueryWrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
-                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
+    public List<ApplicationPipelineTaskDetailVO> getTaskDetails(Long taskId) {
+        LambdaQueryWrapper<ApplicationPipelineTaskDetailDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDetailDO>()
+                .eq(ApplicationPipelineTaskDetailDO::getTaskId, taskId);
         // 查询列表
-        List<ApplicationPipelineDetailRecordVO> details = DataQuery.of(applicationPipelineDetailRecordDAO)
+        List<ApplicationPipelineTaskDetailVO> details = DataQuery.of(applicationPipelineTaskDetailDAO)
                 .wrapper(wrapper)
-                .list(ApplicationPipelineDetailRecordVO.class);
+                .list(ApplicationPipelineTaskDetailVO.class);
         // 设置配置信息 构建序列
         List<ApplicationPipelineStageConfigVO> buildConfigList = details.stream()
-                .map(ApplicationPipelineDetailRecordVO::getConfig)
+                .map(ApplicationPipelineTaskDetailVO::getConfig)
                 .filter(s -> s.getBuildId() != null)
                 .collect(Collectors.toList());
         if (!buildConfigList.isEmpty()) {
@@ -71,7 +71,7 @@ public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPi
         }
         // 设置配置信息 构建序列
         List<ApplicationPipelineStageConfigVO> specifyMachineReleaseConfigList = details.stream()
-                .map(ApplicationPipelineDetailRecordVO::getConfig)
+                .map(ApplicationPipelineTaskDetailVO::getConfig)
                 .filter(s -> Lists.isNotEmpty(s.getMachineIdList()))
                 .collect(Collectors.toList());
         if (!specifyMachineReleaseConfigList.isEmpty()) {
@@ -96,24 +96,31 @@ public class ApplicationPipelineDetailRecordServiceImpl implements ApplicationPi
     }
 
     @Override
-    public List<ApplicationPipelineDetailRecordDO> selectRecordDetails(Long recordId) {
-        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
-                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
-        return applicationPipelineDetailRecordDAO.selectList(wrapper);
+    public List<ApplicationPipelineTaskDetailDO> selectTaskDetails(Long taskId) {
+        Wrapper<ApplicationPipelineTaskDetailDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDetailDO>()
+                .eq(ApplicationPipelineTaskDetailDO::getTaskId, taskId);
+        return applicationPipelineTaskDetailDAO.selectList(wrapper);
     }
 
     @Override
-    public Integer deleteByRecordId(Long recordId) {
-        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
-                .eq(ApplicationPipelineDetailRecordDO::getRecordId, recordId);
-        return applicationPipelineDetailRecordDAO.delete(wrapper);
+    public List<ApplicationPipelineTaskDetailDO> selectTaskDetails(List<Long> taskIdList) {
+        Wrapper<ApplicationPipelineTaskDetailDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDetailDO>()
+                .in(ApplicationPipelineTaskDetailDO::getTaskId, taskIdList);
+        return applicationPipelineTaskDetailDAO.selectList(wrapper);
     }
 
     @Override
-    public Integer deleteByRecordIdList(List<Long> recordIdList) {
-        Wrapper<ApplicationPipelineDetailRecordDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDetailRecordDO>()
-                .in(ApplicationPipelineDetailRecordDO::getRecordId, recordIdList);
-        return applicationPipelineDetailRecordDAO.delete(wrapper);
+    public Integer deleteByTaskId(Long taskId) {
+        Wrapper<ApplicationPipelineTaskDetailDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDetailDO>()
+                .eq(ApplicationPipelineTaskDetailDO::getTaskId, taskId);
+        return applicationPipelineTaskDetailDAO.delete(wrapper);
+    }
+
+    @Override
+    public Integer deleteByTaskIdList(List<Long> taskIdList) {
+        Wrapper<ApplicationPipelineTaskDetailDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDetailDO>()
+                .in(ApplicationPipelineTaskDetailDO::getTaskId, taskIdList);
+        return applicationPipelineTaskDetailDAO.delete(wrapper);
     }
 
 }

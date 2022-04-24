@@ -1,6 +1,6 @@
 package com.orion.ops.entity.dto;
 
-import com.orion.ops.entity.request.ApplicationPipelineDetailRecordRequest;
+import com.orion.ops.entity.request.ApplicationPipelineTaskDetailRequest;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
@@ -47,7 +47,7 @@ public class ApplicationPipelineStageConfigDTO {
     private List<Long> machineIdList;
 
     static {
-        TypeStore.STORE.register(ApplicationPipelineDetailRecordRequest.class, ApplicationPipelineStageConfigDTO.class, p -> {
+        TypeStore.STORE.register(ApplicationPipelineTaskDetailRequest.class, ApplicationPipelineStageConfigDTO.class, p -> {
             ApplicationPipelineStageConfigDTO dto = new ApplicationPipelineStageConfigDTO();
             dto.setBranchName(p.getBranchName());
             dto.setCommitId(p.getCommitId());
@@ -58,8 +58,8 @@ public class ApplicationPipelineStageConfigDTO {
             return dto;
         });
 
-        TypeStore.STORE.register(ApplicationPipelineStageConfigDTO.class, ApplicationPipelineDetailRecordRequest.class, p -> {
-            ApplicationPipelineDetailRecordRequest req = new ApplicationPipelineDetailRecordRequest();
+        TypeStore.STORE.register(ApplicationPipelineStageConfigDTO.class, ApplicationPipelineTaskDetailRequest.class, p -> {
+            ApplicationPipelineTaskDetailRequest req = new ApplicationPipelineTaskDetailRequest();
             req.setBranchName(p.getBranchName());
             req.setCommitId(p.getCommitId());
             req.setBuildId(p.getBuildId());

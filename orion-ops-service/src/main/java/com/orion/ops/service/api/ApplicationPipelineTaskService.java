@@ -1,21 +1,22 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.entity.request.ApplicationPipelineRecordRequest;
-import com.orion.ops.entity.vo.ApplicationPipelineRecordListVO;
-import com.orion.ops.entity.vo.ApplicationPipelineRecordVO;
+import com.orion.ops.entity.request.ApplicationPipelineTaskRequest;
+import com.orion.ops.entity.vo.ApplicationPipelineTaskListVO;
+import com.orion.ops.entity.vo.ApplicationPipelineTaskStatusVO;
+import com.orion.ops.entity.vo.ApplicationPipelineTaskVO;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * 应用流水线明细服务
+ * 应用流水线任务服务
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/7 8:55
  */
-public interface ApplicationPipelineRecordService {
+public interface ApplicationPipelineTaskService {
 
     /**
      * 获取列表
@@ -23,15 +24,15 @@ public interface ApplicationPipelineRecordService {
      * @param request request
      * @return rows
      */
-    DataGrid<ApplicationPipelineRecordListVO> getPipelineRecordList(ApplicationPipelineRecordRequest request);
+    DataGrid<ApplicationPipelineTaskListVO> getPipelineTaskList(ApplicationPipelineTaskRequest request);
 
     /**
      * 获取详情
      *
      * @param id id
-     * @return record
+     * @return task
      */
-    ApplicationPipelineRecordVO getPipelineRecordDetail(Long id);
+    ApplicationPipelineTaskVO getPipelineTaskDetail(Long id);
 
     /**
      * 提交流水线执行
@@ -39,7 +40,7 @@ public interface ApplicationPipelineRecordService {
      * @param request request
      * @return id
      */
-    Long submitPipelineExec(ApplicationPipelineRecordRequest request);
+    Long submitPipelineTask(ApplicationPipelineTaskRequest request);
 
     /**
      * 审核流水线
@@ -47,7 +48,7 @@ public interface ApplicationPipelineRecordService {
      * @param request request
      * @return effect
      */
-    Integer auditPipeline(ApplicationPipelineRecordRequest request);
+    Integer auditPipelineTask(ApplicationPipelineTaskRequest request);
 
     /**
      * 复制流水线
@@ -110,5 +111,22 @@ public interface ApplicationPipelineRecordService {
      * @param detailId detailId
      */
     void skipExecDetail(Long id, Long detailId);
+
+    /**
+     * 任务状态
+     *
+     * @param id id
+     * @return status
+     */
+    ApplicationPipelineTaskStatusVO getTaskStatus(Long id);
+
+    /**
+     * 任务状态列表
+     *
+     * @param idList       idList
+     * @param detailIdList detailIdList
+     * @return status
+     */
+    List<ApplicationPipelineTaskStatusVO> getTaskStatusList(List<Long> idList, List<Long> detailIdList);
 
 }
