@@ -60,7 +60,11 @@
                 <!-- 传输路径 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">产物传输路径</span>
-                  <a-textarea class="transfer-input" placeholder="目标机器产物传输绝对路径" :maxLength="512" v-model="transferPath"/>
+                  <a-textarea class="transfer-input"
+                              v-model="transferPath"
+                              :autoSize="{minRows: 1}"
+                              :maxLength="512"
+                              placeholder="目标机器产物传输绝对路径, 路径不能包含 \ 应该用 / 替换"/>
                 </div>
                 <!-- 文件夹类型选择 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
@@ -74,7 +78,7 @@
                   </a-select>
                 </div>
                 <!-- 文件夹类型描述 -->
-                <span class="transfer-dir-type-description" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                <span class="config-description" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
                   如构建产物为文件夹时可选 (传输整个文件夹 / 传输zip压缩文件) &nbsp;&nbsp;&nbsp;如产物不是文件夹则忽略
                 </span>
               </div>
@@ -232,6 +236,10 @@ export default {
             this.$message.warning('传输操作 传输路径不能为空')
             return
           }
+          if (this.transferPath.includes('\\')) {
+            this.$message.warning('产物传输路径不能包含 \\ 应该用 / 替换')
+            return
+          }
         }
       }
       this.loading = true
@@ -262,6 +270,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@label-width: 160px;
+@action-handler-width: 120px;
 @app-conf-container-width: 1030px;
 @app-action-container-width: 994px;
 @app-action-width: 876px;
@@ -272,13 +282,15 @@ export default {
 @action-divider-min-width: 830px;
 @action-divider-width: 990px;
 @app-action-footer-width: 700px;
+@footer-margin-left: 168px;
+@desc-margin-left: 160px;
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
   width: @app-conf-container-width;
 
   .label {
-    width: 160px;
+    width: @label-width;
     font-size: 15px;
     line-height: 32px;
   }
@@ -339,17 +351,10 @@ export default {
             width: @transfer-input-width;
           }
         }
-
-        .transfer-dir-type-description {
-          display: block;
-          padding-left: 160px;
-          color: rgba(0, 0, 0, .45);
-          font-size: 13px;
-        }
       }
 
       .app-action-handler {
-        width: 120px;
+        width: @action-handler-width;
         margin: 8px 0 0 8px;
       }
     }
@@ -362,13 +367,20 @@ export default {
   }
 
   #app-action-footer {
-    margin: 16px 0 8px 168px;
+    margin: 16px 0 8px @footer-margin-left;
     width: @app-action-footer-width;
 
     .app-action-footer-button {
       width: 100%;
       margin-bottom: 8px;
     }
+  }
+
+  .config-description {
+    margin: 4px 0 0 @desc-margin-left;
+    display: block;
+    color: rgba(0, 0, 0, .45);
+    font-size: 13px;
   }
 
 }

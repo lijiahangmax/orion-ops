@@ -2,12 +2,15 @@
   <div id="app-conf-container">
     <a-spin :spinning="loading">
       <!-- 产物路径 -->
-      <div id="app-bundle-wrapper">
-        <span class="label normal-label required-label">构建产物路径</span>
-        <a-textarea class="bundle-input"
-                    v-model="bundlePath"
-                    :maxLength="512"
-                    placeholder="宿主机构建产物路径 (绝对路径[以 '/' 开头] 或 基于版本仓库的相对路径)"/>
+      <div id="app-bundle-container">
+        <div id="app-bundle-wrapper">
+          <span class="label normal-label required-label">构建产物路径</span>
+          <a-textarea class="bundle-input"
+                      v-model="bundlePath"
+                      :maxLength="512"
+                      :autoSize="{minRows: 1}"
+                      :placeholder="'基于版本仓库的相对路径 或 绝对路径, 路径不能包含 \\\ 应该用 / 替换'"/>
+        </div>
       </div>
       <!-- 构建操作 -->
       <div id="app-action-container">
@@ -151,6 +154,10 @@ export default {
         this.$message.warning('请输入构建产物路径')
         return
       }
+      if (this.bundlePath.includes('\\')) {
+        this.$message.warning('构建产物路径不能包含 \\ 应该用 / 替换')
+        return
+      }
       if (!this.actions.length) {
         this.$message.warning('请设置构建操作')
         return
@@ -195,6 +202,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@label-width: 160px;
+@action-handler-width: 120px;
 @config-container-width: 1030px;
 @bundle-input-width: 700px;
 @app-action-container-width: 994px;
@@ -206,13 +215,15 @@ export default {
 @action-divider-min-width: 830px;
 @action-divider-width: 990px;
 @app-action-footer-width: 700px;
+@footer-margin-left: 168px;
+@desc-margin-left: 168px;
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
   width: @config-container-width;
 
   .label {
-    width: 160px;
+    width: @label-width;
     font-size: 15px;
     line-height: 32px;
   }
@@ -275,7 +286,7 @@ export default {
       }
 
       .app-action-handler {
-        width: 120px;
+        width: @action-handler-width;
         margin: 8px 0 0 8px;
       }
     }
@@ -288,13 +299,20 @@ export default {
   }
 
   #app-action-footer {
-    margin: 16px 0 8px 168px;
+    margin: 16px 0 8px @footer-margin-left;
     width: @app-action-footer-width;
 
     .app-action-footer-button {
       width: 100%;
       margin-bottom: 8px;
     }
+  }
+
+  .config-description {
+    margin: 4px 0 0 @desc-margin-left;
+    display: block;
+    color: rgba(0, 0, 0, .45);
+    font-size: 13px;
   }
 
 }

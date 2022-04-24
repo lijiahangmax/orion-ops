@@ -50,13 +50,13 @@
           {{ detail.createUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="创建时间" :span="3" v-if="detail.createTime !== null">
-          {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
+          {{ detail.createTime | formatDate }}
         </a-descriptions-item>
         <a-descriptions-item label="审核用户" :span="3" v-if="detail.auditUserName !== null">
           {{ detail.auditUserName }}
         </a-descriptions-item>
         <a-descriptions-item label="审核时间" :span="3" v-if="detail.auditTime !== null">
-          {{ detail.auditTime | formatDate }} ({{ detail.auditTimeAgo }})
+          {{ detail.auditTime | formatDate }}
         </a-descriptions-item>
         <a-descriptions-item label="审核批注" :span="3" v-if="detail.auditReason !== null">
           {{ detail.auditReason }}
@@ -215,10 +215,6 @@ export default {
   },
   filters: {
     ..._filters
-  },
-  beforeDestroy() {
-    this.pollId !== null && clearInterval(this.pollId)
-    this.pollId = null
   }
 }
 </script>

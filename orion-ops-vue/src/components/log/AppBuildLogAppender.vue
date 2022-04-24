@@ -149,7 +149,7 @@ export default {
       this.$api.terminateAppBuild({
         id: this.detail.id
       }).then(() => {
-        this.$message.success('已提交停止请求')
+        this.$message.success('已停止')
       })
     },
     setStepsCurrent() {

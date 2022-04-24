@@ -143,6 +143,9 @@ export default {
       })
     },
     close() {
+      if (!this.record.machines || !this.record.machines.length) {
+        return
+      }
       // 关闭tail
       for (const machine of this.record.machines) {
         const appender = this.$refs[`appender-${machine.id}`][0]

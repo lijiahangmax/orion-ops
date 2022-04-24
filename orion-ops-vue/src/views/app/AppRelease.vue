@@ -567,7 +567,7 @@ export default {
       this.$api.runnableAppRelease({
         id: record.id
       }).then(() => {
-        this.$message.success('已提交执行请求')
+        this.$message.success('已开始执行')
         record.status = this.$enum.RELEASE_STATUS.RUNNABLE.value
       })
     },
@@ -578,14 +578,14 @@ export default {
       this.$api.terminateAppRelease({
         id
       }).then(() => {
-        this.$message.success('已提交停止请求')
+        this.$message.success('已停止')
       })
     },
     rollback(id) {
       this.$api.rollbackAppRelease({
         id
       }).then(() => {
-        this.$message.success('已提交回滚请求')
+        this.$message.success('已创建回滚任务')
         this.getList({})
       })
     },

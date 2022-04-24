@@ -217,7 +217,7 @@ export default {
             cleanType: type.value
           }).then(() => {
             pending()
-            this.$message.success(`已提交 ${type.label} 清理任务`)
+            this.$message.success(`正在清理 ${type.label}`)
           }).catch(() => {
             pending()
             this.visibleClean[type.key] = true

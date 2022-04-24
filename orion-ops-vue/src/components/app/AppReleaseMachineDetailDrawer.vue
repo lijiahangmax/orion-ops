@@ -209,10 +209,6 @@ export default {
   },
   filters: {
     ..._filters
-  },
-  beforeDestroy() {
-    this.pollId !== null && clearInterval(this.pollId)
-    this.pollId = null
   }
 }
 </script>

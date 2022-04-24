@@ -1378,45 +1378,45 @@ const $enum = {
           value: 5515,
           label: '删除流水线'
         },
-        SUBMIT_PIPELINE_EXEC: {
+        SUBMIT_PIPELINE_TASK: {
           value: 5605,
           label: '提交执行任务'
         },
-        AUDIT_PIPELINE_EXEC: {
+        AUDIT_PIPELINE_TASK: {
           value: 5610,
           label: '审核任务'
         },
-        COPY_PIPELINE_EXEC: {
+        COPY_PIPELINE_TASK: {
           value: 5615,
           label: '复制任务'
         },
-        EXEC_PIPELINE_EXEC: {
+        EXEC_PIPELINE_TASK: {
           value: 5620,
           label: '执行任务'
         },
-        DELETE_PIPELINE_EXEC: {
+        DELETE_PIPELINE_TASK: {
           value: 5625,
           label: '删除任务'
         },
-        SET_PIPELINE_TIMED_EXEC: {
+        SET_PIPELINE_TIMED_TASK: {
           value: 5630,
           label: '设置定时执行'
         },
-        CANCEL_PIPELINE_TIMED_EXEC: {
+        CANCEL_PIPELINE_TIMED_TASK: {
           value: 5635,
           label: '取消定时执行'
         },
-        TERMINATE_PIPELINE_EXEC: {
+        TERMINATE_PIPELINE_TASK: {
           value: 5640,
           label: '停止执行任务'
         },
-        TERMINATE_PIPELINE_EXEC_DETAIL: {
+        TERMINATE_PIPELINE_TASK_DETAIL: {
           value: 5645,
-          label: '停止执行部分操作'
+          label: '停止执行操作'
         },
-        SKIP_PIPELINE_EXEC_DETAIL: {
+        SKIP_PIPELINE_TASK_DETAIL: {
           value: 5650,
-          label: '跳过执行部分操作'
+          label: '跳过执行操作'
         }
       }
     },
