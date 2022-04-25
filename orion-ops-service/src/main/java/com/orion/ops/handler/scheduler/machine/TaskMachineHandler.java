@@ -151,19 +151,14 @@ public class TaskMachineHandler implements ITaskMachineHandler {
                 .append(Letters.LF)
                 .append(Utils.getStainKeyWords("# 调度任务执行完成", StainCode.GLOSS_GREEN))
                 .append(Letters.LF);
-        log.append("exit code: ")
+        log.append("exitcode: ")
                 .append(execSuccess
                         ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
                         : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
                 .append(Letters.LF);
-        log.append("执行结果: ")
-                .append(execSuccess
-                        ? Utils.getStainKeyWords(Const.SUCCESS_CN, StainCode.GLOSS_BLUE)
-                        : Utils.getStainKeyWords(Const.FAILURE_CN, StainCode.GLOSS_RED))
-                .append(Letters.LF);
         log.append("结束时间: ")
                 .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
-                .append("; used ")
+                .append("  used ")
                 .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
                 .append(" (")
                 .append(StainCode.prefix(StainCode.GLOSS_BLUE))
@@ -231,8 +226,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
                 .append(Const.LF);
         log.append("开始时间: ")
                 .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
-                .append(Const.LF)
-                .append(Const.LF);
+                .append(Const.LF_2);
         log.append(Utils.getStainKeyWords("# 执行命令", StainCode.GLOSS_GREEN))
                 .append(Const.LF)
                 .append(StainCode.prefix(StainCode.GLOSS_CYAN))
