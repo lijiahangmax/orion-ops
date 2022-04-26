@@ -71,12 +71,12 @@
     "icon": "appstore",
     "children": [
       {
-        "name": "环境管理",
-        "path": "/app/profile"
-      },
-      {
         "name": "应用列表",
         "path": "/app/list"
+      },
+      {
+        "name": "流水线配置",
+        "path": "/app/pipeline/list"
       },
       {
         "name": "环境变量",
@@ -99,6 +99,10 @@
       {
         "name": "应用发布",
         "path": "/app/release/list"
+      },
+      {
+        "name": "流水线任务",
+        "path": "/app/pipeline/task"
       },
       {
         "name": "构建统计",
