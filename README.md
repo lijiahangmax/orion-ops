@@ -1,6 +1,6 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD) 等功能, 帮助开发人员快速定位问题,
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD)、操作流水线等功能, 帮助开发人员快速定位问题,
 致力于企业级应用。
 
 Github: https://github.com/lijiahangmax/orion-ops  
@@ -48,7 +48,7 @@ Demo: http://101.43.254.243/ops/#/
 
 > 机器列表
 
-![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8512578085516682386.png "机器列表")
+![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1264467313405831364.png "机器列表")
 
 > 在线终端
 
@@ -61,7 +61,7 @@ Demo: http://101.43.254.243/ops/#/
 
 > 批量执行
 
-![批量执行](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8195883496604225112.png "批量执行")
+![批量执行](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files4899857856529374903.png "批量执行")
 
 > 日志文件
 
@@ -69,39 +69,46 @@ Demo: http://101.43.254.243/ops/#/
 
 > 调度任务
 
-![调度任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files7140183316009047038.png "调度任务")  
-![调度执行列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files5875226043882871962.png "调度执行列表")  
-![调度执行日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files285645083754039026.png "调度执行日志")
+![调度任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files5065881246088616914.png "调度任务")  
+![调度执行列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files9138174215052119985.png "调度执行列表")  
+![调度执行日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files3786363821214889886.png "调度执行日志")
 
 > 应用配置
 
-![应用列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files3132678810569551460.png "应用列表")  
-![构建配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8930817600030460.png "构建配置")  
-![发布配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4557512125504191404.png "发布配置")
+![应用列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files2712336456731415928.png "应用列表")  
+![构建配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files7988531022696126381.png "构建配置")  
+![发布配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1800464505453752748.png "发布配置")
 
 > 构建列表
 
-![构建列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4960287647322644132.png "构建列表")  
-![构建日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files6245253907567338465.png "构建日志")
+![构建列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files2590331112837583257.png "构建列表")  
+![构建日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files4232688502598769434.png "构建日志")
 
 > 发布列表
 
-![发布列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4322661961526641390.png "发布列表")
-![发布日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4699926352889499394.png "发布日志")
+![发布列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6859723679488097151.png "发布列表")
+![发布日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files3662304038159928145.png "发布日志")
+
+> 流水线任务
+
+![流水线配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files694386343461173439.png "流水线配置")
+![流水线任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6446052342050924823.png "流水线任务")
+
+> 消息
+
+![操作日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1778166520525763829.png "操作日志")
+![站内信](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1762448910379225648.png "站内信")
 
 <br/>
 
 ## 联系我
 
 <img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="联系微信" width="268px"/>
-
 <br/>
 
 ## 支持一下
 
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files7884174196576690325.png" alt="微信收款码" width="268px"/>
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files8581952463146065537.jpg" alt="支付宝收款码" width="268px"/>
-
+<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files4948235556147091810.png" alt="收款码" width="540px"/>
 <br/>
 
 ## License

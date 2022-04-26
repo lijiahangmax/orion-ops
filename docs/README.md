@@ -1,6 +1,7 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD) 等功能, 帮助开发人员快速定位问题, 致力于企业级应用。
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD)、操作流水线等功能, 帮助开发人员快速定位问题,
+致力于企业级应用。
 
 Github: https://github.com/lijiahangmax/orion-ops  
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
@@ -76,12 +77,23 @@ Demo: http://101.43.254.243/ops/#/
 ![发布列表](./assert/img/release_list.png "发布列表")
 ![发布日志](./assert/img/release_log.png "发布日志")
 
+> 流水线任务
+
+![流水线配置](./assert/img/pipeline_list.png "流水线配置")
+![流水线任务](./assert/img/pipeline_record_list.png "流水线任务")
+
+> 消息
+
+![操作日志](./assert/img/operator_log.png "操作日志")
+![站内信](./assert/img/webside_message.png "站内信")
+
 ## 联系我
-<img src="./assert/img/concat_wx.jpg" alt="微信" width="350px"/>
+
+<img src="./assert/img/concat_wx.jpg" alt="微信" width="268px"/>
 
 ## 支持一下
-<img src="./assert/img/support_wx.png" alt="微信" width="350px"/>
-<img src="./assert/img/support_zfb.jpg" alt="支付宝" width="350px"/>
+
+<img src="./assert/img/support_pay.jpg" alt="收款码" width="540px"/>
 
 ## License
 

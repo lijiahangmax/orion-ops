@@ -5,6 +5,7 @@
     * [设计概念](about/concepts.md)
 
 * 快速开始
+    * [docker安装](quickstart/docker-install.md)
     * [普通安装](quickstart/install.md)
     * [FAQ](quickstart/faq.md)
 
@@ -13,9 +14,14 @@
     * [执行管理](operator/exec.md)
     * [调度任务](operator/scheduler.md)
     * [应用管理](operator/app.md)
-    * [CD/CD](operator/ci-cd.md)
+    * [CI/CD](operator/ci-cd.md)
     * [用户管理](operator/user.md)
     * [系统管理](operator/system.md)
 
 * 进阶指南
     * [二次开发](advance/second-dev.md)
+    *
+* 配置模板
+    * [java-springboot 项目](template/java-springboot-template.md)
+    * [java-tomcat 项目](template/java-tomcat-template.md)
+    * [node-vue 项目](template/node-vue-template.md)

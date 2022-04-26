@@ -8,7 +8,8 @@
 * Nginx
 * npm / yarn
 
-⚡ 注意: windows 环境二次开发需要安装 OpenSSH Server
+⚡ maven 推荐使用 阿里云 mirror  
+⚡ windows 环境二次开发需要安装 OpenSSH Server
 
 ### 配置
 
@@ -40,7 +41,8 @@
    ```   
 
 5. 运行  
-   后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户
+   后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户   
+   启动参数 idea 中设置  `应用设置` > `Environment` > `Program arguments`
 
 ### 测试访问
 
@@ -54,4 +56,3 @@
 如果是密码登录: 机器管理 > 机器列表 > `宿主机` > 更多 > 编辑 > 选择认证方式为密码 > 输入密码 > 确定  
 如果是秘钥登陆: 机器管理 > 机器秘钥 > 新建  
 配置完成后测试连接:  机器管理 > 机器列表 > `宿主机` > 更多 > 测试连接
-
