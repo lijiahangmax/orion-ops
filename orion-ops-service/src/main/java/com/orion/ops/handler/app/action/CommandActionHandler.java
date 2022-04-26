@@ -1,5 +1,7 @@
 package com.orion.ops.handler.app.action;
 
+import com.orion.ops.consts.StainCode;
+import com.orion.ops.utils.Utils;
 import com.orion.remote.ExitCode;
 import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
@@ -29,6 +31,7 @@ public class CommandActionHandler extends AbstractActionHandler {
 
     @Override
     protected void handler() throws Exception {
+        this.appendLog(Utils.getStainKeyWords("# 开始执行\n", StainCode.GLOSS_BLUE));
         // 打开executor
         this.executor = store.getSessionStore().getCommandExecutor(Strings.replaceCRLF(action.getActionCommand()));
         executor.inherit()

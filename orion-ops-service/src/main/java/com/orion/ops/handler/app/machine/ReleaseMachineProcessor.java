@@ -2,6 +2,7 @@ package com.orion.ops.handler.app.machine;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationMachineDAO;
@@ -14,6 +15,7 @@ import com.orion.ops.handler.app.action.IActionHandler;
 import com.orion.ops.handler.app.action.MachineActionStore;
 import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -158,12 +160,16 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
     @Override
     protected void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 开始执行机器操作 ")
-                .append(machine.getMachineName())
-                .append(Const.TAB);
-        log.append(machine.getMachineHost())
-                .append(Const.TAB)
-                .append(Dates.format(startTime))
+                .append(Utils.getStainKeyWords("# 开始执行主机发布任务", StainCode.GLOSS_GREEN))
+                .append(Const.LF);
+        log.append("机器名称: ")
+                .append(Utils.getStainKeyWords(machine.getMachineName(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("发布主机: ")
+                .append(Utils.getStainKeyWords(machine.getMachineHost(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("开始时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
                 .append(Const.LF);
         this.appendLog(log.toString());
     }

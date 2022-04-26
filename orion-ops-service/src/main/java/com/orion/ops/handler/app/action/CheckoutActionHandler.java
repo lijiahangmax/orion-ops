@@ -1,8 +1,11 @@
 package com.orion.ops.handler.app.action;
 
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.io.Files1;
@@ -43,12 +46,22 @@ public class CheckoutActionHandler extends AbstractActionHandler {
         String vcsClonePath = store.getVcsClonePath();
         Files1.delete(vcsClonePath);
         // 拼接日志
-        String log = "*** 检出url: " + vcs.getVscUrl() + "\n" +
-                "*** 分支: " + fullBranchName + "\n" +
-                "*** commit: " + commitId + "\n" +
-                "*** 检出目录: " + vcsClonePath + "\n" +
-                "*** 检出中...\n";
-        this.appendLog(log);
+        StringBuilder log = new StringBuilder(Const.LF_2)
+                .append(Utils.getStainKeyWords("    *** 检出url   ", StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(vcs.getVscUrl(), StainCode.GLOSS_CYAN))
+                .append(Const.LF);
+        log.append(Utils.getStainKeyWords("    *** 检出分支  ", StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(fullBranchName, StainCode.GLOSS_CYAN))
+                .append(Const.LF);
+        log.append(Utils.getStainKeyWords("    *** commitId  ", StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(commitId, StainCode.GLOSS_CYAN))
+                .append(Const.LF);
+        log.append(Utils.getStainKeyWords("    *** 检出目录  ", StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(vcsClonePath, StainCode.GLOSS_CYAN))
+                .append(Const.LF)
+                .append(Utils.getStainKeyWords("    *** 开始检出", StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        this.appendLog(log.toString());
         // clone
         try {
             CloneCommand clone = Git.cloneRepository()
@@ -64,7 +77,7 @@ public class CheckoutActionHandler extends AbstractActionHandler {
                 clone.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password));
             }
             this.git = clone.call();
-            this.appendLog("*** 检出完成\n");
+            this.appendLog(Utils.getStainKeyWords("    *** 检出完成", StainCode.GLOSS_GREEN) + Const.LF_3);
         } catch (Exception e) {
             throw Exceptions.vcs(MessageConst.CHECKOUT_ERROR, e);
         }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.orion.able.Executable;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.BuildStatus;
@@ -21,6 +22,7 @@ import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.WebSideMessageService;
+import com.orion.ops.utils.Utils;
 import com.orion.remote.channel.SessionStore;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
@@ -102,12 +104,15 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
         actions.forEach(s -> store.getActions().put(s.getId(), s));
         log.info("应用构建任务-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 插入store
+        Long vcsId = record.getVcsId();
         store.setRelId(id);
-        store.setVcsId(record.getVcsId());
+        store.setVcsId(vcsId);
         store.setBranchName(record.getBranchName());
         store.setCommitId(record.getCommitId());
-        String vcsClonePath = Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), record.getVcsId() + "/" + record.getId());
-        store.setVcsClonePath(vcsClonePath);
+        if (vcsId != null) {
+            String vcsClonePath = Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + record.getId());
+            store.setVcsClonePath(vcsClonePath);
+        }
         // 创建handler
         this.handlerList = IActionHandler.createHandler(actions, store);
     }
@@ -166,18 +171,24 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
     private void copyBundleFile() {
         // 查询应用产物目录
         String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        if (!bundlePath.startsWith(Const.SLASH)) {
+        if (!bundlePath.startsWith(Const.SLASH) && !Files1.isWindowsPath(bundlePath) && store.getVcsClonePath() != null) {
             // 基于代码目录的相对路径
             bundlePath = Files1.getPath(store.getVcsClonePath(), bundlePath);
         }
         // 检查产物文件是否存在
         File bundleFile = new File(bundlePath);
         if (!bundleFile.exists()) {
-            throw Exceptions.log("***** 构建产物文件不存在: " + bundlePath);
+            throw Exceptions.log("***** 构建产物不存在    " + bundlePath);
         }
-        // 复制
+        // 复制到dist目录下
         String copyBundlePath = Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), record.getBundlePath());
-        this.appendLog(Strings.format("\n***** 已生成产物文件 {}\n", copyBundlePath));
+        StringBuilder copyLog = new StringBuilder(Const.LF_3)
+                .append(StainCode.prefix(StainCode.GLOSS_GREEN))
+                .append("***** 已生成产物文件    ")
+                .append(StainCode.SUFFIX)
+                .append(Utils.getStainKeyWords(copyBundlePath, StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        this.appendLog(copyLog.toString());
         if (bundleFile.isFile()) {
             Files1.copy(bundleFile, new File(copyBundlePath));
         } else {
@@ -189,7 +200,13 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
             compressor.addFile(bundleFile);
             compressor.setAbsoluteCompressPath(compressFile);
             compressor.compress();
-            this.appendLog(Strings.format("***** 已生成压缩产物文件 {}\n", compressFile));
+            StringBuilder compressLog = new StringBuilder()
+                    .append(StainCode.prefix(StainCode.GLOSS_GREEN))
+                    .append("***** 已生成产物文件zip ")
+                    .append(StainCode.SUFFIX)
+                    .append(Utils.getStainKeyWords(compressFile, StainCode.GLOSS_BLUE))
+                    .append(Const.LF);
+            this.appendLog(compressLog.toString());
         }
     }
 
@@ -242,19 +259,35 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
     @Override
     protected void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 开始构建 #").append(record.getBuildSeq()).append(Const.LF)
-                .append("# 构建应用: ").append(record.getAppName()).append(Const.TAB)
-                .append(record.getAppTag()).append(Const.LF)
-                .append("# 构建环境: ").append(record.getProfileName()).append(Const.TAB)
-                .append(record.getProfileTag()).append(Const.LF)
-                .append("# 执行用户: ").append(record.getCreateUserName()).append(Const.LF)
-                .append("# 开始时间: ").append(Dates.format(startTime)).append(Const.LF);
+                .append(Utils.getStainKeyWords("# 开始执行主机构建任务 ", StainCode.GLOSS_GREEN))
+                .append(StainCode.prefix(StainCode.GLOSS_BLUE))
+                .append("#").append(record.getBuildSeq())
+                .append(StainCode.SUFFIX)
+                .append(Const.LF);
+        log.append("构建应用: ")
+                .append(Utils.getStainKeyWords(record.getAppName(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("构建环境: ")
+                .append(Utils.getStainKeyWords(record.getProfileName(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("执行用户: ")
+                .append(Utils.getStainKeyWords(record.getCreateUserName(), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        log.append("开始时间: ")
+                .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         if (!Strings.isBlank(record.getDescription())) {
-            log.append("# 执行描述: ").append(record.getDescription()).append(Const.LF);
+            log.append("构建描述: ")
+                    .append(Utils.getStainKeyWords(record.getDescription(), StainCode.GLOSS_BLUE))
+                    .append(Const.LF);
         }
         if (!Strings.isBlank(record.getBranchName())) {
-            log.append("# branch: ").append(record.getBranchName()).append(Const.TAB)
-                    .append("commitId: ").append(record.getCommitId()).append(Const.LF);
+            log.append("branch:   ")
+                    .append(Utils.getStainKeyWords(record.getBranchName(), StainCode.GLOSS_BLUE))
+                    .append(Const.LF);
+            log.append("commit:   ")
+                    .append(Utils.getStainKeyWords(record.getCommitId(), StainCode.GLOSS_BLUE))
+                    .append(Const.LF);
         }
         this.appendLog(log.toString());
     }

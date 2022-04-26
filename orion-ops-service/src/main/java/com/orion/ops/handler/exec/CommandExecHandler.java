@@ -242,14 +242,14 @@ public class CommandExecHandler implements IExecHandler {
                 .append(Letters.LF)
                 .append(Utils.getStainKeyWords("# 命令执行完毕", StainCode.GLOSS_GREEN))
                 .append(Letters.LF);
-        sb.append("exit code: ")
+        sb.append("exitcode: ")
                 .append(ExitCode.SUCCESS.getCode().equals(exitCode)
                         ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
                         : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
                 .append(Letters.LF);
         sb.append("结束时间: ")
                 .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
-                .append("; used ")
+                .append("  used ")
                 .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
                 .append(" (")
                 .append(StainCode.prefix(StainCode.GLOSS_BLUE))

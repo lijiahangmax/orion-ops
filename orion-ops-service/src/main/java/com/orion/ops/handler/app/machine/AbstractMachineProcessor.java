@@ -1,11 +1,14 @@
 package com.orion.ops.handler.app.machine;
 
+import com.orion.constant.Letters;
 import com.orion.exception.LogException;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.handler.app.action.IActionHandler;
 import com.orion.ops.handler.tail.TailSessionHolder;
+import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -172,9 +175,10 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
         // 修改状态
         this.updateStatus(MachineProcessorStatus.TERMINATED);
         // 拼接日志
-        StringBuilder log = new StringBuilder()
-                .append("# 机器操作手动停止 结束时间: ")
-                .append(Dates.format(endTime))
+        StringBuilder log = new StringBuilder(Const.LF_2)
+                .append(Utils.getStainKeyWords("# 主机任务手动停止", StainCode.GLOSS_YELLOW))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
                 .append(Const.LF);
         this.appendLog(log.toString());
     }
@@ -186,11 +190,20 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
         log.info("机器任务执行-成功 relId: {}", id);
         // 修改状态
         this.updateStatus(MachineProcessorStatus.FINISH);
+        long used = endTime.getTime() - startTime.getTime();
         // 拼接日志
-        StringBuilder log = new StringBuilder()
-                .append("# 机器操作执行完成 结束时间: ").append(Dates.format(endTime))
-                .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                .append("ms\n");
+        StringBuilder log = new StringBuilder(Const.LF_2)
+                .append(Utils.getStainKeyWords("# 主机任务执行完成", StainCode.GLOSS_GREEN))
+                .append(Const.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(" used ")
+                .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
+                .append(" (")
+                .append(StainCode.prefix(StainCode.GLOSS_BLUE))
+                .append(used)
+                .append("ms")
+                .append(StainCode.SUFFIX)
+                .append(")\n");
         // 拼接日志
         this.appendLog(log.toString());
     }
@@ -206,19 +219,22 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
         // 更新状态
         this.updateStatus(MachineProcessorStatus.FAILURE);
         // 拼接日志
-        StringBuilder log = new StringBuilder()
-                .append("# 机器操作执行失败 结束时间: ").append(Dates.format(endTime))
-                .append("; used: ").append(endTime.getTime() - startTime.getTime())
-                .append("ms\n");
-        this.appendLog(log.toString());
+        StringBuilder log = new StringBuilder(Const.LF_2)
+                .append(Utils.getStainKeyWords("# 主机任务执行失败", StainCode.GLOSS_RED))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Letters.LF);
         // 拼接异常
         if (isMainError) {
+            log.append(Const.LF);
             if (ex instanceof LogException) {
-                this.appendLog(ex.getMessage() + Const.LF);
+                log.append(Utils.getStainKeyWords(ex.getMessage(), StainCode.GLOSS_RED));
             } else {
-                this.appendLog(Exceptions.getStackTraceAsString(ex) + Const.LF);
+                log.append(Exceptions.getStackTraceAsString(ex));
             }
+            log.append(Const.LF);
         }
+        this.appendLog(log.toString());
     }
 
     /**
@@ -229,6 +245,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     @SneakyThrows
     protected void appendLog(String log) {
         logStream.write(Strings.bytes(log));
+        logStream.flush();
     }
 
     @Override

@@ -4,16 +4,20 @@ import com.orion.constant.Letters;
 import com.orion.exception.LogException;
 import com.orion.lang.io.OutputAppender;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
+import com.orion.ops.utils.Utils;
+import com.orion.remote.ExitCode;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 import com.orion.utils.io.Streams;
+import com.orion.utils.time.Dates;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -141,13 +145,22 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @SneakyThrows
     private void appendStartedLog() {
         StringBuilder log = new StringBuilder()
-                .append("# 操作 [").append(action.getActionName()).append("] 执行开始\n");
+                .append(StainCode.prefix(StainCode.GLOSS_GREEN))
+                .append("# ").append(action.getActionName()).append(" 执行开始")
+                .append(StainCode.SUFFIX)
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         ActionType actionType = ActionType.of(action.getActionType());
-        if (ActionType.BUILD_COMMAND.equals(actionType)
-                || ActionType.RELEASE_COMMAND.equals(actionType)) {
-            log.append("# 执行命令: ").append(action.getActionCommand()).append("\n\n");
+        if (ActionType.BUILD_COMMAND.equals(actionType) || ActionType.RELEASE_COMMAND.equals(actionType)) {
+            log.append(Letters.LF)
+                    .append(Utils.getStainKeyWords("# 执行命令", StainCode.GLOSS_BLUE))
+                    .append(Letters.LF)
+                    .append(StainCode.prefix(StainCode.GLOSS_CYAN))
+                    .append(Utils.getEndLfWithEof(action.getActionCommand()))
+                    .append(StainCode.SUFFIX);
         }
-        store.getSuperLogStream().write(Letters.LF);
+        store.getSuperLogStream().write(Strings.bytes(Const.LF_3));
         this.appendLog(log.toString());
     }
 
@@ -159,12 +172,13 @@ public abstract class AbstractActionHandler implements IActionHandler {
         // 修改状态
         this.updateStatus(ActionStatus.TERMINATED);
         // 拼接日志
-        StringBuilder log = new StringBuilder()
-                .append("\n# 执行操作手动停止 ")
-                .append(action.getActionName());
-        log.append(" used: ")
-                .append(endTime.getTime() - startTime.getTime())
-                .append("ms\n\n");
+        StringBuilder log = new StringBuilder(Const.LF)
+                .append(StainCode.prefix(StainCode.GLOSS_YELLOW))
+                .append("# ").append(action.getActionName()).append(" 手动停止")
+                .append(StainCode.SUFFIX)
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         this.appendLog(log.toString());
     }
 
@@ -200,29 +214,51 @@ public abstract class AbstractActionHandler implements IActionHandler {
     private void appendFinishedLog(Exception ex) {
         StringBuilder log = new StringBuilder();
         Integer actionType = action.getActionType();
-        if (ActionType.BUILD_COMMAND.getType().equals(actionType)
-                || ActionType.RELEASE_COMMAND.getType().equals(actionType)) {
+        if (ActionType.BUILD_COMMAND.getType().equals(actionType) || ActionType.RELEASE_COMMAND.getType().equals(actionType)) {
             log.append(Const.LF);
         }
         if (ex != null) {
             // 有异常
-            log.append("# 操作 [").append(action.getActionName()).append("] 执行失败");
+            log.append(StainCode.prefix(StainCode.GLOSS_RED))
+                    .append("# ").append(action.getActionName()).append(" 执行失败")
+                    .append(StainCode.SUFFIX)
+                    .append(Letters.TAB)
+                    .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                    .append(Letters.LF);
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
-                log.append("\texitCode: ").append(exitCode).append(";");
+                log.append("exitCode: ")
+                        .append(ExitCode.SUCCESS.getCode().equals(exitCode)
+                                ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
+                                : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
+                        .append(Letters.LF);
             }
         } else {
             // 无异常
-            log.append("# 操作 [").append(action.getActionName()).append("] 执行完成");
+            long used = endTime.getTime() - startTime.getTime();
+            log.append(StainCode.prefix(StainCode.GLOSS_GREEN))
+                    .append("# ").append(action.getActionName()).append(" 执行完成")
+                    .append(StainCode.SUFFIX)
+                    .append(Letters.TAB)
+                    .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                    .append(" used ")
+                    .append(Utils.getStainKeyWords(Utils.interval(used), StainCode.GLOSS_BLUE))
+                    .append(" (")
+                    .append(StainCode.prefix(StainCode.GLOSS_BLUE))
+                    .append(used)
+                    .append("ms")
+                    .append(StainCode.SUFFIX)
+                    .append(")\n");
         }
-        log.append(" used: ").append(endTime.getTime() - startTime.getTime()).append("ms\n");
         // 拼接异常
         if (ex != null) {
+            log.append(Const.LF);
             if (ex instanceof LogException) {
-                log.append(ex.getMessage()).append(Const.LF);
+                log.append(Utils.getStainKeyWords(ex.getMessage(), StainCode.GLOSS_RED));
             } else {
-                log.append(Exceptions.getStackTraceAsString(ex)).append(Const.LF);
+                log.append(Exceptions.getStackTraceAsString(ex));
             }
+            log.append(Const.LF);
         }
         // 拼接日志
         this.appendLog(log.toString());
@@ -236,6 +272,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
     @SneakyThrows
     protected void appendLog(String log) {
         appender.write(Strings.bytes(log));
+        appender.flush();
     }
 
     /**
