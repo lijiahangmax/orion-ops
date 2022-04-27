@@ -112,11 +112,9 @@ public class Const extends com.orion.constant.Const {
 
     public static final String COMPRESS_LIST_FILE = "压缩清单.txt";
 
-    public static final Integer TERMINATED_EXIT_CODE = -1;
+    public static final int TRACKER_DELAY_MS = 250;
 
-    public static final int TRACKER_DELAY_MS = 500;
-
-    public static final String NO_SUCH_FILE = "no such file";
+    public static final int MIN_TRACKER_DELAY_MS = 50;
 
     public static final String ENABLE_LABEL = "启用";
 

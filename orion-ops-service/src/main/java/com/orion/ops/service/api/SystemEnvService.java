@@ -104,12 +104,4 @@ public interface SystemEnvService {
      */
     MutableLinkedHashMap<String, String> getFullSystemEnv();
 
-    /**
-     * 获取文件 tail 模型
-     *
-     * @return mode
-     * @see com.orion.ops.consts.tail.FileTailMode
-     */
-    String getTailMode();
-
 }

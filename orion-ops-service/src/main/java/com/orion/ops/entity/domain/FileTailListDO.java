@@ -65,7 +65,7 @@ public class FileTailListDO implements Serializable {
     private String tailCommand;
 
     /**
-     * 宿主机文件追踪类型 tacker/tail
+     * 宿主机文件追踪类型 tracker/tail
      *
      * @see com.orion.ops.consts.tail.FileTailMode
      */

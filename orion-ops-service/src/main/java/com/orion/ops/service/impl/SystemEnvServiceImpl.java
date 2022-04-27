@@ -11,7 +11,6 @@ import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
 import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.dao.SystemEnvDAO;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.request.SystemEnvRequest;
@@ -226,12 +225,6 @@ public class SystemEnvServiceImpl implements SystemEnvService {
                 .orderByAsc(SystemEnvDO::getId);
         systemEnvDAO.selectList(wrapper).forEach(e -> env.put(EnvConst.SYSTEM_PREFIX + e.getAttrKey(), e.getAttrValue()));
         return env;
-    }
-
-    @Override
-    public String getTailMode() {
-        String mode = this.getEnvValue(SystemEnvAttr.TAIL_MODE.getKey());
-        return FileTailMode.of(mode, true).getMode();
     }
 
 }

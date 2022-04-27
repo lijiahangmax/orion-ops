@@ -107,6 +107,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.DIST_PATH);
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
+            case TRACKER_DELAY_TIME:
+                return Const.TRACKER_DELAY_MS + Const.EMPTY;
             case ENABLE_IP_FILTER:
             case ENABLE_WHITE_IP_LIST:
             case ENABLE_AUTO_CLEAN_FILE:

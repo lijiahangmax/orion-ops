@@ -47,4 +47,9 @@ public class TailFileHint {
      */
     private String command;
 
+    /**
+     * 延迟时间
+     */
+    private int delay;
+
 }
