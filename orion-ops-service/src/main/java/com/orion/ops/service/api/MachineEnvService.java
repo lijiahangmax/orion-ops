@@ -163,4 +163,20 @@ public interface MachineEnvService {
      */
     String getTailDefaultCommand(Long machineId);
 
+    /**
+     * 获取连接超时时间
+     *
+     * @param machineId machineId
+     * @return 连接超时时间
+     */
+    Integer getConnectTimeout(Long machineId);
+
+    /**
+     * 获取连接失败重试次数
+     *
+     * @param machineId machineId
+     * @return 连接失败重试次数
+     */
+    Integer getConnectRetryTimes(Long machineId);
+
 }

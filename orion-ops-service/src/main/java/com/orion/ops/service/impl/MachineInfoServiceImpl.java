@@ -11,7 +11,6 @@ import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
-import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.machine.MachineProperties;
 import com.orion.ops.consts.machine.ProxyType;
 import com.orion.ops.dao.MachineEnvDAO;
@@ -253,7 +252,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Integer testConnect(Long id) {
         SessionStore s = null;
         try {
-            s = this.connectSessionStore(Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE));
+            // 查询机器
+            MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+            // 查询超时间
+            Integer connectTimeout = machineEnvService.getConnectTimeout(id);
+            s = this.connectSessionStore(machine, connectTimeout);
             return Const.ENABLE;
         } catch (Exception e) {
             return Const.DISABLE;
@@ -274,12 +277,17 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         if (!Const.ENABLE.equals(machine.getMachineStatus())) {
             throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
         }
+        Long id = machine.getId();
+        // 查询超时间
+        Integer connectTimeout = machineEnvService.getConnectTimeout(id);
+        // 重试次数
+        Integer retryTimes = machineEnvService.getConnectRetryTimes(id);
         Exception ex = null;
         String msg = MessageConst.CONNECT_ERROR;
-        for (int i = 0, t = MachineConst.CONNECT_RETRY_TIMES; i < t; i++) {
-            log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}, host: {}", (i + 1), machine.getId(), machine.getMachineHost());
+        for (int i = 0, t = retryTimes + 1; i < t; i++) {
+            log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}, host: {}", (i + 1), id, machine.getMachineHost());
             try {
-                return this.connectSessionStore(machine);
+                return this.connectSessionStore(machine, connectTimeout);
             } catch (Exception e) {
                 ex = e;
                 if (e instanceof ConnectionRuntimeException) {
@@ -292,17 +300,19 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 }
             }
         }
-        ex.printStackTrace();
-        throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, "机器 " + machine.getMachineHost() + " " + msg, ex);
+        String errorMessage = "机器 " + machine.getMachineHost() + " " + msg;
+        log.error(errorMessage, ex);
+        throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, errorMessage, ex);
     }
 
     /**
      * 打开sessionStore
      *
      * @param machine machine
+     * @param timeout timeout
      * @return SessionStore
      */
-    private SessionStore connectSessionStore(MachineInfoDO machine) {
+    private SessionStore connectSessionStore(MachineInfoDO machine, int timeout) {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         Long proxyId = machine.getProxyId();
         SessionStore session;
@@ -331,7 +341,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 }
                 session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
             }
-            session.connect(MachineConst.CONNECT_TIMEOUT);
+            session.connect(timeout);
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
             return session;
         } catch (Exception e) {

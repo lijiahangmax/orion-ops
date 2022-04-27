@@ -11,6 +11,7 @@ import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.consts.history.HistoryOperator;
 import com.orion.ops.consts.history.HistoryValueType;
+import com.orion.ops.consts.machine.MachineConst;
 import com.orion.ops.consts.machine.MachineEnvAttr;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
@@ -309,6 +310,12 @@ public class MachineEnvServiceImpl implements MachineEnvService {
                 case TAIL_DEFAULT_COMMAND:
                     env.setAttrValue(CommandConst.TAIL_FILE_DEFAULT);
                     break;
+                case CONNECT_TIMEOUT:
+                    env.setAttrValue(MachineConst.CONNECT_TIMEOUT + Strings.EMPTY);
+                    break;
+                case CONNECT_RETRY_TIMES:
+                    env.setAttrValue(MachineConst.CONNECT_RETRY_TIMES + Strings.EMPTY);
+                    break;
                 default:
                     break;
             }
@@ -333,8 +340,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
 
     @Override
     public Integer getTailOffset(Long machineId) {
-        String offset = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
-        return Strings.isInteger(offset) ? Integer.parseInt(offset) : Const.TAIL_OFFSET_LINE;
+        String value = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_OFFSET.getKey());
+        int offset = Strings.isInteger(value) ? Integer.parseInt(value) : Const.TAIL_OFFSET_LINE;
+        return Math.max(offset, 0);
     }
 
     @Override
@@ -347,6 +355,20 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     public String getTailDefaultCommand(Long machineId) {
         String command = this.getMachineEnv(machineId, MachineEnvAttr.TAIL_DEFAULT_COMMAND.getKey());
         return Strings.isBlank(command) ? CommandConst.TAIL_FILE_DEFAULT : command;
+    }
+
+    @Override
+    public Integer getConnectTimeout(Long machineId) {
+        String value = this.getMachineEnv(machineId, MachineEnvAttr.CONNECT_TIMEOUT.getKey());
+        int timeout = Strings.isInteger(value) ? Integer.parseInt(value) : MachineConst.CONNECT_TIMEOUT;
+        return Math.max(timeout, 0);
+    }
+
+    @Override
+    public Integer getConnectRetryTimes(Long machineId) {
+        String value = this.getMachineEnv(machineId, MachineEnvAttr.CONNECT_RETRY_TIMES.getKey());
+        int times = Strings.isInteger(value) ? Integer.parseInt(value) : MachineConst.CONNECT_RETRY_TIMES;
+        return Math.max(times, 0);
     }
 
 }
