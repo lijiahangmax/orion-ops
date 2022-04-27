@@ -39,6 +39,12 @@ public interface ITailHandler extends SafeCloseable {
     String getFilePath();
 
     /**
+     * 设置最后修改时间
+     */
+    default void setLastModify() {
+    }
+
+    /**
      * 获取实际执行 handler
      *
      * @param mode    mode

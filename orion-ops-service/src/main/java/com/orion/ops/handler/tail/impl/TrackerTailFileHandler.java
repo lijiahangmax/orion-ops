@@ -8,16 +8,18 @@ import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailFileHint;
 import com.orion.tail.Tracker;
-import com.orion.tail.delay.DelayTracker;
-import com.orion.tail.handler.LineHandler;
+import com.orion.tail.delay.DelayTrackerListener;
+import com.orion.tail.handler.DataHandler;
 import com.orion.tail.mode.FileNotFoundMode;
 import com.orion.tail.mode.FileOffsetMode;
 import com.orion.utils.Threads;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import java.io.File;
 
 /**
  * tracker 方式
@@ -27,7 +29,7 @@ import org.springframework.web.socket.WebSocketSession;
  * @since 2021/6/18 17:36
  */
 @Slf4j
-public class TrackerTailFileHandler implements ITailHandler, LineHandler {
+public class TrackerTailFileHandler implements ITailHandler, DataHandler {
 
     @Getter
     private String token;
@@ -42,21 +44,25 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
      */
     private TailFileHint hint;
 
-    private DelayTracker tracker;
+    private DelayTrackerListener tracker;
 
     private volatile boolean close;
+
+    @Getter
+    private String filePath;
 
     public TrackerTailFileHandler(TailFileHint hint, WebSocketSession session) {
         this.token = hint.getToken();
         this.hint = hint;
+        this.filePath = hint.getPath();
         this.session = session;
         log.info("tail TRACKER 监听文件初始化 token: {}, hint: {}", token, JSON.toJSONString(hint));
     }
 
     @Override
     public void start() {
-        this.tracker = new DelayTracker(hint.getPath(), this);
-        tracker.delayMillis(Const.TRACKER_DELAY_MS);
+        this.tracker = new DelayTrackerListener(filePath, this);
+        tracker.delayMillis(hint.getDelay());
         tracker.charset(hint.getCharset());
         tracker.offset(FileOffsetMode.LINE, hint.getOffset());
         tracker.notFoundMode(FileNotFoundMode.WAIT_COUNT, 10);
@@ -67,13 +73,13 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
     }
 
     @Override
-    public Long getMachineId() {
-        return Const.HOST_MACHINE_ID;
+    public void setLastModify() {
+        new File(filePath).setLastModified(System.currentTimeMillis());
     }
 
     @Override
-    public String getFilePath() {
-        return hint.getPath();
+    public Long getMachineId() {
+        return Const.HOST_MACHINE_ID;
     }
 
     /**
@@ -84,6 +90,14 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
         log.info("tail TRACKER 监听文件结束 token: {}", token);
         if (session.isOpen()) {
             session.close(WsCloseCode.EOF_CALLBACK.close());
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public void read(byte[] bytes, int len, Tracker tracker) {
+        if (session.isOpen()) {
+            session.sendMessage(new BinaryMessage(bytes, 0, len, true));
         }
     }
 
@@ -99,16 +113,9 @@ public class TrackerTailFileHandler implements ITailHandler, LineHandler {
         }
     }
 
-    @SneakyThrows
-    @Override
-    public void readLine(String read, int line, Tracker tracker) {
-        if (session.isOpen()) {
-            session.sendMessage(new TextMessage(read));
-        }
-    }
-
     @Override
     public String toString() {
-        return hint.getPath();
+        return filePath;
     }
+
 }

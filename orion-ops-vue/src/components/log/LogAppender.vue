@@ -196,6 +196,7 @@ export default {
         rendererType: 'canvas',
         fontFamily: 'courier-new, courier, monospace',
         lineHeight: 1.08,
+        convertEol: true,
         theme: {
           foreground: '#FFFFFF',
           background: '#212529'
@@ -276,14 +277,8 @@ export default {
         // this.term.write('\r\n\x1b[31m已断开连接...\x1b[0m')
         this.$emit('close')
       }
-      this.client.onmessage = event => {
-        let msg
-        if (event.data.length) {
-          msg = event.data
-        } else {
-          msg = ' '
-        }
-        this.term.writeln(msg)
+      this.client.onmessage = async event => {
+        this.term.write(await event.data.text())
         if (!this.fixedLog) {
           this.term.scrollToBottom()
         }
