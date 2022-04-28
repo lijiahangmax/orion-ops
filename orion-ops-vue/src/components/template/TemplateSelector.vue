@@ -37,7 +37,8 @@
                size="middle">
         <!-- 模板内容 -->
         <template v-slot:value="record">
-          <span class="pointer" title="复制" @click="$copy(record.value)">
+          <span :title="record.value">
+            <a-icon class="span-blue pointer" type="copy" title="复制" @click="$copy(record.value)"/>
             {{ record.value }}
           </span>
         </template>
