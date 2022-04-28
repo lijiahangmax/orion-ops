@@ -3,43 +3,43 @@ package com.orion.ops.consts.app;
 import lombok.Getter;
 
 /**
- * 产物为文件夹传输类型 (dir/zip)
+ * 产物传输方式 (sftp/scp)
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2021/12/21 10:17
+ * @since 2022/4/26 22:16
  */
 @Getter
-public enum TransferDirType {
+public enum TransferMode {
 
     /**
-     * 文件夹
+     * scp
      */
-    DIR,
+    SCP,
 
     /**
-     * 压缩文件
+     * sftp
      */
-    ZIP,
+    SFTP,
 
     ;
 
-    TransferDirType() {
+    TransferMode() {
         this.value = name().toLowerCase();
     }
 
     private final String value;
 
-    public static TransferDirType of(String value) {
+    public static TransferMode of(String value) {
         if (value == null) {
-            return DIR;
+            return SFTP;
         }
-        for (TransferDirType type : values()) {
+        for (TransferMode type : values()) {
             if (type.value.equals(value)) {
                 return type;
             }
         }
-        return DIR;
+        return SFTP;
     }
 
 }

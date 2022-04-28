@@ -8,6 +8,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.ActionType;
 import com.orion.ops.consts.app.StageType;
+import com.orion.ops.consts.app.TransferMode;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.ApplicationDetailVO;
@@ -196,8 +197,12 @@ public class ApplicationInfoController {
             Valid.notBlank(action.getName());
             ActionType actionType = Valid.notNull(ActionType.of(action.getType(), stageType.getType()));
             // 检查命令
-            if (ActionType.BUILD_COMMAND.equals(actionType)
-                    || ActionType.RELEASE_COMMAND.equals(actionType)) {
+            if (ActionType.BUILD_COMMAND.equals(actionType) || ActionType.RELEASE_COMMAND.equals(actionType)) {
+                Valid.notBlank(action.getCommand());
+            }
+            // 检查传输 scp 命令
+            if (ActionType.RELEASE_TRANSFER.equals(actionType)
+                    && TransferMode.SCP.getValue().equals(env.getTransferMode())) {
                 Valid.notBlank(action.getCommand());
             }
         }

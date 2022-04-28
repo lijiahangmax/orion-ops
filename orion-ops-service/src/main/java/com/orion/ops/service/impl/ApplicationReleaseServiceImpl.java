@@ -660,6 +660,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         String buildBundlePath = applicationBuildService.checkBuildBundlePath(build);
         // 查询产物传输路径
         String transferPath = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_PATH.getKey());
+        // 查询产物传输方式
+        String transferMode = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.TRANSFER_MODE.getKey());
         // 查询发布序列
         String releaseSerial = applicationEnvService.getAppEnvValue(app.getId(), profile.getId(), ApplicationEnvAttr.RELEASE_SERIAL.getKey());
         // 查询异常处理
@@ -681,6 +683,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         release.setExceptionHandler(ExceptionHandlerType.of(exceptionHandler).getType());
         release.setBundlePath(buildBundlePath);
         release.setTransferPath(transferPath);
+        release.setTransferMode(transferMode);
         release.setTimedRelease(request.getTimedRelease());
         release.setTimedReleaseTime(request.getTimedReleaseTime());
         release.setCreateUserId(user.getId());
@@ -771,8 +774,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 releaseAction.setActionName(action.getActionName());
                 releaseAction.setActionType(action.getActionType());
                 // 设置命令
+                String command = action.getActionCommand();
                 if (ActionType.RELEASE_COMMAND.equals(actionType)) {
-                    String command = action.getActionCommand();
                     if (hasEnvCommand) {
                         // 替换发布命令
                         command = Strings.format(command, EnvConst.SYMBOL, releaseEnv);
@@ -780,8 +783,8 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                         Map<String, String> machineEnv = machineEnvService.getFullMachineEnv(machineId);
                         command = Strings.format(command, EnvConst.SYMBOL, machineEnv);
                     }
-                    releaseAction.setActionCommand(command);
                 }
+                releaseAction.setActionCommand(command);
                 releaseAction.setLogPath(PathBuilders.getReleaseActionLogPath(releaseMachine.getReleaseId(), machineId, actionId));
                 releaseAction.setRunStatus(ActionStatus.WAIT.getStatus());
                 releaseActions.add(releaseAction);
@@ -833,6 +836,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUNDLE_PATH, release.getBundlePath() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_TITLE, release.getReleaseTitle());
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.TRANSFER_PATH, release.getTransferPath());
