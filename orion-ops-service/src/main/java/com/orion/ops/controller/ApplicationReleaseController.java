@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
+import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
@@ -222,6 +223,7 @@ public class ApplicationReleaseController {
     /**
      * 发布状态列表
      */
+    @IgnoreLog
     @RequestMapping("/list-status")
     public List<ApplicationReleaseStatusVO> getReleaseStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -231,6 +233,7 @@ public class ApplicationReleaseController {
     /**
      * 发布状态
      */
+    @IgnoreLog
     @RequestMapping("/status")
     public ApplicationReleaseStatusVO getReleaseStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -240,6 +243,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器状态列表
      */
+    @IgnoreLog
     @RequestMapping("/list-machine-status")
     public List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getReleaseMachineIdList());
@@ -249,6 +253,7 @@ public class ApplicationReleaseController {
     /**
      * 发布机器状态
      */
+    @IgnoreLog
     @RequestMapping("/machine-status")
     public ApplicationReleaseMachineStatusVO getReleaseMachineStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getReleaseMachineId());

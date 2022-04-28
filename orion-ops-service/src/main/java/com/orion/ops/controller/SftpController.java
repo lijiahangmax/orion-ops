@@ -16,6 +16,7 @@ import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
+import com.orion.remote.channel.sftp.SftpErrorMessage;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
@@ -63,7 +64,7 @@ public class SftpController {
         try {
             return sftpService.list(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -76,7 +77,7 @@ public class SftpController {
         try {
             return sftpService.listDir(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -110,7 +111,7 @@ public class SftpController {
         try {
             sftpService.truncate(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -125,7 +126,7 @@ public class SftpController {
         try {
             return sftpService.move(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -142,7 +143,7 @@ public class SftpController {
         try {
             sftpService.remove(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -157,7 +158,7 @@ public class SftpController {
         try {
             return sftpService.chmod(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -172,7 +173,7 @@ public class SftpController {
         try {
             sftpService.chown(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -187,7 +188,7 @@ public class SftpController {
         try {
             sftpService.changeGroup(request);
         } catch (RuntimeException e) {
-            throw convertError(e);
+            throw this.convertError(e);
         }
     }
 
@@ -207,7 +208,7 @@ public class SftpController {
     }
 
     /**
-     * 获取上传文件accessToken
+     * 获取上传文件 accessToken
      */
     @RequestMapping("/upload/{sessionToken}/token")
     public String getUploadAccessToken(@PathVariable String sessionToken) {
@@ -369,7 +370,7 @@ public class SftpController {
      * @return RuntimeException
      */
     private RuntimeException convertError(RuntimeException e) {
-        if (e.getMessage().toLowerCase().contains(Const.NO_SUCH_FILE)) {
+        if (SftpErrorMessage.NO_SUCH_FILE.isCause(e)) {
             return Exceptions.argument(MessageConst.NO_SUCH_FILE);
         } else {
             return e;

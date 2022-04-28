@@ -12,7 +12,7 @@ import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.ext.dom.*;
 import org.dom4j.io.OutputFormat;
-import org.ho.yaml.Yaml;
+import org.yaml.snakeyaml.Yaml;
 
 import java.util.Map;
 
@@ -76,7 +76,7 @@ public class AttrConverts {
      * @return yml
      */
     public static String toYml(Map<String, String> attrs) {
-        return Yaml.dump(attrs).substring(30);
+        return new Yaml().dumpAsMap(attrs);
     }
 
     /**
@@ -144,7 +144,7 @@ public class AttrConverts {
      */
     @SuppressWarnings("unchecked")
     public static MutableLinkedHashMap<String, String> fromYml(String yml) {
-        return Yaml.loadType(yml, MutableLinkedHashMap.class);
+        return new Yaml().loadAs(yml, MutableLinkedHashMap.class);
     }
 
     /**

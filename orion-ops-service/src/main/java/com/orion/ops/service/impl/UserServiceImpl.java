@@ -278,8 +278,10 @@ public class UserServiceImpl implements UserService {
             update.setLockStatus(Const.ENABLE);
             update.setUpdateTime(new Date());
             userInfoDAO.updateById(update);
-            // 删除token
-            RedisUtils.deleteLoginToken(redisTemplate, id);
+            if (!password.equals(admin.getPassword())) {
+                // 密码不同删除token
+                RedisUtils.deleteLoginToken(redisTemplate, id);
+            }
         } else {
             // 生成用户
             this.generatorDefaultAdminUser();
