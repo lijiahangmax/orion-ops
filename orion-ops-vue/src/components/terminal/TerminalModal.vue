@@ -1,53 +1,61 @@
 <template>
-  <a-modal v-model="visible"
-           v-drag-modal
-           :closable="false"
-           :footer="null"
-           :keyboard="false"
-           :maskClosable="false"
-           :forceRender="true"
-           :dialogStyle="{top: '16px', padding: 0}"
-           :bodyStyle="{padding: '4px'}"
-           @cancel="close"
-           width="80%">
-    <!-- 标题 -->
-    <template #title>
-      <div class="terminal-wrapper-title-wrapper">
-        <!-- 左侧 -->
-        <div class="title-left-fixed">
-          <!-- ssh信息 -->
-          <div class="terminal-ssh">
+  <div class="terminal-modal-container">
+    <a-modal v-model="visible"
+             v-drag-modal
+             :closable="false"
+             :footer="null"
+             :keyboard="false"
+             :maskClosable="false"
+             :forceRender="true"
+             :dialogStyle="{top: '16px', padding: 0}"
+             :bodyStyle="{padding: '4px'}"
+             @cancel="close"
+             width="80%">
+      <!-- 标题 -->
+      <template #title>
+        <div class="terminal-wrapper-title-wrapper">
+          <!-- 左侧 -->
+          <div class="title-left-fixed">
+            <!-- ssh信息 -->
+            <div class="terminal-ssh">
           <span v-if="machine.username">
             <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
             <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.sshPort }}</span>
           </span>
+            </div>
+          </div>
+          <!-- 右侧 -->
+          <div class="title-right-fixed">
+            <a-icon class="title-right-item setting-trigger" type="setting" title="设置" @click="openSetting"/>
+            <a-icon class="title-right-item min-size-trigger" type="shrink" title="最小化" @click="minimize"/>
+            <a-icon class="title-right-item" type="close" title="关闭" @click="close"/>
           </div>
         </div>
-        <!-- 右侧 -->
-        <div class="title-right-fixed">
-          <a-icon class="title-right-item min-size-trigger" type="shrink" title="最小化" @click="minimize"/>
-          <a-icon class="title-right-item" type="close" title="关闭" @click="close"/>
-        </div>
+      </template>
+      <!-- 终端 -->
+      <div class="terminal-wrapper">
+        <TerminalXterm v-if="machineId"
+                       ref="terminal"
+                       wrapperHeight="100%"
+                       terminalHeight="100%"
+                       :machineId="machineId"
+                       :visibleHeader="false"/>
       </div>
-    </template>
-    <!-- 终端 -->
-    <div class="terminal-wrapper">
-      <TerminalXterm v-if="machineId"
-                     ref="terminal"
-                     wrapperHeight="100%"
-                     terminalHeight="100%"
-                     :machineId="machineId"
-                     :visibleHeader="false"/>
-    </div>
-  </a-modal>
+    </a-modal>
+    <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
+  </div>
 </template>
 
 <script>
 import TerminalXterm from '@/components/terminal/TerminalXterm'
+import TerminalSettingModal from '@/components/terminal/TerminalSettingModal'
 
 export default {
   name: 'TerminalModal',
-  components: { TerminalXterm },
+  components: {
+    TerminalSettingModal,
+    TerminalXterm
+  },
   data() {
     return {
       visible: false,
@@ -90,6 +98,9 @@ export default {
         this.$refs.terminal.focus()
       }, 450)
     },
+    openSetting() {
+      this.$refs.settingModal.openSetting()
+    },
     copySshCommand() {
       const command = this.$utils.getSshCommand(this.machine.username, this.machine.host, this.machine.sshPort)
       this.$message.success(`${command} 已复制`)
@@ -125,7 +136,7 @@ export default {
     color: rgba(0, 0, 0, .45);
     text-align: end;
 
-    .min-size-trigger {
+    .min-size-trigger, .setting-trigger {
       margin-right: 16px;
     }
 
