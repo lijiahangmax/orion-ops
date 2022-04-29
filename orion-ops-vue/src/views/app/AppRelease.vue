@@ -129,9 +129,7 @@
         </template>
         <!-- 构建序列 -->
         <template v-slot:seq="record">
-          <a-tag class="ml8" color="#5C7CFA">
-            #{{ record.buildSeq }}
-          </a-tag>
+          <span class="span-blue">#{{ record.buildSeq }}</span>
         </template>
         <!-- 发布标题 -->
         <template v-slot:releaseTitle="record">
@@ -246,7 +244,7 @@
     <!-- 事件 -->
     <div class="app-info-event">
       <!-- 添加模态框 -->
-      <AppReleaseModal ref="addModal" @submit="getList({})"/>
+      <AppReleaseModal ref="addModal" :visibleReselect="true" @submit="getList({})"/>
       <!-- 审核模态框 -->
       <AppReleaseAuditModal ref="auditModal" @audit="releaseAudit"/>
       <!-- 发布详情抽屉 -->
