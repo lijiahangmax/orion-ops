@@ -6,6 +6,7 @@ import com.orion.function.select.Branches;
 import com.orion.function.select.Selector;
 import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.ActionType;
+import com.orion.ops.consts.app.TransferMode;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 
 import java.util.List;
@@ -62,7 +63,13 @@ public interface IActionHandler extends Executable, SafeCloseable {
                         .test(Branches.in(ActionType.BUILD_COMMAND, ActionType.RELEASE_COMMAND)
                                 .then(() -> new CommandActionHandler(action.getId(), store)))
                         .test(Branches.eq(ActionType.RELEASE_TRANSFER)
-                                .then(() -> new TransferActionHandler(action.getId(), store)))
+                                .then(() -> {
+                                    if (TransferMode.SCP.getValue().equals(store.getTransferMode())) {
+                                        return new ScpTransferActionHandler(action.getId(), store);
+                                    } else {
+                                        return new SftpTransferActionHandler(action.getId(), store);
+                                    }
+                                }))
                         .get())
                 .collect(Collectors.toList());
     }

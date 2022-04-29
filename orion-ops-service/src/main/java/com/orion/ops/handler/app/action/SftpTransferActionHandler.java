@@ -10,27 +10,25 @@ import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 执行操作-传输产物
+ * 执行操作-传输产物 sftp方式
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @see com.orion.ops.consts.app.ActionType#RELEASE_TRANSFER
- * @since 2022/2/11 16:01
+ * @see com.orion.ops.consts.app.TransferMode#SFTP
+ * @since 2022/4/26 23:57
  */
-public class TransferActionHandler extends AbstractActionHandler {
+public class SftpTransferActionHandler extends AbstractTransferActionHandler<SftpExecutor> {
 
     protected static MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
 
-    private SftpExecutor executor;
-
-    public TransferActionHandler(Long actionId, MachineActionStore store) {
+    public SftpTransferActionHandler(Long actionId, MachineActionStore store) {
         super(actionId, store);
     }
 
@@ -123,20 +121,6 @@ public class TransferActionHandler extends AbstractActionHandler {
             map.put(transferFile, remoteFile);
         }
         return map;
-    }
-
-    @Override
-    public void terminate() {
-        super.terminate();
-        // 关闭executor
-        Streams.close(executor);
-    }
-
-    @Override
-    public void close() {
-        super.close();
-        // 关闭executor
-        Streams.close(executor);
     }
 
 }

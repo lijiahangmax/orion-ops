@@ -70,6 +70,8 @@ public class EnvConst {
 
     public static final String COMMIT = "commit";
 
+    public static final String BUNDLE_PATH = "bundle_path";
+
     // -------------------- release --------------------
 
     public static final String RELEASE_ID = "release_id";
@@ -83,6 +85,12 @@ public class EnvConst {
     public static final String OFFSET = "offset";
 
     public static final String FILE = "file";
+
+    // -------------------- scp --------------------
+
+    public static final String TARGET_USERNAME = "target_username";
+
+    public static final String TARGET_HOST = "target_host";
 
     /**
      * 获取替换变量

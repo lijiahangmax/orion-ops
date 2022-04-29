@@ -7,10 +7,7 @@ import com.orion.ops.consts.app.ActionStatus;
 import com.orion.ops.consts.app.StageType;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.ApplicationReleaseMachineDAO;
-import com.orion.ops.entity.domain.ApplicationActionLogDO;
-import com.orion.ops.entity.domain.ApplicationMachineDO;
-import com.orion.ops.entity.domain.ApplicationReleaseDO;
-import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
+import com.orion.ops.entity.domain.*;
 import com.orion.ops.handler.app.action.IActionHandler;
 import com.orion.ops.handler.app.action.MachineActionStore;
 import com.orion.ops.service.api.ApplicationActionLogService;
@@ -47,23 +44,24 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
 
     private ApplicationReleaseDO release;
 
-    private ApplicationReleaseMachineDO machine;
+    private ApplicationReleaseMachineDO releaseMachine;
 
     private MachineActionStore store;
 
     @Getter
     private volatile ActionStatus status;
 
-    public ReleaseMachineProcessor(ApplicationReleaseDO release, ApplicationReleaseMachineDO machine) {
-        super(machine.getId());
+    public ReleaseMachineProcessor(ApplicationReleaseDO release, ApplicationReleaseMachineDO releaseMachine) {
+        super(releaseMachine.getId());
         this.release = release;
-        this.machine = machine;
-        this.status = ActionStatus.of(machine.getRunStatus());
+        this.releaseMachine = releaseMachine;
+        this.status = ActionStatus.of(releaseMachine.getRunStatus());
         this.store = new MachineActionStore();
-        store.setRelId(machine.getId());
-        store.setMachineId(machine.getMachineId());
+        store.setRelId(releaseMachine.getId());
+        store.setMachineId(releaseMachine.getMachineId());
         store.setBundlePath(release.getBundlePath());
         store.setTransferPath(release.getTransferPath());
+        store.setTransferMode(release.getTransferMode());
     }
 
     @Override
@@ -108,7 +106,7 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
 
     @Override
     protected String getLogPath() {
-        return machine.getLogPath();
+        return releaseMachine.getLogPath();
     }
 
     @Override
@@ -127,9 +125,13 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
 
     @Override
     protected void openMachineSession() {
-        // 打开session
-        SessionStore sessionStore = machineInfoService.openSessionStore(machine.getMachineId());
+        // 打开目标机器session
+        Long machineId = releaseMachine.getMachineId();
+        MachineInfoDO machine = machineInfoService.selectById(machineId);
+        SessionStore sessionStore = machineInfoService.openSessionStore(machine);
         store.setSessionStore(sessionStore);
+        store.setMachineUsername(machine.getUsername());
+        store.setMachineHost(machine.getMachineHost());
     }
 
     @Override
@@ -163,10 +165,10 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
                 .append(Utils.getStainKeyWords("# 开始执行主机发布任务", StainCode.GLOSS_GREEN))
                 .append(Const.LF);
         log.append("机器名称: ")
-                .append(Utils.getStainKeyWords(machine.getMachineName(), StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(releaseMachine.getMachineName(), StainCode.GLOSS_BLUE))
                 .append(Const.LF);
         log.append("发布主机: ")
-                .append(Utils.getStainKeyWords(machine.getMachineHost(), StainCode.GLOSS_BLUE))
+                .append(Utils.getStainKeyWords(releaseMachine.getMachineHost(), StainCode.GLOSS_BLUE))
                 .append(Const.LF);
         log.append("开始时间: ")
                 .append(Utils.getStainKeyWords(Dates.format(startTime), StainCode.GLOSS_BLUE))
@@ -181,7 +183,7 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
         ApplicationMachineDO update = new ApplicationMachineDO();
         update.setAppId(release.getAppId());
         update.setProfileId(release.getProfileId());
-        update.setMachineId(machine.getMachineId());
+        update.setMachineId(releaseMachine.getMachineId());
         update.setReleaseId(release.getId());
         update.setBuildId(release.getBuildId());
         update.setBuildSeq(release.getBuildSeq());
