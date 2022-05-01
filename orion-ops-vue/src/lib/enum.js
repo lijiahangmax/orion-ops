@@ -705,16 +705,30 @@ const $enum = {
   },
 
   /**
-   * 发布产物为文件夹传输类型
+   * 发布产物传输方式
    */
-  RELEASE_TRANSFER_DIR_TYPE: {
-    DIR: {
-      value: 'dir',
-      label: '文件夹'
+  RELEASE_TRANSFER_MODE: {
+    SCP: {
+      value: 'scp',
+      label: 'SCP'
+    },
+    SFTP: {
+      value: 'sftp',
+      label: 'SFTP'
+    }
+  },
+
+  /**
+   * 发布产物传输类型
+   */
+  RELEASE_TRANSFER_FILE_TYPE: {
+    NORMAL: {
+      value: 'normal',
+      label: '文件 / 文件夹'
     },
     ZIP: {
       value: 'zip',
-      label: 'zip文件'
+      label: '文件夹zip'
     }
   },
 

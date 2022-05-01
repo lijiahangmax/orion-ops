@@ -48,7 +48,7 @@
                 <!-- 名称 -->
                 <div class="action-name-wrapper">
                   <span class="label action-label normal-label required-label">操作名称</span>
-                  <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
+                  <a-input class="action-name-input" v-model="action.name" :maxLength="32" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
                 <div class="action-editor-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
@@ -57,30 +57,64 @@
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
                   </div>
                 </div>
-                <!-- 传输路径 -->
+                <!-- 文件传输方式 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  <span class="label action-label normal-label required-label">产物传输路径</span>
-                  <a-textarea class="transfer-input"
-                              v-model="transferPath"
-                              :autoSize="{minRows: 1}"
-                              :maxLength="512"
-                              placeholder="目标机器产物传输绝对路径, 路径不能包含 \ 应该用 / 替换"/>
-                </div>
-                <!-- 文件夹类型选择 -->
-                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  <span class="label action-label normal-label required-label">
-                      文件夹传输类型
-                  </span>
-                  <a-select class="transfer-input" v-model="transferDirType">
-                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_DIR_TYPE" :key="type.value" :value="type.value">
+                  <span class="label action-label normal-label required-label">文件传输方式</span>
+                  <a-select class="transfer-input" v-model="transferMode">
+                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_MODE" :key="type.value" :value="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
                 </div>
-                <!-- 文件夹类型描述 -->
-                <span class="config-description" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
-                  如构建产物为文件夹时可选 (传输整个文件夹 / 传输zip压缩文件) &nbsp;&nbsp;&nbsp;如产物不是文件夹则忽略
-                </span>
+                <!-- 文件传输路径 -->
+                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                  <span class="label action-label normal-label required-label">文件传输路径</span>
+                  <a-textarea class="transfer-input"
+                              v-model="transferPath"
+                              :autoSize="{minRows: 1}"
+                              :maxLength="1024"
+                              placeholder="目标机器产物传输绝对路径, 路径不能包含 \ 应该用 / 替换"/>
+                </div>
+                <!-- 文件传输类型 -->
+                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                  <span class="label action-label normal-label required-label">文件传输类型</span>
+                  <!-- 文件传输类型 -->
+                  <a-select class="transfer-input help-input" v-model="transferFileType">
+                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_FILE_TYPE" :key="type.value" :value="type.value">
+                      {{ type.label }}
+                    </a-select-option>
+                  </a-select>
+                  <!-- 描述 -->
+                  <a-popover placement="top">
+                    <template slot="content">
+                      如构建产物为普通文件选择 (文件 / 文件夹)<br/>
+                      如构建产物为文件夹且传输整个文件夹选择 (文件 / 文件夹)<br/>
+                      如构建产物为文件夹且传输文件夹zip选择 (文件夹zip)
+                    </template>
+                    <a-icon class="help-trigger" type="question-circle"/>
+                  </a-popover>
+                </div>
+                <!-- scp 传输命令 -->
+                <div class="action-transfer-wrapper"
+                     v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value && transferMode === $enum.RELEASE_TRANSFER_MODE.SCP.value">
+                  <span class="label action-label normal-label required-label"> scp 传输命令</span>
+                  <!-- scp 传输命令 -->
+                  <a-textarea class="transfer-input help-input"
+                              v-model="action.command"
+                              :autoSize="{minRows: 1}"
+                              :maxLength="1024"
+                              placeholder="目标机器和宿主机需要建立 ssh 免密登陆"/>
+                  <!-- scp 传输命令描述 -->
+                  <a-popover placement="top">
+                    <template slot="content">
+                      bundle_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;构建产物路径<br/>
+                      target_username&nbsp;&nbsp;目标机器用户<br/>
+                      target_host&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;目标机器主机<br/>
+                      transfer_path&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;传输路径
+                    </template>
+                    <a-icon class="help-trigger" type="question-circle"/>
+                  </a-popover>
+                </div>
               </div>
               <!-- 操作 -->
               <div class="app-action-handler">
@@ -143,7 +177,8 @@ export default {
       loading: false,
       profileId: null,
       transferPath: undefined,
-      transferDirType: _enum.RELEASE_TRANSFER_DIR_TYPE.DIR.value,
+      transferMode: _enum.RELEASE_TRANSFER_MODE.SFTP.value,
+      transferFileType: _enum.RELEASE_TRANSFER_FILE_TYPE.NORMAL.value,
       releaseSerial: _enum.SERIAL_TYPE.PARALLEL.value,
       exceptionHandler: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
       machines: [],
@@ -163,7 +198,8 @@ export default {
     initData(detail) {
       this.profileId = detail.profileId
       this.transferPath = detail.env && detail.env.transferPath
-      this.transferDirType = detail.env && detail.env.transferDirType
+      this.transferMode = detail.env && detail.env.transferMode
+      this.transferFileType = detail.env && detail.env.transferFileType
       this.releaseSerial = detail.env && detail.env.releaseSerial
       this.exceptionHandler = detail.env && detail.env.exceptionHandler
       if (detail.releaseMachines && detail.releaseMachines.length) {
@@ -190,12 +226,17 @@ export default {
       ref.hide()
     },
     addAction(type) {
-      this.actions.push({
+      const action = {
         type,
-        command: '',
         name: undefined,
         visible: true
-      })
+      }
+      if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === type) {
+        action.command = 'scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}'
+      } else {
+        action.command = ''
+      }
+      this.actions.push(action)
     },
     removeAction(index) {
       this.actions[index].visible = false
@@ -224,11 +265,11 @@ export default {
           return
         }
         if (this.$enum.RELEASE_ACTION_TYPE.COMMAND.value === action.type) {
-          if (!action.command) {
+          if (!action.command || !action.command.trim().length) {
             this.$message.warning(`请输入操作命令 [发布操作${i + 1}]`)
             return
-          } else if (action.command.length > 1024) {
-            this.$message.warning(`操作命令长度不能大于1024位 [发布操作${i + 1}]`)
+          } else if (action.command.length > 2048) {
+            this.$message.warning(`操作命令长度不能大于2048位 [发布操作${i + 1}] 当前: ${action.command.length}`)
             return
           }
         } else if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === action.type) {
@@ -240,6 +281,12 @@ export default {
             this.$message.warning('产物传输路径不能包含 \\ 应该用 / 替换')
             return
           }
+          if (this.$enum.RELEASE_TRANSFER_MODE.SCP.value === this.transferMode) {
+            if (!action.command || !action.command.trim().length) {
+              this.$message.warning('请输入 scp 传输命令')
+              return
+            }
+          }
         }
       }
       this.loading = true
@@ -249,9 +296,10 @@ export default {
         stageType: 20,
         env: {
           transferPath: this.transferPath,
+          transferMode: this.transferMode,
+          transferFileType: this.transferFileType,
           releaseSerial: this.releaseSerial,
-          exceptionHandler: this.exceptionHandler,
-          transferDirType: this.transferDirType
+          exceptionHandler: this.exceptionHandler
         },
         machineIdList: this.machines,
         releaseActions: this.actions
@@ -279,6 +327,7 @@ export default {
 @app-action-editor-width: 700px;
 @app-action-editor-height: 250px;
 @transfer-input-width: 700px;
+@help-input-width: 670px;
 @action-divider-min-width: 830px;
 @action-divider-width: 990px;
 @app-action-footer-width: 700px;
@@ -381,6 +430,17 @@ export default {
     display: block;
     color: rgba(0, 0, 0, .45);
     font-size: 13px;
+  }
+
+  .help-input {
+    width: @help-input-width !important;
+  }
+
+  .help-trigger {
+    cursor: pointer;
+    color: #1890FF;
+    font-size: 20px;
+    padding-left: 8px;
   }
 
 }

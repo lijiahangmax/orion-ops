@@ -1,90 +1,106 @@
 <template>
   <a-modal v-model="visible"
            v-drag-modal
-           okText="构建"
            :width="550"
-           :okButtonProps="{props: {disabled: loading}}"
+           :maskStyle="{opacity: 0.8, animation: 'none'}"
+           :dialogStyle="{top: '64px', padding: 0}"
            :maskClosable="false"
-           :destroyOnClose="true"
-           @ok="build"
-           @cancel="close">
-    <!-- 标题 -->
+           :destroyOnClose="true">
+    <!-- 页头 -->
     <template #title>
-      <a-icon class="ml4 pointer span-blue"
-              title="重新选择"
-              v-if="appId != null" @click="reselectApp"
-              type="arrow-left"/>
-      <span class="ml16">应用构建</span>
+      <span v-if="selectAppPage">选择应用</span>
+      <span v-if="!selectAppPage">
+        <a-icon class="mx4 pointer span-blue"
+                title="重新选择"
+                v-if="visibleReselect && appId"
+                @click="reselectAppList"
+                type="arrow-left"/>
+        应用构建
+      </span>
     </template>
-    <!-- 应用选择 -->
-    <div class="app-list" v-if="selectAppPage">
-      <div v-if="loading">
-        <a-skeleton active :paragraph="{rows: 6}"/>
-      </div>
-      <div v-else-if="appList.length">
-        <div class="app-item" v-for="app of appList" :key="app.id" @click="chooseApp(app)">
-          <div class="app-name">
-            <a-icon class="mx8" type="code-sandbox"/>
-            {{ app.name }}
+    <!-- 初始化骨架 -->
+    <a-skeleton v-if="initiating" active :paragraph="{rows: 4}"/>
+    <!-- 主体 -->
+    <a-spin v-else :spinning="loading || appLoading">
+      <!-- 应用选择 -->
+      <div class="app-list-container" v-if="selectAppPage">
+        <!-- 无应用数据 -->
+        <a-empty v-if="!appList.length" description="请先配置应用"/>
+        <!-- 应用列表 -->
+        <div v-else class="app-list">
+          <div class="app-item" v-for="app of appList" :key="app.id" @click="chooseApp(app.id)">
+            <div class="app-name">
+              <a-icon class="mx8" type="code-sandbox"/>
+              {{ app.name }}
+            </div>
+            <a-tag color="#5C7CFA">
+              {{ app.tag }}
+            </a-tag>
           </div>
-          <a-tag color="#5C7CFA">
-            {{ app.tag }}
-          </a-tag>
         </div>
       </div>
-      <div v-else-if="!appList.length">
-        <a-empty style="margin-top: 10%" description="请先配置应用"/>
-      </div>
-    </div>
-    <!-- 构建配置 -->
-    <a-spin :spinning="loading" v-else>
-      <div class="build-form">
-        <!-- 分支 -->
-        <div class="build-form-item" v-if="app && app.vcsId">
-          <span class="build-form-item-label normal-label required-label">分支</span>
-          <a-select class="build-form-item-input"
-                    v-model="submit.branchName"
-                    placeholder="分支"
-                    @change="reloadCommit"
-                    allowClear>
-            <a-select-option v-for="branch of branchList" :key="branch.name" :value="branch.name">
-              {{ branch.name }}
-            </a-select-option>
-          </a-select>
-          <a-icon type="reload" class="reload" title="刷新" @click="reloadBranch"/>
-        </div>
-        <!-- commit -->
-        <div class="build-form-item" v-if="app && app.vcsId">
-          <span class="build-form-item-label normal-label required-label">commit</span>
-          <a-select class="build-form-item-input commit-selector"
-                    v-model="submit.commitId"
-                    placeholder="提交记录"
-                    allowClear>
-            <a-select-option v-for="commit of commitList" :key="commit.id" :value="commit.id">
-              <div class="commit-item">
-                <div class="commit-item-left">
-                  <span class="commit-item-id">{{ commit.id.substring(0, 7) }}</span>
-                  <span class="commit-item-message">{{ commit.message }}</span>
-                </div>
-                <span class="commit-item-date">
+      <!-- 构建配置 -->
+      <div class="build-container" v-else>
+        <div class="build-form">
+          <!-- 分支 -->
+          <div class="build-form-item" v-if="app && app.vcsId">
+            <span class="build-form-item-label normal-label required-label">分支</span>
+            <a-select class="build-form-item-input"
+                      v-model="submit.branchName"
+                      placeholder="分支"
+                      @change="reloadCommit"
+                      allowClear>
+              <a-select-option v-for="branch of branchList" :key="branch.name" :value="branch.name">
+                {{ branch.name }}
+              </a-select-option>
+            </a-select>
+            <a-icon type="reload" class="reload" title="刷新" @click="reloadBranch"/>
+          </div>
+          <!-- commit -->
+          <div class="build-form-item" v-if="app && app.vcsId">
+            <span class="build-form-item-label normal-label required-label">commit</span>
+            <a-select class="build-form-item-input commit-selector"
+                      v-model="submit.commitId"
+                      placeholder="提交记录"
+                      allowClear>
+              <a-select-option v-for="commit of commitList" :key="commit.id" :value="commit.id">
+                <div class="commit-item">
+                  <div class="commit-item-left">
+                    <span class="commit-item-id">{{ commit.id.substring(0, 7) }}</span>
+                    <span class="commit-item-message">{{ commit.message }}</span>
+                  </div>
+                  <span class="commit-item-date">
                   {{ commit.time | formatDate('MM-dd HH:mm' ) }}
                 </span>
-              </div>
-            </a-select-option>
-          </a-select>
-          <a-icon type="reload" class="reload" title="刷新" @click="reloadCommit"/>
-        </div>
-        <!-- 描述 -->
-        <div class="build-form-item" style="margin: 8px 0;">
-          <span class="build-form-item-label normal-label">构建描述</span>
-          <a-textarea class="build-form-item-input"
-                      v-model="submit.description"
-                      style="height: 50px; width: 430px"
-                      :maxLength="64"
-                      allowClear/>
+                </div>
+              </a-select-option>
+            </a-select>
+            <a-icon type="reload" class="reload" title="刷新" @click="reloadCommit"/>
+          </div>
+          <!-- 描述 -->
+          <div class="build-form-item" style="margin: 8px 0;">
+            <span class="build-form-item-label normal-label">构建描述</span>
+            <a-textarea class="build-form-item-input"
+                        v-model="submit.description"
+                        style="height: 50px; width: 430px"
+                        :maxLength="64"
+                        allowClear/>
+          </div>
         </div>
       </div>
     </a-spin>
+    <!-- 页脚 -->
+    <template #footer>
+      <!-- 关闭 -->
+      <a-button @click="close">关闭</a-button>
+      <!-- 构建 -->
+      <a-button type="primary"
+                :loading="loading"
+                :disabled="selectAppPage || loading || appLoading || initiating"
+                @click="build">
+        构建
+      </a-button>
+    </template>
   </a-modal>
 </template>
 
@@ -94,6 +110,9 @@ import _filters from '@/lib/filters'
 
 export default {
   name: 'AppBuildModal',
+  props: {
+    visibleReselect: Boolean
+  },
   data: function() {
     return {
       selectAppPage: true,
@@ -109,58 +128,77 @@ export default {
         description: null
       },
       visible: false,
-      loading: false
+      loading: false,
+      appLoading: false,
+      initiating: false
     }
   },
   methods: {
-    async openBuild(profileId, appId) {
+    async openBuild(profileId, id) {
       if (!profileId) {
         this.$message.warning('请先维护应用环境')
         return
       }
-      this.cleanData()
-      this.selectAppPage = !appId
-      this.visible = true
-      this.loading = false
       this.profileId = profileId
-      this.appId = null
-      this.app = null
       this.appList = []
-      await this.loadAppList(profileId)
-      if (appId) {
-        this.appId = appId
-        const selectedApp = this.appList.filter(s => s.id === appId)
-        if (selectedApp.length) {
-          this.chooseApp(selectedApp[0])
-        } else {
-          this.$message.warning('未找到该应用')
-        }
+      this.cleanData()
+      this.selectAppPage = !id
+      this.loading = false
+      this.appLoading = false
+      this.initiating = true
+      this.visible = true
+      await this.loadAppList()
+      if (id) {
+        this.chooseApp(id)
+      }
+      this.initiating = false
+    },
+    async chooseApp(id) {
+      this.cleanData()
+      this.appId = id
+      this.selectAppPage = false
+      const filter = this.appList.filter(s => s.id === id)
+      if (!filter.length) {
+        this.$message.warning('未找到该应用')
+      }
+      this.app = filter[0]
+      if (this.app.vcsId) {
+        this.appLoading = true
+        await this.loadVcs()
+        this.appLoading = false
       }
     },
-    chooseApp(app) {
-      this.selectAppPage = false
-      this.app = app
-      this.appId = app.id
-      this.cleanData()
-      if (this.app.vcsId) {
-        this.loadVcs()
+    async loadAppList() {
+      const { data: { rows } } = await this.$api.getAppList({
+        profileId: this.profileId,
+        limit: 10000
+      })
+      this.appList = rows.filter(s => s.isConfig === this.$enum.CONFIG_STATUS.CONFIGURED.value)
+    },
+    async reselectAppList() {
+      this.selectAppPage = true
+      if (this.appList.length) {
+        return
       }
+      this.initiating = true
+      await this.loadAppList()
+      this.initiating = false
     },
     cleanData() {
+      this.app = {}
+      this.appId = null
       this.branchList = []
       this.commitList = []
       this.submit.branchName = null
       this.submit.commitId = null
       this.submit.description = null
     },
-    loadVcs() {
-      this.loading = true
-      this.$api.getVcsInfo({
+    async loadVcs() {
+      await this.$api.getVcsInfo({
         id: this.app.vcsId,
         appId: this.appId,
         profileId: this.profileId
       }).then(({ data }) => {
-        this.loading = false
         this.branchList = data.branches
         // 分支列表
         const defaultBranch = this.branchList.filter(s => s.isDefault === 1)
@@ -176,19 +214,17 @@ export default {
         } else {
           this.submit.commitId = null
         }
-      }).catch(() => {
-        this.loading = false
       })
     },
     reloadBranch() {
-      this.loading = true
+      this.appLoading = true
       this.$api.getVcsBranchList({
         id: this.app.vcsId
       }).then(({ data }) => {
-        this.loading = false
+        this.appLoading = false
         this.branchList = data
       }).catch(() => {
-        this.loading = false
+        this.appLoading = false
       })
     },
     reloadCommit() {
@@ -201,12 +237,12 @@ export default {
         this.$message.warning('请先选择分支')
         return
       }
-      this.loading = true
+      this.appLoading = true
       this.$api.getVcsCommitList({
         id: this.app.vcsId,
         branchName: this.submit.branchName
       }).then(({ data }) => {
-        this.loading = false
+        this.appLoading = false
         this.commitList = data
         if (data && data.length) {
           this.submit.commitId = this.commitList[0].id
@@ -214,32 +250,8 @@ export default {
           this.submit.commitId = null
         }
       }).catch(() => {
-        this.loading = false
+        this.appLoading = false
       })
-    },
-    async loadAppList() {
-      this.loading = true
-      this.app = null
-      this.appList = []
-      await this.$api.getAppList({
-        profileId: this.profileId,
-        limit: 10000
-      }).then(({ data }) => {
-        this.loading = false
-        if (data.rows && data.rows.length) {
-          this.appList = data.rows.filter(s => s.isConfig === this.$enum.CONFIG_STATUS.CONFIGURED.value)
-        }
-      }).catch(() => {
-        this.loading = false
-      })
-    },
-    reselectApp() {
-      this.appId = null
-      this.app = null
-      this.selectAppPage = true
-      if (!this.appList.length) {
-        this.loadAppList()
-      }
     },
     async build() {
       if (!this.app) {
@@ -264,7 +276,8 @@ export default {
       }).then(() => {
         this.$message.success('已开始构建')
         this.$emit('submit')
-        this.close()
+        this.visible = false
+      }).catch(() => {
         this.loading = false
       })
     },
