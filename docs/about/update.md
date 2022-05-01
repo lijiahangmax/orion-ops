@@ -1,15 +1,97 @@
 ⚡ 注意: 应用不支持跨版本升级
 
-## 1.0.1 > 1.1.0-beta
+## 1.1.0
 
 > sql 脚本
 
 ```sql
-ALTER TABLE `orion-ops`.`web_side_message` 
+ALTER TABLE `application_action` 
+MODIFY COLUMN `action_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称' AFTER `profile_id`;
+
+ALTER TABLE `application_action_log` 
+MODIFY COLUMN `action_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作名称' AFTER `action_id`;
+
+ALTER TABLE `machine_env` 
+MODIFY COLUMN `attr_value` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'value' AFTER `attr_key`;
+
+ALTER TABLE `application_env` 
+MODIFY COLUMN `attr_value` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'value' AFTER `attr_key`;
+
+ALTER TABLE `history_value_snapshot` 
+MODIFY COLUMN `before_value` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '原始值' AFTER `value_type`,
+MODIFY COLUMN `after_value` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '新值' AFTER `before_value`;
+
+ALTER TABLE `application_action` 
+MODIFY COLUMN `action_command` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '执行命令' AFTER `stage_type`;
+
+ALTER TABLE `application_action_log` 
+MODIFY COLUMN `action_command` varchar(4096) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作命令' AFTER `action_type`;
+
+ALTER TABLE `application_release` 
+MODIFY COLUMN `bundle_path` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '构建产物文件' AFTER `exception_handler`,
+MODIFY COLUMN `transfer_path` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '产物传输路径' AFTER `bundle_path`;
+
+ALTER TABLE `application_build` 
+MODIFY COLUMN `bundle_path` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '构建产物路径' AFTER `log_path`;
+
+ALTER TABLE `command_exec` 
+MODIFY COLUMN `exec_command` varchar(4096) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '命令' AFTER `exit_code`;
+
+ALTER TABLE `application_build` 
+MODIFY COLUMN `log_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '构建日志路径' AFTER `vcs_id`;
+
+ALTER TABLE `file_tail_list` 
+MODIFY COLUMN `file_path` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件路径' AFTER `alias_name`,
+MODIFY COLUMN `tail_command` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'tail 命令' AFTER `file_offset`;
+
+ALTER TABLE `file_transfer_log` 
+MODIFY COLUMN `remote_file` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '远程文件' AFTER `machine_id`;
+
+ALTER TABLE `machine_terminal` 
+MODIFY COLUMN `font_family` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字体名称' AFTER `font_size`;
+
+ALTER TABLE `web_side_message` 
+MODIFY COLUMN `params_json` varchar(4096) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '消息参数' AFTER `send_message`;
+
+INSERT INTO machine_env (machine_id, attr_key, attr_value, description, deleted) 
+SELECT m.id, 'connect_timeout', '3000', '连接超时时间 (ms)', m.deleted FROM machine_info m;
+
+INSERT INTO machine_env (machine_id, attr_key, attr_value, description, deleted) 
+SELECT m.id, 'connect_retry_times', '2', '连接失败重试次数', m.deleted FROM machine_info m;
+
+INSERT INTO system_env (attr_key, attr_value, system_env, description, deleted) 
+VALUES ('tracker_delay_time', '250', 2, '文件追踪器延迟时间 (ms)', 1);
+
+ALTER TABLE `file_tail_list` 
+MODIFY COLUMN `tail_mode` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'tracker' COMMENT '宿主机文件追踪类型 tracker/tail' AFTER `tail_command`;
+
+UPDATE file_tail_list SET tail_mode = 'tracker' WHERE tail_mode = 'tacker';
+
+UPDATE application_action SET action_command = 'scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}' WHERE action_type = 210;
+
+INSERT INTO application_env (app_id, profile_id, attr_key, attr_value, system_env, description, deleted) 
+SELECT app.id, p.id, 'transfer_mode', 'sftp', 2, '产物传输方式 (sftp/scp)', app.deleted FROM application_profile p, application_info app;
+
+ALTER TABLE `application_release` 
+ADD COLUMN `transfer_mode` char(8) NULL DEFAULT 'sftp' COMMENT '产物传输方式 sftp scp' AFTER `transfer_path`;
+
+UPDATE application_release SET transfer_mode = 'sftp' WHERE transfer_mode IS NULL;
+
+UPDATE application_env SET attr_key = 'transfer_file_type', description = '产物传输文件类型 (normal/zip)' WHERE attr_key = 'transfer_dir_type';
+
+UPDATE application_env SET attr_value = 'normal' WHERE attr_key = 'transfer_file_type' AND attr_value = 'dir';
+```
+
+## 1.1.0-beta
+
+> sql 脚本
+
+```sql
+ALTER TABLE `web_side_message` 
 MODIFY COLUMN `create_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间' AFTER `deleted`,
 MODIFY COLUMN `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间' AFTER `create_time`;
 
-ALTER TABLE `orion-ops`.`application_action_log` 
+ALTER TABLE `application_action_log` 
 MODIFY COLUMN `run_status` tinyint(4) NULL DEFAULT 10 COMMENT '状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止' AFTER `log_path`;
 
 CREATE TABLE `application_pipeline_task`  (
@@ -78,7 +160,7 @@ CREATE TABLE `application_pipeline_task_log`  (
 
 ```
 
-## 1.0.0 > 1.0.1
+## 1.0.1
 
 > sql 脚本
 
@@ -99,21 +181,21 @@ CREATE TABLE `web_side_message` (
   KEY `to_user_id_idx` (`to_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统站内信';
 
-ALTER TABLE `orion-ops`.`application_release` 
+ALTER TABLE `application_release` 
 MODIFY COLUMN `release_status` tinyint(0) NULL DEFAULT NULL COMMENT '发布状态 10待审核 20审核驳回 30待发布 35待调度 40发布中 50发布完成 60发布停止 70发布失败' AFTER `release_type`;
 ```
 
-## 1.0.0-beta > 1.0.0
+## 1.0.0
 
 > sql 脚本
 
 ```sql
-INSERT INTO machine_env ( machine_id, attr_key, attr_value, description, deleted ) 
+INSERT INTO machine_env (machine_id, attr_key, attr_value, description, deleted) 
 SELECT m.id, 'tail_default_command', 'tail -f -n @{offset} @{file}', '文件追踪默认命令', m.deleted FROM machine_info m;
 
-ALTER TABLE `orion-ops`.`file_tail_list` 
-ADD COLUMN `tail_mode` char(8) NULL DEFAULT 'tacker' COMMENT '宿主机文件追踪类型 tacker/tail' AFTER `tail_command`;
+ALTER TABLE `file_tail_list` 
+ADD COLUMN `tail_mode` char(8) NULL DEFAULT 'tracker' COMMENT '宿主机文件追踪类型 tracker/tail' AFTER `tail_command`;
 
-UPDATE file_tail_list SET tail_mode = 'tacker' WHERE machine_id = 1;
+UPDATE file_tail_list SET tail_mode = 'tracker' WHERE machine_id = 1;
 UPDATE file_tail_list SET tail_mode = 'tail' WHERE machine_id <> 1;
 ```

@@ -9,9 +9,13 @@
             <a-icon type="reload"/>
           </div>
         </div>
+        <!-- 过滤文件 -->
+        <div class="name-filter">
+          <a-input placeholder="文件名 / 文件路径过滤" v-model="nameFilter" allowClear/>
+        </div>
         <!-- tail文件列表菜单 -->
         <a-menu theme="dark" mode="inline" :selectedKeys="selectedKeys">
-          <a-menu-item v-for="item of tailList" :key="item.id"
+          <a-menu-item v-for="item of filterTailList" :key="item.id"
                        :title="`双击打开 ${item.name}`"
                        @dblclick="chooseFile(item.id)">
             <a-icon type="file-text"/>
@@ -110,6 +114,8 @@ export default {
       selectedKeys: [],
       selectedTailFiles: [],
       tailList: [],
+      filterTailList: [],
+      nameFilter: null,
       activeTab: 0
     }
   },
@@ -127,9 +133,17 @@ export default {
     //     $refBefore[0].toScroll()
     //   }
     // }
+    nameFilter(v) {
+      if (v) {
+        this.filterTailList = this.tailList.filter(s => s.name.toLowerCase().includes(v.toLowerCase()) || s.path.toLowerCase().includes(v.toLowerCase()))
+      } else {
+        this.filterTailList = [...this.tailList]
+      }
+    }
   },
   methods: {
     async getTailList() {
+      this.nameFilter = null
       this.listLoading = true
       try {
         const tailListRes = await this.$api.getTailList({
@@ -145,6 +159,7 @@ export default {
             machineHost: i.machineHost
           }
         })
+        this.filterTailList = [...this.tailList]
       } catch (e) {
         // ignore
       }
@@ -272,6 +287,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.name-filter {
+  padding: 6px 8px;
 }
 
 </style>

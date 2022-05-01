@@ -93,7 +93,7 @@
       <!-- 添加/修改模态框 -->
       <AddPipelineModal ref="addModal" @added="getList({})" @updated="getList"/>
       <!-- 流水线执行模态框 -->
-      <AppPipelineExecModal ref="execModal"/>
+      <AppPipelineExecModal ref="execModal" :visibleReselect="false"/>
     </div>
   </div>
 </template>
@@ -215,7 +215,7 @@ export default {
       this.$refs.addModal.update(id)
     },
     execPipeline(id) {
-      this.$refs.execModal.open(id)
+      this.$refs.execModal.openPipeline(this.query.profileId, id)
     },
     openDetail(id) {
       this.$refs.detailViewDrawer.open(id)

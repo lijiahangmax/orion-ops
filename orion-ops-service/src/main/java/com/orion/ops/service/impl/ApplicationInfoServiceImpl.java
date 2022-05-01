@@ -7,10 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.ExceptionHandlerType;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SerialType;
-import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.consts.app.StageType;
-import com.orion.ops.consts.app.TransferDirType;
+import com.orion.ops.consts.app.*;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationInfoDAO;
@@ -279,7 +276,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 查询环境变量
         String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
         String transferPath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_PATH.getKey());
-        String transferDirType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
+        String transferMode = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_MODE.getKey());
+        String transferFileType = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.TRANSFER_FILE_TYPE.getKey());
         String releaseSerial = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.RELEASE_SERIAL.getKey());
         String exceptionHandler = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.EXCEPTION_HANDLER.getKey());
         // 查询发布机器
@@ -290,7 +288,8 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationConfigEnvVO env = new ApplicationConfigEnvVO();
         env.setBundlePath(bundlePath);
         env.setTransferPath(transferPath);
-        env.setTransferDirType(TransferDirType.of(transferDirType).getValue());
+        env.setTransferMode(TransferMode.of(transferMode).getValue());
+        env.setTransferFileType(TransferFileType.of(transferFileType).getValue());
         env.setReleaseSerial(SerialType.of(releaseSerial).getType());
         env.setExceptionHandler(ExceptionHandlerType.of(exceptionHandler).getType());
         List<ApplicationActionVO> buildActions = actions.stream()

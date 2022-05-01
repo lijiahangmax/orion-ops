@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
+import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.AuditStatus;
@@ -212,6 +213,7 @@ public class ApplicationPipelineTaskController {
     /**
      * 任务状态
      */
+    @IgnoreLog
     @RequestMapping("/status")
     public ApplicationPipelineTaskStatusVO getTaskStatus(@RequestBody ApplicationPipelineTaskRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -221,6 +223,7 @@ public class ApplicationPipelineTaskController {
     /**
      * 任务状态
      */
+    @IgnoreLog
     @RequestMapping("/list-status")
     public List<ApplicationPipelineTaskStatusVO> getTaskStatusList(@RequestBody ApplicationPipelineTaskRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());

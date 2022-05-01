@@ -115,8 +115,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Long buildId = buildTask.getId();
         // 设置目录信息
         buildTask.setLogPath(PathBuilders.getBuildLogPath(buildId));
-        String bundlePath = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        buildTask.setBundlePath(PathBuilders.getBuildBundlePath(buildId) + "/" + Files1.getFileName(bundlePath));
+        String bundlePathEnv = applicationEnvService.getAppEnvValue(appId, profileId, ApplicationEnvAttr.BUNDLE_PATH.getKey());
+        String bundlePathReal = PathBuilders.getBuildBundlePath(buildId) + "/" + Files1.getFileName(bundlePathEnv);
+        buildTask.setBundlePath(bundlePathReal);
         // 更新构建信息
         applicationBuildDAO.updateById(buildTask);
         // 检查是否包含环境变量命令
@@ -135,7 +136,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             // 查询系统环境变量
             env.putAll(systemEnvService.getFullSystemEnv());
             // 添加构建环境变量
-            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId(), request));
+            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId(), bundlePathReal, request));
         }
         // 设置action
         for (ApplicationActionDO action : actions) {
@@ -317,8 +318,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             return buildBundlePath;
         }
         // 如果是文件夹则需要检查传输文件是文件夹还是压缩文件
-        String transferDirValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
-        if (TransferDirType.ZIP.equals(TransferDirType.of(transferDirValue))) {
+        String transferValueValue = applicationEnvService.getAppEnvValue(build.getAppId(), build.getProfileId(), ApplicationEnvAttr.TRANSFER_FILE_TYPE.getKey());
+        if (TransferFileType.ZIP.equals(TransferFileType.of(transferValueValue))) {
             buildBundlePath = build.getBundlePath() + "." + Const.SUFFIX_ZIP;
             bundleFile = new File(Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), buildBundlePath));
             Valid.isTrue(bundleFile.exists(), MessageConst.BUNDLE_ZIP_FILE_ABSENT);
@@ -335,14 +336,15 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     /**
      * 获取构建环境变量
      *
-     * @param buildId  buildId
-     * @param buildSeq buildSeq
-     * @param vcsId    vcsId
-     * @param request  request
+     * @param buildId        buildId
+     * @param buildSeq       buildSeq
+     * @param vcsId          vcsId
+     * @param bundlePathReal bundlePathReal
+     * @param request        request
      * @return env
      */
     private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq,
-                                                             Long vcsId, ApplicationBuildRequest request) {
+                                                             Long vcsId, String bundlePathReal, ApplicationBuildRequest request) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_ID, buildId + Strings.EMPTY);
@@ -353,6 +355,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
             env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_EVENT_HOME, Utils.getVcsEventDir(vcsId));
         }
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BUNDLE_PATH, bundlePathReal);
         return env;
     }
 

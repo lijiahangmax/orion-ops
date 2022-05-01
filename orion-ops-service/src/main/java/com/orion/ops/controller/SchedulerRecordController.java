@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
+import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.SchedulerTaskRecordRequest;
@@ -63,6 +64,7 @@ public class SchedulerRecordController {
     /**
      * 查询调度任务状态
      */
+    @IgnoreLog
     @RequestMapping("/list-status")
     public List<SchedulerTaskRecordStatusVO> listRecordStatus(@RequestBody SchedulerTaskRecordRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -72,6 +74,7 @@ public class SchedulerRecordController {
     /**
      * 查询调度任务机器状态
      */
+    @IgnoreLog
     @RequestMapping("/machines-status")
     public List<SchedulerTaskMachineRecordStatusVO> listMachineRecordStatus(@RequestBody SchedulerTaskRecordRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());

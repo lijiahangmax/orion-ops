@@ -1,74 +1,110 @@
 <template>
   <a-modal v-model="visible"
            v-drag-modal
-           :width="540"
+           :width="550"
            :maskStyle="{opacity: 0.8, animation: 'none'}"
            :dialogStyle="{top: '64px', padding: 0}"
-           :bodyStyle="{padding: '24px 24px 0 24px'}"
            :maskClosable="false"
-           :destroyOnClose="true"
-           @cancel="close">
+           :destroyOnClose="true">
     <!-- 页头 -->
     <template #title>
-      <span class="span-blue">执行</span> {{ record.name }}
+      <span v-if="selectPipelinePage">选择流水线</span>
+      <span v-if="!selectPipelinePage">
+        <a-icon class="mx4 pointer span-blue"
+                title="重新选择"
+                v-if="visibleReselect && id"
+                @click="reselectPipelineList"
+                type="arrow-left"/>
+        执行流水线
+      </span>
     </template>
-    <a-spin :spinning="loading">
-      <!-- 执行参数 -->
-      <a-form-model v-bind="layout">
-        <!-- 执行标题 -->
-        <a-form-model-item class="exec-form-item" label="执行标题" required>
-          <a-input class="name-input" v-model="submit.title" :maxLength="32" allowClear/>
-        </a-form-model-item>
-        <!-- 发布类型 -->
-        <a-form-model-item class="exec-form-item" label="执行类型" required>
-          <a-radio-group v-model="submit.timedExec" buttonStyle="solid">
-            <a-radio-button :value="type.value" v-for="type in $enum.TIMED_TYPE" :key="type.value">
-              {{ type.execLabel }}
-            </a-radio-button>
-          </a-radio-group>
-        </a-form-model-item>
-        <!-- 调度时间 -->
-        <a-form-model-item class="exec-form-item" label="调度时间"
-                           v-if="submit.timedExec === $enum.TIMED_TYPE.TIMED.value" required>
-          <a-date-picker v-model="submit.timedExecTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
-        </a-form-model-item>
-        <!-- 执行描述 -->
-        <a-form-model-item class="exec-form-item" label="执行描述">
-          <a-textarea class="description-input" v-model="submit.description" :maxLength="64" allowClear/>
-        </a-form-model-item>
-      </a-form-model>
-      <a-divider class="detail-divider">流水线操作</a-divider>
-      <!-- 执行操作 -->
-      <div class="pipeline-wrapper">
-        <a-timeline>
-          <a-timeline-item v-for="detail of details" :key="detail.id">
-            <div class="pipeline-detail-wrapper">
-              <!-- 操作名称 -->
-              <div class="pipeline-stage-type span-blue">
-                {{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}
-              </div>
-              <!-- 应用名称 -->
-              <div class="pipeline-app-name">
-                {{ detail.appName }}
-              </div>
-              <!-- 应用操作 -->
-              <div class="pipeline-handler">
+    <!-- 初始化骨架 -->
+    <a-skeleton v-if="initiating" active :paragraph="{rows: 8}"/>
+    <!-- 主体 -->
+    <a-spin v-else :spinning="loading">
+      <!-- 流水线选择 -->
+      <div class="pipeline-list-container" v-if="selectPipelinePage">
+        <!-- 无流水线数据 -->
+        <a-empty v-if="!pipelineList.length" description="请先配置应用流水线"/>
+        <!-- 流水线列表 -->
+        <div class="pipeline-list">
+          <div class="pipeline-item" v-for="pipeline of pipelineList"
+               :key="pipeline.id"
+               @click="choosePipeline(pipeline.id)">
+            <div class="pipeline-name">
+              <a-icon class="mx8" type="code-sandbox"/>
+              {{ pipeline.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 执行配置 -->
+      <div class="pipeline-container" v-else>
+        <!-- 执行参数 -->
+        <a-form-model v-bind="layout">
+          <!-- 执行标题 -->
+          <a-form-model-item class="exec-form-item" label="执行标题" required>
+            <a-input class="name-input" v-model="submit.title" :maxLength="32" allowClear/>
+          </a-form-model-item>
+          <!-- 发布类型 -->
+          <a-form-model-item class="exec-form-item" label="执行类型" required>
+            <a-radio-group v-model="submit.timedExec" buttonStyle="solid">
+              <a-radio-button :value="type.value" v-for="type in $enum.TIMED_TYPE" :key="type.value">
+                {{ type.execLabel }}
+              </a-radio-button>
+            </a-radio-group>
+          </a-form-model-item>
+          <!-- 调度时间 -->
+          <a-form-model-item class="exec-form-item" label="调度时间"
+                             v-if="submit.timedExec === $enum.TIMED_TYPE.TIMED.value" required>
+            <a-date-picker v-model="submit.timedExecTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
+          </a-form-model-item>
+          <!-- 执行描述 -->
+          <a-form-model-item class="exec-form-item" label="执行描述">
+            <a-textarea class="description-input" v-model="submit.description" :maxLength="64" allowClear/>
+          </a-form-model-item>
+        </a-form-model>
+        <a-divider class="detail-divider">流水线操作</a-divider>
+        <!-- 执行操作 -->
+        <div class="pipeline-wrapper">
+          <a-timeline>
+            <a-timeline-item v-for="detail of details" :key="detail.id">
+              <div class="pipeline-detail-wrapper">
+                <!-- 操作名称 -->
+                <div class="pipeline-stage-type span-blue">
+                  {{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}
+                </div>
+                <!-- 应用名称 -->
+                <div class="pipeline-app-name">
+                  {{ detail.appName }}
+                </div>
+                <!-- 应用操作 -->
+                <div class="pipeline-handler">
                 <span class="pipeline-config-message auto-ellipsis-item"
                       :title="getConfigMessage(detail)"
                       v-text="getConfigMessage(detail)"/>
-                <!-- 设置 -->
-                <a-badge class="pipeline-set-badge" :dot="visibleConfigDot(detail)">
-                  <span class="span-blue pointer" title="设置" @click="openSetting(detail)">设置</span>
-                </a-badge>
+                  <!-- 设置 -->
+                  <a-badge class="pipeline-set-badge" :dot="visibleConfigDot(detail)">
+                    <span class="span-blue pointer" title="设置" @click="openSetting(detail)">设置</span>
+                  </a-badge>
+                </div>
               </div>
-            </div>
-          </a-timeline-item>
-        </a-timeline>
+            </a-timeline-item>
+          </a-timeline>
+        </div>
       </div>
     </a-spin>
     <!-- 页脚 -->
     <template #footer>
-      <a-button type="primary" :loading="loading" @click="execPipeline">执行</a-button>
+      <!-- 关闭 -->
+      <a-button @click="close">关闭</a-button>
+      <!-- 执行 -->
+      <a-button type="primary"
+                :loading="loading"
+                :disabled="selectPipelinePage || loading || initiating"
+                @click="execPipeline">
+        执行
+      </a-button>
     </template>
     <!-- 事件 -->
     <div class="pipeline-event-container">
@@ -96,12 +132,18 @@ export default {
     AppPipelineExecReleaseModal,
     AppPipelineExecBuildModal
   },
+  props: {
+    visibleReselect: Boolean
+  },
   data: function() {
     return {
+      selectPipelinePage: false,
       id: null,
       visible: false,
+      initiating: false,
       loading: false,
-      pipelineId: null,
+      profileId: null,
+      pipelineList: [],
       record: {},
       submit: {
         title: null,
@@ -114,20 +156,67 @@ export default {
     }
   },
   methods: {
-    open(id) {
+    async openPipelineList(profileId) {
+      this.profileId = profileId
+      this.pipelineList = []
+      this.selectPipelinePage = true
+      this.loading = false
+      this.initiating = true
+      this.visible = true
+      await this.loadPipelineList()
+      this.initiating = false
+    },
+    async openPipeline(profileId, id) {
+      this.profileId = profileId
+      this.pipelineList = []
+      this.cleanPipelineData()
+      this.selectPipelinePage = false
+      this.loading = false
+      this.initiating = true
+      this.visible = true
+      await this.selectPipeline(id)
+      this.initiating = false
+    },
+    async choosePipeline(id) {
+      this.cleanPipelineData()
+      this.selectPipelinePage = false
+      this.loading = true
+      await this.selectPipeline(id)
+      this.loading = false
+    },
+    async loadPipelineList() {
+      const { data: { rows } } = await this.$api.getAppPipelineList({
+        profileId: this.profileId,
+        limit: 10000
+      })
+      this.pipelineList = rows
+    },
+    async selectPipeline(id) {
       this.id = id
-      this.$api.getAppPipelineDetail({
+      await this.$api.getAppPipelineDetail({
         id
       }).then(({ data }) => {
         this.record = data
-        this.visible = true
-        this.pipelineId = data.id
         this.details = data.details
         this.submit.title = `执行${data.name}`
-        this.submit.description = null
-        this.submit.timedExec = this.$enum.TIMED_TYPE.NORMAL.value
-        this.submit.timedExecTime = null
       })
+    },
+    async reselectPipelineList() {
+      this.selectPipelinePage = true
+      if (this.pipelineList.length) {
+        return
+      }
+      this.initiating = true
+      await this.loadPipelineList()
+      this.initiating = false
+    },
+    cleanPipelineData() {
+      this.record = {}
+      this.details = []
+      this.submit.title = null
+      this.submit.description = null
+      this.submit.timedExec = this.$enum.TIMED_TYPE.NORMAL.value
+      this.submit.timedExecTime = null
     },
     visibleConfigDot(detail) {
       if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value) {
@@ -202,7 +291,7 @@ export default {
       }
       // 封装数据
       const request = {
-        pipelineId: this.pipelineId,
+        pipelineId: this.id,
         ...this.submit,
         details: []
       }
@@ -219,10 +308,9 @@ export default {
       }
       this.loading = true
       this.$api.submitAppPipelineTask(request).then(() => {
-        this.loading = false
-        this.$message.success('已提交流水线任务')
+        this.$message.success('已创建流水线任务')
         this.$emit('submit')
-        this.close()
+        this.visible = false
       }).catch(() => {
         this.loading = false
       })
@@ -236,6 +324,45 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+/deep/ .ant-modal-body {
+  padding: 8px;
+}
+
+.pipeline-container {
+  padding: 16px 16px 0 16px;
+}
+
+.pipeline-list {
+  margin: 0 4px 0 8px;
+  height: 355px;
+  overflow-y: auto;
+
+  .pipeline-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px;
+    padding: 4px 4px 4px 8px;
+    background: #F8F9FA;
+    border-radius: 4px;
+    height: 40px;
+    cursor: pointer;
+
+    .pipeline-name {
+      width: 300px;
+      text-overflow: ellipsis;
+      display: block;
+      overflow-x: hidden;
+      white-space: nowrap;
+    }
+  }
+
+  .pipeline-item:hover {
+    background: #E7F5FF;
+  }
+}
+
 .exec-form-item {
   margin-bottom: 12px;
 }

@@ -20,9 +20,7 @@
           {{ detail.profileName }}
         </a-descriptions-item>
         <a-descriptions-item label="构建序列" :span="3">
-          <a-tag color="#5C7CFA">
-            #{{ detail.seq }}
-          </a-tag>
+          <span class="span-blue">#{{ detail.seq }}</span>
         </a-descriptions-item>
         <a-descriptions-item label="版本仓库" :span="3" v-if="detail.vcsName != null">
           {{ detail.vcsName }}

@@ -17,24 +17,46 @@ import java.util.stream.Collectors;
 public enum MachineEnvAttr {
 
     /**
-     * sftp 文件名称编码格式 默认UTF-8
+     * sftp 文件名称编码格式
+     *
+     * @see com.orion.ops.consts.Const#UTF_8
      */
     SFTP_CHARSET("SFTP 文件名称编码格式"),
 
     /**
      * 文件追踪偏移量
+     *
+     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
      */
     TAIL_OFFSET("文件追踪偏移量(行)"),
 
     /**
      * 文件追踪编码格式
+     *
+     * @see com.orion.ops.consts.Const#UTF_8
      */
     TAIL_CHARSET("文件追踪编码格式"),
 
     /**
      * 文件追踪默认命令
+     *
+     * @see com.orion.ops.consts.command.CommandConst#TAIL_FILE_DEFAULT
      */
     TAIL_DEFAULT_COMMAND("文件追踪默认命令"),
+
+    /**
+     * 连接超时时间 (ms)
+     *
+     * @see MachineConst#CONNECT_TIMEOUT
+     */
+    CONNECT_TIMEOUT("连接超时时间 (ms)"),
+
+    /**
+     * 连接失败重试次数
+     *
+     * @see MachineConst#CONNECT_RETRY_TIMES
+     */
+    CONNECT_RETRY_TIMES("连接失败重试次数"),
 
     ;
 

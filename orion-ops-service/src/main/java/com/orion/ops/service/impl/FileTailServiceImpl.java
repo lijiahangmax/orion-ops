@@ -57,9 +57,6 @@ public class FileTailServiceImpl implements FileTailService {
     private MachineInfoService machineInfoService;
 
     @Resource
-    private SystemEnvService systemEnvService;
-
-    @Resource
     private CommandExecService commandExecService;
 
     @Resource
@@ -110,7 +107,7 @@ public class FileTailServiceImpl implements FileTailService {
         FileTailDTO tail = Converts.to(res, FileTailDTO.class);
         tail.setUserId(Currents.getUserId());
         // 追踪模式
-        String tailMode = isLocal ? systemEnvService.getTailMode() : res.getTailMode();
+        String tailMode = isLocal ? FileTailMode.getHostTailMode() : res.getTailMode();
         tail.setMode(tailMode);
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);

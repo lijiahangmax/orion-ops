@@ -1,5 +1,6 @@
 package com.orion.ops.consts.tail;
 
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,6 +51,16 @@ public enum FileTailMode {
             }
         }
         return hostMachine ? TRACKER : TAIL;
+    }
+
+    /**
+     * 获取宿主机 tailMode
+     *
+     * @return tailMode
+     */
+    public static String getHostTailMode() {
+        String mode = SystemEnvAttr.TAIL_MODE.getValue();
+        return of(mode, true).getMode();
     }
 
 }

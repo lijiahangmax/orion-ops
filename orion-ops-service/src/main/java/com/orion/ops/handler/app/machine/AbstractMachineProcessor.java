@@ -92,7 +92,7 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                 }
             }
             // 完成回调
-            this.completeCallback();
+            this.completeCallback(ex);
         } catch (Exception e) {
             // 异常
             ex = e;
@@ -162,8 +162,10 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
 
     /**
      * 完成回调
+     *
+     * @param e e
      */
-    protected void completeCallback() {
+    protected void completeCallback(Exception e) {
         log.info("机器任务执行-完成 relId: {}", id);
     }
 

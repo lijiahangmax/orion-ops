@@ -39,6 +39,16 @@ public class MachineActionStore {
     private Long machineId;
 
     /**
+     * 机器用户
+     */
+    private String machineUsername;
+
+    /**
+     * 机器主机
+     */
+    private String machineHost;
+
+    /**
      * 机器会话
      */
     private SessionStore sessionStore;
@@ -46,44 +56,52 @@ public class MachineActionStore {
     /**
      * 版本id
      *
-     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     * @see CheckoutActionHandler
      */
     private Long vcsId;
 
     /**
      * 分支
      *
-     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     * @see CheckoutActionHandler
      */
     private String branchName;
 
     /**
      * 提交版本
      *
-     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     * @see CheckoutActionHandler
      */
     private String commitId;
 
     /**
      * vcs clone 路径
      *
-     * @see com.orion.ops.handler.app.action.CheckoutActionHandler
+     * @see CheckoutActionHandler
      */
     private String vcsClonePath;
 
     /**
      * 构建产物文件
      *
-     * @see com.orion.ops.handler.app.action.TransferActionHandler
+     * @see AbstractTransferActionHandler
      */
     private String bundlePath;
 
     /**
      * 产物传输路径
      *
-     * @see com.orion.ops.handler.app.action.TransferActionHandler
+     * @see AbstractTransferActionHandler
      */
     private String transferPath;
+
+    /**
+     * 产物传输方式
+     *
+     * @see AbstractTransferActionHandler
+     * @see com.orion.ops.consts.app.TransferMode
+     */
+    private String transferMode;
 
     public MachineActionStore() {
         this.actions = Maps.newLinkedHashMap();

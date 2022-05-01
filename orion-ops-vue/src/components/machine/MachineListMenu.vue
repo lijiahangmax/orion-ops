@@ -7,9 +7,13 @@
           <a-icon type="reload"/>
         </div>
       </div>
+      <!-- 过滤文件 -->
+      <div class="name-filter">
+        <a-input placeholder="IP / 名称过滤" v-model="nameFilter" allowClear/>
+      </div>
       <!-- 机器列表菜单 -->
       <a-menu :theme="theme" mode="inline" :selectedKeys="selectedMachine">
-        <a-menu-item v-for="item of list" :key="item.id"
+        <a-menu-item v-for="item of filterList" :key="item.id"
                      :title="`双击打开 ${item.host}`"
                      @dblclick="chooseMachine(item.id)">
           <a-icon type="desktop"/>
@@ -33,14 +37,26 @@ export default {
       }
     }
   },
+  watch: {
+    nameFilter(v) {
+      if (v) {
+        this.filterList = this.list.filter(s => s.name.toLowerCase().includes(v.toLowerCase()) || s.host.toLowerCase().includes(v.toLowerCase()))
+      } else {
+        this.filterList = [...this.list]
+      }
+    }
+  },
   data() {
     return {
       loading: false,
-      list: []
+      list: [],
+      filterList: [],
+      nameFilter: null
     }
   },
   methods: {
     async getMachineList() {
+      this.nameFilter = null
       this.loading = true
       try {
         const machineListRes = await this.$api.getMachineList({
@@ -55,6 +71,7 @@ export default {
             host: i.host
           }
         })
+        this.filterList = [...this.list]
       } catch (e) {
         // ignore
       }
@@ -112,5 +129,10 @@ export default {
       color: #FFFFFF;
     }
   }
+
+  .name-filter {
+    padding: 6px 8px;
+  }
+
 }
 </style>

@@ -184,6 +184,8 @@ export default {
       }).then(data => {
         treeNode.dataRef.children = filesToNodes(data)
         this.treeData = [...this.treeData]
+      }).catch((data) => {
+        // ignore
       })
     },
     clean() {

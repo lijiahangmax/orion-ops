@@ -27,11 +27,18 @@ public class ApplicationConfigEnvVO {
     private String transferPath;
 
     /**
-     * 产物为文件夹传输类型 (dir/zip)
+     * 产物传输方式 (sftp/scp)
      *
-     * @see com.orion.ops.consts.app.ApplicationEnvAttr#TRANSFER_DIR_TYPE
+     * @see com.orion.ops.consts.app.ApplicationEnvAttr#TRANSFER_MODE
      */
-    private String transferDirType;
+    private String transferMode;
+
+    /**
+     * 产物传输文件类型 (normal/zip)
+     *
+     * @see com.orion.ops.consts.app.ApplicationEnvAttr#TRANSFER_FILE_TYPE
+     */
+    private String transferFileType;
 
     /**
      * 发布序列 10串行 20并行

@@ -3,9 +3,31 @@
 `orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、WebTerminal、 WebSftp、 机器批量执行、日志在线查看、定时调度任务、应用环境维护、应用构建及发布任务 (CI / CD)、操作流水线等功能, 帮助开发人员快速定位问题,
 致力于企业级应用。
 
+<p style="text-align: center">
+	<a target="_blank" href="https://www.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lijiahangmax/orion-ops&amp;utm_campaign=Badge_Grade">
+		<img src="https://app.codacy.com/project/badge/Grade/18b08ef5e7294e80836c56d595fea4bb" alt="Codacy"/>
+	</a>
+	<a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
+		<img src="https://img.shields.io/badge/JDK-8+-green.svg" alt="jdk8"/>
+	</a>
+	<a target="_blank" href="https://www.apache.org/licenses/LICENSE-2.0">
+		<img src="https://img.shields.io/github/license/lijiahangmax/orion-ops" alt="License"/>
+	</a>
+	<a target="_blank" href="https://gitee.com/lijiahangmax/orion-ops/stargazers">
+		<img src="https://gitee.com/lijiahangmax/orion-ops/badge/star.svg?theme=dark" alt="star"/>
+	</a>
+	<a target="_blank" href="https://gitee.com/lijiahangmax/orion-ops/members">
+		<img src="https://gitee.com/lijiahangmax/orion-ops/badge/fork.svg?theme=dark" alt="fork"/>
+	</a>		
+	<!-- <a target="_blank" href="https://github.com/lijiahangmax/orion-ops">
+		<img src="https://img.shields.io/github/stars/lijiahangmax/orion-ops.svg?style=social" alt="star"/>
+	</a> -->	
+</p>
+
 Github: https://github.com/lijiahangmax/orion-ops  
 Gitee: https://gitee.com/lijiahangmax/orion-ops  
 CSDN: https://blog.csdn.net/qq_41011894  
+orion-kit: [gitee](https://gitee.com/lijiahangmax/orion-kit) [github](https://github.com/lijiahangmax/orion-kit)    
 文档: https://lijiahangmax.gitee.io/orion-ops/#/    
 Demo: http://101.43.254.243/ops/#/
 

@@ -37,12 +37,12 @@ export default {
     async loadData(profileId) {
       this.pipelineList = []
       this.visiblePipeline = []
-      const pipelineListRes = await this.$api.getAppPipelineList({
+      const { data } = await this.$api.getAppPipelineList({
         profileId,
         limit: 10000
       })
-      if (pipelineListRes.data && pipelineListRes.data.rows && pipelineListRes.data.rows.length) {
-        for (const row of pipelineListRes.data.rows) {
+      if (data && data.rows && data.rows.length) {
+        for (const row of data.rows) {
           this.pipelineList.push({
             id: row.id,
             name: row.name

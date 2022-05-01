@@ -123,12 +123,12 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
     }
 
     @Override
-    protected void completeCallback() {
-        if (!terminated) {
+    protected void completeCallback(Exception e) {
+        super.completeCallback(e);
+        if (e == null && !terminated) {
             // 复制产物文件
             this.copyBundleFile();
         }
-        super.completeCallback();
     }
 
     @Override

@@ -76,9 +76,7 @@
                     <div class="app-build-record-status">
                       <!-- 构建序列 -->
                       <div class="build-seq">
-                        <a-tag color="#5C7CFA">
-                          #{{ buildRecord.seq }}
-                        </a-tag>
+                        <span class="span-blue">#{{ buildRecord.seq }}</span>
                       </div>
                       <!-- 构建状态 -->
                       <a-tag :color="$enum.valueOf($enum.BUILD_STATUS, buildRecord.status).color">

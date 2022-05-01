@@ -154,7 +154,7 @@ export default {
   computed: {
     leftContainerStyle() {
       return {
-        width: this.runnable ? '240px' : '580px',
+        width: this.runnable ? '240px' : '50%',
         padding: this.visibleCommand ? '16px 20px 20px 20px' : '0'
       }
     }
@@ -198,6 +198,10 @@ export default {
       const command = this.$refs.editor.getValue()
       if (!command.trim().length) {
         this.$message.warn('请输入执行命令')
+        return
+      }
+      if (command.length > 2048) {
+        this.$message.warn(`执行命令不能超过2048位 当前${command.length}位`)
         return
       }
       this.config.command = command

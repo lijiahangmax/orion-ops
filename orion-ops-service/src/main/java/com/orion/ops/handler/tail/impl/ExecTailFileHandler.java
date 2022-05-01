@@ -17,12 +17,10 @@ import com.orion.utils.io.Streams;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * tail -f 命令
@@ -110,15 +108,26 @@ public class ExecTailFileHandler implements ITailHandler {
     /**
      * 处理标准输入流
      *
-     * @param inputStream 流
+     * @param input 流
      */
     @SneakyThrows
-    private void handler(InputStream inputStream) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_8);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            session.sendMessage(new TextMessage(line));
+    private void handler(InputStream input) {
+        byte[] buffer = new byte[Const.BUFFER_KB_8];
+        int read;
+        while ((read = input.read(buffer)) != -1) {
+            if (session.isOpen()) {
+                session.sendMessage(new BinaryMessage(buffer, 0, read, true));
+            }
         }
+
+        // 2.0 tail 换行有问题
+        // BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, hint.getCharset()), Const.BUFFER_KB_8);
+        // String line;
+        // while ((line = reader.readLine()) != null) {
+        //     session.sendMessage(new TextMessage(line));
+        // }
+
+        // 1.0 tracker 换行有问题
         // char[] buffer = new char[Const.BUFFER_KB_4];
         // int read;
         // StringBuilder sb = new StringBuilder();

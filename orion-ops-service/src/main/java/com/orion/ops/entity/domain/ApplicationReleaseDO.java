@@ -133,6 +133,14 @@ public class ApplicationReleaseDO implements Serializable {
     private String transferPath;
 
     /**
+     * 产物传输方式
+     *
+     * @see com.orion.ops.consts.app.TransferMode
+     */
+    @TableField("transfer_mode")
+    private String transferMode;
+
+    /**
      * 回滚发布id
      */
     @TableField("rollback_release_id")

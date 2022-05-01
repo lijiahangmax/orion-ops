@@ -90,8 +90,8 @@ function getDecorators() {
         required: true,
         message: '请输入文件路径'
       }, {
-        max: 512,
-        message: '文件路径长度不能大于512位'
+        max: 1024,
+        message: '文件路径长度不能大于1024位'
       }]
     }],
     command: ['command', {

@@ -1,6 +1,7 @@
 package com.orion.ops.handler.app.action;
 
 import com.orion.constant.Letters;
+import com.orion.exception.ExecuteException;
 import com.orion.exception.LogException;
 import com.orion.lang.io.OutputAppender;
 import com.orion.ops.consts.Const;
@@ -223,16 +224,15 @@ public abstract class AbstractActionHandler implements IActionHandler {
                     .append("# ").append(action.getActionName()).append(" 执行失败")
                     .append(StainCode.SUFFIX)
                     .append(Letters.TAB)
-                    .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
-                    .append(Letters.LF);
+                    .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE));
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
-                log.append("exitCode: ")
+                log.append("  exitcode: ")
                         .append(ExitCode.SUCCESS.getCode().equals(exitCode)
                                 ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
-                                : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
-                        .append(Letters.LF);
+                                : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED));
             }
+            log.append(Letters.LF);
         } else {
             // 无异常
             long used = endTime.getTime() - startTime.getTime();
@@ -251,7 +251,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
                     .append(")\n");
         }
         // 拼接异常
-        if (ex != null) {
+        if (ex != null && !(ex instanceof ExecuteException)) {
             log.append(Const.LF);
             if (ex instanceof LogException) {
                 log.append(Utils.getStainKeyWords(ex.getMessage(), StainCode.GLOSS_RED));

@@ -58,6 +58,11 @@ public enum SystemEnvAttr {
     TAIL_MODE("文件追踪模式 (tracker/tail)", false),
 
     /**
+     * 文件追踪器等待时间 (ms)
+     */
+    TRACKER_DELAY_TIME("文件追踪器等待时间 (ms)", false),
+
+    /**
      * ip 白名单
      */
     WHITE_IP_LIST("ip 白名单", true),

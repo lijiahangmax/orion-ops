@@ -85,13 +85,13 @@ export default {
       this.$refs.terminalMain.fitTerminal()
     },
     toTop() {
-      this.$refs.terminalMain.term.scrollToTop()
+      this.$refs.terminalMain.term && this.$refs.terminalMain.term.scrollToTop()
     },
     toBottom() {
-      this.$refs.terminalMain.term.scrollToBottom()
+      this.$refs.terminalMain.term && this.$refs.terminalMain.term.scrollToBottom()
     },
     focus() {
-      this.$refs.terminalMain.term.focus()
+      this.$refs.terminalMain.term && this.$refs.terminalMain.term.focus()
     },
     async getAccessToken() {
       this.loading = this.$message.loading('建立连接中...')

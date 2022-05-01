@@ -73,9 +73,7 @@
                size="middle">
         <!-- 构建序列 -->
         <template v-slot:seq="record">
-          <a-tag color="#5C7CFA">
-            #{{ record.seq }}
-          </a-tag>
+          <span class="span-blue">#{{ record.seq }}</span>
         </template>
         <!-- 版本 -->
         <template v-slot:version="record">
@@ -151,7 +149,7 @@
     <!-- 事件 -->
     <div class="app-info-event">
       <!-- 添加模态框 -->
-      <AppBuildModal ref="addModal" @submit="getList({})"/>
+      <AppBuildModal ref="addModal" :visibleReselect="true" @submit="getList({})"/>
       <!-- 详情模态框 -->
       <AppBuildDetailDrawer ref="detail"/>
       <!-- 日志模态框 -->

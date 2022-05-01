@@ -60,9 +60,7 @@
             size="middle">
             <!-- 构建版本 -->
             <template v-slot:buildSeq="machine">
-              <a-tag color="#5C7CFA" v-if="machine.buildSeq">
-                #{{ machine.buildSeq }}
-              </a-tag>
+              <span class="span-blue" v-if="machine.buildSeq">#{{ machine.buildSeq }}</span>
             </template>
             <!-- 操作 -->
             <template v-slot:action="machine">
@@ -169,9 +167,9 @@
       <!-- 添加模态框 -->
       <AddAppModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 构建模态框 -->
-      <AppBuildModal ref="buildModal"/>
+      <AppBuildModal ref="buildModal" :visibleReselect="false"/>
       <!-- 构建模态框 -->
-      <AppReleaseModal ref="releaseModal"/>
+      <AppReleaseModal ref="releaseModal" :visibleReselect="false"/>
     </div>
   </div>
 </template>

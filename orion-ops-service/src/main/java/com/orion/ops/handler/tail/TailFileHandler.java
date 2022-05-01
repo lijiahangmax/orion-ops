@@ -1,7 +1,9 @@
 package com.orion.ops.handler.tail;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.entity.dto.FileTailDTO;
@@ -61,8 +63,7 @@ public class TailFileHandler implements WebSocketHandler {
         try {
             this.openTailHandler(session, token, Objects.requireNonNull(fileTail));
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("tail 打开处理器-失败 e: {}, token: {}, id: {}", e, token, id);
+            log.error("tail 打开处理器-失败 token: {}, id: {}", token, id, e);
         }
     }
 
@@ -119,6 +120,12 @@ public class TailFileHandler implements WebSocketHandler {
         hint.setCharset(fileTail.getCharset());
         hint.setCommand(fileTail.getCommand());
         FileTailMode mode = FileTailMode.of(fileTail.getMode());
+        if (FileTailMode.TRACKER.equals(mode)) {
+            // 获取delay
+            String delayValue = SystemEnvAttr.TRACKER_DELAY_TIME.getValue();
+            int delay = Strings.isInteger(delayValue) ? Integer.parseInt(delayValue) : Const.TRACKER_DELAY_MS;
+            hint.setDelay(Math.max(delay, Const.MIN_TRACKER_DELAY_MS));
+        }
         log.info("tail 打开处理器-开始 token: {}, id: {}, mode: {}, hint: {}", token, id, mode, JSON.toJSONString(hint));
         ITailHandler handler = ITailHandler.with(mode, hint, session);
         tailSessionHolder.addSession(token, handler);

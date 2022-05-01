@@ -7,7 +7,7 @@
           <span class="label normal-label required-label">构建产物路径</span>
           <a-textarea class="bundle-input"
                       v-model="bundlePath"
-                      :maxLength="512"
+                      :maxLength="1024"
                       :autoSize="{minRows: 1}"
                       :placeholder="'基于版本仓库的相对路径 或 绝对路径, 路径不能包含 \\\ 应该用 / 替换'"/>
         </div>
@@ -23,7 +23,7 @@
               <div class="app-action">
                 <div class="action-name-wrapper">
                   <span class="label normal-label required-label action-label">操作名称{{ index + 1 }}</span>
-                  <a-input class="action-name-input" v-model="action.name" :maxLength="16" placeholder="操作名称"/>
+                  <a-input class="action-name-input" v-model="action.name" :maxLength="32" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
                 <div class="action-editor-wrapper" v-if="action.type === $enum.BUILD_ACTION_TYPE.COMMAND.value">
@@ -172,8 +172,8 @@ export default {
           if (!action.command) {
             this.$message.warning(`请输入操作命令 [构建操作${i + 1}]`)
             return
-          } else if (action.command.length > 1024) {
-            this.$message.warning(`操作命令长度不能大于1024位 [构建操作${i + 1}]`)
+          } else if (action.command.length > 2048) {
+            this.$message.warning(`操作命令长度不能大于2048位 [构建操作${i + 1}] 当前: ${action.command.length}`)
             return
           }
         }

@@ -9,7 +9,8 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.SerialType;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.consts.app.StageType;
-import com.orion.ops.consts.app.TransferDirType;
+import com.orion.ops.consts.app.TransferFileType;
+import com.orion.ops.consts.app.TransferMode;
 import com.orion.ops.consts.env.EnvConst;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
@@ -269,14 +270,23 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
             transferPathEnv.setDescription(ApplicationEnvAttr.TRANSFER_PATH.getDescription());
             list.add(transferPathEnv);
         }
-        // 产物传输类型
-        String transferDirType = requestEnv.getTransferDirType();
-        if (!Strings.isBlank(transferDirType)) {
-            ApplicationEnvRequest transferDirTypeEnv = new ApplicationEnvRequest();
-            transferDirTypeEnv.setKey(ApplicationEnvAttr.TRANSFER_DIR_TYPE.getKey());
-            transferDirTypeEnv.setValue(TransferDirType.of(transferDirType).getValue());
-            transferDirTypeEnv.setDescription(ApplicationEnvAttr.TRANSFER_DIR_TYPE.getDescription());
-            list.add(transferDirTypeEnv);
+        // 产物传输方式
+        String transferMode = requestEnv.getTransferMode();
+        if (!Strings.isBlank(transferMode)) {
+            ApplicationEnvRequest transferModeEnv = new ApplicationEnvRequest();
+            transferModeEnv.setKey(ApplicationEnvAttr.TRANSFER_MODE.getKey());
+            transferModeEnv.setValue(TransferMode.of(transferMode).getValue());
+            transferModeEnv.setDescription(ApplicationEnvAttr.TRANSFER_MODE.getDescription());
+            list.add(transferModeEnv);
+        }
+        // 产物传输文件类型
+        String transferFileType = requestEnv.getTransferFileType();
+        if (!Strings.isBlank(transferFileType)) {
+            ApplicationEnvRequest transferFileTypeEnv = new ApplicationEnvRequest();
+            transferFileTypeEnv.setKey(ApplicationEnvAttr.TRANSFER_FILE_TYPE.getKey());
+            transferFileTypeEnv.setValue(TransferFileType.of(transferFileType).getValue());
+            transferFileTypeEnv.setDescription(ApplicationEnvAttr.TRANSFER_FILE_TYPE.getDescription());
+            list.add(transferFileTypeEnv);
         }
         // 发布序列
         Integer releaseSerial = requestEnv.getReleaseSerial();

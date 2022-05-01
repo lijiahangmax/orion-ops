@@ -23,9 +23,7 @@
           {{ detail.profileName }}
         </a-descriptions-item>
         <a-descriptions-item label="构建序列" :span="3">
-          <a-tag color="#5C7CFA">
-            #{{ detail.buildSeq }}
-          </a-tag>
+          <span class="span-blue">#{{ detail.buildSeq }}</span>
         </a-descriptions-item>
         <a-descriptions-item label="发布描述" :span="3" v-if="detail.description != null">
           {{ detail.description }}

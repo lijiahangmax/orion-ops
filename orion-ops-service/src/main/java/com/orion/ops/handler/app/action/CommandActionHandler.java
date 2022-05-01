@@ -41,7 +41,7 @@ public class CommandActionHandler extends AbstractActionHandler {
                 .exec();
         this.exitCode = executor.getExitCode();
         if (!ExitCode.SUCCESS.getCode().equals(exitCode)) {
-            throw Exceptions.log("*** 命令执行失败 exitCode: " + exitCode);
+            throw Exceptions.execute("*** 命令执行失败 exitCode: " + exitCode);
         }
     }
 

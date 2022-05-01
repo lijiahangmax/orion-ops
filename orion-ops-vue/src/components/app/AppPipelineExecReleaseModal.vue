@@ -30,9 +30,7 @@
             <a-select-option v-for="build of buildList" :key="build.id" :value="build.id">
               <div class="build-item">
                 <div class="build-item-left">
-                  <a-tag class="build-item-seq" color="#5C7CFA">
-                    #{{ build.seq }}
-                  </a-tag>
+                  <span class="span-blue">#{{ build.seq }}</span>
                   <span class="build-item-message">{{ build.description }}</span>
                 </div>
                 <span class="build-item-date">

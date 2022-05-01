@@ -97,7 +97,9 @@ public class TailSessionHolder {
     public void asyncCloseTailFile(Long machineId, String path) {
         Threads.start(() -> {
             try {
-                Threads.sleep(Const.MS_S_10);
+                Threads.sleep(Const.MS_S_1);
+                this.getSession(machineId, path).forEach(ITailHandler::setLastModify);
+                Threads.sleep(Const.MS_S_5);
                 this.getSession(machineId, path).forEach(ITailHandler::close);
             } catch (Exception e) {
                 log.error("关闭tailingFile失败 machineId: {}, path: {}", machineId, path, e);

@@ -317,7 +317,7 @@ export default {
         sessionToken: this.sessionToken,
         packageType
       }).then(() => {
-        this.$message.success('已提交打包请求')
+        this.$message.success('正在打包...')
       })
     },
     async loadDownload(item) {
