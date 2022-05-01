@@ -48,6 +48,8 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="caret-right" @click="openPipelineList">执行</a-button>
+        <a-divider type="vertical"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -249,7 +251,7 @@
     <!-- 事件 -->
     <div class="app-pipeline-event">
       <!-- 流水线执行模态框 -->
-      <AppPipelineExecModal ref="execModal"/>
+      <AppPipelineExecModal ref="execModal" :visibleReselect="true" @submit="getList"/>
       <!-- 审核模态框 -->
       <AppPipelineExecAuditModal ref="auditModal" @audit="auditPipeline"/>
       <!-- 定时模态框 -->
@@ -531,6 +533,9 @@ export default {
       }).catch(() => {
         record.loading = false
       })
+    },
+    openPipelineList() {
+      this.$refs.execModal.openPipelineList(this.query.profileId)
     },
     openAudit(id) {
       this.$refs.auditModal.open(id)
