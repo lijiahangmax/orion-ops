@@ -10,7 +10,7 @@
 
 配置机器环境变量, 这个环境变量并不会设置到远程机器内, 而是运行命令时动态替换命令内容。  
 `批量执行` `调度任务` `应用发布` `应用构建` 都可以用到, 设计的初衷是每台机器的配置不一样, 不同的机器执行相同的命令时设置不同的参数。  
-系统提供了几个默认的机器变量, 使用 `@{machine.xxx}` 来替换。
+系统提供了几个默认的机器变量, 执行命令时使用 `@{machine.xxx}` 来替换。
 
 | key               | 示例       | 描述      |
 | :----             | :---      | :----     |
@@ -25,14 +25,15 @@
 
 ```
 # 当前机器 名称: dev-server1
-# 环境变量 profile: dev
+# 环境变量 dumpPath: /usr/local/oom
+
 # 执行命令
 echo @{machine.machine_name}
-java -jar xxx.jar --spring.profiles.active=@{machine.profile}
+java -jar demo.jar -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=@{machine.dumpPath}
 
 # 命令在执行前会被替换为
 echo dev-server1
-java -jar xxx.jar --spring.profiles.active=dev
+java -jar demo.jar -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/oom
 ```
 
 机器创建后系统会生成几个默认的环境变量, 用于部分功能的交互。
