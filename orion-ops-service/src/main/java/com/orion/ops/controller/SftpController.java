@@ -370,7 +370,7 @@ public class SftpController {
      * @return RuntimeException
      */
     private RuntimeException convertError(RuntimeException e) {
-        if (SftpErrorMessage.NO_SUCH_FILE.isCause(e)) {
+        if (SftpErrorMessage.NO_SUCH_FILE.getMessage().toLowerCase().contains(Strings.def(e.getMessage()))) {
             return Exceptions.argument(MessageConst.NO_SUCH_FILE);
         } else {
             return e;
