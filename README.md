@@ -24,12 +24,14 @@
 	</a> -->	
 </p>
 
-Github: https://github.com/lijiahangmax/orion-ops  
-Gitee: https://gitee.com/lijiahangmax/orion-ops  
-CSDN: https://blog.csdn.net/qq_41011894  
+<br/>  
+
+github: https://github.com/lijiahangmax/orion-ops  
+gitee: https://gitee.com/lijiahangmax/orion-ops  
+csdn: https://blog.csdn.net/qq_41011894  
 orion-kit: [gitee](https://gitee.com/lijiahangmax/orion-kit) [github](https://github.com/lijiahangmax/orion-kit)    
 文档: https://lijiahangmax.gitee.io/orion-ops/#/    
-Demo: http://101.43.254.243/ops/#/
+demo: http://101.43.254.243/ops/#/
 
 演示账号: `orionadmin`    
 演示密码: `orionadmin`
@@ -70,7 +72,7 @@ Demo: http://101.43.254.243/ops/#/
 
 > 机器列表
 
-![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1264467313405831364.png "机器列表")
+![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-05-05/files4260895980395378347.png "机器列表")
 
 > 在线终端
 
