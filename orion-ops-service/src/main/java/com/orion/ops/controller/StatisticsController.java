@@ -4,10 +4,7 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.AppBuildStatisticsRequest;
 import com.orion.ops.entity.request.AppReleaseStatisticsRequest;
 import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
-import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
-import com.orion.ops.entity.vo.ApplicationReleaseStatisticsVO;
-import com.orion.ops.entity.vo.HomeStatisticsVO;
-import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.StatisticsService;
 import com.orion.ops.utils.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 统计操作
@@ -49,13 +47,33 @@ public class StatisticsController {
     }
 
     /**
-     * 应用构建统计
+     * 应用构建统计 指标
      */
-    @RequestMapping("/app-build")
-    public ApplicationBuildStatisticsVO appBuildStatistics(@RequestBody AppBuildStatisticsRequest request) {
+    @RequestMapping("/app-build/metrics")
+    public ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(@RequestBody AppBuildStatisticsRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
-        return statisticsService.appBuildStatistics(appId, profileId);
+        return statisticsService.appBuildStatisticsMetrics(appId, profileId);
+    }
+
+    /**
+     * 应用构建统计 视图
+     */
+    @RequestMapping("/app-build/view")
+    public ApplicationBuildStatisticsViewVO appBuildStatisticsView(@RequestBody AppBuildStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appBuildStatisticsView(appId, profileId);
+    }
+
+    /**
+     * 应用构建统计 折线图
+     */
+    @RequestMapping("/app-build/chart")
+    public List<ApplicationBuildStatisticsChartVO> appBuildStatisticsChart(@RequestBody AppBuildStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appBuildStatisticsChart(appId, profileId);
     }
 
     /**

@@ -1,9 +1,8 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
-import com.orion.ops.entity.vo.ApplicationReleaseStatisticsVO;
-import com.orion.ops.entity.vo.HomeStatisticsVO;
-import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
+import com.orion.ops.entity.vo.*;
+
+import java.util.List;
 
 /**
  * 统计service
@@ -30,13 +29,31 @@ public interface StatisticsService {
     SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(Long taskId);
 
     /**
-     * 获取应用构建统计
+     * 获取应用构建统计 指标
      *
      * @param appId     appId
      * @param profileId profileId
-     * @return 统计
+     * @return 指标
      */
-    ApplicationBuildStatisticsVO appBuildStatistics(Long appId, Long profileId);
+    ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(Long appId, Long profileId);
+
+    /**
+     * 获取应用构建统计 视图
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 视图
+     */
+    ApplicationBuildStatisticsViewVO appBuildStatisticsView(Long appId, Long profileId);
+
+    /**
+     * 获取应用构建统计 表格
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 表格
+     */
+    List<ApplicationBuildStatisticsChartVO> appBuildStatisticsChart(Long appId, Long profileId);
 
     /**
      * 获取应用发布统计

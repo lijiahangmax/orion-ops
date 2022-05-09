@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2022/3/29 18:02
  */
 @Data
-public class ApplicationBuildStatisticsAnalysisVO {
+public class ApplicationBuildStatisticsViewVO {
 
     /**
      * 平均构建时长ms (成功)
