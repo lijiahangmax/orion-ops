@@ -778,7 +778,7 @@ const $enum = {
       label: '未开始',
       stepStatus: 'wait',
       actionStyle: {
-        background: '#63E6BE'
+        background: '#CED4DA'
       },
       actionValue() {
         return '未开始'
@@ -790,7 +790,8 @@ const $enum = {
       label: '进行中',
       stepStatus: 'process',
       actionStyle: {
-        background: '#A9E34B'
+        background: '#94D82D',
+        cursor: 'pointer'
       },
       actionValue() {
         return '进行中'
@@ -802,8 +803,8 @@ const $enum = {
       label: '已完成',
       stepStatus: 'finish',
       actionStyle: {
-        background: '#A5D8FF',
-        'font-size': '14px'
+        background: '#74C0FC',
+        cursor: 'pointer'
       },
       actionValue(log) {
         return log.usedInterval || '已完成'
@@ -815,8 +816,8 @@ const $enum = {
       label: '已失败',
       stepStatus: 'error',
       actionStyle: {
-        background: '#FF6B6B',
-        'font-size': '14px'
+        background: '#F03E3E',
+        cursor: 'pointer'
       },
       actionValue(log) {
         return log.usedInterval || '已失败'
@@ -828,7 +829,7 @@ const $enum = {
       label: '已跳过',
       stepStatus: 'wait',
       actionStyle: {
-        background: '#FFE066'
+        background: '#FFD43B'
       },
       actionValue() {
         return '已跳过'
@@ -840,7 +841,8 @@ const $enum = {
       label: '已停止',
       stepStatus: 'wait',
       actionStyle: {
-        background: '#FFC078'
+        background: '#FFA94D',
+        cursor: 'pointer'
       },
       actionValue() {
         return '已停止'

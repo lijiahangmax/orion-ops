@@ -1462,10 +1462,24 @@ const $api = {
   },
 
   /**
-   * 应用构建统计信息
+   * 应用构建统计信息 指标
    */
-  getAppBuildStatistics: param => {
-    return $http.$post('/statistics/app-build', param)
+  getAppBuildStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-build/metrics', param)
+  },
+
+  /**
+   * 应用构建统计信息 视图
+   */
+  getAppBuildStatisticsView: param => {
+    return $http.$post('/statistics/app-build/view', param)
+  },
+
+  /**
+   * 应用构建统计信息 折线图
+   */
+  getAppBuildStatisticsChart: param => {
+    return $http.$post('/statistics/app-build/chart', param)
   },
 
   /**
