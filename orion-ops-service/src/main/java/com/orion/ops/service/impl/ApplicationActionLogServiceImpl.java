@@ -10,6 +10,7 @@ import com.orion.ops.entity.vo.ApplicationActionLogVO;
 import com.orion.ops.service.api.ApplicationActionLogService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.utils.Strings;
+import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,18 @@ public class ApplicationActionLogServiceImpl implements ApplicationActionLogServ
 
     @Resource
     private ApplicationActionLogDAO applicationActionLogDAO;
+
+    @Override
+    public ApplicationActionLogVO getDetailById(Long id) {
+        ApplicationActionLogDO log = applicationActionLogDAO.selectById(id);
+        return Converts.to(log, ApplicationActionLogVO.class);
+    }
+
+    @Override
+    public ApplicationActionLogVO getStatusById(Long id) {
+        ApplicationActionLogDO log = applicationActionLogDAO.selectStatusInfoById(id);
+        return Converts.to(log, ApplicationActionLogVO.class);
+    }
 
     @Override
     public List<ApplicationActionLogVO> getActionLogsByRelId(Long relId, StageType stageType) {

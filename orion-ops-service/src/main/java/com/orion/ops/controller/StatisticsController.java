@@ -1,5 +1,6 @@
 package com.orion.ops.controller;
 
+import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.AppBuildStatisticsRequest;
 import com.orion.ops.entity.request.AppReleaseStatisticsRequest;
@@ -59,6 +60,7 @@ public class StatisticsController {
     /**
      * 应用构建统计 视图
      */
+    @IgnoreLog
     @RequestMapping("/app-build/view")
     public ApplicationBuildStatisticsViewVO appBuildStatisticsView(@RequestBody AppBuildStatisticsRequest request) {
         Long appId = Valid.notNull(request.getAppId());

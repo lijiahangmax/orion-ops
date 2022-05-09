@@ -118,8 +118,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 path = applicationBuildService.getBuildLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
-            case APP_BUILD_ACTION_LOG:
-            case APP_RELEASE_ACTION_LOG:
+            case APP_ACTION_LOG:
                 // 应用构建操作日志
                 path = applicationActionLogService.getActionLogPath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);

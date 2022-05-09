@@ -116,34 +116,128 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ApplicationBuildStatisticsVO appBuildStatistics(Long appId, Long profileId) {
-        // 查询缓存
-        String cacheKey = Strings.format(KeyConst.APP_BUILD_STATISTICS_KEY, profileId, appId);
-        String cacheData = redisTemplate.opsForValue().get(cacheKey);
-        if (Strings.isBlank(cacheData)) {
-            // 获取图表时间
-            Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
-            Date rangeStartDate = Arrays1.last(chartDates);
-            // 获取构建统计信息
-            ApplicationBuildStatisticsDTO buildStatisticsDTO = applicationBuildDAO.getBuildStatistics(appId, profileId, rangeStartDate);
-            ApplicationBuildStatisticsVO buildStatistics = Converts.to(buildStatisticsDTO, ApplicationBuildStatisticsVO.class);
-            // 获取构建操作分析
-            ApplicationBuildStatisticsAnalysisVO analysis = this.analysisBuildStatistics(appId, profileId);
-            buildStatistics.setAnalysis(analysis);
-            // 获取构建统计图表
-            List<ApplicationBuildStatisticsDTO> dateStatistics = applicationBuildDAO.getBuildDateStatistics(appId, profileId, rangeStartDate);
-            Map<String, ApplicationBuildStatisticsDTO> dateStatisticsMap = dateStatistics.stream()
-                    .collect(Collectors.toMap(s -> Dates.format(s.getDate(), Dates.YMD), Function.identity(), (e1, e2) -> e2));
-            // 填充图表数据
-            List<ApplicationBuildStatisticsChartVO> statisticsCharts = this.fillApplicationBuildStatisticsChartData(chartDates, dateStatisticsMap);
-            buildStatistics.setCharts(statisticsCharts);
-            // 设置缓存
-            redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(buildStatistics),
-                    Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
-            return buildStatistics;
-        } else {
-            return JSON.parseObject(cacheData, ApplicationBuildStatisticsVO.class);
+    public ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(Long appId, Long profileId) {
+        ApplicationBuildStatisticsMetricsWrapperVO wrapper = new ApplicationBuildStatisticsMetricsWrapperVO();
+        // 获取图表时间
+        Date rangeStartDate = Dates.stream().addDay(-7).get();
+        // 获取最近构建统计信息
+        ApplicationBuildStatisticsDTO lately = applicationBuildDAO.getBuildStatistics(appId, profileId, rangeStartDate);
+        wrapper.setLately(Converts.to(lately, ApplicationBuildStatisticsMetricsVO.class));
+        // 获取所有构建统计信息
+        ApplicationBuildStatisticsDTO all = applicationBuildDAO.getBuildStatistics(appId, profileId, null);
+        wrapper.setAll(Converts.to(all, ApplicationBuildStatisticsMetricsVO.class));
+        return wrapper;
+    }
+
+    @Override
+    public ApplicationBuildStatisticsViewVO appBuildStatisticsView(Long appId, Long profileId) {
+        // 查询构建配置
+        LambdaQueryWrapper<ApplicationActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationActionDO>()
+                .eq(ApplicationActionDO::getAppId, appId)
+                .eq(ApplicationActionDO::getProfileId, profileId)
+                .eq(ApplicationActionDO::getStageType, StageType.BUILD.getType());
+        List<ApplicationActionDO> appActions = applicationActionDAO.selectList(actionWrapper);
+        if (appActions.isEmpty()) {
+            return null;
         }
+        // 查询最近10次的构建记录 进行中/成功/失败/停止
+        LambdaQueryWrapper<ApplicationBuildDO> buildWrapper = new LambdaQueryWrapper<ApplicationBuildDO>()
+                .eq(ApplicationBuildDO::getAppId, appId)
+                .eq(ApplicationBuildDO::getProfileId, profileId)
+                .in(ApplicationBuildDO::getBuildStatus,
+                        BuildStatus.RUNNABLE.getStatus(),
+                        BuildStatus.FINISH.getStatus(),
+                        BuildStatus.FAILURE.getStatus(),
+                        BuildStatus.TERMINATED.getStatus())
+                .orderByDesc(ApplicationBuildDO::getId)
+                .last("LIMIT 10");
+        List<ApplicationBuildDO> buildList = applicationBuildDAO.selectList(buildWrapper);
+        if (buildList.isEmpty()) {
+            return null;
+        }
+        // 查询构建明细
+        List<Long> buildIdList = buildList.stream().map(ApplicationBuildDO::getId).collect(Collectors.toList());
+        LambdaQueryWrapper<ApplicationActionLogDO> logWrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
+                .eq(ApplicationActionLogDO::getStageType, StageType.BUILD.getType())
+                .in(ApplicationActionLogDO::getRelId, buildIdList);
+        List<ApplicationActionLogDO> buildActionLogs = applicationActionLogDAO.selectList(logWrapper);
+        // 封装数据
+        ApplicationBuildStatisticsViewVO analysis = new ApplicationBuildStatisticsViewVO();
+        // 成功构建平均耗时
+        long avgUsed = (long) buildList.stream()
+                .filter(s -> BuildStatus.FINISH.getStatus().equals(s.getBuildStatus()))
+                .filter(s -> s.getBuildStartTime() != null && s.getBuildEndTime() != null)
+                .mapToLong(s -> s.getBuildEndTime().getTime() - s.getBuildStartTime().getTime())
+                .average()
+                .orElse(0);
+        analysis.setAvgUsed(avgUsed);
+        analysis.setAvgUsedInterval(Utils.interval(avgUsed));
+        // 设置构建操作
+        List<ApplicationStatisticsActionVO> statisticsActions = appActions.stream()
+                .map(s -> Converts.to(s, ApplicationStatisticsActionVO.class))
+                .collect(Collectors.toList());
+        analysis.setActions(statisticsActions);
+        // 设置构建操作日志
+        Map<Long, List<ApplicationActionLogDO>> buildActionLogsMap = buildActionLogs.stream().collect(Collectors.groupingBy(ApplicationActionLogDO::getRelId));
+        List<ApplicationBuildStatisticsRecordVO> buildRecordList = Lists.newList();
+        for (ApplicationBuildDO build : buildList) {
+            // 设置构建信息
+            ApplicationBuildStatisticsRecordVO buildRecord = Converts.to(build, ApplicationBuildStatisticsRecordVO.class);
+            // 设置构建操作配置
+            List<ApplicationActionLogDO> buildRecordActionLogs = buildActionLogsMap.get(build.getId());
+            if (Lists.isEmpty(buildRecordActionLogs)) {
+                continue;
+            }
+            // 设置构建操作日志
+            List<ApplicationStatisticsActionLogVO> recordActionLogs = this.getStatisticsActionLogs(appActions, buildRecordActionLogs);
+            buildRecord.setActionLogs(recordActionLogs);
+            buildRecordList.add(buildRecord);
+        }
+        analysis.setBuildRecordList(buildRecordList);
+        // 设置构建操作平均使用时间
+        for (ApplicationStatisticsActionVO statisticsAction : statisticsActions) {
+            long actionAvgUsed = (long) buildRecordList.stream()
+                    .map(ApplicationBuildStatisticsRecordVO::getActionLogs)
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .filter(Objects::nonNull)
+                    .filter(s -> s.getActionId().equals(statisticsAction.getId()))
+                    .filter(s -> ActionStatus.FINISH.getStatus().equals(s.getStatus()))
+                    .map(ApplicationStatisticsActionLogVO::getUsed)
+                    .filter(Objects::nonNull)
+                    .mapToLong(s -> s)
+                    .average()
+                    .orElse(0);
+            statisticsAction.setAvgUsed(actionAvgUsed);
+            statisticsAction.setAvgUsedInterval(Utils.interval(actionAvgUsed));
+        }
+        return analysis;
+    }
+
+    @Override
+    public List<ApplicationBuildStatisticsChartVO> appBuildStatisticsChart(Long appId, Long profileId) {
+        // 获取图表时间
+        Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
+        Date rangeStartDate = Arrays1.last(chartDates);
+        // 获取构建统计图表
+        List<ApplicationBuildStatisticsDTO> dateStatistics = applicationBuildDAO.getBuildDateStatistics(appId, profileId, rangeStartDate);
+        Map<String, ApplicationBuildStatisticsDTO> dateStatisticsMap = dateStatistics.stream()
+                .collect(Collectors.toMap(s -> Dates.format(s.getDate(), Dates.YMD), Function.identity(), (e1, e2) -> e2));
+        // 填充图表数据
+        return Arrays.stream(chartDates)
+                .sorted()
+                .map(s -> Dates.format(s, Dates.YMD))
+                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
+                        .map(s -> Converts.to(s, ApplicationBuildStatisticsChartVO.class))
+                        .orElseGet(() -> {
+                            ApplicationBuildStatisticsChartVO dateChart = new ApplicationBuildStatisticsChartVO();
+                            dateChart.setDate(date);
+                            dateChart.setBuildCount(0);
+                            dateChart.setSuccessCount(0);
+                            dateChart.setFailureCount(0);
+                            return dateChart;
+                        }))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -231,117 +325,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                             return dateChart;
                         }))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * 填充应用构建统计图表数据
-     *
-     * @param chartDates        图表时间
-     * @param dateStatisticsMap 图表数据
-     * @return data
-     */
-    private List<ApplicationBuildStatisticsChartVO> fillApplicationBuildStatisticsChartData(Date[] chartDates, Map<String, ApplicationBuildStatisticsDTO> dateStatisticsMap) {
-        return Arrays.stream(chartDates)
-                .sorted()
-                .map(s -> Dates.format(s, Dates.YMD))
-                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
-                        .map(s -> Converts.to(s, ApplicationBuildStatisticsChartVO.class))
-                        .orElseGet(() -> {
-                            ApplicationBuildStatisticsChartVO dateChart = new ApplicationBuildStatisticsChartVO();
-                            dateChart.setDate(date);
-                            dateChart.setBuildCount(0);
-                            dateChart.setSuccessCount(0);
-                            dateChart.setFailureCount(0);
-                            return dateChart;
-                        }))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 获取应用构建统计分析信息
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @return 应用构建统计分析信息
-     */
-    private ApplicationBuildStatisticsAnalysisVO analysisBuildStatistics(Long appId, Long profileId) {
-        // 查询构建配置
-        LambdaQueryWrapper<ApplicationActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationActionDO>()
-                .eq(ApplicationActionDO::getAppId, appId)
-                .eq(ApplicationActionDO::getProfileId, profileId)
-                .eq(ApplicationActionDO::getStageType, StageType.BUILD.getType());
-        List<ApplicationActionDO> appActions = applicationActionDAO.selectList(actionWrapper);
-        if (appActions.isEmpty()) {
-            return null;
-        }
-        // 查询最近10次的构建记录 成功/失败/停止
-        LambdaQueryWrapper<ApplicationBuildDO> buildWrapper = new LambdaQueryWrapper<ApplicationBuildDO>()
-                .eq(ApplicationBuildDO::getAppId, appId)
-                .eq(ApplicationBuildDO::getProfileId, profileId)
-                .in(ApplicationBuildDO::getBuildStatus, BuildStatus.FINISH.getStatus(), BuildStatus.FAILURE.getStatus(), BuildStatus.TERMINATED.getStatus())
-                .orderByDesc(ApplicationBuildDO::getId)
-                .last("LIMIT 10");
-        List<ApplicationBuildDO> lastBuildList = applicationBuildDAO.selectList(buildWrapper);
-        if (lastBuildList.isEmpty()) {
-            return null;
-        }
-        // 查询构建明细
-        List<Long> buildIdList = lastBuildList.stream().map(ApplicationBuildDO::getId).collect(Collectors.toList());
-        LambdaQueryWrapper<ApplicationActionLogDO> logWrapper = new LambdaQueryWrapper<ApplicationActionLogDO>()
-                .eq(ApplicationActionLogDO::getStageType, StageType.BUILD.getType())
-                .in(ApplicationActionLogDO::getRelId, buildIdList);
-        List<ApplicationActionLogDO> buildActionLogs = applicationActionLogDAO.selectList(logWrapper);
-        // 封装数据
-        ApplicationBuildStatisticsAnalysisVO analysis = new ApplicationBuildStatisticsAnalysisVO();
-        // 成功构建平均耗时
-        long avgUsed = (long) lastBuildList.stream()
-                .filter(s -> BuildStatus.FINISH.getStatus().equals(s.getBuildStatus()))
-                .filter(s -> s.getBuildStartTime() != null && s.getBuildEndTime() != null)
-                .mapToLong(s -> s.getBuildEndTime().getTime() - s.getBuildStartTime().getTime())
-                .average()
-                .orElse(0);
-        analysis.setAvgUsed(avgUsed);
-        analysis.setAvgUsedInterval(Utils.interval(avgUsed));
-        // 设置构建操作
-        List<ApplicationStatisticsActionVO> statisticsActions = appActions.stream()
-                .map(s -> Converts.to(s, ApplicationStatisticsActionVO.class))
-                .collect(Collectors.toList());
-        analysis.setActions(statisticsActions);
-        // 设置构建操作日志
-        Map<Long, List<ApplicationActionLogDO>> buildActionLogsMap = buildActionLogs.stream().collect(Collectors.groupingBy(ApplicationActionLogDO::getRelId));
-        List<ApplicationBuildStatisticsRecordVO> buildRecordList = Lists.newList();
-        for (ApplicationBuildDO build : lastBuildList) {
-            // 设置构建信息
-            ApplicationBuildStatisticsRecordVO buildRecord = Converts.to(build, ApplicationBuildStatisticsRecordVO.class);
-            // 设置构建操作配置
-            List<ApplicationActionLogDO> buildRecordActionLogs = buildActionLogsMap.get(build.getId());
-            if (Lists.isEmpty(buildRecordActionLogs)) {
-                continue;
-            }
-            // 设置构建操作日志
-            List<ApplicationStatisticsActionLogVO> recordActionLogs = this.getStatisticsActionLogs(appActions, buildRecordActionLogs);
-            buildRecord.setActionLogs(recordActionLogs);
-            buildRecordList.add(buildRecord);
-        }
-        analysis.setBuildRecordList(buildRecordList);
-        // 设置构建操作平均使用时间
-        for (ApplicationStatisticsActionVO statisticsAction : statisticsActions) {
-            long actionAvgUsed = (long) buildRecordList.stream()
-                    .map(ApplicationBuildStatisticsRecordVO::getActionLogs)
-                    .filter(Objects::nonNull)
-                    .flatMap(Collection::stream)
-                    .filter(Objects::nonNull)
-                    .filter(s -> s.getActionId().equals(statisticsAction.getId()))
-                    .filter(s -> ActionStatus.FINISH.getStatus().equals(s.getStatus()))
-                    .map(ApplicationStatisticsActionLogVO::getUsed)
-                    .filter(Objects::nonNull)
-                    .mapToLong(s -> s)
-                    .average()
-                    .orElse(0);
-            statisticsAction.setAvgUsed(actionAvgUsed);
-            statisticsAction.setAvgUsedInterval(Utils.interval(actionAvgUsed));
-        }
-        return analysis;
     }
 
     /**
