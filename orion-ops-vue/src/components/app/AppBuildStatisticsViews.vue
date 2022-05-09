@@ -11,7 +11,7 @@
             <div class="app-build-actions-wrapper">
               <!-- 平均时间 -->
               <div class="app-build-actions-legend">
-                平均构建时间: <span style="margin-left: 4px; color: #000">{{ analysis.avgUsedInterval }}</span>
+                平均构建时间: <span class="avg-used-legend">{{ analysis.avgUsedInterval }}</span>
               </div>
               <!-- 构建操作 -->
               <div class="app-build-actions" v-for="(action, index) of analysis.actions" :key="action.id">
@@ -41,12 +41,11 @@
                       {{ $enum.valueOf($enum.BUILD_STATUS, buildRecord.status).label }}
                     </a-tag>
                     <!-- 日志 -->
-                    <a-tooltip title="ctrl 点击打开新页面">
-                      <a target="_blank"
-                         class="build-log-trigger"
-                         :href="`#/app/build/log/view/${buildRecord.buildId}`"
-                         @click="openLogView($event, buildRecord.buildId)">日志</a>
-                    </a-tooltip>
+                    <a target="_blank"
+                       title="点击查看日志"
+                       class="build-log-trigger"
+                       :href="`#/app/build/log/view/${buildRecord.buildId}`"
+                       @click="openLogView($event, buildRecord.buildId)">日志</a>
                   </div>
                   <!-- 构建时间 -->
                   <div class="app-build-record-info">
@@ -56,12 +55,24 @@
                 </div>
                 <!-- 构建操作 -->
                 <div class="app-build-action-log-actions-wrapper">
-                  <div v-for="(actionLog, index) of buildRecord.actionLogs" :key="index"
-                       class="app-build-action-log-action-wrapper">
+                  <div class="app-build-action-log-action-wrapper"
+                       v-for="(actionLog, index) of buildRecord.actionLogs" :key="index">
                     <!-- 构建操作值 -->
                     <div class="app-build-action-log-action"
+                         v-if="!getCanOpenLog(actionLog)"
                          :style="getActionLogStyle(actionLog)"
-                         v-text="getActionLogValue(actionLog)"/>
+                         v-text="getActionLogValue(actionLog)">
+                    </div>
+                    <!-- 可打开日志 -->
+                    <a v-else target="_blank"
+                       title="点击查看日志"
+                       :href="`#/app/action/log/view/${actionLog.id}`"
+                       @click="openActionLogView($event, actionLog.id)">
+                      <div class="app-build-action-log-action"
+                           :style="getActionLogStyle(actionLog)"
+                           v-text="getActionLogValue(actionLog)">
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -75,19 +86,25 @@
     </a-spin>
     <!-- 事件 -->
     <div class="app-build-statistic-event-container">
-      <!-- 日志模态框 -->
+      <!-- 构建日志模态框 -->
       <AppBuildLogAppenderModal ref="logView"/>
+      <!-- 操作日志模态框 -->
+      <AppActionLogAppenderModal ref="actionLogView"/>
     </div>
   </div>
 </template>
 
 <script>
 import _filters from '@/lib/filters'
-import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
+import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
+import AppActionLogAppenderModal from '@/components/log/AppActionLogAppenderModal'
 
 export default {
   name: 'AppBuildStatisticsViews',
-  components: { AppBuildLogAppenderModal },
+  components: {
+    AppBuildLogAppenderModal,
+    AppActionLogAppenderModal
+  },
   data() {
     return {
       loading: false,
@@ -128,6 +145,24 @@ export default {
       } else {
         // 跳转页面
         return true
+      }
+    },
+    openActionLogView(e, id) {
+      if (!e.ctrlKey) {
+        e.preventDefault()
+        // 打开模态框
+        this.$refs.actionLogView.open(id)
+        return false
+      } else {
+        // 跳转页面
+        return true
+      }
+    },
+    getCanOpenLog(actionLog) {
+      if (actionLog) {
+        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).log
+      } else {
+        return false
       }
     },
     getActionLogStyle(actionLog) {
@@ -180,8 +215,7 @@ export default {
 
   .build-log-trigger {
     display: inline-block;
-    width: 55px;
-    text-align: end;
+    margin-left: 28px;
   }
 
   .app-build-actions-wrapper {
@@ -194,6 +228,12 @@ export default {
       align-items: flex-end;
       justify-content: flex-end;
       padding: 4px 8px 4px 0;
+
+      .avg-used-legend {
+        margin-left: 4px;
+        color: #000;
+        font-size: 16px;
+      }
     }
 
     .app-build-actions {
@@ -279,6 +319,7 @@ export default {
           align-items: center;
           justify-content: space-around;
           opacity: 0.8;
+          color: rgba(0, 0, 0, .8);
         }
 
         .app-build-action-log-action:hover {

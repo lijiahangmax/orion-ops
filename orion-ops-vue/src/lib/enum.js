@@ -457,6 +457,10 @@ const $enum = {
     SCHEDULER_TASK_MACHINE_LOG: {
       value: 50,
       label: '调度任务机器日志'
+    },
+    APP_ACTION_LOG: {
+      value: 60,
+      label: '应用操作日志'
     }
   },
 
@@ -514,9 +518,9 @@ const $enum = {
       value: 60,
       label: '应用构建日志'
     },
-    APP_BUILD_ACTION_LOG: {
+    APP_ACTION_LOG: {
       value: 70,
-      label: '应用构建操作日志'
+      label: '应用操作日志'
     },
     APP_BUILD_BUNDLE: {
       value: 80,
@@ -525,10 +529,6 @@ const $enum = {
     APP_RELEASE_MACHINE_LOG: {
       value: 90,
       label: '应用发布机器日志'
-    },
-    APP_RELEASE_ACTION_LOG: {
-      value: 100,
-      label: '应用发布操作日志'
     },
     SCHEDULER_TASK_MACHINE_LOG: {
       value: 110,
@@ -777,6 +777,7 @@ const $enum = {
       color: '',
       label: '未开始',
       stepStatus: 'wait',
+      log: false,
       actionStyle: {
         background: '#CED4DA'
       },
@@ -789,9 +790,9 @@ const $enum = {
       color: 'green',
       label: '进行中',
       stepStatus: 'process',
+      log: true,
       actionStyle: {
-        background: '#94D82D',
-        cursor: 'pointer'
+        background: '#94D82D'
       },
       actionValue() {
         return '进行中'
@@ -802,9 +803,9 @@ const $enum = {
       color: 'blue',
       label: '已完成',
       stepStatus: 'finish',
+      log: true,
       actionStyle: {
-        background: '#74C0FC',
-        cursor: 'pointer'
+        background: '#74C0FC'
       },
       actionValue(log) {
         return log.usedInterval || '已完成'
@@ -815,9 +816,9 @@ const $enum = {
       color: 'red',
       label: '已失败',
       stepStatus: 'error',
+      log: true,
       actionStyle: {
-        background: '#F03E3E',
-        cursor: 'pointer'
+        background: '#F03E3E'
       },
       actionValue(log) {
         return log.usedInterval || '已失败'
@@ -828,6 +829,7 @@ const $enum = {
       color: 'orange',
       label: '已跳过',
       stepStatus: 'wait',
+      log: false,
       actionStyle: {
         background: '#FFD43B'
       },
@@ -840,9 +842,9 @@ const $enum = {
       color: 'orange',
       label: '已停止',
       stepStatus: 'wait',
+      log: true,
       actionStyle: {
-        background: '#FFA94D',
-        cursor: 'pointer'
+        background: '#FFA94D'
       },
       actionValue() {
         return '已停止'

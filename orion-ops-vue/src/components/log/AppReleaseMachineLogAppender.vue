@@ -114,8 +114,8 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 清除状态轮询
-        if (this.detail.status !== this.$enum.BUILD_STATUS.WAIT.value &&
-          this.detail.status !== this.$enum.BUILD_STATUS.RUNNABLE.value) {
+        if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
+          this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
           this.pollId = null
         }

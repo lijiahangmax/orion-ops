@@ -100,7 +100,7 @@
               </a-descriptions-item>
               <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
                 <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
-                <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_BUILD_ACTION_LOG.value)">获取日志文件</a>
+                <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value)">获取日志文件</a>
               </a-descriptions-item>
             </a-descriptions>
           </a-list-item>

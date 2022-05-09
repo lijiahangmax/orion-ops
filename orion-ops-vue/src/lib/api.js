@@ -1215,6 +1215,22 @@ const $api = {
   },
 
   /**
+   * 应用操作详情
+   */
+  getAppActionDetail: param => {
+    return $http.$post('/app-action-log/detail', param)
+  },
+
+  /**
+   * 应用操作状态
+   */
+  getAppActionStatus: param => {
+    return $http.$post('/app-action-log/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
    * 应用构建列表
    */
   getAppBuildList: param => {

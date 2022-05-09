@@ -274,7 +274,7 @@ import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
 import AppPipelineExecAuditModal from '@/components/app/AppPipelineExecAuditModal'
 import AppPipelineExecTimedModal from '@/components/app/AppPipelineExecTimedModal'
 import AppPipelineTaskDetailDrawer from '@/components/app/AppPipelineTaskDetailDrawer'
-import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderMadal'
+import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 
 function statusHolder() {
