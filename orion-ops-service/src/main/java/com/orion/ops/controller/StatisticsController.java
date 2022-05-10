@@ -79,13 +79,34 @@ public class StatisticsController {
     }
 
     /**
-     * 应用发布统计
+     * 应用发布统计 指标
      */
-    @RequestMapping("/app-release")
-    public ApplicationReleaseStatisticsVO appReleaseStatistics(@RequestBody AppReleaseStatisticsRequest request) {
+    @RequestMapping("/app-release/metrics")
+    public ApplicationReleaseStatisticsWrapperVO appReleaseStatisticsMetrics(@RequestBody AppReleaseStatisticsRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
-        return statisticsService.appReleaseStatistic(appId, profileId);
+        return statisticsService.appReleaseStatisticMetrics(appId, profileId);
+    }
+
+    /**
+     * 应用发布统计 视图
+     */
+    @IgnoreLog
+    @RequestMapping("/app-release/view")
+    public ApplicationReleaseStatisticsViewVO appReleaseStatisticsView(@RequestBody AppReleaseStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appReleaseStatisticView(appId, profileId);
+    }
+
+    /**
+     * 应用发布统计 折线图
+     */
+    @RequestMapping("/app-release/chart")
+    public List<ApplicationReleaseStatisticsChartVO> appReleaseStatisticsChart(@RequestBody AppReleaseStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appReleaseStatisticChart(appId, profileId);
     }
 
 }

@@ -56,12 +56,30 @@ public interface StatisticsService {
     List<ApplicationBuildStatisticsChartVO> appBuildStatisticsChart(Long appId, Long profileId);
 
     /**
-     * 获取应用发布统计
+     * 获取应用发布统计 指标
      *
      * @param appId     appId
      * @param profileId profileId
      * @return 统计
      */
-    ApplicationReleaseStatisticsVO appReleaseStatistic(Long appId, Long profileId);
+    ApplicationReleaseStatisticsWrapperVO appReleaseStatisticMetrics(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 视图
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 视图
+     */
+    ApplicationReleaseStatisticsViewVO appReleaseStatisticView(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 折线图
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 折线图
+     */
+    List<ApplicationReleaseStatisticsChartVO> appReleaseStatisticChart(Long appId, Long profileId);
 
 }

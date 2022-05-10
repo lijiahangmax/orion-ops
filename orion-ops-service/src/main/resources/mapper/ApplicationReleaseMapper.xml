@@ -108,7 +108,9 @@
         WHERE deleted = 1
         AND app_id = #{appId}
         AND profile_id = #{profileId}
-        AND release_start_time >= #{rangeStartDate}
+        <if test="rangeStartDate != null">
+            AND release_start_time >= #{rangeStartDate}
+        </if>
     </select>
 
     <select id="getReleaseDateStatistics" resultMap="StatisticsResultMap">

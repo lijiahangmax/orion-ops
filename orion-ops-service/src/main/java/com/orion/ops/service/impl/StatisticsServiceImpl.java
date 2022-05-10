@@ -83,6 +83,38 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statistics;
     }
 
+    /**
+     * 获取首页统计数量
+     *
+     * @return 首页统计
+     */
+    private HomeStatisticsCountVO homeCountStatistics() {
+        StatisticsCountDTO count;
+        // 查询缓存
+        String countCache = redisTemplate.opsForValue().get(KeyConst.HOME_STATISTICS_COUNT_KEY);
+        if (Strings.isBlank(countCache)) {
+            count = new StatisticsCountDTO();
+            // 查询机器数量
+            Integer machineCount = machineInfoDAO.selectCount(null);
+            // 查询环境数量
+            Integer profileCount = applicationProfileDAO.selectCount(null);
+            // 查询应用数量
+            Integer appCount = applicationInfoDAO.selectCount(null);
+            // 查询日志数量
+            Integer logCount = fileTailListDAO.selectCount(null);
+            // 设置缓存
+            count.setMachineCount(machineCount);
+            count.setProfileCount(profileCount);
+            count.setAppCount(appCount);
+            count.setLogCount(logCount);
+            redisTemplate.opsForValue().set(KeyConst.HOME_STATISTICS_COUNT_KEY, JSON.toJSONString(count),
+                    Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
+        } else {
+            count = JSON.parseObject(countCache, StatisticsCountDTO.class);
+        }
+        return Converts.to(count, HomeStatisticsCountVO.class);
+    }
+
     @Override
     public SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(Long taskId) {
         // 查询缓存
@@ -241,124 +273,21 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public ApplicationReleaseStatisticsVO appReleaseStatistic(Long appId, Long profileId) {
-        // 查询缓存
-        String cacheKey = Strings.format(KeyConst.APP_RELEASE_STATISTICS_KEY, profileId, appId);
-        String cacheData = redisTemplate.opsForValue().get(cacheKey);
-        if (Strings.isBlank(cacheData)) {
-            // 获取图表时间
-            Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
-            Date rangeStartDate = Arrays1.last(chartDates);
-            // 获取发布统计信息
-            ApplicationReleaseStatisticsDTO releaseStatisticsDTO = applicationReleaseDAO.getReleaseStatistics(appId, profileId, rangeStartDate);
-            ApplicationReleaseStatisticsVO releaseStatistics = Converts.to(releaseStatisticsDTO, ApplicationReleaseStatisticsVO.class);
-            // 获取构建操作分析
-            ApplicationReleaseStatisticsAnalysisVO analysis = this.analysisReleaseStatistics(appId, profileId);
-            releaseStatistics.setAnalysis(analysis);
-            // 获取发布统计图表
-            List<ApplicationReleaseStatisticsDTO> dateStatistics = applicationReleaseDAO.getReleaseDateStatistics(appId, profileId, rangeStartDate);
-            Map<String, ApplicationReleaseStatisticsDTO> dateStatisticsMap = dateStatistics.stream()
-                    .collect(Collectors.toMap(s -> Dates.format(s.getDate(), Dates.YMD), Function.identity(), (e1, e2) -> e2));
-            // 填充图表数据
-            List<ApplicationReleaseStatisticsChartVO> statisticsCharts = this.fillApplicationReleaseStatisticsChartData(chartDates, dateStatisticsMap);
-            releaseStatistics.setCharts(statisticsCharts);
-            // 设置缓存
-            redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(releaseStatistics),
-                    Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
-            return releaseStatistics;
-        } else {
-            return JSON.parseObject(cacheData, ApplicationReleaseStatisticsVO.class);
-        }
+    public ApplicationReleaseStatisticsWrapperVO appReleaseStatisticMetrics(Long appId, Long profileId) {
+        ApplicationReleaseStatisticsWrapperVO wrapper = new ApplicationReleaseStatisticsWrapperVO();
+        // 获取图表时间
+        Date rangeStartDate = Dates.stream().addDay(-7).get();
+        // 获取最近发布统计信息
+        ApplicationReleaseStatisticsDTO lately = applicationReleaseDAO.getReleaseStatistics(appId, profileId, rangeStartDate);
+        wrapper.setLately(Converts.to(lately, ApplicationReleaseStatisticsMetricsVO.class));
+        // 获取所有发布统计信息
+        ApplicationReleaseStatisticsDTO all = applicationReleaseDAO.getReleaseStatistics(appId, profileId, null);
+        wrapper.setAll(Converts.to(all, ApplicationReleaseStatisticsMetricsVO.class));
+        return wrapper;
     }
 
-    /**
-     * 获取首页统计数量
-     *
-     * @return 首页统计
-     */
-    private HomeStatisticsCountVO homeCountStatistics() {
-        StatisticsCountDTO count;
-        // 查询缓存
-        String countCache = redisTemplate.opsForValue().get(KeyConst.HOME_STATISTICS_COUNT_KEY);
-        if (Strings.isBlank(countCache)) {
-            count = new StatisticsCountDTO();
-            // 查询机器数量
-            Integer machineCount = machineInfoDAO.selectCount(null);
-            // 查询环境数量
-            Integer profileCount = applicationProfileDAO.selectCount(null);
-            // 查询应用数量
-            Integer appCount = applicationInfoDAO.selectCount(null);
-            // 查询日志数量
-            Integer logCount = fileTailListDAO.selectCount(null);
-            // 设置缓存
-            count.setMachineCount(machineCount);
-            count.setProfileCount(profileCount);
-            count.setAppCount(appCount);
-            count.setLogCount(logCount);
-            redisTemplate.opsForValue().set(KeyConst.HOME_STATISTICS_COUNT_KEY, JSON.toJSONString(count),
-                    Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
-        } else {
-            count = JSON.parseObject(countCache, StatisticsCountDTO.class);
-        }
-        return Converts.to(count, HomeStatisticsCountVO.class);
-    }
-
-    /**
-     * 填充调度任务统计图表数据
-     *
-     * @param chartDates        图表时间
-     * @param dateStatisticsMap 图表数据
-     * @return data
-     */
-    private List<SchedulerTaskRecordStatisticsChartVO> fillSchedulerStatisticsChartData(Date[] chartDates, Map<String, SchedulerTaskRecordStatisticsDTO> dateStatisticsMap) {
-        return Arrays.stream(chartDates)
-                .sorted()
-                .map(s -> Dates.format(s, Dates.YMD))
-                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
-                        .map(s -> Converts.to(s, SchedulerTaskRecordStatisticsChartVO.class))
-                        .orElseGet(() -> {
-                            SchedulerTaskRecordStatisticsChartVO dateChart = new SchedulerTaskRecordStatisticsChartVO();
-                            dateChart.setDate(date);
-                            dateChart.setScheduledCount(0);
-                            dateChart.setSuccessCount(0);
-                            dateChart.setFailureCount(0);
-                            return dateChart;
-                        }))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 填充应用发布统计图表数据
-     *
-     * @param chartDates        图表时间
-     * @param dateStatisticsMap 图表数据
-     * @return data
-     */
-    private List<ApplicationReleaseStatisticsChartVO> fillApplicationReleaseStatisticsChartData(Date[] chartDates, Map<String, ApplicationReleaseStatisticsDTO> dateStatisticsMap) {
-        return Arrays.stream(chartDates)
-                .sorted()
-                .map(s -> Dates.format(s, Dates.YMD))
-                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
-                        .map(s -> Converts.to(s, ApplicationReleaseStatisticsChartVO.class))
-                        .orElseGet(() -> {
-                            ApplicationReleaseStatisticsChartVO dateChart = new ApplicationReleaseStatisticsChartVO();
-                            dateChart.setDate(date);
-                            dateChart.setReleaseCount(0);
-                            dateChart.setSuccessCount(0);
-                            dateChart.setFailureCount(0);
-                            return dateChart;
-                        }))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 获取应用发布统计分析信息
-     *
-     * @param appId     appId
-     * @param profileId profileId
-     * @return 应用发布统计分析信息
-     */
-    private ApplicationReleaseStatisticsAnalysisVO analysisReleaseStatistics(Long appId, Long profileId) {
+    @Override
+    public ApplicationReleaseStatisticsViewVO appReleaseStatisticView(Long appId, Long profileId) {
         // 查询发布配置
         LambdaQueryWrapper<ApplicationActionDO> actionWrapper = new LambdaQueryWrapper<ApplicationActionDO>()
                 .eq(ApplicationActionDO::getAppId, appId)
@@ -368,11 +297,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (appActions.isEmpty()) {
             return null;
         }
-        // 查询最近10次的发布记录 成功/失败/停止
+        // 查询最近10次的发布记录 进行中/成功/失败/停止
         LambdaQueryWrapper<ApplicationReleaseDO> releaseWrapper = new LambdaQueryWrapper<ApplicationReleaseDO>()
                 .eq(ApplicationReleaseDO::getAppId, appId)
                 .eq(ApplicationReleaseDO::getProfileId, profileId)
-                .in(ApplicationReleaseDO::getReleaseStatus, ReleaseStatus.FINISH.getStatus(), ReleaseStatus.FAILURE.getStatus(), ReleaseStatus.TERMINATED.getStatus())
+                .in(ApplicationReleaseDO::getReleaseStatus,
+                        ReleaseStatus.RUNNABLE.getStatus(),
+                        ReleaseStatus.FINISH.getStatus(),
+                        ReleaseStatus.FAILURE.getStatus(),
+                        ReleaseStatus.TERMINATED.getStatus())
                 .orderByDesc(ApplicationReleaseDO::getId)
                 .last("LIMIT 10");
         List<ApplicationReleaseDO> lastReleaseList = applicationReleaseDAO.selectList(releaseWrapper);
@@ -396,7 +329,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         // 封装数据
         Map<Long, List<ApplicationReleaseMachineDO>> releaseMachinesMap = releaseMachineList.stream().collect(Collectors.groupingBy(ApplicationReleaseMachineDO::getReleaseId));
         Map<Long, List<ApplicationActionLogDO>> releaseActionLogsMap = releaseActionLogs.stream().collect(Collectors.groupingBy(ApplicationActionLogDO::getRelId));
-        ApplicationReleaseStatisticsAnalysisVO analysis = new ApplicationReleaseStatisticsAnalysisVO();
+        ApplicationReleaseStatisticsViewVO analysis = new ApplicationReleaseStatisticsViewVO();
         // 成功发布平均耗时
         long avgUsed = (long) lastReleaseList.stream()
                 .filter(s -> ReleaseStatus.FINISH.getStatus().equals(s.getReleaseStatus()))
@@ -459,6 +392,54 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsAction.setAvgUsedInterval(Utils.interval(actionAvgUsed));
         }
         return analysis;
+    }
+
+    @Override
+    public List<ApplicationReleaseStatisticsChartVO> appReleaseStatisticChart(Long appId, Long profileId) {
+        Date[] chartDates = Dates.getIncrementDates(Dates.clearHms(), Calendar.DAY_OF_MONTH, -1, 7);
+        Date rangeStartDate = Arrays1.last(chartDates);
+        // 获取发布统计图表
+        List<ApplicationReleaseStatisticsDTO> dateStatistics = applicationReleaseDAO.getReleaseDateStatistics(appId, profileId, rangeStartDate);
+        Map<String, ApplicationReleaseStatisticsDTO> dateStatisticsMap = dateStatistics.stream()
+                .collect(Collectors.toMap(s -> Dates.format(s.getDate(), Dates.YMD), Function.identity(), (e1, e2) -> e2));
+        return Arrays.stream(chartDates)
+                .sorted()
+                .map(s -> Dates.format(s, Dates.YMD))
+                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
+                        .map(s -> Converts.to(s, ApplicationReleaseStatisticsChartVO.class))
+                        .orElseGet(() -> {
+                            ApplicationReleaseStatisticsChartVO dateChart = new ApplicationReleaseStatisticsChartVO();
+                            dateChart.setDate(date);
+                            dateChart.setReleaseCount(0);
+                            dateChart.setSuccessCount(0);
+                            dateChart.setFailureCount(0);
+                            return dateChart;
+                        }))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 填充调度任务统计图表数据
+     *
+     * @param chartDates        图表时间
+     * @param dateStatisticsMap 图表数据
+     * @return data
+     */
+    private List<SchedulerTaskRecordStatisticsChartVO> fillSchedulerStatisticsChartData(Date[] chartDates, Map<String, SchedulerTaskRecordStatisticsDTO> dateStatisticsMap) {
+        return Arrays.stream(chartDates)
+                .sorted()
+                .map(s -> Dates.format(s, Dates.YMD))
+                .map(date -> Optional.ofNullable(dateStatisticsMap.get(date))
+                        .map(s -> Converts.to(s, SchedulerTaskRecordStatisticsChartVO.class))
+                        .orElseGet(() -> {
+                            SchedulerTaskRecordStatisticsChartVO dateChart = new SchedulerTaskRecordStatisticsChartVO();
+                            dateChart.setDate(date);
+                            dateChart.setScheduledCount(0);
+                            dateChart.setSuccessCount(0);
+                            dateChart.setFailureCount(0);
+                            return dateChart;
+                        }))
+                .collect(Collectors.toList());
     }
 
     /**
