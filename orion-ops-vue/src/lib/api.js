@@ -1499,10 +1499,24 @@ const $api = {
   },
 
   /**
-   * 应用发布统计信息
+   * 应用发布统计信息 指标
    */
-  getAppReleaseStatistics: param => {
-    return $http.$post('/statistics/app-release', param)
+  getAppReleaseStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-release/metrics', param)
+  },
+
+  /**
+   * 应用发布统计信息 视图
+   */
+  getAppReleaseStatisticsView: param => {
+    return $http.$post('/statistics/app-release/view', param)
+  },
+
+  /**
+   * 应用发布统计信息 折线图
+   */
+  getAppReleaseStatisticsChart: param => {
+    return $http.$post('/statistics/app-release/chart', param)
   },
 
   /**

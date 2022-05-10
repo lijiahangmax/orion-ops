@@ -2,7 +2,7 @@
   <div class="app-build-statistic-record-view-container">
     <a-spin :spinning="loading">
       <!-- 构建视图 -->
-      <div class="app-build-statistic-record-view-wrapper" v-if="initialized && analysis">
+      <div class="app-build-statistic-record-view-wrapper" v-if="initialized && view">
         <div class="app-build-statistic-record-view">
           <p class="statistics-description">近十次构建视图</p>
           <!-- 构建视图主体 -->
@@ -11,10 +11,12 @@
             <div class="app-build-actions-wrapper">
               <!-- 平均时间 -->
               <div class="app-build-actions-legend">
-                平均构建时间: <span class="avg-used-legend">{{ analysis.avgUsedInterval }}</span>
+                <span class="avg-used-legend-wrapper">
+                  平均构建时间: <span class="avg-used-legend">{{ view.avgUsedInterval }}</span>
+                </span>
               </div>
               <!-- 构建操作 -->
-              <div class="app-build-actions" v-for="(action, index) of analysis.actions" :key="action.id">
+              <div class="app-build-actions" v-for="(action, index) of view.actions" :key="action.id">
                 <div :class="['app-build-actions-name', index % 2 === 0 ? 'app-build-actions-name-theme1' : 'app-build-actions-name-theme2']">
                   {{ action.name }}
                 </div>
@@ -27,32 +29,34 @@
             </div>
             <!-- 构建日志 -->
             <div class="app-build-action-logs-container">
-              <div class="app-build-action-logs-wrapper" v-for="buildRecord of analysis.buildRecordList" :key="buildRecord.buildId">
+              <!-- 日志 -->
+              <div class="app-build-action-logs-wrapper"
+                   v-for="buildRecord of view.buildRecordList"
+                   :key="buildRecord.buildId">
                 <!-- 构建信息头 -->
-                <div class="app-build-record-legend">
-                  <!-- 构建状态 -->
-                  <div class="app-build-record-status">
-                    <!-- 构建序列 -->
-                    <div class="build-seq">
-                      <span class="span-blue">#{{ buildRecord.seq }}</span>
-                    </div>
+                <a target="_blank"
+                   title="点击查看构建日志"
+                   :href="`#/app/build/log/view/${buildRecord.buildId}`"
+                   @click="openLogView($event,'build', buildRecord.buildId)">
+                  <div class="app-build-record-legend">
                     <!-- 构建状态 -->
-                    <a-tag :color="$enum.valueOf($enum.BUILD_STATUS, buildRecord.status).color">
-                      {{ $enum.valueOf($enum.BUILD_STATUS, buildRecord.status).label }}
-                    </a-tag>
-                    <!-- 日志 -->
-                    <a target="_blank"
-                       title="点击查看日志"
-                       class="build-log-trigger"
-                       :href="`#/app/build/log/view/${buildRecord.buildId}`"
-                       @click="openLogView($event, buildRecord.buildId)">日志</a>
+                    <div class="app-build-record-status">
+                      <!-- 构建序列 -->
+                      <div class="build-seq">
+                        <span class="span-blue">#{{ buildRecord.seq }}</span>
+                      </div>
+                      <!-- 构建状态 -->
+                      <a-tag class="m0" :color="$enum.valueOf($enum.BUILD_STATUS, buildRecord.status).color">
+                        {{ $enum.valueOf($enum.BUILD_STATUS, buildRecord.status).label }}
+                      </a-tag>
+                    </div>
+                    <!-- 构建时间 -->
+                    <div class="app-build-record-info">
+                      <span>{{ buildRecord.buildDate | formatDate('MM-dd HH:mm') }}</span>
+                      <span v-if="buildRecord.usedInterval" class="ml4"> (used: {{ buildRecord.usedInterval }})</span>
+                    </div>
                   </div>
-                  <!-- 构建时间 -->
-                  <div class="app-build-record-info">
-                    <span>{{ buildRecord.buildDate | formatDate('MM-dd HH:mm') }}</span>
-                    <span v-if="buildRecord.usedInterval" class="ml4"> (used: {{ buildRecord.usedInterval }})</span>
-                  </div>
-                </div>
+                </a>
                 <!-- 构建操作 -->
                 <div class="app-build-action-log-actions-wrapper">
                   <div class="app-build-action-log-action-wrapper"
@@ -65,9 +69,9 @@
                     </div>
                     <!-- 可打开日志 -->
                     <a v-else target="_blank"
-                       title="点击查看日志"
+                       title="点击查看操作日志"
                        :href="`#/app/action/log/view/${actionLog.id}`"
-                       @click="openActionLogView($event, actionLog.id)">
+                       @click="openLogView($event,'action', actionLog.id)">
                       <div class="app-build-action-log-action"
                            :style="getActionLogStyle(actionLog)"
                            v-text="getActionLogValue(actionLog)">
@@ -80,14 +84,15 @@
           </div>
         </div>
       </div>
-      <div style="padding: 0 16px" v-else-if="initialized && !analysis">
+      <!-- 无数据 -->
+      <div style="padding: 0 16px" v-else-if="initialized && !view">
         无构建记录
       </div>
     </a-spin>
     <!-- 事件 -->
     <div class="app-build-statistic-event-container">
       <!-- 构建日志模态框 -->
-      <AppBuildLogAppenderModal ref="logView"/>
+      <AppBuildLogAppenderModal ref="buildLogView"/>
       <!-- 操作日志模态框 -->
       <AppActionLogAppenderModal ref="actionLogView"/>
     </div>
@@ -109,7 +114,7 @@ export default {
     return {
       loading: false,
       initialized: false,
-      analysis: {}
+      view: {}
     }
   },
   methods: {
@@ -120,38 +125,27 @@ export default {
         appId,
         profileId
       })
-      this.analysis = data
+      this.view = data
       this.initialized = true
       this.loading = false
     },
     clean() {
       this.initialized = false
       this.loading = false
-      this.analysis = {}
+      this.view = {}
     },
     async refresh(appId, profileId) {
       const { data } = await this.$api.getAppBuildStatisticsView({
         appId,
         profileId
       })
-      this.analysis = data
+      this.view = data
     },
-    openLogView(e, id) {
+    openLogView(e, type, id) {
       if (!e.ctrlKey) {
         e.preventDefault()
         // 打开模态框
-        this.$refs.logView.open(id)
-        return false
-      } else {
-        // 跳转页面
-        return true
-      }
-    },
-    openActionLogView(e, id) {
-      if (!e.ctrlKey) {
-        e.preventDefault()
-        // 打开模态框
-        this.$refs.actionLogView.open(id)
+        this.$refs[`${type}LogView`].open(id)
         return false
       } else {
         // 跳转页面
@@ -208,16 +202,6 @@ export default {
     box-shadow: 0 0 4px 1px #DEE2E6;
   }
 
-  .build-seq {
-    display: inline-block;
-    width: 42px;
-  }
-
-  .build-log-trigger {
-    display: inline-block;
-    margin-left: 28px;
-  }
-
   .app-build-actions-wrapper {
     display: flex;
     min-height: 82px;
@@ -228,6 +212,12 @@ export default {
       align-items: flex-end;
       justify-content: flex-end;
       padding: 4px 8px 4px 0;
+      font-weight: 600;
+
+      .avg-used-legend-wrapper {
+        display: flex;
+        align-items: center;
+      }
 
       .avg-used-legend {
         margin-left: 4px;
@@ -284,6 +274,7 @@ export default {
 
     .app-build-record-legend {
       width: 180px;
+      height: 100%;
       padding: 8px;
       border-radius: 4px;
       display: flex;
@@ -294,12 +285,20 @@ export default {
 
       .app-build-record-status {
         margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
       }
 
       .app-build-record-info {
         color: #000000;
         font-size: 12px;
       }
+    }
+
+    .app-build-record-legend:hover {
+      transition: .3s;
+      background: #D0EBFF;
     }
 
     .app-build-action-log-actions-wrapper {

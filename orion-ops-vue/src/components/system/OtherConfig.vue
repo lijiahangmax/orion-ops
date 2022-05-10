@@ -52,7 +52,7 @@
           </a-input-search>
           <template #extra>
             <span class="help-text">
-              设置统计缓存有效时间(分) (首页, 调度任务, 应用构建, 应用发布)
+              设置统计缓存有效时间(分)
             </span>
           </template>
         </a-form-model-item>
