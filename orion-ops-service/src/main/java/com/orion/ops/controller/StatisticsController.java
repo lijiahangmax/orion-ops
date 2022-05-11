@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.AppBuildStatisticsRequest;
+import com.orion.ops.entity.request.AppPipelineTaskStatisticsRequest;
 import com.orion.ops.entity.request.AppReleaseStatisticsRequest;
 import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
 import com.orion.ops.entity.vo.*;
@@ -48,16 +49,6 @@ public class StatisticsController {
     }
 
     /**
-     * 应用构建统计 指标
-     */
-    @RequestMapping("/app-build/metrics")
-    public ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(@RequestBody AppBuildStatisticsRequest request) {
-        Long appId = Valid.notNull(request.getAppId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        return statisticsService.appBuildStatisticsMetrics(appId, profileId);
-    }
-
-    /**
      * 应用构建统计 视图
      */
     @IgnoreLog
@@ -69,6 +60,16 @@ public class StatisticsController {
     }
 
     /**
+     * 应用构建统计 指标
+     */
+    @RequestMapping("/app-build/metrics")
+    public ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(@RequestBody AppBuildStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appBuildStatisticsMetrics(appId, profileId);
+    }
+
+    /**
      * 应用构建统计 折线图
      */
     @RequestMapping("/app-build/chart")
@@ -76,16 +77,6 @@ public class StatisticsController {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
         return statisticsService.appBuildStatisticsChart(appId, profileId);
-    }
-
-    /**
-     * 应用发布统计 指标
-     */
-    @RequestMapping("/app-release/metrics")
-    public ApplicationReleaseStatisticsWrapperVO appReleaseStatisticsMetrics(@RequestBody AppReleaseStatisticsRequest request) {
-        Long appId = Valid.notNull(request.getAppId());
-        Long profileId = Valid.notNull(request.getProfileId());
-        return statisticsService.appReleaseStatisticMetrics(appId, profileId);
     }
 
     /**
@@ -100,6 +91,16 @@ public class StatisticsController {
     }
 
     /**
+     * 应用发布统计 指标
+     */
+    @RequestMapping("/app-release/metrics")
+    public ApplicationReleaseStatisticsMetricsWrapperVO appReleaseStatisticsMetrics(@RequestBody AppReleaseStatisticsRequest request) {
+        Long appId = Valid.notNull(request.getAppId());
+        Long profileId = Valid.notNull(request.getProfileId());
+        return statisticsService.appReleaseStatisticMetrics(appId, profileId);
+    }
+
+    /**
      * 应用发布统计 折线图
      */
     @RequestMapping("/app-release/chart")
@@ -107,6 +108,34 @@ public class StatisticsController {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());
         return statisticsService.appReleaseStatisticChart(appId, profileId);
+    }
+
+    /**
+     * 应用流水线统计 视图
+     */
+    @IgnoreLog
+    @RequestMapping("/app-pipeline/view")
+    public ApplicationPipelineTaskStatisticsViewVO appReleaseStatisticsView(@RequestBody AppPipelineTaskStatisticsRequest request) {
+        Long pipelineId = Valid.notNull(request.getPipelineId());
+        return statisticsService.appPipelineTaskStatisticView(pipelineId);
+    }
+
+    /**
+     * 应用流水线统计 指标
+     */
+    @RequestMapping("/app-pipeline/metrics")
+    public ApplicationPipelineTaskStatisticsMetricsWrapperVO appReleaseStatisticsMetrics(@RequestBody AppPipelineTaskStatisticsRequest request) {
+        Long pipelineId = Valid.notNull(request.getPipelineId());
+        return statisticsService.appPipelineTaskStatisticMetrics(pipelineId);
+    }
+
+    /**
+     * 应用流水线统计 折线图
+     */
+    @RequestMapping("/app-pipeline/chart")
+    public List<ApplicationPipelineTaskStatisticsChartVO> appReleaseStatisticsChart(@RequestBody AppPipelineTaskStatisticsRequest request) {
+        Long pipelineId = Valid.notNull(request.getPipelineId());
+        return statisticsService.appPipelineTaskStatisticChart(pipelineId);
     }
 
 }

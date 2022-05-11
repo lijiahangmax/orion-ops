@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2022/3/30 17:17
  */
 @Data
-public class ApplicationReleaseStatisticsWrapperVO {
+public class ApplicationReleaseStatisticsMetricsWrapperVO {
 
     /**
      * 最近发布指标
