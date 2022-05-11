@@ -1520,6 +1520,27 @@ const $api = {
   },
 
   /**
+   * 应用流水线统计信息 指标
+   */
+  getAppPipelineTaskStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-pipeline/metrics', param)
+  },
+
+  /**
+   * 应用流水线统计信息 视图
+   */
+  getAppPipelineTaskStatisticsView: param => {
+    return $http.$post('/statistics/app-pipeline/view', param)
+  },
+
+  /**
+   * 应用流水线统计信息 折线图
+   */
+  getAppPipelineTaskStatisticsChart: param => {
+    return $http.$post('/statistics/app-pipeline/chart', param)
+  },
+
+  /**
    * 获取日志列表
    */
   getLogList: param => {

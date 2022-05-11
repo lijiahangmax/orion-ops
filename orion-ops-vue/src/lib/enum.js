@@ -934,10 +934,12 @@ const $enum = {
   STAGE_TYPE: {
     BUILD: {
       value: 10,
+      symbol: 'build',
       label: '构建'
     },
     RELEASE: {
       value: 20,
+      symbol: 'release',
       label: '发布'
     }
   },
@@ -1915,32 +1917,74 @@ const $enum = {
     WAIT: {
       value: 10,
       color: '',
-      label: '未开始'
+      label: '未开始',
+      log: false,
+      actionStyle: {
+        background: '#CED4DA'
+      },
+      actionValue() {
+        return '未开始'
+      }
     },
     RUNNABLE: {
       value: 20,
       color: 'green',
-      label: '进行中'
+      label: '进行中',
+      log: true,
+      actionStyle: {
+        background: '#94D82D'
+      },
+      actionValue() {
+        return '进行中'
+      }
     },
     FINISH: {
       value: 30,
       color: 'blue',
-      label: '已完成'
+      label: '已完成',
+      log: true,
+      actionStyle: {
+        background: '#74C0FC'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已完成'
+      }
     },
     FAILURE: {
       value: 40,
       color: 'red',
-      label: '已失败'
+      label: '已失败',
+      log: true,
+      actionStyle: {
+        background: '#F03E3E'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已失败'
+      }
     },
     SKIPPED: {
       value: 50,
       color: 'orange',
-      label: '已跳过'
+      label: '已跳过',
+      log: false,
+      actionStyle: {
+        background: '#FFD43B'
+      },
+      actionValue() {
+        return '已跳过'
+      }
     },
     TERMINATED: {
       value: 60,
       color: 'orange',
-      label: '已停止'
+      label: '已停止',
+      log: true,
+      actionStyle: {
+        background: '#FFA94D'
+      },
+      actionValue() {
+        return '已停止'
+      }
     }
   },
 

@@ -336,6 +336,16 @@ const routes = [
         component: () => import('../views/app/AppReleaseStatistics')
       },
       {
+        path: '/app/pipeline/statistics',
+        name: 'appPipelineStatistics',
+        meta: {
+          requireAuth: true,
+          title: '流水线统计',
+          visibleProfile: true
+        },
+        component: () => import('../views/app/AppPipelineStatistics')
+      },
+      {
         path: '/user/list',
         name: 'userList',
         meta: {
