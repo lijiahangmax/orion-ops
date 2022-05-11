@@ -197,7 +197,7 @@ export default {
         this.$message.warning('未找到该应用')
       }
       this.app = filter[0]
-      this.submit.title = `发布 ${this.app.name}`
+      this.submit.title = `发布${this.app.name}`
       this.appLoading = true
       await this.loadReleaseMachine()
       await this.loadBuildList()

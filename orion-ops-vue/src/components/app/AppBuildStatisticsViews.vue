@@ -323,6 +323,7 @@ export default {
 
         .app-build-action-log-action:hover {
           opacity: 1;
+          transition: .3s;
         }
       }
     }

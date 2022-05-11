@@ -443,6 +443,7 @@ export default {
 
             .app-release-action-log-action:hover {
               opacity: 1;
+              transition: .3s;
             }
           }
         }

@@ -27,7 +27,7 @@
     </div>
     <!-- 构建明细 -->
     <div class="app-build-statistics-container">
-      <div class="statistic-tabs-wrapper">
+      <div class="statistic-tabs-wrapper" v-show="profileId && appList.length">
         <a-tabs v-model="activeTab" :animated="false" @change="chooseStatisticsTab">
           <!-- 视图 -->
           <a-tab-pane key="1" tab="视图">
@@ -43,6 +43,7 @@
           </a-tab-pane>
         </a-tabs>
       </div>
+      <p v-if="!appLoading && (!profileId || !appList.length)" style="padding: 16px;">请先维护应用</p>
     </div>
   </div>
 </template>
@@ -93,8 +94,8 @@ export default {
       })
     },
     chooseApp(id) {
-      this.$refs.metrics && this.$refs.metrics.clean()
       this.$refs.view && this.$refs.view.clean()
+      this.$refs.metrics && this.$refs.metrics.clean()
       this.$refs.chart && this.$refs.chart.clean()
       this.selectedAppIds = [id]
       this.chooseStatisticsTab()
@@ -129,8 +130,6 @@ export default {
       this.chooseApp(this.appList[0].id)
       // 加载轮询
       this.pollId = setInterval(this.refreshView, 5000)
-    } else {
-      this.$message.warning('请先维护应用')
     }
   },
   beforeDestroy() {
