@@ -425,6 +425,16 @@ const $api = {
   },
 
   /**
+   * sftp 压缩下载文件
+   */
+  sftpPackageDownloadExec: param => {
+    return $http.$post('/sftp/package-download/exec', param, {
+      timeout: 180000,
+      loading: '正在执行压缩命令, 执行完毕自动下载'
+    })
+  },
+
+  /**
    * sftp 传输列表
    */
   sftpTransferList: param => {

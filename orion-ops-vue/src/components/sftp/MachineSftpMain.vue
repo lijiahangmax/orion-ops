@@ -1,6 +1,6 @@
 <template>
   <div class="sftp-container">
-    <div class="sftp-main-container">
+    <div class="sftp-main-container" ref="sftpMainContainer">
       <!-- 左侧主体 -->
       <div id="sftp-left-fixed" v-if="leftFolderVisible" :style="{width: leftFolderVisible ? '16%' : '0px'}">
         <!-- 左侧地址输入框 -->
@@ -50,18 +50,38 @@
             <!-- 工具栏 -->
             <div class="sftp-file-exec-buttons">
               <a-button-group>
+                <!-- 删除 -->
                 <a-button :disabled="!sessionToken || selectedRowKeys.length === 0"
-                          @click="batchRemove" title="批量删除" icon="delete"/>
+                          @click="batchRemove" title="删除" icon="delete"/>
+                <!-- 下载 -->
                 <a-popconfirm :disabled="!sessionToken || selectedRowKeys.length === 0"
-                              :title="`是否下载当前选中的 ${selectedRowKeys.length} 个文件?`"
                               placement="bottomRight"
-                              ok-text="确定"
-                              cancel-text="取消"
-                              @confirm="batchDownload">
-                  <a-button :disabled="!sessionToken || selectedRowKeys.length === 0" title="批量下载" icon="cloud-download"/>
+                              overlayClassName="download-popover-confirm"
+                              :getPopupContainer="() => $refs.sftpMainContainer">
+                  <!-- 内容 -->
+                  <template #title>
+                    <!-- 标题 -->
+                    <div class="download-popover-title-wrapper">
+                      <span>{{ `是否下载当前选中的 ${selectedRowKeys.length} 个文件?` }}</span>
+                    </div>
+                    <!-- 按钮 -->
+                    <div class="download-prpover-buttons-wrapper">
+                      <a-button class="download-popover-button span-blue" size="small" @click="triggerDownloadTrigger">取消</a-button>
+                      <a-button class="download-popover-button" size="small" type="primary" @click="batchDownload">下载</a-button>
+                      <a-button class="download-popover-button" size="small" type="primary" @click="batchPackageDownload">打包下载</a-button>
+                    </div>
+                  </template>
+                  <!-- 触发器 -->
+                  <a-button :disabled="!sessionToken || selectedRowKeys.length === 0"
+                            title="下载"
+                            icon="cloud-download"
+                            @click="clickDownloadTrigger"/>
                 </a-popconfirm>
+                <!-- 复制路径 -->
                 <a-button :disabled="!sessionToken" @click="$copy(path)" title="复制路径" icon="link"/>
+                <!-- 刷新 -->
                 <a-button :disabled="!sessionToken" @click="listFiles()" title="刷新" icon="reload"/>
+                <!-- 创建 -->
                 <a-button :disabled="!sessionToken" @click="openTouch" title="创建" icon="file-add"/>
                 <!-- 文件上传 -->
                 <a-popover v-model="uploadVisible" trigger="click" placement="bottomRight" overlayClassName="sftp-upload-list-popover">
@@ -149,12 +169,24 @@
               <a-divider type="vertical"/>
               <!-- 下载 -->
               <a-popconfirm v-if="record.isDir"
-                            title="确定要下载当前文件夹?"
                             placement="bottomRight"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="download(record)">
-                <a title="下载">
+                            overlayClassName="download-popover-confirm"
+                            :getPopupContainer="() => $refs.sftpMainContainer">
+                <!-- 内容 -->
+                <template #title>
+                  <!-- 标题 -->
+                  <div class="download-popover-title-wrapper">
+                    <span>确定要下载当前文件夹?</span>
+                  </div>
+                  <!-- 按钮 -->
+                  <div class="download-prpover-buttons-wrapper">
+                    <a-button class="download-popover-button span-blue" size="small" @click="triggerDownloadTrigger">取消</a-button>
+                    <a-button class="download-popover-button" size="small" type="primary" @click="download(record)">下载</a-button>
+                    <a-button class="download-popover-button" size="small" type="primary" @click="packageDownload(record)">打包下载</a-button>
+                  </div>
+                </template>
+                <!-- 触发器 -->
+                <a title="下载" @click="clickDownloadTrigger">
                   <a-icon type="cloud-download"/>
                 </a>
               </a-popconfirm>
@@ -225,6 +257,18 @@
           </a-menu-item>
         </template>
       </RightClickMenu>
+      <!-- 右键菜单下载文件夹 -->
+      <a-modal :title="null"
+               :maskStyle="{opacity: 0.55, animation: 'none'}"
+               :width="240"
+               v-model="visibleRightMenuDownloadModal">
+        <p style="margin: 1em 0 0 0;">确定要下载当前文件夹?</p>
+        <template #footer>
+          <a-button size="small" @click="() => visibleRightMenuDownloadModal = false">取消</a-button>
+          <a-button size="small" @click="download(curr)" type="primary">下载</a-button>
+          <a-button size="small" @click="packageDownload(curr)" type="primary">打包下载</a-button>
+        </template>
+      </a-modal>
     </div>
   </div>
 </template>
@@ -309,14 +353,7 @@ const fileRightMenuHandler = {
   },
   downloadFile() {
     if (this.curr.isDir) {
-      this.$confirm({
-        content: '确定要下载当前文件夹?',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          this.download(this.curr)
-        }
-      })
+      this.visibleRightMenuDownloadModal = true
     } else {
       this.download(this.curr)
     }
@@ -365,6 +402,8 @@ export default {
       uploadVisible: false,
       emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
       curr: null,
+      downloadTrigger: null,
+      visibleRightMenuDownloadModal: false,
       customClick: record => ({
         on: {
           contextmenu: e => {
@@ -473,6 +512,8 @@ export default {
         pagination.total = data.files.length
         pagination.current = toPage
         this.pagination = pagination
+        this.selectedRowKeys = []
+        this.selectedRows = []
         this.files = data.files
         this.loading = false
       }).catch(() => {
@@ -498,6 +539,8 @@ export default {
       selectedKeys = []
     },
     download(record) {
+      this.visibleRightMenuDownloadModal = false
+      this.triggerDownloadTrigger()
       this.$api.sftpDownloadExec({
         paths: [record.path],
         sessionToken: this.sessionToken
@@ -505,7 +548,19 @@ export default {
         this.$message.success('已添加至传输列表')
       })
     },
+    packageDownload(record) {
+      this.visibleRightMenuDownloadModal = false
+      this.triggerDownloadTrigger()
+      this.$api.sftpPackageDownloadExec({
+        paths: [record.path],
+        sessionToken: this.sessionToken
+      }).then(() => {
+        this.$message.success('已添加至传输列表')
+      })
+    },
     batchDownload() {
+      this.visibleRightMenuDownloadModal = false
+      this.triggerDownloadTrigger()
       this.$api.sftpDownloadExec({
         paths: this.selectedRowKeys,
         sessionToken: this.sessionToken
@@ -514,6 +569,25 @@ export default {
         this.selectedRowKeys = []
         this.selectedRows = []
       })
+    },
+    batchPackageDownload() {
+      this.visibleRightMenuDownloadModal = false
+      this.triggerDownloadTrigger()
+      this.$api.sftpPackageDownloadExec({
+        paths: this.selectedRowKeys,
+        sessionToken: this.sessionToken
+      }).then(() => {
+        this.$message.success('已添加至传输列表')
+        this.selectedRowKeys = []
+        this.selectedRows = []
+      })
+    },
+    clickDownloadTrigger(event) {
+      this.downloadTrigger = event.currentTarget
+    },
+    triggerDownloadTrigger() {
+      this.downloadTrigger && this.downloadTrigger.click()
+      this.downloadTrigger = null
     },
     remove(record) {
       this.$confirm({
@@ -632,6 +706,28 @@ export default {
       font-size: 16px;
       padding-right: 8px;
     }
+  }
+
+  /deep/ .download-popover-confirm .ant-popover-message {
+    padding: 0 !important;
+  }
+
+  /deep/ .download-popover-confirm .ant-popover-buttons {
+    display: none !important;
+  }
+
+  .download-popover-title-wrapper {
+    display: block;
+    padding-top: 4px;
+    margin-bottom: 16px;
+  }
+
+  .download-popover-button {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 14px;
+    border-radius: 4px;
+    margin-left: 6px;
   }
 }
 
