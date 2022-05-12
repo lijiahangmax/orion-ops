@@ -200,4 +200,8 @@ public class MessageConst {
 
     public static final String APP_LAST_BUILD_VERSION_ABSENT = "{} 无构建版本";
 
+    public static final String EXECUTE_SFTP_ZIP_COMMAND_ERROR = "执行 zip 压缩命令失败";
+
+    public static final String SFTP_ZIP_FILE_ABSENT = "压缩文件不存在";
+
 }

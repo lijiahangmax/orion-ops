@@ -90,6 +90,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String SECRET_KEY_SUFFIX = "_id_rsa";
 
+    public static final String TEMP_PACKAGE_PATH = "tmp_ops_pkg";
+
     public static final Long N_N_L_1 = -1L;
 
     public static final Integer IS_DEFAULT = 1;

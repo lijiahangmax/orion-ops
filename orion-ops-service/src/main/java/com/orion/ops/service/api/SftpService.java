@@ -142,6 +142,13 @@ public interface SftpService {
     void download(FileDownloadRequest request);
 
     /**
+     * 打包下载文件
+     *
+     * @param request request
+     */
+    void packageDownload(FileDownloadRequest request);
+
+    /**
      * 传输暂停
      *
      * @param fileToken fileToken

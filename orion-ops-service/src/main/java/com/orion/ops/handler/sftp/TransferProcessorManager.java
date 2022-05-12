@@ -129,13 +129,12 @@ public class TransferProcessorManager {
      *
      * @param userId    userId
      * @param machineId machineId
-     * @param fileToken fileToken
      * @param record    record
      */
-    public void notifySessionAddEvent(Long userId, Long machineId, String fileToken, FileTransferLogDO record) {
+    public void notifySessionAddEvent(Long userId, Long machineId, FileTransferLogDO record) {
         FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
         notify.setType(SftpNotifyType.ADD.getType());
-        notify.setFileToken(fileToken);
+        notify.setFileToken(record.getFileToken());
         notify.setBody(Jsons.toJsonWriteNull(Converts.to(record, FileTransferLogVO.class)));
         this.notifySession(userId, machineId, notify);
     }

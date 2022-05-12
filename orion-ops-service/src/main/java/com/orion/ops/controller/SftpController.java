@@ -262,6 +262,17 @@ public class SftpController {
     }
 
     /**
+     * 打包下载文件
+     */
+    @RequestMapping("/package-download/exec")
+    @EventLog(EventType.SFTP_DOWNLOAD)
+    public void packageDownloadFile(@RequestBody FileDownloadRequest request) {
+        List<String> paths = Valid.notEmpty(request.getPaths());
+        paths.forEach(Valid::checkNormalize);
+        sftpService.packageDownload(request);
+    }
+
+    /**
      * 传输暂停
      */
     @RequestMapping("/transfer/{fileToken}/pause")

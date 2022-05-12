@@ -3,6 +3,7 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.id.UUIds;
+import com.orion.lang.io.IgnoreOutputStream;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
@@ -14,6 +15,7 @@ import com.orion.ops.consts.sftp.SftpTransferType;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
@@ -29,10 +31,14 @@ import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
+import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
+import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.remote.channel.sftp.SftpFile;
+import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Arrays1;
+import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.convert.Converts;
@@ -292,7 +298,7 @@ public class SftpServiceImpl implements SftpService {
             uploadFiles.add(upload);
             fileTransferLogDAO.insert(upload);
             // 通知添加
-            transferProcessorManager.notifySessionAddEvent(userId, machineId, upload.getFileToken(), upload);
+            transferProcessorManager.notifySessionAddEvent(userId, machineId, upload);
         }
         // 提交上传任务
         for (FileTransferLogDO uploadFile : uploadFiles) {
@@ -350,7 +356,7 @@ public class SftpServiceImpl implements SftpService {
         for (FileTransferLogDO downloadFile : downloadFiles) {
             fileTransferLogDAO.insert(downloadFile);
             // 通知添加
-            transferProcessorManager.notifySessionAddEvent(userId, machineId, downloadFile.getFileToken(), downloadFile);
+            transferProcessorManager.notifySessionAddEvent(userId, machineId, downloadFile);
         }
         // 提交下载任务
         for (FileTransferLogDO downloadFile : downloadFiles) {
@@ -360,6 +366,58 @@ public class SftpServiceImpl implements SftpService {
         EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
         EventParamsHolder.addParam(EventKeys.PATHS, paths);
         EventParamsHolder.addParam(EventKeys.COUNT, downloadFiles.size());
+    }
+
+    @Override
+    public void packageDownload(FileDownloadRequest request) {
+        // 获取token信息
+        Long machineId = this.getMachineId(request.getSessionToken());
+        UserDTO user = Currents.getUser();
+        Long userId = user.getId();
+        List<String> paths = request.getPaths();
+        // 查询机器信息
+        MachineInfoDO machine = machineInfoService.selectById(machineId);
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        // 执行压缩命令
+        String fileToken = ObjectIds.next();
+        String zipPath = PathBuilders.getSftpPackageTempPath(machine.getUsername(), fileToken, paths);
+        String command = Utils.getSftpPackageCommand(zipPath, paths);
+        try (SessionStore session = machineInfoService.openSessionStore(machine);
+             CommandExecutor executor = session.getCommandExecutor(Strings.replaceCRLF(command))) {
+            // 执行命令
+            executor.sync()
+                    .transfer(new IgnoreOutputStream())
+                    .connect()
+                    .exec();
+        } catch (Exception e) {
+            throw Exceptions.app(MessageConst.EXECUTE_SFTP_ZIP_COMMAND_ERROR, e);
+        }
+        // 获取压缩文件信息
+        SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
+        SftpFile zipFile = executor.getFile(zipPath);
+        Valid.notNull(zipFile, MessageConst.SFTP_ZIP_FILE_ABSENT);
+        // 设置传输明细
+        FileTransferLogDO download = new FileTransferLogDO();
+        download.setUserId(userId);
+        download.setUserName(user.getUsername());
+        download.setFileToken(fileToken);
+        download.setTransferType(SftpTransferType.DOWNLOAD.getType());
+        download.setMachineId(machineId);
+        download.setRemoteFile(zipPath);
+        download.setLocalFile(PathBuilders.getSftpDownloadFilePath(fileToken));
+        download.setCurrentSize(0L);
+        download.setFileSize(zipFile.getSize());
+        download.setNowProgress(0D);
+        download.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
+        fileTransferLogDAO.insert(download);
+        // 通知添加
+        transferProcessorManager.notifySessionAddEvent(userId, machineId, download);
+        // 提交任务
+        IFileTransferProcessor.of(FileTransferHint.transfer(download)).exec();
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.PATHS, paths);
+        EventParamsHolder.addParam(EventKeys.COUNT, paths.size());
     }
 
     @Override
@@ -664,7 +722,7 @@ public class SftpServiceImpl implements SftpService {
         packageRecord.setTransferStatus(SftpTransferStatus.WAIT.getStatus());
         fileTransferLogDAO.insert(packageRecord);
         // 通知添加
-        transferProcessorManager.notifySessionAddEvent(userId, machineId, packageRecord.getFileToken(), packageRecord);
+        transferProcessorManager.notifySessionAddEvent(userId, machineId, packageRecord);
         // 提交打包任务
         IFileTransferProcessor.of(FileTransferHint.packaged(packageRecord, logList)).exec();
         // 设置日志参数
