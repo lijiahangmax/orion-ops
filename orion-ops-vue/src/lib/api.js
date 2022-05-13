@@ -1819,6 +1819,13 @@ const $api = {
   },
 
   /**
+   * 发送调度任务机器命令
+   */
+  writeMachineSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/write-machine', param)
+  },
+
+  /**
    * 获取站内信未读数量
    */
   getWebSideMessageUnreadCount: param => {

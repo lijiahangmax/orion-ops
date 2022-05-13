@@ -48,13 +48,31 @@
                       :style="{'color': machine.exitCode === 0 ? '#4263EB' : '#E03131'}">
                       {{ machine.exitCode }}
                 </span>
+                <!-- 命令输入 -->
+                <a-input-search class="command-write-input"
+                                size="default"
+                                v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
+                                v-model="command"
+                                placeholder="输入"
+                                @search="sendCommand(machine.id)">
+                  <template #enterButton>
+                    <a-icon type="forward"/>
+                  </template>
+                  <!-- 发送 lf -->
+                  <template #suffix>
+                    <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                            title="是否发送 \n"
+                            type="pull-request"
+                            @click="() => sendLf = !sendLf"/>
+                  </template>
+                </a-input-search>
                 <!-- 停止 -->
                 <a-popconfirm v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
                               title="是否要停止执行?"
                               placement="bottomLeft"
                               ok-text="确定"
                               cancel-text="取消"
-                              @confirm="terminateMachine(record.id, machine.id)">
+                              @confirm="terminateMachine(machine.id)">
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- 跳过 -->
@@ -63,7 +81,7 @@
                               placement="bottomLeft"
                               ok-text="确定"
                               cancel-text="取消"
-                              @confirm="skipMachine(record.id, machine.id)">
+                              @confirm="skipMachine( machine.id)">
                   <a-button icon="stop">跳过</a-button>
                 </a-popconfirm>
               </div>
@@ -96,6 +114,8 @@ export default {
       record: {},
       pollId: null,
       loading: false,
+      command: null,
+      sendLf: true,
       selectedKeys: [],
       openedFiles: []
     }
@@ -156,20 +176,30 @@ export default {
     chooseMachineLog(id) {
       this.$refs[`appender-${id}`][0].fitTerminal()
     },
-    terminateMachine(id, machineRecordId) {
+    terminateMachine(machineRecordId) {
       this.$api.terminateMachineSchedulerTaskRecord({
-        id,
         machineRecordId
       }).then(() => {
         this.$message.success('已停止')
       })
     },
-    skipMachine(id, machineRecordId) {
+    skipMachine(machineRecordId) {
       this.$api.skipMachineSchedulerTaskRecord({
-        id,
         machineRecordId
       }).then(() => {
         this.$message.success('已跳过')
+      })
+    },
+    sendCommand(machineRecordId) {
+      if (!this.command && !this.sendLf) {
+        return
+      }
+      const command = this.command
+      this.command = ''
+      this.$api.writeMachineSchedulerTaskRecord({
+        machineRecordId: machineRecordId,
+        sendLf: this.sendLf,
+        command
       })
     },
     async pollStatus() {
