@@ -5,6 +5,7 @@ import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.entity.request.SchedulerTaskRecordRequest;
 import com.orion.ops.entity.vo.SchedulerTaskMachineRecordStatusVO;
@@ -13,6 +14,7 @@ import com.orion.ops.entity.vo.SchedulerTaskRecordStatusVO;
 import com.orion.ops.entity.vo.SchedulerTaskRecordVO;
 import com.orion.ops.service.api.SchedulerTaskRecordService;
 import com.orion.ops.utils.Valid;
+import com.orion.utils.Strings;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -108,9 +110,8 @@ public class SchedulerRecordController {
     @RequestMapping("/terminate-machine")
     @EventLog(EventType.TERMINATE_SCHEDULER_TASK_MACHINE)
     public HttpWrapper<?> terminateMachine(@RequestBody SchedulerTaskRecordRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long machineRecordId = Valid.notNull(request.getMachineRecordId());
-        schedulerTaskRecordService.terminateMachine(id, machineRecordId);
+        schedulerTaskRecordService.terminateMachine(machineRecordId);
         return HttpWrapper.ok();
     }
 
@@ -120,9 +121,23 @@ public class SchedulerRecordController {
     @RequestMapping("/skip-machine")
     @EventLog(EventType.SKIP_SCHEDULER_TASK_MACHINE)
     public HttpWrapper<?> skipMachine(@RequestBody SchedulerTaskRecordRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long machineRecordId = Valid.notNull(request.getMachineRecordId());
-        schedulerTaskRecordService.skipMachine(id, machineRecordId);
+        schedulerTaskRecordService.skipMachine(machineRecordId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 跳过单个
+     */
+    @RequestMapping("/write-machine")
+    @EventLog(EventType.SKIP_SCHEDULER_TASK_MACHINE)
+    public HttpWrapper<?> writeMachine(@RequestBody SchedulerTaskRecordRequest request) {
+        Long machineRecordId = Valid.notNull(request.getMachineRecordId());
+        String command = Strings.def(request.getCommand());
+        if (request.isSendLf()) {
+            command += Const.LF;
+        }
+        schedulerTaskRecordService.writeMachine(machineRecordId, command);
         return HttpWrapper.ok();
     }
 

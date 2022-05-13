@@ -241,31 +241,42 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     }
 
     @Override
-    public void terminateMachine(Long id, Long machineRecordId) {
-        this.skipOrTerminateTaskMachine(id, machineRecordId, true);
+    public void terminateMachine(Long machineRecordId) {
+        this.skipOrTerminateTaskMachine(machineRecordId, true);
     }
 
     @Override
-    public void skipMachine(Long id, Long machineRecordId) {
-        this.skipOrTerminateTaskMachine(id, machineRecordId, false);
+    public void skipMachine(Long machineRecordId) {
+        this.skipOrTerminateTaskMachine(machineRecordId, false);
+    }
+
+    @Override
+    public void writeMachine(Long machineRecordId, String command) {
+        // 查询明细
+        SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
+        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        Valid.isTrue(SchedulerTaskMachineStatus.RUNNABLE.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取会话
+        ITaskProcessor session = taskSessionHolder.getSession(machine.getRecordId());
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        session.writeMachine(machineRecordId, command);
     }
 
     /**
      * 跳过或终止任务
      *
-     * @param id              id
      * @param machineRecordId machineRecordId
      * @param terminate       终止/跳过
      */
-    private void skipOrTerminateTaskMachine(Long id, Long machineRecordId, boolean terminate) {
+    private void skipOrTerminateTaskMachine(Long machineRecordId, boolean terminate) {
         // 查询数据
-        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
-        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
-        // 检查状态
-        Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
         SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
         Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
-        // 检查状态
+        Long id = machine.getRecordId();
+        SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
+        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
+        // 执行
         if (terminate) {
             Valid.isTrue(SchedulerTaskMachineStatus.RUNNABLE.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         } else {

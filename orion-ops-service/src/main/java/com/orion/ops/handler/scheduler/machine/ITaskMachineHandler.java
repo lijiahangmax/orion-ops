@@ -23,6 +23,13 @@ public interface ITaskMachineHandler extends Runnable, SafeCloseable {
     void terminate();
 
     /**
+     * 发送命令
+     *
+     * @param command command
+     */
+    void write(String command);
+
+    /**
      * 状态
      *
      * @return 获取状态

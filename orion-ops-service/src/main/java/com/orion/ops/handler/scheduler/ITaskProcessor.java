@@ -34,6 +34,14 @@ public interface ITaskProcessor extends Runnable, SafeCloseable {
     void skipMachine(Long recordMachineId);
 
     /**
+     * 发送机器命令
+     *
+     * @param recordMachineId recordMachineId
+     * @param command         command
+     */
+    void writeMachine(Long recordMachineId, String command);
+
+    /**
      * 获取实际执行处理器
      *
      * @param recordId recordId

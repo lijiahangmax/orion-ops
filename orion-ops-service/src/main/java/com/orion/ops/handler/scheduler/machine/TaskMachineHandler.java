@@ -125,7 +125,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
         // 更新状态
         this.updateStatus(SchedulerTaskMachineStatus.TERMINATED);
         // 拼接日志
-        StringBuilder log = new StringBuilder(Const.LF)
+        StringBuilder log = new StringBuilder(Const.LF_2)
                 .append(Utils.getStainKeyWords("# 调度任务执行停止", StainCode.GLOSS_YELLOW))
                 .append(Letters.TAB)
                 .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
@@ -205,6 +205,11 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             this.terminated = true;
             Streams.close(this.executor);
         }
+    }
+
+    @Override
+    public void write(String command) {
+        executor.write(command);
     }
 
     /**
