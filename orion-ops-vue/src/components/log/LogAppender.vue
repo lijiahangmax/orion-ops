@@ -37,7 +37,7 @@
           </div>
           <!-- 固定日志 -->
           <div class="log-fixed-wrapper nowrap" v-if="rightToolsProps.fixed !== false">
-            <span class="log-fixed-label normal-label ml8">固定</span>
+            <span class="log-fixed-label normal-label ml8 usn">固定</span>
             <a-switch class="log-fixed-switch" v-model="fixedLog" :size="size"/>
           </div>
           <!-- 状态 -->
@@ -49,19 +49,15 @@
                             ok-text="确定"
                             cancel-text="取消"
                             @confirm="close">
-                <a-badge class="pointer"
+                <a-badge class="pointer usn"
                          :status="$enum.LOG_TAIL_STATUS.RUNNABLE.status"
                          :text="$enum.LOG_TAIL_STATUS.RUNNABLE.label"/>
               </a-popconfirm>
             </template>
-            <!-- 状态 已关闭 -->
-            <template v-else-if="$enum.LOG_TAIL_STATUS.CLOSE.value === status">
-              <a-badge :status="$enum.LOG_TAIL_STATUS.CLOSE.status"
-                       :text="$enum.LOG_TAIL_STATUS.CLOSE.label"/>
-            </template>
             <!-- 状态 其他 -->
             <template v-else>
-              <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
+              <a-badge class="usn"
+                       :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
                        :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
             </template>
           </div>

@@ -191,14 +191,16 @@ export default {
       })
     },
     sendCommand(machineRecordId) {
-      if (!this.command && !this.sendLf) {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
         return
       }
-      const command = this.command
       this.command = ''
       this.$api.writeMachineSchedulerTaskRecord({
         machineRecordId: machineRecordId,
-        sendLf: this.sendLf,
         command
       })
     },

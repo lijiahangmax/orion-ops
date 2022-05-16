@@ -282,14 +282,16 @@ export default {
     },
     sendCommand(execMachine) {
       const id = execMachine.execId
-      const command = execMachine.inputCommand
-      if (!command && !this.config.sendLf) {
+      let command = execMachine.inputCommand || ''
+      if (this.config.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
         return
       }
       this.$api.writeExecTask({
         id,
-        command,
-        sendLf: this.config.sendLf
+        command
       }).then(() => {
         execMachine.inputCommand = null
       })
