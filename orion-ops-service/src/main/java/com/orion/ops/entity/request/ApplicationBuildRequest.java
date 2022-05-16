@@ -70,4 +70,9 @@ public class ApplicationBuildRequest extends PageRequest {
      */
     private Integer onlyMyself;
 
+    /**
+     * 命令
+     */
+    private String command;
+
 }

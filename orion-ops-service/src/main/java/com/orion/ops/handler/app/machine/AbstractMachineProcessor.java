@@ -261,6 +261,13 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
     }
 
     @Override
+    public void write(String command) {
+        Lists.stream(handlerList)
+                .filter(s -> ActionStatus.RUNNABLE.equals(s.getStatus()))
+                .forEach(s -> s.write(command));
+    }
+
+    @Override
     public void close() {
         // 关闭日志流
         Streams.close(logStream);

@@ -192,9 +192,8 @@ public class ApplicationReleaseController {
     @RequestMapping("/terminate-machine")
     @EventLog(EventType.TERMINATE_MACHINE_RELEASE)
     public HttpWrapper<?> terminateMachine(@RequestBody ApplicationReleaseRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
-        applicationReleaseService.terminateMachine(id, releaseMachineId);
+        applicationReleaseService.terminateMachine(releaseMachineId);
         return HttpWrapper.ok();
     }
 
@@ -204,9 +203,19 @@ public class ApplicationReleaseController {
     @RequestMapping("/skip-machine")
     @EventLog(EventType.SKIP_MACHINE_RELEASE)
     public HttpWrapper<?> skipMachine(@RequestBody ApplicationReleaseRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
-        applicationReleaseService.skipMachine(id, releaseMachineId);
+        applicationReleaseService.skipMachine(releaseMachineId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 输入命令
+     */
+    @RequestMapping("/write-machine")
+    public HttpWrapper<?> writeMachine(@RequestBody ApplicationReleaseRequest request) {
+        Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
+        String command = Valid.notEmpty(request.getCommand());
+        applicationReleaseService.writeMachine(releaseMachineId, command);
         return HttpWrapper.ok();
     }
 

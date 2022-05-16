@@ -228,7 +228,7 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     public void terminateAll(Long id) {
         // 查询数据
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
-        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(record, MessageConst.TASK_ABSENT);
         // 检查状态
         Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
         // 停止
@@ -254,7 +254,7 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     public void writeMachine(Long machineRecordId, String command) {
         // 查询明细
         SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
-        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(machine, MessageConst.TASK_ABSENT);
         Valid.isTrue(SchedulerTaskMachineStatus.RUNNABLE.getStatus().equals(machine.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         // 获取会话
         ITaskProcessor session = taskSessionHolder.getSession(machine.getRecordId());
@@ -271,10 +271,10 @@ public class SchedulerTaskRecordServiceImpl implements SchedulerTaskRecordServic
     private void skipOrTerminateTaskMachine(Long machineRecordId, boolean terminate) {
         // 查询数据
         SchedulerTaskMachineRecordDO machine = schedulerTaskMachineRecordDAO.selectById(machineRecordId);
-        Valid.notNull(machine, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(machine, MessageConst.TASK_ABSENT);
         Long id = machine.getRecordId();
         SchedulerTaskRecordDO record = schedulerTaskRecordDAO.selectById(id);
-        Valid.notNull(record, MessageConst.UNKNOWN_DATA);
+        Valid.notNull(record, MessageConst.TASK_ABSENT);
         Valid.isTrue(SchedulerTaskStatus.RUNNABLE.getStatus().equals(record.getTaskStatus()), MessageConst.ILLEGAL_STATUS);
         // 执行
         if (terminate) {

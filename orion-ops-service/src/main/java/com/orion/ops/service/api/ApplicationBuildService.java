@@ -67,6 +67,14 @@ public interface ApplicationBuildService {
     void terminateBuildTask(Long id);
 
     /**
+     * 输入命令
+     *
+     * @param id      id
+     * @param command command
+     */
+    void writeBuildTask(Long id, String command);
+
+    /**
      * 删除构建
      *
      * @param idList idList

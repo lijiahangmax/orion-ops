@@ -64,9 +64,4 @@ public class SchedulerTaskRecordRequest extends PageRequest {
      */
     private String command;
 
-    /**
-     * 是否发送 \n
-     */
-    private boolean sendLf;
-
 }

@@ -187,13 +187,11 @@ public class CommandExecServiceImpl implements CommandExecService {
     public void writeCommand(Long id, String command) {
         CommandExecDO execDO = this.selectById(id);
         Valid.notNull(execDO, MessageConst.EXEC_TASK_ABSENT);
-        if (!execDO.getExecStatus().equals(ExecStatus.RUNNABLE.getStatus())) {
-            return;
-        }
+        Valid.isTrue(ExecStatus.RUNNABLE.getStatus().equals(execDO.getExecStatus()), MessageConst.ILLEGAL_STATUS);
         // 获取任务信息
         IExecHandler session = execSessionHolder.getSession(id);
         Valid.notNull(session, MessageConst.EXEC_TASK_THREAD_ABSENT);
-        session.write(command + Const.LF);
+        session.write(command);
     }
 
     @Override

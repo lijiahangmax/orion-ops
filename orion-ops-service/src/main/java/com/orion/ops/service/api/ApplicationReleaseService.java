@@ -116,18 +116,24 @@ public interface ApplicationReleaseService {
     /**
      * 终止
      *
-     * @param id               id
      * @param releaseMachineId releaseMachineId
      */
-    void terminateMachine(Long id, Long releaseMachineId);
+    void terminateMachine(Long releaseMachineId);
 
     /**
      * 跳过
      *
-     * @param id               id
      * @param releaseMachineId releaseMachineId
      */
-    void skipMachine(Long id, Long releaseMachineId);
+    void skipMachine(Long releaseMachineId);
+
+    /**
+     * 输入命令
+     *
+     * @param releaseMachineId releaseMachineId
+     * @param command          命令
+     */
+    void writeMachine(Long releaseMachineId, String command);
 
     /**
      * 删除

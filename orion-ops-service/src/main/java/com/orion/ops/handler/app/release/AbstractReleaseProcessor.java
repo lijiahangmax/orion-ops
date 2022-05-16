@@ -127,6 +127,14 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         }
     }
 
+    @Override
+    public void writeMachine(Long releaseMachineId, String command) {
+        ReleaseMachineProcessor processor = machineProcessors.get(releaseMachineId);
+        if (processor != null) {
+            processor.write(command);
+        }
+    }
+
     /**
      * 获取发布数据
      */

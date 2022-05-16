@@ -28,8 +28,8 @@ import java.util.List;
  */
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/exec")
-public class CommandExecController {
+@RequestMapping("/orion/api/batch-exec")
+public class BatchExecCommandController {
 
     @Resource
     private CommandExecService commandExecService;
@@ -68,7 +68,7 @@ public class CommandExecController {
     @RequestMapping("/write")
     public void write(@RequestBody CommandExecRequest request) {
         Long id = Valid.notNull(request.getId());
-        String command = Valid.notBlank(request.getCommand());
+        String command = Valid.notEmpty(request.getCommand());
         commandExecService.writeCommand(id, command);
     }
 

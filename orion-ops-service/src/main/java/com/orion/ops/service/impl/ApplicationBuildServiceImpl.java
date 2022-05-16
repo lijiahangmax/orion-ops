@@ -251,6 +251,20 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     }
 
     @Override
+    public void writeBuildTask(Long id, String command) {
+        // 获取数据
+        ApplicationBuildDO build = applicationBuildDAO.selectById(id);
+        Valid.notNull(build, MessageConst.UNKNOWN_DATA);
+        // 检查状态
+        Valid.isTrue(BuildStatus.RUNNABLE.getStatus().equals(build.getBuildStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取实例
+        IMachineProcessor session = buildSessionHolder.getSession(id);
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        // 写入命令
+        session.write(command);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer deleteBuildTask(List<Long> idList) {
         // 获取数据
