@@ -13,6 +13,11 @@ import lombok.Data;
 public class FileUploadRequest {
 
     /**
+     * sessionToken
+     */
+    private String sessionToken;
+
+    /**
      * 机器id
      */
     private Long machineId;

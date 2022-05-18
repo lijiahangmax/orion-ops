@@ -21,6 +21,11 @@ public class FileTransferLogVO {
     private Long id;
 
     /**
+     * 机器id
+     */
+    private Long machineId;
+
+    /**
      * fileToken
      */
     private String fileToken;
@@ -60,16 +65,17 @@ public class FileTransferLogVO {
     private Integer status;
 
     static {
-        TypeStore.STORE.register(FileTransferLogDO.class, FileTransferLogVO.class, s -> {
+        TypeStore.STORE.register(FileTransferLogDO.class, FileTransferLogVO.class, p -> {
             FileTransferLogVO vo = new FileTransferLogVO();
-            vo.setId(s.getId());
-            vo.setFileToken(s.getFileToken());
-            vo.setType(s.getTransferType());
-            vo.setRemoteFile(s.getRemoteFile());
-            vo.setCurrent(Files1.getSize(s.getCurrentSize()));
-            vo.setSize(Files1.getSize(s.getFileSize()));
-            vo.setProgress(s.getNowProgress());
-            vo.setStatus(s.getTransferStatus());
+            vo.setId(p.getId());
+            vo.setMachineId(p.getMachineId());
+            vo.setFileToken(p.getFileToken());
+            vo.setType(p.getTransferType());
+            vo.setRemoteFile(p.getRemoteFile());
+            vo.setCurrent(Files1.getSize(p.getCurrentSize()));
+            vo.setSize(Files1.getSize(p.getFileSize()));
+            vo.setProgress(p.getNowProgress());
+            vo.setStatus(p.getTransferStatus());
             return vo;
         });
     }

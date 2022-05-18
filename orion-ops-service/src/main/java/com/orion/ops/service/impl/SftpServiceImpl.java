@@ -1,5 +1,6 @@
 package com.orion.ops.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.id.UUIds;
@@ -17,6 +18,8 @@ import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.entity.dto.SftpSessionTokenDTO;
+import com.orion.ops.entity.dto.SftpUploadInfoDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
@@ -37,7 +40,6 @@ import com.orion.remote.channel.SessionStore;
 import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.remote.channel.sftp.SftpFile;
 import com.orion.remote.channel.ssh.CommandExecutor;
-import com.orion.utils.Arrays1;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
@@ -48,7 +50,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -249,30 +250,34 @@ public class SftpServiceImpl implements SftpService {
     }
 
     @Override
-    public String getUploadAccessToken(String sessionToken) {
-        Long[] tokenInfo = this.getTokenInfo(sessionToken);
+    public String getUploadAccessToken(FileUploadRequest request) {
+        SftpSessionTokenDTO tokenInfo = this.getTokenInfo(request.getSessionToken());
         Long userId = Currents.getUserId();
-        Valid.isTrue(tokenInfo[0].equals(userId), MessageConst.SESSION_EXPIRE);
-        // 生成accessToken
+        Valid.isTrue(tokenInfo.getUserId().equals(userId), MessageConst.SESSION_EXPIRE);
+        // 设置缓存信息
+        SftpUploadInfoDTO uploadInfo = Converts.to(request, SftpUploadInfoDTO.class);
+        uploadInfo.setUserId(userId);
+        uploadInfo.setMachineId(tokenInfo.getMachineId());
+        // 设置缓存
         String accessToken = UUIds.random32();
         String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
-        redisTemplate.opsForValue().set(key, userId + "_" + tokenInfo[1],
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(uploadInfo),
                 KeyConst.SFTP_UPLOAD_ACCESS_EXPIRE, TimeUnit.SECONDS);
         return accessToken;
     }
 
     @Override
-    public Long checkUploadAccessToken(String accessToken) {
+    public SftpUploadInfoDTO checkUploadAccessToken(String accessToken) {
         // 获取缓存
         String key = Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, accessToken);
         String value = redisTemplate.opsForValue().get(key);
         Valid.notBlank(value, MessageConst.TOKEN_EXPIRE);
         // 解析缓存
-        Long[] valueInfo = Arrays1.mapper(Objects.requireNonNull(value).split("_"), Long[]::new, Long::valueOf);
-        Valid.isTrue(valueInfo[0].equals(Currents.getUserId()), MessageConst.TOKEN_EXPIRE);
+        SftpUploadInfoDTO uploadInfo = JSON.parseObject(value, SftpUploadInfoDTO.class);
+        Valid.isTrue(uploadInfo.getUserId().equals(Currents.getUserId()), MessageConst.TOKEN_EXPIRE);
         // 删除缓存
         redisTemplate.delete(key);
-        return valueInfo[1];
+        return uploadInfo;
     }
 
     @Override
@@ -751,20 +756,20 @@ public class SftpServiceImpl implements SftpService {
 
     @Override
     public Long getMachineId(String sessionToken) {
-        return this.getTokenInfo(sessionToken)[1];
+        return this.getTokenInfo(sessionToken).getMachineId();
     }
 
     @Override
-    public Long[] getTokenInfo(String sessionToken) {
+    public SftpSessionTokenDTO getTokenInfo(String sessionToken) {
         Valid.notBlank(sessionToken, MessageConst.TOKEN_EMPTY);
         String key = Strings.format(KeyConst.SFTP_SESSION_TOKEN, sessionToken);
         String value = redisTemplate.opsForValue().get(key);
         Valid.notBlank(value, MessageConst.SESSION_EXPIRE);
-        return Arrays1.mapper(Objects.requireNonNull(value).split("_"), Long[]::new, Long::valueOf);
+        return JSON.parseObject(value, SftpSessionTokenDTO.class);
     }
 
     /**
-     * 生成sessionToken
+     * 生成 sessionToken
      *
      * @param userId    userId
      * @param machineId 机器id
@@ -775,7 +780,10 @@ public class SftpServiceImpl implements SftpService {
         String sessionToken = UUIds.random15();
         // 设置缓存
         String key = Strings.format(KeyConst.SFTP_SESSION_TOKEN, sessionToken);
-        redisTemplate.opsForValue().set(key, userId + "_" + machineId,
+        SftpSessionTokenDTO info = new SftpSessionTokenDTO();
+        info.setUserId(userId);
+        info.setMachineId(machineId);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(info),
                 KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
         return sessionToken;
     }

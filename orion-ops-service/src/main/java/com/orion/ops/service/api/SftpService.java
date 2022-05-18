@@ -2,6 +2,8 @@ package com.orion.ops.service.api;
 
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
+import com.orion.ops.entity.dto.SftpSessionTokenDTO;
+import com.orion.ops.entity.dto.SftpUploadInfoDTO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
@@ -111,12 +113,12 @@ public interface SftpService {
     List<String> checkFilePresent(FilePresentCheckRequest request);
 
     /**
-     * 获取上传文件accessToken
+     * 获取上传文件 accessToken
      *
-     * @param sessionToken sessionToken
+     * @param request request
      * @return accessToken
      */
-    String getUploadAccessToken(String sessionToken);
+    String getUploadAccessToken(FileUploadRequest request);
 
     /**
      * 检查上传token
@@ -124,13 +126,13 @@ public interface SftpService {
      * @param accessToken accessToken
      * @return machineId
      */
-    Long checkUploadAccessToken(String accessToken);
+    SftpUploadInfoDTO checkUploadAccessToken(String accessToken);
 
     /**
      * 上传文件
      *
-     * @param requestFiles requestFiles
      * @param machineId    machineId
+     * @param requestFiles requestFiles
      */
     void upload(Long machineId, List<FileUploadRequest> requestFiles);
 
@@ -213,14 +215,14 @@ public interface SftpService {
     List<FileTransferLogVO> transferList(Long machineId);
 
     /**
-     * 传输删除(单个)
+     * 传输删除 (单个)
      *
      * @param fileToken fileToken
      */
     void transferRemove(String fileToken);
 
     /**
-     * 传输清空(全部)
+     * 传输清空 (全部)
      *
      * @param machineId machineId
      * @return effect
@@ -236,7 +238,7 @@ public interface SftpService {
     void transferPackage(String sessionToken, SftpPackageType packageType);
 
     /**
-     * 获取sftp下载文件本地路径
+     * 获取 sftp 下载文件本地路径
      *
      * @param id id
      * @return FileTransferLogDO
@@ -252,11 +254,11 @@ public interface SftpService {
     Long getMachineId(String sessionToken);
 
     /**
-     * 获取token信息
+     * 获取 token 信息
      *
      * @param sessionToken sessionToken
-     * @return userId machineId
+     * @return token 信息
      */
-    Long[] getTokenInfo(String sessionToken);
+    SftpSessionTokenDTO getTokenInfo(String sessionToken);
 
 }
