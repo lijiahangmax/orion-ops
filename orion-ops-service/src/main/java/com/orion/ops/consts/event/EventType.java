@@ -208,7 +208,7 @@ public enum EventType {
     /**
      * 删除文件
      */
-    SFTP_REMOVE(2525, EventClassify.SFTP, "删除文件 <sb>${count}</sb>个 <sb>${paths}</sb>"),
+    SFTP_REMOVE(2525, EventClassify.SFTP, "删除文件 <sb>${count}</sb>个"),
 
     /**
      * 修改文件权限

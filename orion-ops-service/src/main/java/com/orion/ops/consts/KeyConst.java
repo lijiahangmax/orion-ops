@@ -125,20 +125,6 @@ public class KeyConst {
     public static final String SCHEDULER_TASK_STATISTICS_KEY = "data:statistics:scheduler:task:{}";
 
     /**
-     * 应用构建统计 key
-     * <p>
-     * data:statistics:app:build:{profileId}:{appId}
-     */
-    public static final String APP_BUILD_STATISTICS_KEY = "data:statistics:app:build:{}:{}";
-
-    /**
-     * 应用发布统计 key
-     * <p>
-     * data:statistics:app:release:{profileId}:{appId}
-     */
-    public static final String APP_RELEASE_STATISTICS_KEY = "data:statistics:app:release:{}:{}";
-
-    /**
      * 环境缓存 key
      * <p>
      * data:profile

@@ -59,4 +59,9 @@ public class SchedulerTaskRecordRequest extends PageRequest {
      */
     private Integer status;
 
+    /**
+     * 命令
+     */
+    private String command;
+
 }

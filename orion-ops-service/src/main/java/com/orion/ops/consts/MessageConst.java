@@ -176,6 +176,8 @@ public class MessageConst {
 
     public static final String NO_SUCH_FILE = "未找到文件或目录";
 
+    public static final String TASK_ABSENT = "任务不存在";
+
     public static final String TASK_PRESENT = "任务已存在";
 
     public static final String INVALID_CONFIG = "配置不合法";
@@ -188,7 +190,7 @@ public class MessageConst {
 
     public static final String SESSION_PRESENT = "会话不存在";
 
-    public static final String UPLOAD_TOO_LARGE = "上传文件大小不能大于 {}MB";
+    public static final String UPLOAD_TOO_LARGE = "上传文件大小不能大于 {}MB, 当前大小 {}";
 
     public static final String PIPELINE_ABSENT = "流水线不存在";
 
@@ -199,5 +201,9 @@ public class MessageConst {
     public static final String PIPELINE_DETAIL_ABSENT = "未查询到流水线操作";
 
     public static final String APP_LAST_BUILD_VERSION_ABSENT = "{} 无构建版本";
+
+    public static final String EXECUTE_SFTP_ZIP_COMMAND_ERROR = "执行 zip 压缩命令失败";
+
+    public static final String SFTP_ZIP_FILE_ABSENT = "压缩文件不存在";
 
 }

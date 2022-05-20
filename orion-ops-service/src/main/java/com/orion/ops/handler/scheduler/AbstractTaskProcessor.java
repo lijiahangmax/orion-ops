@@ -179,6 +179,14 @@ public abstract class AbstractTaskProcessor implements ITaskProcessor {
     }
 
     @Override
+    public void writeMachine(Long recordMachineId, String command) {
+        ITaskMachineHandler machineHandler = handlers.get(recordMachineId);
+        if (machineHandler != null) {
+            machineHandler.write(command);
+        }
+    }
+
+    @Override
     public void close() {
         // 移除会话
         taskSessionHolder.removeSession(recordId);

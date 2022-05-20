@@ -51,6 +51,24 @@
                          :tailType="$enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
                          :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
               <template #left-tools>
+                <!-- 命令输入 -->
+                <a-input-search class="command-write-input"
+                                size="default"
+                                v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"
+                                v-model="command"
+                                placeholder="输入"
+                                @search="sendCommand(machine.id)">
+                  <template #enterButton>
+                    <a-icon type="forward"/>
+                  </template>
+                  <!-- 发送 lf -->
+                  <template #suffix>
+                    <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                            title="是否发送 \n"
+                            type="pull-request"
+                            @click="() => sendLf = !sendLf"/>
+                  </template>
+                </a-input-search>
                 <!-- 停止 -->
                 <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"
                               title="是否要停止执行?"
@@ -98,6 +116,8 @@ export default {
       id: null,
       loading: false,
       record: {},
+      command: null,
+      sendLf: true,
       pollId: null,
       selectedKeys: [],
       openedFiles: [],
@@ -168,7 +188,6 @@ export default {
     },
     terminateMachine(releaseMachineId) {
       this.$api.terminateAppReleaseMachine({
-        id: this.record.id,
         releaseMachineId: releaseMachineId
       }).then(() => {
         this.$message.success('已停止')
@@ -176,10 +195,23 @@ export default {
     },
     skipMachine(releaseMachineId) {
       this.$api.skipAppReleaseMachine({
-        id: this.record.id,
         releaseMachineId: releaseMachineId
       }).then(() => {
         this.$message.success('已跳过')
+      })
+    },
+    sendCommand(releaseMachineId) {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
+        return
+      }
+      this.command = ''
+      this.$api.writeAppReleaseMachine({
+        releaseMachineId: releaseMachineId,
+        command
       })
     },
     async pollStatus() {

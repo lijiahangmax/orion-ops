@@ -62,6 +62,15 @@ const routes = [
     component: () => import('../views/log/LoggerView')
   },
   {
+    path: '/app/action/log/view/:id',
+    name: 'AppActionLogView',
+    meta: {
+      requireAuth: true,
+      title: '操作日志'
+    },
+    component: () => import('../views/app/AppActionLogView')
+  },
+  {
     path: '/app/build/log/view/:id',
     name: 'AppBuildLogView',
     meta: {
@@ -196,6 +205,11 @@ const routes = [
         component: () => import('../views/exec/AddBatchExecTask')
       },
       {
+        path: '/batch/upload',
+        name: 'BatchUploadFile',
+        component: () => import('../views/exec/BatchUploadFile')
+      },
+      {
         path: '/log/list',
         name: 'loggerList',
         meta: {
@@ -325,6 +339,16 @@ const routes = [
           visibleProfile: true
         },
         component: () => import('../views/app/AppReleaseStatistics')
+      },
+      {
+        path: '/app/pipeline/statistics',
+        name: 'appPipelineStatistics',
+        meta: {
+          requireAuth: true,
+          title: '流水线统计',
+          visibleProfile: true
+        },
+        component: () => import('../views/app/AppPipelineStatistics')
       },
       {
         path: '/user/list',

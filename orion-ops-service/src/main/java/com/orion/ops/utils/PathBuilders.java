@@ -6,6 +6,8 @@ import com.orion.utils.Systems;
 import com.orion.utils.io.Files1;
 import com.orion.utils.time.Dates;
 
+import java.util.List;
+
 /**
  * 公共路径构建
  *
@@ -176,16 +178,16 @@ public class PathBuilders {
     }
 
     /**
-     * 获取环境根目录
+     * 获取用户根目录
      *
      * @param username 用户名
-     * @return 目录
+     * @return 用户目录
      */
-    public static String getEnvPath(String username) {
+    public static String getHomePath(String username) {
         if (Const.ROOT.equals(username)) {
-            return "/" + Const.ROOT + "/" + Const.ORION_OPS + "/";
+            return "/" + Const.ROOT;
         } else {
-            return "/home/" + username + "/" + Const.ORION_OPS + "/";
+            return "/home/" + username;
         }
     }
 
@@ -206,6 +208,24 @@ public class PathBuilders {
      */
     public static String getHostEnvPath(String path) {
         return Systems.HOME_DIR + "/" + Const.ORION_OPS + "/" + path;
+    }
+
+    /**
+     * 获取 sftp 打包临时目录
+     *
+     * @param username  username
+     * @param fileToken fileToken
+     * @param paths     paths
+     * @return path
+     */
+    public static String getSftpPackageTempPath(String username, String fileToken, List<String> paths) {
+        return PathBuilders.getHomePath(username)
+                + "/" + Const.TEMP_PACKAGE_PATH
+                + "/" + fileToken
+                + "/" + Files1.getFileName(paths.get(0))
+                + " more files"
+                + "." + Const.SUFFIX_ZIP
+                + "";
     }
 
 }

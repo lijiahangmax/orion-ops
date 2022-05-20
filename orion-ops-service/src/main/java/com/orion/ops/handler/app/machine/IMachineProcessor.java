@@ -17,6 +17,13 @@ public interface IMachineProcessor extends Runnable, SafeCloseable {
     void terminate();
 
     /**
+     * 输入命令
+     *
+     * @param command command
+     */
+    void write(String command);
+
+    /**
      * 跳过
      */
     default void skip() {

@@ -47,6 +47,10 @@
         "path": "/batch/exec/list"
       },
       {
+        "name": "批量上传",
+        "path": "/batch/upload"
+      },
+      {
         "name": "日志面板",
         "path": "/log/list"
       }
@@ -119,6 +123,10 @@
       {
         "name": "发布统计",
         "path": "/app/release/statistics"
+      },
+      {
+        "name": "流水线统计",
+        "path": "/app/pipeline/statistics"
       }
     ]
   },

@@ -476,32 +476,33 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
     }
 
+
     @Override
-    public void terminateMachine(Long id, Long releaseMachineId) {
-        this.skipOrTerminateReleaseMachine(id, releaseMachineId, true);
+    public void terminateMachine(Long releaseMachineId) {
+        this.skipOrTerminateReleaseMachine(releaseMachineId, true);
     }
 
     @Override
-    public void skipMachine(Long id, Long releaseMachineId) {
-        this.skipOrTerminateReleaseMachine(id, releaseMachineId, false);
+    public void skipMachine(Long releaseMachineId) {
+        this.skipOrTerminateReleaseMachine(releaseMachineId, false);
     }
 
     /**
      * 跳过或停止发布机器
      *
-     * @param id               id
      * @param releaseMachineId releaseMachineId
      * @param terminate        terminate / skip
      */
-    private void skipOrTerminateReleaseMachine(Long id, Long releaseMachineId, boolean terminate) {
+    private void skipOrTerminateReleaseMachine(Long releaseMachineId, boolean terminate) {
+        // 获取发布机器
+        ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
+        Valid.notNull(machine, MessageConst.RELEASE_MACHINE_ABSENT);
+        Long id = machine.getReleaseId();
         // 获取数据
         ApplicationReleaseDO release = applicationReleaseDAO.selectById(id);
         Valid.notNull(release, MessageConst.RELEASE_ABSENT);
         // 检查状态
         Valid.isTrue(ReleaseStatus.RUNNABLE.getStatus().equals(release.getReleaseStatus()), MessageConst.ILLEGAL_STATUS);
-        // 获取发布机器
-        ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
-        Valid.notNull(machine, MessageConst.RELEASE_MACHINE_ABSENT);
         // 检查状态
         if (terminate) {
             Valid.isTrue(ActionStatus.RUNNABLE.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
@@ -523,6 +524,19 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         EventParamsHolder.addParam(EventKeys.MACHINE_ID, releaseMachineId);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
         EventParamsHolder.addParam(EventKeys.MACHINE_NAME, machine.getMachineName());
+    }
+
+    @Override
+    public void writeMachine(Long releaseMachineId, String command) {
+        // 获取发布机器
+        ApplicationReleaseMachineDO machine = applicationReleaseMachineDAO.selectById(releaseMachineId);
+        Valid.notNull(machine, MessageConst.RELEASE_MACHINE_ABSENT);
+        Valid.isTrue(ActionStatus.RUNNABLE.getStatus().equals(machine.getRunStatus()), MessageConst.ILLEGAL_STATUS);
+        // 获取实例
+        IReleaseProcessor session = releaseSessionHolder.getSession(machine.getReleaseId());
+        Valid.notNull(session, MessageConst.SESSION_PRESENT);
+        // 输入命令
+        session.writeMachine(releaseMachineId, command);
     }
 
     @Override

@@ -217,7 +217,7 @@ export default {
   margin: 0 24px 16px 24px;
 
   #scheduler-statistic-chart {
-    height: calc(100vh - 228px);
+    height: calc(100vh - 280px);
   }
 }
 

@@ -91,7 +91,7 @@
         <!-- 名称 -->
         <template v-slot:name="record">
           {{ record.name }}
-          <span v-if="record.id === 1" class="host-machine-label">#宿主机</span>
+          <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
@@ -239,7 +239,7 @@ const columns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: '机器标签',
+    title: '标签',
     key: 'tag',
     width: 150,
     sorter: (a, b) => a.tag.localeCompare(b.tag),

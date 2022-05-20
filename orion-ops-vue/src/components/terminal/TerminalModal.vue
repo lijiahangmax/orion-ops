@@ -18,10 +18,10 @@
           <div class="title-left-fixed">
             <!-- ssh信息 -->
             <div class="terminal-ssh">
-          <span v-if="machine.username">
-            <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
-            <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.sshPort }}</span>
-          </span>
+              <span v-if="machine.username">
+                <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
+                <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.sshPort }}</span>
+              </span>
             </div>
           </div>
           <!-- 右侧 -->

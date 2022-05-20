@@ -1,9 +1,8 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.vo.ApplicationBuildStatisticsVO;
-import com.orion.ops.entity.vo.ApplicationReleaseStatisticsVO;
-import com.orion.ops.entity.vo.HomeStatisticsVO;
-import com.orion.ops.entity.vo.SchedulerTaskRecordStatisticsVO;
+import com.orion.ops.entity.vo.*;
+
+import java.util.List;
 
 /**
  * 统计service
@@ -30,21 +29,81 @@ public interface StatisticsService {
     SchedulerTaskRecordStatisticsVO schedulerTaskStatistics(Long taskId);
 
     /**
-     * 获取应用构建统计
+     * 获取应用构建统计 视图
      *
      * @param appId     appId
      * @param profileId profileId
-     * @return 统计
+     * @return 视图
      */
-    ApplicationBuildStatisticsVO appBuildStatistics(Long appId, Long profileId);
+    ApplicationBuildStatisticsViewVO appBuildStatisticsView(Long appId, Long profileId);
 
     /**
-     * 获取应用发布统计
+     * 获取应用构建统计 指标
      *
      * @param appId     appId
      * @param profileId profileId
-     * @return 统计
+     * @return 指标
      */
-    ApplicationReleaseStatisticsVO appReleaseStatistic(Long appId, Long profileId);
+    ApplicationBuildStatisticsMetricsWrapperVO appBuildStatisticsMetrics(Long appId, Long profileId);
+
+    /**
+     * 获取应用构建统计 表格
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 折线图
+     */
+    List<ApplicationBuildStatisticsChartVO> appBuildStatisticsChart(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 视图
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 视图
+     */
+    ApplicationReleaseStatisticsViewVO appReleaseStatisticView(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 指标
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 指标
+     */
+    ApplicationReleaseStatisticsMetricsWrapperVO appReleaseStatisticMetrics(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 折线图
+     *
+     * @param appId     appId
+     * @param profileId profileId
+     * @return 折线图
+     */
+    List<ApplicationReleaseStatisticsChartVO> appReleaseStatisticChart(Long appId, Long profileId);
+
+    /**
+     * 获取应用发布统计 视图
+     *
+     * @param pipelineId pipelineId
+     * @return 视图
+     */
+    ApplicationPipelineTaskStatisticsViewVO appPipelineTaskStatisticView(Long pipelineId);
+
+    /**
+     * 获取应用发布统计 指标
+     *
+     * @param pipelineId pipelineId
+     * @return 指标
+     */
+    ApplicationPipelineTaskStatisticsMetricsWrapperVO appPipelineTaskStatisticMetrics(Long pipelineId);
+
+    /**
+     * 获取应用发布统计 折线图
+     *
+     * @param pipelineId pipelineId
+     * @return 折线图
+     */
+    List<ApplicationPipelineTaskStatisticsChartVO> appPipelineTaskStatisticChart(Long pipelineId);
 
 }

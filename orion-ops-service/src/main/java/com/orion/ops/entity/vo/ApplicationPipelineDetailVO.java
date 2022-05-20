@@ -51,6 +51,8 @@ public class ApplicationPipelineDetailVO {
 
     /**
      * 阶段类型 10构建 20发布
+     *
+     * @see com.orion.ops.consts.app.StageType
      */
     private Integer stageType;
 

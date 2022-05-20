@@ -19,7 +19,9 @@ import com.orion.utils.time.Dates;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * 工具类
@@ -207,6 +209,21 @@ public class Utils {
      */
     public static String getEndLfWithEof(String s) {
         return s.endsWith(Const.LF) ? s + Const.LF : s + Const.LF_2;
+    }
+
+    /**
+     * 获取 sftp 压缩命令
+     *
+     * @param zipPath zipPath
+     * @param paths   paths
+     * @return zip 命令
+     */
+    public static String getSftpPackageCommand(String zipPath, List<String> paths) {
+        return "mkdir -p " + Files1.getParentPath(zipPath) + " && zip -r \"" + zipPath + "\" "
+                + paths.stream()
+                .map(Files1::getPath)
+                .map(s -> "\"" + s + "\"")
+                .collect(Collectors.joining(Const.SPACE));
     }
 
 }

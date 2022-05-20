@@ -33,6 +33,13 @@
             <template #enterButton>
               <a-icon type="forward"/>
             </template>
+            <!-- 发送 lf -->
+            <template #suffix>
+              <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                      title="是否发送 \n"
+                      type="pull-request"
+                      @click="() => sendLf = !sendLf"/>
+            </template>
           </a-input-search>
           <!-- 停止 -->
           <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
@@ -68,6 +75,7 @@ export default {
       status: null,
       execId: null,
       command: null,
+      sendLf: true,
       keepTime: null,
       used: null,
       exitCode: null,
@@ -110,10 +118,13 @@ export default {
       this.exitCode = null
     },
     sendCommand() {
-      if (!this.command) {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
         return
       }
-      const command = this.command
       this.command = ''
       this.$api.writeExecTask({
         id: this.execId,
@@ -164,11 +175,6 @@ export default {
   .appender-left-tools {
     display: flex;
     align-items: center;
-
-    .command-write-input {
-      margin-right: 8px;
-      width: 70%;
-    }
   }
 }
 

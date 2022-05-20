@@ -16,6 +16,22 @@ import java.util.List;
 public interface ApplicationActionLogService {
 
     /**
+     * 通过 id 查询详情
+     *
+     * @param id id
+     * @return detail
+     */
+    ApplicationActionLogVO getDetailById(Long id);
+
+    /**
+     * 通过 id 查询状态
+     *
+     * @param id id
+     * @return detail
+     */
+    ApplicationActionLogVO getStatusById(Long id);
+
+    /**
      * 获取操作执行日志
      *
      * @param relId     relId

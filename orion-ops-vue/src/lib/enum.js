@@ -457,6 +457,10 @@ const $enum = {
     SCHEDULER_TASK_MACHINE_LOG: {
       value: 50,
       label: '调度任务机器日志'
+    },
+    APP_ACTION_LOG: {
+      value: 60,
+      label: '应用操作日志'
     }
   },
 
@@ -514,9 +518,9 @@ const $enum = {
       value: 60,
       label: '应用构建日志'
     },
-    APP_BUILD_ACTION_LOG: {
+    APP_ACTION_LOG: {
       value: 70,
-      label: '应用构建操作日志'
+      label: '应用操作日志'
     },
     APP_BUILD_BUNDLE: {
       value: 80,
@@ -525,10 +529,6 @@ const $enum = {
     APP_RELEASE_MACHINE_LOG: {
       value: 90,
       label: '应用发布机器日志'
-    },
-    APP_RELEASE_ACTION_LOG: {
-      value: 100,
-      label: '应用发布操作日志'
     },
     SCHEDULER_TASK_MACHINE_LOG: {
       value: 110,
@@ -777,8 +777,9 @@ const $enum = {
       color: '',
       label: '未开始',
       stepStatus: 'wait',
+      log: false,
       actionStyle: {
-        background: '#63E6BE'
+        background: '#CED4DA'
       },
       actionValue() {
         return '未开始'
@@ -789,8 +790,9 @@ const $enum = {
       color: 'green',
       label: '进行中',
       stepStatus: 'process',
+      log: true,
       actionStyle: {
-        background: '#A9E34B'
+        background: '#94D82D'
       },
       actionValue() {
         return '进行中'
@@ -801,9 +803,9 @@ const $enum = {
       color: 'blue',
       label: '已完成',
       stepStatus: 'finish',
+      log: true,
       actionStyle: {
-        background: '#A5D8FF',
-        'font-size': '14px'
+        background: '#74C0FC'
       },
       actionValue(log) {
         return log.usedInterval || '已完成'
@@ -814,9 +816,9 @@ const $enum = {
       color: 'red',
       label: '已失败',
       stepStatus: 'error',
+      log: true,
       actionStyle: {
-        background: '#FF6B6B',
-        'font-size': '14px'
+        background: '#F03E3E'
       },
       actionValue(log) {
         return log.usedInterval || '已失败'
@@ -827,8 +829,9 @@ const $enum = {
       color: 'orange',
       label: '已跳过',
       stepStatus: 'wait',
+      log: false,
       actionStyle: {
-        background: '#FFE066'
+        background: '#FFD43B'
       },
       actionValue() {
         return '已跳过'
@@ -839,8 +842,9 @@ const $enum = {
       color: 'orange',
       label: '已停止',
       stepStatus: 'wait',
+      log: true,
       actionStyle: {
-        background: '#FFC078'
+        background: '#FFA94D'
       },
       actionValue() {
         return '已停止'
@@ -930,10 +934,12 @@ const $enum = {
   STAGE_TYPE: {
     BUILD: {
       value: 10,
+      symbol: 'build',
       label: '构建'
     },
     RELEASE: {
       value: 20,
+      symbol: 'release',
       label: '发布'
     }
   },
@@ -1911,32 +1917,74 @@ const $enum = {
     WAIT: {
       value: 10,
       color: '',
-      label: '未开始'
+      label: '未开始',
+      log: false,
+      actionStyle: {
+        background: '#CED4DA'
+      },
+      actionValue() {
+        return '未开始'
+      }
     },
     RUNNABLE: {
       value: 20,
       color: 'green',
-      label: '进行中'
+      label: '进行中',
+      log: true,
+      actionStyle: {
+        background: '#94D82D'
+      },
+      actionValue() {
+        return '进行中'
+      }
     },
     FINISH: {
       value: 30,
       color: 'blue',
-      label: '已完成'
+      label: '已完成',
+      log: true,
+      actionStyle: {
+        background: '#74C0FC'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已完成'
+      }
     },
     FAILURE: {
       value: 40,
       color: 'red',
-      label: '已失败'
+      label: '已失败',
+      log: true,
+      actionStyle: {
+        background: '#F03E3E'
+      },
+      actionValue(log) {
+        return log.usedInterval || '已失败'
+      }
     },
     SKIPPED: {
       value: 50,
       color: 'orange',
-      label: '已跳过'
+      label: '已跳过',
+      log: false,
+      actionStyle: {
+        background: '#FFD43B'
+      },
+      actionValue() {
+        return '已跳过'
+      }
     },
     TERMINATED: {
       value: 60,
       color: 'orange',
-      label: '已停止'
+      label: '已停止',
+      log: true,
+      actionStyle: {
+        background: '#FFA94D'
+      },
+      actionValue() {
+        return '已停止'
+      }
     }
   },
 
@@ -1967,6 +2015,75 @@ const $enum = {
     SKIPPED: {
       value: 60,
       label: '跳过'
+    }
+  },
+
+  /**
+   * 批量上传状态
+   */
+  BATCH_UPLOAD_STATUS: {
+    WAIT: {
+      value: 10,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '点击上传按钮开始上传',
+      type: 'info'
+    },
+    CHECKING: {
+      value: 20,
+      loading: true,
+      mask: true,
+      checked: false,
+      visibleTransfer: false,
+      message: '正在检查文件...',
+      type: 'info'
+    },
+    REQUESTING: {
+      value: 30,
+      loading: true,
+      mask: true,
+      checked: false,
+      visibleTransfer: false,
+      message: '正在请求上传...',
+      type: 'info'
+    },
+    WAIT_UPLOAD: {
+      value: 40,
+      loading: true,
+      mask: false,
+      checked: true,
+      visibleTransfer: false,
+      message: '等待上传中...',
+      type: 'info'
+    },
+    UPLOADING: {
+      value: 50,
+      loading: true,
+      mask: false,
+      checked: false,
+      visibleTransfer: true,
+      message: '文件上传中... 清空或页面关闭则在后台继续上传',
+      type: 'info'
+    },
+    ERROR: {
+      value: 60,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '文件上传失败, 请重试',
+      type: 'error'
+    },
+    NO_AVAILABLE: {
+      value: 70,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '无可用上传机器, 请重新选择后重试',
+      type: 'error'
     }
   }
 

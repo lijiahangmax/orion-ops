@@ -8,6 +8,8 @@ import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.sftp.SftpPackageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.entity.dto.SftpSessionTokenDTO;
+import com.orion.ops.entity.dto.SftpUploadInfoDTO;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
@@ -199,20 +201,16 @@ public class SftpController {
     public List<String> checkFilePresent(@RequestBody FilePresentCheckRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notEmpty(request.getNames());
-        Long size = Valid.notNull(request.getSize());
-        String uploadThreshold = SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue();
-        if (size / Const.BUFFER_KB_1 / Const.BUFFER_KB_1 > Long.parseLong(uploadThreshold)) {
-            throw Exceptions.argument(Strings.format(MessageConst.UPLOAD_TOO_LARGE, uploadThreshold));
-        }
+        Valid.checkUploadSize(request.getSize());
         return sftpService.checkFilePresent(request);
     }
 
     /**
      * 获取上传文件 accessToken
      */
-    @RequestMapping("/upload/{sessionToken}/token")
-    public String getUploadAccessToken(@PathVariable String sessionToken) {
-        return sftpService.getUploadAccessToken(sessionToken);
+    @RequestMapping("/upload/token")
+    public String getUploadAccessToken(@RequestBody FileUploadRequest request) {
+        return sftpService.getUploadAccessToken(request);
     }
 
     /**
@@ -220,14 +218,14 @@ public class SftpController {
      */
     @RequestMapping("/upload/exec")
     @EventLog(EventType.SFTP_UPLOAD)
-    public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("remotePath") String remotePath,
-                           @RequestParam("files") List<MultipartFile> files) throws IOException {
+    public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("files") List<MultipartFile> files) throws IOException {
         // 检查路径
-        Valid.checkNormalize(remotePath);
         Valid.notBlank(accessToken);
         Valid.notEmpty(files);
         // 检查token
-        Long machineId = sftpService.checkUploadAccessToken(accessToken);
+        SftpUploadInfoDTO uploadInfo = sftpService.checkUploadAccessToken(accessToken);
+        Long machineId = uploadInfo.getMachineId();
+        String remotePath = uploadInfo.getRemotePath();
 
         List<FileUploadRequest> requestFiles = Lists.newList();
         for (MultipartFile file : files) {
@@ -259,6 +257,17 @@ public class SftpController {
         List<String> paths = Valid.notEmpty(request.getPaths());
         paths.forEach(Valid::checkNormalize);
         sftpService.download(request);
+    }
+
+    /**
+     * 打包下载文件
+     */
+    @RequestMapping("/package-download/exec")
+    @EventLog(EventType.SFTP_DOWNLOAD)
+    public void packageDownloadFile(@RequestBody FileDownloadRequest request) {
+        List<String> paths = Valid.notEmpty(request.getPaths());
+        paths.forEach(Valid::checkNormalize);
+        sftpService.packageDownload(request);
     }
 
     /**
@@ -330,13 +339,13 @@ public class SftpController {
      */
     @RequestMapping("/transfer/{sessionToken}/list")
     public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
-        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
-        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
-        return sftpService.transferList(tokenInfo[1]);
+        SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo.getUserId()));
+        return sftpService.transferList(tokenInfo.getMachineId());
     }
 
     /**
-     * 传输删除(单个) 包含进行中的
+     * 传输删除 (单个) 包含进行中的
      */
     @RequestMapping("/transfer/{fileToken}/remove")
     public void transferRemove(@PathVariable("fileToken") String fileToken) {
@@ -344,13 +353,13 @@ public class SftpController {
     }
 
     /**
-     * 传输清空(全部) 不包含进行中的
+     * 传输清空 (全部) 不包含进行中的
      */
     @RequestMapping("/transfer/{sessionToken}/clear")
     public Integer transferClear(@PathVariable("sessionToken") String sessionToken) {
-        Long[] tokenInfo = sftpService.getTokenInfo(sessionToken);
-        Valid.isTrue(Currents.getUserId().equals(tokenInfo[0]));
-        return sftpService.transferClear(tokenInfo[1]);
+        SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
+        Valid.isTrue(Currents.getUserId().equals(tokenInfo.getUserId()));
+        return sftpService.transferClear(tokenInfo.getMachineId());
     }
 
     /**
@@ -370,7 +379,8 @@ public class SftpController {
      * @return RuntimeException
      */
     private RuntimeException convertError(RuntimeException e) {
-        if (SftpErrorMessage.NO_SUCH_FILE.getMessage().toLowerCase().contains(Strings.def(e.getMessage()))) {
+        if (SftpErrorMessage.NO_SUCH_FILE.getMessage().toLowerCase().contains(Strings.def(e.getMessage()).toLowerCase())) {
+        // if (SftpErrorMessage.NO_SUCH_FILE.isCause(e)) {
             return Exceptions.argument(MessageConst.NO_SUCH_FILE);
         } else {
             return e;

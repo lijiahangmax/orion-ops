@@ -31,6 +31,24 @@
             <a-tag color="#40C057" v-if="detail.machineHost">
               {{ detail.machineHost }}
             </a-tag>
+            <!-- 命令输入 -->
+            <a-input-search class="command-write-input"
+                            size="default"
+                            v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+                            v-model="command"
+                            placeholder="输入"
+                            @search="sendCommand">
+              <template #enterButton>
+                <a-icon type="forward"/>
+              </template>
+              <!-- 发送 lf -->
+              <template #suffix>
+                <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                        title="是否发送 \n"
+                        type="pull-request"
+                        @click="() => sendLf = !sendLf"/>
+              </template>
+            </a-input-search>
             <!-- 停止 -->
             <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === detail.status"
                           title="是否要停止执行?"
@@ -38,7 +56,7 @@
                           ok-text="确定"
                           cancel-text="取消"
                           @confirm="terminateMachine">
-              <a-button icon="close" size="small">停止</a-button>
+              <a-button icon="close">停止</a-button>
             </a-popconfirm>
           </div>
         </template>
@@ -65,6 +83,8 @@ export default {
       id: null,
       current: 0,
       detail: {},
+      command: null,
+      sendLf: true,
       pollId: null
     }
   },
@@ -102,10 +122,23 @@ export default {
     },
     terminateMachine() {
       this.$api.terminateAppReleaseMachine({
-        id: this.detail.releaseId,
         releaseMachineId: this.detail.id
       }).then(() => {
         this.$message.success('已停止')
+      })
+    },
+    sendCommand() {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
+        return
+      }
+      this.command = ''
+      this.$api.writeAppReleaseMachine({
+        releaseMachineId: this.detail.id,
+        command
       })
     },
     pollStatus() {
@@ -114,8 +147,8 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 清除状态轮询
-        if (this.detail.status !== this.$enum.BUILD_STATUS.WAIT.value &&
-          this.detail.status !== this.$enum.BUILD_STATUS.RUNNABLE.value) {
+        if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
+          this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
           this.pollId = null
         }
@@ -165,7 +198,7 @@ export default {
 
   .machine-log-tools {
     display: flex;
-    align-items: baseline;
+    align-items: center;
   }
 }
 

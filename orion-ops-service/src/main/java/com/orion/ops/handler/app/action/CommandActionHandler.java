@@ -53,6 +53,11 @@ public class CommandActionHandler extends AbstractActionHandler {
     }
 
     @Override
+    public void write(String command) {
+        executor.write(command);
+    }
+
+    @Override
     public void close() {
         super.close();
         // 关闭executor

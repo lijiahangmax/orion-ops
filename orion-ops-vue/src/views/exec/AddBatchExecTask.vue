@@ -98,6 +98,13 @@
                   <template #enterButton>
                     <a-icon type="forward"/>
                   </template>
+                  <!-- 发送 lf -->
+                  <template #suffix>
+                    <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': config.sendLf}"
+                            title="是否发送 \n"
+                            type="pull-request"
+                            @click="() => config.sendLf = !config.sendLf"/>
+                  </template>
                 </a-input-search>
                 <!-- 停止 -->
                 <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
@@ -106,7 +113,7 @@
                               ok-text="确定"
                               cancel-text="取消"
                               @confirm="terminate(execMachine)">
-                  <a-button class="ml8" icon="close">停止</a-button>
+                  <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- used -->
                 <span class="mx8 nowrap" title="用时"
@@ -167,6 +174,7 @@ export default {
       config: {
         machineIdList: [],
         command: '',
+        sendLf: true,
         description: undefined
       },
       execMachines: [],
@@ -274,7 +282,10 @@ export default {
     },
     sendCommand(execMachine) {
       const id = execMachine.execId
-      const command = execMachine.inputCommand
+      let command = execMachine.inputCommand || ''
+      if (this.config.sendLf) {
+        command += '\n'
+      }
       if (!command) {
         return
       }

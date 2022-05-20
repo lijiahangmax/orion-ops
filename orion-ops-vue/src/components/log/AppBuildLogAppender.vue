@@ -34,6 +34,24 @@
             <a-tag color="#845EF7" v-if="detail.profileName">
               {{ detail.profileName }}
             </a-tag>
+            <!-- 命令输入 -->
+            <a-input-search class="command-write-input"
+                            size="default"
+                            v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+                            v-model="command"
+                            placeholder="输入"
+                            @search="sendCommand">
+              <template #enterButton>
+                <a-icon type="forward"/>
+              </template>
+              <!-- 发送 lf -->
+              <template #suffix>
+                <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                        title="是否发送 \n"
+                        type="pull-request"
+                        @click="() => sendLf = !sendLf"/>
+              </template>
+            </a-input-search>
             <!-- 停止 -->
             <a-popconfirm v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
                           title="是否要停止执行?"
@@ -41,13 +59,13 @@
                           ok-text="确定"
                           cancel-text="取消"
                           @confirm="terminate">
-              <a-button size="small" icon="close">停止</a-button>
+              <a-button icon="close">停止</a-button>
             </a-popconfirm>
             <!-- 下载 -->
             <div class="download-bundle-wrapper" v-if="detail.status === $enum.BUILD_STATUS.FINISH.value">
               <a-button v-if="!downloadUrl" icon="link" size="small" @click="loadDownloadUrl">获取产物链接</a-button>
               <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
-                <a-button size="small" icon="download">下载产物</a-button>
+                <a-button icon="download">下载产物</a-button>
               </a>
             </div>
           </div>
@@ -83,6 +101,8 @@ export default {
       id: null,
       current: 0,
       detail: {},
+      command: null,
+      sendLf: true,
       pollId: null,
       downloadUrl: null
     }
@@ -152,6 +172,20 @@ export default {
         this.$message.success('已停止')
       })
     },
+    sendCommand() {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
+        return
+      }
+      this.command = ''
+      this.$api.writeAppBuild({
+        id: this.detail.id,
+        command
+      })
+    },
     setStepsCurrent() {
       const len = this.detail.actions.length
       let curr = len - 1
@@ -200,7 +234,7 @@ export default {
 
   .build-log-tools {
     display: flex;
-    align-items: baseline;
+    align-items: center;
   }
 }
 

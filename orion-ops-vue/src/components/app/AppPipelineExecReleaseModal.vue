@@ -107,7 +107,7 @@ export default {
       this.title = `${detail.appName} 发布配置`
       this.buildList = []
       this.appMachineIdList = []
-      this.submit.title = detail.title || `发布 ${detail.appName}`
+      this.submit.title = detail.title || `发布${detail.appName}`
       this.submit.buildId = detail.buildId
       this.submit.buildSeq = detail.buildSeq
       this.submit.description = detail.description

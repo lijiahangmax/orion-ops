@@ -138,7 +138,9 @@
         WHERE deleted = 1
         AND app_id = #{appId}
         AND profile_id = #{profileId}
-        AND create_time >= #{rangeStartDate}
+        <if test="rangeStartDate != null">
+            AND create_time >= #{rangeStartDate}
+        </if>
     </select>
 
     <select id="getBuildDateStatistics" resultMap="StatisticsResultMap">

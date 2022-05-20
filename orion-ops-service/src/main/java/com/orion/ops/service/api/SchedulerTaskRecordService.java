@@ -94,17 +94,23 @@ public interface SchedulerTaskRecordService {
     /**
      * 停止单个
      *
-     * @param id              id
      * @param machineRecordId machineRecordId
      */
-    void terminateMachine(Long id, Long machineRecordId);
+    void terminateMachine(Long machineRecordId);
 
     /**
      * 跳过单个
      *
-     * @param id              id
      * @param machineRecordId machineRecordId
      */
-    void skipMachine(Long id, Long machineRecordId);
+    void skipMachine(Long machineRecordId);
+
+    /**
+     * 发送命令
+     *
+     * @param machineRecordId machineRecordId
+     * @param command         command
+     */
+    void writeMachine(Long machineRecordId, String command);
 
 }

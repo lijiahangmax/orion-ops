@@ -69,6 +69,9 @@ public class FileTailServiceImpl implements FileTailService {
     private SchedulerTaskMachineRecordService schedulerTaskMachineRecordService;
 
     @Resource
+    private ApplicationActionLogService applicationActionLogService;
+
+    @Resource
     private FileTailListDAO fileTailListDAO;
 
     @Resource
@@ -245,6 +248,10 @@ public class FileTailServiceImpl implements FileTailService {
             case SCHEDULER_TASK_MACHINE_LOG:
                 // 调度任务机器日志
                 path = schedulerTaskMachineRecordService.getTaskMachineLogPath(relId);
+                break;
+            case APP_ACTION_LOG:
+                // 应用操作日志
+                path = applicationActionLogService.getActionLogPath(relId);
                 break;
             default:
                 path = null;

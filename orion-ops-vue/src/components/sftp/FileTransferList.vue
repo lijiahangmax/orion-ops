@@ -4,53 +4,66 @@
       <!-- 工具栏 -->
       <div class="transfer-list-bar" ref="transferListBar">
         <!-- 刷新 -->
-        <div class="transfer-list-action" @click="getTransferList" title="刷新">
-          <a-icon type="sync"/>
-        </div>
+        <a-tooltip title="刷新">
+          <div class="transfer-list-action" @click="getTransferList">
+            <a-icon type="sync"/>
+          </div>
+        </a-tooltip>
         <!-- 开始所有 -->
-        <div class="transfer-list-action" @click="resumeAll" title="开始所有">
-          <a-icon type="caret-right"/>
-        </div>
+        <a-tooltip title="开始所有">
+          <div class="transfer-list-action" @click="resumeAll">
+            <a-icon type="caret-right"/>
+          </div>
+        </a-tooltip>
         <!-- 暂停所有 -->
-        <div class="transfer-list-action" @click="pauseAll" title="暂停所有">
-          <a-icon type="pause"/>
-        </div>
+        <a-tooltip title="暂停所有">
+          <div class="transfer-list-action" @click="pauseAll">
+            <a-icon type="pause"/>
+          </div>
+        </a-tooltip>
         <!-- 重试所有 -->
-        <div class="transfer-list-action" @click="retryAll" title="重试所有">
-          <a-icon type="issues-close"/>
-        </div>
+        <a-tooltip title="重试所有">
+          <div class="transfer-list-action" @click="retryAll">
+            <a-icon type="issues-close"/>
+          </div>
+        </a-tooltip>
         <!-- 打包 -->
-        <a-popconfirm placement="bottomRight"
-                      v-model="packageVisible"
-                      :getPopupContainer="() => $refs.transferListBar">
-          <template #title>
-            <!-- 标题 -->
-            <div class="transfer-popover-title-wrapper">
-              <span>是否要打包传输文件?</span>
+        <a-tooltip title="打包传输">
+          <a-popconfirm placement="bottomRight"
+                        v-model="packageVisible"
+                        overlayClassName="package-popover-confirm"
+                        :getPopupContainer="() => $refs.transferListBar">
+            <template #title>
+              <!-- 标题 -->
+              <div class="package-popover-title-wrapper">
+                <span>是否要打包传输文件?</span>
+              </div>
+              <!-- 按钮 -->
+              <div class="package-popover-buttons-wrapper">
+                <a-button class="package-popover-button span-blue" size="small" @click="() => packageVisible = false">取消</a-button>
+                <a-button class="package-popover-button" size="small" type="primary" @click="transferPackage(1)">仅上传</a-button>
+                <a-button class="package-popover-button" size="small" type="primary" @click="transferPackage(2)">仅下载</a-button>
+                <a-button class="package-popover-button" size="small" type="primary" @click="transferPackage(3)">所有</a-button>
+              </div>
+            </template>
+            <!-- 触发器 -->
+            <div class="transfer-list-action">
+              <a-icon type="file-zip"/>
             </div>
-            <!-- 按钮 -->
-            <div class="transfer-popover-buttons-wrapper">
-              <a-button class="transfer-popover-button span-blue" size="small" @click="() => packageVisible = false">取消</a-button>
-              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(1)">仅上传</a-button>
-              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(2)">仅下载</a-button>
-              <a-button class="transfer-popover-button" size="small" type="primary" @click="transferPackage(3)">所有</a-button>
-            </div>
-          </template>
-          <!-- 触发器 -->
-          <div class="transfer-list-action" @click="() => packageVisible = true" title="打包传输">
-            <a-icon type="file-zip"/>
-          </div>
-        </a-popconfirm>
+          </a-popconfirm>
+        </a-tooltip>
         <!-- 清空 -->
-        <a-popconfirm title="确定要清空传输记录吗?"
-                      placement="bottomRight"
-                      ok-text="确定"
-                      cancel-text="取消"
-                      @confirm="clearAll">
-          <div class="transfer-list-action" title="清空">
-            <a-icon type="delete"/>
-          </div>
-        </a-popconfirm>
+        <a-tooltip title="清空">
+          <a-popconfirm title="确定要清空传输记录吗?"
+                        placement="bottomRight"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="clearAll">
+            <div class="transfer-list-action">
+              <a-icon type="delete"/>
+            </div>
+          </a-popconfirm>
+        </a-tooltip>
       </div>
       <!-- 传输列表 -->
       <div class="transfer-list-items" v-if="transferList.length === 0">
@@ -367,9 +380,35 @@ export default {
   }
 
   .transfer-list-action:hover {
-    color: hsla(0, 0%, 100%, .2);
-    background-color: #1C7ED6;
-    color: #FFF;
+    color: #3B5BDB;
+    background: #DEE2E6;
+  }
+
+  /deep/ .package-popover-confirm .ant-popover-message {
+    padding: 0 !important;
+  }
+
+  /deep/ .package-popover-confirm .ant-popover-buttons {
+    display: none !important;
+  }
+
+  /deep/ .package-popover-confirm .ant-popover-message-title {
+    padding-right: 8px;
+    margin-bottom: 4px;
+  }
+
+  .package-popover-title-wrapper {
+    display: block;
+    padding-top: 4px;
+    margin-bottom: 16px;
+  }
+
+  .package-popover-button {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 14px;
+    border-radius: 4px;
+    margin-left: 6px;
   }
 }
 
@@ -380,6 +419,7 @@ export default {
   overflow-y: auto;
 
   .transfer-list-item {
+    transition: .3s;
     padding: 0 0 10px 5px;
     box-shadow: 0 8px 8px #F8F9FA;
     margin: 2px 0;
@@ -422,35 +462,6 @@ export default {
     .transfer-list-item-action {
       margin: 5px 0 0 8px;
     }
-  }
-}
-
-.transfer-list-bar {
-  /deep/ .ant-popover-message {
-    padding: 0 !important;
-  }
-
-  /deep/ .ant-popover-buttons {
-    display: none !important;
-  }
-
-  /deep/ .ant-popover-message-title {
-    padding-right: 8px;
-    margin-bottom: 4px;
-  }
-
-  .transfer-popover-title-wrapper {
-    display: block;
-    padding-top: 4px;
-    margin-bottom: 16px;
-  }
-
-  .transfer-popover-button {
-    height: 24px;
-    padding: 0 7px;
-    font-size: 14px;
-    border-radius: 4px;
-    margin: 0 2.5px;
   }
 }
 

@@ -104,4 +104,9 @@ public class ApplicationReleaseRequest extends PageRequest {
      */
     private Integer queryAction;
 
+    /**
+     * 命令
+     */
+    private String command;
+
 }

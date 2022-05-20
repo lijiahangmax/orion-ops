@@ -391,14 +391,16 @@ const $api = {
    * sftp 检查文件是否存在
    */
   sftpCheckFilePresent: param => {
-    return $http.$post('/sftp/check-present', param)
+    return $http.$post('/sftp/check-present', param, {
+      timeout: 18000000
+    })
   },
 
   /**
-   * sftp 获取上传文件fileToken
+   * sftp 获取上传文件 accessToken
    */
   getSftpUploadToken: param => {
-    return $http.$post(`/sftp/upload/${param.sessionToken}/token`, param)
+    return $http.$post('/sftp/upload/token', param)
   },
 
   /**
@@ -421,6 +423,16 @@ const $api = {
     return $http.$post('/sftp/download/exec', param, {
       timeout: 180000,
       loading: '正在请求下载文件...'
+    })
+  },
+
+  /**
+   * sftp 压缩下载文件
+   */
+  sftpPackageDownloadExec: param => {
+    return $http.$post('/sftp/package-download/exec', param, {
+      timeout: 180000,
+      loading: '正在执行压缩命令, 执行完毕自动下载'
     })
   },
 
@@ -742,7 +754,7 @@ const $api = {
    * 执行提交
    */
   submitExecTask: param => {
-    return $http.$post('/exec/submit', param, {
+    return $http.$post('/batch-exec/submit', param, {
       timeout: 600000,
       loading: '正在提交...'
     })
@@ -752,28 +764,28 @@ const $api = {
    * 执行列表
    */
   getExecList: param => {
-    return $http.$post('/exec/list', param)
+    return $http.$post('/batch-exec/list', param)
   },
 
   /**
    * 执行详情
    */
   getExecDetail: param => {
-    return $http.$post('/exec/detail', param)
+    return $http.$post('/batch-exec/detail', param)
   },
 
   /**
    * 执行输入
    */
   writeExecTask: param => {
-    return $http.$post('/exec/write', param)
+    return $http.$post('/batch-exec/write', param)
   },
 
   /**
    * 执行停止
    */
   terminateExecTask: param => {
-    return $http.$post('/exec/terminate', param, {
+    return $http.$post('/batch-exec/terminate', param, {
       loading: '正在停止...'
     })
   },
@@ -782,7 +794,7 @@ const $api = {
    * 删除执行任务
    */
   deleteExecTask: param => {
-    return $http.$post('/exec/delete', param, {
+    return $http.$post('/batch-exec/delete', param, {
       loading: '正在删除...'
     })
   },
@@ -791,8 +803,35 @@ const $api = {
    * 获取执行状态
    */
   getExecTaskStatus: param => {
-    return $http.$post('/exec/list-status', param, {
+    return $http.$post('/batch-exec/list-status', param, {
       skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 批量上传检查机器以及文件
+   */
+  checkBatchUploadFiles: param => {
+    return $http.$post('/batch-upload/check', param, {
+      timeout: 18000000
+    })
+  },
+
+  /**
+   * 获取批量上传 token
+   */
+  getBatchUploadToken: param => {
+    return $http.$post('/batch-upload/token', param, {
+      timeout: 18000000
+    })
+  },
+
+  /**
+   * 执行批量上传
+   */
+  execBatchUpload: param => {
+    return $http.$post('/batch-upload/exec', param, {
+      timeout: 18000000
     })
   },
 
@@ -1215,6 +1254,22 @@ const $api = {
   },
 
   /**
+   * 应用操作详情
+   */
+  getAppActionDetail: param => {
+    return $http.$post('/app-action-log/detail', param)
+  },
+
+  /**
+   * 应用操作状态
+   */
+  getAppActionStatus: param => {
+    return $http.$post('/app-action-log/status', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
    * 应用构建列表
    */
   getAppBuildList: param => {
@@ -1244,6 +1299,13 @@ const $api = {
     return $http.$post('/app-build/terminate', param, {
       loading: '正在停止...'
     })
+  },
+
+  /**
+   * 应用构建输入命令
+   */
+  writeAppBuild: param => {
+    return $http.$post('/app-build/write', param)
   },
 
   /**
@@ -1412,6 +1474,13 @@ const $api = {
   },
 
   /**
+   * 应用发布机器输入命令
+   */
+  writeAppReleaseMachine: param => {
+    return $http.$post('/app-release/write-machine', param)
+  },
+
+  /**
    * 应用发布列表状态
    */
   getAppReleaseListStatus: param => {
@@ -1462,17 +1531,66 @@ const $api = {
   },
 
   /**
-   * 应用构建统计信息
+   * 应用构建统计信息 指标
    */
-  getAppBuildStatistics: param => {
-    return $http.$post('/statistics/app-build', param)
+  getAppBuildStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-build/metrics', param)
   },
 
   /**
-   * 应用发布统计信息
+   * 应用构建统计信息 视图
    */
-  getAppReleaseStatistics: param => {
-    return $http.$post('/statistics/app-release', param)
+  getAppBuildStatisticsView: param => {
+    return $http.$post('/statistics/app-build/view', param)
+  },
+
+  /**
+   * 应用构建统计信息 折线图
+   */
+  getAppBuildStatisticsChart: param => {
+    return $http.$post('/statistics/app-build/chart', param)
+  },
+
+  /**
+   * 应用发布统计信息 指标
+   */
+  getAppReleaseStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-release/metrics', param)
+  },
+
+  /**
+   * 应用发布统计信息 视图
+   */
+  getAppReleaseStatisticsView: param => {
+    return $http.$post('/statistics/app-release/view', param)
+  },
+
+  /**
+   * 应用发布统计信息 折线图
+   */
+  getAppReleaseStatisticsChart: param => {
+    return $http.$post('/statistics/app-release/chart', param)
+  },
+
+  /**
+   * 应用流水线统计信息 指标
+   */
+  getAppPipelineTaskStatisticsMetrics: param => {
+    return $http.$post('/statistics/app-pipeline/metrics', param)
+  },
+
+  /**
+   * 应用流水线统计信息 视图
+   */
+  getAppPipelineTaskStatisticsView: param => {
+    return $http.$post('/statistics/app-pipeline/view', param)
+  },
+
+  /**
+   * 应用流水线统计信息 折线图
+   */
+  getAppPipelineTaskStatisticsChart: param => {
+    return $http.$post('/statistics/app-pipeline/chart', param)
   },
 
   /**
@@ -1741,6 +1859,13 @@ const $api = {
     return $http.$post('/scheduler-record/skip-machine', param, {
       loading: '正在跳过...'
     })
+  },
+
+  /**
+   * 发送调度任务机器命令
+   */
+  writeMachineSchedulerTaskRecord: param => {
+    return $http.$post('/scheduler-record/write-machine', param)
   },
 
   /**

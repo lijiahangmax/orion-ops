@@ -2,8 +2,10 @@ package com.orion.ops.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
+import com.orion.ops.entity.dto.ApplicationPipelineTaskStatisticsDTO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,5 +41,23 @@ public interface ApplicationPipelineTaskDAO extends BaseMapper<ApplicationPipeli
      * @return rows
      */
     List<ApplicationPipelineTaskDO> selectStatusByIdList(@Param("idList") List<Long> idList);
+
+    /**
+     * 获取流水线任务统计
+     *
+     * @param pipelineId     pipelineId
+     * @param rangeStartDate rangeStartDate
+     * @return 统计信息
+     */
+    ApplicationPipelineTaskStatisticsDTO getPipelineTaskStatistics(@Param("pipelineId") Long pipelineId, @Param("rangeStartDate") Date rangeStartDate);
+
+    /**
+     * 获取流水线任务时间线统计
+     *
+     * @param pipelineId     pipelineId
+     * @param rangeStartDate rangeStartDate
+     * @return 时间线统计信息
+     */
+    List<ApplicationPipelineTaskStatisticsDTO> getPipelineTaskDateStatistics(@Param("pipelineId") Long pipelineId, @Param("rangeStartDate") Date rangeStartDate);
 
 }

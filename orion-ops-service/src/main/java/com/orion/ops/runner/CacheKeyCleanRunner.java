@@ -51,10 +51,6 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 KeyConst.HOME_STATISTICS_COUNT_KEY,
                 // 调度统计key
                 Strings.format(KeyConst.SCHEDULER_TASK_STATISTICS_KEY, "*"),
-                // 构建统计key
-                Strings.format(KeyConst.APP_BUILD_STATISTICS_KEY, "*", "*"),
-                // 发布统计key
-                Strings.format(KeyConst.APP_RELEASE_STATISTICS_KEY, "*", "*"),
                 // 环境缓存key
                 KeyConst.DATA_PROFILE_KEY
         );

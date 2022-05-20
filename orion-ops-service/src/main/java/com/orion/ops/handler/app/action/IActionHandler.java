@@ -40,6 +40,14 @@ public interface IActionHandler extends Executable, SafeCloseable {
     void terminate();
 
     /**
+     * 输入命令
+     *
+     * @param command command
+     */
+    default void write(String command) {
+    }
+
+    /**
      * 获取退出码
      *
      * @return exitCode

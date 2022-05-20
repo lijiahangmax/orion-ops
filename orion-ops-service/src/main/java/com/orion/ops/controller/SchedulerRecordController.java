@@ -108,9 +108,8 @@ public class SchedulerRecordController {
     @RequestMapping("/terminate-machine")
     @EventLog(EventType.TERMINATE_SCHEDULER_TASK_MACHINE)
     public HttpWrapper<?> terminateMachine(@RequestBody SchedulerTaskRecordRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long machineRecordId = Valid.notNull(request.getMachineRecordId());
-        schedulerTaskRecordService.terminateMachine(id, machineRecordId);
+        schedulerTaskRecordService.terminateMachine(machineRecordId);
         return HttpWrapper.ok();
     }
 
@@ -120,9 +119,19 @@ public class SchedulerRecordController {
     @RequestMapping("/skip-machine")
     @EventLog(EventType.SKIP_SCHEDULER_TASK_MACHINE)
     public HttpWrapper<?> skipMachine(@RequestBody SchedulerTaskRecordRequest request) {
-        Long id = Valid.notNull(request.getId());
         Long machineRecordId = Valid.notNull(request.getMachineRecordId());
-        schedulerTaskRecordService.skipMachine(id, machineRecordId);
+        schedulerTaskRecordService.skipMachine(machineRecordId);
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 跳过单个
+     */
+    @RequestMapping("/write-machine")
+    public HttpWrapper<?> writeMachine(@RequestBody SchedulerTaskRecordRequest request) {
+        Long machineRecordId = Valid.notNull(request.getMachineRecordId());
+        String command = Valid.notEmpty(request.getCommand());
+        schedulerTaskRecordService.writeMachine(machineRecordId, command);
         return HttpWrapper.ok();
     }
 

@@ -94,6 +94,17 @@ public class ApplicationBuildController {
     }
 
     /**
+     * 输入命令
+     */
+    @RequestMapping("/write")
+    public HttpWrapper<?> writeTask(@RequestBody ApplicationBuildRequest request) {
+        Long id = Valid.notNull(request.getId());
+        String command = Valid.notEmpty(request.getCommand());
+        applicationBuildService.writeBuildTask(id, command);
+        return HttpWrapper.ok();
+    }
+
+    /**
      * 删除构建
      */
     @RequestMapping("/delete")

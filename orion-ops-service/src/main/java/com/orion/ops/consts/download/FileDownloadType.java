@@ -59,7 +59,7 @@ public enum FileDownloadType {
      *
      * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
-    APP_BUILD_ACTION_LOG(70, true),
+    APP_ACTION_LOG(70, true),
 
     /**
      * 应用构建 产物文件
@@ -74,13 +74,6 @@ public enum FileDownloadType {
      * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
      */
     APP_RELEASE_MACHINE_LOG(90, true),
-
-    /**
-     * 应用发布 操作日志
-     *
-     * @see com.orion.ops.consts.system.SystemEnvAttr#LOG_PATH
-     */
-    APP_RELEASE_ACTION_LOG(100, true),
 
     /**
      * 调度任务机器日志

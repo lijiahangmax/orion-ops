@@ -91,6 +91,11 @@ public class ScpTransferActionHandler extends AbstractTransferActionHandler<Comm
     }
 
     @Override
+    public void write(String command) {
+        executor.write(command);
+    }
+
+    @Override
     public void close() {
         super.close();
         // 关闭宿主机session

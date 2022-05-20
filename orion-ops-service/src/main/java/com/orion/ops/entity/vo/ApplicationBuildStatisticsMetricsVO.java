@@ -5,8 +5,6 @@ import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * 构建统计
  *
@@ -15,7 +13,7 @@ import java.util.List;
  * @since 2022/3/29 16:03
  */
 @Data
-public class ApplicationBuildStatisticsVO {
+public class ApplicationBuildStatisticsMetricsVO {
 
     /**
      * 构建次数
@@ -42,19 +40,9 @@ public class ApplicationBuildStatisticsVO {
      */
     private String avgUsedInterval;
 
-    /**
-     * 构建统计解析
-     */
-    private ApplicationBuildStatisticsAnalysisVO analysis;
-
-    /**
-     * 构建图表
-     */
-    private List<ApplicationBuildStatisticsChartVO> charts;
-
     static {
-        TypeStore.STORE.register(ApplicationBuildStatisticsDTO.class, ApplicationBuildStatisticsVO.class, p -> {
-            ApplicationBuildStatisticsVO vo = new ApplicationBuildStatisticsVO();
+        TypeStore.STORE.register(ApplicationBuildStatisticsDTO.class, ApplicationBuildStatisticsMetricsVO.class, p -> {
+            ApplicationBuildStatisticsMetricsVO vo = new ApplicationBuildStatisticsMetricsVO();
             vo.setBuildCount(p.getBuildCount());
             vo.setSuccessCount(p.getSuccessCount());
             vo.setFailureCount(p.getFailureCount());

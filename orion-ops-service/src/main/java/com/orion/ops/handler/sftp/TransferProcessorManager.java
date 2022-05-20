@@ -37,18 +37,16 @@ public class TransferProcessorManager {
     private final Map<String, IFileTransferProcessor> transferProcessor = Maps.newCurrentHashMap();
 
     /**
+     * sessionId 和 session 映射
+     * <p>
      * key: sessionId
      * value: webSocketSession
      */
     private final Map<String, WebSocketSession> idMapping = Maps.newCurrentHashMap();
 
     /**
-     * key: sessionId
-     * value: userId_machineId
-     */
-    private final Map<String, String> sessionUserMachineMapping = Maps.newCurrentHashMap();
-
-    /**
+     * 机器 和 session 映射
+     * <p>
      * key: userId_machineId
      * value: sessionIdList
      */
@@ -92,18 +90,16 @@ public class TransferProcessorManager {
     }
 
     /**
-     * 认证session 通知
+     * 注册session 通知
      *
      * @param id        id
      * @param session   session
      * @param userId    userId
      * @param machineId machineId
      */
-    public void authSessionNotify(String id, WebSocketSession session, Long userId, Long machineId) {
-        String userMachine = this.getUserMachine(userId, machineId);
+    public void registerSessionNotify(String id, WebSocketSession session, Long userId, Long machineId) {
         idMapping.put(id, session);
-        sessionUserMachineMapping.put(id, userMachine);
-        userMachineSessionMapping.computeIfAbsent(userMachine, s -> Lists.newList()).add(id);
+        userMachineSessionMapping.computeIfAbsent(this.getUserMachine(userId, machineId), s -> Lists.newList()).add(id);
     }
 
     /**
@@ -113,15 +109,13 @@ public class TransferProcessorManager {
      */
     public void closeSessionNotify(String id) {
         idMapping.remove(id);
-        String userMachine = sessionUserMachineMapping.remove(id);
-        if (userMachine == null) {
-            return;
-        }
-        List<String> sessionIds = userMachineSessionMapping.get(userMachine);
-        if (sessionIds == null) {
-            return;
-        }
-        sessionIds.removeIf(s -> s.equals(id));
+        // 删除机器与会话的关联
+        userMachineSessionMapping.forEach((k, v) -> {
+            if (Lists.isEmpty(v)) {
+                return;
+            }
+            v.removeIf(s -> s.equals(id));
+        });
     }
 
     /**
@@ -129,13 +123,12 @@ public class TransferProcessorManager {
      *
      * @param userId    userId
      * @param machineId machineId
-     * @param fileToken fileToken
      * @param record    record
      */
-    public void notifySessionAddEvent(Long userId, Long machineId, String fileToken, FileTransferLogDO record) {
+    public void notifySessionAddEvent(Long userId, Long machineId, FileTransferLogDO record) {
         FileTransferNotifyDTO notify = new FileTransferNotifyDTO();
         notify.setType(SftpNotifyType.ADD.getType());
-        notify.setFileToken(fileToken);
+        notify.setFileToken(record.getFileToken());
         notify.setBody(Jsons.toJsonWriteNull(Converts.to(record, FileTransferLogVO.class)));
         this.notifySession(userId, machineId, notify);
     }

@@ -1,26 +1,24 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.entity.dto.ApplicationReleaseStatisticsDTO;
+import com.orion.ops.entity.dto.ApplicationPipelineTaskStatisticsDTO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * 发布统计
+ * 流水线执行统计指标
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @since 2022/3/30 17:17
+ * @since 2022/5/10 11:04
  */
 @Data
-public class ApplicationReleaseStatisticsVO {
+public class ApplicationPipelineTaskStatisticsMetricsVO {
 
     /**
-     * 发布次数
+     * 执行次数
      */
-    private Integer releaseCount;
+    private Integer execCount;
 
     /**
      * 成功次数
@@ -42,20 +40,10 @@ public class ApplicationReleaseStatisticsVO {
      */
     private String avgUsedInterval;
 
-    /**
-     * 统计
-     */
-    private ApplicationReleaseStatisticsAnalysisVO analysis;
-
-    /**
-     * 发布图表
-     */
-    private List<ApplicationReleaseStatisticsChartVO> charts;
-
     static {
-        TypeStore.STORE.register(ApplicationReleaseStatisticsDTO.class, ApplicationReleaseStatisticsVO.class, p -> {
-            ApplicationReleaseStatisticsVO vo = new ApplicationReleaseStatisticsVO();
-            vo.setReleaseCount(p.getReleaseCount());
+        TypeStore.STORE.register(ApplicationPipelineTaskStatisticsDTO.class, ApplicationPipelineTaskStatisticsMetricsVO.class, p -> {
+            ApplicationPipelineTaskStatisticsMetricsVO vo = new ApplicationPipelineTaskStatisticsMetricsVO();
+            vo.setExecCount(p.getExecCount());
             vo.setSuccessCount(p.getSuccessCount());
             vo.setFailureCount(p.getFailureCount());
             vo.setAvgUsed(p.getAvgUsed());
