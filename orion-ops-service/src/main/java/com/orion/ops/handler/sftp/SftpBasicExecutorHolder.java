@@ -3,6 +3,7 @@ package com.orion.ops.handler.sftp;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
@@ -62,6 +63,7 @@ public class SftpBasicExecutorHolder {
         return this.getBasicExecutor(machineId);
     }
 
+
     /**
      * 获取 sftp 基本操作 executor
      *
@@ -69,6 +71,17 @@ public class SftpBasicExecutorHolder {
      * @return SftpExecutor
      */
     public SftpExecutor getBasicExecutor(Long machineId) {
+        return this.getBasicExecutor(machineId, null);
+    }
+
+    /**
+     * 获取 sftp 基本操作 executor
+     *
+     * @param machineId machineId
+     * @param machine   machine
+     * @return SftpExecutor
+     */
+    public SftpExecutor getBasicExecutor(Long machineId, MachineInfoDO machine) {
         SftpExecutor executor = basicExecutorHolder.get(machineId);
         if (executor != null) {
             if (!executor.isConnected()) {
@@ -82,10 +95,13 @@ public class SftpBasicExecutorHolder {
         }
         // 如果没有重新建立连接
         if (executor == null) {
+            if (machine == null) {
+                machine = machineInfoService.selectById(machineId);
+            }
             // 获取charset
             String charset = machineEnvService.getSftpCharset(machineId);
             // 打开sftp连接
-            SessionStore sessionStore = machineInfoService.openSessionStore(machineId);
+            SessionStore sessionStore = machineInfoService.openSessionStore(machine);
             executor = sessionStore.getSftpExecutor(charset);
             executor.connect();
             basicExecutorHolder.put(machineId, executor);
@@ -95,7 +111,7 @@ public class SftpBasicExecutorHolder {
     }
 
     /**
-     * 无效化一段时间(5分钟)未使用的执行器
+     * 无效化一段时间(1分钟)未使用的执行器
      */
     @Scheduled(cron = "0 */1 * * * ?")
     private void invalidationUnusedExecutor() {

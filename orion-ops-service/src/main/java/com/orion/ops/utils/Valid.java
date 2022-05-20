@@ -1,7 +1,11 @@
 package com.orion.ops.utils;
 
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
+import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.utils.Arrays1;
+import com.orion.utils.Exceptions;
+import com.orion.utils.Strings;
 import com.orion.utils.io.Files1;
 
 import java.util.Collection;
@@ -79,6 +83,19 @@ public class Valid extends com.orion.utils.Valid {
     public static void checkNormalize(String path) {
         Valid.notBlank(path);
         Valid.isTrue(Files1.isNormalize(path), MessageConst.PATH_NOT_NORMALIZE);
+    }
+
+    /**
+     * 检查是否超过文件上传阈值
+     *
+     * @param size size
+     */
+    public static void checkUploadSize(Long size) {
+        Valid.notNull(size);
+        String uploadThreshold = SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue();
+        if (size / Const.BUFFER_KB_1 / Const.BUFFER_KB_1 > Long.parseLong(uploadThreshold)) {
+            throw Exceptions.argument(Strings.format(MessageConst.UPLOAD_TOO_LARGE, uploadThreshold, Files1.getSize(size)));
+        }
     }
 
 }

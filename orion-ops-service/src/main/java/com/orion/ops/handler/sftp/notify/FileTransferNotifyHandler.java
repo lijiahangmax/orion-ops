@@ -1,16 +1,20 @@
 package com.orion.ops.handler.sftp.notify;
 
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.ws.WsCloseCode;
+import com.orion.ops.entity.dto.SftpSessionTokenDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.service.api.SftpService;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 import static com.orion.ops.utils.WebSockets.getToken;
@@ -37,7 +41,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
 
     private static final String USER_ID_KEY = "userId";
 
-    private static final String MACHINE_ID_KEY = "machineId";
+    private static final String MACHINE_ID_LIST_KEY = "machineIdList";
 
     private static final String AUTH_KEY = "auth";
 
@@ -46,19 +50,27 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
         String id = session.getId();
         String token = getToken(session);
         try {
-            Long[] tokenInfo = sftpService.getTokenInfo(token);
-            Long userId = tokenInfo[0];
-            Long machineId = tokenInfo[1];
+            SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(token);
+            Long userId = tokenInfo.getUserId();
+            Long machineId = tokenInfo.getMachineId();
+            List<Long> machineIdList = tokenInfo.getMachineIdList();
+            if (machineIdList == null) {
+                machineIdList = Lists.newList();
+            }
+            if (machineId != null) {
+                machineIdList.add(machineId);
+            }
             session.getAttributes().put(USER_ID_KEY, userId);
-            session.getAttributes().put(MACHINE_ID_KEY, machineId);
-            log.info("sftp-Notify 建立连接成功 id: {}, token: {}, userId: {}, machineId: {}", id, token, userId, machineId);
+            session.getAttributes().put(MACHINE_ID_LIST_KEY, machineIdList);
+            log.info("sftp-Notify 建立连接成功 id: {}, token: {}, userId: {}, machineId: {}, machineIdList: {}", id, token, userId, machineId, machineIdList);
         } catch (Exception e) {
-            log.info("sftp-Notify 建立连接失败-未查询到token信息 id: {}, token: {}", id, token);
+            log.error("sftp-Notify 建立连接失败-未查询到token信息 id: {}, token: {}", id, token, e);
             session.close(WsCloseCode.FORGE_TOKEN.close());
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String id = session.getId();
         Map<String, Object> attributes = session.getAttributes();
@@ -85,17 +97,20 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
         }
         // 检查认证用户是否匹配
         Long userId = user.getId();
-        Object tokenUserId = attributes.get(USER_ID_KEY);
-        boolean valid = userId.equals(tokenUserId);
+        Long tokenUserId = (Long) attributes.get(USER_ID_KEY);
+        final boolean valid = userId.equals(tokenUserId);
         if (!valid) {
             log.info("sftp-Notify 认证失败-用户不匹配 id: {}, userId: {}, tokenUserId: {}", id, userId, tokenUserId);
             session.close(WsCloseCode.VALID.close());
             return;
         }
-        attributes.put(AUTH_KEY, 1);
-        Long machineId = (Long) attributes.get(MACHINE_ID_KEY);
-        log.info("sftp-Notify 认证成功 id: {}, userId: {}, machineId: {}", id, userId, machineId);
-        transferProcessorManager.authSessionNotify(id, session, userId, machineId);
+        attributes.put(AUTH_KEY, Const.ENABLE);
+        // 注册会话
+        List<Long> machineIdList = (List<Long>) attributes.get(MACHINE_ID_LIST_KEY);
+        Lists.forEach(machineIdList, i -> {
+            log.info("sftp-Notify 认证成功 id: {}, userId: {}, machineId: {}", id, userId, i);
+            transferProcessorManager.registerSessionNotify(id, session, userId, i);
+        });
     }
 
     @Override
