@@ -122,26 +122,26 @@ export default {
       let accessToken
       try {
         // 获取上传token
-        const uploadToken = await this.$api.getSftpUploadToken({
+        const { data } = await this.$api.getSftpUploadToken({
+          remotePath: this.path,
           sessionToken: this.sessionToken
         })
-        accessToken = uploadToken.data
-      } catch (e) {
+        accessToken = data
+      } catch {
         this.loading = false
         return
       }
       this.$emit('changeVisible', false)
       const formData = new FormData()
       formData.append('accessToken', accessToken)
-      formData.append('remotePath', this.path)
       this.fileList.forEach(file => {
         formData.append('files', file)
       })
       this.$api.sftpUploadExec(formData).then(() => {
-        this.$message.success('文件上传请求提交成功')
+        this.$message.success('已提交至传输列表')
         this.loading = false
         this.fileList = []
-      }).catch(e => {
+      }).catch(() => {
         this.loading = false
         this.$emit('changeVisible', true)
       })

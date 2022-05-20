@@ -239,7 +239,7 @@ const columns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: '机器标签',
+    title: '标签',
     key: 'tag',
     width: 150,
     sorter: (a, b) => a.tag.localeCompare(b.tag),

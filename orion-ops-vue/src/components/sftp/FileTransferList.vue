@@ -383,6 +383,33 @@ export default {
     color: #3B5BDB;
     background: #DEE2E6;
   }
+
+  /deep/ .package-popover-confirm .ant-popover-message {
+    padding: 0 !important;
+  }
+
+  /deep/ .package-popover-confirm .ant-popover-buttons {
+    display: none !important;
+  }
+
+  /deep/ .package-popover-confirm .ant-popover-message-title {
+    padding-right: 8px;
+    margin-bottom: 4px;
+  }
+
+  .package-popover-title-wrapper {
+    display: block;
+    padding-top: 4px;
+    margin-bottom: 16px;
+  }
+
+  .package-popover-button {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 14px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
 }
 
 .transfer-list-items {
@@ -435,35 +462,6 @@ export default {
     .transfer-list-item-action {
       margin: 5px 0 0 8px;
     }
-  }
-}
-
-.transfer-list-bar {
-  /deep/ .package-popover-confirm .ant-popover-message {
-    padding: 0 !important;
-  }
-
-  /deep/ .package-popover-confirm .ant-popover-buttons {
-    display: none !important;
-  }
-
-  /deep/ .package-popover-confirm .ant-popover-message-title {
-    padding-right: 8px;
-    margin-bottom: 4px;
-  }
-
-  .package-popover-title-wrapper {
-    display: block;
-    padding-top: 4px;
-    margin-bottom: 16px;
-  }
-
-  .package-popover-button {
-    height: 24px;
-    padding: 0 7px;
-    font-size: 14px;
-    border-radius: 4px;
-    margin-left: 6px;
   }
 }
 

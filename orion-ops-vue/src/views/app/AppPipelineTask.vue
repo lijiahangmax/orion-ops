@@ -397,7 +397,8 @@ const innerColumns = [
   {
     title: '应用名称',
     key: 'appName',
-    dataIndex: 'appName'
+    dataIndex: 'appName',
+    width: 260
   },
   {
     title: '配置',
@@ -409,6 +410,7 @@ const innerColumns = [
     title: '状态',
     key: 'status',
     align: 'center',
+    width: 160,
     sorter: (a, b) => a.status - b.status,
     scopedSlots: { customRender: 'status' }
   },
@@ -416,6 +418,7 @@ const innerColumns = [
     title: '持续时间',
     key: 'keepTime',
     dataIndex: 'keepTime',
+    width: 140,
     sorter: (a, b) => (a.used || 0) - (b.used || 0)
   },
   {
@@ -737,6 +740,11 @@ export default {
 
 .stage-config-release-version {
   display: inline-block;
-  width: 120px;
+  max-width: 120px;
+  margin-right: 8px;
+}
+
+.stage-config-release-machine {
+  display: inline-block;
 }
 </style>
