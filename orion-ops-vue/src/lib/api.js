@@ -391,14 +391,16 @@ const $api = {
    * sftp 检查文件是否存在
    */
   sftpCheckFilePresent: param => {
-    return $http.$post('/sftp/check-present', param)
+    return $http.$post('/sftp/check-present', param, {
+      timeout: 18000000
+    })
   },
 
   /**
-   * sftp 获取上传文件fileToken
+   * sftp 获取上传文件 accessToken
    */
   getSftpUploadToken: param => {
-    return $http.$post(`/sftp/upload/${param.sessionToken}/token`, param)
+    return $http.$post('/sftp/upload/token', param)
   },
 
   /**
@@ -752,7 +754,7 @@ const $api = {
    * 执行提交
    */
   submitExecTask: param => {
-    return $http.$post('/exec/submit', param, {
+    return $http.$post('/batch-exec/submit', param, {
       timeout: 600000,
       loading: '正在提交...'
     })
@@ -762,28 +764,28 @@ const $api = {
    * 执行列表
    */
   getExecList: param => {
-    return $http.$post('/exec/list', param)
+    return $http.$post('/batch-exec/list', param)
   },
 
   /**
    * 执行详情
    */
   getExecDetail: param => {
-    return $http.$post('/exec/detail', param)
+    return $http.$post('/batch-exec/detail', param)
   },
 
   /**
    * 执行输入
    */
   writeExecTask: param => {
-    return $http.$post('/exec/write', param)
+    return $http.$post('/batch-exec/write', param)
   },
 
   /**
    * 执行停止
    */
   terminateExecTask: param => {
-    return $http.$post('/exec/terminate', param, {
+    return $http.$post('/batch-exec/terminate', param, {
       loading: '正在停止...'
     })
   },
@@ -792,7 +794,7 @@ const $api = {
    * 删除执行任务
    */
   deleteExecTask: param => {
-    return $http.$post('/exec/delete', param, {
+    return $http.$post('/batch-exec/delete', param, {
       loading: '正在删除...'
     })
   },
@@ -801,8 +803,35 @@ const $api = {
    * 获取执行状态
    */
   getExecTaskStatus: param => {
-    return $http.$post('/exec/list-status', param, {
+    return $http.$post('/batch-exec/list-status', param, {
       skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 批量上传检查机器以及文件
+   */
+  checkBatchUploadFiles: param => {
+    return $http.$post('/batch-upload/check', param, {
+      timeout: 18000000
+    })
+  },
+
+  /**
+   * 获取批量上传 token
+   */
+  getBatchUploadToken: param => {
+    return $http.$post('/batch-upload/token', param, {
+      timeout: 18000000
+    })
+  },
+
+  /**
+   * 执行批量上传
+   */
+  execBatchUpload: param => {
+    return $http.$post('/batch-upload/exec', param, {
+      timeout: 18000000
     })
   },
 
@@ -1273,6 +1302,13 @@ const $api = {
   },
 
   /**
+   * 应用构建输入命令
+   */
+  writeAppBuild: param => {
+    return $http.$post('/app-build/write', param)
+  },
+
+  /**
    * 删除应用构建
    */
   deleteAppBuild: param => {
@@ -1435,6 +1471,13 @@ const $api = {
     return $http.$post('/app-release/skip-machine', param, {
       loading: '正在跳过...'
     })
+  },
+
+  /**
+   * 应用发布机器输入命令
+   */
+  writeAppReleaseMachine: param => {
+    return $http.$post('/app-release/write-machine', param)
   },
 
   /**

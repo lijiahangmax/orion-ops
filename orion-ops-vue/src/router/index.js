@@ -205,6 +205,11 @@ const routes = [
         component: () => import('../views/exec/AddBatchExecTask')
       },
       {
+        path: '/batch/upload',
+        name: 'BatchUploadFile',
+        component: () => import('../views/exec/BatchUploadFile')
+      },
+      {
         path: '/log/list',
         name: 'loggerList',
         meta: {

@@ -2016,6 +2016,75 @@ const $enum = {
       value: 60,
       label: '跳过'
     }
+  },
+
+  /**
+   * 批量上传状态
+   */
+  BATCH_UPLOAD_STATUS: {
+    WAIT: {
+      value: 10,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '点击上传按钮开始上传',
+      type: 'info'
+    },
+    CHECKING: {
+      value: 20,
+      loading: true,
+      mask: true,
+      checked: false,
+      visibleTransfer: false,
+      message: '正在检查文件...',
+      type: 'info'
+    },
+    REQUESTING: {
+      value: 30,
+      loading: true,
+      mask: true,
+      checked: false,
+      visibleTransfer: false,
+      message: '正在请求上传...',
+      type: 'info'
+    },
+    WAIT_UPLOAD: {
+      value: 40,
+      loading: true,
+      mask: false,
+      checked: true,
+      visibleTransfer: false,
+      message: '等待上传中...',
+      type: 'info'
+    },
+    UPLOADING: {
+      value: 50,
+      loading: true,
+      mask: false,
+      checked: false,
+      visibleTransfer: true,
+      message: '文件上传中... 清空或页面关闭则在后台继续上传',
+      type: 'info'
+    },
+    ERROR: {
+      value: 60,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '文件上传失败, 请重试',
+      type: 'error'
+    },
+    NO_AVAILABLE: {
+      value: 70,
+      loading: false,
+      mask: false,
+      checked: false,
+      visibleTransfer: false,
+      message: '无可用上传机器, 请重新选择后重试',
+      type: 'error'
+    }
   }
 
 }
