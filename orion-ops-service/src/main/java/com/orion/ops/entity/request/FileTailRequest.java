@@ -71,4 +71,9 @@ public class FileTailRequest extends PageRequest {
      */
     private Integer type;
 
+    /**
+     * token
+     */
+    private String token;
+
 }

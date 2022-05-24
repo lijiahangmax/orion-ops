@@ -19,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.File;
-
 /**
  * tracker 方式
  *
@@ -74,7 +72,7 @@ public class TrackerTailFileHandler implements ITailHandler, DataHandler {
 
     @Override
     public void setLastModify() {
-        new File(filePath).setLastModified(System.currentTimeMillis());
+        tracker.setFileLastModifyTime();
     }
 
     @Override
@@ -89,7 +87,7 @@ public class TrackerTailFileHandler implements ITailHandler, DataHandler {
     private void callback() {
         log.info("tail TRACKER 监听文件结束 token: {}", token);
         if (session.isOpen()) {
-            session.close(WsCloseCode.EOF_CALLBACK.close());
+            session.close(WsCloseCode.EOF_CALLBACK.status());
         }
     }
 

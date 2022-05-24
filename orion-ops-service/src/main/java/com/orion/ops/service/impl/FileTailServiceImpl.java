@@ -21,6 +21,8 @@ import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -75,6 +77,9 @@ public class FileTailServiceImpl implements FileTailService {
     private FileTailListDAO fileTailListDAO;
 
     @Resource
+    private TailSessionHolder tailSessionHolder;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -115,11 +120,11 @@ public class FileTailServiceImpl implements FileTailService {
         tail.setMode(tailMode);
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
-        // 非列表不返回命令和路径
+        // 本地则不返回命令
         if (isLocal) {
-            res.setPath(null);
             res.setCommand(null);
         }
+        res.setTailMode(tailMode);
         return res;
     }
 
@@ -300,6 +305,14 @@ public class FileTailServiceImpl implements FileTailService {
         // command
         config.setCommand(machineEnvService.getTailDefaultCommand(machineId));
         return config;
+    }
+
+    @Override
+    public void writeCommand(String token, String command) {
+        // 获取任务信息
+        ITailHandler session = tailSessionHolder.getSession(token);
+        Valid.notNull(session, MessageConst.EXEC_TASK_THREAD_ABSENT);
+        session.write(command);
     }
 
 }

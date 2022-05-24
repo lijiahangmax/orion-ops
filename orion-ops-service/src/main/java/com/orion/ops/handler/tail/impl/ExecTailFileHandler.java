@@ -83,6 +83,11 @@ public class ExecTailFileHandler implements ITailHandler {
     }
 
     @Override
+    public void write(String command) {
+        executor.write(command);
+    }
+
+    @Override
     public Long getMachineId() {
         return hint.getMachineId();
     }
@@ -101,7 +106,7 @@ public class ExecTailFileHandler implements ITailHandler {
     private void callback(IRemoteExecutor executor) {
         log.info("tail EXEC_TAIL 监听文件结束 token: {}", token);
         if (session.isOpen()) {
-            session.close(WsCloseCode.EOF_CALLBACK.close());
+            session.close(WsCloseCode.EOF_CALLBACK.status());
         }
     }
 
