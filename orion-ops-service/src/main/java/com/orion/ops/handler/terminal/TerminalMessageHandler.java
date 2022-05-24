@@ -128,12 +128,12 @@ public class TerminalMessageHandler implements WebSocketHandler {
             }
             // 获取连接
             if (session.getAttributes().get(CONNECTED_KEY) == null) {
-                session.close(WsCloseCode.VALID.close());
+                session.close(WsCloseCode.VALID.status());
                 return;
             }
             IOperateHandler handler = terminalSessionManager.getSession(token);
             if (handler == null) {
-                session.close(WsCloseCode.UNKNOWN_CONNECT.close());
+                session.close(WsCloseCode.UNKNOWN_CONNECT.status());
                 return;
             }
             // 操作
@@ -142,7 +142,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             log.error("terminal 处理操作异常 token: {}, payload: {}, e: {}", token, payload, e);
             e.printStackTrace();
             if (session.isOpen()) {
-                session.close(WsCloseCode.RUNTIME_EXCEPTION.close());
+                session.close(WsCloseCode.RUNTIME_EXCEPTION.status());
             }
         }
     }
@@ -210,7 +210,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 .orElse(null);
         if (machineId == null) {
             log.info("terminal 建立连接拒绝-token认证失败 token: {}", token);
-            session.close(WsCloseCode.INCORRECT_TOKEN.close());
+            session.close(WsCloseCode.INCORRECT_TOKEN.status());
             return;
         }
         // 检查绑定
@@ -218,21 +218,21 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (bindValue == null || !bindValue.equals(id)) {
             log.info("terminal 建立连接拒绝-bind认证失败 token: {}", token);
-            session.close(WsCloseCode.IDENTITY_MISMATCH.close());
+            session.close(WsCloseCode.IDENTITY_MISMATCH.status());
             return;
         }
         // 检查操作用户
         UserDTO userDTO = passportService.getUserByToken(connectInfo.getLoginToken(), null);
         if (userDTO == null || !tokenUserId.equals(userDTO.getId())) {
             log.info("terminal 建立连接拒绝-用户认证失败 token: {}", token);
-            session.close(WsCloseCode.IDENTITY_MISMATCH.close());
+            session.close(WsCloseCode.IDENTITY_MISMATCH.status());
             return;
         }
         // 获取机器信息
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         if (machine == null) {
             log.info("terminal 建立连接拒绝-未查询到机器信息 token: {}, machineId: {}", token, machineId);
-            session.close(WsCloseCode.INVALID_MACHINE.close());
+            session.close(WsCloseCode.INVALID_MACHINE.status());
             return;
         }
         // 删除token
@@ -269,7 +269,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             terminalHandler.connect();
             log.info("terminal 建立连接成功-打开shell成功 token: {}", terminalHandler.getToken());
         } catch (Exception e) {
-            session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.close());
+            session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.status());
             log.error("terminal 建立连接失败-打开shell失败 machineId: {}, uid: {}, {}", machineId, tokenUserId, e);
             return;
         }

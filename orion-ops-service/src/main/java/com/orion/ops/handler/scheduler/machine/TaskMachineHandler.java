@@ -1,7 +1,7 @@
 package com.orion.ops.handler.scheduler.machine;
 
 import com.orion.constant.Letters;
-import com.orion.exception.DisableException;
+import com.orion.exception.DisabledException;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.SessionStore;
@@ -104,7 +104,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             } else if (ex == null) {
                 // 完成回调
                 this.completeCallback();
-            } else if (ex instanceof DisableException) {
+            } else if (ex instanceof DisabledException) {
                 // 机器未启用回调
                 this.machineDisableCallback();
             } else {

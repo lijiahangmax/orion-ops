@@ -106,7 +106,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
     }
 
-    @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class})
+    @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class, DisabledException.class})
     public HttpWrapper<?> invalidArgumentExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("invalidArgumentExceptionHandler url: {}, 参数异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage());
         ex.printStackTrace();
@@ -189,7 +189,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         if (ex.hasCause()) {
             ex.printStackTrace();
         }
-        return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = ParseCronException.class)

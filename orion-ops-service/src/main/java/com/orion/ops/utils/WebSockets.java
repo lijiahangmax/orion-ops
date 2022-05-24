@@ -2,6 +2,7 @@ package com.orion.ops.utils;
 
 import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
+import com.orion.exception.DisabledException;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.utils.Urls;
 import org.springframework.http.server.ServerHttpRequest;
@@ -49,11 +50,13 @@ public class WebSockets {
      */
     public static void openSessionStoreThrowClose(WebSocketSession session, Exception e) throws IOException {
         if (e instanceof ConnectionRuntimeException) {
-            session.close(WsCloseCode.CONNECTED_FAILURE.close());
+            session.close(WsCloseCode.CONNECTED_FAILURE.status());
         } else if (e instanceof AuthenticationException) {
-            session.close(WsCloseCode.CONNECTED_AUTH_FAILURE.close());
+            session.close(WsCloseCode.CONNECTED_AUTH_FAILURE.status());
+        } else if (e instanceof DisabledException) {
+            session.close(WsCloseCode.MACHINE_DISABLED.status());
         } else {
-            session.close(WsCloseCode.CONNECTED_EXCEPTION.close());
+            session.close(WsCloseCode.CONNECTED_EXCEPTION.status());
         }
     }
 

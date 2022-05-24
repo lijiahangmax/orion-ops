@@ -287,7 +287,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 检查状态
         if (!Const.ENABLE.equals(machine.getMachineStatus())) {
-            throw Exceptions.disable(MessageConst.MACHINE_DISABLE);
+            throw Exceptions.disabled(MessageConst.MACHINE_DISABLE);
         }
         Long id = machine.getId();
         // 查询超时间

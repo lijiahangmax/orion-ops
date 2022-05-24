@@ -269,7 +269,7 @@ public class TerminalOperateHandler implements IOperateHandler {
     private void sendClose(WsCloseCode code) {
         if (session.isOpen()) {
             try {
-                session.close(code.close());
+                session.close(code.status());
             } catch (IOException e) {
                 log.error("terminal 发送断开连接命令 失败 token: {}, code: {}, e: {}", token, code.getCode(), e);
             }

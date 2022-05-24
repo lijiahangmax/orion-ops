@@ -67,7 +67,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         if (!Const.ENABLE.equals(machine.getMachineStatus())) {
-            throw Exceptions.disable(MessageConst.MACHINE_DISABLE);
+            throw Exceptions.disabled(MessageConst.MACHINE_DISABLE);
         }
         // 设置accessToken
         Long userId = Currents.getUserId();

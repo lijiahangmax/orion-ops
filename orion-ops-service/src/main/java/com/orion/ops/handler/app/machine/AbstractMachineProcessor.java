@@ -1,6 +1,7 @@
 package com.orion.ops.handler.app.machine;
 
 import com.orion.constant.Letters;
+import com.orion.exception.DisabledException;
 import com.orion.exception.LogException;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.StainCode;
@@ -106,8 +107,11 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
             } else if (ex == null) {
                 // 成功回调
                 this.successCallback();
+            } else if (ex instanceof DisabledException) {
+                // 机器未启用回调
+                this.machineDisableCallback();
             } else {
-                // 失败回调
+                // 执行失败回调
                 this.exceptionCallback(isMainError, ex);
             }
         } finally {
@@ -207,6 +211,22 @@ public abstract class AbstractMachineProcessor implements IMachineProcessor {
                 .append(StainCode.SUFFIX)
                 .append(")\n");
         // 拼接日志
+        this.appendLog(log.toString());
+    }
+
+    /**
+     * 机器未启用回调
+     */
+    private void machineDisableCallback() {
+        log.info("机器任务执行-机器未启用 relId: {}", id);
+        // 更新状态
+        this.updateStatus(MachineProcessorStatus.TERMINATED);
+        // 拼接日志
+        StringBuilder log = new StringBuilder(Const.LF_2)
+                .append(Utils.getStainKeyWords("# 主机任务执行机器未启用", StainCode.GLOSS_YELLOW))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         this.appendLog(log.toString());
     }
 
