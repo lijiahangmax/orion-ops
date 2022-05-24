@@ -2,7 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.net.remote.TerminalType;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
@@ -25,7 +25,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
-import com.orion.remote.TerminalType;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.Converts;
@@ -68,7 +67,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         if (!Const.ENABLE.equals(machine.getMachineStatus())) {
-            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
+            throw Exceptions.disable(MessageConst.MACHINE_DISABLE);
         }
         // 设置accessToken
         Long userId = Currents.getUserId();

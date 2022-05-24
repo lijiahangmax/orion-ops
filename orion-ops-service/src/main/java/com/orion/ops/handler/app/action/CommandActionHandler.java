@@ -1,9 +1,10 @@
 package com.orion.ops.handler.app.action;
 
+import com.orion.net.remote.CommandExecutors;
+import com.orion.net.remote.ExitCode;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.consts.StainCode;
 import com.orion.ops.utils.Utils;
-import com.orion.remote.ExitCode;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Streams;
@@ -34,13 +35,10 @@ public class CommandActionHandler extends AbstractActionHandler {
         this.appendLog(Utils.getStainKeyWords("# 开始执行\n", StainCode.GLOSS_BLUE));
         // 打开executor
         this.executor = store.getSessionStore().getCommandExecutor(Strings.replaceCRLF(action.getActionCommand()));
-        executor.inherit()
-                .sync()
-                .transfer(appender)
-                .connect()
-                .exec();
+        // 执行命令
+        CommandExecutors.syncExecCommand(executor, appender);
         this.exitCode = executor.getExitCode();
-        if (!ExitCode.SUCCESS.getCode().equals(exitCode)) {
+        if (!ExitCode.isSuccess(exitCode)) {
             throw Exceptions.execute("*** 命令执行失败 exitCode: " + exitCode);
         }
     }

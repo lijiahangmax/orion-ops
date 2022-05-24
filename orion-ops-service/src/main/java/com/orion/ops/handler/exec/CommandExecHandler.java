@@ -1,6 +1,11 @@
 package com.orion.ops.handler.exec;
 
 import com.orion.constant.Letters;
+import com.orion.exception.DisableException;
+import com.orion.net.remote.CommandExecutors;
+import com.orion.net.remote.ExitCode;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.StainCode;
@@ -15,9 +20,6 @@ import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Utils;
-import com.orion.remote.ExitCode;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -104,12 +106,8 @@ public class CommandExecHandler implements IExecHandler {
             // 打开executor
             this.sessionStore = machineInfoService.openSessionStore(machine);
             this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(record.getExecCommand()));
-            // 开始执行
-            executor.inherit()
-                    .sync()
-                    .transfer(logOutputStream)
-                    .connect()
-                    .exec();
+            // 执行命令
+            CommandExecutors.syncExecCommand(executor, logOutputStream);
         } catch (Exception e) {
             ex = e;
         }
@@ -117,13 +115,15 @@ public class CommandExecHandler implements IExecHandler {
         try {
             if (terminated) {
                 // 停止回调
-                log.info("execHandler-执行停止 execId: {}", execId);
                 this.terminatedCallback();
             } else if (ex == null) {
                 // 完成回调
                 this.completeCallback();
+            } else if (ex instanceof DisableException) {
+                // 机器未启用回调
+                this.machineDisableCallback();
             } else {
-                // 失败回调
+                // 执行失败回调
                 this.exceptionCallback(ex);
             }
         } finally {
@@ -217,6 +217,7 @@ public class CommandExecHandler implements IExecHandler {
      * 停止回调
      */
     private void terminatedCallback() {
+        log.info("execHandler-执行停止 execId: {}", execId);
         // 更新状态
         this.updateStatus(ExecStatus.TERMINATED);
         // 拼接日志
@@ -243,7 +244,7 @@ public class CommandExecHandler implements IExecHandler {
                 .append(Utils.getStainKeyWords("# 命令执行完毕", StainCode.GLOSS_GREEN))
                 .append(Letters.LF);
         sb.append("exitcode: ")
-                .append(ExitCode.SUCCESS.getCode().equals(exitCode)
+                .append(ExitCode.isSuccess(exitCode)
                         ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
                         : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED))
                 .append(Letters.LF);
@@ -263,6 +264,23 @@ public class CommandExecHandler implements IExecHandler {
         params.put(EventKeys.ID, record.getId());
         params.put(EventKeys.NAME, record.getMachineName());
         webSideMessageService.addMessage(MessageType.EXEC_SUCCESS, record.getUserId(), record.getUserName(), params);
+    }
+
+    /**
+     * 机器未启用回调
+     */
+    private void machineDisableCallback() {
+        log.info("execHandler-机器停用停止 execId: {}", execId);
+        // 更新状态
+        this.updateStatus(ExecStatus.TERMINATED);
+        // 拼接日志
+        StringBuilder log = new StringBuilder()
+                .append(Const.LF)
+                .append(Utils.getStainKeyWords("# 命令执行机器未启用", StainCode.GLOSS_YELLOW))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        this.appendLog(log.toString());
     }
 
     /**

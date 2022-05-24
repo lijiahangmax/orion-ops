@@ -1,8 +1,8 @@
 package com.orion.ops.handler.app.action;
 
-import com.beust.jcommander.internal.Maps;
+import com.orion.net.remote.channel.SessionStore;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
-import com.orion.remote.channel.SessionStore;
+import com.orion.utils.collect.Maps;
 import lombok.Data;
 
 import java.io.OutputStream;
@@ -84,27 +84,30 @@ public class MachineActionStore {
     /**
      * 构建产物文件
      *
-     * @see AbstractTransferActionHandler
+     * @see SftpTransferActionHandler
+     * @see ScpTransferActionHandler
      */
     private String bundlePath;
 
     /**
      * 产物传输路径
      *
-     * @see AbstractTransferActionHandler
+     * @see SftpTransferActionHandler
+     * @see ScpTransferActionHandler
      */
     private String transferPath;
 
     /**
      * 产物传输方式
      *
-     * @see AbstractTransferActionHandler
+     * @see SftpTransferActionHandler
+     * @see ScpTransferActionHandler
      * @see com.orion.ops.consts.app.TransferMode
      */
     private String transferMode;
 
     public MachineActionStore() {
-        this.actions = Maps.newLinkedHashMap();
+        this.actions = Maps.newLinkedMap();
     }
 
 }
