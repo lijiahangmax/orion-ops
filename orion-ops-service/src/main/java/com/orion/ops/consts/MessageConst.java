@@ -66,7 +66,7 @@ public class MessageConst {
 
     public static final String INVALID_MACHINE = "未知的机器";
 
-    public static final String MACHINE_NOT_ENABLE = "机器未启用";
+    public static final String MACHINE_DISABLE = "机器未启用";
 
     public static final String INVALID_PROXY = "未查询到代理信息";
 
@@ -109,6 +109,8 @@ public class MessageConst {
     public static final String FILE_TOO_LARGE = "文件过大";
 
     public static final String NAME_PRESENT = "名称重复";
+
+    public static final String TAG_PRESENT = "唯一标识重复";
 
     public static final String FORBID_DELETE = "禁止删除";
 

@@ -53,7 +53,7 @@ public class MachineInfoRequest extends PageRequest {
     private String name;
 
     /**
-     * 机器标签
+     * 机器标识符
      */
     private String tag;
 

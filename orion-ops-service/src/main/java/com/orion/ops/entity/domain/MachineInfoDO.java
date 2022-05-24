@@ -53,7 +53,7 @@ public class MachineInfoDO implements Serializable {
     private String machineName;
 
     /**
-     * 机器标签
+     * 机器标识符
      */
     @TableField("machine_tag")
     private String machineTag;

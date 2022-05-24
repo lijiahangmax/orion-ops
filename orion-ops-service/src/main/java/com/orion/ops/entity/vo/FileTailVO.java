@@ -49,6 +49,14 @@ public class FileTailVO {
     private String machineHost;
 
     /**
+     * 机器状态 1有效 2无效
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.consts.Const#DISABLE
+     */
+    private Integer machineStatus;
+
+    /**
      * 文件
      */
     private String path;

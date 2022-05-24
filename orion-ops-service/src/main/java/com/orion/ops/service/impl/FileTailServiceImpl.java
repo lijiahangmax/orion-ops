@@ -103,6 +103,7 @@ public class FileTailServiceImpl implements FileTailService {
         res.setMachineId(machine.getId());
         res.setMachineName(machine.getMachineName());
         res.setMachineHost(machine.getMachineHost());
+        res.setMachineStatus(machine.getMachineStatus());
         // 设置token
         String token = UUIds.random19();
         res.setToken(token);
@@ -205,6 +206,7 @@ public class FileTailServiceImpl implements FileTailService {
             if (machine != null) {
                 p.setMachineName(machine.getMachineName());
                 p.setMachineHost(machine.getMachineHost());
+                p.setMachineStatus(machine.getMachineStatus());
             }
         });
         return dataGrid;
@@ -220,6 +222,7 @@ public class FileTailServiceImpl implements FileTailService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         vo.setMachineName(machine.getMachineName());
         vo.setMachineHost(machine.getMachineHost());
+        vo.setMachineStatus(machine.getMachineStatus());
         return vo;
     }
 
