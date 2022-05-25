@@ -82,10 +82,21 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 打开 -->
-          <a-tooltip title="ctrl 点击打开新页面">
+          <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === $enum.ENABLE_STATUS.ENABLE.value">
             <a target="_blank"
                :href="`#/log/view/${record.id}`"
-               @click="openLogView($event, record.id)">打开</a>
+               @click="openLogView($event, record.id)">
+              <a-button class="open-log-trigger" type="link">
+                打开
+              </a-button>
+            </a>
+          </a-tooltip>
+          <a-tooltip title="机器未启用" v-else>
+            <a-button class="open-log-trigger"
+                      type="link"
+                      :disabled="true">
+              打开
+            </a-button>
           </a-tooltip>
           <a-divider type="vertical"/>
           <!-- 修改 -->
@@ -283,6 +294,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+.open-log-trigger {
+  height: 22px;
+  padding: 0;
+  margin: 0;
+}
 
 </style>

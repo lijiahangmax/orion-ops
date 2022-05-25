@@ -50,40 +50,46 @@
                              :appendStyle="{height: 'calc(100vh - 100px)'}"
                              :relId="selectedTailFile.id"
                              :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value">
+                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
+                             @open="loggerOpened(selectedTailFile)"
+                             @close="loggerClosed(selectedTailFile)">
                   <!-- 左侧工具栏 -->
                   <template #left-tools>
                     <div class="appender-left-tools">
-                      <!-- 信息 -->
-                      <a-breadcrumb>
-                        <!-- 机器名称 -->
-                        <a-breadcrumb-item v-if="selectedTailFile.machineName">
-                          <a-tag color="#7950F2" class="m0">
+                      <!-- 日志信息 -->
+                      <div class="machine-log-info-container">
+                        <!-- 机器信息 -->
+                        <a-tooltip :title="selectedTailFile.machineHost">
+                          <span class="log-info-wrapper" style="margin-left: 2px;">
                             {{ selectedTailFile.machineName }}
-                          </a-tag>
-                        </a-breadcrumb-item>
-                        <!-- 机器主机 -->
-                        <a-breadcrumb-item v-if="selectedTailFile.machineHost">
-                          <a-tag color="#5C7CFA" class="m0">
-                            {{ selectedTailFile.machineHost }}
-                          </a-tag>
-                        </a-breadcrumb-item>
-                        <!-- 名称 -->
-                        <a-breadcrumb-item v-if="selectedTailFile.name">
-                          <a-tag color="#15AABF" class="m0">
-                            {{ selectedTailFile.name }}
-                          </a-tag>
-                        </a-breadcrumb-item>
-                        <!-- 文件名称 -->
-                        <a-breadcrumb-item v-if="selectedTailFile.path">
-                          <a-tag color="#40C057"
-                                 class="pointer mr8"
-                                 :title="selectedTailFile.path"
-                                 @click="$copy(selectedTailFile.path)">
+                          </span>
+                        </a-tooltip>
+                        <a-divider type="vertical" style="top: -0.36em; height: 1em"/>
+                        <!-- 文件信息 -->
+                        <a-tooltip :title="`${selectedTailFile.path}`">
+                          <span class="log-info-wrapper pointer" @click="$copy(selectedTailFile.path)">
                             {{ selectedTailFile.fileName }}
-                          </a-tag>
-                        </a-breadcrumb-item>
-                      </a-breadcrumb>
+                          </span>
+                        </a-tooltip>
+                      </div>
+                      <!-- 命令输入 -->
+                      <a-input-search class="command-write-input"
+                                      size="default"
+                                      v-if="selectedTailFile.visibleCommand"
+                                      v-model="selectedTailFile.command"
+                                      placeholder="输入"
+                                      @search="sendCommand(selectedTailFile)">
+                        <template #enterButton>
+                          <a-icon type="forward"/>
+                        </template>
+                        <!-- 发送 lf -->
+                        <template #suffix>
+                          <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': selectedTailFile.sendLf}"
+                                  title="是否发送 \n"
+                                  type="pull-request"
+                                  @click="() => selectedTailFile.sendLf = !selectedTailFile.sendLf"/>
+                        </template>
+                      </a-input-search>
                     </div>
                   </template>
                 </LogAppender>
@@ -149,16 +155,18 @@ export default {
         const tailListRes = await this.$api.getTailList({
           limit: 10000
         })
-        this.tailList = tailListRes.data.rows.map(i => {
-          return {
-            id: i.id,
-            name: i.name,
-            path: i.path,
-            fileName: i.fileName,
-            machineName: i.machineName,
-            machineHost: i.machineHost
-          }
-        })
+        this.tailList = tailListRes.data.rows
+          .filter(i => i.machineStatus === this.$enum.ENABLE_STATUS.ENABLE.value)
+          .map(i => {
+            return {
+              id: i.id,
+              name: i.name,
+              path: i.path,
+              fileName: i.fileName,
+              machineName: i.machineName,
+              machineHost: i.machineHost
+            }
+          })
         this.filterTailList = [...this.tailList]
       } catch (e) {
         // ignore
@@ -185,7 +193,11 @@ export default {
         path: filterTailFile.path,
         fileName: filterTailFile.fileName,
         machineName: filterTailFile.machineName,
-        machineHost: filterTailFile.machineHost
+        machineHost: filterTailFile.machineHost,
+        visibleCommand: false,
+        command: null,
+        sendLf: true,
+        closed: false
       })
       this.$nextTick(() => {
         const $ref = this.$refs['appender' + id]
@@ -219,6 +231,39 @@ export default {
       }
       this.selectedTailFiles = selectedTailFiles
       this.activeTab = activeTab
+    },
+    loggerOpened(file) {
+      const $ref = this.$refs['appender' + file.id]
+      if ($ref && $ref.length) {
+        if ($ref[0].token.tailMode === this.$enum.FILE_TAIL_MODE.TAIL.value) {
+          setTimeout(() => {
+            if (!file.closed) {
+              file.visibleCommand = true
+            }
+          }, 200)
+        }
+      }
+    },
+    loggerClosed(file) {
+      file.closed = true
+      file.visibleCommand = false
+    },
+    sendCommand(file) {
+      const $ref = this.$refs['appender' + file.id]
+      if ($ref && $ref.length) {
+        let command = file.command || ''
+        if (file.sendLf) {
+          command += '\n'
+        }
+        if (!command) {
+          return
+        }
+        file.command = ''
+        this.$api.writeTailCommand({
+          token: $ref[0].token.token,
+          command
+        })
+      }
     }
   },
   async mounted() {
@@ -291,6 +336,25 @@ export default {
 
 .name-filter {
   padding: 6px 8px;
+}
+
+.appender-left-tools {
+  display: flex;
+  align-items: center;
+}
+
+.machine-log-info-container {
+  margin-right: 16px;
+  margin-top: -9px;
+  height: 1em;
+}
+
+.log-info-wrapper {
+  color: rgba(0, 0, 0, .8);
+  max-width: 200px;
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
 }
 
 </style>

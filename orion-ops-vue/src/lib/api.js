@@ -932,6 +932,13 @@ const $api = {
   },
 
   /**
+   * tail 输入命令
+   */
+  writeTailCommand: param => {
+    return $http.$post('/file-tail/write', param)
+  },
+
+  /**
    * 应用环境列表
    */
   getProfileList: param => {
