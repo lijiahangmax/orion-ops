@@ -2100,6 +2100,78 @@ const $api = {
    */
   getAppPipelineTaskLog: param => {
     return $http.$post('/app-pipeline-task/log', param)
+  },
+
+  /**
+   * 清理批量执行数据
+   */
+  clearBatchExec: param => {
+    return $http.$post('/data-clear/batch-exec', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理终端日志
+   */
+  clearTerminalLog: param => {
+    return $http.$post('/data-clear/terminal-log', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理调度记录
+   */
+  clearSchedulerRecord: param => {
+    return $http.$post('/data-clear/scheduler-record', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用构建记录
+   */
+  clearAppBuild: param => {
+    return $http.$post('/data-clear/app-build', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用发布记录
+   */
+  clearAppRelease: param => {
+    return $http.$post('/data-clear/app-release', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用流水线记录
+   */
+  clearAppPipeline: param => {
+    return $http.$post('/data-clear/app-pipeline', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理站内信
+   */
+  clearWebSideMessage: param => {
+    return $http.$post('/data-clear/web-side-message', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理操作日志
+   */
+  clearEventLog: param => {
+    return $http.$post('/data-clear/event-log', param, {
+      loading: '正在清理...'
+    })
   }
 
 }

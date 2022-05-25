@@ -75,6 +75,7 @@
           </a-button>
         </a>
         <a-divider type="vertical"/>
+        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -186,6 +187,8 @@
       <ExecTaskDetailModal ref="detail"/>
       <!-- 日志模态框 -->
       <ExecLoggerAppenderModal ref="logView"/>
+      <!-- 清空模态框 -->
+      <BatchExecClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -200,6 +203,7 @@ import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import _filters from '@/lib/filters'
 import _enum from '@/lib/enum'
+import BatchExecClearModal from '@/components/clear/BatchExecClearModal'
 
 /**
  * 状态判断
@@ -255,14 +259,14 @@ const columns = [
     width: 120,
     sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
   },
-  // {
-  //   title: '执行用户',
-  //   dataIndex: 'username',
-  //   key: 'username',
-  //   width: 120,
-  //   ellipsis: true,
-  //   sorter: (a, b) => a.username.localeCompare(b.username)
-  // },
+  {
+    title: '执行用户',
+    dataIndex: 'username',
+    key: 'username',
+    width: 120,
+    ellipsis: true,
+    sorter: (a, b) => a.username.localeCompare(b.username)
+  },
   {
     title: '创建时间',
     key: 'createTime',
@@ -299,6 +303,7 @@ const columns = [
 export default {
   name: 'BatchExecList',
   components: {
+    BatchExecClearModal,
     MachineAutoComplete,
     ExecLoggerAppenderModal,
     UserAutoComplete,
@@ -422,6 +427,9 @@ export default {
         this.query.userId = undefined
         this.query.username = name
       }
+    },
+    openClear() {
+      this.$refs.clear.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

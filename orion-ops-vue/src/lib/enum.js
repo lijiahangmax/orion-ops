@@ -1484,6 +1484,44 @@ const $enum = {
         }
       }
     },
+    DATA_CLEAR: {
+      value: 97,
+      label: '数据清理',
+      type: {
+        DATA_CLEAR_BATCH_EXEC: {
+          value: 6205,
+          label: '批量执行'
+        },
+        DATA_CLEAR_TERMINAL_LOG: {
+          value: 6210,
+          label: '终端日志'
+        },
+        DATA_CLEAR_SCHEDULER_RECORD: {
+          value: 6215,
+          label: '任务调度'
+        },
+        DATA_CLEAR_APP_BUILD: {
+          value: 6220,
+          label: '应用构建'
+        },
+        DATA_CLEAR_APP_RELEASE: {
+          value: 6225,
+          label: '应用发布'
+        },
+        DATA_CLEAR_APP_PIPELINE: {
+          value: 6230,
+          label: '流水线任务'
+        },
+        DATA_CLEAR_WEB_SIDE_MESSAGE: {
+          value: 6235,
+          label: '站内信'
+        },
+        DATA_CLEAR_EVENT_LOG: {
+          value: 6240,
+          label: '操作日志'
+        }
+      }
+    },
     SCHEDULER: {
       value: 100,
       label: '调度任务操作',
@@ -2084,6 +2122,21 @@ const $enum = {
       visibleTransfer: false,
       message: '无可用上传机器, 请重新选择后重试',
       type: 'error'
+    }
+  },
+
+  /**
+   * 数据清理区间
+   */
+  DATA_CLEAR_RANGE: {
+    DAY: {
+      value: 10
+    },
+    TOTAL: {
+      value: 20
+    },
+    REL_ID: {
+      value: 30
     }
   }
 
