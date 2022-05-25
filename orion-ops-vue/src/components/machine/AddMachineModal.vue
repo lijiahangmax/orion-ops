@@ -2,7 +2,6 @@
   <div class="machine-wrapper">
     <!-- 机器模态框 -->
     <a-modal v-model="visible"
-             v-drag-modal
              :title="title"
              :width="750"
              :zIndex="805"
@@ -18,7 +17,7 @@
             <a-form-item label="名称" hasFeedback>
               <a-input v-decorator="decorators.name" allowClear/>
             </a-form-item>
-            <a-form-item label="标签" hasFeedback>
+            <a-form-item label="唯一标识" hasFeedback>
               <a-input v-decorator="decorators.tag" allowClear/>
             </a-form-item>
             <a-form-item label="ssh信息" style="margin-bottom: 0">
@@ -32,7 +31,7 @@
                          placeholder="主机"
                          v-decorator="decorators.host"/>
               </a-form-item>
-              <a-form-item hasFeedback style="display: inline-block; width: 25%">
+              <a-form-item style="display: inline-block; width: 25%">
                 <a-input addon-before="-p"
                          placeholder="端口"
                          v-decorator="decorators.sshPort"/>
@@ -108,10 +107,10 @@ function getDecorators() {
     tag: ['tag', {
       rules: [{
         required: true,
-        message: '请输入标签'
+        message: '请输入唯一标识'
       }, {
         max: 32,
-        message: '标签长度不能大于32位'
+        message: '唯一标识长度不能大于32位'
       }]
     }],
     username: ['username', {

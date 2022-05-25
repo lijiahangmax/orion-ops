@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :title="title"
            :width="650"
            :dialogStyle="{top: '64px'}"

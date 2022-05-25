@@ -232,7 +232,7 @@ export default {
         visible: true
       }
       if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === type) {
-        action.command = 'scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}'
+        action.command = 'scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"'
       } else {
         action.command = ''
       }

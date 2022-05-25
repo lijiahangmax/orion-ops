@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="执行审核"
            :maskClosable="false"
            :destroyOnClose="true"

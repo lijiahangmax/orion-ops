@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :width="500"
            :maskClosable="false"
            :title="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, data.classify).type, data.type).label"

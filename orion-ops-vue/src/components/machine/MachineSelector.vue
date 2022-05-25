@@ -27,6 +27,12 @@ export default {
     value: {
       type: Number,
       default: undefined
+    },
+    query: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
@@ -46,7 +52,10 @@ export default {
     }
   },
   async created() {
-    const machineListRes = await this.$api.getMachineList({ limit: 10000 })
+    const machineListRes = await this.$api.getMachineList({
+      limit: 10000,
+      ...this.query
+    })
     if (machineListRes.data && machineListRes.data.rows && machineListRes.data.rows.length) {
       for (const row of machineListRes.data.rows) {
         this.machineList.push({

@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="详情"
            width="700px"
            :maskClosable="false"
@@ -20,10 +19,10 @@
           <a-descriptions-item label="用户名" :span="3">
             {{ detail.username }}
           </a-descriptions-item>
-          <a-descriptions-item label="标签" :span="3">
-            <a-tag color="#5C7CFA">
+          <a-descriptions-item label="唯一标识" :span="3">
+            <span class="span-blue">
               {{ detail.tag }}
-            </a-tag>
+            </span>
           </a-descriptions-item>
           <a-descriptions-item label="认证方式" :span="2">
             <a-tag v-if="detail.authType">

@@ -7,16 +7,18 @@
       <!-- 一级菜单 -->
       <a-menu-item v-if="!menuItem.children" @click="toRoute(menuItem.path)" :key="menuItem.id">
         <a-icon :type="menuItem.icon"/>
-        <span>{{ menuItem.name }}</span>
+        <span class="usn">{{ menuItem.name }}</span>
       </a-menu-item>
       <!-- 二级菜单 -->
       <a-sub-menu v-else :key="menuItem.id">
         <template #title>
           <a-icon :type="menuItem.icon"/>
-          <span>{{ menuItem.name }}</span>
+          <span class="usn">{{ menuItem.name }}</span>
         </template>
         <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id" @click="toRoute(subMenuItem.path)">
-          {{ subMenuItem.name }}
+          <span class="usn">
+            {{ subMenuItem.name }}
+          </span>
         </a-menu-item>
       </a-sub-menu>
     </template>

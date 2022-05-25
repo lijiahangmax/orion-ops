@@ -67,7 +67,10 @@
               <!-- 上半部分 标题 -->
               <div class="message-item-container-top">
                 <a-badge class="message-item-dot" :dot="item.status === $enum.READ_STATUS.UNREAD.value">
-                  <span class="message-item-title" v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).label"/>
+                  <span class="message-item-title"
+                        title="详情"
+                        @click="openDetail(item)"
+                        v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).label"/>
                 </a-badge>
               </div>
               <!-- 下半部分 消息 -->
@@ -79,7 +82,7 @@
                 <div class="message-item-container-right">
                   <!-- 类型 -->
                   <span class="message-item-type span-blue" @click="chooseClassify(item.classify)">
-                      {{ $enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).label }}
+                    {{ $enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).label }}
                   </span>
                   <!-- 时间 -->
                   <span class="message-item-date">{{ item.createTime | formatDate }} ({{ item.createTimeAgo }})</span>
@@ -261,13 +264,14 @@ export default {
   width: 100%;
 
   .message-item-dot /deep/ .ant-badge-dot {
-    margin: 4px -6px;
+    margin: 4px -8px;
   }
 
   .message-item-title {
     color: #181E33;
     display: block;
-    margin-bottom: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
     font-size: 15px;
     line-height: 24px;
   }

@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :width="650"
            :footer="null"
            :destroyOnClose="true"

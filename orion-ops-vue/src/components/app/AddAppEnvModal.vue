@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :title="title"
            :width="500"
            :okButtonProps="{props: {disabled: loading}}"

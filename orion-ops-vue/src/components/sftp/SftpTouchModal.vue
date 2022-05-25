@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="创建"
            width="450px"
            :maskClosable="false"

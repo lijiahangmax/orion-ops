@@ -180,7 +180,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       color: rgba(0, 0, 0, .65);
       font-size: 14px;
       line-height: 22px;

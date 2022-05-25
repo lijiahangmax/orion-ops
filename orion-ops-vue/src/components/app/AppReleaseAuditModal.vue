@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="发布审核"
            :maskClosable="false"
            :destroyOnClose="true"

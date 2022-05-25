@@ -4,7 +4,7 @@
       <a-form-item label="名称" hasFeedback>
         <a-input v-decorator="decorators.name" allowClear/>
       </a-form-item>
-      <a-form-item label="标签" hasFeedback>
+      <a-form-item label="唯一标识" hasFeedback>
         <a-input v-decorator="decorators.tag" allowClear/>
       </a-form-item>
       <a-form-item label="版本仓库">
@@ -17,7 +17,7 @@
           <a-icon type="reload"/>
         </a>
       </a-form-item>
-      <a-form-item label="描述">
+      <a-form-item label="描述" style="margin-bottom: 0;">
         <a-textarea v-decorator="decorators.description" allowClear/>
       </a-form-item>
     </a-form>
@@ -41,10 +41,10 @@ function getDecorators() {
     tag: ['tag', {
       rules: [{
         required: true,
-        message: '请输入标签'
+        message: '请输入唯一标识'
       }, {
         max: 32,
-        message: '标签长度不能大于32位'
+        message: '唯一标识长度不能大于32位'
       }]
     }],
     vcsId: ['vcsId'],
@@ -64,8 +64,8 @@ export default {
       type: Object,
       default: () => {
         return {
-          labelCol: { span: 3 },
-          wrapperCol: { span: 19 }
+          labelCol: { span: 4 },
+          wrapperCol: { span: 17 }
         }
       }
     }

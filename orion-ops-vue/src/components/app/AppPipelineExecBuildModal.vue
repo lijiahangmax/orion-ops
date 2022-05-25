@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :title="title"
            :width="560"
            :maskStyle="{opacity: 0.4, animation: 'none'}"
