@@ -10,7 +10,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="标签" prop="tag">
+            <a-form-model-item label="标识" prop="tag">
               <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
@@ -95,9 +95,9 @@
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
-          <a-tag v-if="record.tag" color="#5C7CFA">
+          <span class="span-blue">
             {{ record.tag }}
-          </a-tag>
+          </span>
         </template>
         <!-- 主机 -->
         <template v-slot:host="record">
@@ -239,7 +239,7 @@ const columns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: '标签',
+    title: '唯一标识',
     key: 'tag',
     width: 150,
     sorter: (a, b) => a.tag.localeCompare(b.tag),
@@ -437,7 +437,7 @@ export default {
       if (record.id === 1) {
         this.$message.error('宿主机不支持该操作')
       } else {
-        const label = status === 1 ? '启用' : '停用'
+        const label = record.status === 1 ? '停用' : '启用'
         const pending = this.$message.loading(`正在${label}...`)
         this.$api.updateMachineStatus({
           idList: [record.id],

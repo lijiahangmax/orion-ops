@@ -10,7 +10,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="标签" prop="tag">
+            <a-form-model-item label="标识" prop="tag">
               <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
@@ -82,10 +82,8 @@
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
-          <span class="span-blue pointer">
-            <a-tag color="#5C7CFA">
-              {{ record.tag }}
-            </a-tag>
+          <span class="span-blue">
+            {{ record.tag }}
           </span>
         </template>
         <!-- 配置 -->
@@ -199,7 +197,7 @@ const columns = [
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
-    title: '标签',
+    title: '唯一标识',
     key: 'tag',
     scopedSlots: { customRender: 'tag' },
     sorter: (a, b) => a.tag.localeCompare(b.tag)

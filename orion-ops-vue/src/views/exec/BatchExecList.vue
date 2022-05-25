@@ -229,7 +229,7 @@ const columns = [
     title: '执行命令',
     key: 'command',
     ellipsis: true,
-    width: 260,
+    width: 220,
     scopedSlots: { customRender: 'command' }
   },
   {
@@ -255,14 +255,14 @@ const columns = [
     width: 120,
     sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
   },
-  {
-    title: '执行用户',
-    dataIndex: 'username',
-    key: 'username',
-    width: 120,
-    ellipsis: true,
-    sorter: (a, b) => a.username.localeCompare(b.username)
-  },
+  // {
+  //   title: '执行用户',
+  //   dataIndex: 'username',
+  //   key: 'username',
+  //   width: 120,
+  //   ellipsis: true,
+  //   sorter: (a, b) => a.username.localeCompare(b.username)
+  // },
   {
     title: '创建时间',
     key: 'createTime',

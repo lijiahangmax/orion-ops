@@ -195,18 +195,26 @@ const routes = [
         name: 'BatchExecList',
         meta: {
           requireAuth: true,
-          title: '批量执行'
+          title: '执行记录'
         },
         component: () => import('../views/exec/BatchExecList')
       },
       {
         path: '/batch/exec/add',
         name: 'BatchExecAdd',
+        meta: {
+          requireAuth: true,
+          title: '批量执行'
+        },
         component: () => import('../views/exec/AddBatchExecTask')
       },
       {
         path: '/batch/upload',
         name: 'BatchUploadFile',
+        meta: {
+          requireAuth: true,
+          title: '批量上传'
+        },
         component: () => import('../views/exec/BatchUploadFile')
       },
       {

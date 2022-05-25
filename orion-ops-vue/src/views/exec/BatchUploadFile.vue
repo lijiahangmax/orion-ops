@@ -344,7 +344,6 @@ export default {
         if (body.type === 10) {
           // 添加
           const file = JSON.parse(body.body)
-          file.downloadUrl = null
           this.transferList.unshift(file)
         } else if (body.type === 20) {
           // 速率
@@ -386,6 +385,7 @@ export default {
     },
     abortUpload() {
       this.checkData = null
+      this.notifyClient && this.notifyClient.close()
       this.notifyClient = null
       this.token = null
       this.fileTokenList = []
