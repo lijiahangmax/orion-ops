@@ -177,7 +177,7 @@
         </template>
       </a-table>
     </div>
-    <!-- 表格 -->
+    <!-- 事件 -->
     <div class="exec-event-container">
       <!-- 编辑器预览 -->
       <EditorPreview ref="previewEditor"/>
@@ -220,85 +220,93 @@ const visibleHolder = {
 /**
  * 列
  */
-const columns = [
-  {
-    title: '执行机器',
-    key: 'machine',
-    width: 180,
-    ellipsis: true,
-    sorter: (a, b) => a.machineName.localeCompare(b.machineName),
-    scopedSlots: { customRender: 'machine' }
-  },
-  {
-    title: '执行命令',
-    key: 'command',
-    ellipsis: true,
-    width: 220,
-    scopedSlots: { customRender: 'command' }
-  },
-  {
-    title: '状态',
-    key: 'status',
-    width: 100,
-    align: 'center',
-    sorter: (a, b) => a.status - b.status,
-    scopedSlots: { customRender: 'status' }
-  },
-  {
-    title: '退出码',
-    key: 'exitCode',
-    width: 100,
-    align: 'center',
-    sorter: (a, b) => a.exitCode - b.exitCode,
-    scopedSlots: { customRender: 'exitCode' }
-  },
-  {
-    title: '持续时间',
-    key: 'keepTime',
-    dataIndex: 'keepTime',
-    width: 120,
-    sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
-  },
-  {
-    title: '执行用户',
-    dataIndex: 'username',
-    key: 'username',
-    width: 120,
-    ellipsis: true,
-    sorter: (a, b) => a.username.localeCompare(b.username)
-  },
-  {
-    title: '创建时间',
-    key: 'createTime',
-    width: 150,
-    ellipsis: true,
-    align: 'center',
-    sorter: (a, b) => a.createTime - b.createTime,
-    scopedSlots: { customRender: 'createTime' }
-  },
-  {
-    title: '描述',
-    key: 'description',
-    ellipsis: true,
-    width: 180,
-    scopedSlots: { customRender: 'description' }
-  },
-  {
-    title: '日志',
-    key: 'log',
-    fixed: 'right',
-    width: 100,
-    align: 'center',
-    scopedSlots: { customRender: 'log' }
-  },
-  {
-    title: '操作',
-    key: 'action',
-    fixed: 'right',
-    width: 175,
-    scopedSlots: { customRender: 'action' }
+const getColumns = function() {
+  const columns = [
+    {
+      title: '执行机器',
+      key: 'machine',
+      width: 180,
+      ellipsis: true,
+      sorter: (a, b) => a.machineName.localeCompare(b.machineName),
+      scopedSlots: { customRender: 'machine' }
+    },
+    {
+      title: '执行命令',
+      key: 'command',
+      ellipsis: true,
+      width: 220,
+      scopedSlots: { customRender: 'command' }
+    },
+    {
+      title: '状态',
+      key: 'status',
+      width: 100,
+      align: 'center',
+      sorter: (a, b) => a.status - b.status,
+      scopedSlots: { customRender: 'status' }
+    },
+    {
+      title: '退出码',
+      key: 'exitCode',
+      width: 100,
+      align: 'center',
+      sorter: (a, b) => a.exitCode - b.exitCode,
+      scopedSlots: { customRender: 'exitCode' }
+    },
+    {
+      title: '持续时间',
+      key: 'keepTime',
+      dataIndex: 'keepTime',
+      width: 120,
+      sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
+    },
+    {
+      title: '执行用户',
+      dataIndex: 'username',
+      key: 'username',
+      width: 120,
+      ellipsis: true,
+      sorter: (a, b) => a.username.localeCompare(b.username),
+      requireAdmin: true
+    },
+    {
+      title: '创建时间',
+      key: 'createTime',
+      width: 150,
+      ellipsis: true,
+      align: 'center',
+      sorter: (a, b) => a.createTime - b.createTime,
+      scopedSlots: { customRender: 'createTime' }
+    },
+    {
+      title: '描述',
+      key: 'description',
+      ellipsis: true,
+      width: 180,
+      scopedSlots: { customRender: 'description' }
+    },
+    {
+      title: '日志',
+      key: 'log',
+      fixed: 'right',
+      width: 100,
+      align: 'center',
+      scopedSlots: { customRender: 'log' }
+    },
+    {
+      title: '操作',
+      key: 'action',
+      fixed: 'right',
+      width: 175,
+      scopedSlots: { customRender: 'action' }
+    }
+  ]
+  if (this.$isAdmin()) {
+    return columns
+  } else {
+    return columns.filter(s => !s.requireAdmin)
   }
-]
+}
 
 export default {
   name: 'BatchExecList',
@@ -334,7 +342,7 @@ export default {
       },
       loading: false,
       pollId: null,
-      columns,
+      columns: getColumns.call(this),
       selectedRowKeys: [],
       visibleHolder
     }

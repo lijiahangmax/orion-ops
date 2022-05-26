@@ -40,6 +40,7 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <a-icon v-if="$isAdmin()" type="delete" class="tools-icon" title="清空" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -91,6 +92,10 @@
         </template>
       </a-table>
     </div>
+    <!-- 事件 -->
+    <div class="terminal-event-container">
+      <TerminalLogClearModal ref="clear" @clear="getList({})"/>
+    </div>
   </div>
 </template>
 
@@ -99,6 +104,7 @@
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import _filters from '@/lib/filters'
+import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
 
 /**
  * 列
@@ -157,6 +163,7 @@ const columns = [
 export default {
   name: 'MachineTerminalLogs',
   components: {
+    TerminalLogClearModal,
     MachineAutoComplete,
     UserAutoComplete
   },
@@ -239,6 +246,9 @@ export default {
         this.$message.success('删除成功')
         this.getList({})
       })
+    },
+    openClear() {
+      this.$refs.clear.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

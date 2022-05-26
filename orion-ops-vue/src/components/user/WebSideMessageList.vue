@@ -41,13 +41,7 @@
                             @confirm="readAll">
                 <a-icon type="book" class="tools-icon" title="全部已读"/>
               </a-popconfirm>
-              <a-popconfirm title="确认删除本页消息?"
-                            placement="topRight"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="removeCurrentPage">
-                <a-icon type="delete" class="tools-icon" title="删除本页消息"/>
-              </a-popconfirm>
+              <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
               <a-icon type="search" class="tools-icon" title="查询" @click="getMessageList()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
             </div>
@@ -112,7 +106,10 @@
     </div>
     <!-- 事件 -->
     <div class="message-event">
+      <!-- 消息详情 -->
       <WebSideMessageModal ref="messageModal"/>
+      <!-- 清理 -->
+      <WebSideMessageClearModal ref="clear" @clear="getMessageList()"/>
     </div>
   </div>
 </template>
@@ -120,10 +117,14 @@
 <script>
 import _filters from '@/lib/filters'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
+import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
 
 export default {
   name: 'WebSideMessageList',
-  components: { WebSideMessageModal },
+  components: {
+    WebSideMessageClearModal,
+    WebSideMessageModal
+  },
   data() {
     return {
       loading: false,
@@ -190,16 +191,8 @@ export default {
         this.getMessageList()
       })
     },
-    removeCurrentPage() {
-      if (!this.rows.length) {
-        return
-      }
-      this.$api.deleteWebSideMessage({
-        idList: this.rows.map(s => s.id)
-      }).then(() => {
-        this.$message.success('已删除')
-        this.getMessageList()
-      })
+    openClear() {
+      this.$refs.clear.open()
     },
     openDetail(detail) {
       detail.status = this.$enum.READ_STATUS.READ.value

@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible"
-           title="批量执行 清理"
+           title="站内信 清理"
            okText="清理"
            :width="400"
            :okButtonProps="{props: {disabled: loading}}"
@@ -15,7 +15,7 @@
           <a-radio-group class="nowrap" v-model="submit.range">
             <a-radio-button :value="$enum.DATA_CLEAR_RANGE.DAY.value">保留天数</a-radio-button>
             <a-radio-button :value="$enum.DATA_CLEAR_RANGE.TOTAL.value">保留条数</a-radio-button>
-            <a-radio-button :value="$enum.DATA_CLEAR_RANGE.REL_ID.value">清理机器</a-radio-button>
+            <a-radio-button :value="$enum.DATA_CLEAR_RANGE.REL_ID.value">清理分类</a-radio-button>
           </a-radio-group>
         </div>
         <!-- 清理参数 -->
@@ -37,16 +37,20 @@
                             placeholder="清理后数据所保留的条数"/>
           </div>
           <div class="data-clear-param" v-if="$enum.DATA_CLEAR_RANGE.REL_ID.value === submit.range">
-            <span class="normal-label clear-label">清理机器</span>
-            <MachineSelector class="param-input"
-                             placeholder="请选择清理的机器"
-                             @change="(e) => submit.relIdList[0] = e"/>
+            <span class="normal-label clear-label">清理分类</span>
+            <a-select class="param-input"
+                      placeholder="请选择需要清理的消息分类"
+                      @change="(e) => submit.relIdList[0] = e">
+              <a-select-option v-for="classify in $enum.MESSAGE_CLASSIFY" :key="classify.value" :value="classify.value">
+                {{ classify.label }}
+              </a-select-option>
+            </a-select>
           </div>
         </div>
-        <!-- 管理员 -->
-        <div class="all-user-wrapper" v-if="$isAdmin()">
-          <span class="normal-label clear-label">执行用户</span>
-          <a-checkbox class="param-input" v-model="iCreated">只清理我执行的</a-checkbox>
+        <!-- 清理状态 -->
+        <div class="read-status-wrapper">
+          <span class="normal-label clear-label">状态区间</span>
+          <a-checkbox class="param-input" v-model="onlyRead">只清理已读的消息</a-checkbox>
         </div>
       </div>
     </a-spin>
@@ -55,16 +59,14 @@
 
 <script>
 import _enum from '@/lib/enum'
-import MachineSelector from '@/components/machine/MachineSelector'
 
 export default {
-  name: 'BatchExecClearModal',
-  components: { MachineSelector },
+  name: 'WebSideMessageClearModal',
   data: function() {
     return {
       visible: false,
       loading: false,
-      iCreated: true,
+      onlyRead: false,
       submit: {
         reserveDay: null,
         reserveTotal: null,
@@ -75,7 +77,7 @@ export default {
   },
   methods: {
     open() {
-      this.iCreated = true
+      this.onlyRead = false
       this.submit.reserveDay = null
       this.submit.reserveTotal = null
       this.submit.relIdList = []
@@ -96,7 +98,7 @@ export default {
         }
       } else if (this.submit.range === this.$enum.DATA_CLEAR_RANGE.REL_ID.value) {
         if (!this.submit.relIdList.length) {
-          this.$message.warning('请选择需要清理的机器')
+          this.$message.warning('请选择需要清理的分类')
           return
         }
       } else {
@@ -116,9 +118,9 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearBatchExec({
+      this.$api.clearWebSideMessage({
         ...this.submit,
-        iCreated: this.iCreated ? 1 : 2
+        onlyRead: this.onlyRead ? 1 : 2
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -165,7 +167,7 @@ export default {
   width: 236px;
 }
 
-.all-user-wrapper {
+.read-status-wrapper {
   margin-top: 12px;
 }
 

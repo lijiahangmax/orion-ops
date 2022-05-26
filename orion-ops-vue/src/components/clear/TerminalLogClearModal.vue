@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible"
-           title="批量执行 清理"
+           title="终端日志 清理"
            okText="清理"
            :width="400"
            :okButtonProps="{props: {disabled: loading}}"
@@ -43,11 +43,6 @@
                              @change="(e) => submit.relIdList[0] = e"/>
           </div>
         </div>
-        <!-- 管理员 -->
-        <div class="all-user-wrapper" v-if="$isAdmin()">
-          <span class="normal-label clear-label">执行用户</span>
-          <a-checkbox class="param-input" v-model="iCreated">只清理我执行的</a-checkbox>
-        </div>
       </div>
     </a-spin>
   </a-modal>
@@ -58,13 +53,12 @@ import _enum from '@/lib/enum'
 import MachineSelector from '@/components/machine/MachineSelector'
 
 export default {
-  name: 'BatchExecClearModal',
+  name: 'TerminalLogClearModal',
   components: { MachineSelector },
   data: function() {
     return {
       visible: false,
       loading: false,
-      iCreated: true,
       submit: {
         reserveDay: null,
         reserveTotal: null,
@@ -75,7 +69,6 @@ export default {
   },
   methods: {
     open() {
-      this.iCreated = true
       this.submit.reserveDay = null
       this.submit.reserveTotal = null
       this.submit.relIdList = []
@@ -116,9 +109,8 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearBatchExec({
-        ...this.submit,
-        iCreated: this.iCreated ? 1 : 2
+      this.$api.clearTerminalLog({
+        ...this.submit
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -163,10 +155,6 @@ export default {
 .param-input {
   margin-left: 8px;
   width: 236px;
-}
-
-.all-user-wrapper {
-  margin-top: 12px;
 }
 
 </style>
