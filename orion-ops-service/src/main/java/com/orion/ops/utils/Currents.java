@@ -1,9 +1,12 @@
 package com.orion.ops.utils;
 
+import com.orion.lang.wrapper.HttpWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.consts.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
+import com.orion.utils.Exceptions;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -86,6 +89,15 @@ public class Currents {
         }
         Integer roleType = user.getRoleType();
         return RoleType.isAdministrator(roleType);
+    }
+
+    /**
+     * 检查是否为管理员权限
+     */
+    public static void requireAdministrator() {
+        if (!isAdministrator()) {
+            throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.NO_PERMISSION));
+        }
     }
 
 }

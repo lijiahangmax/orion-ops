@@ -574,6 +574,49 @@ public enum EventType {
      */
     UPDATE_SYSTEM_OPTION(6120, EventClassify.SYSTEM, "修改系统配置项 <sb>${label}</sb> 原始值:<sb>${before}</sb> 修改为:<sb>${after}</sb>"),
 
+
+    // -------------------- 数据清理 --------------------
+
+    /**
+     * 清理 批量执行数据
+     */
+    DATA_CLEAR_BATCH_EXEC(6205, EventClassify.DATA_CLEAR, "清理批量执行数据 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 终端日志
+     */
+    DATA_CLEAR_TERMINAL_LOG(6210, EventClassify.DATA_CLEAR, "清理终端日志 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 调度记录
+     */
+    DATA_CLEAR_SCHEDULER_RECORD(6215, EventClassify.DATA_CLEAR, "清理任务调度记录 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 应用构建
+     */
+    DATA_CLEAR_APP_BUILD(6220, EventClassify.DATA_CLEAR, "清理应用构建任务数据 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 应用发布
+     */
+    DATA_CLEAR_APP_RELEASE(6225, EventClassify.DATA_CLEAR, "清理应用发布任务数据 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 应用流水线
+     */
+    DATA_CLEAR_APP_PIPELINE(6230, EventClassify.DATA_CLEAR, "清理应用流水线执行数据 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 站内信
+     */
+    DATA_CLEAR_WEB_SIDE_MESSAGE(6235, EventClassify.DATA_CLEAR, "清理站内信 <sb>${count}</sb>条"),
+
+    /**
+     * 清理 操作日志
+     */
+    DATA_CLEAR_EVENT_LOG(6240, EventClassify.DATA_CLEAR, "清理操作日志 <sb>${count}</sb>条"),
+
     // -------------------- 调度操作 --------------------
 
     /**

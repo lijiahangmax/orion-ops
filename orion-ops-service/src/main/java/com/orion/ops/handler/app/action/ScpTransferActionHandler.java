@@ -58,6 +58,7 @@ public class ScpTransferActionHandler extends AbstractActionHandler {
         String scpCommand = Strings.def(action.getActionCommand(), CommandConst.SCP_TRANSFER_DEFAULT);
         Map<String, String> params = Maps.newMap();
         params.put(EnvConst.BUNDLE_PATH, bundlePath);
+        // 目标文件有空格需要转义空格为 \\
         params.put(EnvConst.TRANSFER_PATH, store.getTransferPath().replaceAll(Strings.SPACE, "\\\\\\\\ "));
         params.put(EnvConst.TARGET_USERNAME, store.getMachineUsername());
         params.put(EnvConst.TARGET_HOST, store.getMachineHost());
