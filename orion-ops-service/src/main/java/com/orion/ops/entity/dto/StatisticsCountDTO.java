@@ -28,8 +28,8 @@ public class StatisticsCountDTO {
     private Integer appCount;
 
     /**
-     * 日志数量
+     * 流水线数量
      */
-    private Integer logCount;
+    private Integer pipelineCount;
 
 }

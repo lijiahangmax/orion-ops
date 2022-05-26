@@ -8,6 +8,7 @@ import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.*;
+import com.orion.ops.entity.request.HomeStatisticsRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Utils;
@@ -45,7 +46,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private FileTailListDAO fileTailListDAO;
+    private ApplicationPipelineDAO applicationPipelineDAO;
 
     @Resource
     private SchedulerTaskRecordDAO schedulerTaskRecordDAO;
@@ -78,10 +79,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public HomeStatisticsVO homeStatistics() {
+    public HomeStatisticsVO homeStatistics(HomeStatisticsRequest request) {
         HomeStatisticsVO statistics = new HomeStatisticsVO();
         // 设置数量
-        HomeStatisticsCountVO count = this.homeCountStatistics();
+        HomeStatisticsCountVO count = this.homeCountStatistics(request.getProfileId());
         statistics.setCount(count);
         return statistics;
     }
@@ -89,9 +90,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * 获取首页统计数量
      *
+     * @param profileId profileId
      * @return 首页统计
      */
-    private HomeStatisticsCountVO homeCountStatistics() {
+    private HomeStatisticsCountVO homeCountStatistics(Long profileId) {
         StatisticsCountDTO count;
         // 查询缓存
         String countCache = redisTemplate.opsForValue().get(KeyConst.HOME_STATISTICS_COUNT_KEY);
@@ -103,13 +105,15 @@ public class StatisticsServiceImpl implements StatisticsService {
             Integer profileCount = applicationProfileDAO.selectCount(null);
             // 查询应用数量
             Integer appCount = applicationInfoDAO.selectCount(null);
-            // 查询日志数量
-            Integer logCount = fileTailListDAO.selectCount(null);
+            // 查询流水线数量
+            LambdaQueryWrapper<ApplicationPipelineDO> pipelineWrapper = new LambdaQueryWrapper<ApplicationPipelineDO>()
+                    .eq(ApplicationPipelineDO::getProfileId, profileId);
+            Integer pipelineCount = applicationPipelineDAO.selectCount(pipelineWrapper);
             // 设置缓存
             count.setMachineCount(machineCount);
             count.setProfileCount(profileCount);
             count.setAppCount(appCount);
-            count.setLogCount(logCount);
+            count.setPipelineCount(pipelineCount);
             redisTemplate.opsForValue().set(KeyConst.HOME_STATISTICS_COUNT_KEY, JSON.toJSONString(count),
                     Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
         } else {

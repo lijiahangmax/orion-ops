@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.request.HomeStatisticsRequest;
 import com.orion.ops.entity.vo.*;
 
 import java.util.List;
@@ -16,9 +17,10 @@ public interface StatisticsService {
     /**
      * 获取首页统计信息
      *
+     * @param request request
      * @return 统计信息
      */
-    HomeStatisticsVO homeStatistics();
+    HomeStatisticsVO homeStatistics(HomeStatisticsRequest request);
 
     /**
      * 获取调度任务统计

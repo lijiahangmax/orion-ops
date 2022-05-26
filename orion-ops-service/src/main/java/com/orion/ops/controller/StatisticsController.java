@@ -2,10 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.entity.request.AppBuildStatisticsRequest;
-import com.orion.ops.entity.request.AppPipelineTaskStatisticsRequest;
-import com.orion.ops.entity.request.AppReleaseStatisticsRequest;
-import com.orion.ops.entity.request.SchedulerTaskStatisticsRequest;
+import com.orion.ops.entity.request.*;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.StatisticsService;
 import com.orion.ops.utils.Valid;
@@ -35,8 +32,8 @@ public class StatisticsController {
      * 首页统计
      */
     @RequestMapping("/home")
-    public HomeStatisticsVO homeStatistics() {
-        return statisticsService.homeStatistics();
+    public HomeStatisticsVO homeStatistics(@RequestBody HomeStatisticsRequest request) {
+        return statisticsService.homeStatistics(request);
     }
 
     /**

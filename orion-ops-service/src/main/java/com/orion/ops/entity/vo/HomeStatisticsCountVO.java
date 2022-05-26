@@ -30,9 +30,9 @@ public class HomeStatisticsCountVO {
     private Integer appCount;
 
     /**
-     * 日志数量
+     * 流水线数量
      */
-    private Integer logCount;
+    private Integer pipelineCount;
 
     static {
         TypeStore.STORE.register(StatisticsCountDTO.class, HomeStatisticsCountVO.class, p -> {
@@ -40,7 +40,7 @@ public class HomeStatisticsCountVO {
             vo.setMachineCount(p.getMachineCount());
             vo.setProfileCount(p.getProfileCount());
             vo.setAppCount(p.getAppCount());
-            vo.setLogCount(p.getLogCount());
+            vo.setPipelineCount(p.getPipelineCount());
             return vo;
         });
     }
