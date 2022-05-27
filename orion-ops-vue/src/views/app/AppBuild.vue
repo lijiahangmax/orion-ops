@@ -56,6 +56,7 @@
       <div class="tools-fixed-right">
         <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="build" @click="openBuild">构建应用</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -154,6 +155,8 @@
       <AppBuildDetailDrawer ref="detail"/>
       <!-- 日志模态框 -->
       <AppBuildLogAppenderModal ref="logView"/>
+      <!-- 清理模态框 -->
+      <AppBuildClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -165,6 +168,7 @@ import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import _filters from '@/lib/filters'
 import _enum from '@/lib/enum'
+import AppBuildClearModal from '@/components/clear/AppBuildClearModal'
 
 /**
  * 状态判断
@@ -246,6 +250,7 @@ const columns = [
 export default {
   name: 'AppBuild',
   components: {
+    AppBuildClearModal,
     AppBuildLogAppenderModal,
     AppBuildModal,
     AppSelector,
@@ -345,14 +350,6 @@ export default {
         this.getList({})
       })
     },
-    resetForm() {
-      this.$refs.query.resetFields()
-      this.$refs.appSelector.reset()
-      this.query.appId = undefined
-      this.query.status = undefined
-      this.query.onlyMyself = false
-      this.getList({})
-    },
     openLogView(e, id) {
       if (!e.ctrlKey) {
         e.preventDefault()
@@ -363,6 +360,17 @@ export default {
         // 跳转页面
         return true
       }
+    },
+    openClear() {
+      this.$refs.clear.open(this.query.profileId)
+    },
+    resetForm() {
+      this.$refs.query.resetFields()
+      this.$refs.appSelector.reset()
+      this.query.appId = undefined
+      this.query.status = undefined
+      this.query.onlyMyself = false
+      this.getList({})
     },
     pollStatus() {
       if (!this.rows || !this.rows.length) {
