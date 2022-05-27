@@ -10,7 +10,6 @@ import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.service.api.FileDownloadService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
-import com.orion.utils.Strings;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,7 +55,7 @@ public class FileDownloadController {
             fileDownloadService.execDownload(token, response);
         } catch (NotFoundException e) {
             // 文件未找到
-            Servlets.transfer(response, Const.EMPTY.getBytes(), Strings.bytes(Const.UNKNOWN, Const.UTF_8));
+            Servlets.transfer(response, Const.EMPTY.getBytes(), Const.UNKNOWN);
         }
     }
 

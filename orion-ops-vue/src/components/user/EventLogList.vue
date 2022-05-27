@@ -1,7 +1,7 @@
 <template>
   <div class="log-list-container">
     <!-- 筛选 -->
-    <div class="log-list-filter table-search-columns">
+    <div v-if="!disableSearch" class="log-list-filter table-search-columns">
       <a-form-model ref="query" :model="query">
         <a-row>
           <a-col :span="6">
@@ -90,6 +90,10 @@ export default {
   name: 'EventLogList',
   components: { EditorPreview },
   props: {
+    disableSearch: {
+      type: Boolean,
+      default: false
+    },
     baseQuery: {
       type: Object,
       default: () => {

@@ -232,19 +232,22 @@ function getColumns() {
       align: 'center',
       sorter: (a, b) => (a.lastLoginTime || 0) - (b.lastLoginTime || 0),
       scopedSlots: { customRender: 'lastLoginTime' }
-    }
-  ]
-  if (this.$isAdmin()) {
-    columns.push({
+    },
+    {
       title: '操作',
       key: 'action',
       fixed: 'right',
       width: 310,
       align: 'center',
-      scopedSlots: { customRender: 'action' }
-    })
+      scopedSlots: { customRender: 'action' },
+      requireAdmin: true
+    }
+  ]
+  if (this.$isAdmin()) {
+    return columns
+  } else {
+    return columns.filter(s => !s.requireAdmin)
   }
-  return columns
 }
 
 export default {
