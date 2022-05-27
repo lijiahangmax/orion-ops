@@ -70,6 +70,7 @@
           </div>
           <!-- 右侧 -->
           <div class="tools-fixed-right">
+            <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
             <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
             <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
           </div>
@@ -203,6 +204,8 @@
       <SchedulerTaskLogAppenderModal ref="taskLoggerView"/>
       <!-- 机器日志 -->
       <SchedulerTaskMachineLogAppenderModal ref="machineLoggerView"/>
+      <!-- 批量清理 -->
+      <SchedulerRecordClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -214,6 +217,7 @@ import _enum from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 import SchedulerTaskMachineLogAppenderModal from '@/components/log/SchedulerTaskMachineLogAppenderModal'
 import SchedulerTaskLogAppenderModal from '@/components/log/SchedulerTaskLogAppenderModal'
+import SchedulerRecordClearModal from '@/components/clear/SchedulerRecordClearModal'
 
 /**
  * 列
@@ -338,6 +342,7 @@ const visibleHolder = {
 export default {
   name: 'SchedulerRecord',
   components: {
+    SchedulerRecordClearModal,
     SchedulerTaskLogAppenderModal,
     SchedulerTaskMachineLogAppenderModal,
     EditorPreview
@@ -495,6 +500,14 @@ export default {
     previewCommand(command) {
       this.$refs.preview.preview(command)
     },
+    openClear() {
+      this.$refs.clear.open(this.selectedTaskIds[0])
+    },
+    resetForm() {
+      this.$refs.query.resetFields()
+      this.query.status = undefined
+      this.getList({})
+    },
     pollStatus() {
       if (!this.rows || !this.rows.length) {
         return
@@ -543,11 +556,6 @@ export default {
         // 强制刷新状态
         this.$set(this.rows, 0, this.rows[0])
       })
-    },
-    resetForm() {
-      this.$refs.query.resetFields()
-      this.query.status = undefined
-      this.getList({})
     }
   },
   filters: {
