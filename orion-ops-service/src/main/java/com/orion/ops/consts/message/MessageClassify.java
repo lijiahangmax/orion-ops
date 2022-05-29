@@ -19,6 +19,11 @@ public enum MessageClassify {
      */
     SYSTEM(10),
 
+    /**
+     * 数据导入
+     */
+    IMPORT(20),
+
     ;
 
     private final Integer classify;

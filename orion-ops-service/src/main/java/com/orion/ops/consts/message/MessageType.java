@@ -14,6 +14,8 @@ import lombok.Getter;
 @Getter
 public enum MessageType {
 
+    // -------------------- 系统消息 --------------------
+
     /**
      * 命令执行完成
      */
@@ -83,6 +85,18 @@ public enum MessageType {
      * 应用流水线执行失败
      */
     PIPELINE_EXEC_FAILURE(1140, MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行失败"),
+
+    // -------------------- 导入通知 --------------------
+
+    /**
+     * 导入机器成功
+     */
+    MACHINE_IMPORT_SUCCESS(2010, MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器导入操作执行完成"),
+
+    /**
+     * 导入机器失败
+     */
+    MACHINE_IMPORT_FAILURE(2020, MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器导入操作执行失败"),
 
     ;
 

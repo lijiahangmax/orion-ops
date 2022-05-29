@@ -178,6 +178,39 @@ public class PathBuilders {
     }
 
     /**
+     * 获取导出数据 xlsx 文件路径
+     *
+     * @param userId userId
+     * @param type   type
+     * @return path
+     */
+    public static String getExportDataJsonPath(Long userId, Integer type, String password) {
+        return Const.EXPORT_DIR
+                + "/" + type
+                + "/" + Dates.current(Dates.YMD_HMS2)
+                + "-" + userId
+                + "-" + password
+                + "." + Const.SUFFIX_XLSX;
+    }
+
+    /**
+     * 获取导入数据 json 文件路径
+     *
+     * @param userId userId
+     * @param type   type
+     * @param token  token
+     * @return path
+     */
+    public static String getImportDataJsonPath(Long userId, Integer type, String token) {
+        return Const.IMPORT_DIR
+                + "/" + type
+                + "/" + Dates.current(Dates.YMD_HMS2)
+                + "-" + userId
+                + "-" + token
+                + "." + Const.SUFFIX_JSON;
+    }
+
+    /**
      * 获取用户根目录
      *
      * @param username 用户名
