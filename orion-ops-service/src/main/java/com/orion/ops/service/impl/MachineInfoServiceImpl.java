@@ -8,6 +8,7 @@ import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.channel.SessionHolder;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -171,7 +172,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, effect);
-        EventParamsHolder.addParam(EventKeys.OPERATOR, Const.ENABLE.equals(status) ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, Const.ENABLE.equals(status) ? CnConst.ENABLE : CnConst.DISABLE);
         return effect;
     }
 

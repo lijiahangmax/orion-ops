@@ -28,7 +28,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     private String name;
 
     /**
-     * 机器标签
+     * 唯一标识
      */
     @ImportField(index = 1)
     private String tag;

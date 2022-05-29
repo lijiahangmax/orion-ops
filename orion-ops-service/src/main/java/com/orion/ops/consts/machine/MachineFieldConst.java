@@ -59,7 +59,6 @@ public class MachineFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-
     /**
      * 验证数据合法性
      *

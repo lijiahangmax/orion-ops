@@ -1,6 +1,7 @@
 package com.orion.ops.handler.app.pipeline.stage;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.PipelineLogStatus;
@@ -80,7 +81,7 @@ public class ReleaseStageHandler extends AbstractStageHandler {
         ApplicationPipelineStageConfigDTO config = JSON.parseObject(detail.getStageConfig(), ApplicationPipelineStageConfigDTO.class);
         request.setDescription(config.getDescription());
         // 标题
-        request.setTitle(Strings.def(config.getTitle(), () -> Const.RELEASE_CN + Const.SPACE + detail.getAppName()));
+        request.setTitle(Strings.def(config.getTitle(), () -> CnConst.RELEASE + Const.SPACE + detail.getAppName()));
         // 构建id
         Long buildId = config.getBuildId();
         ApplicationBuildDO build = null;

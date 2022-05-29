@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.UUIds;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
@@ -193,7 +194,7 @@ public class UserServiceImpl implements UserService {
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.USERNAME, userInfo.getUsername());
-        EventParamsHolder.addParam(EventKeys.OPERATOR, enable ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, enable ? CnConst.ENABLE : CnConst.DISABLE);
         return effect;
     }
 

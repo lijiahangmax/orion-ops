@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.constant.Letters;
 import com.orion.lang.wrapper.DataGrid;
 import com.orion.ops.consts.AuditStatus;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.app.PipelineDetailStatus;
@@ -219,7 +220,7 @@ public class ApplicationPipelineTaskServiceImpl implements ApplicationPipelineTa
         }
         int effect = applicationPipelineTaskDAO.updateById(update);
         this.setEventLogParams(task);
-        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? Const.RESOLVE_LABEL : Const.REJECT_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? CnConst.RESOLVE : CnConst.REJECT);
         return effect;
     }
 
@@ -307,7 +308,7 @@ public class ApplicationPipelineTaskServiceImpl implements ApplicationPipelineTa
             Long appId = detail.getAppId();
             ApplicationInfoDO appInfo = appMap.get(appId);
             Valid.notNull(appInfo, detail.getAppName() + MessageConst.ABSENT);
-            String appSymbol = Const.APP_CN + Strings.SPACE + appInfo.getAppName() + Strings.SPACE;
+            String appSymbol = CnConst.APP + Strings.SPACE + appInfo.getAppName() + Strings.SPACE;
             // 检查构建版本
             if (StageType.BUILD.getType().equals(detail.getStageType())) {
                 appBuildStage.add(appId);

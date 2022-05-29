@@ -27,7 +27,7 @@ public class MachineInfoExportDTO {
     private String name;
 
     /**
-     * 机器标签
+     * 唯一标识
      */
     @ExportField(index = 1, header = "唯一标识", width = 25)
     private String tag;
