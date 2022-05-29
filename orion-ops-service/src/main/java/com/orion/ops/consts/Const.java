@@ -56,6 +56,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TASK_DIR = "/task";
 
+    public static final String IMPORT_DIR = "/import";
+
+    public static final String EXPORT_DIR = "/export";
+
     public static final String BUILD = "build";
 
     public static final String RELEASE = "release";
@@ -125,6 +129,10 @@ public class Const extends com.orion.constant.Const {
     public static final String RESOLVE_LABEL = "通过";
 
     public static final String REJECT_LABEL = "驳回";
+
+    public static final String SUCCESS_LABEL = "成功";
+
+    public static final String FAILURE_LABEL = "失败";
 
     public static final Double D_0 = 0D;
 

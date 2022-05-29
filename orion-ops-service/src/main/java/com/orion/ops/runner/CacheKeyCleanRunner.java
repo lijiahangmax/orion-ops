@@ -52,7 +52,9 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 // 调度统计key
                 Strings.format(KeyConst.SCHEDULER_TASK_STATISTICS_KEY, "*"),
                 // 环境缓存key
-                KeyConst.DATA_PROFILE_KEY
+                KeyConst.DATA_PROFILE_KEY,
+                // 数据导入缓存
+                Strings.format(KeyConst.DATA_IMPORT_TOKEN, "*", "*")
         );
         // 查询删除缓存key
         scanKeys.stream()

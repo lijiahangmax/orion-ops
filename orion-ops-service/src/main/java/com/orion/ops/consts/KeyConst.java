@@ -136,4 +136,16 @@ public class KeyConst {
      */
     public static final int DATA_PROFILE_EXPIRE = 60 * 30;
 
+    /**
+     * 数据导入缓存 key
+     * <p>
+     * data:import:{userId}:{token}
+     */
+    public static final String DATA_IMPORT_TOKEN = "data:import:{}:{}";
+
+    /**
+     * 5 min
+     */
+    public static final int DATA_IMPORT_TOKEN_EXPIRE = 60 * 5;
+
 }

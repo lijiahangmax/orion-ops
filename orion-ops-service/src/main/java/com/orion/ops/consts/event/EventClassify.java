@@ -115,14 +115,24 @@ public enum EventClassify {
     SYSTEM(95),
 
     /**
-     * 数据清理
-     */
-    DATA_CLEAR(97),
-
-    /**
      * 调度操作
      */
     SCHEDULER(100),
+
+    /**
+     * 数据清理
+     */
+    DATA_CLEAR(110),
+
+    /**
+     * 数据导入
+     */
+    DATA_IMPORT(120),
+
+    /**
+     * 数据导出
+     */
+    DATA_EXPORT(130),
 
     ;
 
