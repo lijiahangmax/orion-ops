@@ -247,4 +247,9 @@ public class EventKeys {
      */
     public static final String USER_ID = "userId";
 
+    /**
+     * 状态
+     */
+    public static final String STATUS = "status";
+
 }

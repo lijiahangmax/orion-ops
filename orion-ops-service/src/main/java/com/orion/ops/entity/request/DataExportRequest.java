@@ -41,6 +41,11 @@ public class DataExportRequest {
     private Long userId;
 
     /**
+     * 状态
+     */
+    private Integer status;
+
+    /**
      * 只看自己
      *
      * @see com.orion.ops.consts.Const#ENABLE

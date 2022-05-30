@@ -104,7 +104,8 @@ public class DataExportServiceImpl implements DataExportService {
         // 查询数据
         Long machineId = request.getMachineId();
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
-                .eq(Objects.nonNull(machineId), MachineTerminalLogDO::getMachineId, machineId);
+                .eq(Objects.nonNull(machineId), MachineTerminalLogDO::getMachineId, machineId)
+                .orderByDesc(MachineTerminalLogDO::getCreateTime);
         List<MachineTerminalLogDO> terminalList = machineTerminalLogDAO.selectList(wrapper);
         List<MachineTerminalLogExportDTO> exportList = Converts.toList(terminalList, MachineTerminalLogExportDTO.class);
         // 导出
@@ -228,9 +229,12 @@ public class DataExportServiceImpl implements DataExportService {
     public void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException {
         // 查询数据
         Integer classify = request.getClassify();
+        Integer status = request.getStatus();
         LambdaQueryWrapper<WebSideMessageDO> wrapper = new LambdaQueryWrapper<WebSideMessageDO>()
                 .eq(WebSideMessageDO::getToUserId, Currents.getUserId())
-                .eq(Objects.nonNull(classify), WebSideMessageDO::getMessageClassify, classify);
+                .eq(Objects.nonNull(classify), WebSideMessageDO::getMessageClassify, classify)
+                .eq(Objects.nonNull(status), WebSideMessageDO::getReadStatus, status)
+                .orderByDesc(WebSideMessageDO::getCreateTime);
         List<WebSideMessageDO> messageList = webSideMessageDAO.selectList(wrapper);
         List<WebSideMessageExportDTO> exportList = Converts.toList(messageList, WebSideMessageExportDTO.class);
         // 导出
@@ -240,6 +244,7 @@ public class DataExportServiceImpl implements DataExportService {
         this.writeWorkbook(request, response, exporter, ExportType.WEB_SIDE_MESSAGE);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.CLASSIFY, classify);
+        EventParamsHolder.addParam(EventKeys.STATUS, status);
     }
 
     @Override
@@ -250,7 +255,8 @@ public class DataExportServiceImpl implements DataExportService {
         LambdaQueryWrapper<UserEventLogDO> wrapper = new LambdaQueryWrapper<UserEventLogDO>()
                 .eq(UserEventLogDO::getExecResult, Const.ENABLE)
                 .eq(Objects.nonNull(userId), UserEventLogDO::getUserId, userId)
-                .eq(Objects.nonNull(classify), UserEventLogDO::getEventClassify, classify);
+                .eq(Objects.nonNull(classify), UserEventLogDO::getEventClassify, classify)
+                .orderByDesc(UserEventLogDO::getCreateTime);
         List<UserEventLogDO> logList = userEventLogDAO.selectList(wrapper);
         List<EventLogExportDTO> exportList = Converts.toList(logList, EventLogExportDTO.class);
         // 导出

@@ -25,16 +25,16 @@ import java.util.Optional;
  */
 @Data
 @ExportTitle(title = "站内信导出")
-@ExportSheet(name = "站内信", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
+@ExportSheet(name = "站内信", height = 22, freezeHeader = true, filterHeader = true)
 public class WebSideMessageExportDTO {
 
     @ExportField(index = 0, header = "收信人", width = 15, wrapText = true)
     private String username;
 
-    @ExportField(index = 1, header = "消息分类", width = 13)
+    @ExportField(index = 1, header = "消息分类", width = 17)
     private String classify;
 
-    @ExportField(index = 2, header = "消息类型", width = 13)
+    @ExportField(index = 2, header = "消息类型", width = 22)
     private String type;
 
     @ExportField(index = 3, header = "是否已读", width = 10)
@@ -43,7 +43,7 @@ public class WebSideMessageExportDTO {
     @ExportField(index = 4, header = "发送时间", width = 20, wrapText = true, type = ExcelFieldType.DATE, format = Dates.YMD_HMS)
     private Date time;
 
-    @ExportField(index = 5, header = "消息", width = 50, wrapText = true)
+    @ExportField(index = 5, header = "消息", width = 65, wrapText = true)
     private String message;
 
     @ExportField(index = 6, header = "参数", width = 20, wrapText = true)
