@@ -62,6 +62,22 @@ const $fetch = (url, method = 'get', config) => {
 }
 
 /**
+ * 导出请求
+ */
+const $export = (url, data, config) => {
+  return new Promise((resolve, reject) => {
+    $http.post(url, data, fillDefaultConfig({
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 600000,
+      loading: '正在导出请耐心等待...',
+      ...config
+    })).then(res => resolve(res))
+      .catch(err => reject(err))
+  })
+}
+
+/**
  * 填充默认配置
  */
 function fillDefaultConfig(config) {
@@ -105,7 +121,7 @@ $http.interceptors.response.use(
     resp.config.loadingKey && resp.config.loadingKey()
     // 跳过响应拦截器
     if (resp.config.skipRespInterceptor) {
-      return resp.data
+      return resp
     }
     const skipErrorMessage = resp.config.skipErrorMessage
     // 判断data
@@ -226,6 +242,7 @@ export default {
   $get,
   $post,
   $fetch,
+  $export,
   BASE_URL: process.env.VUE_APP_BASE_URI,
   BASE_HOST: process.env.VUE_APP_BASE_HOST
 }

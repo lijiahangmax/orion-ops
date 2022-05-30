@@ -38,7 +38,6 @@ export default {
   },
   methods: {
     open() {
-      this.exportPassword = false
       this.protectPassword = undefined
       this.loading = false
       this.visible = true

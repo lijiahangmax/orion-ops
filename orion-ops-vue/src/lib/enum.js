@@ -1366,7 +1366,7 @@ const $enum = {
         },
         CANCEL_TIMED_RELEASE: {
           value: 5040,
-          label: '取消发布'
+          label: '取消定时发布'
         },
         SET_TIMED_RELEASE: {
           value: 5045,
@@ -1569,8 +1569,8 @@ const $enum = {
       label: '数据导入',
       type: {
         DATA_IMPORT_MACHINE: {
-          value: 8205,
-          label: '导入机器'
+          value: 8305,
+          label: '机器信息'
         }
       }
     },
@@ -1579,8 +1579,44 @@ const $enum = {
       label: '数据导出',
       type: {
         DATA_EXPORT_MACHINE: {
-          value: 8305,
-          label: '导出机器'
+          value: 8505,
+          label: '机器信息'
+        },
+        DATA_EXPORT_MACHINE_PROXY: {
+          value: 8510,
+          label: '机器代理'
+        },
+        DATA_EXPORT_MACHINE_TERMINAL_LOG: {
+          value: 8515,
+          label: '终端日志'
+        },
+        DATA_EXPORT_MACHINE_TAIL_FILE: {
+          value: 8520,
+          label: '日志文件'
+        },
+        DATA_EXPORT_APP_PROFILE: {
+          value: 8550,
+          label: '应用环境'
+        },
+        DATA_EXPORT_APPLICATION: {
+          value: 8555,
+          label: '应用信息'
+        },
+        DATA_EXPORT_APP_VCS: {
+          value: 8560,
+          label: '应用仓库'
+        },
+        DATA_EXPORT_COMMAND_TEMPLATE: {
+          value: 8605,
+          label: '命令模板'
+        },
+        DATA_EXPORT_WEB_SIDE_MESSAGE: {
+          value: 8610,
+          label: '站内信'
+        },
+        DATA_EXPORT_EVENT_LOG: {
+          value: 8615,
+          label: '操作日志'
         }
       }
     }

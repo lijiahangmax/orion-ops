@@ -2183,48 +2183,70 @@ const $api = {
    * 导出机器信息
    */
   exportMachine: param => {
-    return $http.$post('/data-export/machine', param, {
-      skipRespInterceptor: true,
-      responseType: 'blob',
-      timeout: 600000,
-      loading: '正在导出请耐心等待...'
-    })
+    return $http.$export('/data-export/machine', param)
   },
 
   /**
-   * 导出机器信息
+   * 导出机器代理
+   */
+  exportMachineProxy: param => {
+    return $http.$export('/data-export/machine-proxy', param)
+  },
+
+  /**
+   * 导出机器终端日志
+   */
+  exportMachineTerminalLog: param => {
+    return $http.$export('/data-export/machine-terminal-log', param)
+  },
+
+  /**
+   * 导出机器日志文件
+   */
+  exportMachineTailFile: param => {
+    return $http.$export('/data-export/machine-tail-file', param)
+  },
+
+  /**
+   * 导出应用环境
    */
   exportAppProfile: param => {
-    return $http.$post('/data-export/app-profile', param, {
-      skipRespInterceptor: true,
-      responseType: 'blob',
-      timeout: 600000,
-      loading: '正在导出请耐心等待...'
-    })
+    return $http.$export('/data-export/app-profile', param)
   },
 
   /**
-   * 导出机器信息
+   * 导出应用信息
    */
   exportApplication: param => {
-    return $http.$post('/data-export/application', param, {
-      skipRespInterceptor: true,
-      responseType: 'blob',
-      timeout: 600000,
-      loading: '正在导出请耐心等待...'
-    })
+    return $http.$export('/data-export/application', param)
   },
 
   /**
-   * 导出机器信息
+   * 导出应用版本仓库
    */
   exportAppVcs: param => {
-    return $http.$post('/data-export/app-vcs', param, {
-      skipRespInterceptor: true,
-      responseType: 'blob',
-      timeout: 600000,
-      loading: '正在导出请耐心等待...'
-    })
+    return $http.$export('/data-export/app-vcs', param)
+  },
+
+  /**
+   * 导出命令模板
+   */
+  exportCommandTemplate: param => {
+    return $http.$export('/data-export/command-template', param)
+  },
+
+  /**
+   * 导出站内信
+   */
+  exportWebSideMessage: param => {
+    return $http.$export('/data-export/web-side-message', param)
+  },
+
+  /**
+   * 导出操作日志
+   */
+  exportEventLog: param => {
+    return $http.$export('/data-export/event-log', param)
   },
 
   /**
