@@ -96,8 +96,6 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TEMP_PACKAGE_PATH = "tmp_ops_pkg";
 
-    public static final Long N_N_L_1 = -1L;
-
     public static final Integer IS_DEFAULT = 1;
 
     public static final Integer CONFIGURED = 1;
@@ -122,11 +120,15 @@ public class Const extends com.orion.constant.Const {
 
     public static final int MIN_TRACKER_DELAY_MS = 50;
 
-    public static final Double D_0 = 0D;
-
     public static final int DEFAULT_FILE_CLEAN_THRESHOLD = 60;
 
     public static final int DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR = 24 * 2;
+
+    public static final String GITHUB = "github";
+
+    public static final String GITEE = "gitee";
+
+    public static final String GITLAB = "gitlab";
 
     public static final String OAUTH2 = "oauth2";
 

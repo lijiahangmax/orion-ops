@@ -15,7 +15,13 @@ public class ExportConst {
     private ExportConst() {
     }
 
-    public static final String MACHINE_EXPORT_NAME = "机器导出信息{}.xlsx";
+    public static final String MACHINE_EXPORT_NAME = "机器信息导出-{}.xlsx";
+
+    public static final String APP_PROFILE_EXPORT_NAME = "应用环境导出-{}.xlsx";
+
+    public static final String APPLICATION_EXPORT_NAME = "应用信息导出-{}.xlsx";
+
+    public static final String APP_VCS_EXPORT_NAME = "应用版本仓库导出-{}.xlsx";
 
 
     /**

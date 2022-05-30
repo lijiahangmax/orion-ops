@@ -23,4 +23,31 @@ public interface DataExportService {
      */
     void exportMachine(DataExportRequest request, HttpServletResponse response) throws IOException;
 
+    /**
+     * 导出应用环境
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportAppProfile(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出应用
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportApplication(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出仓库
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException;
+
 }

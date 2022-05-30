@@ -36,5 +36,10 @@ public class CnConst {
 
     public static final String RELEASE = "发布";
 
+    public static final String PASSWORD = "密码";
+
+    public static final String TOKEN = "令牌";
+
+    public static final String SECRET_KEY = "秘钥";
 
 }

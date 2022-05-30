@@ -675,7 +675,22 @@ public enum EventType {
     /**
      * 导出机器
      */
-    DATA_EXPORT_MACHINE(8305, EventClassify.DATA_EXPORT, "批量导出机器信息"),
+    DATA_EXPORT_MACHINE(8305, EventClassify.DATA_EXPORT, "导出机器信息"),
+
+    /**
+     * 导出应用环境
+     */
+    DATA_EXPORT_APP_PROFILE(8310, EventClassify.DATA_EXPORT, "导出应用环境信息"),
+
+    /**
+     * 导出应用信息
+     */
+    DATA_EXPORT_APPLICATION(8315, EventClassify.DATA_EXPORT, "导出应用信息"),
+
+    /**
+     * 导出应用仓库
+     */
+    DATA_EXPORT_APP_VCS(8320, EventClassify.DATA_EXPORT, "导出应用版本仓库信息"),
 
     ;
 

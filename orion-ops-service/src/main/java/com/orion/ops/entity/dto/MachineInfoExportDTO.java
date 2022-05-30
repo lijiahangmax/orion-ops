@@ -3,6 +3,7 @@ package com.orion.ops.entity.dto;
 import com.orion.office.excel.annotation.ExportField;
 import com.orion.office.excel.annotation.ExportSheet;
 import com.orion.office.excel.annotation.ExportTitle;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.machine.MachineAuthType;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.utils.convert.TypeStore;
@@ -20,52 +21,31 @@ import lombok.Data;
 @ExportSheet(name = "机器信息", height = 22, freezeHeader = true, filterHeader = true)
 public class MachineInfoExportDTO {
 
-    /**
-     * 机器名称
-     */
-    @ExportField(index = 0, header = "机器名称", width = 30)
+    @ExportField(index = 0, header = "机器名称", width = 20, wrapText = true)
     private String name;
 
-    /**
-     * 唯一标识
-     */
-    @ExportField(index = 1, header = "唯一标识", width = 25)
+    @ExportField(index = 1, header = "唯一标识", width = 20, wrapText = true)
     private String tag;
 
-    /**
-     * 机器主机
-     */
-    @ExportField(index = 2, header = "机器主机", width = 30)
+    @ExportField(index = 2, header = "机器主机", width = 20, wrapText = true)
     private String host;
 
-    /**
-     * ssh 端口
-     */
     @ExportField(index = 3, header = "ssh 端口", width = 10)
     private Integer port;
 
-    /**
-     * 用户名
-     */
-    @ExportField(index = 4, header = "用户名", width = 20)
+    @ExportField(index = 4, header = "认证方式 (密码/秘钥)", width = 22, selectOptions = {CnConst.PASSWORD, CnConst.SECRET_KEY})
+    private String authType;
+
+    @ExportField(index = 5, header = "用户名", width = 20, wrapText = true)
     private String username;
 
-    /**
-     * 密码 (密文)
-     */
-    @ExportField(index = 5, header = "导出密码 (密文)", width = 20, wrapText = true)
+    @ExportField(index = 6, header = "导出密码 (密文)", width = 15, wrapText = true)
     private String encryptPassword;
 
-    /**
-     * 导入密码 (明文)
-     */
-    @ExportField(index = 6, header = "导入密码 (明文)", width = 20, wrapText = true)
+    @ExportField(index = 7, header = "导入密码 (明文)", width = 15, wrapText = true)
     private String importPassword;
 
-    /**
-     * 描述
-     */
-    @ExportField(index = 7, header = "描述", width = 25, wrapText = true)
+    @ExportField(index = 8, header = "描述", width = 25, wrapText = true)
     private String description;
 
     static {
@@ -76,9 +56,11 @@ public class MachineInfoExportDTO {
             dto.setHost(p.getMachineHost());
             dto.setPort(p.getSshPort());
             dto.setUsername(p.getUsername());
-            if (MachineAuthType.PASSWORD.getType().equals(p.getAuthType())) {
+            MachineAuthType authType = MachineAuthType.of(p.getAuthType());
+            if (MachineAuthType.PASSWORD.equals(authType)) {
                 dto.setEncryptPassword(p.getPassword());
             }
+            dto.setAuthType(authType.getLabel());
             dto.setDescription(p.getDescription());
             return dto;
         });
