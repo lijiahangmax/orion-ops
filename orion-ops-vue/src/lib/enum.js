@@ -1484,44 +1484,6 @@ const $enum = {
         }
       }
     },
-    DATA_CLEAR: {
-      value: 97,
-      label: '数据清理',
-      type: {
-        DATA_CLEAR_BATCH_EXEC: {
-          value: 6205,
-          label: '批量执行'
-        },
-        DATA_CLEAR_TERMINAL_LOG: {
-          value: 6210,
-          label: '终端日志'
-        },
-        DATA_CLEAR_SCHEDULER_RECORD: {
-          value: 6215,
-          label: '任务调度'
-        },
-        DATA_CLEAR_APP_BUILD: {
-          value: 6220,
-          label: '应用构建'
-        },
-        DATA_CLEAR_APP_RELEASE: {
-          value: 6225,
-          label: '应用发布'
-        },
-        DATA_CLEAR_APP_PIPELINE: {
-          value: 6230,
-          label: '流水线任务'
-        },
-        DATA_CLEAR_WEB_SIDE_MESSAGE: {
-          value: 6235,
-          label: '站内信'
-        },
-        DATA_CLEAR_EVENT_LOG: {
-          value: 6240,
-          label: '操作日志'
-        }
-      }
-    },
     SCHEDULER: {
       value: 100,
       label: '调度任务操作',
@@ -1563,7 +1525,66 @@ const $enum = {
           label: '删除调度明细'
         }
       }
+    },
+    DATA_CLEAR: {
+      value: 110,
+      label: '数据清理',
+      type: {
+        DATA_CLEAR_BATCH_EXEC: {
+          value: 8105,
+          label: '批量执行'
+        },
+        DATA_CLEAR_TERMINAL_LOG: {
+          value: 8110,
+          label: '终端日志'
+        },
+        DATA_CLEAR_SCHEDULER_RECORD: {
+          value: 8115,
+          label: '任务调度'
+        },
+        DATA_CLEAR_APP_BUILD: {
+          value: 8120,
+          label: '应用构建'
+        },
+        DATA_CLEAR_APP_RELEASE: {
+          value: 8125,
+          label: '应用发布'
+        },
+        DATA_CLEAR_APP_PIPELINE: {
+          value: 8130,
+          label: '流水线任务'
+        },
+        DATA_CLEAR_WEB_SIDE_MESSAGE: {
+          value: 8135,
+          label: '站内信'
+        },
+        DATA_CLEAR_EVENT_LOG: {
+          value: 8140,
+          label: '操作日志'
+        }
+      }
+    },
+    DATA_IMPORT: {
+      value: 120,
+      label: '数据导入',
+      type: {
+        DATA_IMPORT_MACHINE: {
+          value: 8205,
+          label: '导入机器'
+        }
+      }
+    },
+    DATA_EXPORT: {
+      value: 130,
+      label: '数据导出',
+      type: {
+        DATA_EXPORT_MACHINE: {
+          value: 8305,
+          label: '导出机器'
+        }
+      }
     }
+
   },
 
   /**
@@ -1899,6 +1920,24 @@ const $enum = {
           redirect: '#/app/pipeline/record'
         }
       }
+    },
+    IMPORT: {
+      value: 20,
+      label: '数据导入',
+      type: {
+        MACHINE_IMPORT_SUCCESS: {
+          value: 2010,
+          label: '导入机器成功',
+          notify: 'success',
+          redirect: '#/machine/list'
+        },
+        MACHINE_IMPORT_FAILURE: {
+          value: 2020,
+          label: '导入机器失败',
+          notify: 'error',
+          redirect: '#/machine/list'
+        }
+      }
     }
   },
 
@@ -2137,6 +2176,15 @@ const $enum = {
     },
     REL_ID: {
       value: 30
+    }
+  },
+
+  /**
+   * 数据导入类型
+   */
+  IMPORT_TYPE: {
+    MACHINE: {
+      value: 10
     }
   }
 

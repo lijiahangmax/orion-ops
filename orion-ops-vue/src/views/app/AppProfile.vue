@@ -32,6 +32,8 @@
       <div class="tools-fixed-right">
         <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -78,6 +80,8 @@
     <div class="profile-list-event">
       <!-- 新建模态框 -->
       <AddAppProfileModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 导出模态框 -->
+      <AppProfileExportModal ref="export"/>
     </div>
   </div>
 </template>
@@ -85,6 +89,7 @@
 <script>
 
 import AddAppProfileModal from '@/components/app/AddAppProfileModal'
+import AppProfileExportModal from '@/components/export/AppProfileExportModal'
 
 /**
  * 列
@@ -143,6 +148,7 @@ const columns = [
 export default {
   name: 'AppProfile',
   components: {
+    AppProfileExportModal,
     AddAppProfileModal
   },
   data() {
@@ -199,6 +205,12 @@ export default {
           this.$message.success('已删除')
           this.getList({})
         })
+    },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

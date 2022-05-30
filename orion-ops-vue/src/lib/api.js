@@ -831,7 +831,10 @@ const $api = {
    */
   execBatchUpload: param => {
     return $http.$post('/batch-upload/exec', param, {
-      timeout: 18000000
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
   },
 
@@ -1527,7 +1530,9 @@ const $api = {
    * 首页统计信息
    */
   getHomeStatistics: param => {
-    return $http.$post('/statistics/home', param)
+    return $http.$post('/statistics/home', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
@@ -2172,6 +2177,91 @@ const $api = {
     return $http.$post('/data-clear/event-log', param, {
       loading: '正在清理...'
     })
+  },
+
+  /**
+   * 导出机器信息
+   */
+  exportMachine: param => {
+    return $http.$post('/data-export/machine', param, {
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 600000,
+      loading: '正在导出请耐心等待...'
+    })
+  },
+
+  /**
+   * 导出机器信息
+   */
+  exportAppProfile: param => {
+    return $http.$post('/data-export/app-profile', param, {
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 600000,
+      loading: '正在导出请耐心等待...'
+    })
+  },
+
+  /**
+   * 导出机器信息
+   */
+  exportApplication: param => {
+    return $http.$post('/data-export/application', param, {
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 600000,
+      loading: '正在导出请耐心等待...'
+    })
+  },
+
+  /**
+   * 导出机器信息
+   */
+  exportAppVcs: param => {
+    return $http.$post('/data-export/app-vcs', param, {
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 600000,
+      loading: '正在导出请耐心等待...'
+    })
+  },
+
+  /**
+   * 获取导入模板
+   */
+  getImportTemplate: param => {
+    return $http.$get('/data-import/get-template', param, {
+      skipRespInterceptor: true,
+      timeout: 600000,
+      responseType: 'blob'
+    })
+  },
+
+  /**
+   * 检查导入数据
+   */
+  checkImportData: param => {
+    return $http.$post('/data-import/check-data', param, {
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+
+  /**
+   * 导入机器数据
+   */
+  importMachineData: param => {
+    return $http.$post('/data-import/import-machine', param)
+  },
+
+  /**
+   * 取消导入数据
+   */
+  cancelImportData: param => {
+    return $http.$post('/data-import/cancel-import', param)
   }
 
 }
