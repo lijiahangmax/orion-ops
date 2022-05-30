@@ -227,4 +227,24 @@ public class EventKeys {
      */
     public static final String PIPELINE_ID = "pipelineId";
 
+    /**
+     * 是否导出密码
+     */
+    public static final String EXPORT_PASSWORD = "exportPassword";
+
+    /**
+     * 保护密码
+     */
+    public static final String PROTECT = "protect";
+
+    /**
+     * 分类
+     */
+    public static final String CLASSIFY = "classify";
+
+    /**
+     * 用户id
+     */
+    public static final String USER_ID = "userId";
+
 }

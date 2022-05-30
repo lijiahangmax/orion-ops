@@ -346,7 +346,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Valid.isTrue(isConfig, MessageConst.APP_PROFILE_NOT_CONFIGURED);
         for (Long targetProfileId : targetProfileIdList) {
             // 同步环境变量
-            applicationEnvService.syncAppEnv(Const.N_N_L_1, appId, profileId, Lists.singleton(targetProfileId));
+            applicationEnvService.syncAppEnv(Const.L_N_1, appId, profileId, Lists.singleton(targetProfileId));
             // 同步机器
             applicationMachineService.syncAppProfileMachine(appId, profileId, targetProfileId);
             // 同步发布流程

@@ -1,6 +1,6 @@
 package com.orion.ops.consts.machine;
 
-import com.orion.ops.entity.dto.MachineInfoImportDTO;
+import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Strings;

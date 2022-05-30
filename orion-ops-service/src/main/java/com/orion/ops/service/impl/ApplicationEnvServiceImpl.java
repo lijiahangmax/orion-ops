@@ -324,7 +324,7 @@ public class ApplicationEnvServiceImpl implements ApplicationEnvService {
         ApplicationEnvService self = SpringHolder.getBean(ApplicationEnvService.class);
         List<ApplicationEnvDO> envList;
         // 查询数据
-        if (Const.N_N_L_1.equals(id)) {
+        if (Const.L_N_1.equals(id)) {
             // 全量同步
             LambdaQueryWrapper<ApplicationEnvDO> wrapper = new LambdaQueryWrapper<ApplicationEnvDO>()
                     .eq(ApplicationEnvDO::getAppId, appId)

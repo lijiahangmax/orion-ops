@@ -279,7 +279,7 @@ public class DataClearServiceImpl implements DataClearService {
         T maxEntity = mapper.selectOne(maxIdWrapper);
         // 未查询到则代表条数不满足, 设置一个 false 条件 从而达到不执行的目的
         if (maxEntity == null) {
-            wrapper.eq(idGetterFun, Const.N_N_L_1);
+            wrapper.eq(idGetterFun, Const.L_N_1);
             return;
         }
         Long maxId = idGetterFun.apply(maxEntity);

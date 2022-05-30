@@ -42,4 +42,8 @@ public class CnConst {
 
     public static final String SECRET_KEY = "秘钥";
 
+    public static final String READ = "已读";
+
+    public static final String UNREAD = "未读";
+
 }

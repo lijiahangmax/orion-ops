@@ -132,6 +132,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final String OAUTH2 = "oauth2";
 
+    public static final String SOCKET4 = "socket4";
+
+    public static final String SOCKET5 = "socket5";
+
     public static final int SFTP_UPLOAD_THRESHOLD = 512;
 
     public static final String LF_2 = "\n\n";
