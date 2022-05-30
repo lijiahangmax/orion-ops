@@ -1,4 +1,4 @@
-package com.orion.ops.entity.dto;
+package com.orion.ops.entity.dto.exporter;
 
 import com.orion.office.excel.annotation.ExportField;
 import com.orion.office.excel.annotation.ExportSheet;
@@ -11,6 +11,8 @@ import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
+import java.util.Optional;
+
 /**
  * 应用仓库导出
  *
@@ -20,7 +22,7 @@ import lombok.Data;
  */
 @Data
 @ExportTitle(title = "应用仓库导出")
-@ExportSheet(name = "应用仓库", height = 22, freezeHeader = true, filterHeader = true)
+@ExportSheet(name = "应用仓库", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
 public class ApplicationVcsExportDTO {
 
     /**
@@ -78,10 +80,15 @@ public class ApplicationVcsExportDTO {
             dto.setUrl(p.getVscUrl());
             // 认证方式
             VcsAuthType authType = VcsAuthType.of(p.getVcsAuthType());
-            dto.setAuthType(authType.getLabel());
+            if (authType != null) {
+                dto.setAuthType(authType.getLabel());
+            }
             // 令牌类型
             if (VcsAuthType.TOKEN.equals(authType)) {
-                dto.setTokenType(VcsTokenType.of(p.getVcsTokenType()).getLabel());
+                Optional.ofNullable(p.getVcsTokenType())
+                        .map(VcsTokenType::of)
+                        .map(VcsTokenType::getLabel)
+                        .ifPresent(dto::setTokenType);
                 dto.setEncryptAuthValue(p.getVcsPrivateToken());
             } else {
                 dto.setUsername(p.getVscUsername());

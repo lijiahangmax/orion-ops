@@ -1,4 +1,4 @@
-package com.orion.ops.entity.dto;
+package com.orion.ops.entity.dto.exporter;
 
 import com.orion.office.excel.annotation.ExportField;
 import com.orion.office.excel.annotation.ExportSheet;
@@ -22,13 +22,13 @@ public class ApplicationExportDTO {
     /**
      * 应用名称
      */
-    @ExportField(index = 0, header = "应用名称", width = 30)
+    @ExportField(index = 0, header = "应用名称", width = 35)
     private String name;
 
     /**
      * 唯一标识
      */
-    @ExportField(index = 1, header = "唯一标识", width = 25)
+    @ExportField(index = 1, header = "唯一标识", width = 30)
     private String tag;
 
     /**

@@ -25,4 +25,26 @@ public class DataExportRequest {
      */
     private String protectPassword;
 
+    /**
+     * 机器id
+     */
+    private Long machineId;
+
+    /**
+     * 分类
+     */
+    private Integer classify;
+
+    /**
+     * 用户id
+     */
+    private Long userId;
+
+    /**
+     * 只看自己
+     *
+     * @see com.orion.ops.consts.Const#ENABLE
+     */
+    private Integer onlyMyself;
+
 }

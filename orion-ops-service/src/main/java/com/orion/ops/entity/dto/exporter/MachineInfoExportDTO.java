@@ -1,4 +1,4 @@
-package com.orion.ops.entity.dto;
+package com.orion.ops.entity.dto.exporter;
 
 import com.orion.office.excel.annotation.ExportField;
 import com.orion.office.excel.annotation.ExportSheet;
@@ -57,10 +57,12 @@ public class MachineInfoExportDTO {
             dto.setPort(p.getSshPort());
             dto.setUsername(p.getUsername());
             MachineAuthType authType = MachineAuthType.of(p.getAuthType());
+            if (authType != null) {
+                dto.setAuthType(authType.getLabel());
+            }
             if (MachineAuthType.PASSWORD.equals(authType)) {
                 dto.setEncryptPassword(p.getPassword());
             }
-            dto.setAuthType(authType.getLabel());
             dto.setDescription(p.getDescription());
             return dto;
         });

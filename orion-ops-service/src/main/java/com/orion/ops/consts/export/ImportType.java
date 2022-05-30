@@ -1,7 +1,7 @@
 package com.orion.ops.consts.export;
 
 import com.orion.ops.consts.machine.MachineFieldConst;
-import com.orion.ops.entity.dto.MachineInfoImportDTO;
+import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

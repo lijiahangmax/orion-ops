@@ -24,6 +24,33 @@ public interface DataExportService {
     void exportMachine(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
+     * 导出机器代理
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportMachineProxy(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出机器终端日志
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportMachineTerminalLog(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出机器日志
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportMachineTailFile(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
      * 导出应用环境
      *
      * @param request  request
@@ -49,5 +76,32 @@ public interface DataExportService {
      * @throws IOException IOException
      */
     void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出命令模板
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportCommandTemplate(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出站内信
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导出操作日志
+     *
+     * @param request  request
+     * @param response response
+     * @throws IOException IOException
+     */
+    void exportEventLog(DataExportRequest request, HttpServletResponse response) throws IOException;
 
 }

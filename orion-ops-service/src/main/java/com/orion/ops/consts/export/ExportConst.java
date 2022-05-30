@@ -17,12 +17,23 @@ public class ExportConst {
 
     public static final String MACHINE_EXPORT_NAME = "机器信息导出-{}.xlsx";
 
+    public static final String MACHINE_PROXY_EXPORT_NAME = "机器代理导出-{}.xlsx";
+
+    public static final String MACHINE_TERMINAL_LOG_EXPORT_NAME = "机器终端日志导出-{}.xlsx";
+
+    public static final String MACHINE_TAIL_FILE_EXPORT_NAME = "机器日志文件导出-{}.xlsx";
+
     public static final String APP_PROFILE_EXPORT_NAME = "应用环境导出-{}.xlsx";
 
     public static final String APPLICATION_EXPORT_NAME = "应用信息导出-{}.xlsx";
 
     public static final String APP_VCS_EXPORT_NAME = "应用版本仓库导出-{}.xlsx";
 
+    public static final String COMMAND_TEMPLATE_EXPORT_NAME = "命令模板导出-{}.xlsx";
+
+    public static final String WEB_SIDE_MESSAGE_EXPORT_NAME = "站内信导出-{}.xlsx";
+
+    public static final String USER_EVENT_LOG_EXPORT_NAME = "操作日志导出-{}.xlsx";
 
     /**
      * 格式导出文件名
