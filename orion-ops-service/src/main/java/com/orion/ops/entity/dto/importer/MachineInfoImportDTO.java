@@ -1,4 +1,4 @@
-package com.orion.ops.entity.dto;
+package com.orion.ops.entity.dto.importer;
 
 import com.orion.office.excel.annotation.ImportField;
 import com.orion.ops.consts.machine.MachineAuthType;
@@ -9,6 +9,8 @@ import com.orion.utils.Strings;
 import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Optional;
 
 /**
  * 机器导入数据
@@ -46,27 +48,33 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     private Integer port;
 
     /**
-     * 用户名
+     * 认证方式
      */
     @ImportField(index = 4)
+    private String authType;
+
+    /**
+     * 用户名
+     */
+    @ImportField(index = 5)
     private String username;
 
     /**
      * 密码 (密文)
      */
-    @ImportField(index = 5)
+    @ImportField(index = 6)
     private String encryptPassword;
 
     /**
      * 导入密码 (明文)
      */
-    @ImportField(index = 6)
+    @ImportField(index = 7)
     private String importPassword;
 
     /**
      * 描述
      */
-    @ImportField(index = 7)
+    @ImportField(index = 8)
     private String description;
 
     /**
@@ -87,7 +95,10 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
             d.setMachineTag(p.getTag());
             d.setMachineHost(p.getHost());
             d.setSshPort(p.getPort());
-            d.setDescription(p.getDescription());
+            Optional.ofNullable(p.getAuthType())
+                    .map(MachineAuthType::of)
+                    .map(MachineAuthType::getType)
+                    .ifPresent(d::setAuthType);
             d.setUsername(p.getUsername());
             if (!Strings.isBlank(p.getDecryptPassword())) {
                 d.setPassword(ValueMix.encrypt(p.getDecryptPassword()));
@@ -95,11 +106,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
             if (!Strings.isBlank(p.getImportPassword())) {
                 d.setPassword(ValueMix.encrypt(p.getImportPassword()));
             }
-            if (d.getPassword() == null) {
-                d.setAuthType(MachineAuthType.KEY.getType());
-            } else {
-                d.setAuthType(MachineAuthType.PASSWORD.getType());
-            }
+            d.setDescription(p.getDescription());
             return d;
         });
     }

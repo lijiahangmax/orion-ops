@@ -1,4 +1,4 @@
-package com.orion.ops.entity.dto;
+package com.orion.ops.entity.dto.importer;
 
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import lombok.Data;

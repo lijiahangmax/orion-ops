@@ -1,8 +1,8 @@
 package com.orion.ops.service.api;
 
 import com.orion.ops.consts.export.ImportType;
-import com.orion.ops.entity.dto.DataImportDTO;
-import com.orion.ops.entity.dto.MachineInfoImportDTO;
+import com.orion.ops.entity.dto.importer.DataImportDTO;
+import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import org.apache.poi.ss.usermodel.Workbook;
 
