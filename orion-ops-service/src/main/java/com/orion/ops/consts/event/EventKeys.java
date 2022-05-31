@@ -38,6 +38,21 @@ public class EventKeys {
     public static final String INNER_REQUEST_SEQ = "_REQUEST_SEQ_";
 
     /**
+     * 请求 UA
+     */
+    public static final String INNER_REQUEST_USER_AGENT = "userAgent";
+
+    /**
+     * 请求 ip
+     */
+    public static final String INNER_REQUEST_IP = "ip";
+
+    /**
+     * 请求时间
+     */
+    public static final String INNER_REQUEST_TIME = "requestTime";
+
+    /**
      * id
      */
     public static final String ID = "id";
@@ -181,16 +196,6 @@ public class EventKeys {
      * 系统
      */
     public static final String SYSTEM = "system";
-
-    /**
-     * UA
-     */
-    public static final String USER_AGENT = "userAgent";
-
-    /**
-     * ip
-     */
-    public static final String IP = "ip";
 
     /**
      * before

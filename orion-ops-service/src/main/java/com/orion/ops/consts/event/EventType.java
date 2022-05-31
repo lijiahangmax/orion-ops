@@ -446,7 +446,7 @@ public enum EventType {
     /**
      * 取消应用定时发布
      */
-        CANCEL_TIMED_RELEASE(5040, EventClassify.RELEASE, "取消定时发布", "取消应用定时发布 <sb>${title}</sb>"),
+    CANCEL_TIMED_RELEASE(5040, EventClassify.RELEASE, "取消定时发布", "取消应用定时发布 <sb>${title}</sb>"),
 
     /**
      * 设置应用定时发布
@@ -670,6 +670,16 @@ public enum EventType {
      */
     DATA_IMPORT_MACHINE(8305, EventClassify.DATA_IMPORT, "导入机器信息", "批量导入机器信息"),
 
+    /**
+     * 导入机器代理
+     */
+    DATA_IMPORT_MACHINE_PROXY(8310, EventClassify.DATA_IMPORT, "导入机器代理", "批量导入机器代理"),
+
+    /**
+     * 导入日志文件
+     */
+    DATA_IMPORT_TAIL_FILE(8310, EventClassify.DATA_IMPORT, "导入日志文件", "导入日志文件"),
+
     // -------------------- 数据导出 --------------------
 
     /**
@@ -685,12 +695,12 @@ public enum EventType {
     /**
      * 导出机器终端日志
      */
-    DATA_EXPORT_MACHINE_TERMINAL_LOG(8515, EventClassify.DATA_EXPORT, "导出终端日志", "导出机器终端日志 <sb>${count}</sb>条"),
+    DATA_EXPORT_TERMINAL_LOG(8515, EventClassify.DATA_EXPORT, "导出终端日志", "导出机器终端日志 <sb>${count}</sb>条"),
 
     /**
-     * 导出机器日志文件
+     * 导出日志文件
      */
-    DATA_EXPORT_MACHINE_TAIL_FILE(8520, EventClassify.DATA_EXPORT, "导出机器日志文件", "导出机器日志文件 <sb>${count}</sb>条"),
+    DATA_EXPORT_TAIL_FILE(8520, EventClassify.DATA_EXPORT, "导出日志文件", "导出日志文件 <sb>${count}</sb>条"),
 
     /**
      * 导出应用环境
