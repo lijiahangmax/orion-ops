@@ -22,7 +22,7 @@ public class CommandTemplateExportDTO {
     @ExportField(index = 0, header = "名称", width = 25)
     private String name;
 
-    @ExportField(index = 1, header = "模板", width = 60, wrapText = true)
+    @ExportField(index = 1, header = "模板", width = 80, wrapText = true)
     private String template;
 
     @ExportField(index = 2, header = "描述", width = 35, wrapText = true)

@@ -58,13 +58,13 @@ public class ApplicationVcsExportDTO {
     /**
      * 导出密码/令牌 (密文)
      */
-    @ExportField(index = 5, header = "导出密码/令牌 (密文)", width = 21, wrapText = true)
+    @ExportField(index = 5, header = "导出密码/令牌", width = 21, hidden = true, wrapText = true)
     private String encryptAuthValue;
 
     /**
      * 导入密码/令牌 (明文)
      */
-    @ExportField(index = 6, header = "导入密码/令牌 (明文)", width = 21, wrapText = true)
+    @ExportField(index = 6, header = "导入密码/令牌", width = 21, wrapText = true)
     private String importAuthValue;
 
     /**

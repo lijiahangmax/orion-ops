@@ -19,9 +19,9 @@ public class ExportConst {
 
     public static final String MACHINE_PROXY_EXPORT_NAME = "机器代理导出-{}.xlsx";
 
-    public static final String MACHINE_TERMINAL_LOG_EXPORT_NAME = "机器终端日志导出-{}.xlsx";
+    public static final String MACHINE_TERMINAL_LOG_EXPORT_NAME = "终端日志导出-{}.xlsx";
 
-    public static final String MACHINE_TAIL_FILE_EXPORT_NAME = "机器日志文件导出-{}.xlsx";
+    public static final String MACHINE_TAIL_FILE_EXPORT_NAME = "日志文件导出-{}.xlsx";
 
     public static final String APP_PROFILE_EXPORT_NAME = "应用环境导出-{}.xlsx";
 

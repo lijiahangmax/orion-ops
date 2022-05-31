@@ -33,16 +33,16 @@ public class MachineInfoExportDTO {
     @ExportField(index = 3, header = "ssh 端口", width = 10)
     private Integer port;
 
-    @ExportField(index = 4, header = "认证方式 (密码/秘钥)", width = 22, selectOptions = {CnConst.PASSWORD, CnConst.SECRET_KEY})
+    @ExportField(index = 4, header = "认证方式", width = 13, selectOptions = {CnConst.PASSWORD, CnConst.SECRET_KEY})
     private String authType;
 
     @ExportField(index = 5, header = "用户名", width = 20, wrapText = true)
     private String username;
 
-    @ExportField(index = 6, header = "导出密码 (密文)", width = 15, wrapText = true)
+    @ExportField(index = 6, header = "导出密码", hidden = true, width = 16, wrapText = true)
     private String encryptPassword;
 
-    @ExportField(index = 7, header = "导入密码 (明文)", width = 15, wrapText = true)
+    @ExportField(index = 7, header = "导入密码", width = 16, wrapText = true)
     private String importPassword;
 
     @ExportField(index = 8, header = "描述", width = 25, wrapText = true)

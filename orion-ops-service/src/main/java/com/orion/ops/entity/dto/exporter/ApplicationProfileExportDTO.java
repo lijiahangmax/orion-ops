@@ -37,7 +37,7 @@ public class ApplicationProfileExportDTO {
     /**
      * 发布审核
      */
-    @ExportField(index = 2, header = "发布审核(开启/关闭)", width = 23, align = ExcelAlignType.CENTER, selectOptions = {CnConst.OPEN, CnConst.CLOSE})
+    @ExportField(index = 2, header = "发布审核", width = 17, align = ExcelAlignType.CENTER, selectOptions = {CnConst.OPEN, CnConst.CLOSE})
     private String releaseAudit;
 
     /**

@@ -8,15 +8,15 @@ import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 /**
- * 机器日志文件导出
+ * 日志文件导出
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/30 10:40
  */
 @Data
-@ExportTitle(title = "机器日志文件导出")
-@ExportSheet(name = "机器日志文件", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
+@ExportTitle(title = "日志文件导出")
+@ExportSheet(name = "日志文件", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
 public class MachineTailFileExportDTO {
 
     @ExportField(index = 0, header = "机器名称", width = 20, wrapText = true)
@@ -25,10 +25,10 @@ public class MachineTailFileExportDTO {
     @ExportField(index = 1, header = "机器标识", width = 20, wrapText = true)
     private String machineTag;
 
-    @ExportField(index = 2, header = "别名", width = 20, wrapText = true)
+    @ExportField(index = 2, header = "文件别名", width = 20, wrapText = true)
     private String name;
 
-    @ExportField(index = 3, header = "文件路径", width = 35, wrapText = true)
+    @ExportField(index = 3, header = "文件路径", width = 50, wrapText = true)
     private String path;
 
     @ExportField(index = 4, header = "文件编码", width = 12)
@@ -37,7 +37,7 @@ public class MachineTailFileExportDTO {
     @ExportField(index = 5, header = "尾部偏移行", width = 12)
     private Integer offset;
 
-    @ExportField(index = 6, header = "tail 命令", width = 35, wrapText = true)
+    @ExportField(index = 6, header = "执行命令", width = 35, wrapText = true)
     private String command;
 
     /**

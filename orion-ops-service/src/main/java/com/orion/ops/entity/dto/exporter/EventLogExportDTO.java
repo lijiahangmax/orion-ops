@@ -39,7 +39,7 @@ public class EventLogExportDTO {
     @ExportField(index = 3, header = "触发时间", width = 20, wrapText = true, type = ExcelFieldType.DATE, format = Dates.YMD_HMS)
     private Date time;
 
-    @ExportField(index = 4, header = "日志信息", width = 60, wrapText = true)
+    @ExportField(index = 4, header = "日志信息", width = 70, wrapText = true)
     private String message;
 
     @ExportField(index = 5, header = "参数", width = 20, wrapText = true)

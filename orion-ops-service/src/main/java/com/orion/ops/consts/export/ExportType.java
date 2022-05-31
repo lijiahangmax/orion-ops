@@ -32,7 +32,7 @@ public enum ExportType {
     MACHINE_TERMINAL_LOG(120, () -> ExportConst.getFileName(ExportConst.MACHINE_TERMINAL_LOG_EXPORT_NAME)),
 
     /**
-     * 导出机器日志文件
+     * 导出日志文件
      */
     MACHINE_TAIL_FILE(130, () -> ExportConst.getFileName(ExportConst.MACHINE_TAIL_FILE_EXPORT_NAME)),
 

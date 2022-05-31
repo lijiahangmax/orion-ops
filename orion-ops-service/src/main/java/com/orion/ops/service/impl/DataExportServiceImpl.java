@@ -131,7 +131,7 @@ public class DataExportServiceImpl implements DataExportService {
                 .collect(Collectors.toList());
         if (!machineIdList.isEmpty()) {
             List<MachineInfoDO> machineNameList = machineInfoDAO.selectNameByIdList(machineIdList);
-            // 设置仓库名称
+            // 设置机器名称
             for (MachineTailFileExportDTO export : exportList) {
                 Long machineId = export.getMachineId();
                 if (machineId == null) {

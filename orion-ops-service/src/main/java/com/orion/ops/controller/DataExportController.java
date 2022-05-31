@@ -49,20 +49,20 @@ public class DataExportController {
     }
 
     /**
-     * 导出机器终端日志
+     * 导出终端日志
      */
     @RequestMapping("/machine-terminal-log")
-    @EventLog(EventType.DATA_EXPORT_MACHINE_TERMINAL_LOG)
+    @EventLog(EventType.DATA_EXPORT_TERMINAL_LOG)
     @RequireRole(RoleType.ADMINISTRATOR)
     public void exportMachineTerminalLog(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
         dataExportService.exportMachineTerminalLog(request, response);
     }
 
     /**
-     * 导出机器日志文件
+     * 导出日志文件
      */
     @RequestMapping("/machine-tail-file")
-    @EventLog(EventType.DATA_EXPORT_MACHINE_TAIL_FILE)
+    @EventLog(EventType.DATA_EXPORT_TAIL_FILE)
     public void exportMachineTailFile(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
         dataExportService.exportMachineTailFile(request, response);
     }

@@ -12,15 +12,15 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 机器终端日志导出
+ * 终端日志导出
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/30 10:27
  */
 @Data
-@ExportTitle(title = "机器终端日志导出")
-@ExportSheet(name = "机器终端日志", height = 22, freezeHeader = true, filterHeader = true)
+@ExportTitle(title = "终端日志导出")
+@ExportSheet(name = "终端日志", height = 22, freezeHeader = true, filterHeader = true)
 public class MachineTerminalLogExportDTO {
 
     @ExportField(index = 0, header = "用户名", width = 17, wrapText = true)

@@ -33,7 +33,7 @@ public interface DataExportService {
     void exportMachineProxy(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
-     * 导出机器终端日志
+     * 导出终端日志
      *
      * @param request  request
      * @param response response

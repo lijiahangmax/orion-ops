@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @Data
 @ExportTitle(title = "机器代理导出")
-@ExportSheet(name = "机器代理", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
+@ExportSheet(name = "机器代理", height = 22, freezeHeader = true, filterHeader = true)
 public class MachineProxyExportDTO {
 
     @ExportField(index = 0, header = "代理主机", width = 25)
@@ -35,10 +35,10 @@ public class MachineProxyExportDTO {
     @ExportField(index = 3, header = "用户名", width = 25)
     private String username;
 
-    @ExportField(index = 4, header = "导出密码 (密文)", width = 15, wrapText = true)
+    @ExportField(index = 4, header = "导出密码", hidden = true, width = 16, wrapText = true)
     private String encryptPassword;
 
-    @ExportField(index = 5, header = "导入密码 (明文)", width = 15, wrapText = true)
+    @ExportField(index = 5, header = "导入密码", width = 16, wrapText = true)
     private String importPassword;
 
     @ExportField(index = 6, header = "描述", width = 35, wrapText = true)
