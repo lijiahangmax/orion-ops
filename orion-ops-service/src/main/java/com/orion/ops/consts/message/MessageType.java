@@ -98,6 +98,26 @@ public enum MessageType {
      */
     MACHINE_IMPORT_FAILURE(2020, "导入机器失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器导入操作执行失败"),
 
+    /**
+     * 导入机器代理成功
+     */
+    MACHINE_PROXY_IMPORT_SUCCESS(2030, "导入机器代理成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行完成"),
+
+    /**
+     * 导入机器代理失败
+     */
+    MACHINE_PROXY_IMPORT_FAILURE(2040, "导入机器代理失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行失败"),
+
+    /**
+     * 导入日志文件成功
+     */
+    MACHINE_TAIL_FILE_IMPORT_SUCCESS(2050, "导入日志文件成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行完成"),
+
+    /**
+     * 导入日志文件失败
+     */
+    MACHINE_TAIL_FILE_IMPORT_FAILURE(2060, "导入日志文件失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行失败"),
+
     ;
 
     private final Integer type;

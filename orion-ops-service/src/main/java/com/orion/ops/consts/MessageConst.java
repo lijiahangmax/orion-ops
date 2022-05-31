@@ -216,4 +216,6 @@ public class MessageConst {
 
     public static final String OPERATOR_TIMEOUT = "操作超时";
 
+    public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
+
 }

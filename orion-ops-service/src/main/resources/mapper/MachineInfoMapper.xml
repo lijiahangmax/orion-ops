@@ -41,6 +41,7 @@
         SELECT id
         FROM machine_info
         WHERE machine_host LIKE CONCAT('%', #{host}, '%')
+        AND deleted = 1
     </select>
 
     <select id="selectMachineName" resultType="java.lang.String">
@@ -56,6 +57,17 @@
         <foreach collection="idList" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+        AND deleted = 1
+    </select>
+
+    <select id="selectIdByTagList" resultMap="BaseResultMap">
+        SELECT id, machine_name, machine_tag
+        FROM machine_info
+        WHERE machine_tag IN
+        <foreach collection="tagList" item="tag" open="(" separator="," close=")">
+            #{tag}
+        </foreach>
+        AND deleted = 1
     </select>
 
 </mapper>

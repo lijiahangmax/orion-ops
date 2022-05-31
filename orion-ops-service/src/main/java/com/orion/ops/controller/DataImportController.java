@@ -10,6 +10,8 @@ import com.orion.ops.consts.export.ImportType;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.dto.importer.DataImportDTO;
 import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
+import com.orion.ops.entity.dto.importer.MachineProxyImportDTO;
+import com.orion.ops.entity.dto.importer.MachineTailFileImportDTO;
 import com.orion.ops.entity.request.DataImportRequest;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import com.orion.ops.service.api.DataImportService;
@@ -89,7 +91,11 @@ public class DataImportController {
         // 检查数据
         switch (importType) {
             case MACHINE:
-                return dataImportService.checkMachineImportData((List<MachineInfoImportDTO>) rows);
+                return dataImportService.checkMachineInfoImportData((List<MachineInfoImportDTO>) rows);
+            case MACHINE_PROXY:
+                return dataImportService.checkMachineProxyImportData((List<MachineProxyImportDTO>) rows);
+            case MACHINE_TAIL_FILE:
+                return dataImportService.checkMachineTailFileImportData((List<MachineTailFileImportDTO>) rows);
             default:
                 throw Exceptions.unsupported();
         }
@@ -100,10 +106,34 @@ public class DataImportController {
      */
     @RequestMapping("/import-machine")
     @EventLog(EventType.DATA_IMPORT_MACHINE)
-    public HttpWrapper<?> importMachineData(@RequestBody DataImportRequest request) {
+    public HttpWrapper<?> importMachineInfoData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importMachineData(d));
+        this.asyncImportData(token, d -> dataImportService.importMachineInfoData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入机器代理
+     */
+    @RequestMapping("/import-machine-proxy")
+    @EventLog(EventType.DATA_IMPORT_MACHINE_PROXY)
+    public HttpWrapper<?> importMachineProxyData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importMachineProxyData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入日志文件
+     */
+    @RequestMapping("/import-tail-file")
+    @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
+    public HttpWrapper<?> importMachineTailFileData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importMachineTailFileData(d));
         return HttpWrapper.ok();
     }
 

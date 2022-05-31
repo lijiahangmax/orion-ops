@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 import java.util.Optional;
 
 /**
- * 机器导入数据
+ * 机器信息导入
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -85,28 +85,28 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     static {
         TypeStore.STORE.register(MachineInfoImportDTO.class, DataImportCheckRowVO.class, p -> {
             DataImportCheckRowVO vo = new DataImportCheckRowVO();
-            vo.setSymbol(p.getTag());
+            vo.setSymbol(p.tag);
             vo.setIllegalMessage(p.getIllegalMessage());
             return vo;
         });
         TypeStore.STORE.register(MachineInfoImportDTO.class, MachineInfoDO.class, p -> {
             MachineInfoDO d = new MachineInfoDO();
-            d.setMachineName(p.getName());
-            d.setMachineTag(p.getTag());
-            d.setMachineHost(p.getHost());
-            d.setSshPort(p.getPort());
-            Optional.ofNullable(p.getAuthType())
+            d.setMachineName(p.name);
+            d.setMachineTag(p.tag);
+            d.setMachineHost(p.host);
+            d.setSshPort(p.port);
+            Optional.ofNullable(p.authType)
                     .map(MachineAuthType::of)
                     .map(MachineAuthType::getType)
                     .ifPresent(d::setAuthType);
-            d.setUsername(p.getUsername());
-            if (!Strings.isBlank(p.getDecryptPassword())) {
-                d.setPassword(ValueMix.encrypt(p.getDecryptPassword()));
+            d.setUsername(p.username);
+            if (!Strings.isBlank(p.decryptPassword)) {
+                d.setPassword(ValueMix.encrypt(p.decryptPassword));
             }
-            if (!Strings.isBlank(p.getImportPassword())) {
-                d.setPassword(ValueMix.encrypt(p.getImportPassword()));
+            if (!Strings.isBlank(p.importPassword)) {
+                d.setPassword(ValueMix.encrypt(p.importPassword));
             }
-            d.setDescription(p.getDescription());
+            d.setDescription(p.description);
             return d;
         });
     }

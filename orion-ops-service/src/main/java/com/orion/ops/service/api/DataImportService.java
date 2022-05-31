@@ -3,6 +3,8 @@ package com.orion.ops.service.api;
 import com.orion.ops.consts.export.ImportType;
 import com.orion.ops.entity.dto.importer.DataImportDTO;
 import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
+import com.orion.ops.entity.dto.importer.MachineProxyImportDTO;
+import com.orion.ops.entity.dto.importer.MachineTailFileImportDTO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -33,7 +35,44 @@ public interface DataImportService {
      * @param rows rows
      * @return 导入信息
      */
-    DataImportCheckVO checkMachineImportData(List<MachineInfoImportDTO> rows);
+    DataImportCheckVO checkMachineInfoImportData(List<MachineInfoImportDTO> rows);
+
+    /**
+     * 检查机器代理导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkMachineProxyImportData(List<MachineProxyImportDTO> rows);
+
+    /**
+     * 检查日志文件导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkMachineTailFileImportData(List<MachineTailFileImportDTO> rows);
+
+    /**
+     * 导入机器信息
+     *
+     * @param checkData 缓存信息
+     */
+    void importMachineInfoData(DataImportDTO checkData);
+
+    /**
+     * 导入机器代理
+     *
+     * @param checkData checkData
+     */
+    void importMachineProxyData(DataImportDTO checkData);
+
+    /**
+     * 导入日志文件
+     *
+     * @param checkData checkData
+     */
+    void importMachineTailFileData(DataImportDTO checkData);
 
     /**
      * 检查导入 token
@@ -42,13 +81,6 @@ public interface DataImportService {
      * @return 导入数据
      */
     DataImportDTO checkImportToken(String token);
-
-    /**
-     * 导入机器信息
-     *
-     * @param checkData 缓存信息
-     */
-    void importMachineData(DataImportDTO checkData);
 
     /**
      * 清空导入 token

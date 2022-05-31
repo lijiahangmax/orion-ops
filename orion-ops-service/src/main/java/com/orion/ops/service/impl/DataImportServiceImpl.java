@@ -11,11 +11,13 @@ import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.export.ImportType;
 import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.dao.MachineInfoDAO;
+import com.orion.ops.dao.MachineProxyDAO;
+import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.dto.importer.BaseDataImportDTO;
-import com.orion.ops.entity.dto.importer.DataImportDTO;
-import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
+import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import com.orion.ops.service.api.DataImportService;
@@ -41,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +65,12 @@ public class DataImportServiceImpl implements DataImportService {
     private MachineInfoDAO machineInfoDAO;
 
     @Resource
+    private MachineProxyDAO machineProxyDAO;
+
+    @Resource
+    private FileTailListDAO fileTailListDAO;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -73,7 +83,7 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public DataImportCheckVO checkMachineImportData(List<MachineInfoImportDTO> rows) {
+    public DataImportCheckVO checkMachineInfoImportData(List<MachineInfoImportDTO> rows) {
         // 检查数据合法性
         this.validImportData(ImportType.MACHINE, rows);
         // 设置检查对象
@@ -82,26 +92,28 @@ public class DataImportServiceImpl implements DataImportService {
         List<DataImportCheckRowVO> insertRows = Lists.newList();
         List<DataImportCheckRowVO> updateRows = Lists.newList();
         // 通过 tag 查询机器
+        List<MachineInfoDO> presentMachines;
         List<String> tagList = rows.stream()
                 .filter(s -> Objects.isNull(s.getIllegalMessage()))
                 .map(MachineInfoImportDTO::getTag)
                 .collect(Collectors.toList());
-        LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
-                .in(MachineInfoDO::getMachineTag, tagList);
-        List<MachineInfoDO> machines = machineInfoDAO.selectList(wrapper);
+        if (tagList.isEmpty()) {
+            presentMachines = Lists.empty();
+        } else {
+            LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
+                    .in(MachineInfoDO::getMachineTag, tagList);
+            presentMachines = machineInfoDAO.selectList(wrapper);
+        }
         // 设置数据
         for (int i = 0; i < rows.size(); i++) {
             MachineInfoImportDTO row = rows.get(i);
             // 设置检查数据
             DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
-            checkRow.setIndex(i);
-            checkRow.setRow(i + 3);
-            // 不合法数据
-            if (checkRow.getIllegalMessage() != null) {
-                illegalRows.add(checkRow);
+            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
                 continue;
             }
-            final boolean update = machines.stream().anyMatch(m -> m.getMachineTag().equals(row.getTag()));
+            // 存在则修改
+            final boolean update = presentMachines.stream().anyMatch(m -> m.getMachineTag().equals(row.getTag()));
             if (update) {
                 updateRows.add(checkRow);
             } else {
@@ -113,40 +125,70 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public DataImportDTO checkImportToken(String token) {
-        // 查询缓存
-        String data = redisTemplate.opsForValue().get(Strings.format(KeyConst.DATA_IMPORT_TOKEN, Currents.getUserId(), token));
-        if (Strings.isEmpty(data)) {
-            throw Exceptions.argument(MessageConst.OPERATOR_TIMEOUT);
+    public DataImportCheckVO checkMachineProxyImportData(List<MachineProxyImportDTO> rows) {
+        // 检查数据合法性
+        this.validImportData(ImportType.MACHINE_PROXY, rows);
+        // 设置检查对象
+        String dataJson = JSON.toJSONString(rows);
+        List<DataImportCheckRowVO> illegalRows = Lists.newList();
+        List<DataImportCheckRowVO> insertRows = Lists.newList();
+        // 设置数据
+        for (int i = 0; i < rows.size(); i++) {
+            MachineProxyImportDTO row = rows.get(i);
+            // 设置检查数据
+            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
+            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
+                continue;
+            }
+            insertRows.add(checkRow);
         }
-        return JSON.parseObject(data, DataImportDTO.class);
+        // 返回数据
+        return this.setCheckData(ImportType.MACHINE_PROXY.getType(), dataJson, illegalRows, insertRows, Lists.empty());
     }
 
     @Override
-    public void importMachineData(DataImportDTO importData) {
+    public DataImportCheckVO checkMachineTailFileImportData(List<MachineTailFileImportDTO> rows) {
+        // 检查数据合法性
+        this.validImportData(ImportType.MACHINE_TAIL_FILE, rows);
+        // 设置机器id
+        this.setMachineIdByTag(rows, MachineTailFileImportDTO::getMachineTag, MachineTailFileImportDTO::setMachineId);
+        // 设置检查对象
+        String dataJson = JSON.toJSONString(rows);
+        List<DataImportCheckRowVO> illegalRows = Lists.newList();
+        List<DataImportCheckRowVO> insertRows = Lists.newList();
+        // 设置数据
+        for (int i = 0; i < rows.size(); i++) {
+            MachineTailFileImportDTO row = rows.get(i);
+            // 设置检查数据
+            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
+            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
+                continue;
+            }
+            insertRows.add(checkRow);
+        }
+        // 返回数据
+        return this.setCheckData(ImportType.MACHINE_TAIL_FILE.getType(), dataJson, illegalRows, insertRows, Lists.empty());
+    }
+
+    @Override
+    public void importMachineInfoData(DataImportDTO importData) {
         Exception ex = null;
         try {
             // 获取缓存数据
-            List<MachineInfoImportDTO> rows = this.getImportData(importData);
             DataImportCheckVO dataCheck = importData.getCheck();
+            List<MachineInfoImportDTO> rows = this.getImportData(importData);
             // 插入
-            List<DataImportCheckRowVO> insertRows = dataCheck.getInsertRows();
-            for (DataImportCheckRowVO insertRow : insertRows) {
-                // 获取需要插入的数据
-                MachineInfoImportDTO insertImportRow = rows.get(insertRow.getIndex());
-                MachineInfoDO insert = Converts.to(insertImportRow, MachineInfoDO.class);
+            this.getImportInsertData(dataCheck, rows).forEach(row -> {
+                MachineInfoDO insert = Converts.to(row, MachineInfoDO.class);
                 machineInfoDAO.insert(insert);
-            }
+            });
             // 更新
-            List<DataImportCheckRowVO> updateRows = dataCheck.getUpdateRows();
-            for (DataImportCheckRowVO updateRow : updateRows) {
-                // 获取需要更新的数据
-                MachineInfoImportDTO updateImportRow = rows.get(updateRow.getIndex());
-                MachineInfoDO update = Converts.to(updateImportRow, MachineInfoDO.class);
+            this.getImportUpdateData(dataCheck, rows).forEach(row -> {
+                MachineInfoDO update = Converts.to(row, MachineInfoDO.class);
                 LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
                         .eq(MachineInfoDO::getMachineTag, update.getMachineTag());
                 machineInfoDAO.update(update, wrapper);
-            }
+            });
         } catch (Exception e) {
             ex = e;
             log.error("机器信息导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
@@ -155,6 +197,60 @@ public class DataImportServiceImpl implements DataImportService {
         this.sendImportWebSideMessage(importData, ex == null ? MessageType.MACHINE_IMPORT_SUCCESS : MessageType.MACHINE_IMPORT_FAILURE);
         // 保存日志
         this.saveImportDataJson(importData);
+    }
+
+    @Override
+    public void importMachineProxyData(DataImportDTO importData) {
+        Exception ex = null;
+        try {
+            // 获取缓存数据
+            DataImportCheckVO dataCheck = importData.getCheck();
+            List<MachineProxyImportDTO> rows = this.getImportData(importData);
+            // 插入
+            this.getImportInsertData(dataCheck, rows).forEach(row -> {
+                MachineProxyDO insert = Converts.to(row, MachineProxyDO.class);
+                machineProxyDAO.insert(insert);
+            });
+        } catch (Exception e) {
+            ex = e;
+            log.error("机器代理导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
+        }
+        // 发送站内信
+        this.sendImportWebSideMessage(importData, ex == null ? MessageType.MACHINE_PROXY_IMPORT_SUCCESS : MessageType.MACHINE_PROXY_IMPORT_FAILURE);
+        // 保存日志
+        this.saveImportDataJson(importData);
+    }
+
+    @Override
+    public void importMachineTailFileData(DataImportDTO importData) {
+        Exception ex = null;
+        try {
+            // 获取缓存数据
+            DataImportCheckVO dataCheck = importData.getCheck();
+            List<MachineTailFileImportDTO> rows = this.getImportData(importData);
+            // 插入
+            this.getImportInsertData(dataCheck, rows).forEach(row -> {
+                FileTailListDO insert = Converts.to(row, FileTailListDO.class);
+                fileTailListDAO.insert(insert);
+            });
+        } catch (Exception e) {
+            ex = e;
+            log.error("日志文件导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
+        }
+        // 发送站内信
+        this.sendImportWebSideMessage(importData, ex == null ? MessageType.MACHINE_TAIL_FILE_IMPORT_SUCCESS : MessageType.MACHINE_TAIL_FILE_IMPORT_FAILURE);
+        // 保存日志
+        this.saveImportDataJson(importData);
+    }
+
+    @Override
+    public DataImportDTO checkImportToken(String token) {
+        // 查询缓存
+        String data = redisTemplate.opsForValue().get(Strings.format(KeyConst.DATA_IMPORT_TOKEN, Currents.getUserId(), token));
+        if (Strings.isEmpty(data)) {
+            throw Exceptions.argument(MessageConst.OPERATOR_TIMEOUT);
+        }
+        return JSON.parseObject(data, DataImportDTO.class);
     }
 
     @Override
@@ -177,6 +273,67 @@ public class DataImportServiceImpl implements DataImportService {
             }
         }
 
+    }
+
+    /**
+     * 检查是否添加至不合法数据
+     *
+     * @param checkRow    checkRow
+     * @param i           index
+     * @param illegalRows rows
+     * @return 是否已添加
+     */
+    private boolean checkAddToIllegal(DataImportCheckRowVO checkRow, int i, List<DataImportCheckRowVO> illegalRows) {
+        checkRow.setIndex(i);
+        checkRow.setRow(i + 3);
+        // 不合法数据
+        if (checkRow.getIllegalMessage() != null) {
+            illegalRows.add(checkRow);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 设置机器id
+     *
+     * @param rows      rows
+     * @param tagGetter machineTag getter
+     * @param idSetter  machineId setter
+     * @param <T>       T
+     */
+    private <T extends BaseDataImportDTO> void setMachineIdByTag(List<T> rows,
+                                                                 Function<T, String> tagGetter,
+                                                                 BiConsumer<T, Long> idSetter) {
+        // 获取合法数据
+        List<T> validImportList = rows.stream()
+                .filter(s -> s.getIllegalMessage() == null)
+                .collect(Collectors.toList());
+        if (validImportList.isEmpty()) {
+            return;
+        }
+        // 检查机器唯一标识
+        List<String> tagList = validImportList.stream()
+                .map(tagGetter)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (tagList.isEmpty()) {
+            return;
+        }
+        // 查询机器id
+        Map<String, Long> machineTagMap = Maps.newMap();
+        List<MachineInfoDO> machines = machineInfoDAO.selectIdByTagList(tagList);
+        machines.forEach(m -> machineTagMap.put(m.getMachineTag(), m.getId()));
+        // 设置机器id
+        for (T row : validImportList) {
+            String tag = tagGetter.apply(row);
+            Long machineId = machineTagMap.get(tag);
+            if (machineId == null) {
+                row.setIllegalMessage(Strings.format(MessageConst.UNKNOWN_MACHINE_TAG, tag));
+                continue;
+            }
+            idSetter.accept(row, machineId);
+        }
     }
 
     /**
@@ -225,6 +382,36 @@ public class DataImportServiceImpl implements DataImportService {
         ImportType type = ImportType.of(data.getType());
         Valid.notNull(type);
         return (List<T>) JSON.parseArray(data.getData(), type.getImportClass());
+    }
+
+    /**
+     * 获取导入插入数据
+     *
+     * @param dataCheck dataCheck
+     * @param dataList  list
+     * @param <T>       T
+     * @return rows
+     */
+    private <T extends BaseDataImportDTO> List<T> getImportInsertData(DataImportCheckVO dataCheck, List<T> dataList) {
+        return dataCheck.getInsertRows().stream()
+                .map(DataImportCheckRowVO::getIndex)
+                .map(dataList::get)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取导入更新数据
+     *
+     * @param dataCheck dataCheck
+     * @param dataList  list
+     * @param <T>       T
+     * @return rows
+     */
+    private <T extends BaseDataImportDTO> List<T> getImportUpdateData(DataImportCheckVO dataCheck, List<T> dataList) {
+        return dataCheck.getInsertRows().stream()
+                .map(DataImportCheckRowVO::getIndex)
+                .map(dataList::get)
+                .collect(Collectors.toList());
     }
 
     /**
