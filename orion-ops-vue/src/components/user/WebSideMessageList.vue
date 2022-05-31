@@ -42,6 +42,7 @@
                 <a-icon type="book" class="tools-icon" title="全部已读"/>
               </a-popconfirm>
               <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+              <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
               <a-icon type="search" class="tools-icon" title="查询" @click="getMessageList()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
             </div>
@@ -108,8 +109,10 @@
     <div class="message-event">
       <!-- 消息详情 -->
       <WebSideMessageModal ref="messageModal"/>
-      <!-- 清理 -->
+      <!-- 数据清理模态框 -->
       <WebSideMessageClearModal ref="clear" @clear="getMessageList()"/>
+      <!-- 导出模态框-->
+      <WebSideMessageExportModal ref="export"/>
     </div>
   </div>
 </template>
@@ -118,10 +121,12 @@
 import _filters from '@/lib/filters'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
 import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
+import WebSideMessageExportModal from '@/components/export/WebSideMessageExportModal'
 
 export default {
   name: 'WebSideMessageList',
   components: {
+    WebSideMessageExportModal,
     WebSideMessageClearModal,
     WebSideMessageModal
   },
@@ -193,6 +198,9 @@ export default {
     },
     openClear() {
       this.$refs.clear.open()
+    },
+    openExport() {
+      this.$refs.export.open()
     },
     openDetail(detail) {
       detail.status = this.$enum.READ_STATUS.READ.value

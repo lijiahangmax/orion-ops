@@ -38,6 +38,7 @@
           <a-col :span="2">
             <div class="table-tools-bar p0 log-search-bar">
               <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+              <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
               <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
             </div>
@@ -90,8 +91,10 @@
     <div class="log-list-event">
       <!-- 预览 -->
       <EditorPreview ref="preview" title="参数预览" :editorConfig="{lang: 'json'}"/>
-      <!-- 清理 -->
+      <!-- 清理模态框 -->
       <EventLogClearModal ref="clear" @clear="getEventLog()"/>
+      <!-- 导出模态框 -->
+      <EventLogExportExportModal ref="export" :manager="true"/>
     </div>
   </div>
 </template>
@@ -102,10 +105,12 @@ import _enum from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogClearModal from '@/components/clear/EventLogClearModal'
+import EventLogExportExportModal from '@/components/export/EventLogExportExportModal'
 
 export default {
   name: 'UserEventLogList',
   components: {
+    EventLogExportExportModal,
     EventLogClearModal,
     UserAutoComplete,
     EditorPreview
@@ -214,6 +219,9 @@ export default {
     },
     openClear() {
       this.$refs.clear.open()
+    },
+    openExport() {
+      this.$refs.export.open()
     },
     resetForm() {
       this.$refs.query.resetFields()
