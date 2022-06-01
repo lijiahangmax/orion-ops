@@ -11,12 +11,8 @@ import com.orion.ops.consts.event.EventKeys;
 import com.orion.ops.consts.export.ImportType;
 import com.orion.ops.consts.message.MessageType;
 import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.dao.FileTailListDAO;
-import com.orion.ops.dao.MachineInfoDAO;
-import com.orion.ops.dao.MachineProxyDAO;
-import com.orion.ops.entity.domain.FileTailListDO;
-import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.dao.*;
+import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
@@ -71,6 +67,18 @@ public class DataImportServiceImpl implements DataImportService {
     private FileTailListDAO fileTailListDAO;
 
     @Resource
+    private ApplicationProfileDAO applicationProfileDAO;
+
+    @Resource
+    private ApplicationInfoDAO applicationInfoDAO;
+
+    @Resource
+    private ApplicationVcsDAO applicationVcsDAO;
+
+    @Resource
+    private CommandTemplateDAO commandTemplateDAO;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -85,12 +93,7 @@ public class DataImportServiceImpl implements DataImportService {
     @Override
     public DataImportCheckVO checkMachineInfoImportData(List<MachineInfoImportDTO> rows) {
         // 检查数据合法性
-        this.validImportData(ImportType.MACHINE, rows);
-        // 设置检查对象
-        String dataJson = JSON.toJSONString(rows);
-        List<DataImportCheckRowVO> illegalRows = Lists.newList();
-        List<DataImportCheckRowVO> insertRows = Lists.newList();
-        List<DataImportCheckRowVO> updateRows = Lists.newList();
+        this.validImportRows(ImportType.MACHINE, rows);
         // 通过 tag 查询机器
         List<MachineInfoDO> presentMachines;
         List<String> tagList = rows.stream()
@@ -104,70 +107,79 @@ public class DataImportServiceImpl implements DataImportService {
                     .in(MachineInfoDO::getMachineTag, tagList);
             presentMachines = machineInfoDAO.selectList(wrapper);
         }
-        // 设置数据
-        for (int i = 0; i < rows.size(); i++) {
-            MachineInfoImportDTO row = rows.get(i);
-            // 设置检查数据
-            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
-            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
-                continue;
-            }
-            // 存在则修改
-            final boolean update = presentMachines.stream().anyMatch(m -> m.getMachineTag().equals(row.getTag()));
-            if (update) {
-                updateRows.add(checkRow);
-            } else {
-                insertRows.add(checkRow);
-            }
-        }
-        // 返回数据
-        return this.setCheckData(ImportType.MACHINE.getType(), dataJson, illegalRows, insertRows, updateRows);
+        // 检查数据是否存在
+        this.checkImportRowsPresent(rows, MachineInfoImportDTO::getTag,
+                presentMachines, MachineInfoDO::getMachineTag, MachineInfoDO::getId);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.MACHINE, rows);
     }
 
     @Override
     public DataImportCheckVO checkMachineProxyImportData(List<MachineProxyImportDTO> rows) {
         // 检查数据合法性
-        this.validImportData(ImportType.MACHINE_PROXY, rows);
-        // 设置检查对象
-        String dataJson = JSON.toJSONString(rows);
-        List<DataImportCheckRowVO> illegalRows = Lists.newList();
-        List<DataImportCheckRowVO> insertRows = Lists.newList();
-        // 设置数据
-        for (int i = 0; i < rows.size(); i++) {
-            MachineProxyImportDTO row = rows.get(i);
-            // 设置检查数据
-            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
-            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
-                continue;
-            }
-            insertRows.add(checkRow);
-        }
-        // 返回数据
-        return this.setCheckData(ImportType.MACHINE_PROXY.getType(), dataJson, illegalRows, insertRows, Lists.empty());
+        this.validImportRows(ImportType.MACHINE_PROXY, rows);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.MACHINE_PROXY, rows);
     }
 
     @Override
     public DataImportCheckVO checkMachineTailFileImportData(List<MachineTailFileImportDTO> rows) {
         // 检查数据合法性
-        this.validImportData(ImportType.MACHINE_TAIL_FILE, rows);
+        this.validImportRows(ImportType.MACHINE_TAIL_FILE, rows);
         // 设置机器id
         this.setMachineIdByTag(rows, MachineTailFileImportDTO::getMachineTag, MachineTailFileImportDTO::setMachineId);
-        // 设置检查对象
-        String dataJson = JSON.toJSONString(rows);
-        List<DataImportCheckRowVO> illegalRows = Lists.newList();
-        List<DataImportCheckRowVO> insertRows = Lists.newList();
-        // 设置数据
-        for (int i = 0; i < rows.size(); i++) {
-            MachineTailFileImportDTO row = rows.get(i);
-            // 设置检查数据
-            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
-            if (this.checkAddToIllegal(checkRow, i, illegalRows)) {
-                continue;
-            }
-            insertRows.add(checkRow);
+        // // 检查数据是否存在
+        // this.checkImportRowsPresent(rows, MachineInfoImportDTO::getTag, presentMachines, MachineInfoDO::getMachineTag);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.MACHINE_TAIL_FILE, rows);
+    }
+
+    @Override
+    public DataImportCheckVO checkAppProfileImportData(List<ApplicationProfileImportDTO> rows) {
+        // 检查数据合法性
+        this.validImportRows(ImportType.PROFILE, rows);
+        // 通过 tag 查询环境
+        List<ApplicationProfileDO> presentProfiles;
+        List<String> tagList = rows.stream()
+                .filter(s -> Objects.isNull(s.getIllegalMessage()))
+                .map(ApplicationProfileImportDTO::getTag)
+                .collect(Collectors.toList());
+        if (tagList.isEmpty()) {
+            presentProfiles = Lists.empty();
+        } else {
+            LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
+                    .in(ApplicationProfileDO::getProfileTag, tagList);
+            presentProfiles = applicationProfileDAO.selectList(wrapper);
         }
-        // 返回数据
-        return this.setCheckData(ImportType.MACHINE_TAIL_FILE.getType(), dataJson, illegalRows, insertRows, Lists.empty());
+        // 检查数据是否存在
+        this.checkImportRowsPresent(rows, ApplicationProfileImportDTO::getTag,
+                presentProfiles, ApplicationProfileDO::getProfileTag, ApplicationProfileDO::getId);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.PROFILE, rows);
+    }
+
+    @Override
+    public DataImportCheckVO checkApplicationInfoImportData(List<ApplicationImportDTO> rows) {
+        // 检查数据合法性
+        this.validImportRows(ImportType.APPLICATION, rows);
+        // 通过 tag 查询应用
+        List<ApplicationInfoDO> presentApps;
+        List<String> tagList = rows.stream()
+                .filter(s -> Objects.isNull(s.getIllegalMessage()))
+                .map(ApplicationImportDTO::getTag)
+                .collect(Collectors.toList());
+        if (tagList.isEmpty()) {
+            presentApps = Lists.empty();
+        } else {
+            LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                    .in(ApplicationInfoDO::getAppTag, tagList);
+            presentApps = applicationInfoDAO.selectList(wrapper);
+        }
+        // 检查数据是否存在
+        this.checkImportRowsPresent(rows, ApplicationImportDTO::getTag,
+                presentApps, ApplicationInfoDO::getAppTag, ApplicationInfoDO::getId);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.APPLICATION, rows);
     }
 
     @Override
@@ -178,17 +190,9 @@ public class DataImportServiceImpl implements DataImportService {
             DataImportCheckVO dataCheck = importData.getCheck();
             List<MachineInfoImportDTO> rows = this.getImportData(importData);
             // 插入
-            this.getImportInsertData(dataCheck, rows).forEach(row -> {
-                MachineInfoDO insert = Converts.to(row, MachineInfoDO.class);
-                machineInfoDAO.insert(insert);
-            });
+            this.getImportInsertData(dataCheck, rows, MachineInfoDO.class).forEach(machineInfoDAO::insert);
             // 更新
-            this.getImportUpdateData(dataCheck, rows).forEach(row -> {
-                MachineInfoDO update = Converts.to(row, MachineInfoDO.class);
-                LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
-                        .eq(MachineInfoDO::getMachineTag, update.getMachineTag());
-                machineInfoDAO.update(update, wrapper);
-            });
+            this.getImportUpdateData(dataCheck, rows, MachineInfoDO.class).forEach(machineInfoDAO::updateById);
         } catch (Exception e) {
             ex = e;
             log.error("机器信息导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
@@ -207,10 +211,7 @@ public class DataImportServiceImpl implements DataImportService {
             DataImportCheckVO dataCheck = importData.getCheck();
             List<MachineProxyImportDTO> rows = this.getImportData(importData);
             // 插入
-            this.getImportInsertData(dataCheck, rows).forEach(row -> {
-                MachineProxyDO insert = Converts.to(row, MachineProxyDO.class);
-                machineProxyDAO.insert(insert);
-            });
+            this.getImportInsertData(dataCheck, rows, MachineProxyDO.class).forEach(machineProxyDAO::insert);
         } catch (Exception e) {
             ex = e;
             log.error("机器代理导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
@@ -229,10 +230,9 @@ public class DataImportServiceImpl implements DataImportService {
             DataImportCheckVO dataCheck = importData.getCheck();
             List<MachineTailFileImportDTO> rows = this.getImportData(importData);
             // 插入
-            this.getImportInsertData(dataCheck, rows).forEach(row -> {
-                FileTailListDO insert = Converts.to(row, FileTailListDO.class);
-                fileTailListDAO.insert(insert);
-            });
+            this.getImportInsertData(dataCheck, rows, FileTailListDO.class).forEach(fileTailListDAO::insert);
+            // 更新
+            this.getImportUpdateData(dataCheck, rows, FileTailListDO.class).forEach(fileTailListDAO::updateById);
         } catch (Exception e) {
             ex = e;
             log.error("日志文件导入失败 token: {}, data: {}", importData.getImportToken(), JSON.toJSONString(importData), e);
@@ -256,42 +256,6 @@ public class DataImportServiceImpl implements DataImportService {
     @Override
     public void clearImportToken(String token) {
         redisTemplate.delete(Strings.format(KeyConst.DATA_IMPORT_TOKEN, Currents.getUserId(), token));
-    }
-
-    /**
-     * 验证对象合法性
-     *
-     * @param importType importType
-     * @param rows       rows
-     */
-    private void validImportData(ImportType importType, List<? extends BaseDataImportDTO> rows) {
-        for (BaseDataImportDTO row : rows) {
-            try {
-                importType.getValid().accept(row);
-            } catch (Exception e) {
-                row.setIllegalMessage(e.getMessage());
-            }
-        }
-
-    }
-
-    /**
-     * 检查是否添加至不合法数据
-     *
-     * @param checkRow    checkRow
-     * @param i           index
-     * @param illegalRows rows
-     * @return 是否已添加
-     */
-    private boolean checkAddToIllegal(DataImportCheckRowVO checkRow, int i, List<DataImportCheckRowVO> illegalRows) {
-        checkRow.setIndex(i);
-        checkRow.setRow(i + 3);
-        // 不合法数据
-        if (checkRow.getIllegalMessage() != null) {
-            illegalRows.add(checkRow);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -337,20 +301,82 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     /**
-     * 设置检查数据
+     * 验证对象合法性
      *
-     * @param type        type
-     * @param dataJson    json
-     * @param illegalRows 无效数据
-     * @param insertRows  插入数据
-     * @param updateRows  更新数据
-     * @return 检查数据
+     * @param importType importType
+     * @param rows       rows
      */
-    private DataImportCheckVO setCheckData(Integer type,
-                                           String dataJson,
-                                           List<DataImportCheckRowVO> illegalRows,
-                                           List<DataImportCheckRowVO> insertRows,
-                                           List<DataImportCheckRowVO> updateRows) {
+    private void validImportRows(ImportType importType, List<? extends BaseDataImportDTO> rows) {
+        for (BaseDataImportDTO row : rows) {
+            try {
+                importType.getValid().accept(row);
+            } catch (Exception e) {
+                row.setIllegalMessage(e.getMessage());
+            }
+        }
+
+    }
+
+    /**
+     * 检查导入行是否存在
+     *
+     * @param rows            rows
+     * @param rowKeyGetter    rowKeyGetter
+     * @param presentValues   presentValues
+     * @param presentIdGetter presentIdGetter
+     * @param <R>             row type
+     * @param <K>             key type
+     * @param <P>             present type
+     */
+    private <R extends BaseDataImportDTO, K, P> void checkImportRowsPresent(List<R> rows,
+                                                                            Function<R, K> rowKeyGetter,
+                                                                            List<P> presentValues,
+                                                                            Function<P, K> presentKeyGetter,
+                                                                            Function<P, Long> presentIdGetter) {
+        for (R row : rows) {
+            presentValues.stream()
+                    .filter(p -> presentKeyGetter.apply(p).equals(rowKeyGetter.apply(row)))
+                    .findFirst()
+                    .map(presentIdGetter)
+                    .ifPresent(row::setId);
+        }
+    }
+
+    /**
+     * 设置检查行
+     *
+     * @param type type
+     * @param rows rows
+     * @param <R>  rowType
+     * @return checkData
+     */
+    private <R extends BaseDataImportDTO> DataImportCheckVO setImportCheckRows(ImportType type, List<R> rows) {
+        // 设置检查对象
+        String dataJson = JSON.toJSONString(rows);
+        List<DataImportCheckRowVO> illegalRows = Lists.newList();
+        List<DataImportCheckRowVO> insertRows = Lists.newList();
+        List<DataImportCheckRowVO> updateRows = Lists.newList();
+        // 设置行
+        for (int i = 0; i < rows.size(); i++) {
+            // 设置检查数据
+            R row = rows.get(i);
+            DataImportCheckRowVO checkRow = Converts.to(row, DataImportCheckRowVO.class);
+            checkRow.setIndex(i);
+            checkRow.setRow(i + 3);
+            // 检查非法数据
+            if (checkRow.getIllegalMessage() != null) {
+                illegalRows.add(checkRow);
+                continue;
+            }
+            if (checkRow.getId() == null) {
+                // 不存在则新增
+                insertRows.add(checkRow);
+            } else {
+                // 存在则修改
+                updateRows.add(checkRow);
+            }
+        }
+        // 设置缓存并且返回
         String token = UUIds.random32();
         String cacheKey = Strings.format(KeyConst.DATA_IMPORT_TOKEN, Currents.getUserId(), token);
         // 返回数据
@@ -362,7 +388,7 @@ public class DataImportServiceImpl implements DataImportService {
         // 设置缓存
         DataImportDTO cache = new DataImportDTO();
         cache.setImportToken(token);
-        cache.setType(type);
+        cache.setType(type.getType());
         cache.setData(dataJson);
         cache.setCheck(check);
         redisTemplate.opsForValue().set(cacheKey, JSON.toJSONString(cache),
@@ -387,30 +413,40 @@ public class DataImportServiceImpl implements DataImportService {
     /**
      * 获取导入插入数据
      *
-     * @param dataCheck dataCheck
-     * @param dataList  list
-     * @param <T>       T
+     * @param dataCheck    dataCheck
+     * @param dataList     list
+     * @param convertClass convertClass
+     * @param <T>          T
+     * @param <R>          R
      * @return rows
      */
-    private <T extends BaseDataImportDTO> List<T> getImportInsertData(DataImportCheckVO dataCheck, List<T> dataList) {
+    private <T extends BaseDataImportDTO, R> List<R> getImportInsertData(DataImportCheckVO dataCheck,
+                                                                         List<T> dataList,
+                                                                         Class<R> convertClass) {
         return dataCheck.getInsertRows().stream()
                 .map(DataImportCheckRowVO::getIndex)
                 .map(dataList::get)
+                .map(s -> Converts.to(s, convertClass))
                 .collect(Collectors.toList());
     }
 
     /**
      * 获取导入更新数据
      *
-     * @param dataCheck dataCheck
-     * @param dataList  list
-     * @param <T>       T
+     * @param dataCheck    dataCheck
+     * @param dataList     list
+     * @param convertClass convertClass
+     * @param <T>          T
+     * @param <R>          R
      * @return rows
      */
-    private <T extends BaseDataImportDTO> List<T> getImportUpdateData(DataImportCheckVO dataCheck, List<T> dataList) {
+    private <T extends BaseDataImportDTO, R> List<R> getImportUpdateData(DataImportCheckVO dataCheck,
+                                                                         List<T> dataList,
+                                                                         Class<R> convertClass) {
         return dataCheck.getInsertRows().stream()
                 .map(DataImportCheckRowVO::getIndex)
                 .map(dataList::get)
+                .map(s -> Converts.to(s, convertClass))
                 .collect(Collectors.toList());
     }
 

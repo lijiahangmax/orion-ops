@@ -13,8 +13,13 @@ import lombok.Data;
 public class BaseDataImportDTO {
 
     /**
-     * 非法信息
+     * 非法信息 非法操作
      */
     private String illegalMessage;
+
+    /**
+     * 数据id 更新操作
+     */
+    private Long id;
 
 }

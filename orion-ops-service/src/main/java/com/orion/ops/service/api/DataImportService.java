@@ -1,10 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.ops.consts.export.ImportType;
-import com.orion.ops.entity.dto.importer.DataImportDTO;
-import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
-import com.orion.ops.entity.dto.importer.MachineProxyImportDTO;
-import com.orion.ops.entity.dto.importer.MachineTailFileImportDTO;
+import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -52,6 +49,22 @@ public interface DataImportService {
      * @return 导入信息
      */
     DataImportCheckVO checkMachineTailFileImportData(List<MachineTailFileImportDTO> rows);
+
+    /**
+     * 检查应用环境导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkAppProfileImportData(List<ApplicationProfileImportDTO> rows);
+
+    /**
+     * 检查应用信息导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkApplicationInfoImportData(List<ApplicationImportDTO> rows);
 
     /**
      * 导入机器信息
