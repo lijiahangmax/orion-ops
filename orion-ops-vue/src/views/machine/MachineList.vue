@@ -201,7 +201,7 @@
       <!-- 导出模态框 -->
       <MachineExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <MachineImportModal ref="import"/>
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE"/>
       <!-- 终端模态框 -->
       <div v-if="openTerminalArr.length">
         <TerminalModal v-for="openTerminal of openTerminalArr"
@@ -236,7 +236,7 @@ import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
 import MachineExportModal from '@/components/export/MachineExportModal'
-import MachineImportModal from '@/components/import/MachineImportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 const columns = [
   {
@@ -369,7 +369,7 @@ const moreMenuHandler = {
 export default {
   name: 'MachineList',
   components: {
-    MachineImportModal,
+    DataImportModal,
     MachineExportModal,
     TerminalModal,
     MachineDetailModal,

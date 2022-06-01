@@ -107,6 +107,8 @@
       <AddMachineProxyModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 导出模态框 -->
       <MachineProxyExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE_PROXY"/>
     </div>
   </div>
 </template>
@@ -114,6 +116,7 @@
 <script>
 import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
 import MachineProxyExportModal from '@/components/export/MachineProxyExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -165,6 +168,7 @@ const columns = [
 export default {
   name: 'MachineProxy',
   components: {
+    DataImportModal,
     MachineProxyExportModal,
     AddMachineProxyModal
   },

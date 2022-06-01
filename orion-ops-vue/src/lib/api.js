@@ -2194,14 +2194,14 @@ const $api = {
   },
 
   /**
-   * 导出机器终端日志
+   * 导出终端日志
    */
   exportMachineTerminalLog: param => {
     return $http.$export('/data-export/machine-terminal-log', param)
   },
 
   /**
-   * 导出机器日志文件
+   * 导出日志文件
    */
   exportMachineTailFile: param => {
     return $http.$export('/data-export/machine-tail-file', param)
@@ -2273,10 +2273,24 @@ const $api = {
   },
 
   /**
-   * 导入机器数据
+   * 导入机器信息
    */
   importMachineData: param => {
     return $http.$post('/data-import/import-machine', param)
+  },
+
+  /**
+   * 导入机器代理
+   */
+  importMachineProxy: param => {
+    return $http.$post('/data-import/import-machine-proxy', param)
+  },
+
+  /**
+   * 导入日志文件
+   */
+  importTailFile: param => {
+    return $http.$post('/data-import/import-tail-file', param)
   },
 
   /**

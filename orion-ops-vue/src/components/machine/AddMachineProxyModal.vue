@@ -53,8 +53,8 @@ function getDecorators() {
         required: true,
         message: '请输入主机'
       }, {
-        max: 32,
-        message: '主机长度不能大于32位'
+        max: 128,
+        message: '主机长度不能大于128位'
       }]
     }],
     port: ['port', {

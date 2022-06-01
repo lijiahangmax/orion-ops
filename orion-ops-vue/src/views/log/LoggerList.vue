@@ -125,6 +125,8 @@
       <LoggerViewModal ref="logView"/>
       <!-- 导出模态框 -->
       <MachineTailFileExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.TAIL_FILE"/>
     </div>
   </div>
 </template>
@@ -137,6 +139,7 @@ import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
 import _filters from '@/lib/filters'
 import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -212,6 +215,7 @@ const columns = [
 export default {
   name: 'LoggerList',
   components: {
+    DataImportModal,
     MachineTailFileExportModal,
     LoggerViewModal,
     MachineSelector,

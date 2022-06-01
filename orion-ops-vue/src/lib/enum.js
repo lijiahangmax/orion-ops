@@ -1586,11 +1586,11 @@ const $enum = {
           value: 8510,
           label: '机器代理'
         },
-        DATA_EXPORT_MACHINE_TERMINAL_LOG: {
+        DATA_EXPORT_TERMINAL_LOG: {
           value: 8515,
           label: '终端日志'
         },
-        DATA_EXPORT_MACHINE_TAIL_FILE: {
+        DATA_EXPORT_TAIL_FILE: {
           value: 8520,
           label: '日志文件'
         },
@@ -2220,7 +2220,22 @@ const $enum = {
    */
   IMPORT_TYPE: {
     MACHINE: {
-      value: 10
+      value: 100,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增, 优先使用导入密码',
+      title: '机器信息 导入',
+      api: 'importMachineData'
+    },
+    MACHINE_PROXY: {
+      value: 110,
+      tips: '导入时优先使用导入密码',
+      title: '机器代理 导入',
+      api: 'importMachineProxy'
+    },
+    TAIL_FILE: {
+      value: 130,
+      tips: '通过机器标识来区分机器, 机器名称无需填写',
+      title: '日志文件 导入',
+      api: 'importTailFile'
     }
   }
 

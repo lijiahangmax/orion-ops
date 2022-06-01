@@ -173,8 +173,8 @@ export default {
     validateUsername(rule, value, callback) {
       if (!value) {
         callback(new Error('请输入用户名'))
-      } else if (value.length > 32) {
-        callback(new Error('用户名长度不能大于32位'))
+      } else if (value.length > 128) {
+        callback(new Error('用户名长度不能大于128位'))
       } else {
         callback()
       }
