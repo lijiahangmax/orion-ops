@@ -87,10 +87,12 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
             DataImportCheckRowVO vo = new DataImportCheckRowVO();
             vo.setSymbol(p.tag);
             vo.setIllegalMessage(p.getIllegalMessage());
+            vo.setId(p.getId());
             return vo;
         });
         TypeStore.STORE.register(MachineInfoImportDTO.class, MachineInfoDO.class, p -> {
             MachineInfoDO d = new MachineInfoDO();
+            d.setId(p.getId());
             d.setMachineName(p.name);
             d.setMachineTag(p.tag);
             d.setMachineHost(p.host);
@@ -100,11 +102,13 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
                     .map(MachineAuthType::getType)
                     .ifPresent(d::setAuthType);
             d.setUsername(p.username);
-            if (!Strings.isBlank(p.decryptPassword)) {
-                d.setPassword(ValueMix.encrypt(p.decryptPassword));
-            }
-            if (!Strings.isBlank(p.importPassword)) {
-                d.setPassword(ValueMix.encrypt(p.importPassword));
+            if (MachineAuthType.PASSWORD.getType().equals(d.getAuthType())) {
+                if (!Strings.isBlank(p.decryptPassword)) {
+                    d.setPassword(ValueMix.encrypt(p.decryptPassword));
+                }
+                if (!Strings.isBlank(p.importPassword)) {
+                    d.setPassword(ValueMix.encrypt(p.importPassword));
+                }
             }
             d.setDescription(p.description);
             return d;

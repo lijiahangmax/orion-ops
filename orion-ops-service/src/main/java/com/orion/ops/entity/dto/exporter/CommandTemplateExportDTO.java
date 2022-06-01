@@ -19,10 +19,10 @@ import lombok.Data;
 @ExportSheet(name = "命令模板", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
 public class CommandTemplateExportDTO {
 
-    @ExportField(index = 0, header = "名称", width = 25)
+    @ExportField(index = 0, header = "模板名称", width = 25)
     private String name;
 
-    @ExportField(index = 1, header = "模板", width = 80, wrapText = true)
+    @ExportField(index = 1, header = "模板命令", width = 80, wrapText = true)
     private String template;
 
     @ExportField(index = 2, header = "描述", width = 35, wrapText = true)

@@ -75,10 +75,12 @@ public class MachineProxyImportDTO extends BaseDataImportDTO {
             DataImportCheckRowVO vo = new DataImportCheckRowVO();
             vo.setSymbol(p.host);
             vo.setIllegalMessage(p.getIllegalMessage());
+            vo.setId(p.getId());
             return vo;
         });
         TypeStore.STORE.register(MachineProxyImportDTO.class, MachineProxyDO.class, p -> {
             MachineProxyDO d = new MachineProxyDO();
+            d.setId(p.getId());
             d.setProxyHost(p.host);
             d.setProxyPort(p.port);
             d.setProxyUsername(p.username);

@@ -65,10 +65,12 @@ public class MachineTailFileImportDTO extends BaseDataImportDTO {
             DataImportCheckRowVO vo = new DataImportCheckRowVO();
             vo.setSymbol(p.name);
             vo.setIllegalMessage(p.getIllegalMessage());
+            vo.setId(p.getId());
             return vo;
         });
         TypeStore.STORE.register(MachineTailFileImportDTO.class, FileTailListDO.class, p -> {
             FileTailListDO d = new FileTailListDO();
+            d.setId(p.getId());
             d.setMachineId(p.machineId);
             d.setAliasName(p.name);
             d.setFilePath(p.path);

@@ -89,6 +89,9 @@ public class ApplicationVcsExportDTO {
                         .map(VcsTokenType::of)
                         .map(VcsTokenType::getLabel)
                         .ifPresent(dto::setTokenType);
+                if (VcsTokenType.GITEE.getLabel().equals(dto.getTokenType())) {
+                    dto.setUsername(p.getVscUsername());
+                }
                 dto.setEncryptAuthValue(p.getVcsPrivateToken());
             } else {
                 dto.setUsername(p.getVscUsername());

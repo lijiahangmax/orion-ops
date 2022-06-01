@@ -39,10 +39,13 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
 
     @Override
     public Long addTemplate(CommandTemplateRequest request) {
+        // 名称重复校验
+        String name = request.getName();
+        this.checkNamePresent(null, name);
         // 插入
         UserDTO user = Currents.getUser();
         CommandTemplateDO entity = new CommandTemplateDO();
-        entity.setTemplateName(request.getName());
+        entity.setTemplateName(name);
         entity.setTemplateValue(request.getValue());
         entity.setCreateUserId(user.getId());
         entity.setCreateUserName(user.getUsername());
@@ -59,13 +62,16 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
     public Integer updateTemplate(CommandTemplateRequest request) {
         // 查询模板信息
         Long id = request.getId();
+        String name = request.getName();
+        // 名称重复校验
+        this.checkNamePresent(id, name);
         CommandTemplateDO beforeTemplate = commandTemplateDAO.selectById(id);
         Valid.notNull(beforeTemplate, MessageConst.TEMPLATE_ABSENT);
         // 更新
         UserDTO user = Currents.getUser();
         CommandTemplateDO update = new CommandTemplateDO();
         update.setId(id);
-        update.setTemplateName(request.getName());
+        update.setTemplateName(name);
         update.setTemplateValue(request.getValue());
         update.setDescription(request.getDescription());
         update.setUpdateUserId(user.getId());
@@ -113,6 +119,20 @@ public class CommandTemplateServiceImpl implements CommandTemplateService {
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
         return effect;
+    }
+
+    /**
+     * 检查名称是否存在
+     *
+     * @param id   id
+     * @param name name
+     */
+    private void checkNamePresent(Long id, String name) {
+        LambdaQueryWrapper<CommandTemplateDO> presentWrapper = new LambdaQueryWrapper<CommandTemplateDO>()
+                .ne(id != null, CommandTemplateDO::getId, id)
+                .eq(CommandTemplateDO::getTemplateName, name);
+        boolean present = DataQuery.of(commandTemplateDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 }

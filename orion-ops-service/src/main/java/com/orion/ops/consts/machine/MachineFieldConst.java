@@ -118,4 +118,5 @@ public class MachineFieldConst {
             Valid.validLengthLte(description, DESCRIPTION_MAX_LEN, DESCRIPTION_LEN_MESSAGE);
         }
     }
+
 }
