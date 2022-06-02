@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.orion.id.UUIds;
 import com.orion.office.excel.reader.ExcelBeanReader;
 import com.orion.ops.consts.KeyConst;
@@ -44,6 +45,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -110,18 +112,8 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.MACHINE, rows);
         // 通过唯一标识查询机器
-        List<MachineInfoDO> presentMachines;
-        List<String> tagList = rows.stream()
-                .filter(s -> Objects.isNull(s.getIllegalMessage()))
-                .map(MachineInfoImportDTO::getTag)
-                .collect(Collectors.toList());
-        if (tagList.isEmpty()) {
-            presentMachines = Lists.empty();
-        } else {
-            LambdaQueryWrapper<MachineInfoDO> wrapper = new LambdaQueryWrapper<MachineInfoDO>()
-                    .in(MachineInfoDO::getMachineTag, tagList);
-            presentMachines = machineInfoDAO.selectList(wrapper);
-        }
+        List<MachineInfoDO> presentMachines = this.getImportRowsPresentValues(rows, MachineInfoImportDTO::getTag,
+                machineInfoDAO, MachineInfoDO::getMachineTag);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, MachineInfoImportDTO::getTag,
                 presentMachines, MachineInfoDO::getMachineTag, MachineInfoDO::getId);
@@ -149,18 +141,8 @@ public class DataImportServiceImpl implements DataImportService {
                 MachineTailFileImportDTO::setMachineId,
                 MessageConst.UNKNOWN_MACHINE_TAG);
         // 通过别名查询文件
-        List<FileTailListDO> presentFiles;
-        List<String> nameList = rows.stream()
-                .filter(s -> Objects.isNull(s.getIllegalMessage()))
-                .map(MachineTailFileImportDTO::getName)
-                .collect(Collectors.toList());
-        if (nameList.isEmpty()) {
-            presentFiles = Lists.empty();
-        } else {
-            LambdaQueryWrapper<FileTailListDO> wrapper = new LambdaQueryWrapper<FileTailListDO>()
-                    .in(FileTailListDO::getAliasName, nameList);
-            presentFiles = fileTailListDAO.selectList(wrapper);
-        }
+        List<FileTailListDO> presentFiles = this.getImportRowsPresentValues(rows, MachineTailFileImportDTO::getName,
+                fileTailListDAO, FileTailListDO::getAliasName);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, MachineTailFileImportDTO::getName,
                 presentFiles, FileTailListDO::getAliasName, FileTailListDO::getId);
@@ -173,18 +155,9 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.PROFILE, rows);
         // 通过唯一标识查询环境
-        List<ApplicationProfileDO> presentProfiles;
-        List<String> tagList = rows.stream()
-                .filter(s -> Objects.isNull(s.getIllegalMessage()))
-                .map(ApplicationProfileImportDTO::getTag)
-                .collect(Collectors.toList());
-        if (tagList.isEmpty()) {
-            presentProfiles = Lists.empty();
-        } else {
-            LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
-                    .in(ApplicationProfileDO::getProfileTag, tagList);
-            presentProfiles = applicationProfileDAO.selectList(wrapper);
-        }
+        List<ApplicationProfileDO> presentProfiles = this.getImportRowsPresentValues(rows,
+                ApplicationProfileImportDTO::getTag,
+                applicationProfileDAO, ApplicationProfileDO::getProfileTag);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, ApplicationProfileImportDTO::getTag,
                 presentProfiles, ApplicationProfileDO::getProfileTag, ApplicationProfileDO::getId);
@@ -204,18 +177,9 @@ public class DataImportServiceImpl implements DataImportService {
                 ApplicationImportDTO::setVcsId,
                 MessageConst.UNKNOWN_APP_VCS);
         // 通过唯一标识查询应用
-        List<ApplicationInfoDO> presentApps;
-        List<String> tagList = rows.stream()
-                .filter(s -> Objects.isNull(s.getIllegalMessage()))
-                .map(ApplicationImportDTO::getTag)
-                .collect(Collectors.toList());
-        if (tagList.isEmpty()) {
-            presentApps = Lists.empty();
-        } else {
-            LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
-                    .in(ApplicationInfoDO::getAppTag, tagList);
-            presentApps = applicationInfoDAO.selectList(wrapper);
-        }
+        List<ApplicationInfoDO> presentApps = this.getImportRowsPresentValues(rows,
+                ApplicationImportDTO::getTag,
+                applicationInfoDAO, ApplicationInfoDO::getAppTag);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, ApplicationImportDTO::getTag,
                 presentApps, ApplicationInfoDO::getAppTag, ApplicationInfoDO::getId);
@@ -225,7 +189,17 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Override
     public DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows) {
-        return null;
+        // 检查数据合法性
+        this.validImportRows(ImportType.VCS, rows);
+        // 通过唯一标识查询应用
+        List<ApplicationVcsDO> presentVcsList = this.getImportRowsPresentValues(rows,
+                ApplicationVcsImportDTO::getName,
+                applicationVcsDAO, ApplicationVcsDO::getVcsName);
+        // 检查数据是否存在
+        this.checkImportRowsPresent(rows, ApplicationVcsImportDTO::getName,
+                presentVcsList, ApplicationVcsDO::getVcsName, ApplicationVcsDO::getId);
+        // 设置导入检查数据
+        return this.setImportCheckRows(ImportType.VCS, rows);
     }
 
     @Override
@@ -233,18 +207,9 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.COMMAND_TEMPLATE, rows);
         // 通过名称查询模板
-        List<CommandTemplateDO> presentTemplates;
-        List<String> nameList = rows.stream()
-                .filter(s -> Objects.isNull(s.getIllegalMessage()))
-                .map(CommandTemplateImportDTO::getName)
-                .collect(Collectors.toList());
-        if (nameList.isEmpty()) {
-            presentTemplates = Lists.empty();
-        } else {
-            LambdaQueryWrapper<CommandTemplateDO> wrapper = new LambdaQueryWrapper<CommandTemplateDO>()
-                    .in(CommandTemplateDO::getTemplateName, nameList);
-            presentTemplates = commandTemplateDAO.selectList(wrapper);
-        }
+        List<CommandTemplateDO> presentTemplates = this.getImportRowsPresentValues(rows,
+                CommandTemplateImportDTO::getName,
+                commandTemplateDAO, CommandTemplateDO::getTemplateName);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, CommandTemplateImportDTO::getName,
                 presentTemplates, CommandTemplateDO::getTemplateName, CommandTemplateDO::getId);
@@ -256,7 +221,15 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Override
     public void importMachineInfoData(DataImportDTO importData) {
-        this.doImportData(importData, machineInfoDAO);
+        this.doImportData(importData, machineInfoDAO, v -> {
+            // ignore
+        }, v -> {
+            // 检查是否有代理
+            Optional.ofNullable(v.getId())
+                    .map(machineInfoDAO::selectById)
+                    .map(MachineInfoDO::getProxyId)
+                    .ifPresent(v::setProxyId);
+        });
     }
 
     @Override
@@ -405,6 +378,35 @@ public class DataImportServiceImpl implements DataImportService {
             relIdSetter.accept(row, relId);
         }
     }
+
+    /**
+     * 获取导入行已存在的数据
+     *
+     * @param rows               rows
+     * @param rowSymbolGetter    rowSymbolGetter
+     * @param mapper             mapper
+     * @param domainSymbolGetter domainSymbolGetter
+     * @param <T>                row type
+     * @param <DO>               domain type
+     * @return present domain
+     */
+    private <T extends BaseDataImportDTO, DO> List<DO> getImportRowsPresentValues(List<T> rows,
+                                                                                  Function<T, ?> rowSymbolGetter,
+                                                                                  BaseMapper<DO> mapper,
+                                                                                  SFunction<DO, ?> domainSymbolGetter) {
+        List<?> symbolList = rows.stream()
+                .filter(s -> Objects.isNull(s.getIllegalMessage()))
+                .map(rowSymbolGetter)
+                .collect(Collectors.toList());
+        if (symbolList.isEmpty()) {
+            return Lists.empty();
+        } else {
+            LambdaQueryWrapper<DO> wrapper = new LambdaQueryWrapper<DO>()
+                    .in(domainSymbolGetter, symbolList);
+            return mapper.selectList(wrapper);
+        }
+    }
+
 
     /**
      * 检查导入行是否存在

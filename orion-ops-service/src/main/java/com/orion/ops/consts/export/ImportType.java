@@ -2,6 +2,7 @@ package com.orion.ops.consts.export;
 
 import com.orion.ops.consts.app.ApplicationFieldConst;
 import com.orion.ops.consts.app.ApplicationProfileFieldConst;
+import com.orion.ops.consts.app.ApplicationVcsFieldConst;
 import com.orion.ops.consts.command.CommandTemplateFieldConst;
 import com.orion.ops.consts.machine.MachineFieldConst;
 import com.orion.ops.consts.machine.MachineProxyFieldConst;
@@ -54,7 +55,7 @@ public enum ImportType {
      * 导入日志文件
      */
     MACHINE_TAIL_FILE(130,
-            "/templates/machine-tail-file-import-template.xlsx",
+            "/templates/tail-file-import-template.xlsx",
             "日志文件导入模板.xlsx",
             MachineTailFileImportDTO.class,
             FileTailFieldConst::validData,
@@ -93,7 +94,7 @@ public enum ImportType {
             "/templates/app-vcs-import-template.xlsx",
             "应用仓库导入模板.xlsx",
             ApplicationVcsImportDTO.class,
-            FileTailFieldConst::validData,
+            ApplicationVcsFieldConst::validData,
             ApplicationVcsDO.class,
             MessageType.APP_VCS_IMPORT_SUCCESS,
             MessageType.APP_VCS_IMPORT_FAILURE),
