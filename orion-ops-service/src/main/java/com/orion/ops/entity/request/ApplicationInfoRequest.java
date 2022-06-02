@@ -31,7 +31,7 @@ public class ApplicationInfoRequest extends PageRequest {
     private String name;
 
     /**
-     * 标识符
+     * 唯一标识
      */
     private String tag;
 

@@ -45,7 +45,7 @@ public class SchedulerTaskMachineRecordVO {
     private String machineHost;
 
     /**
-     * 机器tag
+     * 机器唯一标识
      */
     private String machineTag;
 

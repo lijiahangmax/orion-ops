@@ -57,7 +57,7 @@ public class MachineInfoVO {
     private String name;
 
     /**
-     * 机器标识符
+     * 机器唯一标识
      */
     private String tag;
 

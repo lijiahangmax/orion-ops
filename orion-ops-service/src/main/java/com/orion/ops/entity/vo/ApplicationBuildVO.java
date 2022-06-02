@@ -36,7 +36,7 @@ public class ApplicationBuildVO {
     private String appName;
 
     /**
-     * 应用tag
+     * 应用唯一标识
      */
     private String appTag;
 
@@ -51,7 +51,7 @@ public class ApplicationBuildVO {
     private String profileName;
 
     /**
-     * 环境tag
+     * 环境唯一标识
      */
     private String profileTag;
 

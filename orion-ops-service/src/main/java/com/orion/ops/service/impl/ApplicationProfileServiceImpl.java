@@ -202,7 +202,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     }
 
     /**
-     * 检查标识符是否存在
+     * 检查唯一标识是否存在
      *
      * @param id  id
      * @param tag tag

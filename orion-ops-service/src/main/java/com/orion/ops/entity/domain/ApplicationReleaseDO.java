@@ -65,7 +65,7 @@ public class ApplicationReleaseDO implements Serializable {
     private String appName;
 
     /**
-     * 应用tag
+     * 应用唯一标识
      */
     @TableField("app_tag")
     private String appTag;
@@ -83,7 +83,7 @@ public class ApplicationReleaseDO implements Serializable {
     private String profileName;
 
     /**
-     * 环境tag
+     * 环境唯一标识
      */
     @TableField("profile_tag")
     private String profileTag;

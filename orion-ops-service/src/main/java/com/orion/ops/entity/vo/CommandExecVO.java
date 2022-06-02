@@ -69,7 +69,7 @@ public class CommandExecVO {
     private String machineHost;
 
     /**
-     * 机器标识符
+     * 机器唯一标识
      */
     private String machineTag;
 

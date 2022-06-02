@@ -65,7 +65,7 @@ public class ApplicationPipelineTaskDetailDO implements Serializable {
     private String appName;
 
     /**
-     * 应用tag
+     * 应用唯一标识
      */
     @TableField("app_tag")
     private String appTag;

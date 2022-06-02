@@ -27,7 +27,7 @@ public class ApplicationInfoVO {
     private String name;
 
     /**
-     * 标识符
+     * 应用唯一标识
      */
     private String tag;
 

@@ -35,7 +35,7 @@ public class ApplicationProfileDO implements Serializable {
     private String profileName;
 
     /**
-     * 环境标识
+     * 环境唯一标识
      */
     @TableField("profile_tag")
     private String profileTag;

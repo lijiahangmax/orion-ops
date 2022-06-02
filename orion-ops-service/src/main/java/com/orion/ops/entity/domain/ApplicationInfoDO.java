@@ -35,7 +35,7 @@ public class ApplicationInfoDO implements Serializable {
     private String appName;
 
     /**
-     * 标识符
+     * 应用唯一标识
      */
     @TableField("app_tag")
     private String appTag;
