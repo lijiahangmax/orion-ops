@@ -24,4 +24,12 @@ public interface ApplicationVcsDAO extends BaseMapper<ApplicationVcsDO> {
      */
     List<ApplicationVcsDO> selectNameByIdList(@Param("idList") List<Long> idList);
 
+    /**
+     * 通过名称查询id
+     *
+     * @param nameList nameList
+     * @return rows
+     */
+    List<ApplicationVcsDO> selectIdByNameList(@Param("nameList") List<String> nameList);
+
 }

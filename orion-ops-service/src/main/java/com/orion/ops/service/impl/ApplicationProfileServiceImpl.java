@@ -182,6 +182,11 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         return Converts.to(profile, ApplicationProfileVO.class);
     }
 
+    @Override
+    public void clearProfileCache() {
+        redisTemplate.delete(KeyConst.DATA_PROFILE_KEY);
+    }
+
     /**
      * 检查名称是否存在
      *

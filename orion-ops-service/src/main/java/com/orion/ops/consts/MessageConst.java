@@ -218,4 +218,6 @@ public class MessageConst {
 
     public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
 
+    public static final String UNKNOWN_APP_VCS = "未查询到应用仓库: {}";
+
 }

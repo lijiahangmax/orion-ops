@@ -18,6 +18,8 @@ import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
+import com.orion.ops.service.api.ApplicationInfoService;
+import com.orion.ops.service.api.ApplicationProfileService;
 import com.orion.ops.service.api.DataImportService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Currents;
@@ -84,6 +86,12 @@ public class DataImportServiceImpl implements DataImportService {
     private CommandTemplateDAO commandTemplateDAO;
 
     @Resource
+    private ApplicationProfileService applicationProfileService;
+
+    @Resource
+    private ApplicationInfoService applicationInfoService;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -134,7 +142,12 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.MACHINE_TAIL_FILE, rows);
         // 设置机器id
-        this.setMachineIdByTag(rows, MachineTailFileImportDTO::getMachineTag, MachineTailFileImportDTO::setMachineId);
+        this.setCheckRowsRelId(rows, MachineTailFileImportDTO::getMachineTag,
+                machineInfoDAO::selectIdByTagList,
+                MachineInfoDO::getMachineTag,
+                MachineInfoDO::getId,
+                MachineTailFileImportDTO::setMachineId,
+                MessageConst.UNKNOWN_MACHINE_TAG);
         // 通过别名查询文件
         List<FileTailListDO> presentFiles;
         List<String> nameList = rows.stream()
@@ -183,6 +196,13 @@ public class DataImportServiceImpl implements DataImportService {
     public DataImportCheckVO checkApplicationInfoImportData(List<ApplicationImportDTO> rows) {
         // 检查数据合法性
         this.validImportRows(ImportType.APPLICATION, rows);
+        // 设置机器id
+        this.setCheckRowsRelId(rows, ApplicationImportDTO::getVcsName,
+                applicationVcsDAO::selectIdByNameList,
+                ApplicationVcsDO::getVcsName,
+                ApplicationVcsDO::getId,
+                ApplicationImportDTO::setVcsId,
+                MessageConst.UNKNOWN_APP_VCS);
         // 通过唯一标识查询应用
         List<ApplicationInfoDO> presentApps;
         List<String> tagList = rows.stream()
@@ -251,12 +271,20 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Override
     public void importAppProfileData(DataImportDTO importData) {
+        // 执行导入
         this.doImportData(importData, applicationProfileDAO);
+        // 删除环境缓存
+        applicationProfileService.clearProfileCache();
     }
 
     @Override
     public void importApplicationData(DataImportDTO importData) {
-        this.doImportData(importData, applicationInfoDAO);
+        this.doImportData(importData, applicationInfoDAO, v -> {
+            // 设置应用排序
+            v.setAppSort(applicationInfoService.getNextSort());
+        }, v -> {
+            // ignore
+        });
     }
 
     @Override
@@ -307,48 +335,6 @@ public class DataImportServiceImpl implements DataImportService {
     // -------------------- check private --------------------
 
     /**
-     * 设置机器id
-     *
-     * @param rows      rows
-     * @param tagGetter machineTag getter
-     * @param idSetter  machineId setter
-     * @param <T>       T
-     */
-    private <T extends BaseDataImportDTO> void setMachineIdByTag(List<T> rows,
-                                                                 Function<T, String> tagGetter,
-                                                                 BiConsumer<T, Long> idSetter) {
-        // 获取合法数据
-        List<T> validImportList = rows.stream()
-                .filter(s -> s.getIllegalMessage() == null)
-                .collect(Collectors.toList());
-        if (validImportList.isEmpty()) {
-            return;
-        }
-        // 检查机器唯一标识
-        List<String> tagList = validImportList.stream()
-                .map(tagGetter)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        if (tagList.isEmpty()) {
-            return;
-        }
-        // 查询机器id
-        Map<String, Long> machineTagMap = Maps.newMap();
-        List<MachineInfoDO> machines = machineInfoDAO.selectIdByTagList(tagList);
-        machines.forEach(m -> machineTagMap.put(m.getMachineTag(), m.getId()));
-        // 设置机器id
-        for (T row : validImportList) {
-            String tag = tagGetter.apply(row);
-            Long machineId = machineTagMap.get(tag);
-            if (machineId == null) {
-                row.setIllegalMessage(Strings.format(MessageConst.UNKNOWN_MACHINE_TAG, tag));
-                continue;
-            }
-            idSetter.accept(row, machineId);
-        }
-    }
-
-    /**
      * 验证对象合法性
      *
      * @param importType importType
@@ -363,6 +349,61 @@ public class DataImportServiceImpl implements DataImportService {
             }
         }
 
+    }
+
+    /**
+     * 设置引用id
+     *
+     * @param rows               rows
+     * @param symbolGetter       symbolGetter
+     * @param query              dataQuery
+     * @param domainSymbolGetter domainSymbolGetter
+     * @param domainIdGetter     domainIdGetter
+     * @param relIdSetter        relIdSetter
+     * @param notPresentTemplate notPresentTemplate
+     * @param <T>                row type
+     * @param <S>                symbol type
+     * @param <DO>               domain type
+     */
+    private <T extends BaseDataImportDTO, S, DO> void setCheckRowsRelId(List<T> rows,
+                                                                        Function<T, S> symbolGetter,
+                                                                        Function<List<S>, List<DO>> query,
+                                                                        Function<DO, S> domainSymbolGetter,
+                                                                        Function<DO, Long> domainIdGetter,
+                                                                        BiConsumer<T, Long> relIdSetter,
+                                                                        String notPresentTemplate) {
+        // 获取合法数据
+        List<T> validImportList = rows.stream()
+                .filter(s -> Objects.isNull(s.getIllegalMessage()))
+                .filter(s -> {
+                    S symbol = symbolGetter.apply(s);
+                    return symbol instanceof String ? Strings.isNotBlank((String) symbol) : Objects.nonNull(symbol);
+                }).collect(Collectors.toList());
+        if (validImportList.isEmpty()) {
+            return;
+        }
+        // 获取标识
+        List<S> symbolList = validImportList.stream()
+                .map(symbolGetter)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (symbolList.isEmpty()) {
+            return;
+        }
+        // 查询id
+        Map<S, Long> symbolIdMap = Maps.newMap();
+        List<DO> dataList = query.apply(symbolList);
+        dataList.forEach(s -> symbolIdMap.put(domainSymbolGetter.apply(s), domainIdGetter.apply(s)));
+        // 设置id
+        for (T row : validImportList) {
+            S symbol = symbolGetter.apply(row);
+            Long relId = symbolIdMap.get(symbol);
+            if (relId == null) {
+                row.setIllegalMessage(Strings.format(notPresentTemplate, symbol));
+                continue;
+            }
+            relIdSetter.accept(row, relId);
+        }
     }
 
     /**
@@ -391,7 +432,7 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     /**
-     * 设置检查行
+     * 设置检查行数据缓存
      *
      * @param type type
      * @param rows rows

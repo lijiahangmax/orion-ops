@@ -109,4 +109,11 @@ public interface ApplicationInfoService {
      */
     boolean checkAppConfig(Long appId, Long profileId);
 
+    /**
+     * 获取下一个排序
+     *
+     * @return sort
+     */
+    Integer getNextSort();
+
 }

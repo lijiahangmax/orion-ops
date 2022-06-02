@@ -392,6 +392,17 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 && applicationActionService.getAppProfileActionCount(appId, profileId, StageType.RELEASE.getType()) > 0;
     }
 
+    @Override
+    public Integer getNextSort() {
+        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .orderByDesc(ApplicationInfoDO::getAppSort)
+                .last(Const.LIMIT_1);
+        return Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
+                .map(ApplicationInfoDO::getAppSort)
+                .map(s -> s + Const.N_10)
+                .orElse(Const.N_10);
+    }
+
     /**
      * 检查名称是否存在
      *
@@ -418,21 +429,6 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .eq(ApplicationInfoDO::getAppTag, tag);
         boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.TAG_PRESENT);
-    }
-
-    /**
-     * 获取下一个排序
-     *
-     * @return sort
-     */
-    private Integer getNextSort() {
-        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
-                .orderByDesc(ApplicationInfoDO::getAppSort)
-                .last(Const.LIMIT_1);
-        return Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
-                .map(ApplicationInfoDO::getAppSort)
-                .map(s -> s + Const.N_10)
-                .orElse(Const.N_10);
     }
 
 }

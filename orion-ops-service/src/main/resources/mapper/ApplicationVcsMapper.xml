@@ -36,4 +36,14 @@
         AND deleted = 1
     </select>
 
+    <select id="selectIdByNameList" resultMap="BaseResultMap">
+        SELECT id, vcs_name
+        FROM application_vcs
+        WHERE vcs_name IN
+        <foreach collection="nameList" item="name" separator="," open="(" close=")">
+            #{name}
+        </foreach>
+        AND deleted = 1
+    </select>
+
 </mapper>
