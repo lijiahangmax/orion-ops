@@ -67,6 +67,22 @@ public interface DataImportService {
     DataImportCheckVO checkApplicationInfoImportData(List<ApplicationImportDTO> rows);
 
     /**
+     * 检查应用版本仓库导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows);
+
+    /**
+     * 检查命令模板导入信息
+     *
+     * @param rows rows
+     * @return 导入信息
+     */
+    DataImportCheckVO checkCommandTemplateImportData(List<CommandTemplateImportDTO> rows);
+
+    /**
      * 导入机器信息
      *
      * @param checkData 缓存信息
@@ -86,6 +102,34 @@ public interface DataImportService {
      * @param checkData checkData
      */
     void importMachineTailFileData(DataImportDTO checkData);
+
+    /**
+     * 导入应用环境
+     *
+     * @param checkData checkData
+     */
+    void importAppProfileData(DataImportDTO checkData);
+
+    /**
+     * 导入应用信息
+     *
+     * @param checkData checkData
+     */
+    void importApplicationData(DataImportDTO checkData);
+
+    /**
+     * 导入应用版本仓库
+     *
+     * @param checkData checkData
+     */
+    void importAppVcsData(DataImportDTO checkData);
+
+    /**
+     * 导入命令模板
+     *
+     * @param checkData checkData
+     */
+    void importCommandTemplateData(DataImportDTO checkData);
 
     /**
      * 检查导入 token

@@ -7,11 +7,9 @@ import com.orion.ops.annotation.*;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.export.ImportType;
+import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.entity.dto.importer.DataImportDTO;
-import com.orion.ops.entity.dto.importer.MachineInfoImportDTO;
-import com.orion.ops.entity.dto.importer.MachineProxyImportDTO;
-import com.orion.ops.entity.dto.importer.MachineTailFileImportDTO;
+import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.request.DataImportRequest;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import com.orion.ops.service.api.DataImportService;
@@ -96,6 +94,14 @@ public class DataImportController {
                 return dataImportService.checkMachineProxyImportData((List<MachineProxyImportDTO>) rows);
             case MACHINE_TAIL_FILE:
                 return dataImportService.checkMachineTailFileImportData((List<MachineTailFileImportDTO>) rows);
+            case PROFILE:
+                return dataImportService.checkAppProfileImportData((List<ApplicationProfileImportDTO>) rows);
+            case APPLICATION:
+                return dataImportService.checkApplicationInfoImportData((List<ApplicationImportDTO>) rows);
+            case VCS:
+                return dataImportService.checkAppVcsImportData((List<ApplicationVcsImportDTO>) rows);
+            case COMMAND_TEMPLATE:
+                return dataImportService.checkCommandTemplateImportData((List<CommandTemplateImportDTO>) rows);
             default:
                 throw Exceptions.unsupported();
         }
@@ -134,6 +140,55 @@ public class DataImportController {
         String token = Valid.notNull(request.getImportToken());
         // 导入
         this.asyncImportData(token, d -> dataImportService.importMachineTailFileData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入应用环境
+     */
+    @RequestMapping("/import-app-profile")
+    @EventLog(EventType.DATA_IMPORT_APP_PROFILE)
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public HttpWrapper<?> importAppProfileData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importAppProfileData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入应用信息
+     */
+    @RequestMapping("/import-application")
+    @EventLog(EventType.DATA_IMPORT_APPLICATION)
+    public HttpWrapper<?> importApplicationData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importApplicationData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入应用版本仓库
+     */
+    @RequestMapping("/import-app-vcs")
+    @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
+    public HttpWrapper<?> importAppVcsData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importAppVcsData(d));
+        return HttpWrapper.ok();
+    }
+
+    /**
+     * 导入命令模板
+     */
+    @RequestMapping("/import-command-template")
+    @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
+    public HttpWrapper<?> importCommandTemplateData(@RequestBody DataImportRequest request) {
+        String token = Valid.notNull(request.getImportToken());
+        // 导入
+        this.asyncImportData(token, d -> dataImportService.importCommandTemplateData(d));
         return HttpWrapper.ok();
     }
 

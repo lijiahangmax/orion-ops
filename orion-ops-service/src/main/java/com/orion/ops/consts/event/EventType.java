@@ -678,7 +678,27 @@ public enum EventType {
     /**
      * 导入日志文件
      */
-    DATA_IMPORT_TAIL_FILE(8310, EventClassify.DATA_IMPORT, "导入日志文件", "导入日志文件"),
+    DATA_IMPORT_TAIL_FILE(8315, EventClassify.DATA_IMPORT, "导入日志文件", "批量导入日志文件"),
+
+    /**
+     * 导入应用环境
+     */
+    DATA_IMPORT_APP_PROFILE(8320, EventClassify.DATA_IMPORT, "导入应用环境", "批量导入应用环境"),
+
+    /**
+     * 导入应用信息
+     */
+    DATA_IMPORT_APPLICATION(8325, EventClassify.DATA_IMPORT, "导入应用信息", "批量导入应用信息"),
+
+    /**
+     * 导入版本仓库
+     */
+    DATA_IMPORT_APP_VCS(8330, EventClassify.DATA_IMPORT, "导入版本仓库", "批量导入应用版本仓库"),
+
+    /**
+     * 导入日志文件
+     */
+    DATA_IMPORT_COMMAND_TEMPLATE(8335, EventClassify.DATA_IMPORT, "导入命令模板", "批量导入命令模板"),
 
     // -------------------- 数据导出 --------------------
 

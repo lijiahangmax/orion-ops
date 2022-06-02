@@ -89,34 +89,74 @@ public enum MessageType {
     // -------------------- 导入通知 --------------------
 
     /**
-     * 导入机器成功
+     * 机器信息导入成功
      */
-    MACHINE_IMPORT_SUCCESS(2010, "导入机器成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器导入操作执行完成"),
+    MACHINE_IMPORT_SUCCESS(2010, "机器信息导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器信息导入操作执行完成"),
 
     /**
-     * 导入机器失败
+     * 机器信息导入失败
      */
-    MACHINE_IMPORT_FAILURE(2020, "导入机器失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器导入操作执行失败"),
+    MACHINE_IMPORT_FAILURE(2020, "机器信息导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器信息导入操作执行失败"),
 
     /**
-     * 导入机器代理成功
+     * 机器代理导入成功
      */
-    MACHINE_PROXY_IMPORT_SUCCESS(2030, "导入机器代理成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行完成"),
+    MACHINE_PROXY_IMPORT_SUCCESS(2030, "机器代理导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行完成"),
 
     /**
-     * 导入机器代理失败
+     * 机器代理导入失败
      */
-    MACHINE_PROXY_IMPORT_FAILURE(2040, "导入机器代理失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行失败"),
+    MACHINE_PROXY_IMPORT_FAILURE(2040, "机器代理导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行失败"),
 
     /**
-     * 导入日志文件成功
+     * 日志文件导入成功
      */
-    MACHINE_TAIL_FILE_IMPORT_SUCCESS(2050, "导入日志文件成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行完成"),
+    MACHINE_TAIL_FILE_IMPORT_SUCCESS(2050, "日志文件导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行完成"),
 
     /**
-     * 导入日志文件失败
+     * 日志文件导入失败
      */
-    MACHINE_TAIL_FILE_IMPORT_FAILURE(2060, "导入日志文件失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行失败"),
+    MACHINE_TAIL_FILE_IMPORT_FAILURE(2060, "日志文件导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行失败"),
+
+    /**
+     * 应用环境导入成功
+     */
+    APP_PROFILE_IMPORT_SUCCESS(2070, "应用环境导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行完成"),
+
+    /**
+     * 应用环境导入失败
+     */
+    APP_PROFILE_IMPORT_FAILURE(2080, "应用环境导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行失败"),
+
+    /**
+     * 应用信息导入成功
+     */
+    APPLICATION_IMPORT_SUCCESS(2090, "应用信息导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用信息导入操作执行完成"),
+
+    /**
+     * 应用信息导入失败
+     */
+    APPLICATION_IMPORT_FAILURE(2100, "应用信息导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用信息导入操作执行失败"),
+
+    /**
+     * 版本仓库导入成功
+     */
+    APP_VCS_IMPORT_SUCCESS(2110, "版本仓库导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行完成"),
+
+    /**
+     * 版本仓库导入失败
+     */
+    APP_VCS_IMPORT_FAILURE(2120, "版本仓库导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行失败"),
+
+    /**
+     * 命令模板导入成功
+     */
+    COMMAND_TEMPLATE_IMPORT_SUCCESS(2130, "命令模板导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的命令模板导入操作执行完成"),
+
+    /**
+     * 命令模板导入失败
+     */
+    COMMAND_TEMPLATE_IMPORT_FAILURE(2140, "命令模板导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的命令模板导入操作执行失败"),
 
     ;
 

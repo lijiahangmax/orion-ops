@@ -130,10 +130,13 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Override
     public Long insertTailFile(FileTailRequest request) {
+        // 名称重复校验
         Long machineId = request.getMachineId();
+        String name = request.getName();
+        this.checkNamePresent(null, name);
         // 插入
         FileTailListDO insert = new FileTailListDO();
-        insert.setAliasName(request.getName());
+        insert.setAliasName(name);
         insert.setMachineId(machineId);
         insert.setFilePath(request.getPath());
         insert.setFileCharset(request.getCharset());
@@ -148,15 +151,18 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Override
     public Integer updateTailFile(FileTailRequest request) {
-        // 查询文件
+        // 名称重复校验
         Long id = request.getId();
+        String name = request.getName();
+        this.checkNamePresent(id, name);
+        // 查询文件
         FileTailListDO beforeTail = fileTailListDAO.selectById(id);
         Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
         Long machineId = request.getMachineId();
         // 修改
         FileTailListDO update = new FileTailListDO();
         update.setId(id);
-        update.setAliasName(request.getName());
+        update.setAliasName(name);
         update.setMachineId(machineId);
         update.setFilePath(request.getPath());
         update.setFileOffset(request.getOffset());
@@ -313,6 +319,20 @@ public class FileTailServiceImpl implements FileTailService {
         ITailHandler session = tailSessionHolder.getSession(token);
         Valid.notNull(session, MessageConst.EXEC_TASK_THREAD_ABSENT);
         session.write(command);
+    }
+
+    /**
+     * 检查名称是否存在
+     *
+     * @param id   id
+     * @param name name
+     */
+    private void checkNamePresent(Long id, String name) {
+        LambdaQueryWrapper<FileTailListDO> presentWrapper = new LambdaQueryWrapper<FileTailListDO>()
+                .ne(id != null, FileTailListDO::getId, id)
+                .eq(FileTailListDO::getAliasName, name);
+        boolean present = DataQuery.of(fileTailListDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 }

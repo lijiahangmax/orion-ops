@@ -131,7 +131,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         if (!beforeVcs.getVscUrl().equals(update.getVscUrl())) {
             // 如果修改了url则状态改为未初始化
             update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
-            // 删除目录
+            // 删除 event 目录
             File clonePath = new File(Utils.getVcsEventDir(id));
             Files1.delete(clonePath);
         }
