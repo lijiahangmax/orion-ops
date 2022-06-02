@@ -1,6 +1,6 @@
 package com.orion.ops.consts.app;
 
-import com.orion.ops.entity.dto.importer.ApplicationProfileImportDTO;
+import com.orion.ops.entity.dto.importer.ApplicationImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
 
@@ -38,8 +38,8 @@ public class ApplicationFieldConst {
      * @param o o
      */
     public static void validData(Object o) {
-        if (o instanceof ApplicationProfileImportDTO) {
-            validImport((ApplicationProfileImportDTO) o);
+        if (o instanceof ApplicationImportDTO) {
+            validImport((ApplicationImportDTO) o);
         }
     }
 
@@ -48,7 +48,7 @@ public class ApplicationFieldConst {
      *
      * @param row row
      */
-    public static void validImport(ApplicationProfileImportDTO row) {
+    public static void validImport(ApplicationImportDTO row) {
         String name = row.getName();
         String tag = row.getTag();
         String description = row.getDescription();

@@ -1,6 +1,7 @@
 package com.orion.ops.entity.dto.importer;
 
 import com.orion.office.excel.annotation.ImportField;
+import com.orion.ops.consts.Const;
 import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
@@ -77,7 +78,11 @@ public class MachineTailFileImportDTO extends BaseDataImportDTO {
             d.setFileCharset(p.charset);
             d.setFileOffset(p.offset);
             d.setTailCommand(p.command);
-            d.setTailMode(FileTailMode.TAIL.getMode());
+            if (Const.HOST_MACHINE_ID.equals(p.machineId)) {
+                d.setTailMode(FileTailMode.TRACKER.getMode());
+            } else {
+                d.setTailMode(FileTailMode.TAIL.getMode());
+            }
             return d;
         });
     }
