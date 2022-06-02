@@ -11,17 +11,18 @@
               <AddAppForm ref="basicForm" :layout="{ labelCol: { span: 4 }, wrapperCol: { span: 20 }}"/>
               <div class="app-basic-form-footer">
                 <a-button type="primary" @click="updateBasic">修改</a-button>
+                <a-button class="ml16" @click="loadAppConfig">刷新</a-button>
               </div>
             </a-spin>
           </div>
         </a-tab-pane>
         <!-- 构建配置 -->
         <a-tab-pane key="2" tab="构建配置">
-          <AppBuildConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
+          <AppBuildConfigForm :appId="appId" :dataLoading="loading" :detail="detail" @updated="loadAppConfig"/>
         </a-tab-pane>
         <!-- 发布配置 -->
         <a-tab-pane key="3" tab="发布配置">
-          <AppReleaseConfigForm :appId="appId" :dataLoading="loading" :detail="detail"/>
+          <AppReleaseConfigForm :appId="appId" :dataLoading="loading" :detail="detail" @updated="loadAppConfig"/>
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -120,7 +121,7 @@ export default {
   }
 
   .app-basic-form-footer {
-    padding-left: 20.83%;
+    padding-left: 16.83%;
   }
 
 }

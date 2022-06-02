@@ -327,28 +327,6 @@ function clearStainKeywords(message) {
 }
 
 /**
- * 下载文件
- */
-function downloadFile(res) {
-  const blob = new Blob([res.data])
-  const tempLink = document.createElement('a')
-  const blobURL = window.URL.createObjectURL(blob)
-  tempLink.style.display = 'none'
-  tempLink.href = blobURL
-  const fileName = res.headers['content-disposition']
-    ? res.headers['content-disposition'].split(';')[1].split('=')[1]
-    : new Date().getTime()
-  tempLink.download = decodeURIComponent(fileName)
-  if (typeof tempLink.download === 'undefined') {
-    tempLink.target = '_blank'
-  }
-  document.body.appendChild(tempLink)
-  tempLink.click()
-  document.body.removeChild(tempLink)
-  window.URL.revokeObjectURL(blobURL)
-}
-
-/**
  * 自适应终端大小
  */
 function fitDimensions(term, parent) {
@@ -399,6 +377,28 @@ function getUUID() {
     const v = c === 'x' ? r : (r & 0x3 | 0x8)
     return v.toString(16)
   })
+}
+
+/**
+ * 下载文件
+ */
+function downloadFile(res) {
+  const blob = new Blob([res.data])
+  const tempLink = document.createElement('a')
+  const blobURL = window.URL.createObjectURL(blob)
+  tempLink.style.display = 'none'
+  tempLink.href = blobURL
+  const fileName = res.headers['content-disposition']
+    ? res.headers['content-disposition'].split(';')[1].split('=')[1]
+    : new Date().getTime()
+  tempLink.download = decodeURIComponent(fileName)
+  if (typeof tempLink.download === 'undefined') {
+    tempLink.target = '_blank'
+  }
+  document.body.appendChild(tempLink)
+  tempLink.click()
+  document.body.removeChild(tempLink)
+  window.URL.revokeObjectURL(blobURL)
 }
 
 export default {
