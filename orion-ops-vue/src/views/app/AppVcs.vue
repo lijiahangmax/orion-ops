@@ -143,6 +143,8 @@
       <TextPreview ref="preview"/>
       <!-- 导出模态框 -->
       <AppVcsExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.VCS"/>
     </div>
   </div>
 </template>
@@ -151,6 +153,7 @@
 import AddAppVcsModal from '@/components/app/AddAppVcsModal'
 import TextPreview from '@/components/preview/TextPreview'
 import AppVcsExportModal from '@/components/export/AppVcsExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -211,6 +214,7 @@ const columns = [
 export default {
   name: 'AppVcs',
   components: {
+    DataImportModal,
     AppVcsExportModal,
     TextPreview,
     AddAppVcsModal

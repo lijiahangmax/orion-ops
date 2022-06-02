@@ -172,6 +172,8 @@
       <AppReleaseModal ref="releaseModal" :visibleReselect="false"/>
       <!-- 导出模态框 -->
       <ApplicationExportModal ref="export"/>
+      <!-- 导出模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.APPLICATION"/>
     </div>
   </div>
 </template>
@@ -182,6 +184,7 @@ import AppProfileChecker from '@/components/app/AppProfileChecker'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import ApplicationExportModal from '@/components/export/ApplicationExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -320,6 +323,7 @@ const moreMenuHandler = {
 export default {
   name: 'AppList',
   components: {
+    DataImportModal,
     ApplicationExportModal,
     AppReleaseModal,
     AppBuildModal,

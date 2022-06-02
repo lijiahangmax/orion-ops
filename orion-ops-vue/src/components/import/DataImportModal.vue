@@ -12,7 +12,7 @@
       <!-- 导入页面 -->
       <div class="data-import-container" v-if="!dataCheckPage">
         <!-- 导入提示 -->
-        <a-alert class="import-alert-message" :message="importType.tips" type="info"/>
+        <a-alert class="import-alert-message" v-if="importType.tips" :message="importType.tips" type="info"/>
         <!-- 上传框 -->
         <div class="file-select-container">
           <!-- 文件选择 -->

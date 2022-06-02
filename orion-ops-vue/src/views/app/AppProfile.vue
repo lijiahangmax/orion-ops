@@ -82,6 +82,8 @@
       <AddAppProfileModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 导出模态框 -->
       <AppProfileExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.PROFILE"/>
     </div>
   </div>
 </template>
@@ -90,6 +92,7 @@
 
 import AddAppProfileModal from '@/components/app/AddAppProfileModal'
 import AppProfileExportModal from '@/components/export/AppProfileExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -148,6 +151,7 @@ const columns = [
 export default {
   name: 'AppProfile',
   components: {
+    DataImportModal,
     AppProfileExportModal,
     AddAppProfileModal
   },

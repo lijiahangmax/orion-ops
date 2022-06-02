@@ -2294,6 +2294,34 @@ const $api = {
   },
 
   /**
+   * 导入应用环境
+   */
+  importAppProfile: param => {
+    return $http.$post('/data-import/import-app-profile', param)
+  },
+
+  /**
+   * 导入应用信息
+   */
+  importApplication: param => {
+    return $http.$post('/data-import/import-application', param)
+  },
+
+  /**
+   * 导入应用版本仓库
+   */
+  importAppVcs: param => {
+    return $http.$post('/data-import/import-app-vcs', param)
+  },
+
+  /**
+   * 导入命令模板
+   */
+  importCommandTemplate: param => {
+    return $http.$post('/data-import/import-command-template', param)
+  },
+
+  /**
    * 取消导入数据
    */
   cancelImportData: param => {

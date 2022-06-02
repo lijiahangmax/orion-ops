@@ -92,6 +92,8 @@
       <EditorPreview ref="preview"/>
       <!-- 导出模态框 -->
       <CommandTemplateExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.COMMAND_TEMPLATE"/>
     </div>
   </div>
 </template>
@@ -102,6 +104,7 @@ import AddTemplateModal from '@/components/template/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
 import _filters from '@/lib/filters'
 import CommandTemplateExportModal from '@/components/export/CommandTemplateExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -167,6 +170,7 @@ const columns = [
 export default {
   name: 'TemplateList',
   components: {
+    DataImportModal,
     CommandTemplateExportModal,
     AddTemplateModal,
     EditorPreview

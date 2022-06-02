@@ -1571,6 +1571,30 @@ const $enum = {
         DATA_IMPORT_MACHINE: {
           value: 8305,
           label: '机器信息'
+        },
+        DATA_IMPORT_MACHINE_PROXY: {
+          value: 8310,
+          label: '导入机器代理'
+        },
+        DATA_IMPORT_TAIL_FILE: {
+          value: 8315,
+          label: '导入日志文件'
+        },
+        DATA_IMPORT_APP_PROFILE: {
+          value: 8320,
+          label: '导入应用环境'
+        },
+        DATA_IMPORT_APPLICATION: {
+          value: 8325,
+          label: '导入应用信息'
+        },
+        DATA_IMPORT_APP_VCS: {
+          value: 8330,
+          label: '导入版本仓库'
+        },
+        DATA_IMPORT_COMMAND_TEMPLATE: {
+          value: 8335,
+          label: '导入命令模板'
         }
       }
     },
@@ -1963,15 +1987,87 @@ const $enum = {
       type: {
         MACHINE_IMPORT_SUCCESS: {
           value: 2010,
-          label: '导入机器成功',
+          label: '机器信息导入成功',
           notify: 'success',
           redirect: '#/machine/list'
         },
         MACHINE_IMPORT_FAILURE: {
           value: 2020,
-          label: '导入机器失败',
+          label: '机器信息导入失败',
           notify: 'error',
           redirect: '#/machine/list'
+        },
+        MACHINE_PROXY_IMPORT_SUCCESS: {
+          value: 2030,
+          label: '机器代理导入成功',
+          notify: 'success',
+          redirect: '#/machine/proxy'
+        },
+        MACHINE_PROXY_IMPORT_FAILURE: {
+          value: 2040,
+          label: '机器代理导入失败',
+          notify: 'error',
+          redirect: '#/machine/proxy'
+        },
+        MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
+          value: 2050,
+          label: '日志文件导入成功',
+          notify: 'success',
+          redirect: '#/log/list'
+        },
+        MACHINE_TAIL_FILE_IMPORT_FAILURE: {
+          value: 2060,
+          label: '日志文件导入失败',
+          notify: 'error',
+          redirect: '#/log/list'
+        },
+        APP_PROFILE_IMPORT_SUCCESS: {
+          value: 2070,
+          label: '应用环境导入成功',
+          notify: 'success',
+          redirect: '#/app/profile'
+        },
+        APP_PROFILE_IMPORT_FAILURE: {
+          value: 2080,
+          label: '应用环境导入失败',
+          notify: 'error',
+          redirect: '#/app/profile'
+        },
+        APPLICATION_IMPORT_SUCCESS: {
+          value: 2090,
+          label: '应用信息导入成功',
+          notify: 'success',
+          redirect: '#/app/list'
+        },
+        APPLICATION_IMPORT_FAILURE: {
+          value: 2100,
+          label: '应用信息导入失败',
+          notify: 'error',
+          redirect: '#/app/list'
+        },
+        APP_VCS_IMPORT_SUCCESS: {
+          value: 2110,
+          label: '版本仓库导入成功',
+          notify: 'success',
+          redirect: '#/app/vcs'
+        },
+        APP_VCS_IMPORT_FAILURE: {
+          value: 2120,
+          label: '版本仓库导入失败',
+          notify: 'error',
+          redirect: '#/app/vcs'
+        },
+        COMMAND_TEMPLATE_IMPORT_SUCCESS: {
+          value: 2130,
+          label: '命令模板导入成功',
+          notify: 'success',
+          redirect: '#/template/list'
+        },
+        COMMAND_TEMPLATE_IMPORT_FAILURE: {
+          value: 2140,
+          label: '命令模板导入失败',
+          notify: 'error',
+          redirect: '#/template/list'
         }
       }
     }
@@ -2236,6 +2332,30 @@ const $enum = {
       tips: '通过机器标识来区分机器, 机器名称无需填写',
       title: '日志文件 导入',
       api: 'importTailFile'
+    },
+    PROFILE: {
+      value: 200,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增',
+      title: '应用环境 导入',
+      api: 'importAppProfile'
+    },
+    APPLICATION: {
+      value: 210,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增',
+      title: '应用信息 导入',
+      api: 'importApplication'
+    },
+    VCS: {
+      value: 220,
+      tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
+      title: '版本仓库 导入',
+      api: 'importAppVcs'
+    },
+    COMMAND_TEMPLATE: {
+      value: 310,
+      tips: '使用模板名称来区分数据, 存在更新不存在新增',
+      title: '命令模板 导入',
+      api: 'importCommandTemplate'
     }
   }
 
