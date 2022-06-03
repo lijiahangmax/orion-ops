@@ -313,7 +313,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.TITLE, release.getReleaseTitle());
-        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? Const.RESOLVE_LABEL : Const.REJECT_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, resolve ? CnConst.RESOLVE : CnConst.REJECT);
         return effect;
     }
 

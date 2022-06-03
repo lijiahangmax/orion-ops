@@ -38,6 +38,21 @@ public class EventKeys {
     public static final String INNER_REQUEST_SEQ = "_REQUEST_SEQ_";
 
     /**
+     * 请求 UA
+     */
+    public static final String INNER_REQUEST_USER_AGENT = "userAgent";
+
+    /**
+     * 请求 ip
+     */
+    public static final String INNER_REQUEST_IP = "ip";
+
+    /**
+     * 请求时间
+     */
+    public static final String INNER_REQUEST_TIME = "requestTime";
+
+    /**
      * id
      */
     public static final String ID = "id";
@@ -183,16 +198,6 @@ public class EventKeys {
     public static final String SYSTEM = "system";
 
     /**
-     * UA
-     */
-    public static final String USER_AGENT = "userAgent";
-
-    /**
-     * ip
-     */
-    public static final String IP = "ip";
-
-    /**
      * before
      */
     public static final String BEFORE = "before";
@@ -226,5 +231,30 @@ public class EventKeys {
      * 流水线id
      */
     public static final String PIPELINE_ID = "pipelineId";
+
+    /**
+     * 是否导出密码
+     */
+    public static final String EXPORT_PASSWORD = "exportPassword";
+
+    /**
+     * 保护密码
+     */
+    public static final String PROTECT = "protect";
+
+    /**
+     * 分类
+     */
+    public static final String CLASSIFY = "classify";
+
+    /**
+     * 用户id
+     */
+    public static final String USER_ID = "userId";
+
+    /**
+     * 状态
+     */
+    public static final String STATUS = "status";
 
 }

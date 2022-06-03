@@ -46,7 +46,7 @@ public class ApplicationPipelineTaskVO {
     private String profileName;
 
     /**
-     * 环境tag
+     * 环境唯一标识
      */
     private String profileTag;
 

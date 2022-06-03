@@ -50,6 +50,7 @@
       <div class="tools-fixed-right">
         <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="caret-right" @click="openPipelineList">执行</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="delete" class="tools-icon" title="查询" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -262,6 +263,8 @@
       <AppBuildLogAppenderModal ref="buildAppender"/>
       <!-- 发布日志 -->
       <AppReleaseLogAppenderModal ref="releaseAppender"/>
+      <!-- 清理模态框 -->
+      <AppPipelineClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -276,6 +279,7 @@ import AppPipelineExecTimedModal from '@/components/app/AppPipelineExecTimedModa
 import AppPipelineTaskDetailDrawer from '@/components/app/AppPipelineTaskDetailDrawer'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
+import AppPipelineClearModal from '@/components/clear/AppPipelineClearModal'
 
 function statusHolder() {
   return {
@@ -433,6 +437,7 @@ const innerColumns = [
 export default {
   name: 'AppPipelineTask',
   components: {
+    AppPipelineClearModal,
     AppReleaseLogAppenderModal,
     AppBuildLogAppenderModal,
     AppPipelineTaskDetailDrawer,
@@ -630,6 +635,9 @@ export default {
       }).then(() => {
         this.$message.success('已跳过')
       })
+    },
+    openClear() {
+      this.$refs.clear.open(this.query.profileId)
     },
     resetForm() {
       this.$refs.query.resetFields()

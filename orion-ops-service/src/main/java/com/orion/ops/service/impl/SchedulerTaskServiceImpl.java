@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.wrapper.DataGrid;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -185,7 +186,7 @@ public class SchedulerTaskServiceImpl implements SchedulerTaskService {
             taskRegister.submit(TaskType.SCHEDULER_TASK, task.getExpression(), id);
         }
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.OPERATOR, enable ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, enable ? CnConst.ENABLE : CnConst.DISABLE);
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, task.getTaskName());
         return effect;

@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.exception.AuthenticationException;
 import com.orion.exception.ConnectionRuntimeException;
 import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.net.remote.CommandExecutors;
+import com.orion.net.remote.channel.SessionHolder;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
+import com.orion.ops.consts.CnConst;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -26,9 +30,6 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.ValueMix;
 import com.orion.process.Processes;
-import com.orion.remote.channel.SessionHolder;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Valid;
@@ -89,16 +90,19 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Long addMachine(MachineInfoRequest request) {
         // 检查proxyId
         this.checkProxy(request.getProxyId());
+        // 检查名称
+        this.checkNamePresent(null, request.getName());
+        // 检查唯一标识
+        this.checkTagPresent(null, request.getTag());
         MachineInfoDO entity = new MachineInfoDO();
-        String password = request.getPassword();
         this.copyProperties(request, entity);
         // 添加机器
         entity.setMachineStatus(Const.ENABLE);
-        machineInfoDAO.insert(entity);
+        String password = request.getPassword();
         if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password));
-            machineInfoDAO.updateById(entity);
         }
+        machineInfoDAO.insert(entity);
         Long id = entity.getId();
         // 初始化环境变量
         machineEnvService.initEnv(id);
@@ -110,11 +114,16 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer updateMachine(MachineInfoRequest request) {
+        Long id = request.getId();
         // 检查proxyId
         this.checkProxy(request.getProxyId());
+        // 检查名称
+        this.checkNamePresent(id, request.getName());
+        // 检查唯一标识
+        this.checkTagPresent(id, request.getTag());
         MachineInfoDO entity = new MachineInfoDO();
-        String password = request.getPassword();
         this.copyProperties(request, entity);
+        String password = request.getPassword();
         if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password));
         }
@@ -163,7 +172,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, effect);
-        EventParamsHolder.addParam(EventKeys.OPERATOR, Const.ENABLE.equals(status) ? Const.ENABLE_LABEL : Const.DISABLE_LABEL);
+        EventParamsHolder.addParam(EventKeys.OPERATOR, Const.ENABLE.equals(status) ? CnConst.ENABLE : CnConst.DISABLE);
         return effect;
     }
 
@@ -208,11 +217,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         String sourceMachineName = machine.getMachineName();
-        String targetMachineName = sourceMachineName + Utils.getCopySuffix();
+        String sourceMachineTag = machine.getMachineTag();
+        String copySuffix = Utils.getCopySuffix();
+        String targetMachineName = sourceMachineName + copySuffix;
+        String targetMachineTag = sourceMachineTag + copySuffix;
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
         machine.setMachineName(targetMachineName);
+        machine.setMachineTag(targetMachineTag);
         machineInfoDAO.insert(machine);
         Long insertId = machine.getId();
         // 复制环境变量
@@ -275,7 +288,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 检查状态
         if (!Const.ENABLE.equals(machine.getMachineStatus())) {
-            throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, MessageConst.MACHINE_NOT_ENABLE);
+            throw Exceptions.disabled(MessageConst.MACHINE_DISABLE);
         }
         Long id = machine.getId();
         // 查询超时间
@@ -291,7 +304,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             } catch (Exception e) {
                 ex = e;
                 if (e instanceof ConnectionRuntimeException) {
-                    // retry
+                    log.info("远程机器建立连接-连接失败");
                 } else if (e instanceof AuthenticationException) {
                     msg = MessageConst.AUTH_EXCEPTION_MESSAGE;
                     break;
@@ -302,7 +315,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         }
         String errorMessage = "机器 " + machine.getMachineHost() + " " + msg;
         log.error(errorMessage, ex);
-        throw Exceptions.codeArgument(HttpWrapper.HTTP_ERROR_CODE, errorMessage, ex);
+        throw Exceptions.app(errorMessage, ex);
     }
 
     /**
@@ -320,7 +333,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             session = SessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
             String password = machine.getPassword();
             if (Strings.isNotBlank(password)) {
-                session.setPassword(ValueMix.decrypt(password));
+                session.password(ValueMix.decrypt(password));
             }
             MachineProxyDO proxy = null;
             if (proxyId != null) {
@@ -333,13 +346,13 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     proxyPassword = ValueMix.decrypt(proxyPassword);
                 }
                 if (ProxyType.HTTP.equals(proxyType)) {
-                    session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKET4.equals(proxyType)) {
-                    session.setSocket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.socket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKET5.equals(proxyType)) {
-                    session.setSocket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.socket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
-                session.setHttpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
             }
             session.connect(timeout);
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
@@ -352,7 +365,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Override
     public String getPropertiesResultSync(Long id, MachineProperties property) {
-        return getCommandResultSync(id, property.getCommand());
+        return this.getCommandResultSync(id, property.getCommand());
     }
 
     @Override
@@ -401,7 +414,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             session = this.openSessionStore(id);
             executor = session.getCommandExecutor(Strings.replaceCRLF(command));
             executor.connect();
-            String res = SessionStore.getCommandOutputResultString(executor);
+            String res = CommandExecutors.getCommandOutputResultString(executor);
             log.info("执行机器命令-成功 {} {} {}", id, command, res);
             return res;
         } catch (Exception e) {
@@ -429,6 +442,36 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         }
         MachineProxyDO proxy = machineProxyDAO.selectById(proxyId);
         Valid.notNull(proxy, MessageConst.INVALID_PROXY);
+    }
+
+
+    /**
+     * 检查 name 是否存在
+     *
+     * @param id   id
+     * @param name name
+     */
+    private void checkNamePresent(Long id, String name) {
+        LambdaQueryWrapper<MachineInfoDO> presentWrapper = new LambdaQueryWrapper<MachineInfoDO>()
+                .ne(id != null, MachineInfoDO::getId, id)
+                .eq(MachineInfoDO::getMachineName, name);
+        boolean present = DataQuery.of(machineInfoDAO).wrapper(presentWrapper).present();
+        com.orion.ops.utils.Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    }
+
+
+    /**
+     * 检查 tag 是否存在
+     *
+     * @param id  id
+     * @param tag tag
+     */
+    private void checkTagPresent(Long id, String tag) {
+        LambdaQueryWrapper<MachineInfoDO> presentWrapper = new LambdaQueryWrapper<MachineInfoDO>()
+                .ne(id != null, MachineInfoDO::getId, id)
+                .eq(MachineInfoDO::getMachineTag, tag);
+        boolean present = DataQuery.of(machineInfoDAO).wrapper(presentWrapper).present();
+        com.orion.ops.utils.Valid.isTrue(!present, MessageConst.TAG_PRESENT);
     }
 
     /**

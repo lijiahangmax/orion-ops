@@ -85,7 +85,7 @@ export default {
   }
 
   #common-sider {
-    overflow: auto
+    overflow: auto;
   }
 }
 
@@ -109,6 +109,10 @@ export default {
       line-height: 48px;
     }
   }
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 </style>

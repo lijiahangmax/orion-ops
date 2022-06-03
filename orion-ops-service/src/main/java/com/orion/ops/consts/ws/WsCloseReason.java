@@ -22,6 +22,8 @@ public class WsCloseReason {
 
     public static final String REMOTE_SERVER_AUTHENTICATION_FAILURE = "remote server authentication failure...";
 
+    public static final String MACHINE_DISABLED = "machine disabled...";
+
     public static final String UNABLE_TO_CONNECT_REMOTE_SERVER = "unable to connect remote server...";
 
     public static final String FORCED_OFFLINE = "forced offline...";

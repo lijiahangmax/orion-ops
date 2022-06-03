@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.orion.id.UUIds;
+import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -27,7 +28,6 @@ import com.orion.ops.handler.sftp.hint.FileTransferHint;
 import com.orion.ops.service.api.BatchUploadService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Currents;
-import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;

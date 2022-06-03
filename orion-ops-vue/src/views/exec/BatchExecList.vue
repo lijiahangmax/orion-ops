@@ -75,6 +75,7 @@
           </a-button>
         </a>
         <a-divider type="vertical"/>
+        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -176,7 +177,7 @@
         </template>
       </a-table>
     </div>
-    <!-- 表格 -->
+    <!-- 事件 -->
     <div class="exec-event-container">
       <!-- 编辑器预览 -->
       <EditorPreview ref="previewEditor"/>
@@ -186,6 +187,8 @@
       <ExecTaskDetailModal ref="detail"/>
       <!-- 日志模态框 -->
       <ExecLoggerAppenderModal ref="logView"/>
+      <!-- 清空模态框 -->
+      <BatchExecClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -200,6 +203,7 @@ import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import _filters from '@/lib/filters'
 import _enum from '@/lib/enum'
+import BatchExecClearModal from '@/components/clear/BatchExecClearModal'
 
 /**
  * 状态判断
@@ -216,89 +220,98 @@ const visibleHolder = {
 /**
  * 列
  */
-const columns = [
-  {
-    title: '执行机器',
-    key: 'machine',
-    width: 180,
-    ellipsis: true,
-    sorter: (a, b) => a.machineName.localeCompare(b.machineName),
-    scopedSlots: { customRender: 'machine' }
-  },
-  {
-    title: '执行命令',
-    key: 'command',
-    ellipsis: true,
-    width: 260,
-    scopedSlots: { customRender: 'command' }
-  },
-  {
-    title: '状态',
-    key: 'status',
-    width: 100,
-    align: 'center',
-    sorter: (a, b) => a.status - b.status,
-    scopedSlots: { customRender: 'status' }
-  },
-  {
-    title: '退出码',
-    key: 'exitCode',
-    width: 100,
-    align: 'center',
-    sorter: (a, b) => a.exitCode - b.exitCode,
-    scopedSlots: { customRender: 'exitCode' }
-  },
-  {
-    title: '持续时间',
-    key: 'keepTime',
-    dataIndex: 'keepTime',
-    width: 120,
-    sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
-  },
-  {
-    title: '执行用户',
-    dataIndex: 'username',
-    key: 'username',
-    width: 120,
-    ellipsis: true,
-    sorter: (a, b) => a.username.localeCompare(b.username)
-  },
-  {
-    title: '创建时间',
-    key: 'createTime',
-    width: 150,
-    ellipsis: true,
-    align: 'center',
-    sorter: (a, b) => a.createTime - b.createTime,
-    scopedSlots: { customRender: 'createTime' }
-  },
-  {
-    title: '描述',
-    key: 'description',
-    ellipsis: true,
-    width: 180,
-    scopedSlots: { customRender: 'description' }
-  },
-  {
-    title: '日志',
-    key: 'log',
-    fixed: 'right',
-    width: 100,
-    align: 'center',
-    scopedSlots: { customRender: 'log' }
-  },
-  {
-    title: '操作',
-    key: 'action',
-    fixed: 'right',
-    width: 175,
-    scopedSlots: { customRender: 'action' }
+const getColumns = function() {
+  const columns = [
+    {
+      title: '执行机器',
+      key: 'machine',
+      width: 180,
+      ellipsis: true,
+      sorter: (a, b) => a.machineName.localeCompare(b.machineName),
+      scopedSlots: { customRender: 'machine' }
+    },
+    {
+      title: '执行命令',
+      key: 'command',
+      ellipsis: true,
+      width: 220,
+      scopedSlots: { customRender: 'command' }
+    },
+    {
+      title: '状态',
+      key: 'status',
+      width: 100,
+      align: 'center',
+      sorter: (a, b) => a.status - b.status,
+      scopedSlots: { customRender: 'status' }
+    },
+    {
+      title: '退出码',
+      key: 'exitCode',
+      width: 100,
+      align: 'center',
+      sorter: (a, b) => a.exitCode - b.exitCode,
+      scopedSlots: { customRender: 'exitCode' }
+    },
+    {
+      title: '持续时间',
+      key: 'keepTime',
+      dataIndex: 'keepTime',
+      width: 120,
+      sorter: (a, b) => (a.used || 0) - (b.exitCode || 0)
+    },
+    {
+      title: '执行用户',
+      dataIndex: 'username',
+      key: 'username',
+      width: 120,
+      ellipsis: true,
+      sorter: (a, b) => a.username.localeCompare(b.username),
+      requireAdmin: true
+    },
+    {
+      title: '创建时间',
+      key: 'createTime',
+      width: 150,
+      ellipsis: true,
+      align: 'center',
+      sorter: (a, b) => a.createTime - b.createTime,
+      scopedSlots: { customRender: 'createTime' }
+    },
+    {
+      title: '描述',
+      key: 'description',
+      ellipsis: true,
+      width: 180,
+      scopedSlots: { customRender: 'description' }
+    },
+    {
+      title: '日志',
+      key: 'log',
+      fixed: 'right',
+      width: 100,
+      align: 'center',
+      scopedSlots: { customRender: 'log' }
+    },
+    {
+      title: '操作',
+      key: 'action',
+      fixed: 'right',
+      width: 175,
+      scopedSlots: { customRender: 'action' }
+    }
+  ]
+  if (this.$isAdmin()) {
+    return columns
+  } else {
+    return columns.filter(s => !s.requireAdmin)
   }
-]
+}
 
 export default {
   name: 'BatchExecList',
   components: {
+    BatchExecClearModal,
     MachineAutoComplete,
     ExecLoggerAppenderModal,
     UserAutoComplete,
@@ -329,7 +342,7 @@ export default {
       },
       loading: false,
       pollId: null,
-      columns,
+      columns: getColumns.call(this),
       selectedRowKeys: [],
       visibleHolder
     }
@@ -422,6 +435,9 @@ export default {
         this.query.userId = undefined
         this.query.username = name
       }
+    },
+    openClear() {
+      this.$refs.clear.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

@@ -1,5 +1,6 @@
 package com.orion.ops.consts.app;
 
+import com.orion.ops.consts.CnConst;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,16 +18,18 @@ public enum VcsAuthType {
     /**
      * 密码
      */
-    PASSWORD(10),
+    PASSWORD(10, CnConst.PASSWORD),
 
     /**
      * 私人令牌
      */
-    TOKEN(20),
+    TOKEN(20, CnConst.TOKEN),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static VcsAuthType of(Integer type) {
         if (type == null) {
@@ -34,6 +37,18 @@ public enum VcsAuthType {
         }
         for (VcsAuthType value : values()) {
             if (value.type.equals(type)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public static VcsAuthType of(String label) {
+        if (label == null) {
+            return null;
+        }
+        for (VcsAuthType value : values()) {
+            if (value.label.equals(label)) {
                 return value;
             }
         }

@@ -1,6 +1,9 @@
 package com.orion.ops.handler.tail.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.net.base.ssh.IRemoteExecutor;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.ws.WsCloseCode;
@@ -8,9 +11,6 @@ import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailFileHint;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.WebSockets;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.ssh.BaseRemoteExecutor;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Strings;
 import com.orion.utils.io.Streams;
@@ -73,13 +73,18 @@ public class ExecTailFileHandler implements ITailHandler {
         }
         // 打开 command
         this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(hint.getCommand()));
-        executor.inherit()
-                .scheduler(SchedulerPools.TAIL_SCHEDULER)
-                .callback(this::callback)
-                .streamHandler(this::handler)
-                .connect()
-                .exec();
+        executor.inherit();
+        executor.scheduler(SchedulerPools.TAIL_SCHEDULER);
+        executor.callback(this::callback);
+        executor.streamHandler(this::handler);
+        executor.connect();
+        executor.exec();
         log.info("tail EXEC_TAIL 监听文件开始 token: {}", token);
+    }
+
+    @Override
+    public void write(String command) {
+        executor.write(command);
     }
 
     @Override
@@ -98,10 +103,10 @@ public class ExecTailFileHandler implements ITailHandler {
      * @param executor executor
      */
     @SneakyThrows
-    private void callback(BaseRemoteExecutor executor) {
+    private void callback(IRemoteExecutor executor) {
         log.info("tail EXEC_TAIL 监听文件结束 token: {}", token);
         if (session.isOpen()) {
-            session.close(WsCloseCode.EOF_CALLBACK.close());
+            session.close(WsCloseCode.EOF_CALLBACK.status());
         }
     }
 

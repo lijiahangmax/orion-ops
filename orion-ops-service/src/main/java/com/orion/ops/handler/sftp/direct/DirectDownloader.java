@@ -1,12 +1,12 @@
 package com.orion.ops.handler.sftp.direct;
 
 import com.orion.able.SafeCloseable;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.consts.MessageConst;
 import com.orion.ops.handler.sftp.SftpSupport;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Valid;
 import com.orion.utils.io.Files1;
@@ -87,7 +87,7 @@ public class DirectDownloader implements SafeCloseable {
                 return Files1.openInputStreamFast(path);
             } else {
                 // 不是本机获取sftp文件
-                return executor.getInputStream(path);
+                return executor.openInputStream(path);
             }
         } catch (IOException e) {
             log.error("直接下载远程文件-执行失败 machineId: {}, path: {}, e: {}", machineId, path, e);

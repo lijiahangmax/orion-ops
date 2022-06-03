@@ -10,7 +10,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="标签" prop="tag">
+            <a-form-model-item label="标识" prop="tag">
               <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
@@ -73,6 +73,8 @@
         </a>
         <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -95,9 +97,9 @@
         </template>
         <!-- tag -->
         <template v-slot:tag="record">
-          <a-tag v-if="record.tag" color="#5C7CFA">
+          <span class="span-blue">
             {{ record.tag }}
-          </a-tag>
+          </span>
         </template>
         <!-- 主机 -->
         <template v-slot:host="record">
@@ -196,6 +198,10 @@
       <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
+      <!-- 导出模态框 -->
+      <MachineExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE"/>
       <!-- 终端模态框 -->
       <div v-if="openTerminalArr.length">
         <TerminalModal v-for="openTerminal of openTerminalArr"
@@ -229,6 +235,8 @@
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
+import MachineExportModal from '@/components/export/MachineExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 const columns = [
   {
@@ -239,7 +247,7 @@ const columns = [
     scopedSlots: { customRender: 'name' }
   },
   {
-    title: '标签',
+    title: '唯一标识',
     key: 'tag',
     width: 150,
     sorter: (a, b) => a.tag.localeCompare(b.tag),
@@ -361,6 +369,8 @@ const moreMenuHandler = {
 export default {
   name: 'MachineList',
   components: {
+    DataImportModal,
+    MachineExportModal,
     TerminalModal,
     MachineDetailModal,
     AddMachineModal
@@ -427,6 +437,12 @@ export default {
     openAdd() {
       this.$refs.addModal.add()
     },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
+    },
     openDetail(id) {
       this.$refs.detailModal.open(id)
     },
@@ -437,7 +453,7 @@ export default {
       if (record.id === 1) {
         this.$message.error('宿主机不支持该操作')
       } else {
-        const label = status === 1 ? '启用' : '停用'
+        const label = record.status === 1 ? '停用' : '启用'
         const pending = this.$message.loading(`正在${label}...`)
         this.$api.updateMachineStatus({
           idList: [record.id],

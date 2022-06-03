@@ -37,7 +37,7 @@ public enum SchedulerTaskStatus {
     /**
      * 已停止
      */
-    TERMINATED(50)
+    TERMINATED(50),
 
     ;
 

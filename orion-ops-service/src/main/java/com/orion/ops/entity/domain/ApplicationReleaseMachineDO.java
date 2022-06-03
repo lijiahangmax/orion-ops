@@ -47,7 +47,7 @@ public class ApplicationReleaseMachineDO implements Serializable {
     private String machineName;
 
     /**
-     * 机器tag
+     * 机器唯一标识
      */
     @TableField("machine_tag")
     private String machineTag;

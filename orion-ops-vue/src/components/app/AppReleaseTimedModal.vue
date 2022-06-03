@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="设置发布定时"
            :width="330"
            :okButtonProps="{props: {disabled: !valid}}"

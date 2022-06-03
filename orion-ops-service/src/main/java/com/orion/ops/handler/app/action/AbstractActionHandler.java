@@ -4,6 +4,7 @@ import com.orion.constant.Letters;
 import com.orion.exception.ExecuteException;
 import com.orion.exception.LogException;
 import com.orion.lang.io.OutputAppender;
+import com.orion.net.remote.ExitCode;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.app.ActionStatus;
@@ -12,7 +13,6 @@ import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationActionLogDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.utils.Utils;
-import com.orion.remote.ExitCode;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -228,7 +228,7 @@ public abstract class AbstractActionHandler implements IActionHandler {
             Integer exitCode = this.getExitCode();
             if (exitCode != null) {
                 log.append("  exitcode: ")
-                        .append(ExitCode.SUCCESS.getCode().equals(exitCode)
+                        .append(ExitCode.isSuccess(exitCode)
                                 ? Utils.getStainKeyWords(exitCode, StainCode.GLOSS_BLUE)
                                 : Utils.getStainKeyWords(exitCode, StainCode.GLOSS_RED));
             }

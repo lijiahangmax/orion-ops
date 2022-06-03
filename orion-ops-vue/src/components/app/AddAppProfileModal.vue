@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :title="title"
            :width="650"
            :okButtonProps="{props: {disabled: loading}}"
@@ -13,7 +12,7 @@
         <a-form-item label="环境名称" hasFeedback>
           <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="标签" hasFeedback>
+        <a-form-item label="唯一标识" hasFeedback>
           <a-input v-decorator="decorators.tag" allowClear/>
         </a-form-item>
         <a-form-item label="是否需要审核">
@@ -54,10 +53,10 @@ function getDecorators() {
     tag: ['tag', {
       rules: [{
         required: true,
-        message: '请输入标签'
+        message: '请输入唯一标识'
       }, {
         max: 32,
-        message: '标签长度不能大于32位'
+        message: '唯一标识长度不能大于32位'
       }]
     }],
     releaseAudit: ['releaseAudit', {

@@ -61,12 +61,15 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     @Override
     public Long addProfile(ApplicationProfileRequest request) {
         String name = request.getName();
-        // 重复检查
+        String tag = request.getTag();
+        // 重复名称检查
         this.checkNamePresent(null, name);
+        // 重复标识检查
+        this.checkTagPresent(null, tag);
         // 插入
         ApplicationProfileDO insert = new ApplicationProfileDO();
-        insert.setProfileName(request.getName());
-        insert.setProfileTag(request.getTag());
+        insert.setProfileName(name);
+        insert.setProfileTag(tag);
         insert.setDescription(request.getDescription());
         insert.setReleaseAudit(request.getReleaseAudit());
         applicationProfileDAO.insert(insert);
@@ -85,13 +88,16 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         ApplicationProfileDO beforeProfile = applicationProfileDAO.selectById(id);
         Valid.notNull(beforeProfile, MessageConst.PROFILE_ABSENT);
         String name = request.getName();
-        // 重复检查
+        String tag = request.getTag();
+        // 重复名称检查
         this.checkNamePresent(id, name);
+        // 重复标识检查
+        this.checkTagPresent(id, tag);
         // 修改
         ApplicationProfileDO update = new ApplicationProfileDO();
         update.setId(id);
-        update.setProfileName(request.getName());
-        update.setProfileTag(request.getTag());
+        update.setProfileName(name);
+        update.setProfileTag(tag);
         update.setDescription(request.getDescription());
         update.setReleaseAudit(request.getReleaseAudit());
         update.setUpdateTime(new Date());
@@ -176,8 +182,13 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
         return Converts.to(profile, ApplicationProfileVO.class);
     }
 
+    @Override
+    public void clearProfileCache() {
+        redisTemplate.delete(KeyConst.DATA_PROFILE_KEY);
+    }
+
     /**
-     * 检查是否存在
+     * 检查名称是否存在
      *
      * @param id   id
      * @param name name
@@ -188,6 +199,20 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
                 .eq(ApplicationProfileDO::getProfileName, name);
         boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+    }
+
+    /**
+     * 检查唯一标识是否存在
+     *
+     * @param id  id
+     * @param tag tag
+     */
+    private void checkTagPresent(Long id, String tag) {
+        LambdaQueryWrapper<ApplicationProfileDO> presentWrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
+                .ne(id != null, ApplicationProfileDO::getId, id)
+                .eq(ApplicationProfileDO::getProfileTag, tag);
+        boolean present = DataQuery.of(applicationProfileDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.TAG_PRESENT);
     }
 
     /**

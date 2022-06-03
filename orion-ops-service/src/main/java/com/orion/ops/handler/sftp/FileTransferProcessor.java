@@ -1,5 +1,7 @@
 package com.orion.ops.handler.sftp;
 
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
@@ -7,8 +9,6 @@ import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.support.progress.ByteTransferProgress;
 import com.orion.support.progress.ByteTransferRateProgress;
@@ -78,7 +78,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
             // 检查是否可以用文件系统传输
             if (SftpSupport.checkUseFileSystem(executor)) {
                 // 直接拷贝
-                this.usingFsCopy();
+                SftpSupport.usingFsCopy(this);
             } else {
                 // 处理
                 this.handler();
@@ -110,11 +110,6 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      * 处理操作
      */
     protected abstract void handler();
-
-    /**
-     * 使用fileSystem 拷贝文件
-     */
-    protected abstract void usingFsCopy();
 
     /**
      * 初始化进度条

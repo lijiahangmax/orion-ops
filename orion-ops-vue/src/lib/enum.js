@@ -1366,7 +1366,7 @@ const $enum = {
         },
         CANCEL_TIMED_RELEASE: {
           value: 5040,
-          label: '取消发布'
+          label: '取消定时发布'
         },
         SET_TIMED_RELEASE: {
           value: 5045,
@@ -1525,7 +1525,126 @@ const $enum = {
           label: '删除调度明细'
         }
       }
+    },
+    DATA_CLEAR: {
+      value: 110,
+      label: '数据清理',
+      type: {
+        DATA_CLEAR_BATCH_EXEC: {
+          value: 8105,
+          label: '批量执行'
+        },
+        DATA_CLEAR_TERMINAL_LOG: {
+          value: 8110,
+          label: '终端日志'
+        },
+        DATA_CLEAR_SCHEDULER_RECORD: {
+          value: 8115,
+          label: '任务调度'
+        },
+        DATA_CLEAR_APP_BUILD: {
+          value: 8120,
+          label: '应用构建'
+        },
+        DATA_CLEAR_APP_RELEASE: {
+          value: 8125,
+          label: '应用发布'
+        },
+        DATA_CLEAR_APP_PIPELINE: {
+          value: 8130,
+          label: '流水线任务'
+        },
+        DATA_CLEAR_WEB_SIDE_MESSAGE: {
+          value: 8135,
+          label: '站内信'
+        },
+        DATA_CLEAR_EVENT_LOG: {
+          value: 8140,
+          label: '操作日志'
+        }
+      }
+    },
+    DATA_IMPORT: {
+      value: 120,
+      label: '数据导入',
+      type: {
+        DATA_IMPORT_MACHINE: {
+          value: 8305,
+          label: '机器信息'
+        },
+        DATA_IMPORT_MACHINE_PROXY: {
+          value: 8310,
+          label: '导入机器代理'
+        },
+        DATA_IMPORT_TAIL_FILE: {
+          value: 8315,
+          label: '导入日志文件'
+        },
+        DATA_IMPORT_APP_PROFILE: {
+          value: 8320,
+          label: '导入应用环境'
+        },
+        DATA_IMPORT_APPLICATION: {
+          value: 8325,
+          label: '导入应用信息'
+        },
+        DATA_IMPORT_APP_VCS: {
+          value: 8330,
+          label: '导入版本仓库'
+        },
+        DATA_IMPORT_COMMAND_TEMPLATE: {
+          value: 8335,
+          label: '导入命令模板'
+        }
+      }
+    },
+    DATA_EXPORT: {
+      value: 130,
+      label: '数据导出',
+      type: {
+        DATA_EXPORT_MACHINE: {
+          value: 8505,
+          label: '机器信息'
+        },
+        DATA_EXPORT_MACHINE_PROXY: {
+          value: 8510,
+          label: '机器代理'
+        },
+        DATA_EXPORT_TERMINAL_LOG: {
+          value: 8515,
+          label: '终端日志'
+        },
+        DATA_EXPORT_TAIL_FILE: {
+          value: 8520,
+          label: '日志文件'
+        },
+        DATA_EXPORT_APP_PROFILE: {
+          value: 8550,
+          label: '应用环境'
+        },
+        DATA_EXPORT_APPLICATION: {
+          value: 8555,
+          label: '应用信息'
+        },
+        DATA_EXPORT_APP_VCS: {
+          value: 8560,
+          label: '应用仓库'
+        },
+        DATA_EXPORT_COMMAND_TEMPLATE: {
+          value: 8605,
+          label: '命令模板'
+        },
+        DATA_EXPORT_WEB_SIDE_MESSAGE: {
+          value: 8610,
+          label: '站内信'
+        },
+        DATA_EXPORT_EVENT_LOG: {
+          value: 8615,
+          label: '操作日志'
+        }
+      }
     }
+
   },
 
   /**
@@ -1861,6 +1980,96 @@ const $enum = {
           redirect: '#/app/pipeline/record'
         }
       }
+    },
+    IMPORT: {
+      value: 20,
+      label: '数据导入',
+      type: {
+        MACHINE_IMPORT_SUCCESS: {
+          value: 2010,
+          label: '机器信息导入成功',
+          notify: 'success',
+          redirect: '#/machine/list'
+        },
+        MACHINE_IMPORT_FAILURE: {
+          value: 2020,
+          label: '机器信息导入失败',
+          notify: 'error',
+          redirect: '#/machine/list'
+        },
+        MACHINE_PROXY_IMPORT_SUCCESS: {
+          value: 2030,
+          label: '机器代理导入成功',
+          notify: 'success',
+          redirect: '#/machine/proxy'
+        },
+        MACHINE_PROXY_IMPORT_FAILURE: {
+          value: 2040,
+          label: '机器代理导入失败',
+          notify: 'error',
+          redirect: '#/machine/proxy'
+        },
+        MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
+          value: 2050,
+          label: '日志文件导入成功',
+          notify: 'success',
+          redirect: '#/log/list'
+        },
+        MACHINE_TAIL_FILE_IMPORT_FAILURE: {
+          value: 2060,
+          label: '日志文件导入失败',
+          notify: 'error',
+          redirect: '#/log/list'
+        },
+        APP_PROFILE_IMPORT_SUCCESS: {
+          value: 2070,
+          label: '应用环境导入成功',
+          notify: 'success',
+          redirect: '#/app/profile'
+        },
+        APP_PROFILE_IMPORT_FAILURE: {
+          value: 2080,
+          label: '应用环境导入失败',
+          notify: 'error',
+          redirect: '#/app/profile'
+        },
+        APPLICATION_IMPORT_SUCCESS: {
+          value: 2090,
+          label: '应用信息导入成功',
+          notify: 'success',
+          redirect: '#/app/list'
+        },
+        APPLICATION_IMPORT_FAILURE: {
+          value: 2100,
+          label: '应用信息导入失败',
+          notify: 'error',
+          redirect: '#/app/list'
+        },
+        APP_VCS_IMPORT_SUCCESS: {
+          value: 2110,
+          label: '版本仓库导入成功',
+          notify: 'success',
+          redirect: '#/app/vcs'
+        },
+        APP_VCS_IMPORT_FAILURE: {
+          value: 2120,
+          label: '版本仓库导入失败',
+          notify: 'error',
+          redirect: '#/app/vcs'
+        },
+        COMMAND_TEMPLATE_IMPORT_SUCCESS: {
+          value: 2130,
+          label: '命令模板导入成功',
+          notify: 'success',
+          redirect: '#/template/list'
+        },
+        COMMAND_TEMPLATE_IMPORT_FAILURE: {
+          value: 2140,
+          label: '命令模板导入失败',
+          notify: 'error',
+          redirect: '#/template/list'
+        }
+      }
     }
   },
 
@@ -2084,6 +2293,69 @@ const $enum = {
       visibleTransfer: false,
       message: '无可用上传机器, 请重新选择后重试',
       type: 'error'
+    }
+  },
+
+  /**
+   * 数据清理区间
+   */
+  DATA_CLEAR_RANGE: {
+    DAY: {
+      value: 10
+    },
+    TOTAL: {
+      value: 20
+    },
+    REL_ID: {
+      value: 30
+    }
+  },
+
+  /**
+   * 数据导入类型
+   */
+  IMPORT_TYPE: {
+    MACHINE: {
+      value: 100,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增, 优先使用导入密码',
+      title: '机器信息 导入',
+      api: 'importMachineData'
+    },
+    MACHINE_PROXY: {
+      value: 110,
+      tips: '导入时优先使用导入密码',
+      title: '机器代理 导入',
+      api: 'importMachineProxy'
+    },
+    TAIL_FILE: {
+      value: 130,
+      tips: '通过机器标识来区分机器, 机器名称无需填写',
+      title: '日志文件 导入',
+      api: 'importTailFile'
+    },
+    PROFILE: {
+      value: 200,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增',
+      title: '应用环境 导入',
+      api: 'importAppProfile'
+    },
+    APPLICATION: {
+      value: 210,
+      tips: '使用唯一标识来区分数据, 存在更新不存在新增',
+      title: '应用信息 导入',
+      api: 'importApplication'
+    },
+    VCS: {
+      value: 220,
+      tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
+      title: '版本仓库 导入',
+      api: 'importAppVcs'
+    },
+    COMMAND_TEMPLATE: {
+      value: 310,
+      tips: '使用模板名称来区分数据, 存在更新不存在新增',
+      title: '命令模板 导入',
+      api: 'importCommandTemplate'
     }
   }
 

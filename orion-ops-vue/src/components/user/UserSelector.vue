@@ -1,5 +1,9 @@
 <template>
-  <a-select v-model="id" @change="$emit('change', id)" placeholder="全部" allowClear>
+  <a-select v-model="id"
+            @change="$emit('change', id)"
+            placeholder="全部"
+            :disabled="disabled"
+            allowClear>
     <a-select-option v-for="user in userList"
                      :value="user.id"
                      :key="user.id">
@@ -11,6 +15,12 @@
 <script>
 export default {
   name: 'UserSelector',
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       id: undefined,

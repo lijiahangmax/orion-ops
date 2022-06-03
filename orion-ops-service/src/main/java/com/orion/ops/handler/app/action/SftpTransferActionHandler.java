@@ -1,15 +1,16 @@
 package com.orion.ops.handler.app.action;
 
+import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.Utils;
-import com.orion.remote.channel.sftp.SftpExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
 
 import java.io.File;
 import java.util.List;
@@ -24,9 +25,13 @@ import java.util.Map;
  * @see com.orion.ops.consts.app.TransferMode#SFTP
  * @since 2022/4/26 23:57
  */
-public class SftpTransferActionHandler extends AbstractTransferActionHandler<SftpExecutor> {
+public class SftpTransferActionHandler extends AbstractActionHandler {
+
+    private static final String SPACE = "      ";
 
     protected static MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
+
+    private SftpExecutor executor;
 
     public SftpTransferActionHandler(Long actionId, MachineActionStore store) {
         super(actionId, store);
@@ -44,25 +49,37 @@ public class SftpTransferActionHandler extends AbstractTransferActionHandler<Sft
         String charset = machineEnvService.getSftpCharset(store.getMachineId());
         this.executor = store.getSessionStore().getSftpExecutor(charset);
         executor.connect();
-        // 删除远程文件
+        // 拼接删除日志
         String transferPath = store.getTransferPath();
+        StringBuilder removeLog = new StringBuilder(Const.LF)
+                .append(SPACE)
+                .append(Utils.getStainKeyWords("开始删除文件原始文件", StainCode.GLOSS_RED))
+                .append(Const.LF);
+        removeLog.append(SPACE)
+                .append(Utils.getStainKeyWords("remove:    ", StainCode.GLOSS_RED))
+                .append(Utils.getStainKeyWords(transferPath, StainCode.GLOSS_BLUE))
+                .append(Const.LF);
+        this.appendLog(removeLog.toString());
+        // 删除远程文件
         executor.rm(transferPath);
-        String space = "      ";
         String bundleAbsolutePath = bundleFile.getAbsolutePath();
         // 拼接头文件
         StringBuilder headerLog = new StringBuilder(Const.LF)
-                .append(space)
+                .append(SPACE)
+                .append(Utils.getStainKeyWords("开始传输文件", StainCode.GLOSS_BLUE))
+                .append(Const.LF)
+                .append(SPACE)
                 .append(Utils.getStainKeyWords("source:    ", StainCode.GLOSS_GREEN))
                 .append(Utils.getStainKeyWords(bundleAbsolutePath, StainCode.GLOSS_BLUE))
                 .append(Const.LF)
-                .append(space)
+                .append(SPACE)
                 .append(Utils.getStainKeyWords("target:    ", StainCode.GLOSS_GREEN))
                 .append(Utils.getStainKeyWords(transferPath, StainCode.GLOSS_BLUE))
                 .append(Const.LF_2);
         headerLog.append(StainCode.prefix(StainCode.GLOSS_GREEN))
-                .append(space)
+                .append(SPACE)
                 .append("类型")
-                .append(space)
+                .append(SPACE)
                 .append(" target")
                 .append(StainCode.SUFFIX)
                 .append(Const.LF);
@@ -74,9 +91,9 @@ public class SftpTransferActionHandler extends AbstractTransferActionHandler<Sft
             String remoteFile = entity.getValue();
             // 文件夹则创建
             if (localFile.isDirectory()) {
-                StringBuilder createDirLog = new StringBuilder(space)
+                StringBuilder createDirLog = new StringBuilder(SPACE)
                         .append(Utils.getStainKeyWords("mkdir", StainCode.GLOSS_GREEN))
-                        .append(space)
+                        .append(SPACE)
                         .append(Utils.getStainKeyWords(remoteFile, StainCode.GLOSS_BLUE))
                         .append(Const.LF);
                 this.appendLog(createDirLog.toString());
@@ -84,9 +101,9 @@ public class SftpTransferActionHandler extends AbstractTransferActionHandler<Sft
                 continue;
             }
             // 文件则传输
-            StringBuilder transferLog = new StringBuilder(space)
+            StringBuilder transferLog = new StringBuilder(SPACE)
                     .append(Utils.getStainKeyWords("touch", StainCode.GLOSS_GREEN))
-                    .append(space)
+                    .append(SPACE)
                     .append(Utils.getStainKeyWords(remoteFile, StainCode.GLOSS_BLUE))
                     .append(StainCode.prefix(StainCode.GLOSS_BLUE))
                     .append(" (")
@@ -121,6 +138,20 @@ public class SftpTransferActionHandler extends AbstractTransferActionHandler<Sft
             map.put(transferFile, remoteFile);
         }
         return map;
+    }
+
+    @Override
+    public void terminate() {
+        super.terminate();
+        // 关闭executor
+        Streams.close(executor);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        // 关闭executor
+        Streams.close(executor);
     }
 
 }

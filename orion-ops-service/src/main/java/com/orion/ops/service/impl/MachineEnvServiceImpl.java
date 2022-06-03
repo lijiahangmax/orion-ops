@@ -220,7 +220,7 @@ public class MachineEnvServiceImpl implements MachineEnvService {
         // 获取self
         MachineEnvService self = SpringHolder.getBean(MachineEnvService.class);
         List<MachineEnvDO> envList;
-        if (Const.N_N_L_1.equals(id)) {
+        if (Const.L_N_1.equals(id)) {
             // 全量同步
             LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
                     .eq(MachineEnvDO::getMachineId, machineId)

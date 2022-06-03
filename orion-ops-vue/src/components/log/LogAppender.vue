@@ -202,7 +202,8 @@ export default {
         fit: null,
         search: null,
         links: null
-      }
+      },
+      token: {}
     }
   },
   methods: {
@@ -212,6 +213,7 @@ export default {
           type: this.tailType,
           relId: this.relId
         }).then(({ data }) => {
+          this.token = data
           this.initLogTailView(data)
         })
       })
@@ -263,6 +265,7 @@ export default {
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
         this.status = this.$enum.LOG_TAIL_STATUS.RUNNABLE.value
+        this.$emit('open')
       }
       this.client.onerror = () => {
         this.status = this.$enum.LOG_TAIL_STATUS.ERROR.value
@@ -270,7 +273,10 @@ export default {
       this.client.onclose = (e) => {
         console.log('closed', e.code, e.reason)
         this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
-        // this.term.write('\r\n\x1b[31m已断开连接...\x1b[0m')
+        if (e.code > 4000 && e.code < 5000) {
+          // 自定义错误信息
+          this.term.write(`\x1b[93m${e.reason}\x1b[0m`)
+        }
         this.$emit('close')
       }
       this.client.onmessage = async event => {

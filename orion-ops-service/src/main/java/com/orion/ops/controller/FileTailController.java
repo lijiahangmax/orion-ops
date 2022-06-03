@@ -112,4 +112,14 @@ public class FileTailController {
         return fileTailService.getMachineConfig(machineId);
     }
 
+    /**
+     * 写入命令
+     */
+    @RequestMapping("/write")
+    public void write(@RequestBody FileTailRequest request) {
+        String token = Valid.notBlank(request.getToken());
+        String command = Valid.notEmpty(request.getCommand());
+        fileTailService.writeCommand(token, command);
+    }
+
 }

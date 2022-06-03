@@ -45,6 +45,14 @@ public interface ITailHandler extends SafeCloseable {
     }
 
     /**
+     * 写入命令
+     *
+     * @param command command
+     */
+    default void write(String command) {
+    }
+
+    /**
      * 获取实际执行 handler
      *
      * @param mode    mode

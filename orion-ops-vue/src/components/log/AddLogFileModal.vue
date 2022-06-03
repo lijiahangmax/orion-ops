@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :title="title"
            :width="650"
            :dialogStyle="{top: '64px', padding: 0}"
@@ -15,6 +14,7 @@
           <MachineSelector ref="machineSelector"
                            placeholder="请选择"
                            @change="setDefaultConfig"
+                           :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
                            v-decorator="decorators.machineId"/>
         </a-form-item>
         <!-- 追踪模式 -->

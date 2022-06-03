@@ -62,4 +62,9 @@ public interface ApplicationProfileService {
      */
     ApplicationProfileVO getProfile(Long id);
 
+    /**
+     * 清空环境缓存
+     */
+    void clearProfileCache();
+
 }

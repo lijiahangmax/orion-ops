@@ -18,15 +18,22 @@
    git clone https://gitee.com/lijiahangmax/orion-ops
    ```
 
-2. 初始化数据库  
-   `执行脚本` > `orion-ops/orion-ops-service/init.sql`
+2. 初始化数据库
+   ```
+   # 执行DDL脚本
+   orion-ops/orion-ops-service/init-schema.sql
+   # 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
+   orion-ops/orion-ops-service/init-data.sql
+   ```
 
 3. 构建后端代码
    ```
    # 修改配置文件
    orion-ops/orion-ops-service/src/main/resources/application-prod.properties
+   # 修改全局加密秘钥,为了密码安全考虑 (推荐修改)
+   orion-ops/orion-ops-servicesrc/main/java/com/orion/ops/utils/ValueMix#SECRET_KEY
    # 编译
-   mvn clean package -DskipTests
+   mvn -U clean install -DskipTests
    ```   
    构建时如果有依赖拉不下来可以选择使用阿里云的 maven 镜像
    ```setting.xml
@@ -87,7 +94,8 @@ service nginx start
 登录后需要配置宿主机 SSH 信息, 直到可以访问  
 如果是密码登录: 机器管理 > 机器列表 > `宿主机` > 更多 > 编辑 > 选择认证方式为密码 > 输入密码 > 确定  
 如果是秘钥登陆: 机器管理 > 机器秘钥 > 新建  
-配置完成后测试连接:  机器管理 > 机器列表 > `宿主机` > 更多 > 测试连接
+配置完成后测试连接: 机器管理 > 机器列表 > `宿主机` > 更多 > 测试连接   
+创建应用环境: 应用管理 > 环境管理 > 添加 (已执行 `init-data.sql` 则可以忽略)
 
 ### 启动参数
 
@@ -95,4 +103,4 @@ service nginx start
 
 关闭IP过滤器   `--disable-ip-filter`  
 生成默认管理员账号 `--generator-admin`  账号: `orionadmin` 密码: `orionadmin`  
-重置默认管理员账号 `--reset-admin`    账号: `orionadmin` 密码: `orionadmin`  
+重置默认管理员账号 `--reset-admin`      账号: `orionadmin` 密码: `orionadmin`  

@@ -30,6 +30,12 @@ public class MessageConst {
 
     public static final String OPERATOR_ERROR = "操作失败";
 
+    public static final String NETWORK_FLUCTUATION = "当前环境网路波动";
+
+    public static final String OPEN_TEMPLATE_ERROR = "模板解析失败 请检查模板和密码";
+
+    public static final String PARSE_TEMPLATE_DATA_ERROR = "模板解析失败 请检查模板数据";
+
     public static final String VCS_OPERATOR_ERROR = "版本控制仓库操作执行失败";
 
     public static final String TASK_ERROR = "任务执行异常";
@@ -66,7 +72,7 @@ public class MessageConst {
 
     public static final String INVALID_MACHINE = "未知的机器";
 
-    public static final String MACHINE_NOT_ENABLE = "机器未启用";
+    public static final String MACHINE_DISABLE = "机器未启用";
 
     public static final String INVALID_PROXY = "未查询到代理信息";
 
@@ -109,6 +115,8 @@ public class MessageConst {
     public static final String FILE_TOO_LARGE = "文件过大";
 
     public static final String NAME_PRESENT = "名称重复";
+
+    public static final String TAG_PRESENT = "唯一标识重复";
 
     public static final String FORBID_DELETE = "禁止删除";
 
@@ -205,5 +213,11 @@ public class MessageConst {
     public static final String EXECUTE_SFTP_ZIP_COMMAND_ERROR = "执行 zip 压缩命令失败";
 
     public static final String SFTP_ZIP_FILE_ABSENT = "压缩文件不存在";
+
+    public static final String OPERATOR_TIMEOUT = "操作超时";
+
+    public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
+
+    public static final String UNKNOWN_APP_VCS = "未查询到应用仓库: {}";
 
 }

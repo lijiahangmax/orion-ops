@@ -56,6 +56,7 @@
       <div class="tools-fixed-right">
         <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="deployment-unit" @click="openRelease">应用发布</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -257,6 +258,8 @@
       <AppReleaseMachineLogAppenderModal ref="machineAppender"/>
       <!-- 定时模态框 -->
       <AppReleaseTimedModal ref="releaseTimed" @updated="forceUpdateRows"/>
+      <!-- 清理模态框 -->
+      <AppReleaseClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -271,6 +274,7 @@ import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDet
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
 import _filters from '@/lib/filters'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
+import AppReleaseClearModal from '@/components/clear/AppReleaseClearModal'
 
 function statusHolder() {
   return {
@@ -433,6 +437,7 @@ const innerColumns = [
 export default {
   name: 'AppRelease',
   components: {
+    AppReleaseClearModal,
     AppReleaseLogAppenderModal,
     AppReleaseTimedModal,
     AppReleaseMachineLogAppenderModal,
@@ -638,6 +643,9 @@ export default {
       }).then(() => {
         this.$message.success('已跳过')
       })
+    },
+    openClear() {
+      this.$refs.clear.open(this.query.profileId)
     },
     resetForm() {
       this.$refs.query.resetFields()

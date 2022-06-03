@@ -831,7 +831,10 @@ const $api = {
    */
   execBatchUpload: param => {
     return $http.$post('/batch-upload/exec', param, {
-      timeout: 18000000
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     })
   },
 
@@ -929,6 +932,13 @@ const $api = {
    */
   getTailConfig: param => {
     return $http.$post('/file-tail/config', param, { skipErrorMessage: true })
+  },
+
+  /**
+   * tail 输入命令
+   */
+  writeTailCommand: param => {
+    return $http.$post('/file-tail/write', param)
   },
 
   /**
@@ -1520,7 +1530,9 @@ const $api = {
    * 首页统计信息
    */
   getHomeStatistics: param => {
-    return $http.$post('/statistics/home', param)
+    return $http.$post('/statistics/home', param, {
+      skipErrorMessage: true
+    })
   },
 
   /**
@@ -2093,6 +2105,227 @@ const $api = {
    */
   getAppPipelineTaskLog: param => {
     return $http.$post('/app-pipeline-task/log', param)
+  },
+
+  /**
+   * 清理批量执行数据
+   */
+  clearBatchExec: param => {
+    return $http.$post('/data-clear/batch-exec', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理终端日志
+   */
+  clearTerminalLog: param => {
+    return $http.$post('/data-clear/terminal-log', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理调度记录
+   */
+  clearSchedulerRecord: param => {
+    return $http.$post('/data-clear/scheduler-record', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用构建记录
+   */
+  clearAppBuild: param => {
+    return $http.$post('/data-clear/app-build', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用发布记录
+   */
+  clearAppRelease: param => {
+    return $http.$post('/data-clear/app-release', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理应用流水线记录
+   */
+  clearAppPipeline: param => {
+    return $http.$post('/data-clear/app-pipeline', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理站内信
+   */
+  clearWebSideMessage: param => {
+    return $http.$post('/data-clear/web-side-message', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 清理操作日志
+   */
+  clearEventLog: param => {
+    return $http.$post('/data-clear/event-log', param, {
+      loading: '正在清理...'
+    })
+  },
+
+  /**
+   * 导出机器信息
+   */
+  exportMachine: param => {
+    return $http.$export('/data-export/machine', param)
+  },
+
+  /**
+   * 导出机器代理
+   */
+  exportMachineProxy: param => {
+    return $http.$export('/data-export/machine-proxy', param)
+  },
+
+  /**
+   * 导出终端日志
+   */
+  exportMachineTerminalLog: param => {
+    return $http.$export('/data-export/machine-terminal-log', param)
+  },
+
+  /**
+   * 导出日志文件
+   */
+  exportMachineTailFile: param => {
+    return $http.$export('/data-export/machine-tail-file', param)
+  },
+
+  /**
+   * 导出应用环境
+   */
+  exportAppProfile: param => {
+    return $http.$export('/data-export/app-profile', param)
+  },
+
+  /**
+   * 导出应用信息
+   */
+  exportApplication: param => {
+    return $http.$export('/data-export/application', param)
+  },
+
+  /**
+   * 导出应用版本仓库
+   */
+  exportAppVcs: param => {
+    return $http.$export('/data-export/app-vcs', param)
+  },
+
+  /**
+   * 导出命令模板
+   */
+  exportCommandTemplate: param => {
+    return $http.$export('/data-export/command-template', param)
+  },
+
+  /**
+   * 导出站内信
+   */
+  exportWebSideMessage: param => {
+    return $http.$export('/data-export/web-side-message', param)
+  },
+
+  /**
+   * 导出操作日志
+   */
+  exportEventLog: param => {
+    return $http.$export('/data-export/event-log', param)
+  },
+
+  /**
+   * 获取导入模板
+   */
+  getImportTemplate: param => {
+    return $http.$get('/data-import/get-template', param, {
+      skipRespInterceptor: true,
+      timeout: 600000,
+      responseType: 'blob'
+    })
+  },
+
+  /**
+   * 检查导入数据
+   */
+  checkImportData: param => {
+    return $http.$post('/data-import/check-data', param, {
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+
+  /**
+   * 导入机器信息
+   */
+  importMachineData: param => {
+    return $http.$post('/data-import/import-machine', param)
+  },
+
+  /**
+   * 导入机器代理
+   */
+  importMachineProxy: param => {
+    return $http.$post('/data-import/import-machine-proxy', param)
+  },
+
+  /**
+   * 导入日志文件
+   */
+  importTailFile: param => {
+    return $http.$post('/data-import/import-tail-file', param)
+  },
+
+  /**
+   * 导入应用环境
+   */
+  importAppProfile: param => {
+    return $http.$post('/data-import/import-app-profile', param)
+  },
+
+  /**
+   * 导入应用信息
+   */
+  importApplication: param => {
+    return $http.$post('/data-import/import-application', param)
+  },
+
+  /**
+   * 导入应用版本仓库
+   */
+  importAppVcs: param => {
+    return $http.$post('/data-import/import-app-vcs', param)
+  },
+
+  /**
+   * 导入命令模板
+   */
+  importCommandTemplate: param => {
+    return $http.$post('/data-import/import-command-template', param)
+  },
+
+  /**
+   * 取消导入数据
+   */
+  cancelImportData: param => {
+    return $http.$post('/data-import/cancel-import', param)
   }
 
 }

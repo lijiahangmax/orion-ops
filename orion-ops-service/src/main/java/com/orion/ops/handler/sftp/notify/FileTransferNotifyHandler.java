@@ -65,7 +65,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
             log.info("sftp-Notify 建立连接成功 id: {}, token: {}, userId: {}, machineId: {}, machineIdList: {}", id, token, userId, machineId, machineIdList);
         } catch (Exception e) {
             log.error("sftp-Notify 建立连接失败-未查询到token信息 id: {}, token: {}", id, token, e);
-            session.close(WsCloseCode.FORGE_TOKEN.close());
+            session.close(WsCloseCode.FORGE_TOKEN.status());
         }
     }
 
@@ -85,14 +85,14 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
         String authToken = ((TextMessage) message).getPayload();
         if (Strings.isEmpty(authToken)) {
             log.info("sftp-Notify 认证失败-body为空 id: {}", id);
-            session.close(WsCloseCode.INCORRECT_TOKEN.close());
+            session.close(WsCloseCode.INCORRECT_TOKEN.status());
             return;
         }
         // 获取认证用户
         UserDTO user = passportService.getUserByToken(authToken, null);
         if (user == null) {
             log.info("sftp-Notify 认证失败-未查询到用户 id: {}, authToken: {}", id, authToken);
-            session.close(WsCloseCode.INCORRECT_TOKEN.close());
+            session.close(WsCloseCode.INCORRECT_TOKEN.status());
             return;
         }
         // 检查认证用户是否匹配
@@ -101,7 +101,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
         final boolean valid = userId.equals(tokenUserId);
         if (!valid) {
             log.info("sftp-Notify 认证失败-用户不匹配 id: {}, userId: {}, tokenUserId: {}", id, userId, tokenUserId);
-            session.close(WsCloseCode.VALID.close());
+            session.close(WsCloseCode.VALID.status());
             return;
         }
         attributes.put(AUTH_KEY, Const.ENABLE);

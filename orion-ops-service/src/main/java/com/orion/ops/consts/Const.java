@@ -56,6 +56,10 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TASK_DIR = "/task";
 
+    public static final String IMPORT_DIR = "/import";
+
+    public static final String EXPORT_DIR = "/export";
+
     public static final String BUILD = "build";
 
     public static final String RELEASE = "release";
@@ -92,8 +96,6 @@ public class Const extends com.orion.constant.Const {
 
     public static final String TEMP_PACKAGE_PATH = "tmp_ops_pkg";
 
-    public static final Long N_N_L_1 = -1L;
-
     public static final Integer IS_DEFAULT = 1;
 
     public static final Integer CONFIGURED = 1;
@@ -118,27 +120,23 @@ public class Const extends com.orion.constant.Const {
 
     public static final int MIN_TRACKER_DELAY_MS = 50;
 
-    public static final String ENABLE_LABEL = "启用";
-
-    public static final String DISABLE_LABEL = "停用";
-
-    public static final String RESOLVE_LABEL = "通过";
-
-    public static final String REJECT_LABEL = "驳回";
-
-    public static final Double D_0 = 0D;
-
     public static final int DEFAULT_FILE_CLEAN_THRESHOLD = 60;
 
     public static final int DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR = 24 * 2;
 
+    public static final String GITHUB = "github";
+
+    public static final String GITEE = "gitee";
+
+    public static final String GITLAB = "gitlab";
+
     public static final String OAUTH2 = "oauth2";
 
+    public static final String SOCKET4 = "socket4";
+
+    public static final String SOCKET5 = "socket5";
+
     public static final int SFTP_UPLOAD_THRESHOLD = 512;
-
-    public static final String APP_CN = "应用";
-
-    public static final String RELEASE_CN = "发布";
 
     public static final String LF_2 = "\n\n";
 

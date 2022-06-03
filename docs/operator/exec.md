@@ -10,19 +10,25 @@
 
 ⚡ 按住 `Ctrl` 点击 `日志` 可以打开一个新页面, 否则将会打开一个模态框。
 
+### 批量上传
+
+批量上传文件到多台机器, 常用与分发文件以及批量上传 agent 脚本文件。  
+批量上传提交至传输列表后关闭页面也会在后台继续上传。  
+如果关闭页面后想查找上传记录, 可以在机器 `sftp` 的传输列表中查找。
+
 ### 日志面板
 
 维护机器可查看的日志文件, 采用执行命令的方式查看文件, 灵活度高。
 
 ```
 # 查看普通日志文件
-tail -f -n @{offset} @{file}
+tail -f -n @{offset} '@{file}'
 
 # 查看 k8s 的日志文件
 kubectl get pods -n dev | awk '{print $1}' | grep @{file} | xargs -I '{}' kubectl logs {} -n dev --tail=@{offset} -f
 
-# 这里甚至可以使用 cat
-cat /data/info.log
+# 这里甚至可以执行脚本
+/root/distribution-log.sh
 ```
 
 这里只有两个可替换的变量, 当然这里也是可以写死的

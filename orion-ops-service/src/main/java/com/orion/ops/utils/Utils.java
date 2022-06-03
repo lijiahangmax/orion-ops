@@ -226,4 +226,24 @@ public class Utils {
                 .collect(Collectors.joining(Const.SPACE));
     }
 
+    /**
+     * 清空高亮标签
+     *
+     * @param m m
+     * @return clean
+     */
+    public static String cleanStainTag(String m) {
+        if (Strings.isEmpty(m)) {
+            return m;
+        }
+        return m.replaceAll("<sb>", Const.EMPTY)
+                .replaceAll("<sb 0>", Const.EMPTY)
+                .replaceAll("<sb 2>", Const.EMPTY)
+                .replaceAll("</sb>", Const.EMPTY)
+                .replaceAll("<sr>", Const.EMPTY)
+                .replaceAll("<sr 0>", Const.EMPTY)
+                .replaceAll("<sr 2>", Const.EMPTY)
+                .replaceAll("</sr>", Const.EMPTY);
+    }
+
 }

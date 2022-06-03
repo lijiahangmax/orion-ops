@@ -176,6 +176,18 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeOut(true)
             .build();
 
+    /**
+     * 异步导入 线程池
+     */
+    public static final ThreadPoolExecutor ASYNC_IMPORT_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("async-import-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(4)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setAllowCoreThreadTimeOut(true)
+            .build();
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
@@ -191,6 +203,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(SCHEDULER_TASK_MAIN_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SCHEDULER_TASK_MACHINE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(PIPELINE_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(ASYNC_IMPORT_SCHEDULER, Const.MS_S_3);
         });
     }
 

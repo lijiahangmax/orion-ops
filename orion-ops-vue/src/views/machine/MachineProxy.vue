@@ -55,6 +55,8 @@
       <div class="tools-fixed-right">
         <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -101,13 +103,20 @@
     </div>
     <!-- 事件 -->
     <div class="machine-proxy-event">
+      <!-- 添加模态框 -->
       <AddMachineProxyModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 导出模态框 -->
+      <MachineProxyExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE_PROXY"/>
     </div>
   </div>
 </template>
 
 <script>
 import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
+import MachineProxyExportModal from '@/components/export/MachineProxyExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -159,6 +168,8 @@ const columns = [
 export default {
   name: 'MachineProxy',
   components: {
+    DataImportModal,
+    MachineProxyExportModal,
     AddMachineProxyModal
   },
   data: function() {
@@ -216,6 +227,12 @@ export default {
     },
     update(id) {
       this.$refs.addModal.update(id)
+    },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

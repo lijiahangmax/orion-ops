@@ -1,17 +1,14 @@
 package com.orion.ops.handler.sftp.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.net.remote.channel.sftp.SftpDownloader;
 import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.handler.sftp.FileTransferProcessor;
-import com.orion.remote.channel.sftp.bigfile.SftpDownload;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
 
 /**
  * 文件下载处理器
@@ -43,26 +40,9 @@ public class DownloadFileProcessor extends FileTransferProcessor {
         String localAbsolutePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), localFile);
         log.info("sftp文件下载-开始传输 fileToken: {}, machineId: {}, local: {}, remote: {}",
                 fileToken, machineId, localAbsolutePath, remoteFile);
-        SftpDownload download = executor.download(remoteFile, localAbsolutePath);
+        SftpDownloader download = executor.download(remoteFile, localAbsolutePath);
         this.initProgress(download.getProgress());
         download.run();
-    }
-
-    @Override
-    public void usingFsCopy() {
-        String remoteFile = record.getRemoteFile();
-        String localFile = record.getLocalFile();
-        String localAbsolutePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), localFile);
-        log.info("sftp文件上传-使用FSC fileToken: {}, machineId: {}, local: {}, remote: {}",
-                fileToken, machineId, localAbsolutePath, remoteFile);
-        // 复制
-        File sourceFile = new File(remoteFile);
-        Files1.copy(sourceFile, new File(localAbsolutePath));
-        // 通知进度
-        long fileSize = sourceFile.length();
-        super.notifyProgress(Files1.getSize(fileSize), Files1.getSize(fileSize), "100");
-        // 通知状态
-        super.updateStatusAndNotify(SftpTransferStatus.FINISH.getStatus(), 100D, fileSize);
     }
 
 }

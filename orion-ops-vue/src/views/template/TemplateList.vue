@@ -41,6 +41,8 @@
       <div class="tools-fixed-right">
         <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">添加</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -88,6 +90,10 @@
       <AddTemplateModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 预览 -->
       <EditorPreview ref="preview"/>
+      <!-- 导出模态框 -->
+      <CommandTemplateExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.COMMAND_TEMPLATE"/>
     </div>
   </div>
 </template>
@@ -97,6 +103,8 @@
 import AddTemplateModal from '@/components/template/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
 import _filters from '@/lib/filters'
+import CommandTemplateExportModal from '@/components/export/CommandTemplateExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -162,6 +170,8 @@ const columns = [
 export default {
   name: 'TemplateList',
   components: {
+    DataImportModal,
+    CommandTemplateExportModal,
     AddTemplateModal,
     EditorPreview
   },
@@ -204,6 +214,12 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

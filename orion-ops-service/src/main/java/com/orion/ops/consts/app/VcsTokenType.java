@@ -1,5 +1,6 @@
 package com.orion.ops.consts.app;
 
+import com.orion.ops.consts.Const;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,25 +20,27 @@ public enum VcsTokenType {
      * <p>
      * username: ''
      */
-    GITHUB(10),
+    GITHUB(10, Const.GITHUB),
 
     /**
      * gitee
      * <p>
      * username: username
      */
-    GITEE(20),
+    GITEE(20, Const.GITEE),
 
     /**
      * gitlab
      * <p>
      * username oauth
      */
-    GITLAB(30),
+    GITLAB(30, Const.GITLAB),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static VcsTokenType of(Integer type) {
         if (type == null) {
@@ -45,6 +48,18 @@ public enum VcsTokenType {
         }
         for (VcsTokenType value : values()) {
             if (value.type.equals(type)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public static VcsTokenType of(String label) {
+        if (label == null) {
+            return null;
+        }
+        for (VcsTokenType value : values()) {
+            if (value.label.equals(label.toLowerCase())) {
                 return value;
             }
         }

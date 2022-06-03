@@ -24,7 +24,7 @@ public class ApplicationProfileDTO {
     private String profileName;
 
     /**
-     * 环境标识
+     * 环境唯一标识
      */
     private String profileTag;
 

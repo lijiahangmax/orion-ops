@@ -88,4 +88,12 @@ public interface FileTailService {
      */
     FileTailConfigVO getMachineConfig(Long machineId);
 
+    /**
+     * 写入命令
+     *
+     * @param token   token
+     * @param command command
+     */
+    void writeCommand(String token, String command);
+
 }

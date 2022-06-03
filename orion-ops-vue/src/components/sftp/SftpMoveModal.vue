@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            title="文件移动"
            :width="450"
            okText="移动"

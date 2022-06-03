@@ -5,6 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.id.ObjectIds;
 import com.orion.id.UUIds;
 import com.orion.lang.io.IgnoreOutputStream;
+import com.orion.net.base.file.sftp.SftpFile;
+import com.orion.net.remote.CommandExecutors;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.sftp.SftpExecutor;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.MessageConst;
@@ -36,10 +41,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.sftp.SftpExecutor;
-import com.orion.remote.channel.sftp.SftpFile;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
@@ -390,10 +391,7 @@ public class SftpServiceImpl implements SftpService {
         try (SessionStore session = machineInfoService.openSessionStore(machine);
              CommandExecutor executor = session.getCommandExecutor(Strings.replaceCRLF(command))) {
             // 执行命令
-            executor.sync()
-                    .transfer(new IgnoreOutputStream())
-                    .connect()
-                    .exec();
+            CommandExecutors.syncExecCommand(executor, new IgnoreOutputStream());
         } catch (Exception e) {
             throw Exceptions.app(MessageConst.EXECUTE_SFTP_ZIP_COMMAND_ERROR, e);
         }
@@ -524,7 +522,7 @@ public class SftpServiceImpl implements SftpService {
             SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(machineId);
             SftpFile file = executor.getFile(transferLog.getRemoteFile());
             if (file != null) {
-                executor.rmFile(transferLog.getRemoteFile());
+                executor.removeFile(transferLog.getRemoteFile());
             }
         } else {
             // 删除本地文件

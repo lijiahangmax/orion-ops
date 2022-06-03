@@ -32,14 +32,14 @@ public enum TransferMode {
 
     public static TransferMode of(String value) {
         if (value == null) {
-            return SFTP;
+            return SCP;
         }
         for (TransferMode type : values()) {
             if (type.value.equals(value)) {
                 return type;
             }
         }
-        return SFTP;
+        return SCP;
     }
 
 }

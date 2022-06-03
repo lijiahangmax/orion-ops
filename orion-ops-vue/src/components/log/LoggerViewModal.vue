@@ -16,40 +16,46 @@
                    :appendStyle="{height: 'calc(100vh - 92px)'}"
                    :relId="id"
                    :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value">
+                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
+                   @open="loggerOpened"
+                   @close="loggerClosed">
         <!-- 左侧工具栏 -->
         <template #left-tools>
           <div class="fixed-left-tools">
-            <!-- 文件名称 -->
-            <a-breadcrumb>
-              <!-- 机器名称 -->
-              <a-breadcrumb-item v-if="file.machineName">
-                <a-tag color="#7950F2" class="m0">
+            <!-- 日志信息 -->
+            <div class="machine-log-info-container">
+              <!-- 机器信息 -->
+              <a-tooltip :title="file.machineHost">
+                <span class="log-info-wrapper" style="margin-left: 2px;">
                   {{ file.machineName }}
-                </a-tag>
-              </a-breadcrumb-item>
-              <!-- 机器主机 -->
-              <a-breadcrumb-item v-if="file.machineHost">
-                <a-tag color="#5C7CFA" class="m0">
-                  {{ file.machineHost }}
-                </a-tag>
-              </a-breadcrumb-item>
-              <!-- 名称 -->
-              <a-breadcrumb-item v-if="file.name">
-                <a-tag color="#15AABF" class="m0">
-                  {{ file.name }}
-                </a-tag>
-              </a-breadcrumb-item>
-              <!-- 文件名称 -->
-              <a-breadcrumb-item v-if="file.path">
-                <a-tag color="#40C057"
-                       class="pointer"
-                       :title="file.path"
-                       @click="$copy(file.path)">
+                </span>
+              </a-tooltip>
+              <a-divider type="vertical" style="top: -0.36em; height: 1em"/>
+              <!-- 文件信息 -->
+              <a-tooltip :title="`${file.path}`">
+                <span class="log-info-wrapper pointer" @click="$copy(file.path)">
                   {{ file.fileName }}
-                </a-tag>
-              </a-breadcrumb-item>
-            </a-breadcrumb>
+                </span>
+              </a-tooltip>
+            </div>
+            <!-- 命令输入 -->
+            <a-input-search class="command-write-input"
+                            size="default"
+                            v-if="visibleCommand"
+                            v-model="command"
+                            placeholder="输入"
+                            @search="sendCommand">
+              <template #enterButton>
+                <a-icon type="forward"/>
+              </template>
+              <!-- 发送 lf -->
+              <template #suffix>
+                <a-icon :class="{'send-lf-trigger': true, 'send-lf-trigger-enable': sendLf}"
+                        title="是否发送 \n"
+                        type="pull-request"
+                        @click="() => sendLf = !sendLf"/>
+              </template>
+            </a-input-search>
           </div>
         </template>
       </LogAppender>
@@ -69,11 +75,20 @@ export default {
     return {
       id: null,
       file: {},
-      visible: false
+      visible: false,
+      visibleCommand: false,
+      command: null,
+      sendLf: true,
+      closed: false
     }
   },
   methods: {
     open(id) {
+      this.file = {}
+      this.visibleCommand = false
+      this.command = null
+      this.sendLf = true
+      this.closed = false
       this.visible = true
       this.id = id
       this.$api.getTailDetail({
@@ -86,11 +101,37 @@ export default {
     },
     close() {
       this.id = null
-      this.file = {}
       this.visible = false
       this.$nextTick(() => {
         this.$refs.appender.clear()
         this.$refs.appender.close()
+      })
+    },
+    loggerOpened() {
+      if (this.$refs.appender.token.tailMode === this.$enum.FILE_TAIL_MODE.TAIL.value) {
+        setTimeout(() => {
+          if (!this.closed) {
+            this.visibleCommand = true
+          }
+        }, 200)
+      }
+    },
+    loggerClosed() {
+      this.closed = true
+      this.visibleCommand = false
+    },
+    sendCommand() {
+      let command = this.command || ''
+      if (this.sendLf) {
+        command += '\n'
+      }
+      if (!command) {
+        return
+      }
+      this.command = ''
+      this.$api.writeTailCommand({
+        token: this.$refs.appender.token.token,
+        command
       })
     }
   }
@@ -104,4 +145,17 @@ export default {
   align-items: center;
 }
 
+.machine-log-info-container {
+  margin-right: 16px;
+  margin-top: -9px;
+  height: 1em;
+}
+
+.log-info-wrapper {
+  color: rgba(0, 0, 0, .8);
+  max-width: 200px;
+  text-overflow: ellipsis;
+  display: inline-block;
+  overflow: hidden;
+}
 </style>

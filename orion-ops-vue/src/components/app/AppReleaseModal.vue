@@ -1,6 +1,5 @@
 <template>
   <a-modal v-model="visible"
-           v-drag-modal
            :width="550"
            :maskStyle="{opacity: 0.8, animation: 'none'}"
            :dialogStyle="{top: '64px', padding: 0}"
@@ -153,11 +152,11 @@ export default {
       buildList: [],
       appMachineIdList: [-1],
       submit: {
-        title: null,
-        buildId: null,
-        description: null,
+        title: undefined,
+        buildId: undefined,
+        description: undefined,
         timedRelease: _enum.TIMED_TYPE.NORMAL.value,
-        timedReleaseTime: null,
+        timedReleaseTime: undefined,
         machineIdList: []
       },
       visible: false,
@@ -208,11 +207,11 @@ export default {
       this.appId = null
       this.buildList = []
       this.appMachineIdList = [-1]
-      this.submit.title = null
-      this.submit.buildId = null
-      this.submit.description = null
+      this.submit.title = undefined
+      this.submit.buildId = undefined
+      this.submit.description = undefined
       this.submit.timedRelease = this.$enum.TIMED_TYPE.NORMAL.value
-      this.submit.timedReleaseTime = null
+      this.submit.timedReleaseTime = undefined
       this.submit.machineIdList = []
     },
     async loadReleaseMachine() {

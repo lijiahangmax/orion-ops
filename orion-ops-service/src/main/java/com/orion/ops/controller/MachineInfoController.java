@@ -134,6 +134,7 @@ public class MachineInfoController {
         Valid.gt(sshPort, 0, "ssh端口不正确");
         Valid.lte(sshPort, 65535, "ssh端口不正确");
         Valid.notBlank(request.getName());
+        Valid.notBlank(request.getTag());
         Valid.notBlank(request.getUsername());
     }
 

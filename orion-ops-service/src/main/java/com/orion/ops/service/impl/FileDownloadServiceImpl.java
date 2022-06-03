@@ -207,7 +207,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 inputStream = downloader.open().getFile(downloadFile.getFilePath());
             }
             // 返回
-            Servlets.transfer(response, inputStream, Strings.bytes(downloadFile.getFileName(), Const.UTF_8));
+            Servlets.transfer(response, inputStream, downloadFile.getFileName());
         } finally {
             Streams.close(inputStream);
             Streams.close(downloader);

@@ -7,7 +7,7 @@
 * 快速开始
     * [docker安装](quickstart/docker-install.md)
     * [普通安装](quickstart/install.md)
-    * [FAQ](quickstart/faq.md)
+    * [常见问题](quickstart/faq.md)
 
 * 操作手册
     * [机器管理](operator/machine.md)

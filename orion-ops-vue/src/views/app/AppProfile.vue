@@ -10,7 +10,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
-            <a-form-model-item label="标签" prop="tag">
+            <a-form-model-item label="标识" prop="tag">
               <a-input v-model="query.tag" allowClear/>
             </a-form-model-item>
           </a-col>
@@ -32,6 +32,8 @@
       <div class="tools-fixed-right">
         <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -48,9 +50,9 @@
                size="middle">
         <!-- tag -->
         <template v-slot:tag="record">
-          <a-tag color="#5C7CFA">
+          <span class="span-blue">
             {{ record.tag }}
-          </a-tag>
+          </span>
         </template>
         <!-- 审核 -->
         <template v-slot:releaseAudit="record">
@@ -78,6 +80,10 @@
     <div class="profile-list-event">
       <!-- 新建模态框 -->
       <AddAppProfileModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <!-- 导出模态框 -->
+      <AppProfileExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.PROFILE"/>
     </div>
   </div>
 </template>
@@ -85,6 +91,8 @@
 <script>
 
 import AddAppProfileModal from '@/components/app/AddAppProfileModal'
+import AppProfileExportModal from '@/components/export/AppProfileExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -106,7 +114,7 @@ const columns = [
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
-    title: '标签',
+    title: '唯一标识',
     key: 'tag',
     ellipsis: true,
     width: 150,
@@ -143,6 +151,8 @@ const columns = [
 export default {
   name: 'AppProfile',
   components: {
+    DataImportModal,
+    AppProfileExportModal,
     AddAppProfileModal
   },
   data() {
@@ -199,6 +209,12 @@ export default {
           this.$message.success('已删除')
           this.getList({})
         })
+    },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

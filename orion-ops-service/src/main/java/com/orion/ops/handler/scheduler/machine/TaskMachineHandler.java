@@ -1,6 +1,11 @@
 package com.orion.ops.handler.scheduler.machine;
 
 import com.orion.constant.Letters;
+import com.orion.exception.DisabledException;
+import com.orion.net.remote.CommandExecutors;
+import com.orion.net.remote.ExitCode;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.StainCode;
 import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
@@ -10,9 +15,6 @@ import com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Utils;
-import com.orion.remote.ExitCode;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.ssh.CommandExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
@@ -89,11 +91,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             // 获取执行器
             this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(machineRecord.getExecCommand()));
             // 开始执行
-            executor.inherit()
-                    .sync()
-                    .transfer(logOutputStream)
-                    .connect()
-                    .exec();
+            CommandExecutors.syncExecCommand(executor, logOutputStream);
             this.exitCode = executor.getExitCode();
         } catch (Exception e) {
             ex = e;
@@ -106,8 +104,11 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             } else if (ex == null) {
                 // 完成回调
                 this.completeCallback();
+            } else if (ex instanceof DisabledException) {
+                // 机器未启用回调
+                this.machineDisableCallback();
             } else {
-                // 异常回调
+                // 执行异常回调
                 this.exceptionCallback(ex);
                 throw Exceptions.runtime(ex);
             }
@@ -138,7 +139,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
      */
     private void completeCallback() {
         log.info("调度任务-机器操作-完成 machineRecordId: {}, exitCode: {}", machineRecordId, exitCode);
-        final boolean execSuccess = ExitCode.SUCCESS.getCode().equals(exitCode);
+        final boolean execSuccess = ExitCode.isSuccess(exitCode);
         // 更新状态
         if (execSuccess) {
             this.updateStatus(SchedulerTaskMachineStatus.SUCCESS);
@@ -166,6 +167,23 @@ public class TaskMachineHandler implements ITaskMachineHandler {
                 .append("ms")
                 .append(StainCode.SUFFIX)
                 .append(")\n");
+        this.appendLog(log.toString());
+    }
+
+    /**
+     * 机器未启用回调
+     */
+    private void machineDisableCallback() {
+        log.error("调度任务-机器操作-机器停用停止 machineRecordId: {}", machineRecordId);
+        // 更新状态
+        this.updateStatus(SchedulerTaskMachineStatus.TERMINATED);
+        // 拼接日志
+        StringBuilder log = new StringBuilder()
+                .append(Const.LF)
+                .append(Utils.getStainKeyWords("# 调度任务执行机器未启用", StainCode.GLOSS_YELLOW))
+                .append(Letters.TAB)
+                .append(Utils.getStainKeyWords(Dates.format(endTime), StainCode.GLOSS_BLUE))
+                .append(Const.LF);
         this.appendLog(log.toString());
     }
 

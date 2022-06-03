@@ -7,6 +7,7 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.UserEventLogService;
 import com.orion.ops.utils.Currents;
 import com.orion.servlet.web.Servlets;
+import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
@@ -41,6 +42,7 @@ public class UserEventLogAspect {
     public void beforeLogRecord(EventLog e) {
         EventParamsHolder.remove();
         EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
+        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_TIME, Dates.current());
         // 有可能是登陆接口有可能为空 则用内部常量策略
         UserDTO user = Currents.getUser();
         if (user != null) {
@@ -52,8 +54,8 @@ public class UserEventLogAspect {
                 .map(s -> (ServletRequestAttributes) s)
                 .map(ServletRequestAttributes::getRequest)
                 .ifPresent(request -> {
-                    EventParamsHolder.addParam(EventKeys.USER_AGENT, Servlets.getUserAgent(request));
-                    EventParamsHolder.addParam(EventKeys.IP, Servlets.getRemoteAddr(request));
+                    EventParamsHolder.addParam(EventKeys.INNER_REQUEST_USER_AGENT, Servlets.getUserAgent(request));
+                    EventParamsHolder.addParam(EventKeys.INNER_REQUEST_IP, Servlets.getRemoteAddr(request));
                 });
     }
 

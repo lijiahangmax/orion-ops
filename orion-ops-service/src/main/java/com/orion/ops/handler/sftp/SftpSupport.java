@@ -1,9 +1,12 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.id.UUIds;
+import com.orion.net.remote.channel.sftp.SftpExecutor;
+import com.orion.ops.consts.sftp.SftpTransferStatus;
 import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.remote.channel.sftp.SftpExecutor;
+import com.orion.ops.handler.sftp.impl.UploadFileProcessor;
 import com.orion.utils.io.Files1;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 
@@ -14,6 +17,7 @@ import java.io.File;
  * @version 1.0.0
  * @since 2021/12/13 11:05
  */
+@Slf4j
 public class SftpSupport {
 
     private SftpSupport() {
@@ -35,6 +39,33 @@ public class SftpSupport {
         boolean exist = executor.getFile(checkFile.getAbsolutePath()) != null;
         Files1.delete(checkFile);
         return exist;
+    }
+
+    /**
+     * 使用 file system copy
+     *
+     * @param processor processor
+     */
+    public static void usingFsCopy(FileTransferProcessor processor) {
+        // upload
+        String remoteFile = processor.record.getRemoteFile();
+        String localFile = processor.record.getLocalFile();
+        String localAbsolutePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), localFile);
+        log.info("sftp文件传输-使用FSC fileToken: {}, machineId: {}, local: {}, remote: {}",
+                processor.fileToken, processor.machineId, localAbsolutePath, remoteFile);
+        // 复制
+        File sourceFile;
+        if (processor instanceof UploadFileProcessor) {
+            sourceFile = new File(localAbsolutePath);
+        } else {
+            sourceFile = new File(remoteFile);
+        }
+        Files1.copy(sourceFile, new File(remoteFile));
+        // 通知进度
+        long fileSize = sourceFile.length();
+        processor.notifyProgress(Files1.getSize(fileSize), Files1.getSize(fileSize), "100");
+        // 通知状态
+        processor.updateStatusAndNotify(SftpTransferStatus.FINISH.getStatus(), 100D, fileSize);
     }
 
 }

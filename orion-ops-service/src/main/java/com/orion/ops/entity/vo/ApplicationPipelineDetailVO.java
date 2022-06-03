@@ -40,7 +40,7 @@ public class ApplicationPipelineDetailVO {
     private String appName;
 
     /**
-     * 应用tag
+     * 应用唯一标识
      */
     private String appTag;
 

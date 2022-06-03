@@ -21,6 +21,8 @@ import com.orion.ops.entity.dto.FileTailDTO;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;
+import com.orion.ops.handler.tail.ITailHandler;
+import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
@@ -75,6 +77,9 @@ public class FileTailServiceImpl implements FileTailService {
     private FileTailListDAO fileTailListDAO;
 
     @Resource
+    private TailSessionHolder tailSessionHolder;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -103,6 +108,7 @@ public class FileTailServiceImpl implements FileTailService {
         res.setMachineId(machine.getId());
         res.setMachineName(machine.getMachineName());
         res.setMachineHost(machine.getMachineHost());
+        res.setMachineStatus(machine.getMachineStatus());
         // 设置token
         String token = UUIds.random19();
         res.setToken(token);
@@ -114,20 +120,23 @@ public class FileTailServiceImpl implements FileTailService {
         tail.setMode(tailMode);
         String key = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(key, JSON.toJSONString(tail), KeyConst.FILE_TAIL_ACCESS_EXPIRE, TimeUnit.SECONDS);
-        // 非列表不返回命令和路径
+        // 本地则不返回命令
         if (isLocal) {
-            res.setPath(null);
             res.setCommand(null);
         }
+        res.setTailMode(tailMode);
         return res;
     }
 
     @Override
     public Long insertTailFile(FileTailRequest request) {
+        // 名称重复校验
         Long machineId = request.getMachineId();
+        String name = request.getName();
+        this.checkNamePresent(null, name);
         // 插入
         FileTailListDO insert = new FileTailListDO();
-        insert.setAliasName(request.getName());
+        insert.setAliasName(name);
         insert.setMachineId(machineId);
         insert.setFilePath(request.getPath());
         insert.setFileCharset(request.getCharset());
@@ -142,15 +151,18 @@ public class FileTailServiceImpl implements FileTailService {
 
     @Override
     public Integer updateTailFile(FileTailRequest request) {
-        // 查询文件
+        // 名称重复校验
         Long id = request.getId();
+        String name = request.getName();
+        this.checkNamePresent(id, name);
+        // 查询文件
         FileTailListDO beforeTail = fileTailListDAO.selectById(id);
         Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
         Long machineId = request.getMachineId();
         // 修改
         FileTailListDO update = new FileTailListDO();
         update.setId(id);
-        update.setAliasName(request.getName());
+        update.setAliasName(name);
         update.setMachineId(machineId);
         update.setFilePath(request.getPath());
         update.setFileOffset(request.getOffset());
@@ -205,6 +217,7 @@ public class FileTailServiceImpl implements FileTailService {
             if (machine != null) {
                 p.setMachineName(machine.getMachineName());
                 p.setMachineHost(machine.getMachineHost());
+                p.setMachineStatus(machine.getMachineStatus());
             }
         });
         return dataGrid;
@@ -220,6 +233,7 @@ public class FileTailServiceImpl implements FileTailService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         vo.setMachineName(machine.getMachineName());
         vo.setMachineHost(machine.getMachineHost());
+        vo.setMachineStatus(machine.getMachineStatus());
         return vo;
     }
 
@@ -297,6 +311,28 @@ public class FileTailServiceImpl implements FileTailService {
         // command
         config.setCommand(machineEnvService.getTailDefaultCommand(machineId));
         return config;
+    }
+
+    @Override
+    public void writeCommand(String token, String command) {
+        // 获取任务信息
+        ITailHandler session = tailSessionHolder.getSession(token);
+        Valid.notNull(session, MessageConst.EXEC_TASK_THREAD_ABSENT);
+        session.write(command);
+    }
+
+    /**
+     * 检查名称是否存在
+     *
+     * @param id   id
+     * @param name name
+     */
+    private void checkNamePresent(Long id, String name) {
+        LambdaQueryWrapper<FileTailListDO> presentWrapper = new LambdaQueryWrapper<FileTailListDO>()
+                .ne(id != null, FileTailListDO::getId, id)
+                .eq(FileTailListDO::getAliasName, name);
+        boolean present = DataQuery.of(fileTailListDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 }

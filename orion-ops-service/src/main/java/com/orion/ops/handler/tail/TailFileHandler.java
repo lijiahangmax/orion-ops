@@ -51,7 +51,7 @@ public class TailFileHandler implements WebSocketHandler {
         String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND_TOKEN, token);
         String bindValue = redisTemplate.opsForValue().get(bindKey);
         if (bindValue != null) {
-            session.close(WsCloseCode.TOKEN_BIND.close());
+            session.close(WsCloseCode.TOKEN_BIND.status());
             return;
         }
         // 删除token

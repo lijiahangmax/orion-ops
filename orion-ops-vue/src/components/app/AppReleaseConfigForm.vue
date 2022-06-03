@@ -60,11 +60,21 @@
                 <!-- 文件传输方式 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">文件传输方式</span>
-                  <a-select class="transfer-input" v-model="transferMode">
+                  <!-- 类型选择 -->
+                  <a-select :class="['transfer-input', transferMode === $enum.RELEASE_TRANSFER_MODE.SFTP.value ? 'help-input' : '']"
+                            v-model="transferMode">
                     <a-select-option v-for="type of $enum.RELEASE_TRANSFER_MODE" :key="type.value" :value="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
+                  <!-- 描述 -->
+                  <a-popover placement="top" v-if="transferMode === $enum.RELEASE_TRANSFER_MODE.SFTP.value">
+                    <template slot="content">
+                      文件传输方式选择 SFTP 后, 当执行传输操作时, 会先删除文件传输路径再进行传输操作<br/>
+                      ⚠ 这里一定要注意, 配置不正确会导致数据误删除!!!
+                    </template>
+                    <a-icon class="help-trigger span-red" type="question-circle"/>
+                  </a-popover>
                 </div>
                 <!-- 文件传输路径 -->
                 <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
@@ -132,12 +142,12 @@
       <div id="app-action-footer">
         <a-button class="app-action-footer-button" type="dashed"
                   @click="addAction($enum.RELEASE_ACTION_TYPE.COMMAND.value)">
-          添加命令操作
+          添加命令操作 (发布机器执行)
         </a-button>
         <a-button class="app-action-footer-button" type="dashed"
                   v-if="visibleAddTransfer"
                   @click="addAction($enum.RELEASE_ACTION_TYPE.TRANSFER.value)">
-          添加传输操作
+          添加传输操作 (构建产物传输至发布机器)
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
       </div>
@@ -172,26 +182,26 @@ export default {
       return this.actions.map(s => s.type).filter(t => t === this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value).length < 1
     }
   },
-  data() {
-    return {
-      loading: false,
-      profileId: null,
-      transferPath: undefined,
-      transferMode: _enum.RELEASE_TRANSFER_MODE.SFTP.value,
-      transferFileType: _enum.RELEASE_TRANSFER_FILE_TYPE.NORMAL.value,
-      releaseSerial: _enum.SERIAL_TYPE.PARALLEL.value,
-      exceptionHandler: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
-      machines: [],
-      actions: [],
-      editorConfig
-    }
-  },
   watch: {
     detail(e) {
       this.initData(e)
     },
     dataLoading(e) {
       this.loading = e
+    }
+  },
+  data() {
+    return {
+      loading: false,
+      profileId: null,
+      transferPath: undefined,
+      transferMode: _enum.RELEASE_TRANSFER_MODE.SCP.value,
+      transferFileType: _enum.RELEASE_TRANSFER_FILE_TYPE.NORMAL.value,
+      releaseSerial: _enum.SERIAL_TYPE.PARALLEL.value,
+      exceptionHandler: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
+      machines: [],
+      actions: [],
+      editorConfig
     }
   },
   methods: {
@@ -232,7 +242,7 @@ export default {
         visible: true
       }
       if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === type) {
-        action.command = 'scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}'
+        action.command = 'scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"'
       } else {
         action.command = ''
       }
@@ -305,6 +315,7 @@ export default {
         releaseActions: this.actions
       }).then(() => {
         this.$message.success('保存成功')
+        this.$emit('updated')
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -320,7 +331,7 @@ export default {
 <style lang="less" scoped>
 @label-width: 160px;
 @action-handler-width: 120px;
-@app-conf-container-width: 1030px;
+@app-top-container-width: 994px;
 @app-action-container-width: 994px;
 @app-action-width: 876px;
 @action-name-input-width: 700px;
@@ -336,7 +347,7 @@ export default {
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
-  width: @app-conf-container-width;
+  overflow: auto;
 
   .label {
     width: @label-width;
@@ -345,6 +356,7 @@ export default {
   }
 
   #app-machine-wrapper {
+    width: @app-top-container-width;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -352,6 +364,7 @@ export default {
   }
 
   #app-release-serial-wrapper, #app-release-exception-wrapper {
+    width: @app-top-container-width;
     display: flex;
     align-items: center;
     margin-top: 8px;

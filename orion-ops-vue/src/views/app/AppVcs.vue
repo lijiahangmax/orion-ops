@@ -46,6 +46,8 @@
       <div class="tools-fixed-right">
         <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -139,6 +141,10 @@
       <AddAppVcsModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 预览框 -->
       <TextPreview ref="preview"/>
+      <!-- 导出模态框 -->
+      <AppVcsExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.VCS"/>
     </div>
   </div>
 </template>
@@ -146,6 +152,8 @@
 <script>
 import AddAppVcsModal from '@/components/app/AddAppVcsModal'
 import TextPreview from '@/components/preview/TextPreview'
+import AppVcsExportModal from '@/components/export/AppVcsExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -206,6 +214,8 @@ const columns = [
 export default {
   name: 'AppVcs',
   components: {
+    DataImportModal,
+    AppVcsExportModal,
     TextPreview,
     AddAppVcsModal
   },
@@ -285,6 +295,12 @@ export default {
     },
     update(id) {
       this.$refs.addModal.update(id)
+    },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

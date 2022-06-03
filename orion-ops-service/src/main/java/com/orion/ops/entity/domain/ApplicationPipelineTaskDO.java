@@ -53,7 +53,7 @@ public class ApplicationPipelineTaskDO implements Serializable {
     private String profileName;
 
     /**
-     * 环境tag
+     * 环境唯一标识
      */
     @TableField("profile_tag")
     private String profileTag;

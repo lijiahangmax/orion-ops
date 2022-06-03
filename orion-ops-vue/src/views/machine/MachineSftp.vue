@@ -60,7 +60,7 @@ export default {
       if (filterMachines.length) {
         this.currentMachine = filterMachines[0]
       } else {
-        this.$message.error('未查询到机器信息')
+        this.$message.error('机器未启用或不存在')
         return
       }
       this.machineId = id

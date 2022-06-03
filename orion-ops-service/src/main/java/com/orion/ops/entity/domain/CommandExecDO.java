@@ -67,7 +67,7 @@ public class CommandExecDO implements Serializable {
     private String machineHost;
 
     /**
-     * 机器tag
+     * 机器唯一标识
      */
     @TableField("machine_tag")
     private String machineTag;

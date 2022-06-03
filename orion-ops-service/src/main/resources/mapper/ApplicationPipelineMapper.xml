@@ -4,13 +4,13 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationPipelineDO">
-        <id column="id" property="id" />
-        <result column="profile_id" property="profileId" />
-        <result column="pipeline_name" property="pipelineName" />
-        <result column="description" property="description" />
-        <result column="deleted" property="deleted" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <id column="id" property="id"/>
+        <result column="profile_id" property="profileId"/>
+        <result column="pipeline_name" property="pipelineName"/>
+        <result column="description" property="description"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->

@@ -1,5 +1,8 @@
 package com.orion.ops.handler.terminal;
 
+import com.orion.net.base.ssh.IRemoteExecutor;
+import com.orion.net.remote.channel.SessionStore;
+import com.orion.net.remote.channel.ssh.ShellExecutor;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.system.SystemEnvAttr;
@@ -11,9 +14,6 @@ import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalSizeDTO;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.PathBuilders;
-import com.orion.remote.channel.SessionStore;
-import com.orion.remote.channel.ssh.BaseRemoteExecutor;
-import com.orion.remote.channel.ssh.ShellExecutor;
 import com.orion.spring.SpringHolder;
 import com.orion.utils.Arrays1;
 import com.orion.utils.Strings;
@@ -115,11 +115,11 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public void connect() {
-        executor.connect()
-                .scheduler(SchedulerPools.TERMINAL_SCHEDULER)
-                .callback(this::callback)
-                .streamHandler(this::streamHandler)
-                .exec();
+        executor.connect();
+        executor.scheduler(SchedulerPools.TERMINAL_SCHEDULER);
+        executor.callback(this::callback);
+        executor.streamHandler(this::streamHandler);
+        executor.exec();
     }
 
     /**
@@ -127,7 +127,7 @@ public class TerminalOperateHandler implements IOperateHandler {
      *
      * @param executor executor
      */
-    private void callback(BaseRemoteExecutor executor) {
+    private void callback(IRemoteExecutor executor) {
         if (close) {
             return;
         }
@@ -269,7 +269,7 @@ public class TerminalOperateHandler implements IOperateHandler {
     private void sendClose(WsCloseCode code) {
         if (session.isOpen()) {
             try {
-                session.close(code.close());
+                session.close(code.status());
             } catch (IOException e) {
                 log.error("terminal 发送断开连接命令 失败 token: {}, code: {}, e: {}", token, code.getCode(), e);
             }

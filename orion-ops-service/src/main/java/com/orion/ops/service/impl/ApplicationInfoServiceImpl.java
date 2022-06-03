@@ -68,14 +68,16 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
 
     @Override
     public Long insertApp(ApplicationInfoRequest request) {
-        // 检查是否存在
         String name = request.getName();
-        // 重复检查
+        String tag = request.getTag();
+        // 名称重复检查
         this.checkNamePresent(null, name);
+        // 标识重复检查
+        this.checkTagPresent(null, tag);
         // 插入
         ApplicationInfoDO insert = new ApplicationInfoDO();
         insert.setAppName(name);
-        insert.setAppTag(request.getTag());
+        insert.setAppTag(tag);
         insert.setVcsId(request.getVcsId());
         insert.setDescription(request.getDescription());
         insert.setAppSort(this.getNextSort());
@@ -89,15 +91,18 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     public Integer updateApp(ApplicationInfoRequest request) {
         Long id = request.getId();
         String name = request.getName();
+        String tag = request.getTag();
         // 查询应用
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(id), MessageConst.APP_ABSENT);
-        // 重复检查
+        // 名称重复检查
         this.checkNamePresent(id, name);
+        // 标识重复检查
+        this.checkTagPresent(id, tag);
         // 更新
         ApplicationInfoDO update = new ApplicationInfoDO();
         update.setId(id);
         update.setAppName(name);
-        update.setAppTag(request.getTag());
+        update.setAppTag(tag);
         update.setVcsId(request.getVcsId());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
@@ -341,7 +346,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         Valid.isTrue(isConfig, MessageConst.APP_PROFILE_NOT_CONFIGURED);
         for (Long targetProfileId : targetProfileIdList) {
             // 同步环境变量
-            applicationEnvService.syncAppEnv(Const.N_N_L_1, appId, profileId, Lists.singleton(targetProfileId));
+            applicationEnvService.syncAppEnv(Const.L_N_1, appId, profileId, Lists.singleton(targetProfileId));
             // 同步机器
             applicationMachineService.syncAppProfileMachine(appId, profileId, targetProfileId);
             // 同步发布流程
@@ -362,7 +367,9 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         String beforeName = app.getAppName();
         app.setId(null);
-        app.setAppName(app.getAppName() + Utils.getCopySuffix());
+        String copySuffix = Utils.getCopySuffix();
+        app.setAppName(beforeName + copySuffix);
+        app.setAppTag(app.getAppTag() + copySuffix);
         app.setAppSort(this.getNextSort());
         app.setCreateTime(null);
         app.setUpdateTime(null);
@@ -385,8 +392,19 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 && applicationActionService.getAppProfileActionCount(appId, profileId, StageType.RELEASE.getType()) > 0;
     }
 
+    @Override
+    public Integer getNextSort() {
+        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .orderByDesc(ApplicationInfoDO::getAppSort)
+                .last(Const.LIMIT_1);
+        return Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
+                .map(ApplicationInfoDO::getAppSort)
+                .map(s -> s + Const.N_10)
+                .orElse(Const.N_10);
+    }
+
     /**
-     * 检查是否存在
+     * 检查名称是否存在
      *
      * @param id   id
      * @param name name
@@ -400,18 +418,17 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     }
 
     /**
-     * 获取下一个排序
+     * 检查标签是否存在
      *
-     * @return sort
+     * @param id  id
+     * @param tag tag
      */
-    private Integer getNextSort() {
-        Wrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
-                .orderByDesc(ApplicationInfoDO::getAppSort)
-                .last(Const.LIMIT_1);
-        return Optional.ofNullable(applicationInfoDAO.selectOne(wrapper))
-                .map(ApplicationInfoDO::getAppSort)
-                .map(s -> s + Const.N_10)
-                .orElse(Const.N_10);
+    private void checkTagPresent(Long id, String tag) {
+        LambdaQueryWrapper<ApplicationInfoDO> presentWrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .ne(id != null, ApplicationInfoDO::getId, id)
+                .eq(ApplicationInfoDO::getAppTag, tag);
+        boolean present = DataQuery.of(applicationInfoDAO).wrapper(presentWrapper).present();
+        Valid.isTrue(!present, MessageConst.TAG_PRESENT);
     }
 
 }

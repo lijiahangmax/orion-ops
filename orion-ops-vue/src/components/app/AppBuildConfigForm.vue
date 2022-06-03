@@ -55,12 +55,12 @@
       <div id="app-action-footer">
         <a-button class="app-action-footer-button" type="dashed"
                   @click="addAction($enum.BUILD_ACTION_TYPE.COMMAND.value)">
-          添加命令操作
+          添加命令操作 (宿主机执行)
         </a-button>
         <a-button class="app-action-footer-button" type="dashed"
                   v-if="visibleAddCheckout"
                   @click="addAction($enum.BUILD_ACTION_TYPE.CHECKOUT.value)">
-          添加检出操作
+          添加检出操作 (宿主机执行)
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
       </div>
@@ -94,6 +94,14 @@ export default {
         this.actions.map(s => s.type).filter(t => t === this.$enum.BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
     }
   },
+  watch: {
+    detail(e) {
+      this.initData(e)
+    },
+    dataLoading(e) {
+      this.loading = e
+    }
+  },
   data() {
     return {
       loading: false,
@@ -102,14 +110,6 @@ export default {
       bundlePath: undefined,
       actions: [],
       editorConfig
-    }
-  },
-  watch: {
-    detail(e) {
-      this.initData(e)
-    },
-    dataLoading(e) {
-      this.loading = e
     }
   },
   methods: {
@@ -189,6 +189,7 @@ export default {
         buildActions: this.actions
       }).then(() => {
         this.$message.success('保存成功')
+        this.$emit('updated')
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -204,7 +205,7 @@ export default {
 <style lang="less" scoped>
 @label-width: 160px;
 @action-handler-width: 120px;
-@config-container-width: 1030px;
+@bundle-container-width: 994px;
 @bundle-input-width: 700px;
 @app-action-container-width: 994px;
 @app-action-width: 876px;
@@ -220,7 +221,7 @@ export default {
 
 #app-conf-container {
   padding: 18px 8px 0 8px;
-  width: @config-container-width;
+  overflow: auto;
 
   .label {
     width: @label-width;
@@ -229,6 +230,7 @@ export default {
   }
 
   #app-bundle-wrapper {
+    width: @bundle-container-width;
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;

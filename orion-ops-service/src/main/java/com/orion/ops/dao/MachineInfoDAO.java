@@ -47,4 +47,20 @@ public interface MachineInfoDAO extends BaseMapper<MachineInfoDO> {
      */
     String selectMachineName(@Param("id") Long id);
 
+    /**
+     * 查询机器名称
+     *
+     * @param idList idList
+     * @return rows
+     */
+    List<MachineInfoDO> selectNameByIdList(@Param("idList") List<Long> idList);
+
+    /**
+     * 查询机器id
+     *
+     * @param tagList tagList
+     * @return rows
+     */
+    List<MachineInfoDO> selectIdByTagList(@Param("tagList") List<String> tagList);
+
 }

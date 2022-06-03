@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.id.ObjectIds;
+import com.orion.net.base.file.sftp.SftpErrorMessage;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
@@ -18,9 +19,7 @@ import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.remote.channel.sftp.SftpErrorMessage;
 import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
 import org.springframework.web.bind.annotation.*;
@@ -379,8 +378,7 @@ public class SftpController {
      * @return RuntimeException
      */
     private RuntimeException convertError(RuntimeException e) {
-        if (SftpErrorMessage.NO_SUCH_FILE.getMessage().toLowerCase().contains(Strings.def(e.getMessage()).toLowerCase())) {
-        // if (SftpErrorMessage.NO_SUCH_FILE.isCause(e)) {
+        if (SftpErrorMessage.NO_SUCH_FILE.isCause(e)) {
             return Exceptions.argument(MessageConst.NO_SUCH_FILE);
         } else {
             return e;

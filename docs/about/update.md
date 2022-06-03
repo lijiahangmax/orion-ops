@@ -1,5 +1,61 @@
 ⚡ 注意: 应用不支持跨版本升级
 
+## 1.1.2
+
+> sql 脚本
+
+```sql
+ALTER TABLE `machine_info` 
+MODIFY COLUMN `machine_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器唯一标识' AFTER `machine_name`;
+
+ALTER TABLE `application_info` 
+MODIFY COLUMN `app_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用名称' AFTER `id`,
+MODIFY COLUMN `app_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识' AFTER `app_name`;
+
+ALTER TABLE `application_profile` 
+MODIFY COLUMN `profile_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境名称' AFTER `id`,
+MODIFY COLUMN `profile_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境唯一标识' AFTER `profile_name`;
+
+ALTER TABLE `machine_proxy` 
+MODIFY COLUMN `proxy_host` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '代理主机' AFTER `id`;
+
+ALTER TABLE `user_event_log` 
+ADD COLUMN `deleted` tinyint(4) NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除' AFTER `exec_result`;
+
+UPDATE user_event_log SET deleted = 1;
+
+UPDATE machine_env SET attr_value = "tail -f -n @{offset} '@{file}'" WHERE attr_value = "tail -f -n @{offset} @{file}";
+
+UPDATE application_action SET action_command = 'scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"' WHERE action_command = "scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}";
+
+ALTER TABLE `application_build` 
+MODIFY COLUMN `app_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识' AFTER `app_name`,
+MODIFY COLUMN `profile_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境唯一标识' AFTER `profile_name`;
+
+ALTER TABLE `application_pipeline_task` 
+MODIFY COLUMN `profile_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境唯一标识' AFTER `profile_name`;
+
+ALTER TABLE `application_pipeline_task_detail` 
+MODIFY COLUMN `app_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识' AFTER `app_name`;
+
+ALTER TABLE `application_release` 
+MODIFY COLUMN `app_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识' AFTER `app_name`,
+MODIFY COLUMN `profile_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境名称' AFTER `profile_id`,
+MODIFY COLUMN `profile_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环境唯一标识' AFTER `profile_name`;
+
+ALTER TABLE `application_release_machine` 
+MODIFY COLUMN `machine_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器唯一标识' AFTER `machine_name`;
+
+ALTER TABLE `command_exec` 
+MODIFY COLUMN `machine_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器唯一标识' AFTER `machine_host`;
+
+ALTER TABLE `machine_terminal_log` 
+MODIFY COLUMN `machine_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '机器唯一标识' AFTER `machine_host`;
+
+ALTER TABLE `scheduler_task_machine_record` 
+MODIFY COLUMN `machine_tag` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器唯一标识' AFTER `machine_host`;
+```
+
 ## 1.1.0
 
 > sql 脚本
@@ -157,7 +213,6 @@ CREATE TABLE `application_pipeline_task_log`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `record_idx`(`task_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务日志' ROW_FORMAT = Dynamic;
-
 ```
 
 ## 1.0.1

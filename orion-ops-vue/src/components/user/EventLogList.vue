@@ -1,7 +1,7 @@
 <template>
   <div class="log-list-container">
     <!-- 筛选 -->
-    <div class="log-list-filter table-search-columns">
+    <div v-if="!disableSearch" class="log-list-filter table-search-columns">
       <a-form-model ref="query" :model="query">
         <a-row>
           <a-col :span="6">
@@ -32,6 +32,7 @@
           </a-col>
           <a-col :span="4">
             <div class="table-tools-bar p0 log-search-bar">
+              <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
               <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
             </div>
@@ -76,7 +77,10 @@
     </div>
     <!-- 事件 -->
     <div class="log-list-event">
+      <!-- 预览 -->
       <EditorPreview ref="preview" title="参数预览" :editorConfig="{lang: 'json'}"/>
+      <!-- 导出模态框 -->
+      <EventLogExportExportModal ref="export" :manager="false"/>
     </div>
   </div>
 </template>
@@ -85,11 +89,19 @@
 import EditorPreview from '@/components/preview/EditorPreview'
 import _enum from '@/lib/enum'
 import _filters from '@/lib/filters'
+import EventLogExportExportModal from '@/components/export/EventLogExportExportModal'
 
 export default {
   name: 'EventLogList',
-  components: { EditorPreview },
+  components: {
+    EventLogExportExportModal,
+    EditorPreview
+  },
   props: {
+    disableSearch: {
+      type: Boolean,
+      default: false
+    },
     baseQuery: {
       type: Object,
       default: () => {
@@ -185,6 +197,9 @@ export default {
         this.query.type = type
         this.getEventLog()
       })
+    },
+    openExport() {
+      this.$refs.export.open()
     },
     resetForm() {
       this.$refs.query.resetFields()

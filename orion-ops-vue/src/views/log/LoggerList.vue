@@ -40,6 +40,8 @@
         </a>
         <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
         <a-divider type="vertical"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -82,10 +84,21 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 打开 -->
-          <a-tooltip title="ctrl 点击打开新页面">
+          <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === $enum.ENABLE_STATUS.ENABLE.value">
             <a target="_blank"
                :href="`#/log/view/${record.id}`"
-               @click="openLogView($event, record.id)">打开</a>
+               @click="openLogView($event, record.id)">
+              <a-button class="open-log-trigger" type="link">
+                打开
+              </a-button>
+            </a>
+          </a-tooltip>
+          <a-tooltip title="机器未启用" v-else>
+            <a-button class="open-log-trigger"
+                      type="link"
+                      :disabled="true">
+              打开
+            </a-button>
           </a-tooltip>
           <a-divider type="vertical"/>
           <!-- 修改 -->
@@ -110,6 +123,10 @@
       <AddLogFileModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 日志模态框 -->
       <LoggerViewModal ref="logView"/>
+      <!-- 导出模态框 -->
+      <MachineTailFileExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.TAIL_FILE"/>
     </div>
   </div>
 </template>
@@ -121,6 +138,8 @@ import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
 import _filters from '@/lib/filters'
+import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -196,6 +215,8 @@ const columns = [
 export default {
   name: 'LoggerList',
   components: {
+    DataImportModal,
+    MachineTailFileExportModal,
     LoggerViewModal,
     MachineSelector,
     AddLogFileModal,
@@ -256,6 +277,12 @@ export default {
     previewText(value) {
       this.$refs.previewText.preview(value)
     },
+    openExport() {
+      this.$refs.export.open()
+    },
+    openImport() {
+      this.$refs.import.open()
+    },
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
@@ -283,6 +310,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
+.open-log-trigger {
+  height: 22px;
+  padding: 0;
+  margin: 0;
+}
 
 </style>

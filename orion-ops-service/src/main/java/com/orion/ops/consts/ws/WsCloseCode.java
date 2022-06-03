@@ -66,6 +66,11 @@ public enum WsCloseCode {
     CONNECTED_EXCEPTION(4210, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
 
     /**
+     * 机器未启用
+     */
+    MACHINE_DISABLED(4215, WsCloseReason.MACHINE_DISABLED),
+
+    /**
      * 打开shell出现异常
      */
     OPEN_SHELL_EXCEPTION(4220, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
@@ -116,7 +121,7 @@ public enum WsCloseCode {
 
     private final String reason;
 
-    public CloseStatus close() {
+    public CloseStatus status() {
         return new CloseStatus(code, reason);
     }
 

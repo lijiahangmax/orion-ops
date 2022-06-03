@@ -41,13 +41,8 @@
                             @confirm="readAll">
                 <a-icon type="book" class="tools-icon" title="全部已读"/>
               </a-popconfirm>
-              <a-popconfirm title="确认删除本页消息?"
-                            placement="topRight"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="removeCurrentPage">
-                <a-icon type="delete" class="tools-icon" title="删除本页消息"/>
-              </a-popconfirm>
+              <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+              <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
               <a-icon type="search" class="tools-icon" title="查询" @click="getMessageList()"/>
               <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
             </div>
@@ -67,7 +62,10 @@
               <!-- 上半部分 标题 -->
               <div class="message-item-container-top">
                 <a-badge class="message-item-dot" :dot="item.status === $enum.READ_STATUS.UNREAD.value">
-                  <span class="message-item-title" v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).label"/>
+                  <span class="message-item-title"
+                        title="详情"
+                        @click="openDetail(item)"
+                        v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).label"/>
                 </a-badge>
               </div>
               <!-- 下半部分 消息 -->
@@ -79,7 +77,7 @@
                 <div class="message-item-container-right">
                   <!-- 类型 -->
                   <span class="message-item-type span-blue" @click="chooseClassify(item.classify)">
-                      {{ $enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).label }}
+                    {{ $enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).label }}
                   </span>
                   <!-- 时间 -->
                   <span class="message-item-date">{{ item.createTime | formatDate }} ({{ item.createTimeAgo }})</span>
@@ -109,7 +107,12 @@
     </div>
     <!-- 事件 -->
     <div class="message-event">
+      <!-- 消息详情 -->
       <WebSideMessageModal ref="messageModal"/>
+      <!-- 数据清理模态框 -->
+      <WebSideMessageClearModal ref="clear" @clear="getMessageList()"/>
+      <!-- 导出模态框-->
+      <WebSideMessageExportModal ref="export"/>
     </div>
   </div>
 </template>
@@ -117,10 +120,16 @@
 <script>
 import _filters from '@/lib/filters'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
+import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
+import WebSideMessageExportModal from '@/components/export/WebSideMessageExportModal'
 
 export default {
   name: 'WebSideMessageList',
-  components: { WebSideMessageModal },
+  components: {
+    WebSideMessageExportModal,
+    WebSideMessageClearModal,
+    WebSideMessageModal
+  },
   data() {
     return {
       loading: false,
@@ -187,16 +196,11 @@ export default {
         this.getMessageList()
       })
     },
-    removeCurrentPage() {
-      if (!this.rows.length) {
-        return
-      }
-      this.$api.deleteWebSideMessage({
-        idList: this.rows.map(s => s.id)
-      }).then(() => {
-        this.$message.success('已删除')
-        this.getMessageList()
-      })
+    openClear() {
+      this.$refs.clear.open()
+    },
+    openExport() {
+      this.$refs.export.open()
     },
     openDetail(detail) {
       detail.status = this.$enum.READ_STATUS.READ.value
@@ -261,13 +265,14 @@ export default {
   width: 100%;
 
   .message-item-dot /deep/ .ant-badge-dot {
-    margin: 4px -6px;
+    margin: 4px -8px;
   }
 
   .message-item-title {
     color: #181E33;
     display: block;
-    margin-bottom: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
     font-size: 15px;
     line-height: 24px;
   }

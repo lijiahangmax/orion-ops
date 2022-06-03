@@ -119,7 +119,7 @@ export default {
         this.$refs.terminalMain.init(options, setting)
       } catch (e) {
         this.loading()
-        this.$message.error('初始化失败')
+        this.$message.error(e.msg || '初始化失败')
         this.machine.status = this.$enum.TERMINAL_STATUS.ERROR.value
       }
     }
