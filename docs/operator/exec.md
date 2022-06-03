@@ -22,13 +22,13 @@
 
 ```
 # 查看普通日志文件
-tail -f -n @{offset} @{file}
+tail -f -n @{offset} '@{file}'
 
 # 查看 k8s 的日志文件
 kubectl get pods -n dev | awk '{print $1}' | grep @{file} | xargs -I '{}' kubectl logs {} -n dev --tail=@{offset} -f
 
-# 这里甚至可以使用 cat
-cat /data/info.log
+# 这里甚至可以执行脚本
+/root/distribution-log.sh
 ```
 
 这里只有两个可替换的变量, 当然这里也是可以写死的

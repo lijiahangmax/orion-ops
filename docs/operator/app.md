@@ -29,6 +29,8 @@
 | release_serial     | parallel                 | 发布序列方式 (serial/parallel)                  |
 | exception_handler  | skip_all                 | 异常处理类型 (skip_all/skip_error)              |
 
+<br/>  
+
 > ##### 构建配置
 
 设计思路: 应用在发布之前需要先由宿主机进行构建, 生成一个可发布的产物, 发布时需要基于该产物进行发布操作。
@@ -63,23 +65,24 @@
 | bundle_path     | /root/orion_ops/dist/build/128/dist      | 构建完成后产物存储路径                       |
 | bundle_zip_path | /root/orion_ops/dist/build/128/dist.zip  | 构建完成后产物 zip文件 存储路径 (如果有)      |
 
+<br/>   
+
 > ##### 发布配置
 
 设计思路: 发布的应用可能是以集群的形式发布的, 可能会有多台机器同时发布一个应用, 基于选择的构建版本, 进行发布操作。
 
 `文件传输方式` 可选择使用 `sftp` / `scp` 来分发产物文件。      
-`文件传输路径` 是将选择的构建版本生成的产物分发到发布机器后绝对路径。  
-`文件传输类型` 可选择 `文件/文件夹` / `文件夹zip`, 当构建产物为 `文件夹` 时生效。
+`文件传输路径` 是将选择的构建版本生成的产物分发到发布机器后绝对路径。
 
 如果构建产物是一个文件 `build.jar`  
-`文件传输路径` 可以配置为 `/data/projects/demo.jar`
+文件传输类型选择 `文件/文件夹` 文件传输路径可以配置为 `/data/projects/demo.jar`
 
 如果构建产物是一个文件夹 `dist`  
-`文件传输类型` 选择 `文件/文件夹` `文件传输路径` 可以配置为 `/data/projects/dist`     
-`文件传输类型` 选择 `zip` `文件传输路径` 可以配置为 `/data/projects/dist.zip` 然后在进行解压。
+当 文件传输类型 选择 `文件/文件夹` 文件传输路径 可以配置为 `/data/projects/dist`     
+当 文件传输类型 选择 `zip` 文件传输路径 可以配置为 `/data/projects/dist.zip` 然后在进行解压。
 
 当 `产物传输方式` 选择 `scp` 时可配置 `scp 传输命令`  
-默认命令为 `scp @{bundle_path} @{target_username}@@{target_host}:@{transfer_path}`, 使用 `@{xxx}` 替换变量。
+默认命令为 `scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"`, 使用 `@{xxx}` 替换变量。
 
 | key             | 示例                                          | 描述                                 |
 | :----           | :---                                         | :----                                |
@@ -88,12 +91,16 @@
 | target_username | root                                         | 目标机器用户                           |
 | target_host     | 192.168.5.65                                 | 目标机器主机                           |  
 
+⚡ **这里一定要注意**: 文件传输方式选择 `SFTP` 后, 当执行传输操作时, 会先**删除**文件传输路径再进行传输操作  
+**配置不正确会导致数据误删除!!!**  
 这里更推荐使用 `scp` 的方式来传输产物文件, 速度更快, 以命令的形式配置, 更加灵活。
 
 ```
 当然这里也可以写死, 以上述例子命令执行时会替换为
-scp /root/orion_ops/dist/build/128/build.jar root@192.168.5.65:/data/projects/demo.jar
+scp "/root/orion_ops/dist/build/128/build.jar" root@192.168.5.65:"/data/projects/demo.jar"
 ```
+
+<br/>  
 
 应用发布时系统提供了几个默认的变量, 在发布操作的命令中可以使用 `@{release.xxx}` 来替换。
 
@@ -113,6 +120,7 @@ scp /root/orion_ops/dist/build/128/build.jar root@192.168.5.65:/data/projects/de
 
 ⚡ 注意: 产物传输路径中不能包含 `\` 应该用 `/` 替换。  
 ⚡ 注意: 产物传输方式选择 `scp` 需要建立宿主机与目标机器 `ssh` 免密登录。  
+⚡ 注意: 执行 `scp` 命令 transfer_path 如果包含空格执行时会自动转义。  
 ⚡ 注意: 执行结果的成功与否是通过执行命令的 `exitcode` 是否为 `0` 来判断的。
 
 ### 流水线配置
