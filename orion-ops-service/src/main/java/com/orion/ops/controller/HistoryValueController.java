@@ -8,6 +8,9 @@ import com.orion.ops.entity.request.HistoryValueRequest;
 import com.orion.ops.entity.vo.HistoryValueVO;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +24,7 @@ import javax.annotation.Resource;
  * @version 1.0.0
  * @since 2021/6/9 17:15
  */
+@Api(tags = "历史值")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/history-value")
@@ -29,20 +33,16 @@ public class HistoryValueController {
     @Resource
     private HistoryValueService historyValueService;
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "历史值列表")
     public DataGrid<HistoryValueVO> list(@RequestBody HistoryValueRequest request) {
         Valid.notNull(request.getValueId());
         Valid.notNull(HistoryValueType.of(request.getValueType()));
         return historyValueService.list(request);
     }
 
-    /**
-     * 回滚
-     */
-    @RequestMapping("/rollback")
+    @PostMapping("/rollback")
+    @ApiOperation(value = "回滚历史值")
     public HttpWrapper<?> rollback(@RequestBody HistoryValueRequest request) {
         Long id = Valid.notNull(request.getId());
         historyValueService.rollback(id);

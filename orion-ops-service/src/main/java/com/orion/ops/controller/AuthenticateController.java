@@ -15,6 +15,9 @@ import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
 import com.orion.utils.Objects1;
 import com.orion.utils.convert.Converts;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,12 +26,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 认证controller
+ * 用户认证 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/1 17:05
  */
+@Api(tags = "用户认证")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/auth")
@@ -37,11 +41,9 @@ public class AuthenticateController {
     @Resource
     private PassportService passportService;
 
-    /**
-     * 登录
-     */
-    @RequestMapping("/login")
     @IgnoreAuth
+    @PostMapping("/login")
+    @ApiOperation(value = "登录")
     @EventLog(EventType.LOGIN)
     public UserLoginVO login(@RequestBody UserLoginRequest login, HttpServletRequest request) {
         String username = Valid.notBlank(login.getUsername()).trim();
@@ -53,21 +55,17 @@ public class AuthenticateController {
         return passportService.login(login);
     }
 
-    /**
-     * 登出
-     */
-    @RequestMapping("/logout")
     @IgnoreAuth
+    @PostMapping("/logout")
+    @ApiOperation(value = "登出")
     @EventLog(EventType.LOGOUT)
     public HttpWrapper<?> logout() {
         passportService.logout();
         return HttpWrapper.ok();
     }
 
-    /**
-     * 重置密码
-     */
-    @RequestMapping("/reset")
+    @PostMapping("/reset")
+    @ApiOperation(value = "重置密码")
     @EventLog(EventType.RESET_PASSWORD)
     public HttpWrapper<?> resetPassword(@RequestBody UserResetRequest request) {
         String password = Valid.notBlank(request.getPassword()).trim();
@@ -77,10 +75,8 @@ public class AuthenticateController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 检查用户信息
-     */
-    @RequestMapping("/valid")
+    @PostMapping("/valid")
+    @ApiOperation(value = "检查用户信息")
     public UserInfoVO validToken() {
         return Converts.to(Currents.getUser(), UserInfoVO.class);
     }

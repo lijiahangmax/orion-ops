@@ -10,22 +10,22 @@ import com.orion.ops.entity.request.FileDownloadRequest;
 import com.orion.ops.service.api.FileDownloadService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 文件下载api
+ * 文件下载 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/8 17:17
  */
+@Api(tags = "文件下载")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/file-download")
@@ -34,22 +34,18 @@ public class FileDownloadController {
     @Resource
     private FileDownloadService fileDownloadService;
 
-    /**
-     * 下载文件 检查文件存在以及权限
-     */
-    @RequestMapping("/token")
-    public String getToken(@RequestBody FileDownloadRequest request) {
+    @PostMapping("/token")
+    @ApiOperation(value = "检查并获取下载文件token")
+    public String getDownloadToken(@RequestBody FileDownloadRequest request) {
         Long id = Valid.notNull(request.getId());
         FileDownloadType type = Valid.notNull(FileDownloadType.of(request.getType()));
         return fileDownloadService.getDownloadToken(id, type);
     }
 
-    /**
-     * 下载文件
-     */
-    @RequestMapping("/{token}/exec")
     @IgnoreWrapper
     @IgnoreAuth
+    @PostMapping("/{token}/exec")
+    @ApiOperation(value = "下载文件")
     public void downloadLogFile(@PathVariable String token, HttpServletResponse response) throws IOException {
         try {
             fileDownloadService.execDownload(token, response);

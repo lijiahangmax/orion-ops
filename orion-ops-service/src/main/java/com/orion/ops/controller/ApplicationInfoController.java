@@ -18,6 +18,9 @@ import com.orion.ops.service.api.ApplicationInfoService;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,12 +29,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 应用 api
+ * 应用信息 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/2 17:54
  */
+@Api(tags = "应用信息")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/app-info")
@@ -43,77 +47,61 @@ public class ApplicationInfoController {
     @Resource
     private ApplicationMachineService applicationMachineService;
 
-    /**
-     * 添加应用
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加应用")
     @EventLog(EventType.ADD_APP)
     public Long insertApp(@RequestBody ApplicationInfoRequest request) {
         Valid.allNotBlank(request.getName(), request.getTag());
         return applicationService.insertApp(request);
     }
 
-    /**
-     * 更新应用
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "更新应用")
     @EventLog(EventType.UPDATE_APP)
     public Integer updateApp(@RequestBody ApplicationInfoRequest request) {
         Valid.notNull(request.getId());
         return applicationService.updateApp(request);
     }
 
-    /**
-     * 更新排序
-     */
-    @RequestMapping("/sort")
+    @PostMapping("/sort")
+    @ApiOperation(value = "更新排序")
     public Integer updateAppSort(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         Integer adjust = Valid.in(request.getSortAdjust(), Const.INCREMENT, Const.DECREMENT);
         return applicationService.updateAppSort(id, Const.INCREMENT.equals(adjust));
     }
 
-    /**
-     * 删除应用
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除应用")
     @EventLog(EventType.DELETE_APP)
     public Integer deleteApp(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationService.deleteApp(id);
     }
 
-    /**
-     * 应用列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取应用列表")
     public DataGrid<ApplicationInfoVO> listApp(@RequestBody ApplicationInfoRequest request) {
         return applicationService.listApp(request);
     }
 
-    /**
-     * 应用机器列表
-     */
-    @RequestMapping("/list-machine")
+    @PostMapping("/list-machine")
+    @ApiOperation(value = "获取应用机器列表")
     public List<ApplicationMachineVO> listAppMachines(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         Long profileId = Valid.notNull(request.getProfileId());
         return applicationService.getAppMachines(id, profileId);
     }
 
-    /**
-     * 详情应用
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取详情应用")
     public ApplicationDetailVO appDetail(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
         return applicationService.getAppDetail(appId, request.getProfileId());
     }
 
-    /**
-     * 配置应用
-     */
-    @RequestMapping("/config")
+    @PostMapping("/config")
+    @ApiOperation(value = "配置应用")
     @EventLog(EventType.CONFIG_APP)
     public HttpWrapper<?> configApp(@RequestBody ApplicationConfigRequest request) {
         Valid.notNull(request.getAppId());
@@ -123,10 +111,8 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 同步配置
-     */
-    @RequestMapping("/sync")
+    @PostMapping("/sync")
+    @ApiOperation(value = "同步配置")
     @EventLog(EventType.SYNC_APP)
     public HttpWrapper<?> syncAppConfig(@RequestBody ApplicationSyncConfigRequest request) {
         Long appId = Valid.notNull(request.getAppId());
@@ -136,10 +122,8 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 复制应用
-     */
-    @RequestMapping("/copy")
+    @PostMapping("/copy")
+    @ApiOperation(value = "复制应用")
     @EventLog(EventType.COPY_APP)
     public HttpWrapper<?> copyApplication(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
@@ -147,19 +131,15 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 删除发布机器
-     */
-    @RequestMapping("/delete-machine")
+    @PostMapping("/delete-machine")
+    @ApiOperation(value = "删除发布机器")
     public Integer deleteAppMachine(@RequestBody ApplicationInfoRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationMachineService.deleteById(id);
     }
 
-    /**
-     * 获取发布机器id
-     */
-    @RequestMapping("/get-machine-id")
+    @PostMapping("/get-machine-id")
+    @ApiOperation(value = "获取发布机器id")
     public List<Long> getAppMachineId(@RequestBody ApplicationInfoRequest request) {
         Long appId = Valid.notNull(request.getId());
         Long profileId = Valid.notNull(request.getProfileId());

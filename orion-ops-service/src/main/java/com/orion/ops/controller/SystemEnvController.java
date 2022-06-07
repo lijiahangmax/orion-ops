@@ -14,6 +14,9 @@ import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Maps;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,12 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 系统环境变量
+ * 系统环境变量 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/15 20:40
  */
+@Api(tags = "系统环境变量")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/system-env")
@@ -37,10 +41,8 @@ public class SystemEnvController {
     @Resource
     private SystemEnvService systemEnvService;
 
-    /**
-     * 添加
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加环境变量")
     @EventLog(EventType.ADD_SYSTEM_ENV)
     public Long add(@RequestBody SystemEnvRequest request) {
         Valid.notBlank(request.getKey());
@@ -48,10 +50,8 @@ public class SystemEnvController {
         return systemEnvService.addEnv(request);
     }
 
-    /**
-     * 更新
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改环境变量")
     @EventLog(EventType.UPDATE_SYSTEM_ENV)
     public Integer update(@RequestBody SystemEnvRequest request) {
         Valid.notNull(request.getId());
@@ -59,37 +59,29 @@ public class SystemEnvController {
         return systemEnvService.updateEnv(request);
     }
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_SYSTEM_ENV)
     public Integer delete(@RequestBody SystemEnvRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return systemEnvService.deleteEnv(idList);
     }
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取环境变量列表")
     public DataGrid<SystemEnvVO> list(@RequestBody SystemEnvRequest request) {
         return systemEnvService.listEnv(request);
     }
 
-    /**
-     * 详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取环境变量详情")
     public SystemEnvVO detail(@RequestBody SystemEnvRequest request) {
         Long id = Valid.notNull(request.getId());
         return systemEnvService.getEnvDetail(id);
     }
 
-    /**
-     * 视图
-     */
-    @RequestMapping("/view")
+    @PostMapping("/view")
+    @ApiOperation(value = "获取环境变量视图")
     public String view(@RequestBody SystemEnvRequest request) {
         EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
         request.setLimit(Const.N_100000);
@@ -99,10 +91,8 @@ public class SystemEnvController {
         return viewType.toValue(env);
     }
 
-    /**
-     * 视图保存
-     */
-    @RequestMapping("/view-save")
+    @PostMapping("/view-save")
+    @ApiOperation(value = "保存环境变量视图")
     @EventLog(EventType.SAVE_SYSTEM_ENV)
     public Integer viewSave(@RequestBody SystemEnvRequest request) {
         String value = Valid.notBlank(request.getValue());

@@ -18,6 +18,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String ORION_OPS = "orion_ops";
 
+    public static final String ORION_OPS_VERSION = "1.1.3";
+
     public static final String KEYS_PATH = ".keys";
 
     public static final String PIC_PATH = "pic";

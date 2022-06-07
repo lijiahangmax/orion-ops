@@ -16,10 +16,9 @@ import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -29,12 +28,13 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * 批量上传controller
+ * 批量上传 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/13 15:42
  */
+@Api(tags = "批量上传")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/batch-upload")
@@ -46,10 +46,8 @@ public class BatchUploadController {
     @Resource
     private SftpService sftpService;
 
-    /**
-     * 检查机器以及文件
-     */
-    @RequestMapping("/check")
+    @PostMapping("/check")
+    @ApiOperation(value = "检查机器以及文件")
     public BatchUploadCheckVO checkFilePresent(@RequestBody BatchUploadRequest request) {
         Valid.checkNormalize(request.getRemotePath());
         Valid.notEmpty(request.getMachineIds());
@@ -58,20 +56,16 @@ public class BatchUploadController {
         return batchUploadService.checkMachineFiles(request);
     }
 
-    /**
-     * 获取 token
-     */
-    @RequestMapping("/token")
+    @PostMapping("/token")
+    @ApiOperation(value = "获取上传token")
     public BatchUploadTokenVO getUploadAccessToken(@RequestBody BatchUploadRequest request) {
         Valid.checkNormalize(request.getRemotePath());
         Valid.notEmpty(request.getMachineIds());
         return batchUploadService.getUploadAccessToken(request);
     }
 
-    /**
-     * 执行上传
-     */
-    @RequestMapping("/exec")
+    @PostMapping("/exec")
+    @ApiOperation(value = "执行上传")
     @EventLog(EventType.SFTP_UPLOAD)
     public List<String> uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("files") List<MultipartFile> files) throws IOException {
         // 检查路径

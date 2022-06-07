@@ -14,6 +14,9 @@ import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.utils.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,12 +25,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 应用仓库api
+ * 应用版本仓库 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/11/29 8:55
  */
+@Api(tags = "应用版本仓库")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/app-vcs")
@@ -36,10 +40,8 @@ public class ApplicationVcsController {
     @Resource
     private ApplicationVcsService applicationVcsService;
 
-    /**
-     * 添加版本仓库
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加版本仓库")
     @EventLog(EventType.ADD_VCS)
     public Long addAppVcs(@RequestBody ApplicationVcsRequest request) {
         Valid.allNotBlank(request.getName(), request.getUrl());
@@ -51,10 +53,8 @@ public class ApplicationVcsController {
         return applicationVcsService.addAppVcs(request);
     }
 
-    /**
-     * 更新版本仓库
-     */
-    @RequestMapping("/update")
+    @ApiOperation(value = "更新版本仓库")
+    @PostMapping("/update")
     @EventLog(EventType.UPDATE_VCS)
     public Integer updateAppVcs(@RequestBody ApplicationVcsRequest request) {
         Valid.notNull(request.getId());
@@ -62,37 +62,29 @@ public class ApplicationVcsController {
         return applicationVcsService.updateAppVcs(request);
     }
 
-    /**
-     * 通过id删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除版本仓库")
     @EventLog(EventType.DELETE_VCS)
     public Integer deleteAppVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationVcsService.deleteAppVcs(id);
     }
 
-    /**
-     * 获取列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取版本仓库列表")
     public DataGrid<ApplicationVcsVO> listAppVcs(@RequestBody ApplicationVcsRequest request) {
         return applicationVcsService.listAppVcs(request);
     }
 
-    /**
-     * 获取详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取版本仓库详情")
     public ApplicationVcsVO getAppVcsDetail(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationVcsService.getAppVcsDetail(id);
     }
 
-    /**
-     * 仓库初始化
-     */
-    @RequestMapping("/init")
+    @PostMapping("/init")
+    @ApiOperation(value = "初始化版本仓库")
     @EventLog(EventType.INIT_VCS)
     public HttpWrapper<?> initVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -100,10 +92,8 @@ public class ApplicationVcsController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 仓库重新初始化
-     */
-    @RequestMapping("/re-init")
+    @PostMapping("/re-init")
+    @ApiOperation(value = "重新初始化版本仓库")
     @EventLog(EventType.RE_INIT_VCS)
     public HttpWrapper<?> reInitVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -111,38 +101,30 @@ public class ApplicationVcsController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 获取版本信息列表
-     */
-    @RequestMapping("/info")
+    @ApiOperation(value = "获取分支和提交记录列表")
+    @PostMapping("/info")
     public ApplicationVcsInfoVO getVcsInfo(@RequestBody ApplicationVcsRequest request) {
         Valid.notNull(request.getId());
         return applicationVcsService.getVcsInfo(request);
     }
 
-    /**
-     * 获取分支列表
-     */
-    @RequestMapping("/branch")
+    @PostMapping("/branch")
+    @ApiOperation(value = "获取分支列表")
     public List<ApplicationVcsBranchVO> getVcsBranchList(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationVcsService.getVcsBranchList(id);
     }
 
-    /**
-     * 获取提交列表
-     */
-    @RequestMapping("/commit")
+    @PostMapping("/commit")
+    @ApiOperation(value = "获取提交列表")
     public List<ApplicationVcsCommitVO> getVcsCommitList(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         String branchName = Valid.notBlank(request.getBranchName());
         return applicationVcsService.getVcsCommitList(id, branchName);
     }
 
-    /**
-     * 清空应用构建历史版本
-     */
-    @RequestMapping("/clean")
+    @PostMapping("/clean")
+    @ApiOperation(value = "清空应用构建历史版本")
     @EventLog(EventType.CLEAN_VCS)
     public HttpWrapper<?> cleanBuildVcs(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());

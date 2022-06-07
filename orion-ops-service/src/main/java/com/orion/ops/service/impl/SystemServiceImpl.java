@@ -92,7 +92,7 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void configIpList(ConfigIpListRequest request) {
+    public void configIpFilterList(ConfigIpListRequest request) {
         // 检查名单
         String blackIpList = request.getBlackIpList();
         String whiteIpList = request.getWhiteIpList();
