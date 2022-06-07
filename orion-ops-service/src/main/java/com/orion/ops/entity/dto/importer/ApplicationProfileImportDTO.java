@@ -6,6 +6,8 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,31 +18,24 @@ import lombok.EqualsAndHashCode;
  * @version 1.0.0
  * @since 2022/6/1 9:37
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用环境信息导入")
 public class ApplicationProfileImportDTO extends BaseDataImportDTO {
 
-    /**
-     * 环境名称
-     */
+    @ApiModelProperty(value = "环境名称")
     @ImportField(index = 0)
     private String name;
 
-    /**
-     * 唯一标识
-     */
+    @ApiModelProperty(value = "唯一标识")
     @ImportField(index = 1)
     private String tag;
 
-    /**
-     * 发布审核
-     */
+    @ApiModelProperty(value = "发布审核")
     @ImportField(index = 2)
     private String releaseAudit;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ImportField(index = 3)
     private String description;
 
