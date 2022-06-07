@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- * 应用版本控制 Mapper 接口
+ * 应用版本仓库 Mapper 接口
  * </p>
  *
  * @author Jiahang Li

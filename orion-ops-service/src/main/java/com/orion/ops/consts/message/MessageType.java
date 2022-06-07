@@ -49,22 +49,22 @@ public enum MessageType {
     /**
      * 发布审批通过
      */
-    RELEASE_AUDIT_RESOLVE(1070, "发布审批通过", MessageClassify.SYSTEM, "发布单 <sb>${title}</sb> 审核已通过"),
+    RELEASE_AUDIT_RESOLVE(1070, "发布审批通过", MessageClassify.SYSTEM, "发布任务 <sb>${title}</sb> 审核已通过"),
 
     /**
      * 发布审批驳回
      */
-    RELEASE_AUDIT_REJECT(1080, "发布审批驳回", MessageClassify.SYSTEM, "发布单 <sb>${title}</sb> 审核已被驳回"),
+    RELEASE_AUDIT_REJECT(1080, "发布审批驳回", MessageClassify.SYSTEM, "发布任务 <sb>${title}</sb> 审核已被驳回"),
 
     /**
      * 发布执行成功
      */
-    RELEASE_SUCCESS(1090, "发布执行成功", MessageClassify.SYSTEM, "发布单 <sb>${title}</sb> 发布成功"),
+    RELEASE_SUCCESS(1090, "发布执行成功", MessageClassify.SYSTEM, "发布任务 <sb>${title}</sb> 发布成功"),
 
     /**
      * 发布执行失败
      */
-    RELEASE_FAILURE(1100, "发布执行失败", MessageClassify.SYSTEM, "发布单 <sb>${title}</sb> 发布失败"),
+    RELEASE_FAILURE(1100, "发布执行失败", MessageClassify.SYSTEM, "发布任务 <sb>${title}</sb> 发布失败"),
 
     /**
      * 应用流水线审批通过

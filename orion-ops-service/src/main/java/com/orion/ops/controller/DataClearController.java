@@ -7,7 +7,7 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.clear.DataClearRange;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
-import com.orion.ops.entity.request.sftp.DataClearRequest;
+import com.orion.ops.entity.request.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;

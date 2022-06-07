@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- * 发布单机器表 Mapper 接口
+ * 发布任务机器表 Mapper 接口
  * </p>
  *
  * @author Jiahang Li

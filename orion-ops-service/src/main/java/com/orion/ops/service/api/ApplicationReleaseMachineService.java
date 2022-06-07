@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * <p>
- * 发布单机器表 服务类
+ * 发布任务机器表 服务类
  * </p>
  *
  * @author Jiahang Li

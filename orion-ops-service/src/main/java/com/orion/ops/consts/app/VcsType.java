@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 版本控制工具类型
+ * 应用版本仓库工具类型
  *
  * @author Jiahang Li
  * @version 1.0.0

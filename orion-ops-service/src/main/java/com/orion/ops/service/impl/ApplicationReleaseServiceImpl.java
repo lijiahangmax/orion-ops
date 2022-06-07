@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 发布单 服务实现类
+ * 发布任务 服务实现类
  * </p>
  *
  * @author Jiahang Li

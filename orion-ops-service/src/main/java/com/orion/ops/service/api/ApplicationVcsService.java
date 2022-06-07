@@ -12,7 +12,7 @@ import com.orion.vcs.git.Gits;
 import java.util.List;
 
 /**
- * 应用版本控制仓库服务
+ * 应用版本仓库仓库服务
  *
  * @author Jiahang Li
  * @version 1.0.0
