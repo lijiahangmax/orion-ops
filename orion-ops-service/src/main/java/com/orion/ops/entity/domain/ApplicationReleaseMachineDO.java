@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 发布单机器表
+ * 发布任务机器表
  * </p>
  *
  * @author Jiahang Li
@@ -29,7 +29,7 @@ public class ApplicationReleaseMachineDO implements Serializable {
     private Long id;
 
     /**
-     * 上线单id
+     * 发布任务id
      */
     @TableField("release_id")
     private Long releaseId;

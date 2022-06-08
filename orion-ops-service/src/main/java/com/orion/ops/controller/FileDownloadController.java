@@ -44,7 +44,7 @@ public class FileDownloadController {
 
     @IgnoreWrapper
     @IgnoreAuth
-    @PostMapping("/{token}/exec")
+    @GetMapping("/{token}/exec")
     @ApiOperation(value = "下载文件")
     public void downloadLogFile(@PathVariable String token, HttpServletResponse response) throws IOException {
         try {
