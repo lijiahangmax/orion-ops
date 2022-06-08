@@ -104,8 +104,7 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 
 export default {
   name: 'AppBuildModal',
@@ -286,7 +285,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

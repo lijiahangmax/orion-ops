@@ -119,7 +119,7 @@
 
 <script>
 import { replaceStainKeywords } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
 import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
 import WebSideMessageExportModal from '@/components/export/WebSideMessageExportModal'
@@ -227,7 +227,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   async mounted() {
     // 打开消息

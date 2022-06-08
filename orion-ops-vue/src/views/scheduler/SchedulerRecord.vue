@@ -211,10 +211,9 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import _enum from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 import SchedulerTaskMachineLogAppenderModal from '@/components/log/SchedulerTaskMachineLogAppenderModal'
 import SchedulerTaskLogAppenderModal from '@/components/log/SchedulerTaskLogAppenderModal'
@@ -560,7 +559,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   async mounted() {
     await this.getSchedulerTask()

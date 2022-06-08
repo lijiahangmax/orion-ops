@@ -162,12 +162,12 @@
 </template>
 
 <script>
+import { formatDate } from '@/lib/filters'
+import _enum from '@/lib/enum'
 import AppSelector from '@/components/app/AppSelector'
 import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import AppBuildClearModal from '@/components/clear/AppBuildClearModal'
 
 /**
@@ -401,7 +401,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     // 读取当前环境

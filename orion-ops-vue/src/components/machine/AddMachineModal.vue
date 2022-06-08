@@ -84,9 +84,10 @@
 </template>
 
 <script>
+import { pick } from 'lodash'
+import { validatePort } from '@/lib/validate'
 import _enum from '@/lib/enum'
 import AddMachineKeyModal from '../machine/AddMachineKeyModal'
-import { pick } from 'lodash'
 
 const layout = {
   labelCol: { span: 4 },
@@ -127,7 +128,7 @@ function getDecorators() {
     sshPort: ['sshPort', {
       initialValue: 22,
       rules: [{
-        validator: this.validatePort
+        validator: validatePort
       }]
     }],
     authType: ['authType', {
@@ -184,15 +185,6 @@ export default {
         callback(new Error('请输入主机'))
       } else if (value.length > 128) {
         callback(new Error('主机长度不能大于128位'))
-      } else {
-        callback()
-      }
-    },
-    validatePort(rule, value, callback) {
-      if (!value) {
-        callback(new Error('请输入端口'))
-      } else if (parseInt(value) < 2 || parseInt(value) > 65534) {
-        callback(new Error('端口必须在2~65534之间'))
       } else {
         callback()
       }

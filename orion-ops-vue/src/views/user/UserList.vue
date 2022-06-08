@@ -164,8 +164,7 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import ResetPassword from '@/components/user/ResetPassword'
 import AddUserModal from '@/components/user/AddUserModal'
 
@@ -344,7 +343,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

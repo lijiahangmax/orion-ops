@@ -81,7 +81,7 @@
 
 <script>
 import { pick } from 'lodash'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import _enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import MachineMultiSelector from '@/components/machine/MachineMultiSelector'
@@ -289,7 +289,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

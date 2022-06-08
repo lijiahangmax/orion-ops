@@ -266,7 +266,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import AppSelector from '@/components/app/AppSelector'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
@@ -711,7 +711,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     // 读取当前环境

@@ -193,14 +193,13 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import _$enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddMachineEnvModal from '@/components/machine/AddMachineEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 import MachineChecker from '@/components/machine/MachineChecker'
-import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -429,7 +428,7 @@ export default {
     this.defaultSelectedMachineIds.push(chooseId)
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

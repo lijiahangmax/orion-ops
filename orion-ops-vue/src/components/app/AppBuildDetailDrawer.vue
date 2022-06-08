@@ -116,7 +116,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import EditorPreview from '@/components/preview/EditorPreview'
 
 function statusHolder() {
@@ -235,7 +235,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

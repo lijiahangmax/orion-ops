@@ -100,9 +100,9 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import { replaceStainKeywords } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import _enum from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogClearModal from '@/components/clear/EventLogClearModal'
@@ -238,7 +238,7 @@ export default {
     }
   },
   filters: {
-    ..._filters,
+    formatDate,
     filterClassify(origin) {
       return _enum.valueOf(_enum.EVENT_CLASSIFY, origin).label
     },

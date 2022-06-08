@@ -159,7 +159,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
 import TempMountMachineKeyModal from '@/components/machine/TempMountMachineKeyModal'
 
@@ -359,7 +359,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

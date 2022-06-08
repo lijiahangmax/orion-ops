@@ -55,8 +55,8 @@
 </template>
 
 <script>
+import { formatDate } from '@/lib/filters'
 import Editor from '@/components/editor/Editor'
-import _filters from '@/lib/filters'
 
 export default {
   name: 'ExecTaskDetailModal',
@@ -90,7 +90,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

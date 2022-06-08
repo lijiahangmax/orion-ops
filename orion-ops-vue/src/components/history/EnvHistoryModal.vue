@@ -75,9 +75,8 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import TextPreview from '@/components/preview/TextPreview'
-import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -220,7 +219,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

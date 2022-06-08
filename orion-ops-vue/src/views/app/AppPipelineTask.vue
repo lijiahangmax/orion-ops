@@ -271,7 +271,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
 import AppPipelineExecAuditModal from '@/components/app/AppPipelineExecAuditModal'
@@ -721,7 +721,7 @@ export default {
     this.pollId = null
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

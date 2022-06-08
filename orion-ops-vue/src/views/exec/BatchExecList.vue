@@ -196,7 +196,7 @@
 <script>
 
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import _enum from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
@@ -516,7 +516,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     // 设置轮询

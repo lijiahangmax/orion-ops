@@ -147,13 +147,12 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import _$enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddSystemEnvModal from '@/components/system/AddSystemEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
-import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -332,7 +331,7 @@ export default {
     this.getSystemEnv({})
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

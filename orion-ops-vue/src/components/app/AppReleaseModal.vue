@@ -129,10 +129,9 @@
 </template>
 
 <script>
-
-import MachineChecker from '@/components/machine/MachineChecker'
+import { formatDate } from '@/lib/filters'
 import _enum from '@/lib/enum'
-import _filters from '@/lib/filters'
+import MachineChecker from '@/components/machine/MachineChecker'
 
 export default {
   name: 'AppReleaseModal',
@@ -309,7 +308,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

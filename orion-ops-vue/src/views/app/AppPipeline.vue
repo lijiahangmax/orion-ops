@@ -99,9 +99,8 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import AppPipelineDetailViewDrawer from '@/components/app/AppPipelineDetailViewDrawer'
-import _filters from '@/lib/filters'
 import AddPipelineModal from '@/components/app/AddPipelineModal'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 
@@ -236,7 +235,7 @@ export default {
     this.getList({})
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

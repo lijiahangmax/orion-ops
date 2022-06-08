@@ -68,9 +68,8 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import MachineChecker from '@/components/machine/MachineChecker'
-import _filters from '@/lib/filters'
 
 const layout = {
   labelCol: { span: 4 },
@@ -170,7 +169,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

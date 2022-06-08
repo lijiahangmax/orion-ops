@@ -60,9 +60,6 @@ function getDecorators() {
     port: ['port', {
       initialValue: 22,
       rules: [{
-        required: true,
-        message: '请输入端口'
-      }, {
         validator: validatePort
       }]
     }],

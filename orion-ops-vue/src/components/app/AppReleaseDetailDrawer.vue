@@ -118,8 +118,8 @@
 </template>
 
 <script>
+import { formatDate } from '@/lib/filters'
 import EditorPreview from '@/components/preview/EditorPreview'
-import _filters from '@/lib/filters'
 
 export default {
   name: 'AppReleaseDetailDrawer',
@@ -212,7 +212,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

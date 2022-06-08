@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 
 export default {
   name: 'AppPipelineTaskDetailDrawer',
@@ -206,7 +206,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

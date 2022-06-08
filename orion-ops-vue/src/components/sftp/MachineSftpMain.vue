@@ -276,6 +276,7 @@
 <script>
 import { Empty } from 'ant-design-vue'
 import { getPathAnalysis } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
 import SftpFolderTree from './SftpFolderTree'
 import SftpTouchModal from './SftpTouchModal'
 import SftpMoveModal from './SftpMoveModal'
@@ -283,7 +284,6 @@ import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
 import RightClickMenu from '@/components/common/RightClickMenu'
 import SftpUpload from './SftpUpload'
-import _filters from '@/lib/filters'
 
 /**
  * 表格列
@@ -679,7 +679,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

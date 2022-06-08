@@ -87,9 +87,9 @@
 
 <script>
 import { replaceStainKeywords } from '@/lib/utils'
-import EditorPreview from '@/components/preview/EditorPreview'
+import { formatDate } from '@/lib/filters'
 import _enum from '@/lib/enum'
-import _filters from '@/lib/filters'
+import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogExportExportModal from '@/components/export/EventLogExportExportModal'
 
 export default {
@@ -213,7 +213,7 @@ export default {
     }
   },
   filters: {
-    ..._filters,
+    formatDate,
     filterClassify(origin) {
       return _enum.valueOf(_enum.EVENT_CLASSIFY, origin).label
     },

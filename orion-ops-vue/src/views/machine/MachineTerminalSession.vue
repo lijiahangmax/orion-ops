@@ -56,9 +56,8 @@
 </template>
 
 <script>
-
 import { defineArrayKey } from '@/lib/utils'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 
@@ -215,7 +214,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

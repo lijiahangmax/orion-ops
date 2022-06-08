@@ -193,14 +193,13 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import _$enum from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddAppEnvModal from '@/components/app/AddAppEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
-import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -444,7 +443,7 @@ export default {
     this.defaultSelectedAppIds.push(chooseId)
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

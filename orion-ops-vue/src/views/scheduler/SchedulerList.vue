@@ -137,8 +137,7 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import AddSchedulerTask from '@/components/scheduler/AddSchedulerTask'
 
 /**
@@ -306,7 +305,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

@@ -137,7 +137,7 @@ import MachineSelector from '@/components/machine/MachineSelector'
 import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
@@ -302,7 +302,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

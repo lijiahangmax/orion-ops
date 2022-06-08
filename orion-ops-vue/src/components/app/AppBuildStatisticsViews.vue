@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppActionLogAppenderModal from '@/components/log/AppActionLogAppenderModal'
 
@@ -180,7 +180,7 @@ export default {
     this.clean()
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

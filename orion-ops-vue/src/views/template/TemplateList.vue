@@ -99,10 +99,9 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
 import AddTemplateModal from '@/components/template/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
-import _filters from '@/lib/filters'
 import CommandTemplateExportModal from '@/components/export/CommandTemplateExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
@@ -244,7 +243,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})
