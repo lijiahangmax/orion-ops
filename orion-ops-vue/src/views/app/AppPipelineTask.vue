@@ -270,7 +270,7 @@
 </template>
 
 <script>
-
+import { defineArrayKey } from '@/lib/utils'
 import _filters from '@/lib/filters'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
@@ -508,8 +508,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'details', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'details', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []

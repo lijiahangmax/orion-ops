@@ -109,8 +109,7 @@
         </template>
         <!-- 端口 -->
         <template v-slot:sshPort="record">
-          <span class="span-blue pointer" title="复制ssh"
-                @click="$copy($utils.getSshCommand(record.username, record.host, record.sshPort), true)">
+          <span class="span-blue pointer" title="复制ssh" @click="copySshCommand(record)">
             {{ record.sshPort }}
           </span>
         </template>
@@ -232,6 +231,7 @@
 </template>
 
 <script>
+import { getSshCommand } from '@/lib/utils'
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
@@ -445,6 +445,9 @@ export default {
     },
     openDetail(id) {
       this.$refs.detailModal.open(id)
+    },
+    copySshCommand(record) {
+      this.$copy(getSshCommand(record.username, record.host, record.sshPort), true)
     },
     menuHandler({ key }, record) {
       moreMenuHandler[key].call(this, record)

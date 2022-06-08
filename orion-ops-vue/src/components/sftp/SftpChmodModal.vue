@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { permission10toString } from '@/lib/utils'
+
 export default {
   name: 'SftpChmodModal',
   props: {
@@ -40,7 +42,7 @@ export default {
   },
   computed: {
     permissionString: function() {
-      return this.$utils.permission10toString(this.permission).padEnd(9, '-').substring(0, 9)
+      return permission10toString(this.permission).padEnd(9, '-').substring(0, 9)
     }
   },
   data: function() {

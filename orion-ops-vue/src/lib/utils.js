@@ -3,14 +3,14 @@ import * as $md5 from 'js-md5'
 /**
  * 判断值是否非空
  */
-function isEmptyStr(val) {
-  return typeof (val) === 'undefined' || val == null
+export function isEmptyStr(val) {
+  return typeof (val) === 'undefined' || val == null || val === ''
 }
 
 /**
  * 复制到剪切板
  */
-function copyToClipboard(content) {
+export function copyToClipboard(content) {
   const clipboardData = window.clipboardData
   if (clipboardData) {
     clipboardData.clearData()
@@ -34,28 +34,28 @@ function copyToClipboard(content) {
 /**
  * 获取剪切板内容 返回promise
  */
-function getClipboardText() {
+export function getClipboardText() {
   return navigator.clipboard.readText()
 }
 
 /**
  * md5
  */
-function md5(val) {
+export function md5(val) {
   return $md5.hex(val)
 }
 
 /**
  * ssh命令
  */
-function getSshCommand(username, host, port) {
+export function getSshCommand(username, host, port) {
   return `ssh -p ${port} ${username}@${host}`
 }
 
 /**
  * 全屏
  */
-function fullScreen() {
+export function fullScreen() {
   const el = document.documentElement
   const rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen
   if (typeof rfs !== 'undefined' && rfs) {
@@ -66,7 +66,7 @@ function fullScreen() {
 /**
  * 取消全屏
  */
-function exitFullScreen() {
+export function exitFullScreen() {
   const el = document
   const cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.mozCancelFullScreen || el.exitFullScreen
   if (typeof cfs !== 'undefined' && cfs) {
@@ -77,7 +77,7 @@ function exitFullScreen() {
 /**
  * 格式化时间
  */
-function dateFormat(date, pattern = 'yyyy-MM-dd HH:mm:ss') {
+export function dateFormat(date, pattern = 'yyyy-MM-dd HH:mm:ss') {
   const o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),
@@ -101,7 +101,7 @@ function dateFormat(date, pattern = 'yyyy-MM-dd HH:mm:ss') {
 /**
  * 10进制权限 转 字符串权限
  */
-function permission10toString(permission) {
+export function permission10toString(permission) {
   const ps = (permission + '')
   let res = ''
   for (let i = 0; i < ps.length; i++) {
@@ -128,14 +128,14 @@ function permission10toString(permission) {
 /**
  * 返回base64实际数据
  */
-function getBase64Data(e) {
+export function getBase64Data(e) {
   return e.substring(e.indexOf(',') + 1)
 }
 
 /**
  *读取文件base64 返回promise
  */
-function readFileBase64(e) {
+export function readFileBase64(e) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.readAsDataURL(e)
@@ -151,14 +151,14 @@ function readFileBase64(e) {
 /**
  * 获取页面路由
  */
-function getRoute(url = location.href) {
+export function getRoute(url = location.href) {
   return url.substring(url.lastIndexOf('#') + 1).split('?')[0]
 }
 
 /**
  * 格式化数字为 ,分割
  */
-function formatNumber(value = 0) {
+export function formatNumber(value = 0) {
   value += ''
   const list = value.split('.')
   const prefix = list[0].charAt(0) === '-' ? '-' : ''
@@ -177,7 +177,7 @@ function formatNumber(value = 0) {
 /**
  * 判断是否为数字
  */
-function isNumber(value, decimal = true, negative = true) {
+export function isNumber(value, decimal = true, negative = true) {
   let reg
   if (decimal && negative) {
     reg = /^-?[0-9]*(\.[0-9]*)?$/
@@ -196,7 +196,7 @@ function isNumber(value, decimal = true, negative = true) {
 /**
  * 替换数字
  */
-function replaceNumber(value) {
+export function replaceNumber(value) {
   const s = value.charAt(value.length - 1)
   if (s === '.' || s === '-') {
     return s.substring(0, value.length - 1)
@@ -207,7 +207,7 @@ function replaceNumber(value) {
 /**
  * 给array的元素定义key
  */
-function defineArrayKey(array, key, value = null) {
+export function defineArrayKey(array, key, value = null) {
   if (!array || !array.length) {
     return
   }
@@ -219,7 +219,7 @@ function defineArrayKey(array, key, value = null) {
 /**
  * 给array的元素定义key
  */
-function defineArrayKeys(array) {
+export function defineArrayKeys(array) {
   if (!array || !array.length) {
     return
   }
@@ -233,7 +233,7 @@ function defineArrayKeys(array) {
 /**
  * 获取解析路径
  */
-function getPathAnalysis(analysisPath, paths = []) {
+export function getPathAnalysis(analysisPath, paths = []) {
   const lastSymbol = analysisPath.lastIndexOf('/')
   if (lastSymbol === -1) {
     paths.unshift({
@@ -255,7 +255,7 @@ function getPathAnalysis(analysisPath, paths = []) {
 /**
  * 替换路径
  */
-function getPath(path) {
+export function getPath(path) {
   return path.replace(new RegExp('\\\\+', 'g'), '/')
     .replace(new RegExp('/+', 'g'), '/')
 }
@@ -263,7 +263,7 @@ function getPath(path) {
 /**
  * 获取当前页面的缩放值
  */
-function detectZoom() {
+export function detectZoom() {
   let ratio = 0
   const screen = window.screen
   const ua = navigator.userAgent.toLowerCase()
@@ -285,7 +285,7 @@ function detectZoom() {
 /**
  * 清除xss
  */
-function cleanXss(s) {
+export function cleanXss(s) {
   s = s.replaceAll('&', '&amp;')
   s = s.replaceAll('<', '&lt;')
   s = s.replaceAll('>', '&gt;')
@@ -299,7 +299,7 @@ function cleanXss(s) {
 /**
  * 替换高亮关键字
  */
-function replaceStainKeywords(message) {
+export function replaceStainKeywords(message) {
   return cleanXss(message)
     .replaceAll('&lt;sb 0&gt;', '<span class="span-blue mx0">')
     .replaceAll('&lt;sb 2&gt;', '<span class="span-blue mx2">')
@@ -314,7 +314,7 @@ function replaceStainKeywords(message) {
 /**
  * 清除高亮关键字
  */
-function clearStainKeywords(message) {
+export function clearStainKeywords(message) {
   return cleanXss(message)
     .replaceAll('&lt;sb 0&gt;', '')
     .replaceAll('&lt;sb 2&gt;', '')
@@ -329,7 +329,7 @@ function clearStainKeywords(message) {
 /**
  * 自适应终端大小
  */
-function fitDimensions(term, parent) {
+export function fitDimensions(term, parent) {
   if (!term) {
     return {}
   }
@@ -371,7 +371,7 @@ function fitDimensions(term, parent) {
 /**
  * 获取唯一的 UUID
  */
-function getUUID() {
+export function getUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0
     const v = c === 'x' ? r : (r & 0x3 | 0x8)
@@ -382,7 +382,7 @@ function getUUID() {
 /**
  * 下载文件
  */
-function downloadFile(res) {
+export function downloadFile(res) {
   const blob = new Blob([res.data])
   const tempLink = document.createElement('a')
   const blobURL = window.URL.createObjectURL(blob)
@@ -399,33 +399,4 @@ function downloadFile(res) {
   tempLink.click()
   document.body.removeChild(tempLink)
   window.URL.revokeObjectURL(blobURL)
-}
-
-export default {
-  isEmptyStr,
-  copyToClipboard,
-  getClipboardText,
-  md5,
-  getSshCommand,
-  fullScreen,
-  exitFullScreen,
-  dateFormat,
-  permission10toString,
-  getBase64Data,
-  readFileBase64,
-  getRoute,
-  formatNumber,
-  isNumber,
-  replaceNumber,
-  defineArrayKey,
-  defineArrayKeys,
-  getPathAnalysis,
-  getPath,
-  detectZoom,
-  cleanXss,
-  replaceStainKeywords,
-  clearStainKeywords,
-  fitDimensions,
-  getUUID,
-  downloadFile
 }

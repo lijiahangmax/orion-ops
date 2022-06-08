@@ -37,7 +37,7 @@
 </template>
 
 <script>
-
+import { md5 } from '@/lib/utils'
 import { pick } from 'lodash'
 
 const layout = {
@@ -151,7 +151,7 @@ export default {
       try {
         if (!this.id) {
           // 添加
-          values.password = this.$utils.md5(values.password)
+          values.password = md5(values.password)
           res = await this.$api.addUser({
             ...values
           })

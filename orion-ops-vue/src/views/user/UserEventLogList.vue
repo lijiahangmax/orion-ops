@@ -102,6 +102,7 @@
 <script>
 import _filters from '@/lib/filters'
 import _enum from '@/lib/enum'
+import { replaceStainKeywords } from '@/lib/utils'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogClearModal from '@/components/clear/EventLogClearModal'
@@ -172,7 +173,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.rows.forEach((row) => {
-          row.log = this.$utils.replaceStainKeywords(row.log)
+          row.log = replaceStainKeywords(row.log)
         })
         this.pagination = pagination
         this.loading = false

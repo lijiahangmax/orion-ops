@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import _utils from '@/lib/utils'
+import { getPathAnalysis } from '@/lib/utils'
 
 /**
  * 文件夹转树node
@@ -98,7 +98,7 @@ const folderRightMenuHandler = {
  * 查找节点
  */
 function findNode(node, key) {
-  const keys = _utils.getPathAnalysis(key)
+  const keys = getPathAnalysis(key)
   const length = keys.length
   var curr = node[0]
   for (let i = 1; i < length; i++) {
@@ -144,7 +144,7 @@ export default {
       this.reloading = true
       var brothers = this.treeData
       var curr = this.treeData
-      const pathAnalysis = this.$utils.getPathAnalysis(key)
+      const pathAnalysis = getPathAnalysis(key)
       for (let i = 0; i < pathAnalysis.length; i++) {
         var pathItem = pathAnalysis[i]
         for (const treeNode of brothers) {

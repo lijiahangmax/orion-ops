@@ -158,9 +158,10 @@
 </template>
 
 <script>
+import { defineArrayKey } from '@/lib/utils'
+import _filters from '@/lib/filters'
 import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
 import TempMountMachineKeyModal from '@/components/machine/TempMountMachineKeyModal'
-import _filters from '@/lib/filters'
 
 /**
  * 列
@@ -250,7 +251,7 @@ export default {
         pagination.total = data.total
         pagination.current = data.page
         // 定义下载路径
-        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false

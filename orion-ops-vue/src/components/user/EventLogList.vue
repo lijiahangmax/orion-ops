@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { replaceStainKeywords } from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
 import _enum from '@/lib/enum'
 import _filters from '@/lib/filters'
@@ -167,7 +168,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.rows.forEach((row) => {
-          row.log = this.$utils.replaceStainKeywords(row.log)
+          row.log = replaceStainKeywords(row.log)
         })
         this.pagination = pagination
         this.loading = false

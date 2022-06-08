@@ -178,7 +178,7 @@
   </div>
 </template>
 
-<script>
+<script>import { defineArrayKey } from '@/lib/utils'
 import AddAppModal from '@/components/app/AddAppModal'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
 import AppBuildModal from '@/components/app/AppBuildModal'
@@ -370,8 +370,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'machines', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.loading = false

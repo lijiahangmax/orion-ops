@@ -24,6 +24,7 @@
   </a-modal>
 </template>
 <script>
+import { md5 } from '@/lib/utils'
 
 const layout = {
   labelCol: { span: 5 },
@@ -127,13 +128,13 @@ export default {
     },
     async resetPassword(values) {
       const updateData = {
-        password: this.$utils.md5(values.password)
+        password: md5(values.password)
       }
       if (this.userId) {
         updateData.userId = this.userId
       }
       if (values.beforePassword) {
-        updateData.beforePassword = this.$utils.md5(values.beforePassword)
+        updateData.beforePassword = md5(values.beforePassword)
       }
       this.$api.resetPassword(updateData)
         .then(() => {

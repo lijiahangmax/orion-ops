@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { defineArrayKey } from '@/lib/utils'
 import MachineListMenu from '@/components/machine/MachineListMenu'
 import MachineSftpMain from '@/components/sftp/MachineSftpMain'
 
@@ -90,7 +91,7 @@ export default {
   },
   async mounted() {
     await this.$refs.machineList.getMachineList()
-    this.$utils.defineArrayKey(this.$refs.machineList.list, 'session')
+    defineArrayKey(this.$refs.machineList.list, 'session')
     this.changeSftpMain(this.initMachineId)
   }
 }

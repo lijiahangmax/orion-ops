@@ -42,6 +42,7 @@
 <script>
 
 import { pick } from 'lodash'
+import { readFileBase64 } from '@/lib/utils'
 
 const userFormLayout = {
   labelCol: { span: 4 },
@@ -136,7 +137,7 @@ export default {
         return false
       }
       this.userLoading = true
-      const fileBase64 = await this.$utils.readFileBase64(e)
+      const fileBase64 = await readFileBase64(e)
       this.$api.updateAvatar({
         avatar: fileBase64
       }).then(() => {

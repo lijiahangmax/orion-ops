@@ -8,11 +8,13 @@
            cancelText="关闭"
            @ok="redirect"
            @cancel="close">
-    <div v-if="data.message" v-html="$utils.replaceStainKeywords(data.message)"/>
+    <div v-if="data.message" v-html="stainMessage"/>
   </a-modal>
 </template>
 
 <script>
+import { replaceStainKeywords } from '@/lib/utils'
+
 export default {
   name: 'WebSideMessageModal',
   data() {
@@ -20,6 +22,15 @@ export default {
       visible: false,
       loading: false,
       data: {}
+    }
+  },
+  computed: {
+    stainMessage() {
+      if (this.data.message) {
+        return replaceStainKeywords(this.data.message)
+      } else {
+        return this.data.message
+      }
     }
   },
   methods: {

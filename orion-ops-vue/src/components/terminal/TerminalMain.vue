@@ -49,9 +49,9 @@ import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { WebglAddon } from 'xterm-addon-webgl'
+import { copyToClipboard, fitDimensions, getClipboardText } from '@/lib/utils'
 
 import 'xterm/css/xterm.css'
-import RightClickMenu from '@/components/common/RightClickMenu'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
 
 /**
@@ -141,13 +141,13 @@ const terminalEventHandler = {
   },
   copy() {
     // 复制
-    this.$utils.copyToClipboard(this.term.getSelection())
+    copyToClipboard(this.term.getSelection())
     this.term.clearSelection()
     this.term.focus()
   },
   paste() {
     // 粘贴
-    this.$utils.getClipboardText().then(clipText => {
+    getClipboardText().then(clipText => {
       terminalOperator.key.call(this, clipText)
       this.term.focus()
     })
@@ -375,7 +375,7 @@ export default {
     },
     fitTerminal() {
       setTimeout(() => {
-        const dimensions = this.$utils.fitDimensions(this.term, this.$refs.terminal)
+        const dimensions = fitDimensions(this.term, this.$refs.terminal)
         if (dimensions?.cols && dimensions?.rows) {
           this.term.resize(dimensions.cols, dimensions.rows)
         }

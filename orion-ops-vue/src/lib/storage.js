@@ -1,4 +1,4 @@
-import utils from './utils'
+import { isEmptyStr } from './utils'
 
 const $storage = {
 
@@ -15,7 +15,7 @@ const $storage = {
    */
   get(key, def) {
     const item = localStorage.getItem(key)
-    return utils.isEmptyStr(item) ? def : item
+    return isEmptyStr(item) ? def : item
   },
 
   /**
@@ -44,7 +44,7 @@ const $storage = {
    */
   getSession(key, def) {
     const item = sessionStorage.getItem(key)
-    return utils.isEmptyStr(item) ? def : item
+    return isEmptyStr(item) ? def : item
   },
 
   /**

@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import { cleanXss } from '@/lib/utils'
 
 const stain = {
   DEBUG: {
@@ -318,7 +319,7 @@ export default {
       })
     },
     stainKeywords(msg) {
-      msg = this.$utils.cleanXss(msg)
+      msg = cleanXss(msg)
       // 高亮
       for (const stainKey in stain) {
         msg = msg.replace(stain[stainKey].reg, (keyword) => {

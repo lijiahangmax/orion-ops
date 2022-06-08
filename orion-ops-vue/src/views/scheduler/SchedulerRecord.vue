@@ -214,6 +214,7 @@
 
 import _filters from '@/lib/filters'
 import _enum from '@/lib/enum'
+import { defineArrayKey } from '@/lib/utils'
 import EditorPreview from '@/components/preview/EditorPreview'
 import SchedulerTaskMachineLogAppenderModal from '@/components/log/SchedulerTaskMachineLogAppenderModal'
 import SchedulerTaskLogAppenderModal from '@/components/log/SchedulerTaskLogAppenderModal'
@@ -419,8 +420,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'machines', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []

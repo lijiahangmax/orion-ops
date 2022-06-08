@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { fullScreen, exitFullScreen, getSshCommand } from '@/lib/utils'
+
 import TerminalSettingModal from './TerminalSettingModal'
 
 export default {
@@ -104,13 +106,11 @@ export default {
   },
   methods: {
     copySshCommand() {
-      const command = this.$utils.getSshCommand(this.machine.username, this.machine.host, this.machine.port)
-      this.$message.success(`${command} 已复制`)
-      this.$utils.copyToClipboard(command)
+      const command = getSshCommand(this.machine.username, this.machine.host, this.machine.port)
+      this.$copy(command, true)
     },
     copyHost() {
-      this.$message.success(`${this.machine.host} 已复制`)
-      this.$utils.copyToClipboard(this.machine.host)
+      this.$copy(this.machine.host, true)
     },
     inputCommand() {
       this.$emit('inputCommand', this.commandInput)
@@ -125,9 +125,9 @@ export default {
     },
     fullscreen() {
       if (this.isFullScreen) {
-        this.$utils.exitFullScreen()
+        exitFullScreen()
       } else {
-        this.$utils.fullScreen()
+        fullScreen()
       }
       this.isFullScreen = !this.isFullScreen
     },

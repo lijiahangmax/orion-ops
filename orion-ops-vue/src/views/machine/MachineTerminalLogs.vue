@@ -105,9 +105,10 @@
 
 <script>
 
+import { defineArrayKey } from '@/lib/utils'
+import _filters from '@/lib/filters'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
-import _filters from '@/lib/filters'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
 import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
 
@@ -218,7 +219,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []

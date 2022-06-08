@@ -115,8 +115,9 @@
 </template>
 
 <script>
-import EditorPreview from '@/components/preview/EditorPreview'
+import { defineArrayKey } from '@/lib/utils'
 import _filters from '@/lib/filters'
+import EditorPreview from '@/components/preview/EditorPreview'
 
 function statusHolder() {
   return {
@@ -159,7 +160,7 @@ export default {
         this.loading = false
         data.logUrl = null
         data.downloadUrl = null
-        this.$utils.defineArrayKey(data.actions, 'downloadUrl')
+        defineArrayKey(data.actions, 'downloadUrl')
         this.detail = data
         // 轮询状态
         if (data.status === this.$enum.BUILD_STATUS.WAIT.value || data.status === this.$enum.BUILD_STATUS.RUNNABLE.value) {

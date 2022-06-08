@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { dateFormat, replaceStainKeywords, clearStainKeywords } from '@/lib/utils'
 
 export default {
   name: 'WebSideMessageDropdown',
@@ -75,9 +76,9 @@ export default {
         this.unreadCount = this.rows.length
         this.rows.forEach(row => {
           // 格式化时间
-          row.createTimeString = this.$utils.dateFormat(new Date(row.createTime))
+          row.createTimeString = dateFormat(new Date(row.createTime))
           // 处理数据
-          row.message = this.$utils.replaceStainKeywords(row.message)
+          row.message = replaceStainKeywords(row.message)
         })
         this.loading = false
       }).then(() => {
@@ -98,7 +99,7 @@ export default {
               const messageType = this.$enum.valueOf(this.$enum.valueOf(this.$enum.MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
               this.$notification[messageType.notify]({
                 message: messageType.label,
-                description: () => this.$utils.clearStainKeywords(newMessage.message),
+                description: () => clearStainKeywords(newMessage.message),
                 duration: 3
               })
             })
@@ -125,7 +126,7 @@ export default {
     this.pollId !== null && clearInterval(this.pollId)
     this.pollWebSideMessage()
     // 轮询
-    this.pollId = setInterval(this.pollWebSideMessage, 10000)
+    this.pollId = setInterval(this.pollWebSideMessage, 20000)
   },
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)

@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { downloadFile } from '@/lib/utils'
+
 export default {
   name: 'ApplicationExportModal',
   data: function() {
@@ -50,7 +52,7 @@ export default {
         this.loading = false
         this.visible = false
         this.$message.success('导出成功, 片刻后自动下载')
-        this.$utils.downloadFile(e)
+        downloadFile(e)
       }).catch(() => {
         this.loading = false
         this.$message.error('导出失败')

@@ -118,6 +118,7 @@
 </template>
 
 <script>
+import { replaceStainKeywords } from '@/lib/utils'
 import _filters from '@/lib/filters'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
 import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
@@ -168,7 +169,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.rows.forEach((row) => {
-          row.message = this.$utils.replaceStainKeywords(row.message)
+          row.message = replaceStainKeywords(row.message)
         })
         this.pagination = pagination
         this.loading = false

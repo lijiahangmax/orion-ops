@@ -274,6 +274,8 @@
 </template>
 
 <script>
+import { Empty } from 'ant-design-vue'
+import { getPathAnalysis } from '@/lib/utils'
 import SftpFolderTree from './SftpFolderTree'
 import SftpTouchModal from './SftpTouchModal'
 import SftpMoveModal from './SftpMoveModal'
@@ -281,7 +283,6 @@ import SftpChmodModal from './SftpChmodModal'
 import FileTransferList from './FileTransferList'
 import RightClickMenu from '@/components/common/RightClickMenu'
 import SftpUpload from './SftpUpload'
-import { Empty } from 'ant-design-vue'
 import _filters from '@/lib/filters'
 
 /**
@@ -428,7 +429,7 @@ export default {
   },
   computed: {
     pathAnalysis() {
-      return this.$utils.getPathAnalysis(this.path)
+      return getPathAnalysis(this.path)
     },
     rowSelection() {
       return {

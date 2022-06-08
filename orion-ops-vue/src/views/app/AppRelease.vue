@@ -265,6 +265,8 @@
 </template>
 
 <script>
+import { defineArrayKey } from '@/lib/utils'
+import _filters from '@/lib/filters'
 import AppSelector from '@/components/app/AppSelector'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
@@ -272,7 +274,6 @@ import AppReleaseTimedModal from '@/components/app/AppReleaseTimedModal'
 import AppReleaseDetailDrawer from '@/components/app/AppReleaseDetailDrawer'
 import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDetailDrawer'
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
-import _filters from '@/lib/filters'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 import AppReleaseClearModal from '@/components/clear/AppReleaseClearModal'
 
@@ -509,8 +510,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'machines', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []

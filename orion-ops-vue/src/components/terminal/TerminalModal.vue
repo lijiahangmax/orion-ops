@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { getSshCommand } from '@/lib/utils'
 import TerminalXterm from '@/components/terminal/TerminalXterm'
 import TerminalSettingModal from '@/components/terminal/TerminalSettingModal'
 
@@ -102,13 +103,11 @@ export default {
       this.$refs.settingModal.openSetting()
     },
     copySshCommand() {
-      const command = this.$utils.getSshCommand(this.machine.username, this.machine.host, this.machine.sshPort)
-      this.$message.success(`${command} 已复制`)
-      this.$utils.copyToClipboard(command)
+      const command = getSshCommand(this.machine.username, this.machine.host, this.machine.sshPort)
+      this.$copy(command, true)
     },
     copyHost() {
-      this.$message.success(`${this.machine.host} 已复制`)
-      this.$utils.copyToClipboard(this.machine.host)
+      this.$copy(this.machine.host, true)
     }
   }
 }

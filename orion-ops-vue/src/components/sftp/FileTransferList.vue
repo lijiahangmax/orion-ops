@@ -183,7 +183,7 @@
 </template>
 
 <script>
-
+import { defineArrayKey } from '@/lib/utils'
 import RightClickMenu from '@/components/common/RightClickMenu'
 
 /**
@@ -303,7 +303,7 @@ export default {
       this.$api.sftpTransferList({
         sessionToken: this.sessionToken
       }).then(({ data }) => {
-        this.$utils.defineArrayKey(data, 'downloadUrl')
+        defineArrayKey(data, 'downloadUrl')
         this.transferList = data
       })
     },

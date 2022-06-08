@@ -195,14 +195,15 @@
 
 <script>
 
+import { defineArrayKey } from '@/lib/utils'
+import _filters from '@/lib/filters'
+import _enum from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import TextPreview from '@/components/preview/TextPreview'
 import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import BatchExecClearModal from '@/components/clear/BatchExecClearModal'
 
 /**
@@ -374,7 +375,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []
