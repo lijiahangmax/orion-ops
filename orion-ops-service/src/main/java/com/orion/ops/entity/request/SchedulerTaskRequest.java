@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,70 +17,53 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "调度任务请求")
 public class SchedulerTaskRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 任务名称
-     */
+    @ApiModelProperty(value = "任务名称")
     private String name;
 
-    /**
-     * 任务描述
-     */
+    @ApiModelProperty(value = "任务描述")
     private String description;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     private String command;
 
-    /**
-     * cron表达式
-     */
+    @ApiModelProperty(value = "cron表达式")
     private String expression;
 
     /**
-     * 启用状态 1启用 2停用
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "启用状态 1启用 2停用")
     private Integer enableStatus;
 
     /**
-     * 最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止
-     *
      * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
      */
+    @ApiModelProperty(value = "最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止")
     private Integer latelyStatus;
 
     /**
-     * 调度序列 10串行 20并行
-     *
      * @see com.orion.ops.consts.SerialType
      */
+    @ApiModelProperty(value = "调度序列 10串行 20并行")
     private Integer serializeType;
 
     /**
-     * 异常处理 10跳过所有 20跳过错误
-     *
      * @see com.orion.ops.consts.ExceptionHandlerType
      */
+    @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     private Integer exceptionHandler;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 次数
-     */
+    @ApiModelProperty(value = "次数")
     private Integer times;
 
 }

@@ -1,13 +1,15 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
- * 任务执行记录
+ * 任务执行记录请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -15,53 +17,37 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "任务执行记录请求")
 public class SchedulerTaskRecordRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * idList
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * 机器明细idList
-     */
-    private List<Long> machineRecordIdList;
-
-    /**
-     * 明细id
-     */
+    @ApiModelProperty(value = "明细id")
     private Long recordId;
 
-    /**
-     * 机器明细id
-     */
+    @ApiModelProperty(value = "机器明细id")
     private Long machineRecordId;
 
-    /**
-     * 任务id
-     */
+    @ApiModelProperty(value = "机器明细id")
+    private List<Long> machineRecordIdList;
+
+    @ApiModelProperty(value = "任务id")
     private Long taskId;
 
-    /**
-     * 任务名称
-     */
+    @ApiModelProperty(value = "任务名称")
     private String taskName;
 
     /**
-     * 状态
-     *
      * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
      */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
-    /**
-     * 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
 }

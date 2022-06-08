@@ -1,5 +1,7 @@
-package com.orion.ops.entity.request.sftp;
+package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,70 +14,56 @@ import java.util.List;
  * @since 2022/5/24 16:36
  */
 @Data
+@ApiModel(value = "数据清理请求")
 public class DataClearRequest {
 
-    /**
-     * 保留天数
-     */
+    @ApiModelProperty(value = "保留天数")
     private Integer reserveDay;
 
-    /**
-     * 保留条数
-     */
+    @ApiModelProperty(value = "保留条数")
     private Integer reserveTotal;
 
     /**
-     * 清理区间
-     *
      * @see com.orion.ops.consts.clear.DataClearRange
      */
+    @ApiModelProperty(value = "清理区间")
     private Integer range;
 
-    /**
-     * 清理的引用id
-     */
+    @ApiModelProperty(value = "清理的引用id")
     private List<Long> relIdList;
 
-    /**
-     * 引用id
-     */
+    @ApiModelProperty(value = "引用id")
     private Long relId;
 
-    /**
-     * profile id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
     /**
-     * 只清理我创建的
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "只清理我创建的")
     private Integer iCreated;
 
     /**
-     * 只清理我审核的
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "只清理我审核的")
     private Integer iAudited;
 
     /**
-     * 只清理我执行的
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "只清理我执行的")
     private Integer iExecute;
 
     /**
-     * 只清理未读的
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "只清理未读的")
     private Integer onlyRead;
 
 }

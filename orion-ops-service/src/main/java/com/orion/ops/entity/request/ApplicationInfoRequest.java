@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,56 +15,41 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用请求")
 public class ApplicationInfoRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 唯一标识
-     */
+    @ApiModelProperty(value = "唯一标识")
     private String tag;
 
-    /**
-     * 版本控制id
-     */
+    @ApiModelProperty(value = "版本仓库id")
     private Long vcsId;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 排序调整方向
-     *
      * @see com.orion.ops.consts.Const#INCREMENT
      * @see com.orion.ops.consts.Const#DECREMENT
      */
+    @ApiModelProperty(value = "排序调整方向")
     private Integer sortAdjust;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
     /**
-     * 是否查询机器
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "是否查询机器")
     private Integer queryMachine;
 
 }

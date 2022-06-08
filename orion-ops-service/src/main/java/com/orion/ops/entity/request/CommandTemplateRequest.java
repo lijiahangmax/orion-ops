@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,36 +17,25 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "命令模板请求")
 public class CommandTemplateRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * name
-     */
+    @ApiModelProperty(value = "模板名称")
     private String name;
 
-    /**
-     * 模板值
-     */
+    @ApiModelProperty(value = "模板值")
     private String value;
 
-    /**
-     * 命令描述
-     */
+    @ApiModelProperty(value = "模板描述")
     private String description;
 
-    /**
-     * 是否省略值
-     */
+    @ApiModelProperty(value = "是否省略值")
     private boolean omitValue;
 
 }

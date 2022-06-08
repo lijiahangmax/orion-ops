@@ -1,11 +1,13 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * app 版本控制请求
+ * 应用版本仓库请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -13,84 +15,61 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用版本仓库请求")
 public class ApplicationVcsRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * url
-     */
+    @ApiModelProperty(value = "url")
     private String url;
 
-    /**
-     * name
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 类型 1git
-     *
      * @see com.orion.ops.consts.app.VcsType
      */
+    @ApiModelProperty(value = "类型 1git")
     private Integer type;
 
     /**
-     * 状态 10未初始化 20初始化中 30正常 40失败
-     *
      * @see com.orion.ops.consts.app.VcsStatus
      */
+    @ApiModelProperty(value = "状态 10未初始化 20初始化中 30正常 40失败")
     private Integer status;
 
     /**
-     * 认证类型 10密码 20令牌
-     *
      * @see com.orion.ops.consts.app.VcsAuthType
      */
+    @ApiModelProperty(value = "认证类型 10密码 20令牌")
     private Integer authType;
 
     /**
-     * 令牌类型 10github 20gitee 30gitlab
-     *
      * @see com.orion.ops.consts.app.VcsTokenType
      */
+    @ApiModelProperty(value = "令牌类型 10github 20gitee 30gitlab")
     private Integer tokenType;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 密码
-     */
+    @ApiModelProperty(value = "密码")
     private String password;
 
-    /**
-     * 令牌
-     */
+    @ApiModelProperty(value = "令牌")
     private String privateToken;
 
-    /**
-     * 分支名称
-     */
+    @ApiModelProperty(value = "分支名称")
     private String branchName;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
 }

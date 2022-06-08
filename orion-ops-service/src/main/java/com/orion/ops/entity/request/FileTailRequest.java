@@ -1,11 +1,13 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 文件tail 请求
+ * 文件tail请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -13,67 +15,52 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "文件tail请求")
 public class FileTailRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 文件路径
-     */
+    @ApiModelProperty(value = "文件路径")
     private String path;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
     /**
-     * 文件尾部偏移行
-     *
      * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
      */
+    @ApiModelProperty(value = "文件尾部偏移行")
     private Integer offset;
 
     /**
-     * 编码集
-     *
      * @see com.orion.ops.consts.Const#UTF_8
      */
+    @ApiModelProperty(value = "编码集")
     private String charset;
 
-    /**
-     * tail 命令
-     */
+    @ApiModelProperty(value = "tail命令")
     private String command;
 
     /**
-     * 宿主机文件追踪类型 tracker/tail
-     *
      * @see com.orion.ops.consts.tail.FileTailMode
      */
+    @ApiModelProperty(value = "宿主机文件追踪类型 tracker/tail")
     private String tailMode;
 
-    /**
-     * relId
-     */
+    @ApiModelProperty(value = "relId")
     private Long relId;
 
     /**
      * @see com.orion.ops.consts.tail.FileTailType
      */
+    @ApiModelProperty(value = "类型")
     private Integer type;
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
 }

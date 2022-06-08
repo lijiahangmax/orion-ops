@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,61 +17,50 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "操作日志请求")
 public class EventLogRequest extends PageRequest {
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
     /**
-     * 事件分类
+     * @see com.orion.ops.consts.event.EventClassify
      */
+    @ApiModelProperty(value = "事件分类")
     private Integer classify;
 
     /**
-     * 事件类型
+     * @see com.orion.ops.consts.event.EventType
      */
+    @ApiModelProperty(value = "事件类型")
     private Integer type;
 
-    /**
-     * 日志信息
-     */
+    @ApiModelProperty(value = "日志信息")
     private String log;
 
-    /**
-     * 日志参数
-     */
+    @ApiModelProperty(value = "日志参数")
     private String params;
 
     /**
-     * 是否执行成功 1成功 2失败
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否执行成功 1成功 2失败")
     private Integer result;
 
-    /**
-     * 开始时间区间-开始
-     */
+    @ApiModelProperty(value = "开始时间区间-开始")
     private Date rangeStart;
 
-    /**
-     * 开始时间区间-结束
-     */
+    @ApiModelProperty(value = "开始时间区间-结束")
     private Date rangeEnd;
 
     /**
-     * 只看自己
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
 
 }

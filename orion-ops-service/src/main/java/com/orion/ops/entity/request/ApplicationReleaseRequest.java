@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,97 +18,67 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用发布请求")
 public class ApplicationReleaseRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 标题
-     */
+    @ApiModelProperty(value = "标题")
     private String title;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 构建id
-     */
+    @ApiModelProperty(value = "构建id")
     private Long buildId;
 
-    /**
-     * app机器id列表
-     */
+    @ApiModelProperty(value = "应用机器id列表")
     private List<Long> machineIdList;
 
     /**
-     * 状态
-     *
      * @see com.orion.ops.consts.app.ReleaseStatus
      */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * 是否是定时发布 10普通发布 20定时发布
-     *
      * @see com.orion.ops.consts.app.TimedType
      */
+    @ApiModelProperty(value = "是否是定时发布 10普通发布 20定时发布")
     private Integer timedRelease;
 
-    /**
-     * 定时发布时间
-     */
+    @ApiModelProperty(value = "定时发布时间")
     private Date timedReleaseTime;
 
     /**
-     * 只看自己
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
 
-    /**
-     * 发布机器id
-     */
+    @ApiModelProperty(value = "发布机器id")
     private Long releaseMachineId;
 
-    /**
-     * 发布机器id
-     */
+    @ApiModelProperty(value = "发布机器id")
     private List<Long> releaseMachineIdList;
 
-    /**
-     * id列表
-     */
+    @ApiModelProperty(value = "id列表")
     private List<Long> idList;
 
-    /**
-     * 是否查询机器
-     */
+    @ApiModelProperty(value = "是否查询机器")
     private Integer queryMachine;
 
-    /**
-     * 是否查询操作
-     */
+    @ApiModelProperty(value = "是否查询操作")
     private Integer queryAction;
 
-    /**
-     * 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
 }

@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 终端日志
+ * 终端日志请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -16,71 +18,46 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "终端日志请求")
 public class MachineTerminalLogRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * id list
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Integer machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器host
-     */
+    @ApiModelProperty(value = "机器host")
     private String machineHost;
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String accessToken;
 
-    /**
-     * 建立连接时间 开始
-     */
+    @ApiModelProperty(value = "建立连接时间-区间开始")
     private Date connectedTimeStart;
 
-    /**
-     * 建立连接时间 结束
-     */
+    @ApiModelProperty(value = "建立连接时间-区间结束")
     private Date connectedTimeEnd;
 
-    /**
-     * 断开连接时间 开始
-     */
+    @ApiModelProperty(value = "断开连接时间-区间开始")
     private Date disconnectedTimeStart;
 
-    /**
-     * 断开连接时间 结束
-     */
+    @ApiModelProperty(value = "断开连接时间-区间结束")
     private Date disconnectedTimeEnd;
 
-    /**
-     * close code
-     */
+    @ApiModelProperty(value = "close code")
     private Integer closeCode;
 
 }

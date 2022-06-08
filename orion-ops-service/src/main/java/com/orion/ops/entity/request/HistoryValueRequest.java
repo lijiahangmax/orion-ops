@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,23 +15,19 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "历史值快照请求")
 public class HistoryValueRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 值id
-     */
+    @ApiModelProperty(value = "值id")
     private Long valueId;
 
     /**
-     * 值类型
-     *
      * @see com.orion.ops.consts.history.HistoryValueType
      */
+    @ApiModelProperty(value = "值类型")
     private Integer valueType;
 
 }

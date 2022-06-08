@@ -1,32 +1,30 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * app 配置发布操作请求
+ * 应用发布操作配置请求
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/7 19:00
  */
 @Data
+@ApiModel(value = "应用发布操作配置请求")
 public class ApplicationConfigActionRequest {
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
     /**
-     * 类型
-     *
      * @see com.orion.ops.consts.app.ActionType
      */
+    @ApiModelProperty(value = "类型")
     private Integer type;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     private String command;
 
 }

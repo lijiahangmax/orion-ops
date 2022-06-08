@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,46 +12,35 @@ import lombok.Data;
  * @since 2022/5/26 16:10
  */
 @Data
+@ApiModel(value = "数据导出请求")
 public class DataExportRequest {
 
     /**
-     * 是否导出密码
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否导出密码")
     private Integer exportPassword;
 
-    /**
-     * 保护密码
-     */
+    @ApiModelProperty(value = "保护密码")
     private String protectPassword;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 分类
-     */
+    @ApiModelProperty(value = "分类")
     private Integer classify;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 状态
-     */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * 只看自己
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
 
 }

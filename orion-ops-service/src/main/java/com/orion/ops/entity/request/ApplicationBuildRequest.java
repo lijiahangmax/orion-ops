@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,65 +16,46 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用构建请求")
 public class ApplicationBuildRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 构建序列
-     */
+    @ApiModelProperty(value = "构建序列")
     private Integer seq;
 
-    /**
-     * 构建分支
-     */
+    @ApiModelProperty(value = "构建分支")
     private String branchName;
 
-    /**
-     * 构建提交id
-     */
+    @ApiModelProperty(value = "构建提交id")
     private String commitId;
 
     /**
-     * 状态 10未开始 20执行中 30已完成 40执行失败 50已取消
-     *
      * @see com.orion.ops.consts.app.BuildStatus
      */
+    @ApiModelProperty(value = "状态 10未开始 20执行中 30已完成 40执行失败 50已取消")
     private Integer status;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 只看自己
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
 
-    /**
-     * 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
 }

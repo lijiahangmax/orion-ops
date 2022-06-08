@@ -1,62 +1,47 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 提交发布单
+ * 提交发布任务请求
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/10 20:37
  */
 @Data
+@ApiModel(value = "提交发布任务请求")
 public class ApplicationReleaseSubmitRequest {
 
-    /**
-     * 标题
-     */
+    @ApiModelProperty(value = "标题")
     private String title;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 版本控制url
-     */
+    @ApiModelProperty(value = "应用版本仓库url")
     private String vcsUrl;
 
-    /**
-     * 分支
-     */
+    @ApiModelProperty(value = "分支")
     private String branchName;
 
-    /**
-     * 提交id
-     */
+    @ApiModelProperty(value = "提交id")
     private String commitId;
 
-    /**
-     * 提交message
-     */
+    @ApiModelProperty(value = "提交message")
     private String commitMessage;
 
-    /**
-     * app机器id列表
-     */
+    @ApiModelProperty(value = "app机器id列表")
     private List<Long> machineIdList;
 
 }

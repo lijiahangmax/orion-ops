@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,26 +14,19 @@ import java.util.List;
  * @since 2022/5/13 16:42
  */
 @Data
+@ApiModel(value = "批量上传请求")
 public class BatchUploadRequest {
 
-    /**
-     * 文件大小
-     */
+    @ApiModelProperty(value = "文件大小")
     private Long size;
 
-    /**
-     * 远程路径
-     */
+    @ApiModelProperty(value = "远程路径")
     private String remotePath;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private List<Long> machineIds;
 
-    /**
-     * 文件名称
-     */
+    @ApiModelProperty(value = "文件名称")
     private List<String> names;
 
 }

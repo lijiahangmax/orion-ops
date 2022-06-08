@@ -1,10 +1,12 @@
 package com.orion.ops.entity.request.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * sftp chown命令
+ * sftp 修改所有者请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,16 +14,13 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "修改所有者请求")
 public class FileChownRequest extends FileBaseRequest {
 
-    /**
-     * 路径 绝对路径
-     */
+    @ApiModelProperty(value = "绝对路径")
     private String path;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Integer uid;
 
 }
