@@ -1,93 +1,71 @@
 package com.orion.ops.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 访问终端 VO
+ * 访问终端响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/1 16:40
  */
 @Data
+@ApiModel(value = "访问终端响应")
 public class TerminalAccessVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 主机
-     */
+    @ApiModelProperty(value = "主机")
     private String host;
 
-    /**
-     * 端口
-     */
+    @ApiModelProperty(value = "端口")
     private Integer port;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * username
-     */
+    @ApiModelProperty(value = "username")
     private String username;
 
     /**
-     * 终端类型
-     *
-     * @see com.orion.remote.TerminalType
+     * @see com.orion.net.remote.TerminalType
      */
+    @ApiModelProperty(value = "终端类型")
     private String terminalType;
 
-    /**
-     * 背景色
-     */
+    @ApiModelProperty(value = "背景色")
     private String backgroundColor;
 
-    /**
-     * 字体颜色
-     */
+    @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
-    /**
-     * 字体大小
-     */
+    @ApiModelProperty(value = "字体大小")
     private Integer fontSize;
 
-    /**
-     * 字体名称
-     */
+    @ApiModelProperty(value = "字体名称")
     private String fontFamily;
 
-    /**
-     * 访问token
-     */
+    @ApiModelProperty(value = "访问token")
     private String accessToken;
 
     /**
-     * 是否开启url link 1开启 2关闭
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否开启url link 1开启 2关闭")
     private Integer enableWebLink;
 
     /**
-     * 是否开启webGL加速 1开启 2关闭
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否开启webGL加速 1开启 2关闭")
     private Integer enableWebGL;
 
 }

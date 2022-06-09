@@ -5,74 +5,55 @@ import com.orion.ops.consts.Const;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.io.FileType;
 import com.orion.utils.io.Files1;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * sftp ls 文件信息
+ * sftp 文件详情响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/23 18:36
  */
 @Data
+@ApiModel(value = "文件详情响应")
 public class FileDetailVO {
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 绝对路径
-     */
+    @ApiModelProperty(value = "绝对路径")
     private String path;
 
-    /**
-     * 大小
-     */
+    @ApiModelProperty(value = "文件大小")
     private String size;
 
-    /**
-     * 大小 byte
-     */
+    @ApiModelProperty(value = "文件大小(byte)")
     private Long sizeByte;
 
-    /**
-     * 属性
-     */
+    @ApiModelProperty(value = "属性")
     private String attr;
 
-    /**
-     * 10进制表现的8进制权限
-     */
+    @ApiModelProperty(value = "10进制表现的8进制权限")
     private Integer permission;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Integer uid;
 
-    /**
-     * 组id
-     */
+    @ApiModelProperty(value = "组id")
     private Integer gid;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date modifyTime;
 
-    /**
-     * 是否为目录
-     */
+    @ApiModelProperty(value = "是否为目录")
     private Boolean isDir;
 
-    /**
-     * 是否安全
-     */
+    @ApiModelProperty(value = "是否安全")
     private Boolean isSafe;
 
     static {

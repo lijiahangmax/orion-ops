@@ -3,78 +3,57 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 命令模板 vo
+ * 命令模板响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/9 18:29
  */
 @Data
+@ApiModel(value = "命令模板响应")
 public class CommandTemplateVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 模板名称
-     */
+    @ApiModelProperty(value = "模板名称")
     private String name;
 
-    /**
-     * 模板值
-     */
+    @ApiModelProperty(value = "模板值")
     private String value;
 
-    /**
-     * 命令描述
-     */
+    @ApiModelProperty(value = "命令描述")
     private String description;
 
-    /**
-     * 创建用户id
-     */
+    @ApiModelProperty(value = "创建用户id")
     private Long createUserId;
 
-    /**
-     * 创建用户名
-     */
+    @ApiModelProperty(value = "创建用户名")
     private String createUserName;
 
-    /**
-     * 修改用户id
-     */
+    @ApiModelProperty(value = "修改用户id")
     private Long updateUserId;
 
-    /**
-     * 修改用户名
-     */
+    @ApiModelProperty(value = "修改用户名")
     private String updateUserName;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private String createTimeAgo;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private String updateTimeAgo;
 
     static {

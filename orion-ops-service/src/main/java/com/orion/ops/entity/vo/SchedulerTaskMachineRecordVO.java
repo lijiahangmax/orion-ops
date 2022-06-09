@@ -4,96 +4,70 @@ import com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 调度机器执行明细
+ * 调度机器执行明细响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/25 14:42
  */
 @Data
+@ApiModel(value = "调度机器执行明细响应")
 public class SchedulerTaskMachineRecordVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 明细id
-     */
+    @ApiModelProperty(value = "明细id")
     private Long recordId;
 
-    /**
-     * 执行机器id
-     */
+    @ApiModelProperty(value = "执行机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     private String machineHost;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     private String command;
 
     /**
-     * 执行状态 10待调度 20调度中 30调度成功 40调度失败 50已跳过 60已停止
-     *
      * @see com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus
      */
+    @ApiModelProperty(value = "执行状态 10待调度 20调度中 30调度成功 40调度失败 50已跳过 60已停止")
     private Integer status;
 
-    /**
-     * 退出码
-     */
+    @ApiModelProperty(value = "退出码")
     private Integer exitCode;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private Date startTime;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private String startTimeAgo;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private Date endTime;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
     static {

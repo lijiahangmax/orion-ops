@@ -4,93 +4,74 @@ import com.orion.ops.entity.domain.SchedulerTaskDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.cron.Cron;
 import com.orion.utils.time.cron.CronSupport;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * 调度任务
+ * 调度任务响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/22 11:19
  */
 @Data
+@ApiModel(value = "调度任务响应")
 public class SchedulerTaskVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 任务名称
-     */
+    @ApiModelProperty(value = "任务名称")
     private String name;
 
-    /**
-     * 任务描述
-     */
+    @ApiModelProperty(value = "任务描述")
     private String description;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     private String command;
 
-    /**
-     * cron表达式
-     */
+    @ApiModelProperty(value = "cron表达式")
     private String expression;
 
     /**
-     * 启用状态 1启用 2停用
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "启用状态 1启用 2停用")
     private Integer enableStatus;
 
     /**
-     * 最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止
-     *
      * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
      */
+    @ApiModelProperty(value = "最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止")
     private Integer latelyStatus;
 
     /**
-     * 调度序列 10串行 20并行
-     *
      * @see com.orion.ops.consts.SerialType
      */
+    @ApiModelProperty(value = "调度序列 10串行 20并行")
     private Integer serializeType;
 
     /**
-     * 异常处理 10跳过所有 20跳过错误
-     *
      * @see com.orion.ops.consts.ExceptionHandlerType
      */
+    @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     private Integer exceptionHandler;
 
-    /**
-     * 上次调度时间
-     */
+    @ApiModelProperty(value = "上次调度时间")
     private Date latelyScheduleTime;
 
-    /**
-     * 执行机器id
-     */
+    @ApiModelProperty(value = "执行机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-    /**
-     * 下次执行时间
-     */
+    @ApiModelProperty(value = "下次执行时间")
     private List<Date> nextTime;
 
     static {

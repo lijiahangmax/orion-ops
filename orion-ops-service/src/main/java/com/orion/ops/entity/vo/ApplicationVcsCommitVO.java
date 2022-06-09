@@ -3,44 +3,37 @@ package com.orion.ops.entity.vo;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
 import com.orion.vcs.git.info.LogInfo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 分支提交信息
+ * 分支提交信息响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/12 17:57
  */
 @Data
+@ApiModel(value = "分支提交信息响应")
 public class ApplicationVcsCommitVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private String id;
 
-    /**
-     * 提交信息
-     */
+    @ApiModelProperty(value = "提交信息")
     private String message;
 
-    /**
-     * 提交人
-     */
+    @ApiModelProperty(value = "提交人")
     private String name;
 
-    /**
-     * 提交时间
-     */
+    @ApiModelProperty(value = "提交时间")
     private Date time;
 
-    /**
-     * 提交时间
-     */
+    @ApiModelProperty(value = "提交时间")
     private String timeAgo;
 
     static {

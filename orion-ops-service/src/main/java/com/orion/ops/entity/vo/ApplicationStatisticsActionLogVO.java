@@ -3,45 +3,39 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 应用构建统计分析操作日志
+ * 应用构建统计分析操作日志响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/29 18:07
  */
 @Data
+@ApiModel(value = "应用构建统计分析操作日志响应")
 public class ApplicationStatisticsActionLogVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 操作id
-     */
+    @ApiModelProperty(value = "操作id")
     private Long actionId;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
-     *
      * @see com.orion.ops.consts.app.ActionStatus
      */
+    @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     private Integer status;
 
-    /**
-     * 操作时长 (任何状态)
-     */
+    @ApiModelProperty(value = "操作时长 (任何状态)")
     private Long used;
 
-    /**
-     * 操作时长 (任何状态)
-     */
+    @ApiModelProperty(value = "操作时长 (任何状态)")
     private String usedInterval;
 
     static {

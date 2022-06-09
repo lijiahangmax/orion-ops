@@ -2,53 +2,42 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 秘钥vo
+ * 机器秘钥响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/5 13:44
  */
 @Data
+@ApiModel(value = "机器秘钥响应")
 public class MachineSecretKeyVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * name
-     */
+    @ApiModelProperty(value = "秘钥名称")
     private String name;
 
-    /**
-     * 路径
-     */
+    @ApiModelProperty(value = "路径")
     private String path;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
     /**
-     * 挂载状态
-     * 1 未找到
-     * 2 已挂载
-     * 3 未挂载
-     *
      * @see com.orion.ops.consts.machine.MountKeyStatus
      */
+    @ApiModelProperty(value = "挂载状态 1未找到 2已挂载 3未挂载")
     private Integer mountStatus;
 
     static {

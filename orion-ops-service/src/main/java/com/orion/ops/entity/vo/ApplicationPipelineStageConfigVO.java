@@ -2,48 +2,39 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.dto.ApplicationPipelineStageConfigDTO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 应用操作流水线配置
+ * 应用操作流水线配置响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/8 10:00
  */
 @Data
+@ApiModel(value = "应用操作流水线配置响应")
 public class ApplicationPipelineStageConfigVO {
 
-    /**
-     * 分支名称
-     */
+    @ApiModelProperty(value = "分支名称")
     private String branchName;
 
-    /**
-     * 提交id
-     */
+    @ApiModelProperty(value = "提交id")
     private String commitId;
 
-    /**
-     * 构建id
-     */
+    @ApiModelProperty(value = "构建id")
     private Long buildId;
 
-    /**
-     * 构建序列
-     */
+    @ApiModelProperty(value = "构建序列")
     private Integer buildSeq;
 
-    /**
-     * 发布机器id
-     */
+    @ApiModelProperty(value = "发布机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 发布机器
-     */
+    @ApiModelProperty(value = "发布机器")
     private List<MachineInfoVO> machineList;
 
     static {

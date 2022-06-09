@@ -3,36 +3,31 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.dto.SchedulerTaskRecordStatisticsDTO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 调度任务统计图标
+ * 调度任务统计图表响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/21 11:09
  */
 @Data
+@ApiModel(value = "调度任务统计图表响应")
 public class SchedulerTaskRecordStatisticsChartVO {
 
-    /**
-     * 日期
-     */
+    @ApiModelProperty(value = "日期")
     private String date;
 
-    /**
-     * 调度次数
-     */
+    @ApiModelProperty(value = "调度次数")
     private Integer scheduledCount;
 
-    /**
-     * 成功次数
-     */
+    @ApiModelProperty(value = "成功次数")
     private Integer successCount;
 
-    /**
-     * 失败次数
-     */
+    @ApiModelProperty(value = "失败次数")
     private Integer failureCount;
 
     static {

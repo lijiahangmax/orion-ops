@@ -1,35 +1,30 @@
 package com.orion.ops.entity.vo.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 命令提交结果vo
+ * 命令提交响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/11/18 22:25
  */
 @Data
+@ApiModel(value = "命令提交响应")
 public class CommandTaskSubmitVO {
 
-    /**
-     * 执行id
-     */
+    @ApiModelProperty(value = "执行id")
     private Long execId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     private String machineHost;
 
 }

@@ -1,45 +1,36 @@
 package com.orion.ops.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * ip 列表配置
+ * ip过滤器配置响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/15 22:09
  */
 @Data
+@ApiModel(value = "ip过滤器配置响应")
 public class IpListConfigVO {
 
-    /**
-     * 当前 ip
-     */
+    @ApiModelProperty(value = "当前ip")
     private String currentIp;
 
-    /**
-     * ip 位置
-     */
+    @ApiModelProperty(value = "当前ip位置")
     private String ipLocation;
 
-    /**
-     * ip 白名单
-     */
+    @ApiModelProperty(value = "ip白名单")
     private String whiteIpList;
 
-    /**
-     * ip 黑名单
-     */
+    @ApiModelProperty(value = "ip黑名单")
     private String blackIpList;
 
-    /**
-     * 是否启用 ip 过滤
-     */
+    @ApiModelProperty(value = "是否启用ip过滤器")
     private Boolean enableIpFilter;
 
-    /**
-     * 是否启用 ip 白名单
-     */
+    @ApiModelProperty(value = "是否启用ip白名单")
     private Boolean enableWhiteIpList;
 
 }

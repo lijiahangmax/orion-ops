@@ -4,100 +4,76 @@ import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 应用操作日志vo
+ * 应用操作日志响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/3 17:52
  */
 @Data
+@ApiModel(value = "应用操作日志响应")
 public class ApplicationActionLogVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 引用id
-     */
+    @ApiModelProperty(value = "引用id")
     private Long relId;
 
-    /**
-     * 操作id
-     */
+    @ApiModelProperty(value = "操作id")
     private Long actionId;
 
-    /**
-     * 操作名称
-     */
+    @ApiModelProperty(value = "操作名称")
     private String actionName;
 
     /**
-     * 操作类型
+     * @see com.orion.ops.consts.app.ActionType
      */
+    @ApiModelProperty(value = "操作类型")
     private Integer actionType;
 
-    /**
-     * 操作命令
-     */
+    @ApiModelProperty(value = "操作命令")
     private String actionCommand;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
-     *
      * @see com.orion.ops.consts.app.ActionStatus
      */
+    @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     private Integer status;
 
-    /**
-     * 退出码
-     */
+    @ApiModelProperty(value = "退出码")
     private Integer exitCode;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private Date startTime;
-    /**
-     * 开始时间
-     */
+
+    @ApiModelProperty(value = "开始时间")
     private String startTimeAgo;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private Date endTime;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用毫秒 ms
-     */
+    @ApiModelProperty(value = "使用毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
     static {

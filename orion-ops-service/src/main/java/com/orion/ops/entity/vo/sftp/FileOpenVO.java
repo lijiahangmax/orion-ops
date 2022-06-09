@@ -1,10 +1,12 @@
 package com.orion.ops.entity.vo.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * sftp open vo
+ * sftp 打开连接响应
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,21 +14,16 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "打开连接响应")
 public class FileOpenVO extends FileListVO {
 
-    /**
-     * 根目录
-     */
+    @ApiModelProperty(value = "根目录")
     private String home;
 
-    /**
-     * sessionToken
-     */
+    @ApiModelProperty(value = "sessionToken")
     private String sessionToken;
 
-    /**
-     * 编码格式
-     */
+    @ApiModelProperty(value = "编码格式")
     private String charset;
 
 }

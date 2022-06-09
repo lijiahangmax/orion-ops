@@ -2,53 +2,42 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 代理
+ * 机器代理响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/3 22:01
  */
 @Data
+@ApiModel(value = "机器代理响应")
 public class MachineProxyVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 主机
-     */
+    @ApiModelProperty(value = "主机")
     private String host;
 
-    /**
-     * 端口
-     */
+    @ApiModelProperty(value = "端口")
     private Integer port;
 
-    /**
-     * 代理类型
-     */
+    @ApiModelProperty(value = "代理类型")
     private Integer type;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
     static {
