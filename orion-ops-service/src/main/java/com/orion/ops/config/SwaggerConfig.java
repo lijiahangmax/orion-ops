@@ -30,7 +30,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
-@Profile({"dev"})
+@Profile({"dev", "local"})
 public class SwaggerConfig {
 
     @Bean
