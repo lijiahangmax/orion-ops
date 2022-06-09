@@ -11,7 +11,7 @@
                     :loading="loading.resumeEnableSchedulerTask"
                     checkedChildren="启用"
                     unCheckedChildren="停用"
-                    @change="changeOption($enum.SYSTEM_OPTION_KEY.RESUME_ENABLE_SCHEDULER_TASK)"/>
+                    @change="changeOption(SYSTEM_OPTION_KEY.RESUME_ENABLE_SCHEDULER_TASK)"/>
           <template #extra>
             <span class="help-text">
               开启后系统启动后会自动恢复启用的调度任务
@@ -26,7 +26,7 @@
                           placeholder="上传文件最大阈值(MB)"
                           :disabled="loading.sftpUploadThreshold"
                           :loading="loading.sftpUploadThreshold"
-                          @search="changeOption($enum.SYSTEM_OPTION_KEY.SFTP_UPLOAD_THRESHOLD)">
+                          @search="changeOption(SYSTEM_OPTION_KEY.SFTP_UPLOAD_THRESHOLD)">
             <template #enterButton>
               <a-icon type="check"/>
             </template>
@@ -45,7 +45,7 @@
                           placeholder="统计缓存有效时间"
                           :disabled="loading.statisticsCacheExpire"
                           :loading="loading.statisticsCacheExpire"
-                          @search="changeOption($enum.SYSTEM_OPTION_KEY.STATISTICS_CACHE_EXPIRE)">
+                          @search="changeOption(SYSTEM_OPTION_KEY.STATISTICS_CACHE_EXPIRE)">
             <template #enterButton>
               <a-icon type="check"/>
             </template>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import { SYSTEM_OPTION_KEY } from '@/lib/enum'
+
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 17 }
@@ -70,6 +72,7 @@ export default {
   name: 'OtherConfig',
   data() {
     return {
+      SYSTEM_OPTION_KEY,
       layout,
       option: {
         resumeEnableSchedulerTask: false,

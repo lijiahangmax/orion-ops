@@ -7,7 +7,7 @@
         <MachineChecker style="margin-left: 8px"
                         ref="machineChecker"
                         :defaultValue="machines"
-                        :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+                        :query="machineQuery">
           <template #trigger>
             <span class="span-blue pointer">已选择 {{ machines.length }} 台机器</span>
           </template>
@@ -20,16 +20,16 @@
       <div id="app-release-serial-wrapper">
         <span class="label normal-label required-label">发布序列</span>
         <a-radio-group class="ml8" v-model="releaseSerial">
-          <a-radio v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
+          <a-radio v-for="type of SERIAL_TYPE" :key="type.value" :value="type.value">
             {{ type.label }}
           </a-radio>
         </a-radio-group>
       </div>
       <!-- 异常处理 -->
-      <div id="app-release-exception-wrapper" v-show="releaseSerial === $enum.SERIAL_TYPE.SERIAL.value">
+      <div id="app-release-exception-wrapper" v-show="releaseSerial === SERIAL_TYPE.SERIAL.value">
         <span class="label normal-label required-label">异常处理</span>
         <a-radio-group class="ml8" v-model="exceptionHandler">
-          <a-tooltip v-for="type of $enum.EXCEPTION_HANDLER_TYPE" :key="type.value" :title="type.title">
+          <a-tooltip v-for="type of EXCEPTION_HANDLER_TYPE" :key="type.value" :title="type.title">
             <a-radio :value="type.value">
               {{ type.label }}
             </a-radio>
@@ -51,24 +51,24 @@
                   <a-input class="action-name-input" v-model="action.name" :maxLength="32" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
-                <div class="action-editor-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+                <div class="action-editor-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.COMMAND.value">
                   <span class="label action-label normal-label required-label">目标主机命令</span>
                   <div class="app-action-editor">
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
                   </div>
                 </div>
                 <!-- 文件传输方式 -->
-                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                <div class="action-transfer-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">文件传输方式</span>
                   <!-- 类型选择 -->
-                  <a-select :class="['transfer-input', transferMode === $enum.RELEASE_TRANSFER_MODE.SFTP.value ? 'help-input' : '']"
+                  <a-select :class="['transfer-input', transferMode === RELEASE_TRANSFER_MODE.SFTP.value ? 'help-input' : '']"
                             v-model="transferMode">
-                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_MODE" :key="type.value" :value="type.value">
+                    <a-select-option v-for="type of RELEASE_TRANSFER_MODE" :key="type.value" :value="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
                   <!-- 描述 -->
-                  <a-popover placement="top" v-if="transferMode === $enum.RELEASE_TRANSFER_MODE.SFTP.value">
+                  <a-popover placement="top" v-if="transferMode === RELEASE_TRANSFER_MODE.SFTP.value">
                     <template slot="content">
                       文件传输方式选择 SFTP 后, 当执行传输操作时, 会先删除文件传输路径再进行传输操作<br/>
                       ⚠ 这里一定要注意, 配置不正确会导致数据误删除!!!
@@ -77,7 +77,7 @@
                   </a-popover>
                 </div>
                 <!-- 文件传输路径 -->
-                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                <div class="action-transfer-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">文件传输路径</span>
                   <a-textarea class="transfer-input"
                               v-model="transferPath"
@@ -86,11 +86,11 @@
                               placeholder="目标机器产物传输绝对路径, 路径不能包含 \ 应该用 / 替换"/>
                 </div>
                 <!-- 文件传输类型 -->
-                <div class="action-transfer-wrapper" v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value">
+                <div class="action-transfer-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">文件传输类型</span>
                   <!-- 文件传输类型 -->
                   <a-select class="transfer-input help-input" v-model="transferFileType">
-                    <a-select-option v-for="type of $enum.RELEASE_TRANSFER_FILE_TYPE" :key="type.value" :value="type.value">
+                    <a-select-option v-for="type of RELEASE_TRANSFER_FILE_TYPE" :key="type.value" :value="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
@@ -106,7 +106,7 @@
                 </div>
                 <!-- scp 传输命令 -->
                 <div class="action-transfer-wrapper"
-                     v-if="action.type === $enum.RELEASE_ACTION_TYPE.TRANSFER.value && transferMode === $enum.RELEASE_TRANSFER_MODE.SCP.value">
+                     v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value && transferMode === RELEASE_TRANSFER_MODE.SCP.value">
                   <span class="label action-label normal-label required-label"> scp 传输命令</span>
                   <!-- scp 传输命令 -->
                   <a-textarea class="transfer-input help-input"
@@ -141,12 +141,12 @@
       <!-- 底部按钮 -->
       <div id="app-action-footer">
         <a-button class="app-action-footer-button" type="dashed"
-                  @click="addAction($enum.RELEASE_ACTION_TYPE.COMMAND.value)">
+                  @click="addAction(RELEASE_ACTION_TYPE.COMMAND.value)">
           添加命令操作 (发布机器执行)
         </a-button>
         <a-button class="app-action-footer-button" type="dashed"
                   v-if="visibleAddTransfer"
-                  @click="addAction($enum.RELEASE_ACTION_TYPE.TRANSFER.value)">
+                  @click="addAction(RELEASE_ACTION_TYPE.TRANSFER.value)">
           添加传输操作 (构建产物传输至发布机器)
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
@@ -156,8 +156,7 @@
 </template>
 
 <script>
-
-import _enum from '@/lib/enum'
+import { ENABLE_STATUS, EXCEPTION_HANDLER_TYPE, RELEASE_ACTION_TYPE, RELEASE_TRANSFER_FILE_TYPE, RELEASE_TRANSFER_MODE, SERIAL_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import MachineChecker from '@/components/machine/MachineChecker'
 
@@ -179,7 +178,7 @@ export default {
   },
   computed: {
     visibleAddTransfer() {
-      return this.actions.map(s => s.type).filter(t => t === this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value).length < 1
+      return this.actions.map(s => s.type).filter(t => t === RELEASE_ACTION_TYPE.TRANSFER.value).length < 1
     }
   },
   watch: {
@@ -192,16 +191,22 @@ export default {
   },
   data() {
     return {
+      RELEASE_ACTION_TYPE,
+      RELEASE_TRANSFER_MODE,
+      RELEASE_TRANSFER_FILE_TYPE,
+      SERIAL_TYPE,
+      EXCEPTION_HANDLER_TYPE,
       loading: false,
       profileId: null,
       transferPath: undefined,
-      transferMode: _enum.RELEASE_TRANSFER_MODE.SCP.value,
-      transferFileType: _enum.RELEASE_TRANSFER_FILE_TYPE.NORMAL.value,
-      releaseSerial: _enum.SERIAL_TYPE.PARALLEL.value,
-      exceptionHandler: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
+      transferMode: RELEASE_TRANSFER_MODE.SCP.value,
+      transferFileType: RELEASE_TRANSFER_FILE_TYPE.NORMAL.value,
+      releaseSerial: SERIAL_TYPE.PARALLEL.value,
+      exceptionHandler: EXCEPTION_HANDLER_TYPE.SKIP_ALL.value,
       machines: [],
       actions: [],
-      editorConfig
+      editorConfig,
+      machineQuery: { status: ENABLE_STATUS.ENABLE.value }
     }
   },
   methods: {
@@ -241,7 +246,7 @@ export default {
         name: undefined,
         visible: true
       }
-      if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === type) {
+      if (RELEASE_ACTION_TYPE.TRANSFER.value === type) {
         action.command = 'scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"'
       } else {
         action.command = ''
@@ -274,7 +279,7 @@ export default {
           this.$message.warning(`请输入操作名称 [发布操作${i + 1}]`)
           return
         }
-        if (this.$enum.RELEASE_ACTION_TYPE.COMMAND.value === action.type) {
+        if (RELEASE_ACTION_TYPE.COMMAND.value === action.type) {
           if (!action.command || !action.command.trim().length) {
             this.$message.warning(`请输入操作命令 [发布操作${i + 1}]`)
             return
@@ -282,7 +287,7 @@ export default {
             this.$message.warning(`操作命令长度不能大于2048位 [发布操作${i + 1}] 当前: ${action.command.length}`)
             return
           }
-        } else if (this.$enum.RELEASE_ACTION_TYPE.TRANSFER.value === action.type) {
+        } else if (RELEASE_ACTION_TYPE.TRANSFER.value === action.type) {
           if (!this.transferPath || !this.transferPath.trim().length) {
             this.$message.warning('传输操作 传输路径不能为空')
             return
@@ -291,7 +296,7 @@ export default {
             this.$message.warning('产物传输路径不能包含 \\ 应该用 / 替换')
             return
           }
-          if (this.$enum.RELEASE_TRANSFER_MODE.SCP.value === this.transferMode) {
+          if (RELEASE_TRANSFER_MODE.SCP.value === this.transferMode) {
             if (!action.command || !action.command.trim().length) {
               this.$message.warning('请输入 scp 传输命令')
               return

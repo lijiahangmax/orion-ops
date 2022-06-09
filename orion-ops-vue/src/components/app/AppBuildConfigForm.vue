@@ -26,7 +26,7 @@
                   <a-input class="action-name-input" v-model="action.name" :maxLength="32" placeholder="操作名称"/>
                 </div>
                 <!-- 代码块 -->
-                <div class="action-editor-wrapper" v-if="action.type === $enum.BUILD_ACTION_TYPE.COMMAND.value">
+                <div class="action-editor-wrapper" v-if="action.type === BUILD_ACTION_TYPE.COMMAND.value">
                   <span class="label normal-label required-label action-label">主机命令{{ index + 1 }}</span>
                   <div class="app-action-editor">
                     <Editor :config="editorConfig" :value="action.command" @change="(v) => action.command = v"/>
@@ -35,7 +35,7 @@
                 <div class="action-type-wrapper" v-else>
                   <span class="label normal-label action-label">操作类型</span>
                   <a-button class="action-type-name" ghost disabled>
-                    {{ $enum.valueOf($enum.BUILD_ACTION_TYPE, action.type).label }}
+                    {{ action.type | formatActionType('label') }}
                   </a-button>
                 </div>
               </div>
@@ -54,12 +54,12 @@
       <!-- 底部按钮 -->
       <div id="app-action-footer">
         <a-button class="app-action-footer-button" type="dashed"
-                  @click="addAction($enum.BUILD_ACTION_TYPE.COMMAND.value)">
+                  @click="addAction(BUILD_ACTION_TYPE.COMMAND.value)">
           添加命令操作 (宿主机执行)
         </a-button>
         <a-button class="app-action-footer-button" type="dashed"
                   v-if="visibleAddCheckout"
-                  @click="addAction($enum.BUILD_ACTION_TYPE.CHECKOUT.value)">
+                  @click="addAction(BUILD_ACTION_TYPE.CHECKOUT.value)">
           添加检出操作 (宿主机执行)
         </a-button>
         <a-button class="app-action-footer-button" type="primary" @click="save">保存</a-button>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-
+import { BUILD_ACTION_TYPE, enumValueOf } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 
 const editorConfig = {
@@ -91,7 +91,7 @@ export default {
     visibleAddCheckout() {
       return this.vcsId &&
         this.vcsId !== null &&
-        this.actions.map(s => s.type).filter(t => t === this.$enum.BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
+        this.actions.map(s => s.type).filter(t => t === BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
     }
   },
   watch: {
@@ -104,6 +104,7 @@ export default {
   },
   data() {
     return {
+      BUILD_ACTION_TYPE,
       loading: false,
       profileId: null,
       vcsId: null,
@@ -168,7 +169,7 @@ export default {
           this.$message.warning(`请输入操作名称 [构建操作${i + 1}]`)
           return
         }
-        if (this.$enum.BUILD_ACTION_TYPE.COMMAND.value === action.type) {
+        if (BUILD_ACTION_TYPE.COMMAND.value === action.type) {
           if (!action.command) {
             this.$message.warning(`请输入操作命令 [构建操作${i + 1}]`)
             return
@@ -194,6 +195,11 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    }
+  },
+  filters: {
+    formatActionType(type, f) {
+      return enumValueOf(BUILD_ACTION_TYPE, type)[f]
     }
   },
   mounted() {

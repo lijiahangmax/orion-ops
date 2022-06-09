@@ -24,10 +24,8 @@
             {{ detail.createTime | formatDate }} ({{ detail.createTimeAgo }})
           </a-descriptions-item>
           <a-descriptions-item label="状态" :span="1">
-            <a-tag
-              v-if="detail.status"
-              :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, detail.status).color">
-              {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, detail.status).label }}
+            <a-tag v-if="detail.status" :color="detail.status | formatExecStatus('color')">
+              {{ detail.status | formatExecStatus('label') }}
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.startDate" label="开始时间" :span="detail.exitCode === null ? 3 : 2">
@@ -56,6 +54,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, BATCH_EXEC_STATUS } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 
 export default {
@@ -90,7 +89,10 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatExecStatus(status, f) {
+      return enumValueOf(BATCH_EXEC_STATUS, status)[f]
+    }
   }
 }
 </script>

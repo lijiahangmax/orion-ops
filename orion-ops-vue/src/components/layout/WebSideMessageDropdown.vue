@@ -21,7 +21,9 @@
               <div class="message-item">
                 <div class="message-title-wrapper">
                   <!-- 标题 -->
-                  <span class="message-title" v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, row.classify).type, row.type).label"/>
+                  <span class="message-title">
+                    {{ row.classify | formatMessageType(row.type, 'label') }}
+                  </span>
                   <!-- 时间 -->
                   <span class="message-time" v-text="row.createTimeAgo" :title="row.createTimeString"/>
                 </div>
@@ -48,7 +50,8 @@
 </template>
 
 <script>
-import { dateFormat, replaceStainKeywords, clearStainKeywords } from '@/lib/utils'
+import { clearStainKeywords, dateFormat, replaceStainKeywords } from '@/lib/utils'
+import { enumValueOf, MESSAGE_CLASSIFY, READ_STATUS } from '@/lib/enum'
 
 export default {
   name: 'WebSideMessageDropdown',
@@ -69,7 +72,7 @@ export default {
       this.loading = true
       // 获取站内信
       this.$api.getWebSideMessageList({
-        status: this.$enum.READ_STATUS.UNREAD.value,
+        status: READ_STATUS.UNREAD.value,
         limit: 10000
       }).then(({ data }) => {
         this.rows = data.rows || []
@@ -96,7 +99,7 @@ export default {
           // 通知新消息
           for (const newMessage of newMessages) {
             setTimeout(() => {
-              const messageType = this.$enum.valueOf(this.$enum.valueOf(this.$enum.MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
+              const messageType = enumValueOf(enumValueOf(MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
               this.$notification[messageType.notify]({
                 message: messageType.label,
                 description: () => clearStainKeywords(newMessage.message),
@@ -122,11 +125,17 @@ export default {
       })
     }
   },
+  filters: {
+    formatMessageType(classify, type, f) {
+      const messageType = enumValueOf(MESSAGE_CLASSIFY, classify).type
+      return enumValueOf(messageType, type)[f]
+    }
+  },
   mounted() {
     this.pollId !== null && clearInterval(this.pollId)
     this.pollWebSideMessage()
     // 轮询
-    this.pollId = setInterval(this.pollWebSideMessage, 20000)
+    this.pollId = setInterval(this.pollWebSideMessage, 15000)
   },
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)

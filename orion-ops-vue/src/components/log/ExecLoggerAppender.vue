@@ -4,17 +4,17 @@
                  size="default"
                  :appendStyle="{height: appenderHeight}"
                  :relId="execId"
-                 :tailType="$enum.FILE_TAIL_TYPE.EXEC_LOG.value"
-                 :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
+                 :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
+                 :downloadType="FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
       <!-- 左侧工具栏 -->
       <template #left-tools>
         <div class="appender-left-tools">
           <!-- 状态 -->
-          <a-tag class="machine-exec-status" v-if="status" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, status).color">
-            {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, status).label }}
+          <a-tag class="machine-exec-status" v-if="status" :color="status | formatExecStatus('color')">
+            {{ status | formatExecStatus('label') }}
           </a-tag>
           <!-- used -->
-          <span class="mx8" title="用时" v-if="$enum.BATCH_EXEC_STATUS.COMPLETE.value === status && keepTime">
+          <span class="mx8" title="用时" v-if="BATCH_EXEC_STATUS.COMPLETE.value === status && keepTime">
             {{ `${keepTime} (${used}ms)` }}
           </span>
           <!-- exitCode -->
@@ -26,7 +26,7 @@
           <!-- 命令输入 -->
           <a-input-search class="command-write-input"
                           size="default"
-                          v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
+                          v-if="BATCH_EXEC_STATUS.RUNNABLE.value === status"
                           v-model="command"
                           placeholder="输入"
                           @search="sendCommand">
@@ -42,7 +42,7 @@
             </template>
           </a-input-search>
           <!-- 停止 -->
-          <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === status"
+          <a-popconfirm v-if="BATCH_EXEC_STATUS.RUNNABLE.value === status"
                         title="是否要停止执行?"
                         placement="bottomLeft"
                         ok-text="确定"
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { enumValueOf, BATCH_EXEC_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import LogAppender from './LogAppender'
 
 export default {
@@ -72,6 +73,9 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      BATCH_EXEC_STATUS,
       status: null,
       execId: null,
       command: null,
@@ -95,8 +99,8 @@ export default {
       // 获取状态
       await this.getStatus()
       // 检查轮询状态
-      if (this.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
-        this.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value) {
+      if (this.status === BATCH_EXEC_STATUS.WAITING.value ||
+        this.status === BATCH_EXEC_STATUS.RUNNABLE.value) {
         // 轮询状态
         this.pollId = setInterval(this.pollStatus, 2000)
       }
@@ -132,7 +136,7 @@ export default {
       })
     },
     terminate() {
-      this.status = this.$enum.BATCH_EXEC_STATUS.TERMINATED.value
+      this.status = BATCH_EXEC_STATUS.TERMINATED.value
       this.$api.terminateExecTask({
         id: this.execId
       }).then(() => {
@@ -154,10 +158,15 @@ export default {
     },
     async pollStatus() {
       await this.getStatus()
-      if (this.status !== this.$enum.BATCH_EXEC_STATUS.WAITING.value &&
-        this.status !== this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value) {
+      if (this.status !== BATCH_EXEC_STATUS.WAITING.value &&
+        this.status !== BATCH_EXEC_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
       }
+    }
+  },
+  filters: {
+    formatExecStatus(status, f) {
+      return enumValueOf(BATCH_EXEC_STATUS, status)[f]
     }
   },
   beforeDestroy() {

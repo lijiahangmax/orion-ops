@@ -40,7 +40,7 @@
   </a-modal>
 </template>
 <script>
-import { isEmptyStr, getPath } from '@/lib/utils'
+import { getPath, isEmptyStr } from '@/lib/utils'
 
 export default {
   name: 'SftpTouchModal',

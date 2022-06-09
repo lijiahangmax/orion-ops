@@ -6,8 +6,8 @@
                    size="default"
                    :appendStyle="{height: appenderHeight}"
                    :relId="id"
-                   :tailType="$enum.FILE_TAIL_TYPE.APP_ACTION_LOG.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value">
+                   :tailType="FILE_TAIL_TYPE.APP_ACTION_LOG.value"
+                   :downloadType="FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value">
         <!-- 左侧工具 -->
         <template #left-tools>
           <div class="action-log-tools">
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-
+import { ACTION_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -36,6 +36,8 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
       id: null,
       pollId: null,
       detail: {}
@@ -49,8 +51,8 @@ export default {
       }).then(({ data }) => {
         this.detail = data
         // 设置轮询状态
-        if (this.detail.status === this.$enum.ACTION_STATUS.WAIT.value ||
-          this.detail.status === this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        if (this.detail.status === ACTION_STATUS.WAIT.value ||
+          this.detail.status === ACTION_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 2000)
         }
       }).then(() => {
@@ -77,8 +79,8 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 清除状态轮询
-        if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
-          this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        if (this.detail.status !== ACTION_STATUS.WAIT.value &&
+          this.detail.status !== ACTION_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
           this.pollId = null
         }

@@ -8,7 +8,7 @@
         <!-- 指标 -->
         <a-descriptions-item v-for="metric of metrics"
                              :key="metric.type"
-                             :label="$enum.valueOf($enum.THREAD_POOL_METRICS_TYPE, metric.type).label"
+                             :label="metric.type | formatThreadType('label')"
                              :span="3">
           <div class="thread-pool-metrics-wrapper">
             <span class="metrics-label">活跃线程数: </span>
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import { enumValueOf, THREAD_POOL_METRICS_TYPE } from '@/lib/enum'
+
 export default {
   name: 'ThreadMetrics',
   data() {
@@ -59,6 +61,11 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    }
+  },
+  filters: {
+    formatThreadType(type, f) {
+      return enumValueOf(THREAD_POOL_METRICS_TYPE, type)[f]
     }
   },
   mounted() {

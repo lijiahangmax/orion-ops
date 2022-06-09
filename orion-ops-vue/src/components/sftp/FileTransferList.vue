@@ -84,9 +84,9 @@
           <div class="transfer-list-item-body">
             <!-- 类型 -->
             <div class="transfer-list-item-type">
-              <a-tag :color="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).color"
-                     :title="$enum.valueOf($enum.SFTP_TRANSFER_STATUS, item.status).label">
-                {{ $enum.valueOf($enum.SFTP_TRANSFER_TYPE, item.type).label }}
+              <a-tag :color="item.status | formatTransferStatus('color')"
+                     :title="item.status | formatTransferStatus('label')">
+                {{ item.type | formatTransferType('label') }}
               </a-tag>
             </div>
             <!-- 状态进度条 -->
@@ -184,6 +184,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
+import { enumValueOf, FILE_DOWNLOAD_TYPE, SFTP_TRANSFER_STATUS, SFTP_TRANSFER_TYPE } from '@/lib/enum'
 import RightClickMenu from '@/components/common/RightClickMenu'
 
 /**
@@ -335,7 +336,7 @@ export default {
     },
     async loadDownload(item) {
       const downloadUrl = await this.$api.getFileDownloadToken({
-        type: this.$enum.FILE_DOWNLOAD_TYPE.SFTP_DOWNLOAD.value,
+        type: FILE_DOWNLOAD_TYPE.SFTP_DOWNLOAD.value,
         id: item.id
       })
       item.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
@@ -353,6 +354,14 @@ export default {
     },
     clickTransferRightMenuItem(key) {
       transferRightMenuHandler[key].call(this)
+    }
+  },
+  filters: {
+    formatTransferType(type, f) {
+      return enumValueOf(SFTP_TRANSFER_TYPE, type)[f]
+    },
+    formatTransferStatus(status, f) {
+      return enumValueOf(SFTP_TRANSFER_STATUS, status)[f]
     }
   }
 }

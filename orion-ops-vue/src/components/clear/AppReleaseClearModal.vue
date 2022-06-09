@@ -13,14 +13,14 @@
         <!-- 清理区间 -->
         <div class="data-clear-range">
           <a-radio-group class="nowrap" v-model="submit.range">
-            <a-radio-button :value="$enum.DATA_CLEAR_RANGE.DAY.value">保留天数</a-radio-button>
-            <a-radio-button :value="$enum.DATA_CLEAR_RANGE.TOTAL.value">保留条数</a-radio-button>
-            <a-radio-button :value="$enum.DATA_CLEAR_RANGE.REL_ID.value">清理应用</a-radio-button>
+            <a-radio-button :value="DATA_CLEAR_RANGE.DAY.value">保留天数</a-radio-button>
+            <a-radio-button :value="DATA_CLEAR_RANGE.TOTAL.value">保留条数</a-radio-button>
+            <a-radio-button :value="DATA_CLEAR_RANGE.REL_ID.value">清理应用</a-radio-button>
           </a-radio-group>
         </div>
         <!-- 清理参数 -->
         <div class="data-clear-params">
-          <div class="data-clear-param" v-if="$enum.DATA_CLEAR_RANGE.DAY.value === submit.range">
+          <div class="data-clear-param" v-if="DATA_CLEAR_RANGE.DAY.value === submit.range">
             <span class="normal-label clear-label">保留天数</span>
             <a-input-number class="param-input"
                             v-model="submit.reserveDay"
@@ -28,7 +28,7 @@
                             :max="9999"
                             placeholder="清理后数据所保留的天数"/>
           </div>
-          <div class="data-clear-param" v-if="$enum.DATA_CLEAR_RANGE.TOTAL.value === submit.range">
+          <div class="data-clear-param" v-if="DATA_CLEAR_RANGE.TOTAL.value === submit.range">
             <span class="normal-label clear-label">保留条数</span>
             <a-input-number class="param-input"
                             v-model="submit.reserveTotal"
@@ -36,7 +36,7 @@
                             :max="9999"
                             placeholder="清理后数据所保留的条数"/>
           </div>
-          <div class="data-clear-param" v-if="$enum.DATA_CLEAR_RANGE.REL_ID.value === submit.range">
+          <div class="data-clear-param" v-if="DATA_CLEAR_RANGE.REL_ID.value === submit.range">
             <span class="normal-label clear-label">清理应用</span>
             <AppSelector class="param-input"
                          placeholder="请选择清理的应用"
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import _enum from '@/lib/enum'
+import { DATA_CLEAR_RANGE } from '@/lib/enum'
 import AppSelector from '@/components/app/AppSelector'
 
 export default {
@@ -74,17 +74,18 @@ export default {
   },
   data: function() {
     return {
+      DATA_CLEAR_RANGE,
       visible: false,
       loading: false,
       iCreated: true,
       iAudited: false,
       iExecute: false,
       submit: {
+        range: null,
         profileId: null,
         reserveDay: null,
         reserveTotal: null,
-        relIdList: [],
-        range: _enum.DATA_CLEAR_RANGE.DAY.value
+        relIdList: []
       }
     }
   },
@@ -97,7 +98,7 @@ export default {
       this.submit.reserveDay = null
       this.submit.reserveTotal = null
       this.submit.relIdList = []
-      this.submit.range = this.$enum.DATA_CLEAR_RANGE.DAY.value
+      this.submit.range = DATA_CLEAR_RANGE.DAY.value
       this.loading = false
       this.visible = true
     },
@@ -106,17 +107,17 @@ export default {
         this.$message.warning('请选择需要清理的环境')
         return
       }
-      if (this.submit.range === this.$enum.DATA_CLEAR_RANGE.DAY.value) {
+      if (this.submit.range === DATA_CLEAR_RANGE.DAY.value) {
         if (this.submit.reserveDay === null) {
           this.$message.warning('请输入需要保留的天数')
           return
         }
-      } else if (this.submit.range === this.$enum.DATA_CLEAR_RANGE.TOTAL.value) {
+      } else if (this.submit.range === DATA_CLEAR_RANGE.TOTAL.value) {
         if (this.submit.reserveTotal === null) {
           this.$message.warning('请输入需要保留的条数')
           return
         }
-      } else if (this.submit.range === this.$enum.DATA_CLEAR_RANGE.REL_ID.value) {
+      } else if (this.submit.range === DATA_CLEAR_RANGE.REL_ID.value) {
         if (!this.submit.relIdList.length) {
           this.$message.warning('请选择需要清理的应用')
           return

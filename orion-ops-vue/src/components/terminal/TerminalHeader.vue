@@ -13,7 +13,7 @@
         <!-- 命令输入框 -->
         <div class="terminal-command-input-wrapper">
           <a-input-search placeholder="command"
-                          :disabled="machine.status !== $enum.TERMINAL_STATUS.CONNECTED.value"
+                          :disabled="machine.status !== TERMINAL_STATUS.CONNECTED.value"
                           v-model="commandInput"
                           @search="inputCommand">
             <template #enterButton>
@@ -27,7 +27,7 @@
         <!-- 状态 -->
         <a-popconfirm placement="bottom" ok-text="确认" cancel-text="取消" @confirm="confirmStatus">
           <template #title>
-            <p v-if="machine.status === $enum.TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
+            <p v-if="machine.status === TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
           <a-badge :count="statusLabel" :number-style="statusStyle"/>
@@ -54,7 +54,7 @@
         <!-- 设置 -->
         <a-icon id="terminal-setting-icon" class="trigger-icon" title="设置" type="setting" @click="openSetting"/>
         <!-- sftp -->
-        <a-button id="sftp-trigger" :disabled="machine.status !== $enum.TERMINAL_STATUS.CONNECTED.value" type="primary" @click="openSftp">文件管理器</a-button>
+        <a-button id="sftp-trigger" :disabled="machine.status !== TERMINAL_STATUS.CONNECTED.value" type="primary" @click="openSftp">文件管理器</a-button>
       </div>
     </div>
     <!-- 事件 -->
@@ -68,7 +68,8 @@
 </template>
 
 <script>
-import { fullScreen, exitFullScreen, getSshCommand } from '@/lib/utils'
+import { exitFullScreen, fullScreen, getSshCommand } from '@/lib/utils'
+import { enumValueOf, TERMINAL_STATUS } from '@/lib/enum'
 
 import TerminalSettingModal from './TerminalSettingModal'
 
@@ -87,17 +88,18 @@ export default {
   },
   data: function() {
     return {
+      TERMINAL_STATUS,
       commandInput: '',
       isFullScreen: false
     }
   },
   computed: {
     statusLabel: function() {
-      return this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).label
+      return enumValueOf(TERMINAL_STATUS, this.machine.status).label
     },
     statusStyle: function() {
       return {
-        backgroundColor: this.$enum.valueOf(this.$enum.TERMINAL_STATUS, this.machine.status).color,
+        backgroundColor: enumValueOf(TERMINAL_STATUS, this.machine.status).color,
         cursor: 'pointer',
         boxShadow: '0 0 0 1px #D9D9D9 inset',
         'margin-right': '15px'
@@ -117,7 +119,7 @@ export default {
       this.commandInput = ''
     },
     confirmStatus() {
-      if (this.machine.status === this.$enum.TERMINAL_STATUS.CONNECTED.value) {
+      if (this.machine.status === TERMINAL_STATUS.CONNECTED.value) {
         this.$emit('disconnect')
       } else {
         this.$emit('reload')

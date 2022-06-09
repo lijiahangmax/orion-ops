@@ -13,8 +13,8 @@
               <span class="menu-item-machine-name auto-ellipsis-item">{{ machine.machineName }}</span>
               <!-- 状态 -->
               <span class="menu-item-machine-status">
-                <a-tag :color="$enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, machine.status).color">
-                  {{ $enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, machine.status).label }}
+                <a-tag :color="machine.status | formatMachineStatus('color')">
+                  {{ machine.status | formatMachineStatus('label') }}
                 </a-tag>
               </span>
             </div>
@@ -31,15 +31,15 @@
                        size="default"
                        :appendStyle="{height: appenderHeight}"
                        :relId="machine.id"
-                       :tailType="$enum.FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
-                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
+                       :tailType="FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
+                       :downloadType="FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
             <!-- 左侧工具栏 -->
             <template #left-tools>
               <div class="appender-left-tools">
                 <!-- used -->
                 <span class="mx8" title="用时"
-                      v-if="machine.keepTime && $enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value !== machine.status
-                          && $enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value !== machine.status">
+                      v-if="machine.keepTime && SCHEDULER_TASK_MACHINE_STATUS.WAIT.value !== machine.status
+                          && SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value !== machine.status">
                     {{ `${machine.keepTime} (${machine.used}ms)` }}
                 </span>
                 <!-- exitCode -->
@@ -51,7 +51,7 @@
                 <!-- 命令输入 -->
                 <a-input-search class="command-write-input"
                                 size="default"
-                                v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
+                                v-if="SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
                                 v-model="command"
                                 placeholder="输入"
                                 @search="sendCommand(machine.id)">
@@ -67,7 +67,7 @@
                   </template>
                 </a-input-search>
                 <!-- 停止 -->
-                <a-popconfirm v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
+                <a-popconfirm v-if="SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === machine.status"
                               title="是否要停止执行?"
                               placement="bottomLeft"
                               ok-text="确定"
@@ -76,7 +76,7 @@
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- 跳过 -->
-                <a-popconfirm v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value === machine.status"
+                <a-popconfirm v-if="SCHEDULER_TASK_MACHINE_STATUS.WAIT.value === machine.status"
                               title="是否要跳过执行?"
                               placement="bottomLeft"
                               ok-text="确定"
@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import { enumValueOf, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE, SCHEDULER_TASK_MACHINE_STATUS, SCHEDULER_TASK_STATUS } from '@/lib/enum'
 import LogAppender from './LogAppender'
 
 export default {
@@ -110,6 +111,9 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      SCHEDULER_TASK_MACHINE_STATUS,
       id: null,
       record: {},
       pollId: null,
@@ -140,15 +144,15 @@ export default {
       }).then(() => {
         // 打开日志
         for (const machine of this.record.machines) {
-          if (machine.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
-            machine.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value) {
+          if (machine.status !== SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
+            machine.status !== SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value) {
             this.$refs[`appender-${machine.id}`][0].openTail()
             this.openedFiles.push(machine.id)
           }
         }
       }).then(() => {
         // 设置轮询
-        if (this.record.status === this.$enum.SCHEDULER_TASK_STATUS.RUNNABLE.value) {
+        if (this.record.status === SCHEDULER_TASK_STATUS.RUNNABLE.value) {
           // 轮询状态
           this.pollId = setInterval(this.pollStatus, 2000)
         }
@@ -205,8 +209,8 @@ export default {
       })
     },
     async pollStatus() {
-      const pullIdList = this.record.machines.filter(s => s.status === this.$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value ||
-        s.status === this.$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value).map(s => s.id)
+      const pullIdList = this.record.machines.filter(s => s.status === SCHEDULER_TASK_MACHINE_STATUS.WAIT.value ||
+        s.status === SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value).map(s => s.id)
       if (pullIdList.length === 0) {
         clearInterval(this.pollId)
         this.pollId = null
@@ -231,14 +235,19 @@ export default {
           matchMachine.keepTime = status.keepTime
           // 检查打开tail
           const opened = this.openedFiles.filter(s => s === status.id).length > 0
-          if (!opened && status.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
-            status.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value) {
+          if (!opened && status.status !== SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
+            status.status !== SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value) {
             // 打开日志
             this.$refs[`appender-${status.id}`][0].openTail()
             this.openedFiles.push(status.id)
           }
         }
       })
+    }
+  },
+  filters: {
+    formatMachineStatus(status, f) {
+      return enumValueOf(SCHEDULER_TASK_MACHINE_STATUS, status)[f]
     }
   },
   beforeDestroy() {

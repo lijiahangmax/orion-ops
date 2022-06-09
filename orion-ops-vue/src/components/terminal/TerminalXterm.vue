@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { TERMINAL_STATUS } from '@/lib/enum'
 import TerminalHeader from '@/components/terminal/TerminalHeader'
 import TerminalMain from '@/components/terminal/TerminalMain'
 import MachineSftpDrawer from '@/components/sftp/MachineSftpDrawer'
@@ -120,7 +121,7 @@ export default {
       } catch (e) {
         this.loading()
         this.$message.error(e.msg || '初始化失败')
-        this.machine.status = this.$enum.TERMINAL_STATUS.ERROR.value
+        this.machine.status = TERMINAL_STATUS.ERROR.value
       }
     }
   },

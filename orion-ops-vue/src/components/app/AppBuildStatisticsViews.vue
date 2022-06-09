@@ -46,8 +46,8 @@
                         <span class="span-blue">#{{ buildRecord.seq }}</span>
                       </div>
                       <!-- 构建状态 -->
-                      <a-tag class="m0" :color="$enum.valueOf($enum.BUILD_STATUS, buildRecord.status).color">
-                        {{ $enum.valueOf($enum.BUILD_STATUS, buildRecord.status).label }}
+                      <a-tag class="m0" :color="buildRecord.status | formatBuildStatus('color')">
+                        {{ buildRecord.status | formatBuildStatus('label') }}
                       </a-tag>
                     </div>
                     <!-- 构建时间 -->
@@ -101,6 +101,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, ACTION_STATUS, BUILD_STATUS } from '@/lib/enum'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppActionLogAppenderModal from '@/components/log/AppActionLogAppenderModal'
 
@@ -154,14 +155,14 @@ export default {
     },
     getCanOpenLog(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).log
+        return enumValueOf(ACTION_STATUS, actionLog.status).log
       } else {
         return false
       }
     },
     getActionLogStyle(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).actionStyle
+        return enumValueOf(ACTION_STATUS, actionLog.status).actionStyle
       } else {
         return {
           background: '#FFD43B'
@@ -170,7 +171,7 @@ export default {
     },
     getActionLogValue(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).actionValue(actionLog)
+        return enumValueOf(ACTION_STATUS, actionLog.status).actionValue(actionLog)
       } else {
         return '未执行'
       }
@@ -180,7 +181,10 @@ export default {
     this.clean()
   },
   filters: {
-    formatDate
+    formatDate,
+    formatBuildStatus(status, f) {
+      return enumValueOf(BUILD_STATUS, status)[f]
+    }
   }
 }
 </script>

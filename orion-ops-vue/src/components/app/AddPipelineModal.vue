@@ -27,7 +27,7 @@
                 <a-input-group compact>
                   <!-- 操作类型 -->
                   <a-select style="width: 80px" v-model="detail.stageType" placeholder="请选择">
-                    <a-select-option v-for="stage of $enum.STAGE_TYPE"
+                    <a-select-option v-for="stage of STAGE_TYPE"
                                      :key="stage.value"
                                      :value="stage.value">
                       {{ stage.label }}
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { CONFIG_STATUS, STAGE_TYPE } from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 3 },
@@ -78,6 +79,7 @@ export default {
   name: 'AddPipelineModal',
   data: function() {
     return {
+      STAGE_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -131,7 +133,7 @@ export default {
       }).then(({ data }) => {
         this.loading = false
         if (data.rows && data.rows.length) {
-          this.appList = data.rows.filter(s => s.isConfig === this.$enum.CONFIG_STATUS.CONFIGURED.value)
+          this.appList = data.rows.filter(s => s.isConfig === CONFIG_STATUS.CONFIGURED.value)
         }
       }).catch(() => {
         this.loading = false
@@ -142,7 +144,7 @@ export default {
         visible: true,
         id: Date.now(),
         appId: undefined,
-        stageType: this.$enum.STAGE_TYPE.BUILD.value
+        stageType: STAGE_TYPE.BUILD.value
       })
     },
     removeOption(index) {

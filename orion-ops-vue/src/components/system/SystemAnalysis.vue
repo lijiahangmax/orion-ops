@@ -62,8 +62,8 @@
           <div class="analysis-func" v-if="analysis.tempFileCount > 0">
             <span class="clear-button"
                   title="清理"
-                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.TEMP_FILE.key]"
-                  @click="clear($enum.SYSTEM_CLEAR_TYPE.TEMP_FILE)">
+                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.TEMP_FILE.key]"
+                  @click="clear(SYSTEM_CLEAR_TYPE.TEMP_FILE)">
               清理
             </span>
           </div>
@@ -79,8 +79,8 @@
           <div class="analysis-func" v-if="analysis.logFileCount > 0">
             <span class="clear-button"
                   title="清理"
-                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.LOG_FILE.key]"
-                  @click="clear($enum.SYSTEM_CLEAR_TYPE.LOG_FILE)">
+                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.LOG_FILE.key]"
+                  @click="clear(SYSTEM_CLEAR_TYPE.LOG_FILE)">
               清理
             </span>
           </div>
@@ -96,8 +96,8 @@
           <div class="analysis-func" v-if="analysis.swapFileCount > 0">
              <span class="clear-button"
                    title="清理"
-                   v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.SWAP_FILE.key]"
-                   @click="clear($enum.SYSTEM_CLEAR_TYPE.SWAP_FILE)">
+                   v-if="visibleClean[SYSTEM_CLEAR_TYPE.SWAP_FILE.key]"
+                   @click="clear(SYSTEM_CLEAR_TYPE.SWAP_FILE)">
               清理
             </span>
           </div>
@@ -113,8 +113,8 @@
           <div class="analysis-func" v-if="analysis.distVersionCount > 0">
             <span class="clear-button"
                   title="清理"
-                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.DIST_FILE.key]"
-                  @click="clear($enum.SYSTEM_CLEAR_TYPE.DIST_FILE)">
+                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.DIST_FILE.key]"
+                  @click="clear(SYSTEM_CLEAR_TYPE.DIST_FILE)">
               清理
            </span>
           </div>
@@ -130,8 +130,8 @@
         <!--          <div class="analysis-func" v-if="analysis.vcsVersionCount > 0">-->
         <!--            <span class="clear-button"-->
         <!--                  title="清理"-->
-        <!--                  v-if="visibleClean[$enum.SYSTEM_CLEAR_TYPE.VCS_FILE.key]"-->
-        <!--                  @click="clear($enum.SYSTEM_CLEAR_TYPE.VCS_FILE)">-->
+        <!--                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.VCS_FILE.key]"-->
+        <!--                  @click="clear(SYSTEM_CLEAR_TYPE.VCS_FILE)">-->
         <!--            清理-->
         <!--           </span>-->
         <!--          </div>-->
@@ -163,6 +163,8 @@
 </template>
 
 <script>
+import { SYSTEM_CLEAR_TYPE, SYSTEM_OPTION_KEY } from '@/lib/enum'
+
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 17 }
@@ -172,6 +174,7 @@ export default {
   name: 'SystemAnalysis',
   data() {
     return {
+      SYSTEM_CLEAR_TYPE,
       layout,
       analysis: {
         mountKeyCount: 0,
@@ -232,7 +235,7 @@ export default {
       }
       this.fileCleanThresholdLoading = true
       this.$api.updateSystemOption({
-        option: this.$enum.SYSTEM_OPTION_KEY.FILE_CLEAN_THRESHOLD.value,
+        option: SYSTEM_OPTION_KEY.FILE_CLEAN_THRESHOLD.value,
         value: this.fileCleanThreshold
       }).then(() => {
         this.fileCleanThresholdLoading = false
@@ -244,7 +247,7 @@ export default {
     changeAutoClean() {
       this.autoCleanFileLoading = true
       this.$api.updateSystemOption({
-        option: this.$enum.SYSTEM_OPTION_KEY.ENABLE_AUTO_CLEAN_FILE.value,
+        option: SYSTEM_OPTION_KEY.ENABLE_AUTO_CLEAN_FILE.value,
         value: this.autoCleanFile
       }).then(() => {
         this.autoCleanFileLoading = false

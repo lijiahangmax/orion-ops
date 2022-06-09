@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { readFileBase64, getBase64Data } from '@/lib/utils'
+import { getBase64Data, readFileBase64 } from '@/lib/utils'
 
 const layout = {
   labelCol: { span: 5 },

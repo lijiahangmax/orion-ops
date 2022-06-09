@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { PIPELINE_STATUS, TIMED_TYPE } from '@/lib/enum'
 import moment from 'moment'
 
 export default {
@@ -53,8 +54,8 @@ export default {
         this.loading = false
         this.visible = false
         this.record.timedExecTime = time
-        this.record.status = this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
-        this.record.timedExec = this.$enum.TIMED_TYPE.TIMED.value
+        this.record.status = PIPELINE_STATUS.WAIT_SCHEDULE.value
+        this.record.timedExec = TIMED_TYPE.TIMED.value
         this.$emit('updated')
       }).catch(() => {
         this.loading = false

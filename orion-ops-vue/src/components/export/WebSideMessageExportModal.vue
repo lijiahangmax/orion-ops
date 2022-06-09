@@ -18,7 +18,7 @@
             <a-select class="param-input"
                       placeholder="全部"
                       @change="(e) => classify = e">
-              <a-select-option v-for="classify in $enum.MESSAGE_CLASSIFY" :key="classify.value" :value="classify.value">
+              <a-select-option v-for="classify in MESSAGE_CLASSIFY" :key="classify.value" :value="classify.value">
                 {{ classify.label }}
               </a-select-option>
             </a-select>
@@ -29,7 +29,7 @@
             <a-select class="param-input"
                       placeholder="全部"
                       @change="(e) => status = e">
-              <a-select-option v-for="readStatus in $enum.READ_STATUS" :key="readStatus.value" :value="readStatus.value">
+              <a-select-option v-for="readStatus in READ_STATUS" :key="readStatus.value" :value="readStatus.value">
                 {{ readStatus.label }}
               </a-select-option>
             </a-select>
@@ -50,11 +50,14 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
+import { MESSAGE_CLASSIFY, READ_STATUS } from '@/lib/enum'
 
 export default {
   name: 'WebSideMessageExportModal',
   data: function() {
     return {
+      MESSAGE_CLASSIFY,
+      READ_STATUS,
       visible: false,
       loading: false,
       protectPassword: undefined,

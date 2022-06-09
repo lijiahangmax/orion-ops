@@ -40,8 +40,8 @@
         </template>
         <!-- 类型 -->
         <template v-slot:type="record">
-          <a-tag class="m0" :color="$enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).color">
-            {{ $enum.valueOf($enum.HISTORY_VALUE_OPTION_TYPE, record.type).label }}
+          <a-tag class="m0" :color="record.type | formatType('color')">
+            {{ record.type | formatType('label') }}
           </a-tag>
         </template>
         <!-- 修改时间 -->
@@ -76,6 +76,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, HISTORY_VALUE_OPTION_TYPE } from '@/lib/enum'
 import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [
@@ -182,7 +183,7 @@ export default {
     rollback(record) {
       var updateValue
       switch (record.type) {
-        case this.$enum.HISTORY_VALUE_OPTION_TYPE.INSERT.value:
+        case HISTORY_VALUE_OPTION_TYPE.INSERT.value:
           updateValue = record.afterValue
           break
         default:
@@ -219,7 +220,10 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatType(status, f) {
+      return enumValueOf(HISTORY_VALUE_OPTION_TYPE, status)[f]
+    }
   }
 }
 </script>

@@ -45,17 +45,17 @@
           <a-form-model-item class="exec-form-item" label="执行标题" required>
             <a-input class="name-input" v-model="submit.title" :maxLength="32" allowClear/>
           </a-form-model-item>
-          <!-- 发布类型 -->
+          <!-- 执行类型 -->
           <a-form-model-item class="exec-form-item" label="执行类型" required>
             <a-radio-group v-model="submit.timedExec" buttonStyle="solid">
-              <a-radio-button :value="type.value" v-for="type in $enum.TIMED_TYPE" :key="type.value">
+              <a-radio-button :value="type.value" v-for="type in TIMED_TYPE" :key="type.value">
                 {{ type.execLabel }}
               </a-radio-button>
             </a-radio-group>
           </a-form-model-item>
           <!-- 调度时间 -->
           <a-form-model-item class="exec-form-item" label="调度时间"
-                             v-if="submit.timedExec === $enum.TIMED_TYPE.TIMED.value" required>
+                             v-if="submit.timedExec === TIMED_TYPE.TIMED.value" required>
             <a-date-picker v-model="submit.timedExecTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
           </a-form-model-item>
           <!-- 执行描述 -->
@@ -71,7 +71,7 @@
               <div class="pipeline-detail-wrapper">
                 <!-- 操作名称 -->
                 <div class="pipeline-stage-type span-blue">
-                  {{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}
+                  {{ detail.stageType | formatStageType('label') }}
                 </div>
                 <!-- 应用名称 -->
                 <div class="pipeline-app-name">
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import _enum from '@/lib/enum'
+import { enumValueOf, STAGE_TYPE, TIMED_TYPE } from '@/lib/enum'
 import AppPipelineExecBuildModal from '@/components/app/AppPipelineExecBuildModal'
 import AppPipelineExecReleaseModal from '@/components/app/AppPipelineExecReleaseModal'
 
@@ -136,6 +136,7 @@ export default {
   },
   data: function() {
     return {
+      TIMED_TYPE,
       selectPipelinePage: false,
       id: null,
       visible: false,
@@ -147,7 +148,7 @@ export default {
       submit: {
         title: null,
         description: null,
-        timedExec: _enum.TIMED_TYPE.NORMAL.value,
+        timedExec: null,
         timedExecTime: null
       },
       details: [],
@@ -214,11 +215,11 @@ export default {
       this.details = []
       this.submit.title = null
       this.submit.description = null
-      this.submit.timedExec = this.$enum.TIMED_TYPE.NORMAL.value
+      this.submit.timedExec = TIMED_TYPE.NORMAL.value
       this.submit.timedExecTime = null
     },
     visibleConfigDot(detail) {
-      if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value) {
+      if (detail.stageType === STAGE_TYPE.BUILD.value) {
         if (detail.vcsId) {
           return !detail.branchName
         } else {
@@ -229,7 +230,7 @@ export default {
       }
     },
     getConfigMessage(detail) {
-      if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value) {
+      if (detail.stageType === STAGE_TYPE.BUILD.value) {
         // 构建
         if (detail.vcsId) {
           if (detail.branchName) {
@@ -250,7 +251,7 @@ export default {
       }
     },
     openSetting(detail) {
-      if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value) {
+      if (detail.stageType === STAGE_TYPE.BUILD.value) {
         this.$refs.buildSetting.open(detail)
       } else {
         this.$refs.releaseSetting.open(detail)
@@ -270,7 +271,7 @@ export default {
         this.$message.warning('请输入执行标题')
         return
       }
-      if (this.submit.timedExec === this.$enum.TIMED_TYPE.TIMED.value) {
+      if (this.submit.timedExec === TIMED_TYPE.TIMED.value) {
         if (!this.submit.timedExecTime) {
           this.$message.warning('请选择调度时间')
           return
@@ -283,7 +284,7 @@ export default {
         this.submit.timedExecTime = undefined
       }
       for (const detail of this.details) {
-        if (detail.stageType === this.$enum.STAGE_TYPE.BUILD.value && detail.vcsId && !detail.branchName) {
+        if (detail.stageType === STAGE_TYPE.BUILD.value && detail.vcsId && !detail.branchName) {
           this.$message.warning(`请选择 ${detail.appName} 构建版本`)
           return
         }
@@ -317,6 +318,11 @@ export default {
     close() {
       this.visible = false
       this.loading = false
+    }
+  },
+  filters: {
+    formatStageType(type, f) {
+      return enumValueOf(STAGE_TYPE, type)[f]
     }
   }
 }

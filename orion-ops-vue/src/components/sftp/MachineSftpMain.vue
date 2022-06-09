@@ -120,8 +120,8 @@
             <template v-slot:name="record">
               <span class="file-name-cols">
                 <!-- 图标 -->
-                <a-icon :type="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).icon"
-                        :title="$enum.valueOf($enum.FILE_TYPE, record.attr.charAt(0)).label"
+                <a-icon :type="record.attr.charAt(0) | formatFileType('icon')"
+                        :title="record.attr.charAt(0) | formatFileType('label')"
                         class="file-name-cols-icon pointer"
                         @click="$copy(record.name, '已复制文件名称')"/>
                 <!-- 名称 -->
@@ -276,6 +276,7 @@
 <script>
 import { Empty } from 'ant-design-vue'
 import { getPathAnalysis } from '@/lib/utils'
+import { enumValueOf, FILE_TYPE } from '@/lib/enum'
 import { formatDate } from '@/lib/filters'
 import SftpFolderTree from './SftpFolderTree'
 import SftpTouchModal from './SftpTouchModal'
@@ -679,7 +680,10 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatFileType(type, f) {
+      return enumValueOf(FILE_TYPE, type)[f]
+    }
   }
 }
 </script>

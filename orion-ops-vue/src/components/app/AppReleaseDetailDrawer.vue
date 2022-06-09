@@ -29,16 +29,16 @@
           {{ detail.description }}
         </a-descriptions-item>
         <a-descriptions-item label="发布状态" :span="3">
-          <a-tag :color="$enum.valueOf($enum.RELEASE_STATUS, detail.status).color">
-            {{ $enum.valueOf($enum.RELEASE_STATUS, detail.status).label }}
+          <a-tag :color="detail.status | formatReleaseStatus('color')">
+            {{ detail.status | formatReleaseStatus('label') }}
           </a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="发布类型" :span="3">
-          {{ $enum.valueOf($enum.RELEASE_TYPE, detail.type).label }}
+          {{ detail.type | formatReleaseType('label') }}
           -
-          {{ $enum.valueOf($enum.SERIAL_TYPE, detail.serializer).label }}
-          <span v-if="detail.serializer === $enum.SERIAL_TYPE.SERIAL.value">
-            ({{ $enum.valueOf($enum.EXCEPTION_HANDLER_TYPE, detail.exceptionHandler).label }})
+          {{ detail.serializer | formatSerialType('label') }}
+          <span v-if="detail.serializer === SERIAL_TYPE.SERIAL.value">
+            ({{ detail.exceptionHandler | formatExceptionHandler('label') }})
           </span>
         </a-descriptions-item>
         <a-descriptions-item label="调度时间" :span="3" v-if="detail.timedReleaseTime !== null">
@@ -83,8 +83,8 @@
             <span>{{ item.machineName }}</span>
             <div>
               <a @click="$copy(item.machineHost)">{{ item.machineHost }}</a>
-              <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color" style="margin: 0 0 0 8px">
-                {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
+              <a-tag :color="item.status | formatActionStatus('color')" style="margin: 0 0 0 8px">
+                {{ item.status | formatActionStatus('label') }}
               </a-tag>
             </div>
           </a-list-item>
@@ -100,9 +100,9 @@
                 {{ item.name }}
               </a-descriptions-item>
               <a-descriptions-item label="操作类型" :span="3">
-                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.type).label }}</a-tag>
+                <a-tag>{{ item.type | formatReleaseActionType('label') }}</a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="命令" :span="3" v-if="item.type === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+              <a-descriptions-item label="命令" :span="3" v-if="item.type === RELEASE_ACTION_TYPE.COMMAND.value">
                 <a @click="preview(item.command)">预览</a>
               </a-descriptions-item>
             </a-descriptions>
@@ -119,6 +119,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, ACTION_STATUS, EXCEPTION_HANDLER_TYPE, RELEASE_ACTION_TYPE, RELEASE_STATUS, RELEASE_TYPE, SERIAL_TYPE } from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 
 export default {
@@ -128,6 +129,8 @@ export default {
   },
   data() {
     return {
+      RELEASE_ACTION_TYPE,
+      SERIAL_TYPE,
       visible: false,
       loading: true,
       pollId: null,
@@ -150,11 +153,11 @@ export default {
         this.loading = false
         this.detail = data
         // 轮询状态
-        if (data.status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
-          data.status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value ||
-          data.status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
-          data.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value ||
-          data.status === this.$enum.RELEASE_STATUS.RUNNABLE.value) {
+        if (data.status === RELEASE_STATUS.WAIT_AUDIT.value ||
+          data.status === RELEASE_STATUS.AUDIT_REJECT.value ||
+          data.status === RELEASE_STATUS.WAIT_RUNNABLE.value ||
+          data.status === RELEASE_STATUS.WAIT_SCHEDULE.value ||
+          data.status === RELEASE_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 5000)
         }
       }).catch(() => {
@@ -165,11 +168,11 @@ export default {
       if (!this.detail || !this.detail.status) {
         return
       }
-      if (this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_AUDIT.value &&
-        this.detail.status !== this.$enum.RELEASE_STATUS.AUDIT_REJECT.value &&
-        this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value &&
-        this.detail.status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value &&
-        this.detail.status !== this.$enum.RELEASE_STATUS.RUNNABLE.value) {
+      if (this.detail.status !== RELEASE_STATUS.WAIT_AUDIT.value &&
+        this.detail.status !== RELEASE_STATUS.AUDIT_REJECT.value &&
+        this.detail.status !== RELEASE_STATUS.WAIT_RUNNABLE.value &&
+        this.detail.status !== RELEASE_STATUS.WAIT_SCHEDULE.value &&
+        this.detail.status !== RELEASE_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
         this.pollId = null
         return
@@ -212,7 +215,25 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatReleaseStatus(status, f) {
+      return enumValueOf(RELEASE_STATUS, status)[f]
+    },
+    formatReleaseType(type, f) {
+      return enumValueOf(RELEASE_TYPE, type)[f]
+    },
+    formatSerialType(type, f) {
+      return enumValueOf(SERIAL_TYPE, type)[f]
+    },
+    formatExceptionHandler(type, f) {
+      return enumValueOf(EXCEPTION_HANDLER_TYPE, type)[f]
+    },
+    formatReleaseActionType(status, f) {
+      return enumValueOf(RELEASE_ACTION_TYPE, status)[f]
+    },
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
+    }
   }
 }
 </script>

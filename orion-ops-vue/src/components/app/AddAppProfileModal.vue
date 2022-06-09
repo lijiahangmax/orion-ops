@@ -17,7 +17,7 @@
         </a-form-item>
         <a-form-item label="是否需要审核">
           <a-select v-decorator="decorators.releaseAudit">
-            <a-select-option :value="type.value" v-for="type in $enum.PROFILE_AUDIT_STATUS" :key="type.value">
+            <a-select-option :value="type.value" v-for="type in PROFILE_AUDIT_STATUS" :key="type.value">
               {{ type.label }}
             </a-select-option>
           </a-select>
@@ -31,8 +31,8 @@
 </template>
 
 <script>
-
 import { pick } from 'lodash'
+import { PROFILE_AUDIT_STATUS } from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -79,6 +79,7 @@ export default {
   name: 'AddAppProfileModal',
   data: function() {
     return {
+      PROFILE_AUDIT_STATUS,
       id: null,
       visible: false,
       title: null,

@@ -19,7 +19,7 @@
               <!-- 流水线操作 -->
               <div class="app-pipeline-details" v-for="(detail, index) of view.details" :key="detail.id">
                 <div :class="['app-pipeline-details-name', index % 2 === 0 ? 'app-pipeline-details-name-theme1' : 'app-pipeline-details-name-theme2']">
-                  <span class="span-blue mr4">{{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}</span>
+                  <span class="span-blue mr4">{{ detail.stageType | formatStageType('label') }}</span>
                   <span>{{ detail.appName }}</span>
                 </div>
                 <div :class="['app-pipeline-details-avg', index % 2 === 0 ? 'app-pipeline-details-avg-theme1' : 'app-pipeline-details-avg-theme2']">
@@ -44,8 +44,8 @@
                       <span class="span-blue">{{ pipelineTask.title }}</span>
                     </div>
                     <!-- 流水线状态 -->
-                    <a-tag class="m0" :color="$enum.valueOf($enum.PIPELINE_STATUS, pipelineTask.status).color">
-                      {{ $enum.valueOf($enum.PIPELINE_STATUS, pipelineTask.status).label }}
+                    <a-tag class="m0" :color="pipelineTask.status | formatPipelineStatus('color')">
+                      {{ pipelineTask.status | formatPipelineStatus('label') }}
                     </a-tag>
                   </div>
                   <!-- 流水线时间 -->
@@ -66,9 +66,9 @@
                     </div>
                     <!-- 可打开日志 -->
                     <a v-else target="_blank"
-                       :title="`点击查看${$enum.valueOf($enum.STAGE_TYPE, detailLog.stageType).label}日志`"
-                       :href="`#/app/${$enum.valueOf($enum.STAGE_TYPE, detailLog.stageType).symbol}/log/view/${detailLog.relId}`"
-                       @click="openLogView($event,$enum.valueOf($enum.STAGE_TYPE, detailLog.stageType).symbol, detailLog.relId)">
+                       :title="`点击查看${enumValueOf(STAGE_TYPE, detailLog.stageType).label}日志`"
+                       :href="`#/app/${enumValueOf(STAGE_TYPE, detailLog.stageType).symbol}/log/view/${detailLog.relId}`"
+                       @click="openLogView($event, enumValueOf(STAGE_TYPE, detailLog.stageType).symbol, detailLog.relId)">
                       <div class="app-pipeline-detail-log-detail"
                            :style="getDetailLogStyle(detailLog)"
                            v-text="getDetailLogValue(detailLog)">
@@ -98,6 +98,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, PIPELINE_DETAIL_STATUS, PIPELINE_STATUS, STAGE_TYPE } from '@/lib/enum'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 
@@ -109,12 +110,14 @@ export default {
   },
   data() {
     return {
+      STAGE_TYPE,
       loading: false,
       initialized: false,
       view: {}
     }
   },
   methods: {
+    enumValueOf,
     async init(pipelineId) {
       this.loading = true
       this.initialized = false
@@ -149,14 +152,14 @@ export default {
     },
     getCanOpenLog(detailLog) {
       if (detailLog) {
-        return this.$enum.valueOf(this.$enum.PIPELINE_DETAIL_STATUS, detailLog.status).log
+        return enumValueOf(PIPELINE_DETAIL_STATUS, detailLog.status).log
       } else {
         return false
       }
     },
     getDetailLogStyle(detailLog) {
       if (detailLog) {
-        return this.$enum.valueOf(this.$enum.PIPELINE_DETAIL_STATUS, detailLog.status).actionStyle
+        return enumValueOf(PIPELINE_DETAIL_STATUS, detailLog.status).actionStyle
       } else {
         return {
           background: '#FFD43B'
@@ -165,7 +168,7 @@ export default {
     },
     getDetailLogValue(detailLog) {
       if (detailLog) {
-        return this.$enum.valueOf(this.$enum.PIPELINE_DETAIL_STATUS, detailLog.status).actionValue(detailLog)
+        return enumValueOf(PIPELINE_DETAIL_STATUS, detailLog.status).actionValue(detailLog)
       } else {
         return '未执行'
       }
@@ -175,7 +178,13 @@ export default {
     this.clean()
   },
   filters: {
-    formatDate
+    formatDate,
+    formatStageType(type, f) {
+      return enumValueOf(STAGE_TYPE, type)[f]
+    },
+    formatPipelineStatus(status, f) {
+      return enumValueOf(PIPELINE_STATUS, status)[f]
+    }
   }
 }
 </script>

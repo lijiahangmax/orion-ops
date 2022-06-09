@@ -7,7 +7,7 @@
           <a-step :key="action.id"
                   :title="action.actionName"
                   :subTitle="action.used ? `${action.used}ms` : ''">
-            <template v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value" #icon>
+            <template v-if="action.status === ACTION_STATUS.RUNNABLE.value" #icon>
               <a-icon type="loading"/>
             </template>
           </a-step>
@@ -20,8 +20,8 @@
                    size="default"
                    :appendStyle="{height: appenderHeight}"
                    :relId="id"
-                   :tailType="$enum.FILE_TAIL_TYPE.APP_BUILD_LOG.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_BUILD_LOG.value">
+                   :tailType="FILE_TAIL_TYPE.APP_BUILD_LOG.value"
+                   :downloadType="FILE_DOWNLOAD_TYPE.APP_BUILD_LOG.value">
         <!-- 左侧工具 -->
         <template #left-tools>
           <div class="build-log-tools">
@@ -37,7 +37,7 @@
             <!-- 命令输入 -->
             <a-input-search class="command-write-input"
                             size="default"
-                            v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+                            v-if="BUILD_STATUS.RUNNABLE.value === detail.status"
                             v-model="command"
                             placeholder="输入"
                             @search="sendCommand">
@@ -53,7 +53,7 @@
               </template>
             </a-input-search>
             <!-- 停止 -->
-            <a-popconfirm v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+            <a-popconfirm v-if="BUILD_STATUS.RUNNABLE.value === detail.status"
                           title="是否要停止执行?"
                           placement="bottomLeft"
                           ok-text="确定"
@@ -62,7 +62,7 @@
               <a-button icon="close">停止</a-button>
             </a-popconfirm>
             <!-- 下载 -->
-            <div class="download-bundle-wrapper" v-if="detail.status === $enum.BUILD_STATUS.FINISH.value">
+            <div class="download-bundle-wrapper" v-if="detail.status === BUILD_STATUS.FINISH.value">
               <a-button v-if="!downloadUrl" icon="link" size="small" @click="loadDownloadUrl">获取产物链接</a-button>
               <a target="_blank" :href="downloadUrl" @click="clearDownloadUrl" v-else>
                 <a-button icon="download">下载产物</a-button>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-
+import { enumValueOf, ACTION_STATUS, BUILD_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -91,13 +91,17 @@ export default {
   computed: {
     stepStatus() {
       if (this.detail.status) {
-        return this.$enum.valueOf(this.$enum.BUILD_STATUS, this.detail.status).stepStatus
+        return enumValueOf(BUILD_STATUS, this.detail.status).stepStatus
       }
       return null
     }
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      BUILD_STATUS,
+      ACTION_STATUS,
       id: null,
       current: 0,
       detail: {},
@@ -116,8 +120,8 @@ export default {
         this.detail = data
         this.setStepsCurrent()
         // 设置轮询状态
-        if (this.detail.status === this.$enum.BUILD_STATUS.WAIT.value ||
-          this.detail.status === this.$enum.BUILD_STATUS.RUNNABLE.value) {
+        if (this.detail.status === BUILD_STATUS.WAIT.value ||
+          this.detail.status === BUILD_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 2000)
         }
       }).then(() => {
@@ -146,8 +150,8 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 清除状态轮询
-        if (this.detail.status !== this.$enum.BUILD_STATUS.WAIT.value &&
-          this.detail.status !== this.$enum.BUILD_STATUS.RUNNABLE.value) {
+        if (this.detail.status !== BUILD_STATUS.WAIT.value &&
+          this.detail.status !== BUILD_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
           this.pollId = null
         }
@@ -191,7 +195,7 @@ export default {
       let curr = len - 1
       for (let i = 0; i < len; i++) {
         const status = this.detail.actions[i].status
-        if (status !== this.$enum.ACTION_STATUS.FINISH.value) {
+        if (status !== ACTION_STATUS.FINISH.value) {
           curr = i
           break
         }
@@ -201,7 +205,7 @@ export default {
     async loadDownloadUrl() {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: this.$enum.FILE_DOWNLOAD_TYPE.APP_BUILD_BUNDLE.value,
+          type: FILE_DOWNLOAD_TYPE.APP_BUILD_BUNDLE.value,
           id: this.id
         })
         this.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })

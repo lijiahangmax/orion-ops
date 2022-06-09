@@ -28,7 +28,7 @@
         <a-timeline style="margin-top: 16px">
           <a-timeline-item v-for="detail of record.details" :key="detail.id">
             <!-- 操作 -->
-            <span class="mr4 span-blue">{{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}</span>
+            <span class="mr4 span-blue">{{ detail.stageType | formatStageType('label') }}</span>
             <!-- 应用名称 -->
             <span>{{ detail.appName }}</span>
           </a-timeline-item>
@@ -40,6 +40,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, STAGE_TYPE } from '@/lib/enum'
 
 export default {
   name: 'AppPipelineDetailViewDrawer',
@@ -69,7 +70,10 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatStageType(status, f) {
+      return enumValueOf(STAGE_TYPE, status)[f]
+    }
   }
 }
 </script>

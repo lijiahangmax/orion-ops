@@ -2,12 +2,12 @@
   <div class="app-release-container">
     <!-- 步骤 -->
     <div class="app-release-steps">
-      <a-steps :current="current" :status="$enum.valueOf($enum.ACTION_STATUS, detail.status).stepStatus">
+      <a-steps :current="current" :status="detail.status | formatActionStatus('stepStatus')">
         <template v-for="action in detail.actions">
           <a-step :key="action.id"
                   :title="action.actionName"
                   :subTitle="action.used ? `${action.used}ms` : ''">
-            <template v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value" #icon>
+            <template v-if="action.status === ACTION_STATUS.RUNNABLE.value" #icon>
               <a-icon type="loading"/>
             </template>
           </a-step>
@@ -20,8 +20,8 @@
                    size="default"
                    :appendStyle="{height: appenderHeight}"
                    :relId="id"
-                   :tailType="$enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
+                   :tailType="FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
+                   :downloadType="FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
         <!-- 左侧工具 -->
         <template #left-tools>
           <div class="machine-log-tools">
@@ -34,7 +34,7 @@
             <!-- 命令输入 -->
             <a-input-search class="command-write-input"
                             size="default"
-                            v-if="$enum.BUILD_STATUS.RUNNABLE.value === detail.status"
+                            v-if="ACTION_STATUS.RUNNABLE.value === detail.status"
                             v-model="command"
                             placeholder="输入"
                             @search="sendCommand">
@@ -50,7 +50,7 @@
               </template>
             </a-input-search>
             <!-- 停止 -->
-            <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === detail.status"
+            <a-popconfirm v-if="ACTION_STATUS.RUNNABLE.value === detail.status"
                           title="是否要停止执行?"
                           placement="bottomLeft"
                           ok-text="确定"
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-
+import { enumValueOf, ACTION_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -80,6 +80,9 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      ACTION_STATUS,
       id: null,
       current: 0,
       detail: {},
@@ -97,8 +100,8 @@ export default {
         this.detail = data
         this.setStepsCurrent()
         // 设置轮询状态
-        if (this.detail.status === this.$enum.ACTION_STATUS.WAIT.value ||
-          this.detail.status === this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        if (this.detail.status === ACTION_STATUS.WAIT.value ||
+          this.detail.status === ACTION_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 2000)
         }
       }).then(() => {
@@ -147,8 +150,8 @@ export default {
       }).then(({ data }) => {
         this.detail.status = data.status
         // 清除状态轮询
-        if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
-          this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        if (this.detail.status !== ACTION_STATUS.WAIT.value &&
+          this.detail.status !== ACTION_STATUS.RUNNABLE.value) {
           clearInterval(this.pollId)
           this.pollId = null
         }
@@ -171,12 +174,17 @@ export default {
       let curr = len - 1
       for (let i = 0; i < len; i++) {
         const status = this.detail.actions[i].status
-        if (status !== this.$enum.ACTION_STATUS.FINISH.value) {
+        if (status !== ACTION_STATUS.FINISH.value) {
           curr = i
           break
         }
       }
       this.current = curr
+    }
+  },
+  filters: {
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
     }
   },
   beforeDestroy() {

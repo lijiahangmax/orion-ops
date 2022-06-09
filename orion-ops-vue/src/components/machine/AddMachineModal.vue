@@ -40,7 +40,7 @@
             <a-form-item label="认证方式" style="margin-bottom: 0">
               <a-form-item style="display: inline-block; width: 30%">
                 <a-select v-decorator="decorators.authType">
-                  <a-select-option :value="type.value" v-for="type in $enum.MACHINE_AUTH_TYPE" :key="type.value">
+                  <a-select-option :value="type.value" v-for="type in MACHINE_AUTH_TYPE" :key="type.value">
                     {{ type.label }}
                   </a-select-option>
                 </a-select>
@@ -58,8 +58,8 @@
                 <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
                   <div class="proxy-select-option">
                     <span>{{ proxy.host }}:{{ proxy.port }}</span>
-                    <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).color">
-                      {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).label }}
+                    <a-tag :color="proxy.type | formatProxyType('color')">
+                      {{ proxy.type | formatProxyType('label') }}
                     </a-tag>
                   </div>
                 </a-select-option>
@@ -85,8 +85,8 @@
 
 <script>
 import { pick } from 'lodash'
+import { enumValueOf, MACHINE_AUTH_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
 import { validatePort } from '@/lib/validate'
-import _enum from '@/lib/enum'
 import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 
 const layout = {
@@ -132,7 +132,7 @@ function getDecorators() {
       }]
     }],
     authType: ['authType', {
-      initialValue: _enum.MACHINE_AUTH_TYPE.KEY.value
+      initialValue: MACHINE_AUTH_TYPE.KEY.value
     }],
     password: ['password', {
       rules: [{
@@ -159,6 +159,7 @@ export default {
   },
   data: function() {
     return {
+      MACHINE_AUTH_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -270,6 +271,11 @@ export default {
     close() {
       this.visible = false
       this.loading = false
+    }
+  },
+  filters: {
+    formatProxyType(type, f) {
+      return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
     }
   },
   mounted() {

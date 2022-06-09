@@ -19,7 +19,7 @@
           <a-form-item label="角色">
             <a-select :disabled="true" :value="user.role">
               <a-select-option :value="user.role" v-if="user.role">
-                {{ $enum.valueOf($enum.ROLE_TYPE, user.role).label }}
+                {{ user.role | formatRoleType('label') }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -40,9 +40,9 @@
 </template>
 
 <script>
-
 import { pick } from 'lodash'
 import { readFileBase64 } from '@/lib/utils'
+import { enumValueOf, ROLE_TYPE } from '@/lib/enum'
 
 const userFormLayout = {
   labelCol: { span: 4 },
@@ -148,6 +148,11 @@ export default {
         this.$message.error('上传失败')
       })
       return false
+    }
+  },
+  filters: {
+    formatRoleType(type, f) {
+      return enumValueOf(ROLE_TYPE, type)[f]
     }
   },
   mounted() {
