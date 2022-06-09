@@ -27,7 +27,7 @@
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.value" v-for="status in $enum.ENABLE_STATUS" :key="status.value">
+                <a-select-option :value="status.value" v-for="status in ENABLE_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -116,8 +116,8 @@
         <!-- 状态 -->
         <template v-slot:status="record">
           <a-badge v-if="record.status"
-                   :status='$enum.valueOf($enum.ENABLE_STATUS, record.status).status'
-                   :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+                   :status="record.status | formatEnableStatus('status')"
+                   :text="record.status | formatEnableStatus('label')"/>
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
@@ -131,7 +131,7 @@
                       type="link"
                       style="height: 22px"
                       :disabled="record.id === 1">
-              {{ $enum.valueOf($enum.ENABLE_STATUS, record.status === 1 ? 2 : 1).label }}
+              {{ (record.status === 1 ? 2 : 1) | formatEnableStatus('label') }}
             </a-button>
           </a-popconfirm>
           <a-divider type="vertical"/>
@@ -162,7 +162,8 @@
           </a>
           <a-divider type="vertical"/>
           <a-dropdown>
-            <a class="ant-dropdown-link">更多
+            <a class="ant-dropdown-link">
+              更多
               <a-icon type="down"/>
             </a>
             <template #overlay>
@@ -200,7 +201,7 @@
       <!-- 导出模态框 -->
       <MachineExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE"/>
+      <DataImportModal ref="import" :importType="importType"/>
       <!-- 终端模态框 -->
       <div v-if="openTerminalArr.length">
         <TerminalModal v-for="openTerminal of openTerminalArr"
@@ -232,6 +233,7 @@
 
 <script>
 import { getSshCommand } from '@/lib/utils'
+import { enumValueOf, ENABLE_STATUS, IMPORT_TYPE } from '@/lib/enum'
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
@@ -377,6 +379,7 @@ export default {
   },
   data() {
     return {
+      ENABLE_STATUS,
       rows: [],
       query: {
         name: null,
@@ -397,7 +400,8 @@ export default {
       loading: false,
       selectedRowKeys: [],
       openTerminalArr: [],
-      minimizeTerminalArr: []
+      minimizeTerminalArr: [],
+      importType: IMPORT_TYPE.MACHINE
     }
   },
   computed: {
@@ -542,6 +546,11 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getList({})
+    }
+  },
+  filters: {
+    formatEnableStatus(status, f) {
+      return enumValueOf(ENABLE_STATUS, status)[f]
     }
   },
   mounted() {

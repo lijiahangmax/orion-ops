@@ -27,7 +27,7 @@
           <a-col :span="4">
             <a-form-model-item label="角色" prop="role">
               <a-select v-model="query.role" placeholder="全部" allowClear>
-                <a-select-option v-for="role in $enum.ROLE_TYPE"
+                <a-select-option v-for="role in ROLE_TYPE"
                                  :value="role.value"
                                  :key="role.value">
                   {{ role.label }}
@@ -95,13 +95,12 @@
         </template>
         <!-- 角色 -->
         <template v-slot:role="record">
-          <span>{{ $enum.valueOf($enum.ROLE_TYPE, record.role).label }}</span>
+          <span>{{ record.role | formatRoleType('label') }}</span>
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-badge
-            :status='$enum.valueOf($enum.ENABLE_STATUS, record.status).status'
-            :text="$enum.valueOf($enum.ENABLE_STATUS, record.status).label"/>
+          <a-badge :status="record.status | formatEnableStatus('status')"
+                   :text="record.status | formatEnableStatus('label')"/>
         </template>
         <!-- 登陆时间 -->
         <template v-slot:lastLoginTime="record">
@@ -165,6 +164,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { ENABLE_STATUS, enumValueOf, ROLE_TYPE } from '@/lib/enum'
 import ResetPassword from '@/components/user/ResetPassword'
 import AddUserModal from '@/components/user/AddUserModal'
 
@@ -257,6 +257,7 @@ export default {
   },
   data() {
     return {
+      ROLE_TYPE,
       query: {
         username: null,
         nickname: null,
@@ -343,7 +344,13 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatEnableStatus(status, f) {
+      return enumValueOf(ENABLE_STATUS, status)[f]
+    },
+    formatRoleType(type, f) {
+      return enumValueOf(ROLE_TYPE, type)[f]
+    }
   },
   mounted() {
     this.getList({})

@@ -93,13 +93,14 @@
       <!-- 导出模态框 -->
       <CommandTemplateExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.COMMAND_TEMPLATE"/>
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
 <script>
 import { formatDate } from '@/lib/filters'
+import { IMPORT_TYPE } from '@/lib/enum'
 import AddTemplateModal from '@/components/template/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
 import CommandTemplateExportModal from '@/components/export/CommandTemplateExportModal'
@@ -192,6 +193,7 @@ export default {
       },
       loading: false,
       selectedRowKeys: [],
+      importType: IMPORT_TYPE.COMMAND_TEMPLATE,
       columns
     }
   },

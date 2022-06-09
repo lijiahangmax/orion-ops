@@ -11,7 +11,7 @@
         <div class="upload-machine-checker-container">
           <span class="normal-label upload-label">上传机器</span>
           <div class="machine-checker-wrapper">
-            <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+            <MachineChecker ref="machineChecker" :query="machineQuery">
               <template #trigger>
                 <span class="span-blue pointer">已选择 {{ machineIdList.length }} 台机器</span>
               </template>
@@ -210,7 +210,7 @@
 </template>
 
 <script>
-import _enum from '@/lib/enum'
+import { BATCH_UPLOAD_STATUS, ENABLE_STATUS } from '@/lib/enum'
 import MachineChecker from '@/components/machine/MachineChecker'
 
 export default {
@@ -221,12 +221,15 @@ export default {
       machineIdList: [],
       remotePath: '',
       fileList: [],
-      status: _enum.BATCH_UPLOAD_STATUS.WAIT,
+      status: BATCH_UPLOAD_STATUS.WAIT,
       checkData: null,
       notifyClient: null,
       token: null,
       fileTokenList: [],
-      transferList: []
+      transferList: [],
+      machineQuery: {
+        status: ENABLE_STATUS.ENABLE.value
+      }
     }
   },
   methods: {
@@ -268,7 +271,7 @@ export default {
         return
       }
       const size = this.fileList.map(s => s.size).reduce((t, v) => t + v, 0)
-      this.status = this.$enum.BATCH_UPLOAD_STATUS.CHECKING
+      this.status = BATCH_UPLOAD_STATUS.CHECKING
 
       try {
         const { data } = await this.$api.checkBatchUploadFiles({
@@ -279,22 +282,22 @@ export default {
         })
         this.checkData = data
         if (!this.checkData.connectedMachineIdList.length) {
-          this.status = this.$enum.BATCH_UPLOAD_STATUS.NO_AVAILABLE
+          this.status = BATCH_UPLOAD_STATUS.NO_AVAILABLE
           return
         }
         if (this.checkData.notConnectedMachines.length || this.checkData.machinePresentFiles.length) {
-          this.status = this.$enum.BATCH_UPLOAD_STATUS.WAIT_UPLOAD
+          this.status = BATCH_UPLOAD_STATUS.WAIT_UPLOAD
           return
         }
       } catch {
-        this.status = this.$enum.BATCH_UPLOAD_STATUS.ERROR
+        this.status = BATCH_UPLOAD_STATUS.ERROR
         return
       }
       // 开始上传
       await this.startUpload()
     },
     async startUpload() {
-      this.status = this.$enum.BATCH_UPLOAD_STATUS.REQUESTING
+      this.status = BATCH_UPLOAD_STATUS.REQUESTING
       try {
         this.notifyClient = null
         this.token = null
@@ -309,7 +312,7 @@ export default {
           this.execUploadFile()
         }, 600)
       } catch {
-        this.status = this.$enum.BATCH_UPLOAD_STATUS.ERROR
+        this.status = BATCH_UPLOAD_STATUS.ERROR
       }
     },
     async getUploadToken() {
@@ -377,10 +380,10 @@ export default {
       this.$api.execBatchUpload(formData).then(({ data }) => {
         this.$message.success('已提交至传输列表')
         this.fileTokenList = data
-        this.status = this.$enum.BATCH_UPLOAD_STATUS.UPLOADING
+        this.status = BATCH_UPLOAD_STATUS.UPLOADING
       }).catch(() => {
         this.$message.error('上传失败')
-        this.status = this.$enum.BATCH_UPLOAD_STATUS.ERROR
+        this.status = BATCH_UPLOAD_STATUS.ERROR
       })
     },
     abortUpload() {
@@ -390,7 +393,7 @@ export default {
       this.token = null
       this.fileTokenList = []
       this.transferList = []
-      this.status = this.$enum.BATCH_UPLOAD_STATUS.WAIT
+      this.status = BATCH_UPLOAD_STATUS.WAIT
     },
     formatMachine(machineId) {
       const filterMachines = this.checkData.connectedMachines.filter(s => s.id === machineId)

@@ -18,7 +18,7 @@
             <a-form-model-item label="分类" prop="classify">
               <a-input-group compact>
                 <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
-                  <a-select-option :value="classify.value" v-for="classify in $enum.EVENT_CLASSIFY" :key="classify.value">
+                  <a-select-option :value="classify.value" v-for="classify in EVENT_CLASSIFY" :key="classify.value">
                     {{ classify.label }}
                   </a-select-option>
                 </a-select>
@@ -102,7 +102,7 @@
 <script>
 import { replaceStainKeywords } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
-import _enum from '@/lib/enum'
+import { enumValueOf, EVENT_CLASSIFY } from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogClearModal from '@/components/clear/EventLogClearModal'
@@ -118,6 +118,7 @@ export default {
   },
   data() {
     return {
+      EVENT_CLASSIFY,
       loading: false,
       rows: [],
       query: {
@@ -148,7 +149,7 @@ export default {
   watch: {
     'query.classify'(e) {
       if (e) {
-        const classify = this.$enum.valueOf(this.$enum.EVENT_CLASSIFY, e)
+        const classify = enumValueOf(EVENT_CLASSIFY, e)
         if (!classify) {
           return
         }
@@ -240,14 +241,14 @@ export default {
   filters: {
     formatDate,
     filterClassify(origin) {
-      return _enum.valueOf(_enum.EVENT_CLASSIFY, origin).label
+      return enumValueOf(EVENT_CLASSIFY, origin).label
     },
     filterType(origin, classify) {
-      const _classify = _enum.valueOf(_enum.EVENT_CLASSIFY, classify)
+      const _classify = enumValueOf(EVENT_CLASSIFY, classify)
       if (!_classify) {
         return null
       }
-      return _enum.valueOf(_classify.type, origin).label
+      return enumValueOf(_classify.type, origin).label
     }
   },
   mounted() {

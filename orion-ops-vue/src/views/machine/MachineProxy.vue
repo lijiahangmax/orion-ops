@@ -27,7 +27,7 @@
           <a-col :span="4">
             <a-form-model-item label="代理类型" prop="type">
               <a-select v-model="query.type" placeholder="全部" allowClear>
-                <a-select-option :value="type.value" v-for="type in $enum.MACHINE_PROXY_TYPE" :key="type.value">
+                <a-select-option :value="type.value" v-for="type in MACHINE_PROXY_TYPE" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
               </a-select>
@@ -81,8 +81,8 @@
         </template>
         <!-- 类型 -->
         <template v-slot:type="record">
-          <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).color">
-            {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, record.type).label }}
+          <a-tag :color="record.type | formatProxyType('color')">
+            {{ record.type | formatProxyType('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
@@ -108,12 +108,13 @@
       <!-- 导出模态框 -->
       <MachineProxyExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.MACHINE_PROXY"/>
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
 <script>
+import { enumValueOf, IMPORT_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
 import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
 import MachineProxyExportModal from '@/components/export/MachineProxyExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
@@ -174,6 +175,7 @@ export default {
   },
   data: function() {
     return {
+      MACHINE_PROXY_TYPE,
       query: {
         host: null,
         port: null,
@@ -192,6 +194,7 @@ export default {
       },
       loading: false,
       selectedRowKeys: [],
+      importType: IMPORT_TYPE.MACHINE_PROXY,
       columns
     }
   },
@@ -237,6 +240,11 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getList({})
+    }
+  },
+  filters: {
+    formatProxyType(type, f) {
+      return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
     }
   },
   mounted() {

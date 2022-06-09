@@ -4,7 +4,7 @@
     <MachineListMenu ref="machineList"
                      theme="light"
                      :selectedMachine="selectedMachine"
-                     :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
+                     :query="machineQuery"
                      @chooseMachine="changeSftpMain"/>
     <!-- main -->
     <a-layout>
@@ -35,6 +35,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
+import { ENABLE_STATUS } from '@/lib/enum'
 import MachineListMenu from '@/components/machine/MachineListMenu'
 import MachineSftpMain from '@/components/sftp/MachineSftpMain'
 
@@ -49,7 +50,10 @@ export default {
       selectedMachine: [],
       currentMachine: {},
       initMachineId: null,
-      machineId: null
+      machineId: null,
+      machineQuery: {
+        status: ENABLE_STATUS.ENABLE.value
+      }
     }
   },
   methods: {

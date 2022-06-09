@@ -84,7 +84,7 @@
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 打开 -->
-          <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === $enum.ENABLE_STATUS.ENABLE.value">
+          <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === ENABLE_STATUS.ENABLE.value">
             <a target="_blank"
                :href="`#/log/view/${record.id}`"
                @click="openLogView($event, record.id)">
@@ -126,18 +126,18 @@
       <!-- 导出模态框 -->
       <MachineTailFileExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.TAIL_FILE"/>
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
+import { ENABLE_STATUS, IMPORT_TYPE } from '@/lib/enum'
 import MachineSelector from '@/components/machine/MachineSelector'
 import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
-import { formatDate } from '@/lib/filters'
 import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
@@ -224,6 +224,7 @@ export default {
   },
   data() {
     return {
+      ENABLE_STATUS,
       query: {
         machineId: undefined,
         name: null,
@@ -240,7 +241,8 @@ export default {
         }
       },
       loading: false,
-      columns
+      columns,
+      importType: IMPORT_TYPE.TAIL_FILE
     }
   },
   methods: {

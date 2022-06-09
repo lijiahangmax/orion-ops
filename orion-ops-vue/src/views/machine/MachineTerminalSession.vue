@@ -58,6 +58,7 @@
 <script>
 import { defineArrayKey } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
+import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 
@@ -192,7 +193,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: this.$enum.FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
+          type: FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
           id: record.logId
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })

@@ -4,7 +4,7 @@
     <MachineListMenu ref="machineList"
                      theme="light"
                      :selectedMachine="selectedMachine"
-                     :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
+                     :query="machineQuery"
                      @chooseMachine="addTerminal"
                      @changeCollapse="fit"/>
     <!-- main -->
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { ENABLE_STATUS } from '@/lib/enum'
 import MachineListMenu from '@/components/machine/MachineListMenu'
 import TerminalXterm from '@/components/terminal/TerminalXterm'
 import TerminalBanner from '@/components/terminal/TerminalBanner'
@@ -56,7 +57,8 @@ export default {
       activeKey: null,
       machineTabs: [],
       newTabIndex: 0,
-      selectedMachine: []
+      selectedMachine: [],
+      machineQuery: { status: ENABLE_STATUS.ENABLE.value }
     }
   },
   watch: {

@@ -19,7 +19,6 @@
 
 <script>
 import UserBasicForm from '@/components/user/UserBasicForm'
-import WebSideMessageList from '@/components/user/WebSideMessageList'
 
 export default {
   name: 'UserDetail',

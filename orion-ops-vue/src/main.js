@@ -2,20 +2,18 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import $api from './lib/api'
-import { copyToClipboard } from '@/lib/utils'
 import $storage from './lib/storage'
-import $enum from './lib/enum'
+import { copyToClipboard } from '@/lib/utils'
 import './lib/directive'
 
 import ant from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.min.css'
 import $message from 'ant-design-vue/lib/message'
+import 'ant-design-vue/dist/antd.min.css'
 
 Vue.use(ant)
 
 Vue.prototype.$api = $api
 Vue.prototype.$storage = $storage
-Vue.prototype.$enum = $enum
 
 Vue.config.productionTip = false
 

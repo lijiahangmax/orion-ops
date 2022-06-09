@@ -17,7 +17,7 @@
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="请选择" allowClear>
-                <a-select-option v-for="status of $enum.RELEASE_STATUS" :key="status.value" :value="status.value">
+                <a-select-option v-for="status of RELEASE_STATUS" :key="status.value" :value="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -85,8 +85,8 @@
             size="middle">
             <!-- 状态 -->
             <template v-slot:status="machine">
-              <a-tag class="m0" :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
-                {{ $enum.valueOf($enum.ACTION_STATUS, machine.status).label }}
+              <a-tag class="m0" :color="machine.status | formatActionStatus('color')">
+                {{ machine.status | formatActionStatus('label') }}
               </a-tag>
             </template>
             <!-- 操作 -->
@@ -136,11 +136,11 @@
         <template v-slot:releaseTitle="record">
           <div class="timed-wrapper">
             <!-- 回滚图标 -->
-            <a-tooltip v-if="record.type === $enum.RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
+            <a-tooltip v-if="record.type === RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
               <a-icon class="rollback-icon" type="pull-request"/>
             </a-tooltip>
             <!-- 定时图标 -->
-            <a-tooltip v-if="record.timedRelease === $enum.TIMED_TYPE.TIMED.value">
+            <a-tooltip v-if="record.timedRelease === TIMED_TYPE.TIMED.value">
               <template #title>
                 调度时间: {{ record.timedReleaseTime | formatDate }}
               </template>
@@ -154,8 +154,8 @@
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-tag class="m0" :color="$enum.valueOf($enum.RELEASE_STATUS, record.status).color">
-            {{ $enum.valueOf($enum.RELEASE_STATUS, record.status).label }}
+          <a-tag class="m0" :color="record.status | formatReleaseStatus('color')">
+            {{ record.status | formatReleaseStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
@@ -267,6 +267,7 @@
 <script>
 import { defineArrayKey } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
+import { enumValueOf, ACTION_STATUS, RELEASE_STATUS, RELEASE_TYPE, TIMED_TYPE } from '@/lib/enum'
 import AppSelector from '@/components/app/AppSelector'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import AppReleaseAuditModal from '@/components/app/AppReleaseAuditModal'
@@ -283,48 +284,48 @@ function statusHolder() {
       return true
     },
     visibleCancel: (status) => {
-      return status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+      return status === RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleAudit: (status) => {
-      return (status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
-        status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
+      return (status === RELEASE_STATUS.WAIT_AUDIT.value ||
+        status === RELEASE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
     },
     visibleRelease: (status) => {
-      return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
-        status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+      return status === RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        status === RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleTimed: (status) => {
-      return status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
-        status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+      return status === RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        status === RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleTerminate: (status) => {
-      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value
+      return status === RELEASE_STATUS.RUNNABLE.value
     },
     visibleDelete: (status) => {
-      return status !== this.$enum.RELEASE_STATUS.RUNNABLE.value &&
-        status !== this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+      return status !== RELEASE_STATUS.RUNNABLE.value &&
+        status !== RELEASE_STATUS.WAIT_SCHEDULE.value
     },
     visibleRollback: (status) => {
-      return status === this.$enum.RELEASE_STATUS.FINISH.value
+      return status === RELEASE_STATUS.FINISH.value
     },
     visibleLog: (status) => {
-      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
-        status === this.$enum.RELEASE_STATUS.FINISH.value ||
-        status === this.$enum.RELEASE_STATUS.FAILURE.value ||
-        status === this.$enum.RELEASE_STATUS.TERMINATED.value
+      return status === RELEASE_STATUS.RUNNABLE.value ||
+        status === RELEASE_STATUS.FINISH.value ||
+        status === RELEASE_STATUS.FAILURE.value ||
+        status === RELEASE_STATUS.TERMINATED.value
     },
     visibleActionLog: (status) => {
-      return status === this.$enum.ACTION_STATUS.RUNNABLE.value ||
-        status === this.$enum.ACTION_STATUS.FINISH.value ||
-        status === this.$enum.ACTION_STATUS.FAILURE.value ||
-        status === this.$enum.ACTION_STATUS.TERMINATED.value
+      return status === ACTION_STATUS.RUNNABLE.value ||
+        status === ACTION_STATUS.FINISH.value ||
+        status === ACTION_STATUS.FAILURE.value ||
+        status === ACTION_STATUS.TERMINATED.value
     },
     visibleMachineTerminate: (status) => {
-      return status === this.$enum.ACTION_STATUS.RUNNABLE.value
+      return status === ACTION_STATUS.RUNNABLE.value
     },
     visibleMachineSkip: (status, machineStatus) => {
-      return status === this.$enum.RELEASE_STATUS.RUNNABLE.value &&
-        machineStatus === this.$enum.ACTION_STATUS.WAIT.value
+      return status === RELEASE_STATUS.RUNNABLE.value &&
+        machineStatus === ACTION_STATUS.WAIT.value
     }
   }
 }
@@ -450,6 +451,9 @@ export default {
   },
   data: function() {
     return {
+      RELEASE_STATUS,
+      TIMED_TYPE,
+      RELEASE_TYPE,
       query: {
         appId: null,
         profileId: null,
@@ -486,8 +490,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.RELEASE_STATUS.RUNNABLE.value ||
-              record.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
+            disabled: record.status === RELEASE_STATUS.RUNNABLE.value ||
+              record.status === RELEASE_STATUS.WAIT_SCHEDULE.value
           }
         })
       }
@@ -544,7 +548,7 @@ export default {
     releaseAudit(id, res) {
       const match = this.rows.filter(s => s.id === id)
       if (match && match.length) {
-        match[0].status = (res ? this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value : this.$enum.RELEASE_STATUS.AUDIT_REJECT.value)
+        match[0].status = (res ? RELEASE_STATUS.WAIT_RUNNABLE.value : RELEASE_STATUS.AUDIT_REJECT.value)
       }
     },
     copyRelease(id) {
@@ -560,8 +564,8 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('已取消定时发布')
-        record.status = this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value
-        record.timedRelease = this.$enum.TIMED_TYPE.NORMAL.value
+        record.status = RELEASE_STATUS.WAIT_RUNNABLE.value
+        record.timedRelease = TIMED_TYPE.NORMAL.value
         record.timedReleaseTime = undefined
         // 强制刷新状态
         this.forceUpdateRows()
@@ -572,7 +576,7 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('已开始执行')
-        record.status = this.$enum.RELEASE_STATUS.RUNNABLE.value
+        record.status = RELEASE_STATUS.RUNNABLE.value
       })
     },
     openTimedRelease(record) {
@@ -663,11 +667,11 @@ export default {
       if (!this.rows || !this.rows.length) {
         return
       }
-      const pollItems = this.rows.filter(r => r.status === this.$enum.RELEASE_STATUS.WAIT_AUDIT.value ||
-        r.status === this.$enum.RELEASE_STATUS.AUDIT_REJECT.value ||
-        r.status === this.$enum.RELEASE_STATUS.WAIT_RUNNABLE.value ||
-        r.status === this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value ||
-        r.status === this.$enum.RELEASE_STATUS.RUNNABLE.value)
+      const pollItems = this.rows.filter(r => r.status === RELEASE_STATUS.WAIT_AUDIT.value ||
+        r.status === RELEASE_STATUS.AUDIT_REJECT.value ||
+        r.status === RELEASE_STATUS.WAIT_RUNNABLE.value ||
+        r.status === RELEASE_STATUS.WAIT_SCHEDULE.value ||
+        r.status === RELEASE_STATUS.RUNNABLE.value)
       if (!pollItems.length) {
         return
       }
@@ -711,7 +715,13 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatReleaseStatus(status, f) {
+      return enumValueOf(RELEASE_STATUS, status)[f]
+    },
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
+    }
   },
   mounted() {
     // 读取当前环境

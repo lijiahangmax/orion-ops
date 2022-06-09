@@ -9,7 +9,7 @@
           <div class="exec-machine-checker-container">
             <span class="normal-label exec-label">执行机器</span>
             <div class="machine-checker-wrapper">
-              <MachineChecker ref="machineChecker" :query="{status: $enum.ENABLE_STATUS.ENABLE.value}">
+              <MachineChecker ref="machineChecker" :query="machineQuery">
                 <template #trigger>
                   <span class="span-blue pointer">已选择 {{ config.machineIdList.length }} 台机器</span>
                 </template>
@@ -64,8 +64,8 @@
                 <a-icon type="desktop"/>
                 <span class="machine-menu-item-text">{{ item.machineName }}</span>
                 <!-- 状态 -->
-                <a-tag class="m0" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, item.status).color">
-                  {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, item.status).label }}
+                <a-tag class="m0" :color="item.status | formatExecStatus('color')">
+                  {{ item.status | formatExecStatus('label') }}
                 </a-tag>
               </div>
             </a-menu-item>
@@ -84,14 +84,14 @@
                        :appendStyle="{height: 'calc(100vh - 148px)'}"
                        size="default"
                        :relId="execMachine.execId"
-                       :tailType="$enum.FILE_TAIL_TYPE.EXEC_LOG.value"
-                       :downloadType="$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
+                       :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
+                       :downloadType="FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
             <!-- 左侧工具栏 -->
             <template #left-tools>
               <div class="appender-left-tools">
                 <!-- 命令输入 -->
                 <a-input-search class="command-write-input"
-                                v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                                v-if="BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
                                 v-model="execMachine.inputCommand"
                                 placeholder="输入"
                                 @search="sendCommand(execMachine)">
@@ -107,7 +107,7 @@
                   </template>
                 </a-input-search>
                 <!-- 停止 -->
-                <a-popconfirm v-if="$enum.BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
+                <a-popconfirm v-if="BATCH_EXEC_STATUS.RUNNABLE.value === execMachine.status"
                               title="是否要停止执行?"
                               placement="bottomLeft"
                               ok-text="确定"
@@ -117,7 +117,7 @@
                 </a-popconfirm>
                 <!-- used -->
                 <span class="mx8 nowrap" title="用时"
-                      v-if="execMachine.keepTime && $enum.BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
+                      v-if="execMachine.keepTime && BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
                   {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
                 </span>
                 <!-- exitCode -->
@@ -144,7 +144,7 @@
 </template>
 
 <script>
-
+import { enumValueOf, BATCH_EXEC_STATUS, ENABLE_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import MachineChecker from '@/components/machine/MachineChecker'
 import Editor from '@/components/editor/Editor'
 import TemplateSelector from '@/components/template/TemplateSelector'
@@ -168,6 +168,9 @@ export default {
   },
   data() {
     return {
+      BATCH_EXEC_STATUS,
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
       runnable: false,
       visibleCommand: true,
       pollId: null,
@@ -176,6 +179,9 @@ export default {
         command: '',
         sendLf: true,
         description: undefined
+      },
+      machineQuery: {
+        status: ENABLE_STATUS.ENABLE.value
       },
       execMachines: [],
       selectedMachineKeys: [-1]
@@ -219,7 +225,7 @@ export default {
       }).then(({ data }) => {
         for (const exec of data) {
           exec.inputCommand = null
-          exec.status = this.$enum.BATCH_EXEC_STATUS.WAITING.value
+          exec.status = BATCH_EXEC_STATUS.WAITING.value
           exec.exitCode = null
           exec.used = null
         }
@@ -247,8 +253,8 @@ export default {
     },
     pollExecStatus() {
       const idList = this.execMachines.filter(s =>
-        s.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
-        s.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+        s.status === BATCH_EXEC_STATUS.WAITING.value ||
+        s.status === BATCH_EXEC_STATUS.RUNNABLE.value
       ).map(s => s.execId)
       if (!idList.length) {
         return
@@ -297,12 +303,17 @@ export default {
       })
     },
     terminate(execMachine) {
-      execMachine.status = this.$enum.BATCH_EXEC_STATUS.TERMINATED.value
+      execMachine.status = BATCH_EXEC_STATUS.TERMINATED.value
       this.$api.terminateExecTask({
         id: execMachine.execId
       }).then(() => {
         this.$message.success('已停止')
       })
+    }
+  },
+  filters: {
+    formatExecStatus(status, f) {
+      return enumValueOf(BATCH_EXEC_STATUS, status)[f]
     }
   },
   beforeDestroy() {

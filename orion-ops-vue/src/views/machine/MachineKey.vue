@@ -17,7 +17,7 @@
           <a-col :span="5">
             <a-form-model-item label="挂载状态" prop="mountStatus">
               <a-select v-model="query.mountStatus" placeholder="全部" allowClear>
-                <a-select-option :value="type.value" v-for="type in $enum.MACHINE_KEY_MOUNT_STATUS" :key="type.value">
+                <a-select-option :value="type.value" v-for="type in MACHINE_KEY_MOUNT_STATUS" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
               </a-select>
@@ -111,8 +111,8 @@
         </template>
         <!-- 挂载状态 -->
         <template v-slot:mountStatus="record">
-          <a-tag :color="$enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).color">
-            {{ $enum.valueOf($enum.MACHINE_KEY_MOUNT_STATUS, record.mountStatus).label }}
+          <a-tag :color="record.mountStatus | formatMountStatus('color')">
+            {{ record.mountStatus | formatMountStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
@@ -159,6 +159,7 @@
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
+import { enumValueOf, FILE_DOWNLOAD_TYPE, MACHINE_KEY_MOUNT_STATUS } from '@/lib/enum'
 import { formatDate } from '@/lib/filters'
 import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
 import TempMountMachineKeyModal from '@/components/machine/TempMountMachineKeyModal'
@@ -220,6 +221,7 @@ export default {
   },
   data: function() {
     return {
+      MACHINE_KEY_MOUNT_STATUS,
       query: {
         name: null,
         description: null,
@@ -267,7 +269,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: this.$enum.FILE_DOWNLOAD_TYPE.SECRET_KEY.value,
+          type: FILE_DOWNLOAD_TYPE.SECRET_KEY.value,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
@@ -359,7 +361,10 @@ export default {
     }
   },
   filters: {
-    formatDate
+    formatDate,
+    formatMountStatus(status, f) {
+      return enumValueOf(MACHINE_KEY_MOUNT_STATUS, status)[f]
+    }
   },
   mounted() {
     this.getList({})

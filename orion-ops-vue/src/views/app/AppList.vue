@@ -90,8 +90,8 @@
         </template>
         <!-- 配置 -->
         <template v-slot:config="record">
-          <a-tag :color="$enum.valueOf($enum.CONFIG_STATUS, record.isConfig).color">
-            {{ $enum.valueOf($enum.CONFIG_STATUS, record.isConfig).label }}
+          <a-tag :color=" record.isConfig | formatConfigStatus('color')">
+            {{ record.isConfig | formatConfigStatus('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
@@ -105,7 +105,7 @@
           <a-button class="p0"
                     type="link"
                     style="height: 22px"
-                    :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
+                    :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
                     @click="buildApp(record.id)">
             构建
           </a-button>
@@ -114,13 +114,13 @@
           <a-button class="p0"
                     type="link"
                     style="height: 22px"
-                    :disabled="record.isConfig !== $enum.CONFIG_STATUS.CONFIGURED.value"
+                    :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
                     @click="releaseApp(record.id)">
             发布
           </a-button>
           <a-divider type="vertical"/>
           <!-- 同步 -->
-          <AppProfileChecker v-if="record.isConfig === $enum.CONFIG_STATUS.CONFIGURED.value" :ref="'profileChecker' + record.id">
+          <AppProfileChecker v-if="record.isConfig === CONFIG_STATUS.CONFIGURED.value" :ref="'profileChecker' + record.id">
             <template #trigger>
               <span class="span-blue pointer">同步</span>
             </template>
@@ -173,12 +173,14 @@
       <!-- 导出模态框 -->
       <ApplicationExportModal ref="export"/>
       <!-- 导出模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.APPLICATION"/>
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
-<script>import { defineArrayKey } from '@/lib/utils'
+<script>
+import { defineArrayKey } from '@/lib/utils'
+import { enumValueOf, CONFIG_STATUS, IMPORT_TYPE } from '@/lib/enum'
 import AddAppModal from '@/components/app/AddAppModal'
 import AppProfileChecker from '@/components/app/AppProfileChecker'
 import AppBuildModal from '@/components/app/AppBuildModal'
@@ -332,6 +334,7 @@ export default {
   },
   data: function() {
     return {
+      CONFIG_STATUS,
       query: {
         profileId: null,
         name: null,
@@ -350,6 +353,7 @@ export default {
       },
       loading: false,
       expandedRowKeys: [],
+      importType: IMPORT_TYPE.APPLICATION,
       columns,
       innerColumns
     }
@@ -459,6 +463,11 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getList({})
+    }
+  },
+  filters: {
+    formatConfigStatus(status, f) {
+      return enumValueOf(CONFIG_STATUS, status)[f]
     }
   },
   mounted() {
