@@ -233,7 +233,7 @@ const terminalOperator = {
   disconnect() {
     console.log('disconnect')
     this.pingThread && clearInterval(this.pingThread)
-    this.client && this.client.send(TERMINAL_OPERATOR.DISCONNECT.value)
+    this.client && this.client.readyState === 1 && this.client.send(TERMINAL_OPERATOR.DISCONNECT.value)
   },
   ping() {
     console.log('ping')
