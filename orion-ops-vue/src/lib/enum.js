@@ -1188,6 +1188,10 @@ export const EVENT_CLASSIFY = {
       DELETE_TAIL_FILE: {
         value: 2715,
         label: '删除文件'
+      },
+      UPLOAD_TAIL_FILE: {
+        value: 2720,
+        label: '上传文件'
       }
     }
   },

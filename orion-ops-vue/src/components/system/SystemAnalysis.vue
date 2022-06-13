@@ -220,7 +220,7 @@ export default {
             cleanType: type.value
           }).then(() => {
             pending()
-            this.$message.success(`正在清理 ${type.label}`)
+            this.$message.success(`正在清理 ${type.label}, 清理完成后需要手动点击重新分析`)
           }).catch(() => {
             pending()
             this.visibleClean[type.key] = true

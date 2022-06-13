@@ -99,7 +99,7 @@ $http.interceptors.request.use(
     config.headers['Content-Type'] = config.contentType
     // 登陆判断
     if (config.auth && !loginToken) {
-      throw new RequestError(700, '用户未登录')
+      throw new RequestError(700, '会话过期')
     }
     config.headers[$storage.keys.LOGIN_TOKEN] = loginToken
     // 设置加载
