@@ -84,6 +84,8 @@ public class MessageConst {
 
     public static final String IO_EXCEPTION_MESSAGE = "网络异常";
 
+    public static final String SQL_EXCEPTION_MESSAGE = "数据异常";
+
     public static final String UNCONNECTED = "未建立连接";
 
     public static final String EXEC_TASK_ABSENT = "未查询到任务信息";
