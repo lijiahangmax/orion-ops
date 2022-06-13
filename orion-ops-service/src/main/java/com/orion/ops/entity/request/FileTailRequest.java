@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * 文件tail请求
  *
@@ -20,6 +22,9 @@ public class FileTailRequest extends PageRequest {
 
     @ApiModelProperty(value = "id")
     private Long id;
+
+    @ApiModelProperty(value = "idList")
+    private List<Long> idList;
 
     @ApiModelProperty(value = "名称")
     private String name;

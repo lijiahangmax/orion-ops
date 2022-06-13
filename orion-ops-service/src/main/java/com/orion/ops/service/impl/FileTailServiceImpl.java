@@ -26,9 +26,11 @@ import com.orion.ops.handler.tail.TailSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
+import com.orion.utils.collect.Lists;
 import com.orion.utils.collect.Maps;
 import com.orion.utils.convert.Converts;
 import com.orion.utils.io.Files1;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -178,15 +181,46 @@ public class FileTailServiceImpl implements FileTailService {
     }
 
     @Override
-    public Integer deleteTailFile(Long id) {
-        // 查询文件
-        FileTailListDO beforeTail = fileTailListDAO.selectById(id);
-        Valid.notNull(beforeTail, MessageConst.UNKNOWN_DATA);
-        // 删除
-        int effect = fileTailListDAO.deleteById(id);
+    public void uploadTailFiles(List<FileTailRequest> files) {
+        // 获取宿主机配置
+        FileTailConfigVO config = this.getMachineConfig(Const.HOST_MACHINE_ID);
+        // 设置插入数据
+        List<FileTailListDO> insertFiles = Lists.newList();
+        for (FileTailRequest file : files) {
+            // 名称重复校验
+            String name = file.getName();
+            if (name.length() > 32) {
+                name = name.substring(0, 32);
+            }
+            try {
+                this.checkNamePresent(Const.HOST_MACHINE_ID, name);
+            } catch (Exception e) {
+                name = Utils.getCopySuffix() + Const.DASHED + name;
+            }
+            // 插入
+            FileTailListDO insert = new FileTailListDO();
+            insert.setAliasName(name);
+            insert.setMachineId(Const.HOST_MACHINE_ID);
+            insert.setFilePath(file.getPath());
+            insert.setFileCharset(config.getCharset());
+            insert.setFileOffset(config.getOffset());
+            insert.setTailCommand(config.getCommand());
+            insert.setTailMode(FileTailMode.TRACKER.getMode());
+            insertFiles.add(insert);
+        }
+        insertFiles.forEach(fileTailListDAO::insert);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, beforeTail.getAliasName());
+        EventParamsHolder.addParams(insertFiles);
+        EventParamsHolder.addParam(EventKeys.COUNT, files.size());
+    }
+
+    @Override
+    public Integer deleteTailFile(List<Long> idList) {
+        // 删除
+        int effect = fileTailListDAO.deleteBatchIds(idList);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
+        EventParamsHolder.addParam(EventKeys.COUNT, effect);
         return effect;
     }
 

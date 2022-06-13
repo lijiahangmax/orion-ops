@@ -53,9 +53,14 @@ public enum SystemEnvAttr {
     DIST_PATH("构建产物目录", false),
 
     /**
-     * 文件追踪模式 tracker或tail 默认tracker
+     * 日志文件上传目录
      */
-    TAIL_MODE("文件追踪模式 (tracker/tail)", false),
+    TAIL_FILE_UPLOAD_PATH("日志文件上传目录", false),
+
+    /**
+     * 日志文件追踪模式 tracker或tail 默认tracker
+     */
+    TAIL_MODE("日志文件追踪模式 (tracker/tail)", false),
 
     /**
      * 文件追踪器等待时间 (ms)

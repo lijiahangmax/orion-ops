@@ -193,7 +193,7 @@ public class SftpController {
     @ApiOperation(value = "上传文件")
     @EventLog(EventType.SFTP_UPLOAD)
     public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("files") List<MultipartFile> files) throws IOException {
-        // 检查路径
+        // 检查文件
         Valid.notBlank(accessToken);
         Valid.notEmpty(files);
         // 检查token

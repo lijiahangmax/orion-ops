@@ -34,6 +34,8 @@ public class Const extends com.orion.constant.Const {
 
     public static final String DIST_PATH = "dist";
 
+    public static final String TAIL_FILE_PATH = "tail";
+
     public static final String TERMINAL_LOG_DIR = "/terminal";
 
     public static final String BUILD_DIR = "/build";

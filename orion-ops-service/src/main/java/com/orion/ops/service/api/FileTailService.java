@@ -6,6 +6,8 @@ import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;
 
+import java.util.List;
+
 /**
  * 文件 tail service
  *
@@ -41,12 +43,19 @@ public interface FileTailService {
     Integer updateTailFile(FileTailRequest request);
 
     /**
+     * 上传文件
+     *
+     * @param files files
+     */
+    void uploadTailFiles(List<FileTailRequest> files);
+
+    /**
      * 删除 tail 文件
      *
-     * @param id id
+     * @param idList idList
      * @return effect
      */
-    Integer deleteTailFile(Long id);
+    Integer deleteTailFile(List<Long> idList);
 
     /**
      * 删除 tail 文件

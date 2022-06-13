@@ -68,7 +68,7 @@ public class BatchUploadController {
     @ApiOperation(value = "执行上传")
     @EventLog(EventType.SFTP_UPLOAD)
     public List<String> uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("files") List<MultipartFile> files) throws IOException {
-        // 检查路径
+        // 检查文件
         Valid.notBlank(accessToken);
         Valid.notEmpty(files);
         // 检查token
