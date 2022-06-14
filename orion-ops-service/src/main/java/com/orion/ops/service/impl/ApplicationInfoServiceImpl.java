@@ -367,7 +367,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationInfoDO app = Valid.notNull(applicationInfoDAO.selectById(appId), MessageConst.APP_ABSENT);
         String beforeName = app.getAppName();
         app.setId(null);
-        String copySuffix = Utils.getCopySuffix();
+        String copySuffix = Utils.getRandomSuffix();
         app.setAppName(beforeName + copySuffix);
         app.setAppTag(app.getAppTag() + copySuffix);
         app.setAppSort(this.getNextSort());

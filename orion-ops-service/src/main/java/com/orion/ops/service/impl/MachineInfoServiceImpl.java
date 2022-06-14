@@ -218,7 +218,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         String sourceMachineName = machine.getMachineName();
         String sourceMachineTag = machine.getMachineTag();
-        String copySuffix = Utils.getCopySuffix();
+        String copySuffix = Utils.getRandomSuffix();
         String targetMachineName = sourceMachineName + copySuffix;
         String targetMachineTag = sourceMachineTag + copySuffix;
         machine.setId(null);

@@ -14,17 +14,22 @@ import com.orion.ops.entity.vo.FileTailVO;
 import com.orion.ops.service.api.FileTailService;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
+import com.orion.servlet.web.Servlets;
 import com.orion.utils.Charsets;
 import com.orion.utils.Strings;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
+import com.orion.utils.io.Streams;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -90,7 +95,10 @@ public class FileTailController {
         List<FileTailRequest> requestFiles = Lists.newList();
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();
-            Path localAbsolutePath = Paths.get(SystemEnvAttr.TAIL_FILE_UPLOAD_PATH.getValue(), Utils.getCopySuffix() + Const.DASHED + fileName);
+            if (fileName == null) {
+                fileName = Utils.getRandomSuffix() + Const.DOT + Const.SUFFIX_LOG;
+            }
+            Path localAbsolutePath = Paths.get(SystemEnvAttr.TAIL_FILE_UPLOAD_PATH.getValue(), Utils.getRandomSuffix() + Const.DASHED + fileName);
             Files1.touch(localAbsolutePath);
             file.transferTo(localAbsolutePath);
             // 设置文件数据
@@ -123,6 +131,25 @@ public class FileTailController {
     public FileTailVO tailFileDetail(@RequestBody FileTailRequest request) {
         Long id = Valid.notNull(request.getId());
         return fileTailService.tailFileDetail(id);
+    }
+
+    @PostMapping("/clean-ansi")
+    @ApiOperation(value = "清除ANSI码")
+    public void cleanAnsiCode(@RequestParam("file") MultipartFile file, HttpServletResponse response) throws IOException {
+        // 设置 http 响应头
+        String fileName = file.getOriginalFilename();
+        if (fileName == null) {
+            fileName = Utils.getRandomSuffix() + Const.DOT + Const.SUFFIX_LOG;
+        }
+        Servlets.setDownloadHeader(response, fileName);
+        // 读取文件
+        try (InputStream in = file.getInputStream()) {
+            byte[] bytes = Streams.toByteArray(in);
+            String clearValue = Utils.cleanStainAnsiCode(Strings.str(bytes));
+            ServletOutputStream out = response.getOutputStream();
+            out.write(Strings.bytes(clearValue));
+            out.flush();
+        }
     }
 
     @PostMapping("/config")

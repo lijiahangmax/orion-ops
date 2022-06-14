@@ -195,7 +195,7 @@ public class FileTailServiceImpl implements FileTailService {
             try {
                 this.checkNamePresent(Const.HOST_MACHINE_ID, name);
             } catch (Exception e) {
-                name = Utils.getCopySuffix() + Const.DASHED + name;
+                name = Utils.getRandomSuffix() + Const.DASHED + name;
             }
             // 插入
             FileTailListDO insert = new FileTailListDO();
