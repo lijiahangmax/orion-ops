@@ -1,18 +1,18 @@
 <template>
   <a-modal v-model="visible"
-           title="上传日志文件"
-           okText="上传"
+           title="清除文件 ASNI 码"
+           okText="清除"
            :width="400"
            :dialogStyle="{top: '64px', padding: 0}"
            :bodyStyle="{padding: '16px'}"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
            :destroyOnClose="true"
-           @ok="upload"
+           @ok="clean"
            @cancel="close">
     <a-spin :spinning="loading">
       <!-- 提示 -->
-      <a-alert message="通常用于下载的日志文件着色查看"/>
+      <a-alert message="清除日志文件的 ANSI 着色码, 恢复为普通的日志文件"/>
       <!-- 文件上传拖拽框 -->
       <div class="upload-event-trigger mt8">
         <a-upload-dragger class="upload-drag"
@@ -24,7 +24,7 @@
           <p id="upload-trigger-icon" class="ant-upload-drag-icon">
             <a-icon type="inbox"/>
           </p>
-          <p class="ant-upload-text">单击或拖动文件到此区域进行上传</p>
+          <p class="ant-upload-text">单击或拖动文件到此区域</p>
         </a-upload-dragger>
       </div>
     </a-spin>
@@ -32,8 +32,10 @@
 </template>
 
 <script>
+import { downloadFile } from '@/lib/utils'
+
 export default {
-  name: 'UploadLogFileModal',
+  name: 'FileAnsiCleanModal',
   data: function() {
     return {
       visible: false,
@@ -47,9 +49,6 @@ export default {
     },
     selectFile(e) {
       this.fileList.push(e)
-      if (this.fileList.length > 10) {
-        this.fileList.splice(0, this.fileList.length - 10)
-      }
       return false
     },
     removeFile(e) {
@@ -59,28 +58,25 @@ export default {
         }
       }
     },
-    clear() {
-      this.fileList = []
-    },
-    upload() {
+    async clean() {
       if (!this.fileList.length) {
         this.$message.warning('请先选择文件')
         return
       }
       this.loading = true
-      const formData = new FormData()
-      this.fileList.forEach(file => {
-        formData.append('files', file)
-      })
-      // 上传
-      this.$api.uploadTailFile(formData).then(() => {
-        this.$message.success('上传成功')
-        this.$emit('uploaded')
-        this.close()
-      }).catch(() => {
-        this.loading = false
-        this.$message.error('上传失败')
-      })
+      for (const file of this.fileList) {
+        const formData = new FormData()
+        formData.append('file', file)
+        this.$message.info(`开始处理 ${file.name}`)
+        await this.$api.cleanFileAnsiCode(formData).then((e) => {
+          this.$message.success(`${file.name} 处理完成, 片刻后自动下载`)
+          downloadFile(e, file.name)
+          this.fileList.splice(0, 1)
+        }).catch(() => {
+          this.$message.error(`${file.name} 处理失败`)
+        })
+      }
+      this.loading = false
     },
     close() {
       this.visible = false

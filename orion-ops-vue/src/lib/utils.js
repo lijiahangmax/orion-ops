@@ -382,15 +382,17 @@ export function getUUID() {
 /**
  * 下载文件
  */
-export function downloadFile(res) {
+export function downloadFile(res, fileName) {
   const blob = new Blob([res.data])
   const tempLink = document.createElement('a')
   const blobURL = window.URL.createObjectURL(blob)
   tempLink.style.display = 'none'
   tempLink.href = blobURL
-  const fileName = res.headers['content-disposition']
-    ? res.headers['content-disposition'].split(';')[1].split('=')[1]
-    : new Date().getTime()
+  if (!fileName) {
+    fileName = res.headers['content-disposition']
+      ? res.headers['content-disposition'].split(';')[1].split('=')[1]
+      : new Date().getTime()
+  }
   tempLink.download = decodeURIComponent(fileName)
   if (typeof tempLink.download === 'undefined') {
     tempLink.target = '_blank'
