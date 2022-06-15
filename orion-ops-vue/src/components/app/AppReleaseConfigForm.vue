@@ -1,5 +1,5 @@
 <template>
-  <div id="app-conf-container">
+  <div id="app-release-conf-container">
     <a-spin :spinning="loading">
       <!-- 发布机器 -->
       <div id="app-machine-wrapper">
@@ -350,7 +350,7 @@ export default {
 @footer-margin-left: 168px;
 @desc-margin-left: 160px;
 
-#app-conf-container {
+#app-release-conf-container {
   padding: 18px 8px 0 8px;
   overflow: auto;
 

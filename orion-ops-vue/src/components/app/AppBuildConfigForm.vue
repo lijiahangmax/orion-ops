@@ -1,5 +1,5 @@
 <template>
-  <div id="app-conf-container">
+  <div id="app-build-conf-container">
     <a-spin :spinning="loading">
       <!-- 产物路径 -->
       <div id="app-bundle-container">
@@ -225,7 +225,7 @@ export default {
 @footer-margin-left: 168px;
 @desc-margin-left: 168px;
 
-#app-conf-container {
+#app-build-conf-container {
   padding: 18px 8px 0 8px;
   overflow: auto;
 
