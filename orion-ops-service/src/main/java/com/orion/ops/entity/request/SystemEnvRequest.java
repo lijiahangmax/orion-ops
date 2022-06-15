@@ -1,13 +1,15 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
- * 系统环境变量
+ * 系统环境变量请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -15,38 +17,28 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "系统环境变量请求")
 public class SystemEnvRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * id集合
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * key
-     */
+    @ApiModelProperty(value = "key")
     private String key;
 
-    /**
-     * value
-     */
+    @ApiModelProperty(value = "value")
     private String value;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 视图类型
-     *
      * @see com.orion.ops.consts.env.EnvViewType
      */
+    @ApiModelProperty(value = "视图类型")
     private Integer viewType;
 
 }

@@ -13,8 +13,8 @@
               <span class="menu-item-machine-name auto-ellipsis-item">{{ machine.machineName }}</span>
               <!-- 状态 -->
               <span class="menu-item-machine-status">
-                <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
-                  {{ $enum.valueOf($enum.ACTION_STATUS, machine.status).label }}
+                <a-tag :color="machine.status | formatActionStatus('color')">
+                  {{ machine.status | formatActionStatus('label') }}
                 </a-tag>
               </span>
             </div>
@@ -30,12 +30,12 @@
           <!-- 进度 -->
           <div class="machine-steps">
             <a-steps :current="current[machine.id]"
-                     :status="$enum.valueOf($enum.ACTION_STATUS, machine.status).stepStatus">
+                     :status="machine.status | formatActionStatus('stepStatus')">
               <template v-for="action in machine.actions">
                 <a-step :key="action.id"
                         :title="action.actionName"
                         :subTitle="action.used ? `${action.used}ms` : ''">
-                  <template v-if="action.status === $enum.ACTION_STATUS.RUNNABLE.value" #icon>
+                  <template v-if="action.status === ACTION_STATUS.RUNNABLE.value" #icon>
                     <a-icon type="loading"/>
                   </template>
                 </a-step>
@@ -48,13 +48,13 @@
                          size="default"
                          :appendStyle="{height: appenderHeight}"
                          :relId="machine.id"
-                         :tailType="$enum.FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
-                         :downloadType="$enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
+                         :tailType="FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
+                         :downloadType="FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">
               <template #left-tools>
                 <!-- 命令输入 -->
                 <a-input-search class="command-write-input"
                                 size="default"
-                                v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"
+                                v-if="ACTION_STATUS.RUNNABLE.value === machine.status"
                                 v-model="command"
                                 placeholder="输入"
                                 @search="sendCommand(machine.id)">
@@ -70,7 +70,7 @@
                   </template>
                 </a-input-search>
                 <!-- 停止 -->
-                <a-popconfirm v-if="$enum.ACTION_STATUS.RUNNABLE.value === machine.status"
+                <a-popconfirm v-if="ACTION_STATUS.RUNNABLE.value === machine.status"
                               title="是否要停止执行?"
                               placement="bottomLeft"
                               ok-text="确定"
@@ -79,7 +79,7 @@
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- 跳过 -->
-                <a-popconfirm v-if="$enum.ACTION_STATUS.WAIT.value === machine.status"
+                <a-popconfirm v-if="ACTION_STATUS.WAIT.value === machine.status"
                               title="是否要跳过执行?"
                               placement="bottomLeft"
                               ok-text="确定"
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-
+import { enumValueOf, ACTION_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE, RELEASE_STATUS } from '@/lib/enum'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -113,6 +113,9 @@ export default {
   computed: {},
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      ACTION_STATUS,
       id: null,
       loading: false,
       record: {},
@@ -146,15 +149,15 @@ export default {
       }).then(() => {
         // 打开日志
         for (const machine of this.record.machines) {
-          if (machine.status !== this.$enum.ACTION_STATUS.WAIT.value &&
-            machine.status !== this.$enum.ACTION_STATUS.SKIPPED.value) {
+          if (machine.status !== ACTION_STATUS.WAIT.value &&
+            machine.status !== ACTION_STATUS.SKIPPED.value) {
             this.$refs[`appender-${machine.id}`][0].openTail()
             this.openedFiles.push(machine.id)
           }
         }
       }).then(() => {
         // 设置轮询
-        if (this.record.status === this.$enum.RELEASE_STATUS.RUNNABLE.value) {
+        if (this.record.status === RELEASE_STATUS.RUNNABLE.value) {
           // 轮询状态
           this.pollId = setInterval(this.pollStatus, 2000)
         }
@@ -225,8 +228,8 @@ export default {
         if (!data || !data.length) {
           return
         }
-        const notFinish = data.map(s => s.status).filter(s => s === this.$enum.BUILD_STATUS.WAIT.value ||
-          s === this.$enum.BUILD_STATUS.RUNNABLE.value)
+        const notFinish = data.map(s => s.status).filter(s => s === ACTION_STATUS.WAIT.value ||
+          s === ACTION_STATUS.RUNNABLE.value)
         // 清除状态轮询
         if (notFinish.length === 0) {
           clearInterval(this.pollId)
@@ -238,8 +241,8 @@ export default {
             s.status = machineStatus.status
             // 检查打开tail
             const opened = this.openedFiles.filter(e => e === s.id).length > 0
-            if (!opened && s.status !== this.$enum.ACTION_STATUS.WAIT.value &&
-              s.status !== this.$enum.ACTION_STATUS.SKIPPED.value) {
+            if (!opened && s.status !== ACTION_STATUS.WAIT.value &&
+              s.status !== ACTION_STATUS.SKIPPED.value) {
               // 打开日志
               this.$refs[`appender-${s.id}`][0].openTail()
               this.openedFiles.push(s.id)
@@ -269,13 +272,18 @@ export default {
         let curr = len - 1
         for (let i = 0; i < len; i++) {
           const status = machine.actions[i].status
-          if (status !== this.$enum.ACTION_STATUS.FINISH.value) {
+          if (status !== ACTION_STATUS.FINISH.value) {
             curr = i
             break
           }
         }
         this.current[machine.id] = curr
       }
+    }
+  },
+  filters: {
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
     }
   },
   beforeDestroy() {

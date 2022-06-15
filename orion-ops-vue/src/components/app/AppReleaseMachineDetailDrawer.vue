@@ -20,8 +20,8 @@
           {{ detail.machineHost }}
         </a-descriptions-item>
         <a-descriptions-item label="发布状态" :span="3">
-          <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, detail.status).color">
-            {{ $enum.valueOf($enum.ACTION_STATUS, detail.status).label }}
+          <a-tag :color="detail.status | formatActionStatus('color')">
+            {{ detail.status | formatActionStatus('label') }}
           </a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="开始时间" :span="3" v-if="detail.startTime !== null">
@@ -35,7 +35,7 @@
         </a-descriptions-item>
         <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(detail.status)">
           <a v-if="detail.downloadUrl" @click="clearDownloadUrl(detail)" target="_blank" :href="detail.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(detail, $enum.FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value)">获取操作日志</a>
+          <a v-else @click="loadDownloadUrl(detail, FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value)">获取操作日志</a>
         </a-descriptions-item>
       </a-descriptions>
       <!-- 发布操作 -->
@@ -48,11 +48,11 @@
                 {{ item.actionName }}
               </a-descriptions-item>
               <a-descriptions-item label="操作类型" :span="3">
-                <a-tag>{{ $enum.valueOf($enum.RELEASE_ACTION_TYPE, item.actionType).label }}</a-tag>
+                <a-tag>{{ item.actionType | formatActionType('label') }}</a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="操作状态" :span="3">
-                <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, item.status).color">
-                  {{ $enum.valueOf($enum.ACTION_STATUS, item.status).label }}
+                <a-tag :color="item.status | formatActionStatus('color')">
+                  {{ item.status | formatActionStatus('label') }}
                 </a-tag>
               </a-descriptions-item>
               <a-descriptions-item label="开始时间" :span="3" v-if="item.startTime !== null">
@@ -62,19 +62,19 @@
                 {{ item.endTime | formatDate }} ({{ item.endTimeAgo }})
               </a-descriptions-item>
               <a-descriptions-item label="持续时间" :span="3" v-if="item.used !== null">
-                {{ `${item.keepTime}  (${item.used}ms)` }}
+                {{ `${item.keepTime} (${item.used}ms)` }}
               </a-descriptions-item>
               <a-descriptions-item label="退出码" :span="3" v-if="item.exitCode !== null">
               <span :style="{'color': item.exitCode === 0 ? '#4263EB' : '#E03131'}">
                 {{ item.exitCode }}
               </span>
               </a-descriptions-item>
-              <a-descriptions-item label="命令" :span="3" v-if="item.actionType === $enum.RELEASE_ACTION_TYPE.COMMAND.value">
+              <a-descriptions-item label="命令" :span="3" v-if="item.actionType === RELEASE_ACTION_TYPE.COMMAND.value">
                 <a @click="preview(item.actionCommand)">预览</a>
               </a-descriptions-item>
               <a-descriptions-item label="日志" :span="3" v-if="statusHolder.visibleActionLog(item.status)">
                 <a v-if="item.downloadUrl" @click="clearDownloadUrl(item)" target="_blank" :href="item.downloadUrl">下载</a>
-                <a v-else @click="loadDownloadUrl(item, $enum.FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value)">获取操作日志</a>
+                <a v-else @click="loadDownloadUrl(item, FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value)">获取操作日志</a>
               </a-descriptions-item>
             </a-descriptions>
           </a-list-item>
@@ -89,17 +89,17 @@
 </template>
 
 <script>
+import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { ACTION_STATUS, enumValueOf, FILE_DOWNLOAD_TYPE, RELEASE_ACTION_TYPE } from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
-import _filters from '@/lib/filters'
 
-function statusHolder() {
-  return {
-    visibleActionLog: (status) => {
-      return status === this.$enum.ACTION_STATUS.RUNNABLE.value ||
-        status === this.$enum.ACTION_STATUS.FINISH.value ||
-        status === this.$enum.ACTION_STATUS.FAILURE.value ||
-        status === this.$enum.ACTION_STATUS.TERMINATED.value
-    }
+const statusHolder = {
+  visibleActionLog: (status) => {
+    return status === ACTION_STATUS.RUNNABLE.value ||
+      status === ACTION_STATUS.FINISH.value ||
+      status === ACTION_STATUS.FAILURE.value ||
+      status === ACTION_STATUS.TERMINATED.value
   }
 }
 
@@ -110,11 +110,13 @@ export default {
   },
   data() {
     return {
+      FILE_DOWNLOAD_TYPE,
+      RELEASE_ACTION_TYPE,
       visible: false,
       loading: true,
       pollId: null,
       detail: {},
-      statusHolder: statusHolder.call(this)
+      statusHolder
     }
   },
   methods: {
@@ -132,11 +134,11 @@ export default {
       }).then(({ data }) => {
         this.loading = false
         data.downloadUrl = null
-        this.$utils.defineArrayKey(data.actions, 'downloadUrl')
+        defineArrayKey(data.actions, 'downloadUrl')
         this.detail = data
         // 轮询状态
-        if (data.status === this.$enum.ACTION_STATUS.WAIT.value ||
-          data.status === this.$enum.ACTION_STATUS.RUNNABLE.value) {
+        if (data.status === ACTION_STATUS.WAIT.value ||
+          data.status === ACTION_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 5000)
         }
       }).catch(() => {
@@ -147,8 +149,8 @@ export default {
       if (!this.detail || !this.detail.status) {
         return
       }
-      if (this.detail.status !== this.$enum.ACTION_STATUS.WAIT.value &&
-        this.detail.status !== this.$enum.ACTION_STATUS.RUNNABLE.value) {
+      if (this.detail.status !== ACTION_STATUS.WAIT.value &&
+        this.detail.status !== ACTION_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
         this.pollId = null
         return
@@ -208,7 +210,13 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
+    },
+    formatActionType(status, f) {
+      return enumValueOf(RELEASE_ACTION_TYPE, status)[f]
+    }
   }
 }
 </script>

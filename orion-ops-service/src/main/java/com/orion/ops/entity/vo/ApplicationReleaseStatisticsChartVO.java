@@ -3,36 +3,31 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.dto.ApplicationReleaseStatisticsDTO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 发布统计表格
+ * 发布统计表格响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/29 16:42
  */
 @Data
+@ApiModel(value = "发布统计表格响应")
 public class ApplicationReleaseStatisticsChartVO {
 
-    /**
-     * 日期
-     */
+    @ApiModelProperty(value = "日期")
     private String date;
 
-    /**
-     * 发布次数
-     */
+    @ApiModelProperty(value = "发布次数")
     private Integer releaseCount;
 
-    /**
-     * 成功次数
-     */
+    @ApiModelProperty(value = "成功次数")
     private Integer successCount;
 
-    /**
-     * 失败次数
-     */
+    @ApiModelProperty(value = "失败次数")
     private Integer failureCount;
 
     static {

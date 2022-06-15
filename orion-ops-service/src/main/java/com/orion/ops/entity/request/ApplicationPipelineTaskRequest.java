@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,89 +16,63 @@ import java.util.List;
  * @version 1.0.0
  * @since 2022/4/7 10:46
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "流水线明细请求")
 public class ApplicationPipelineTaskRequest extends PageRequest {
 
-    /**
-     * 环境id
-     */
-    private Long profileId;
-
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * detailId
-     */
-    private Long detailId;
-
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    /**
-     * detail id
-     */
+    @ApiModelProperty(value = "环境id")
+    private Long profileId;
+
+    @ApiModelProperty(value = "detailId")
+    private Long detailId;
+
+    @ApiModelProperty(value = "detailId")
     private List<Long> detailIdList;
 
-    /**
-     * 流水线id
-     */
+    @ApiModelProperty(value = "流水线id")
     private Long pipelineId;
 
-    /**
-     * 流水线名称
-     */
+    @ApiModelProperty(value = "流水线名称")
     private String pipelineName;
 
-    /**
-     * 执行标题
-     */
+    @ApiModelProperty(value = "执行标题")
     private String title;
 
-    /**
-     * 执行描述
-     */
+    @ApiModelProperty(value = "执行描述")
     private String description;
 
     /**
-     * 是否是定时执行 10普通执行 20定时执行
-     *
      * @see com.orion.ops.consts.app.TimedType
      */
+    @ApiModelProperty(value = "是否是定时执行 10普通执行 20定时执行")
     private Integer timedExec;
 
-    /**
-     * 定时执行时间
-     */
+    @ApiModelProperty(value = "定时执行时间")
     private Date timedExecTime;
 
     /**
-     * 执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败
-     *
      * @see com.orion.ops.consts.app.PipelineStatus
      */
+    @ApiModelProperty(value = "执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败")
     private Integer status;
 
     /**
-     * 审核状态 10通过 20驳回
-     *
      * @see com.orion.ops.consts.AuditStatus
      */
+    @ApiModelProperty(value = "审核状态 10通过 20驳回")
     private Integer auditStatus;
 
-    /**
-     * 审核描述
-     */
+    @ApiModelProperty(value = "审核描述")
     private String auditReason;
 
-    /**
-     * 执行明细
-     */
+    @ApiModelProperty(value = "执行明细")
     private List<ApplicationPipelineTaskDetailRequest> details;
 
 }

@@ -19,10 +19,7 @@ import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.entity.vo.DataImportCheckVO;
-import com.orion.ops.service.api.ApplicationInfoService;
-import com.orion.ops.service.api.ApplicationProfileService;
-import com.orion.ops.service.api.DataImportService;
-import com.orion.ops.service.api.WebSideMessageService;
+import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
@@ -68,6 +65,9 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Resource
     private MachineInfoDAO machineInfoDAO;
+
+    @Resource
+    private MachineEnvService machineEnvService;
 
     @Resource
     private MachineProxyDAO machineProxyDAO;
@@ -229,6 +229,11 @@ public class DataImportServiceImpl implements DataImportService {
                     .map(machineInfoDAO::selectById)
                     .map(MachineInfoDO::getProxyId)
                     .ifPresent(v::setProxyId);
+        }, v -> {
+            // 初始化新增机器环境变量
+            machineEnvService.initEnv(v.getId());
+        }, v -> {
+            // ignore
         });
     }
 
@@ -501,6 +506,10 @@ public class DataImportServiceImpl implements DataImportService {
             // ignore
         }, e -> {
             // ignore
+        }, e -> {
+            // ignore
+        }, e -> {
+            // ignore
         });
     }
 
@@ -513,9 +522,30 @@ public class DataImportServiceImpl implements DataImportService {
      * @param updateFiller 修改填充器
      * @param <T>          do
      */
-    @SuppressWarnings("unchecked")
     public <T> void doImportData(DataImportDTO importData, BaseMapper<T> mapper,
                                  Consumer<T> insertFiller, Consumer<T> updateFiller) {
+        this.doImportData(importData, mapper, insertFiller, updateFiller, e -> {
+            // ignore
+        }, e -> {
+            // ignore
+        });
+    }
+
+    /**
+     * 执行导入数据
+     *
+     * @param importData     导入数据
+     * @param mapper         mapper
+     * @param insertFiller   插入填充器
+     * @param updateFiller   修改填充器
+     * @param insertCallback 插入回调器
+     * @param updateCallback 更新回调器
+     * @param <T>            do
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void doImportData(DataImportDTO importData, BaseMapper<T> mapper,
+                                 Consumer<T> insertFiller, Consumer<T> updateFiller,
+                                 Consumer<T> insertCallback, Consumer<T> updateCallback) {
         ImportType type = ImportType.of(importData.getType());
         Exception ex = null;
         try {
@@ -527,13 +557,15 @@ public class DataImportServiceImpl implements DataImportService {
                     .stream()
                     .map(s -> (T) s)
                     .peek(insertFiller)
-                    .forEach(mapper::insert);
+                    .peek(mapper::insert)
+                    .forEach(insertCallback);
             // 更新
             this.getImportUpdateData(dataCheck, rows, type.getConvertClass())
                     .stream()
                     .map(s -> (T) s)
                     .peek(updateFiller)
-                    .forEach(mapper::updateById);
+                    .peek(mapper::updateById)
+                    .forEach(updateCallback);
         } catch (Exception e) {
             ex = e;
             log.error("{}导入失败 token: {}, data: {}", type.name(), importData.getImportToken(), JSON.toJSONString(importData), e);

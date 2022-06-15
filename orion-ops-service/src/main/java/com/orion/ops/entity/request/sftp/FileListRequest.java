@@ -1,10 +1,12 @@
 package com.orion.ops.entity.request.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * sftp ll 请求
+ * sftp 文件列表请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,11 +14,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "文件列表请求")
 public class FileListRequest extends FileBaseRequest {
 
-    /**
-     * 路径 绝对路径
-     */
+    @ApiModelProperty(value = "绝对路径")
     private String path;
 
 }

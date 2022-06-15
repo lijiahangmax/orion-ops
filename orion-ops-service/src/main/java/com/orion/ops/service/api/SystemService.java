@@ -28,11 +28,11 @@ public interface SystemService {
     IpListConfigVO getIpInfo(String ip);
 
     /**
-     * 配置 ip 列表
+     * 配置 ip 过滤器列表
      *
      * @param request request
      */
-    void configIpList(ConfigIpListRequest request);
+    void configIpFilterList(ConfigIpListRequest request);
 
     /**
      * 清理系统文件

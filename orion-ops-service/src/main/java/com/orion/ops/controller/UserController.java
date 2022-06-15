@@ -13,6 +13,9 @@ import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Objects1;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * 用户controller
+ * 用户 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/25 18:41
  */
+@Api(tags = "用户")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/user")
@@ -34,26 +38,20 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    /**
-     * 用户列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取用户列表")
     public DataGrid<UserInfoVO> list(@RequestBody UserInfoRequest request) {
         return userService.userList(request);
     }
 
-    /**
-     * 详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取用户详情")
     public UserInfoVO detail(@RequestBody UserInfoRequest request) {
         return userService.userDetail(request);
     }
 
-    /**
-     * 添加用户
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加用户")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.ADD_USER)
     public Long addUser(@RequestBody UserInfoRequest request) {
@@ -63,10 +61,8 @@ public class UserController {
         return userService.addUser(request);
     }
 
-    /**
-     * 修改信息
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改用户信息")
     @EventLog(EventType.UPDATE_USER)
     public Integer update(@RequestBody UserInfoRequest request) {
         Integer roleType = request.getRole();
@@ -77,19 +73,15 @@ public class UserController {
         return userService.updateUser(request);
     }
 
-    /**
-     * 修改头像
-     */
-    @RequestMapping("/update-avatar")
+    @PostMapping("/update-avatar")
+    @ApiOperation(value = "修改用户头像")
     public Integer updateAvatar(@RequestBody UserInfoRequest request) {
         String avatar = Valid.notBlank(request.getAvatar());
         return userService.updateAvatar(avatar);
     }
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除用户")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.DELETE_USER)
     public Integer deleteUser(@RequestBody UserInfoRequest request) {
@@ -97,10 +89,8 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
-    /**
-     * 停用/启用
-     */
-    @RequestMapping("/update-status")
+    @PostMapping("/update-status")
+    @ApiOperation(value = "停用/启用用户")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.CHANGE_USER_STATUS)
     public Integer updateUserStatus(@RequestBody UserInfoRequest request) {
@@ -109,10 +99,8 @@ public class UserController {
         return userService.updateStatus(id, status);
     }
 
-    /**
-     * 解锁
-     */
-    @RequestMapping("/unlock")
+    @PostMapping("/unlock")
+    @ApiOperation(value = "解锁用户")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.UNLOCK_USER)
     public Integer unlockUser(@RequestBody UserInfoRequest request) {

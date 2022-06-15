@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { AUDIT_STATUS } from '@/lib/enum'
 
 export default {
   name: 'AppPipelineExecAuditModal',
@@ -44,7 +45,7 @@ export default {
       this.loading = true
       this.$api.auditAppPipelineTask({
         id: this.id,
-        auditStatus: res ? this.$enum.AUDIT_STATUS.RESOLVE.value : this.$enum.AUDIT_STATUS.REJECT.value,
+        auditStatus: res ? AUDIT_STATUS.RESOLVE.value : AUDIT_STATUS.REJECT.value,
         auditReason: this.description
       }).then(() => {
         this.$message.success('审核完成')

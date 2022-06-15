@@ -24,7 +24,6 @@
 </template>
 
 <script>
-
 import { pick } from 'lodash'
 
 const layout = {

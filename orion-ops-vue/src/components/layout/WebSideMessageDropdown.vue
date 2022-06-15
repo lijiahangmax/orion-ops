@@ -21,7 +21,9 @@
               <div class="message-item">
                 <div class="message-title-wrapper">
                   <!-- 标题 -->
-                  <span class="message-title" v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, row.classify).type, row.type).label"/>
+                  <span class="message-title">
+                    {{ row.classify | formatMessageType(row.type, 'label') }}
+                  </span>
                   <!-- 时间 -->
                   <span class="message-time" v-text="row.createTimeAgo" :title="row.createTimeString"/>
                 </div>
@@ -48,6 +50,8 @@
 </template>
 
 <script>
+import { clearStainKeywords, dateFormat, replaceStainKeywords } from '@/lib/utils'
+import { enumValueOf, MESSAGE_CLASSIFY, READ_STATUS } from '@/lib/enum'
 
 export default {
   name: 'WebSideMessageDropdown',
@@ -68,16 +72,16 @@ export default {
       this.loading = true
       // 获取站内信
       this.$api.getWebSideMessageList({
-        status: this.$enum.READ_STATUS.UNREAD.value,
+        status: READ_STATUS.UNREAD.value,
         limit: 10000
       }).then(({ data }) => {
         this.rows = data.rows || []
         this.unreadCount = this.rows.length
         this.rows.forEach(row => {
           // 格式化时间
-          row.createTimeString = this.$utils.dateFormat(new Date(row.createTime))
+          row.createTimeString = dateFormat(new Date(row.createTime))
           // 处理数据
-          row.message = this.$utils.replaceStainKeywords(row.message)
+          row.message = replaceStainKeywords(row.message)
         })
         this.loading = false
       }).then(() => {
@@ -95,10 +99,10 @@ export default {
           // 通知新消息
           for (const newMessage of newMessages) {
             setTimeout(() => {
-              const messageType = this.$enum.valueOf(this.$enum.valueOf(this.$enum.MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
+              const messageType = enumValueOf(enumValueOf(MESSAGE_CLASSIFY, newMessage.classify).type, newMessage.type)
               this.$notification[messageType.notify]({
                 message: messageType.label,
-                description: () => this.$utils.clearStainKeywords(newMessage.message),
+                description: () => clearStainKeywords(newMessage.message),
                 duration: 3
               })
             })
@@ -121,11 +125,17 @@ export default {
       })
     }
   },
+  filters: {
+    formatMessageType(classify, type, f) {
+      const messageType = enumValueOf(MESSAGE_CLASSIFY, classify).type
+      return enumValueOf(messageType, type)[f]
+    }
+  },
   mounted() {
     this.pollId !== null && clearInterval(this.pollId)
     this.pollWebSideMessage()
     // 轮询
-    this.pollId = setInterval(this.pollWebSideMessage, 10000)
+    this.pollId = setInterval(this.pollWebSideMessage, 15000)
   },
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)

@@ -40,7 +40,7 @@
               <a-col :span="6">
                 <a-form-model-item label="执行状态" prop="status">
                   <a-select v-model="query.status" placeholder="全部" allowClear>
-                    <a-select-option :value="type.value" v-for="type in $enum.SCHEDULER_TASK_STATUS" :key="type.value">
+                    <a-select-option :value="type.value" v-for="type in SCHEDULER_TASK_STATUS" :key="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
@@ -99,8 +99,8 @@
                 size="middle">
                 <!-- 状态 -->
                 <template v-slot:status="machine">
-                  <a-tag :color="$enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, machine.status).color">
-                    {{ $enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, machine.status).label }}
+                  <a-tag :color="machine.status | formatMachineStatus('color')">
+                    {{ machine.status | formatMachineStatus('label') }}
                   </a-tag>
                 </template>
                 <!-- 操作 -->
@@ -144,8 +144,8 @@
             </template>
             <!-- 状态 -->
             <template v-slot:status="record">
-              <a-tag :color="$enum.valueOf($enum.SCHEDULER_TASK_STATUS, record.status).color">
-                {{ $enum.valueOf($enum.SCHEDULER_TASK_STATUS, record.status).label }}
+              <a-tag :color="record.status | formatMachineStatus('color')">
+                {{ record.status | formatMachineStatus('label') }}
               </a-tag>
             </template>
             <!-- 开始时间 -->
@@ -211,9 +211,9 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
+import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, SCHEDULER_TASK_MACHINE_STATUS, SCHEDULER_TASK_STATUS } from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 import SchedulerTaskMachineLogAppenderModal from '@/components/log/SchedulerTaskMachineLogAppenderModal'
 import SchedulerTaskLogAppenderModal from '@/components/log/SchedulerTaskLogAppenderModal'
@@ -318,24 +318,24 @@ const innerColumns = [
  */
 const visibleHolder = {
   visibleRecordLog(status) {
-    return status !== _enum.SCHEDULER_TASK_STATUS.WAIT.value
+    return status !== SCHEDULER_TASK_STATUS.WAIT.value
   },
   visibleRecordTerminate(status) {
-    return status === _enum.SCHEDULER_TASK_STATUS.RUNNABLE.value
+    return status === SCHEDULER_TASK_STATUS.RUNNABLE.value
   },
   visibleRecordDelete(status) {
-    return status !== _enum.SCHEDULER_TASK_STATUS.WAIT.value &&
-      status !== _enum.SCHEDULER_TASK_STATUS.RUNNABLE.value
+    return status !== SCHEDULER_TASK_STATUS.WAIT.value &&
+      status !== SCHEDULER_TASK_STATUS.RUNNABLE.value
   },
   visibleMachineLog(status) {
-    return status !== _enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
-      status !== _enum.SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value
+    return status !== SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
+      status !== SCHEDULER_TASK_MACHINE_STATUS.SKIPPED.value
   },
   visibleMachineTerminate(status) {
-    return status === _enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value
+    return status === SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value
   },
   visibleMachineSkip(status) {
-    return status === _enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value
+    return status === SCHEDULER_TASK_MACHINE_STATUS.WAIT.value
   }
 }
 
@@ -349,6 +349,7 @@ export default {
   },
   data() {
     return {
+      SCHEDULER_TASK_STATUS,
       taskLoading: false,
       taskList: [],
       selectedTaskIds: [0],
@@ -384,8 +385,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.SCHEDULER_TASK_STATUS.WAIT.value ||
-              record.status === this.$enum.SCHEDULER_TASK_STATUS.RUNNABLE.value
+            disabled: record.status === SCHEDULER_TASK_STATUS.WAIT.value ||
+              record.status === SCHEDULER_TASK_STATUS.RUNNABLE.value
           }
         })
       }
@@ -419,8 +420,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'machines', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'machines', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []
@@ -512,8 +513,8 @@ export default {
       if (!this.rows || !this.rows.length) {
         return
       }
-      const pollItems = this.rows.filter(r => r.status === this.$enum.SCHEDULER_TASK_STATUS.WAIT.value ||
-        r.status === this.$enum.SCHEDULER_TASK_STATUS.RUNNABLE.value)
+      const pollItems = this.rows.filter(r => r.status === SCHEDULER_TASK_STATUS.WAIT.value ||
+        r.status === SCHEDULER_TASK_STATUS.RUNNABLE.value)
       if (!pollItems.length) {
         return
       }
@@ -559,7 +560,13 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatTaskStatus(status, f) {
+      return enumValueOf(SCHEDULER_TASK_STATUS, status)[f]
+    },
+    formatMachineStatus(status, f) {
+      return enumValueOf(SCHEDULER_TASK_MACHINE_STATUS, status)[f]
+    }
   },
   async mounted() {
     await this.getSchedulerTask()

@@ -2,98 +2,73 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 机器信息
+ * 机器信息响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/14 22:10
  */
 @Data
+@ApiModel(value = "机器信息响应")
 public class MachineInfoVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 代理id
-     */
+    @ApiModelProperty(value = "代理id")
     private Long proxyId;
 
-    /**
-     * 代理主机
-     */
+    @ApiModelProperty(value = "代理主机")
     private String proxyHost;
 
-    /**
-     * 代理端口
-     */
+    @ApiModelProperty(value = "代理端口")
     private Integer proxyPort;
 
-    /**
-     * 代理类型
-     */
+    @ApiModelProperty(value = "代理类型")
     private Integer proxyType;
 
-    /**
-     * 主机ip
-     */
+    @ApiModelProperty(value = "主机ip")
     private String host;
 
-    /**
-     * ssh端口
-     */
+    @ApiModelProperty(value = "ssh端口")
     private Integer sshPort;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String name;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String tag;
 
-    /**
-     * 机器描述
-     */
+    @ApiModelProperty(value = "机器描述")
     private String description;
 
-    /**
-     * 机器账号
-     */
+    @ApiModelProperty(value = "机器账号")
     private String username;
 
     /**
-     * 机器认证方式 1: 账号认证 2: key认证
-     *
      * @see com.orion.ops.consts.machine.MachineAuthType
      */
+    @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
     private Integer authType;
 
     /**
-     * 机器状态 1有效 2无效
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer status;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
     static {

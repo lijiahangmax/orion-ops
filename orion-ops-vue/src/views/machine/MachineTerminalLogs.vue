@@ -105,9 +105,11 @@
 
 <script>
 
+import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
-import _filters from '@/lib/filters'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
 import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
 
@@ -218,7 +220,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []
@@ -272,7 +274,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: this.$enum.FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
+          type: FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
@@ -287,7 +289,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   },
   mounted() {
     this.getList({})

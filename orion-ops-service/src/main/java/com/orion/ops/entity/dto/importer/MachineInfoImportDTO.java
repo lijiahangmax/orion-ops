@@ -7,6 +7,8 @@ import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,67 +21,48 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 2022/5/26 14:01
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "机器信息导入")
 public class MachineInfoImportDTO extends BaseDataImportDTO {
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     @ImportField(index = 0)
     private String name;
 
-    /**
-     * 唯一标识
-     */
+    @ApiModelProperty(value = "唯一标识")
     @ImportField(index = 1)
     private String tag;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     @ImportField(index = 2)
     private String host;
 
-    /**
-     * ssh 端口
-     */
+    @ApiModelProperty(value = "ssh 端口")
     @ImportField(index = 3)
     private Integer port;
 
-    /**
-     * 认证方式
-     */
+    @ApiModelProperty(value = "认证方式")
     @ImportField(index = 4)
     private String authType;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     @ImportField(index = 5)
     private String username;
 
-    /**
-     * 密码 (密文)
-     */
+    @ApiModelProperty(value = "密码 (密文)")
     @ImportField(index = 6)
     private String encryptPassword;
 
-    /**
-     * 导入密码 (明文)
-     */
+    @ApiModelProperty(value = "导入密码 (明文)")
     @ImportField(index = 7)
     private String importPassword;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ImportField(index = 8)
     private String description;
 
-    /**
-     * 密码密文解密后的明文
-     */
+    @ApiModelProperty(value = "密码密文解密后的明文", hidden = true)
     private String decryptPassword;
 
     static {

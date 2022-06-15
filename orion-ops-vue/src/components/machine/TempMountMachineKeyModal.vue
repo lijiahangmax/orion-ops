@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { getBase64Data, readFileBase64 } from '@/lib/utils'
+
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 17 }
@@ -90,8 +92,8 @@ export default {
       // 读取文件
       let fileBase64
       if (this.fileList.length) {
-        fileBase64 = await this.$utils.readFileBase64(this.fileList[0])
-        fileBase64 = this.$utils.getBase64Data(fileBase64)
+        fileBase64 = await readFileBase64(this.fileList[0])
+        fileBase64 = getBase64Data(fileBase64)
       }
       let res
       try {

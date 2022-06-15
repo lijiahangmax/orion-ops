@@ -218,12 +218,13 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         String sourceMachineName = machine.getMachineName();
         String sourceMachineTag = machine.getMachineTag();
-        String copySuffix = Utils.getCopySuffix();
+        String copySuffix = Utils.getRandomSuffix();
         String targetMachineName = sourceMachineName + copySuffix;
         String targetMachineTag = sourceMachineTag + copySuffix;
         machine.setId(null);
         machine.setCreateTime(null);
         machine.setUpdateTime(null);
+        machine.setMachineStatus(Const.ENABLE);
         machine.setMachineName(targetMachineName);
         machine.setMachineTag(targetMachineTag);
         machineInfoDAO.insert(machine);
@@ -257,7 +258,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     public Integer testPing(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-        boolean ping = IPs.ping(machine.getMachineHost(), Const.MS_S_3);
+        // 查询超时时间
+        Integer connectTimeout = machineEnvService.getConnectTimeout(id);
+        boolean ping = IPs.ping(machine.getMachineHost(), connectTimeout);
         return ping ? Const.ENABLE : Const.DISABLE;
     }
 
@@ -267,7 +270,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         try {
             // 查询机器
             MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
-            // 查询超时间
+            // 查询超时时间
             Integer connectTimeout = machineEnvService.getConnectTimeout(id);
             s = this.connectSessionStore(machine, connectTimeout);
             return Const.ENABLE;

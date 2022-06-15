@@ -53,28 +53,28 @@
           <!-- 状态 -->
           <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
             <!-- 状态 执行中 -->
-            <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
+            <template v-if="LOG_TAIL_STATUS.RUNNABLE.value === status">
               <a-popconfirm title="确认关闭当前日志连接?"
                             placement="topRight"
                             ok-text="确定"
                             cancel-text="取消"
                             @confirm="close">
                 <a-badge class="pointer"
-                         :status="$enum.LOG_TAIL_STATUS.RUNNABLE.status"
-                         :text="$enum.LOG_TAIL_STATUS.RUNNABLE.label"/>
+                         :status="LOG_TAIL_STATUS.RUNNABLE.status"
+                         :text="LOG_TAIL_STATUS.RUNNABLE.label"/>
               </a-popconfirm>
             </template>
             <!-- 状态 已关闭 -->
-            <template v-else-if="$enum.LOG_TAIL_STATUS.CLOSE.value === status">
+            <template v-else-if="LOG_TAIL_STATUS.CLOSE.value === status">
               <a-tooltip :title="`code: ${closeCode}${closeReason ? '; reason: ' + closeReason: ''}`">
-                <a-badge :status="$enum.LOG_TAIL_STATUS.CLOSE.status"
-                         :text="$enum.LOG_TAIL_STATUS.CLOSE.label"/>
+                <a-badge :status="LOG_TAIL_STATUS.CLOSE.status"
+                         :text="LOG_TAIL_STATUS.CLOSE.label"/>
               </a-tooltip>
             </template>
             <!-- 状态 其他 -->
             <template v-else>
-              <a-badge :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
-                       :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
+              <a-badge :status="status | formatLogStatus('status')"
+                       :text="status | formatLogStatus('label')"/>
             </template>
           </div>
         </div>
@@ -115,6 +115,8 @@
 </template>
 
 <script>
+import { cleanXss } from '@/lib/utils'
+import { enumValueOf, LOG_TAIL_STATUS } from '@/lib/enum'
 
 const stain = {
   DEBUG: {
@@ -214,9 +216,10 @@ export default {
   },
   data() {
     return {
+      LOG_TAIL_STATUS,
       client: null,
       fixedLog: true,
-      status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
+      status: LOG_TAIL_STATUS.WAITING.value,
       scroll: 0,
       downloadUrl: null,
       lines: 0,
@@ -245,16 +248,16 @@ export default {
       // 打开websocket
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
-        this.status = this.$enum.LOG_TAIL_STATUS.RUNNABLE.value
+        this.status = LOG_TAIL_STATUS.RUNNABLE.value
       }
       this.client.onerror = () => {
-        this.status = this.$enum.LOG_TAIL_STATUS.ERROR.value
+        this.status = LOG_TAIL_STATUS.ERROR.value
       }
       this.client.onclose = (e) => {
         console.log('log close:', e.code, e.reason)
         this.closeCode = e.code
         this.closeReason = e.reason
-        this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
+        this.status = LOG_TAIL_STATUS.CLOSE.value
         this.$emit('close')
       }
       this.client.onmessage = event => {
@@ -318,7 +321,7 @@ export default {
       })
     },
     stainKeywords(msg) {
-      msg = this.$utils.cleanXss(msg)
+      msg = cleanXss(msg)
       // 高亮
       for (const stainKey in stain) {
         msg = msg.replace(stain[stainKey].reg, (keyword) => {
@@ -346,6 +349,11 @@ export default {
     clickRightMenuItem({ key }) {
       this.visibleRightMenu = false
       rightMenuHandler[key].call(this)
+    }
+  },
+  filters: {
+    formatLogStatus(status, f) {
+      return enumValueOf(LOG_TAIL_STATUS, status)[f]
     }
   },
   mounted() {

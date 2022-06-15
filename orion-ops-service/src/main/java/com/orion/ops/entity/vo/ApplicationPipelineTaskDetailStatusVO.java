@@ -4,70 +4,55 @@ import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 应用流水线任务详情状态
+ * 应用流水线任务详情状态响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/24 16:53
  */
 @Data
+@ApiModel(value = "应用流水线任务详情状态响应")
 public class ApplicationPipelineTaskDetailStatusVO {
-    /**
-     * id
-     */
+
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 流水线任务id
-     */
+    @ApiModelProperty(value = "流水线任务id")
     private Long taskId;
 
-    /**
-     * relId
-     */
+    @ApiModelProperty(value = "relId")
     private Long relId;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止
-     *
      * @see com.orion.ops.consts.app.PipelineDetailStatus
      */
+    @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止")
     private Integer status;
 
-    /**
-     * 执行开始时间
-     */
+    @ApiModelProperty(value = "执行开始时间")
     private Date startTime;
 
-    /**
-     * 执行开始时间
-     */
+    @ApiModelProperty(value = "执行开始时间")
     private String startTimeAgo;
 
-    /**
-     * 执行结束时间
-     */
+    @ApiModelProperty(value = "执行结束时间")
     private Date endTime;
 
-    /**
-     * 执行结束时间
-     */
+    @ApiModelProperty(value = "执行结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
     static {

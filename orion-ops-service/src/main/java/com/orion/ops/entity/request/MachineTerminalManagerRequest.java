@@ -1,13 +1,15 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 /**
- * 终端管理
+ * 终端管理请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -15,51 +17,34 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "终端管理请求")
 public class MachineTerminalManagerRequest extends PageRequest {
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 连接时间 开始
-     */
+    @ApiModelProperty(value = "连接时间-区间开始")
     private Date connectedTimeStart;
 
-    /**
-     * 连接时间 结束
-     */
+    @ApiModelProperty(value = "连接时间-区间结束")
     private Date connectedTimeEnd;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     private String machineHost;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
 }

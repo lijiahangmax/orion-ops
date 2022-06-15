@@ -8,7 +8,7 @@
            @ok="submit"
            @cancel="close">
     <a-spin :spinning="loading">
-      <div class="">
+      <div class="timed-release-picker-wrapper">
         <span class="normal-label mr8">调度时间 </span>
         <a-date-picker v-model="timedReleaseTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
       </div>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { RELEASE_STATUS, TIMED_TYPE } from '@/lib/enum'
 import moment from 'moment'
 
 export default {
@@ -53,8 +54,8 @@ export default {
         this.loading = false
         this.visible = false
         this.record.timedReleaseTime = time
-        this.record.status = this.$enum.RELEASE_STATUS.WAIT_SCHEDULE.value
-        this.record.timedRelease = this.$enum.TIMED_TYPE.TIMED.value
+        this.record.status = RELEASE_STATUS.WAIT_SCHEDULE.value
+        this.record.timedRelease = TIMED_TYPE.TIMED.value
         this.$emit('updated')
       }).catch(() => {
         this.loading = false

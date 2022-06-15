@@ -22,6 +22,8 @@ import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.io.Files1;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,12 +34,13 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- * sftp 操作
+ * sftp 操作 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/22 19:53
  */
+@Api(tags = "sftp操作")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/sftp")
@@ -46,20 +49,16 @@ public class SftpController {
     @Resource
     private SftpService sftpService;
 
-    /**
-     * 打开
-     */
-    @RequestMapping("/open")
+    @PostMapping("/open")
+    @ApiOperation(value = "打开sftp")
     @EventLog(EventType.OPEN_SFTP)
     public FileOpenVO open(@RequestBody FileOpenRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return sftpService.open(machineId);
     }
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取文件列表")
     public FileListVO list(@RequestBody FileListRequest request) {
         Valid.checkNormalize(request.getPath());
         try {
@@ -69,10 +68,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 文件夹列表
-     */
-    @RequestMapping("/list-dir")
+    @PostMapping("/list-dir")
+    @ApiOperation(value = "获取文件夹列表")
     public FileListVO listDir(@RequestBody FileListRequest request) {
         Valid.checkNormalize(request.getPath());
         try {
@@ -82,30 +79,24 @@ public class SftpController {
         }
     }
 
-    /**
-     * 创建文件夹
-     */
-    @RequestMapping("/mkdir")
+    @PostMapping("/mkdir")
+    @ApiOperation(value = "创建文件夹")
     @EventLog(EventType.SFTP_MKDIR)
     public String mkdir(@RequestBody FileMkdirRequest request) {
         Valid.checkNormalize(request.getPath());
         return sftpService.mkdir(request);
     }
 
-    /**
-     * 创建文件
-     */
-    @RequestMapping("/touch")
+    @PostMapping("/touch")
+    @ApiOperation(value = "创建文件")
     @EventLog(EventType.SFTP_TOUCH)
     public String touch(@RequestBody FileTouchRequest request) {
         Valid.checkNormalize(request.getPath());
         return sftpService.touch(request);
     }
 
-    /**
-     * 截断文件
-     */
-    @RequestMapping("/truncate")
+    @PostMapping("/truncate")
+    @ApiOperation(value = "截断文件")
     @EventLog(EventType.SFTP_TRUNCATE)
     public void truncate(@RequestBody FileTruncateRequest request) {
         Valid.checkNormalize(request.getPath());
@@ -116,10 +107,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 移动
-     */
-    @RequestMapping("/move")
+    @PostMapping("/move")
+    @ApiOperation(value = "移动文件")
     @EventLog(EventType.SFTP_MOVE)
     public String move(@RequestBody FileMoveRequest request) {
         Valid.checkNormalize(request.getSource());
@@ -131,10 +120,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/remove")
+    @PostMapping("/remove")
+    @ApiOperation(value = "删除文件/文件夹")
     @EventLog(EventType.SFTP_REMOVE)
     public void remove(@RequestBody FileRemoveRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
@@ -148,10 +135,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 修改权限
-     */
-    @RequestMapping("/chmod")
+    @PostMapping("/chmod")
+    @ApiOperation(value = "修改权限")
     @EventLog(EventType.SFTP_CHMOD)
     public String chmod(@RequestBody FileChmodRequest request) {
         Valid.checkNormalize(request.getPath());
@@ -163,10 +148,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 修改所有者
-     */
-    @RequestMapping("/chown")
+    @PostMapping("/chown")
+    @ApiOperation(value = "修改所有者")
     @EventLog(EventType.SFTP_CHOWN)
     public void chown(@RequestBody FileChownRequest request) {
         Valid.checkNormalize(request.getPath());
@@ -178,10 +161,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 修改所有组
-     */
-    @RequestMapping("/chgrp")
+    @PostMapping("/chgrp")
+    @ApiOperation(value = "修改所有组")
     @EventLog(EventType.SFTP_CHGRP)
     public void changeGroup(@RequestBody FileChangeGroupRequest request) {
         Valid.checkNormalize(request.getPath());
@@ -193,10 +174,8 @@ public class SftpController {
         }
     }
 
-    /**
-     * 检查文件是否存在
-     */
-    @RequestMapping("/check-present")
+    @PostMapping("/check-present")
+    @ApiOperation(value = "检查文件是否存在")
     public List<String> checkFilePresent(@RequestBody FilePresentCheckRequest request) {
         Valid.checkNormalize(request.getPath());
         Valid.notEmpty(request.getNames());
@@ -204,21 +183,17 @@ public class SftpController {
         return sftpService.checkFilePresent(request);
     }
 
-    /**
-     * 获取上传文件 accessToken
-     */
-    @RequestMapping("/upload/token")
+    @PostMapping("/upload/token")
+    @ApiOperation(value = "获取上传文件accessToken")
     public String getUploadAccessToken(@RequestBody FileUploadRequest request) {
         return sftpService.getUploadAccessToken(request);
     }
 
-    /**
-     * 上传文件
-     */
-    @RequestMapping("/upload/exec")
+    @PostMapping("/upload/exec")
+    @ApiOperation(value = "上传文件")
     @EventLog(EventType.SFTP_UPLOAD)
     public void uploadFile(@RequestParam("accessToken") String accessToken, @RequestParam("files") List<MultipartFile> files) throws IOException {
-        // 检查路径
+        // 检查文件
         Valid.notBlank(accessToken);
         Valid.notEmpty(files);
         // 检查token
@@ -247,10 +222,8 @@ public class SftpController {
         sftpService.upload(machineId, requestFiles);
     }
 
-    /**
-     * 下载文件
-     */
-    @RequestMapping("/download/exec")
+    @PostMapping("/download/exec")
+    @ApiOperation(value = "下载文件")
     @EventLog(EventType.SFTP_DOWNLOAD)
     public void downloadFile(@RequestBody FileDownloadRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
@@ -258,10 +231,8 @@ public class SftpController {
         sftpService.download(request);
     }
 
-    /**
-     * 打包下载文件
-     */
-    @RequestMapping("/package-download/exec")
+    @PostMapping("/package-download/exec")
+    @ApiOperation(value = "打包下载文件")
     @EventLog(EventType.SFTP_DOWNLOAD)
     public void packageDownloadFile(@RequestBody FileDownloadRequest request) {
         List<String> paths = Valid.notEmpty(request.getPaths());
@@ -269,102 +240,78 @@ public class SftpController {
         sftpService.packageDownload(request);
     }
 
-    /**
-     * 传输暂停
-     */
-    @RequestMapping("/transfer/{fileToken}/pause")
+    @PostMapping("/transfer/{fileToken}/pause")
+    @ApiOperation(value = "暂停文件传输")
     public void transferPause(@PathVariable("fileToken") String fileToken) {
         sftpService.transferPause(fileToken);
     }
 
-    /**
-     * 传输恢复
-     */
-    @RequestMapping("/transfer/{fileToken}/resume")
+    @PostMapping("/transfer/{fileToken}/resume")
+    @ApiOperation(value = "恢复文件传输")
     public void transferResume(@PathVariable("fileToken") String fileToken) {
         sftpService.transferResume(fileToken);
     }
 
-    /**
-     * 传输失败重试
-     */
-    @RequestMapping("/transfer/{fileToken}/retry")
+    @PostMapping("/transfer/{fileToken}/retry")
+    @ApiOperation(value = "传输失败重试")
     public void transferRetry(@PathVariable("fileToken") String fileToken) {
         sftpService.transferRetry(fileToken);
     }
 
-    /**
-     * 重新上传
-     */
-    @RequestMapping("/transfer/{fileToken}/re-upload")
+    @PostMapping("/transfer/{fileToken}/re-upload")
+    @ApiOperation(value = "重新上传文件")
     public void transferReUpload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReUpload(fileToken);
     }
 
-    /**
-     * 重新下载
-     */
-    @RequestMapping("/transfer/{fileToken}/re-download")
+    @PostMapping("/transfer/{fileToken}/re-download")
+    @ApiOperation(value = "重新下载文件")
     public void transferReDownload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReDownload(fileToken);
     }
 
-    /**
-     * 批量暂停所有传输
-     */
-    @RequestMapping("/transfer/{sessionToken}/pause-all")
+    @PostMapping("/transfer/{sessionToken}/pause-all")
+    @ApiOperation(value = "暂停所有传输")
     public void transferPauseAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferPauseAll(sessionToken);
     }
 
-    /**
-     * 批量恢复所有传输
-     */
-    @RequestMapping("/transfer/{sessionToken}/resume-all")
+    @PostMapping("/transfer/{sessionToken}/resume-all")
+    @ApiOperation(value = "恢复所有传输")
     public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferResumeAll(sessionToken);
     }
 
-    /**
-     * 批量失败重试所有
-     */
-    @RequestMapping("/transfer/{sessionToken}/retry-all")
+    @PostMapping("/transfer/{sessionToken}/retry-all")
+    @ApiOperation(value = "失败重试所有")
     public void transferRetryAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferRetryAll(sessionToken);
     }
 
-    /**
-     * 传输列表
-     */
-    @RequestMapping("/transfer/{sessionToken}/list")
+    @PostMapping("/transfer/{sessionToken}/list")
+    @ApiOperation(value = "获取传输列表")
     public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
         SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
         Valid.isTrue(Currents.getUserId().equals(tokenInfo.getUserId()));
         return sftpService.transferList(tokenInfo.getMachineId());
     }
 
-    /**
-     * 传输删除 (单个) 包含进行中的
-     */
-    @RequestMapping("/transfer/{fileToken}/remove")
+    @PostMapping("/transfer/{fileToken}/remove")
+    @ApiOperation(value = "删除单个传输记录 (包含进行中的)")
     public void transferRemove(@PathVariable("fileToken") String fileToken) {
         sftpService.transferRemove(fileToken);
     }
 
-    /**
-     * 传输清空 (全部) 不包含进行中的
-     */
-    @RequestMapping("/transfer/{sessionToken}/clear")
+    @PostMapping("/transfer/{sessionToken}/clear")
+    @ApiOperation(value = "清空全部传输记录 (不包含进行中的)")
     public Integer transferClear(@PathVariable("sessionToken") String sessionToken) {
         SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
         Valid.isTrue(Currents.getUserId().equals(tokenInfo.getUserId()));
         return sftpService.transferClear(tokenInfo.getMachineId());
     }
 
-    /**
-     * 传输打包 全部已完成未删除的文件
-     */
-    @RequestMapping("/transfer/{sessionToken}/{packageType}/package")
+    @PostMapping("/transfer/{sessionToken}/{packageType}/package")
+    @ApiOperation(value = "传输打包全部已完成未删除的文件")
     @EventLog(EventType.SFTP_PACKAGE)
     public void transferPackage(@PathVariable("sessionToken") String sessionToken, @PathVariable("packageType") Integer packageType) {
         SftpPackageType sftpPackageType = Valid.notNull(SftpPackageType.of(packageType));

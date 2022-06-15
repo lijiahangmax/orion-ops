@@ -1,4 +1,24 @@
-⚡ 注意: 应用不支持跨版本升级
+⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
+
+## 1.1.3
+
+> sql 脚本
+
+```sql
+ALTER TABLE `application_info` 
+MODIFY COLUMN `vcs_id` bigint(20) NULL DEFAULT NULL COMMENT '应用版本仓库id' AFTER `app_sort`;
+
+ALTER TABLE `application_build` 
+MODIFY COLUMN `vcs_id` bigint(20) NULL DEFAULT NULL COMMENT '应用版本仓库id' AFTER `commit_id`;
+
+ALTER TABLE `application_vcs` COMMENT = '应用版本仓库';
+
+ALTER TABLE `application_release` COMMENT = '发布任务';
+
+ALTER TABLE `application_release_machine` 
+MODIFY COLUMN `release_id` bigint(20) NULL DEFAULT NULL COMMENT '发布任务id' AFTER `id`,
+COMMENT = '发布任务机器表';
+```
 
 ## 1.1.2
 

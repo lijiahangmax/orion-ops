@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,16 +12,13 @@ import lombok.Data;
  * @since 2022/3/29 17:02
  */
 @Data
+@ApiModel(value = "应用构建统计")
 public class AppBuildStatisticsRequest {
 
-    /**
-     * appId
-     */
+    @ApiModelProperty(value = "appId")
     private Long appId;
 
-    /**
-     * profileId
-     */
+    @ApiModelProperty(value = "profileId")
     private Long profileId;
 
 }

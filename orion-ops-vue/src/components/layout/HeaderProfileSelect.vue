@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { isEmptyStr } from '@/lib/utils'
+
 export default {
   name: 'HeaderProfileSelect',
   data() {
@@ -41,7 +43,7 @@ export default {
           return
         }
         let storageProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
-        if (this.$utils.isEmptyStr(storageProfile)) {
+        if (isEmptyStr(storageProfile)) {
           // 如果没有则拿到第一个
           storageProfile = this.profileList[0]
         } else {

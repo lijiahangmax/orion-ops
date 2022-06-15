@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,11 +12,10 @@ import lombok.Data;
  * @since 2022/5/9 14:44
  */
 @Data
+@ApiModel(value = "应用操作日志请求")
 public class ApplicationActionLogRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
 }

@@ -3,65 +3,52 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.io.Files1;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 传输列表
+ * 传输列表响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/27 23:30
  */
 @Data
+@ApiModel(value = "传输列表响应")
 public class FileTransferLogVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * fileToken
-     */
+    @ApiModelProperty(value = "fileToken")
     private String fileToken;
 
     /**
-     * 传输类型 10上传 20下载 30传输
-     *
      * @see com.orion.ops.consts.sftp.SftpTransferType
      */
+    @ApiModelProperty(value = "传输类型 10上传 20下载 30传输")
     private Integer type;
 
-    /**
-     * 远程文件
-     */
+    @ApiModelProperty(value = "远程文件")
     private String remoteFile;
 
-    /**
-     * 当前大小
-     */
+    @ApiModelProperty(value = "当前大小")
     private String current;
 
-    /**
-     * 文件大小
-     */
+    @ApiModelProperty(value = "文件大小")
     private String size;
 
-    /**
-     * 当前进度
-     */
+    @ApiModelProperty(value = "当前进度")
     private Double progress;
 
     /**
-     * 传输状态 10未开始 20进行中 30已暂停 40已完成 50已取消 60传输异常
-     *
      * @see com.orion.ops.consts.sftp.SftpTransferStatus
      */
+    @ApiModelProperty(value = "传输状态 10未开始 20进行中 30已暂停 40已完成 50已取消 60传输异常")
     private Integer status;
 
     static {

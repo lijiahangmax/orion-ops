@@ -21,22 +21,22 @@ import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 终端
+ * 机器终端 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/15 21:45
  */
+@Api(tags = "机器终端")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/terminal")
@@ -48,38 +48,30 @@ public class MachineTerminalController {
     @Resource
     private TerminalSessionManager terminalSessionManager;
 
-    /**
-     * 获取终端 accessToken
-     */
-    @RequestMapping("/access")
+    @PostMapping("/access")
+    @ApiOperation(value = "获取终端accessToken")
     @EventLog(EventType.OPEN_TERMINAL)
-    public TerminalAccessVO access(@RequestBody MachineTerminalRequest request) {
+    public TerminalAccessVO getTerminalAccess(@RequestBody MachineTerminalRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return machineTerminalService.getAccessConfig(machineId);
     }
 
-    /**
-     * 获取支持的终端类型
-     */
-    @RequestMapping("/support/pty")
+    @PostMapping("/support/pty")
+    @ApiOperation(value = "获取支持的终端类型")
     public String[] getSupportedPty() {
         return Arrays.stream(TerminalType.values())
                 .map(TerminalType::getType)
                 .toArray(String[]::new);
     }
 
-    /**
-     * 获取配置
-     */
-    @RequestMapping("/get/{machineId}")
+    @PostMapping("/get/{machineId}")
+    @ApiOperation(value = "获取终端配置")
     public MachineTerminalVO getSetting(@PathVariable Long machineId) {
         return machineTerminalService.getMachineConfig(machineId);
     }
 
-    /**
-     * 修改配置
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改终端配置")
     @EventLog(EventType.UPDATE_TERMINAL_CONFIG)
     public Integer updateSetting(@RequestBody MachineTerminalRequest request) {
         Valid.notNull(request.getId());
@@ -96,37 +88,29 @@ public class MachineTerminalController {
         return machineTerminalService.updateSetting(request);
     }
 
-    /**
-     * 日志列表
-     */
-    @RequestMapping("/log/list")
+    @PostMapping("/log/list")
+    @ApiOperation(value = "获取终端日志列表")
     public DataGrid<MachineTerminalLogVO> accessLogList(@RequestBody MachineTerminalLogRequest request) {
         return machineTerminalService.listAccessLog(request);
     }
 
-    /**
-     * 删除日志
-     */
-    @RequestMapping("/log/delete")
+    @PostMapping("/log/delete")
+    @ApiOperation(value = "删除终端日志")
     @EventLog(EventType.DELETE_TERMINAL_LOG)
     public Integer deleteLog(@RequestBody MachineTerminalLogRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineTerminalService.deleteTerminalLog(idList);
     }
 
-    /**
-     * session列表 (管理员)
-     */
-    @RequestMapping("/manager/session")
+    @PostMapping("/manager/session")
+    @ApiOperation(value = "获取终端会话列表")
     @RequireRole(RoleType.ADMINISTRATOR)
     public DataGrid<MachineTerminalManagerVO> sessionList(@RequestBody MachineTerminalManagerRequest request) {
         return terminalSessionManager.getOnlineTerminal(request);
     }
 
-    /**
-     * 强制下线 (管理员)
-     */
-    @RequestMapping("/manager/offline")
+    @PostMapping("/manager/offline")
+    @ApiOperation(value = "强制下线终端会话")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.FORCE_OFFLINE_TERMINAL)
     public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {

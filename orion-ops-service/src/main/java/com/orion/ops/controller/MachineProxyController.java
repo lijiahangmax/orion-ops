@@ -10,6 +10,9 @@ import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Strings;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +21,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 机器代理
+ * 机器代理 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/3 21:11
  */
+@Api(tags = "机器代理")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/proxy")
@@ -32,10 +36,8 @@ public class MachineProxyController {
     @Resource
     private MachineProxyService machineProxyService;
 
-    /**
-     * 添加
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加机器代理")
     @EventLog(EventType.ADD_MACHINE_PROXY)
     public Long addProxy(@RequestBody MachineProxyRequest request) {
         request.setId(null);
@@ -46,10 +48,8 @@ public class MachineProxyController {
         return machineProxyService.addProxy(request);
     }
 
-    /**
-     * 修改
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改机器代理")
     @EventLog(EventType.UPDATE_MACHINE_PROXY)
     public Integer update(@RequestBody MachineProxyRequest request) {
         Valid.notNull(request.getId());
@@ -57,27 +57,21 @@ public class MachineProxyController {
         return machineProxyService.updateProxy(request);
     }
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取机器代理列表")
     public DataGrid<MachineProxyVO> list(@RequestBody MachineProxyRequest request) {
         return machineProxyService.listProxy(request);
     }
 
-    /**
-     * 详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取机器代理详情")
     public MachineProxyVO detail(@RequestBody MachineProxyRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineProxyService.getProxyDetail(id);
     }
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除机器代理")
     @EventLog(EventType.DELETE_MACHINE_PROXY)
     public Integer delete(@RequestBody MachineProxyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());

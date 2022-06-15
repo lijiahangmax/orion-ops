@@ -6,17 +6,17 @@
       <div class="table-search-columns">
         <a-form-model class="system-env-search-form" ref="query" :model="query">
           <a-row>
-            <a-col :span="5">
+            <a-col :span="6">
               <a-form-model-item label="key" prop="key">
                 <a-input v-model="query.key" allowClear/>
               </a-form-model-item>
             </a-col>
-            <a-col :span="5">
+            <a-col :span="6">
               <a-form-model-item label="value" prop="value">
                 <a-input v-model="query.value" allowClear/>
               </a-form-model-item>
             </a-col>
-            <a-col :span="5">
+            <a-col :span="6">
               <a-form-model-item label="描述" prop="description">
                 <a-input v-model="query.description" allowClear/>
               </a-form-model-item>
@@ -33,7 +33,7 @@
           <!-- 视图 -->
           <div class="mx8 nowrap">
             <a-radio-group v-model="viewType" buttonStyle="solid">
-              <a-radio-button v-for="view in $enum.VIEW_TYPE"
+              <a-radio-button v-for="view in VIEW_TYPE"
                               :key="view.value"
                               :value="view.value"
                               @click="changeView(view)">
@@ -43,7 +43,7 @@
           </div>
           <a-divider v-show="selectedRowKeys.length" type="vertical"/>
           <!-- 删除 -->
-          <a-popconfirm v-show="selectedRowKeys.length && viewType === $enum.VIEW_TYPE.TABLE.value"
+          <a-popconfirm v-show="selectedRowKeys.length && viewType === VIEW_TYPE.TABLE.value"
                         placement="topRight"
                         title="是否删除选中环境变量?"
                         ok-text="确定"
@@ -54,14 +54,14 @@
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">
-          <a-button class="mx8" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value"
+          <a-button class="mx8" v-if="viewType !== VIEW_TYPE.TABLE.value"
                     type="primary"
                     icon="check"
                     :disabled="loading"
                     @click="save">
             保存
           </a-button>
-          <a-divider v-if="viewType !== $enum.VIEW_TYPE.TABLE.value" type="vertical"/>
+          <a-divider v-if="viewType !== VIEW_TYPE.TABLE.value" type="vertical"/>
           <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
           <a-divider type="vertical"/>
           <a-icon type="search" class="tools-icon" title="查询" @click="getSystemEnv({})"/>
@@ -69,7 +69,7 @@
         </div>
       </div>
       <!-- 环境变量表格 -->
-      <div class="table-main-container table-scroll-x-auto" v-if="viewType === $enum.VIEW_TYPE.TABLE.value">
+      <div class="table-main-container table-scroll-x-auto" v-if="viewType === VIEW_TYPE.TABLE.value">
         <a-table :columns="columns"
                  :dataSource="rows"
                  :pagination="pagination"
@@ -129,7 +129,7 @@
       </div>
     </div>
     <!-- 环境变量视图 -->
-    <div class="table-main-container env-editor-container" v-if="viewType !== $enum.VIEW_TYPE.TABLE.value">
+    <div class="table-main-container env-editor-container" v-if="viewType !== VIEW_TYPE.TABLE.value">
       <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
         <Editor ref="editor" :lang="viewLang"/>
       </a-spin>
@@ -147,13 +147,12 @@
 </template>
 
 <script>
-
-import _$enum from '@/lib/enum'
+import { formatDate } from '@/lib/filters'
+import { HISTORY_VALUE_TYPE, VIEW_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddSystemEnvModal from '@/components/system/AddSystemEnvModal'
 import EnvHistoryModal from '@/components/history/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
-import _filters from '@/lib/filters'
 
 const columns = [
   {
@@ -206,6 +205,7 @@ export default {
   },
   data: function() {
     return {
+      VIEW_TYPE,
       rows: [],
       query: {
         key: null,
@@ -223,7 +223,7 @@ export default {
       loading: false,
       selectedRowKeys: [],
       columns,
-      viewType: _$enum.VIEW_TYPE.TABLE.value,
+      viewType: VIEW_TYPE.TABLE.value,
       viewLang: null
     }
   },
@@ -251,7 +251,7 @@ export default {
     },
     getSystemEnv(page = this.pagination) {
       this.loading = true
-      if (this.viewType === this.$enum.VIEW_TYPE.TABLE.value) {
+      if (this.viewType === VIEW_TYPE.TABLE.value) {
         this.$api.getSystemEnvList({
           ...this.query,
           page: page.current,
@@ -320,7 +320,7 @@ export default {
       this.$refs.historyModal.open({
         key: record.key,
         valueId: record.id,
-        valueType: this.$enum.HISTORY_VALUE_TYPE.SYSTEM_ENV.value
+        valueType: HISTORY_VALUE_TYPE.SYSTEM_ENV.value
       })
     },
     resetForm() {
@@ -332,7 +332,7 @@ export default {
     this.getSystemEnv({})
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

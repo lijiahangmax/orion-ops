@@ -19,7 +19,7 @@
             <a-col :span="5">
               <a-form-model-item label="状态" prop="type">
                 <a-select v-model="query.latelyStatus" placeholder="全部" allowClear>
-                  <a-select-option :value="type.value" v-for="type in $enum.SCHEDULER_TASK_STATUS" :key="type.value">
+                  <a-select-option :value="type.value" v-for="type in SCHEDULER_TASK_STATUS" :key="type.value">
                     {{ type.label }}
                   </a-select-option>
                 </a-select>
@@ -42,7 +42,7 @@
               <a-radio-button :value="undefined">
                 全部
               </a-radio-button>
-              <a-radio-button :value="type.value" v-for="type in $enum.ENABLE_STATUS" :key="type.value">
+              <a-radio-button :value="type.value" v-for="type in ENABLE_STATUS" :key="type.value">
                 {{ type.label }}
               </a-radio-button>
             </a-radio-group>
@@ -67,8 +67,8 @@
           <!-- 最近状态 -->
           <template v-slot:latelyStatus="record">
             <template v-if="record.enableStatus === 1">
-              <a-tag :color="$enum.valueOf($enum.SCHEDULER_TASK_STATUS, record.latelyStatus).color">
-                {{ $enum.valueOf($enum.SCHEDULER_TASK_STATUS, record.latelyStatus).label }}
+              <a-tag :color="record.latelyStatus | formatTaskStatus('color')">
+                {{ record.latelyStatus | formatTaskStatus('label') }}
               </a-tag>
             </template>
             <template v-else>
@@ -137,8 +137,8 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, ENABLE_STATUS, SCHEDULER_TASK_STATUS } from '@/lib/enum'
 import AddSchedulerTask from '@/components/scheduler/AddSchedulerTask'
 
 /**
@@ -210,6 +210,8 @@ export default {
   components: { AddSchedulerTask },
   data: function() {
     return {
+      SCHEDULER_TASK_STATUS,
+      ENABLE_STATUS,
       query: {
         name: null,
         description: null,
@@ -306,7 +308,10 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatTaskStatus(status, f) {
+      return enumValueOf(SCHEDULER_TASK_STATUS, status)[f]
+    }
   },
   mounted() {
     this.getList({})

@@ -1,42 +1,36 @@
 package com.orion.ops.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 用户登录返回
+ * 用户登录响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/20 22:16
  */
 @Data
+@ApiModel(value = "用户登录响应")
 public class UserLoginVO {
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 昵称
-     */
+    @ApiModelProperty(value = "昵称")
     private String nickname;
 
     /**
-     * 角色类型
-     *
      * @see com.orion.ops.consts.user.RoleType
      */
+    @ApiModelProperty(value = "角色类型")
     private Integer roleType;
 
 }

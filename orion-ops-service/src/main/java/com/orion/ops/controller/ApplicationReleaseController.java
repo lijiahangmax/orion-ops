@@ -19,6 +19,9 @@ import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +31,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 应用发布api
+ * 应用发布 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/11 22:15
  */
+@Api(tags = "应用发布")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/app-release")
@@ -45,45 +49,35 @@ public class ApplicationReleaseController {
     @Resource
     private TaskRegister taskRegister;
 
-    /**
-     * 发布列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取发布列表")
     public DataGrid<ApplicationReleaseListVO> getReleaseList(@RequestBody ApplicationReleaseRequest request) {
         return applicationReleaseService.getReleaseList(request);
     }
 
-    /**
-     * 发布机器列表
-     */
-    @RequestMapping("/list-machine")
+    @PostMapping("/list-machine")
+    @ApiOperation(value = "获取发布机器列表")
     public List<ApplicationReleaseMachineVO> getReleaseMachineList(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.getReleaseMachineList(id);
     }
 
-    /**
-     * 发布详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取发布详情")
     public ApplicationReleaseDetailVO getReleaseDetail(@RequestBody ApplicationReleaseRequest request) {
         Valid.notNull(request.getId());
         return applicationReleaseService.getReleaseDetail(request);
     }
 
-    /**
-     * 发布机器详情
-     */
-    @RequestMapping("/machine-detail")
+    @PostMapping("/machine-detail")
+    @ApiOperation(value = "获取发布机器详情")
     public ApplicationReleaseMachineVO getReleaseMachineDetail(@RequestBody ApplicationReleaseRequest request) {
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
         return applicationReleaseService.getReleaseMachineDetail(releaseMachineId);
     }
 
-    /**
-     * 提交发布
-     */
-    @RequestMapping("/submit")
+    @PostMapping("/submit")
+    @ApiOperation(value = "提交发布任务")
     @EventLog(EventType.SUBMIT_RELEASE)
     public Long submitAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Valid.notBlank(request.getTitle());
@@ -105,20 +99,16 @@ public class ApplicationReleaseController {
         return id;
     }
 
-    /**
-     * 复制发布
-     */
-    @RequestMapping("/copy")
+    @PostMapping("/copy")
+    @ApiOperation(value = "复制发布任务")
     @EventLog(EventType.COPY_RELEASE)
     public Long copyAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.copyAppRelease(id);
     }
 
-    /**
-     * 发布审核
-     */
-    @RequestMapping("/audit")
+    @PostMapping("/audit")
+    @ApiOperation(value = "发布任务审核")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.AUDIT_RELEASE)
     public Integer auditAppRelease(@RequestBody ApplicationReleaseAuditRequest request) {
@@ -130,10 +120,8 @@ public class ApplicationReleaseController {
         return applicationReleaseService.auditAppRelease(request);
     }
 
-    /**
-     * 执行发布
-     */
-    @RequestMapping("/runnable")
+    @PostMapping("/runnable")
+    @ApiOperation(value = "执行发布任务")
     @EventLog(EventType.RUNNABLE_RELEASE)
     public HttpWrapper<?> runnableAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -141,21 +129,8 @@ public class ApplicationReleaseController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 取消定时发布
-     */
-    @RequestMapping("/cancel-timed")
-    @EventLog(EventType.CANCEL_TIMED_RELEASE)
-    public HttpWrapper<?> cancelTimedRelease(@RequestBody ApplicationReleaseRequest request) {
-        Long id = Valid.notNull(request.getId());
-        applicationReleaseService.cancelAppTimedRelease(id);
-        return HttpWrapper.ok();
-    }
-
-    /**
-     * 设置定时发布
-     */
-    @RequestMapping("/set-timed")
+    @PostMapping("/set-timed")
+    @ApiOperation(value = "设置定时发布")
     @EventLog(EventType.SET_TIMED_RELEASE)
     public HttpWrapper<?> setTimedRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -165,31 +140,34 @@ public class ApplicationReleaseController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 回滚发布
-     */
-    @RequestMapping("/rollback")
+    @PostMapping("/cancel-timed")
+    @ApiOperation(value = "取消定时发布")
+    @EventLog(EventType.CANCEL_TIMED_RELEASE)
+    public HttpWrapper<?> cancelTimedRelease(@RequestBody ApplicationReleaseRequest request) {
+        Long id = Valid.notNull(request.getId());
+        applicationReleaseService.cancelAppTimedRelease(id);
+        return HttpWrapper.ok();
+    }
+
+    @PostMapping("/rollback")
+    @ApiOperation(value = "回滚发布")
     @EventLog(EventType.ROLLBACK_RELEASE)
     public Long rollbackAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.rollbackAppRelease(id);
     }
 
-    /**
-     * 发布停止
-     */
-    @RequestMapping("/terminate")
+    @PostMapping("/terminate")
     @EventLog(EventType.TERMINATE_RELEASE)
+    @ApiOperation(value = "停止发布任务")
     public HttpWrapper<?> terminateAppRelease(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         applicationReleaseService.terminateRelease(id);
         return HttpWrapper.ok();
     }
 
-    /**
-     * 停止机器
-     */
-    @RequestMapping("/terminate-machine")
+    @PostMapping("/terminate-machine")
+    @ApiOperation(value = "停止机器发布操作")
     @EventLog(EventType.TERMINATE_MACHINE_RELEASE)
     public HttpWrapper<?> terminateMachine(@RequestBody ApplicationReleaseRequest request) {
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
@@ -197,10 +175,8 @@ public class ApplicationReleaseController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 跳过机器
-     */
-    @RequestMapping("/skip-machine")
+    @PostMapping("/skip-machine")
+    @ApiOperation(value = "跳过机器发布操作")
     @EventLog(EventType.SKIP_MACHINE_RELEASE)
     public HttpWrapper<?> skipMachine(@RequestBody ApplicationReleaseRequest request) {
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
@@ -208,10 +184,8 @@ public class ApplicationReleaseController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 输入命令
-     */
-    @RequestMapping("/write-machine")
+    @PostMapping("/write-machine")
+    @ApiOperation(value = "机器操作输入命令")
     public HttpWrapper<?> writeMachine(@RequestBody ApplicationReleaseRequest request) {
         Long releaseMachineId = Valid.notNull(request.getReleaseMachineId());
         String command = Valid.notEmpty(request.getCommand());
@@ -219,51 +193,41 @@ public class ApplicationReleaseController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 发布删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除发布任务")
     @EventLog(EventType.DELETE_RELEASE)
     public Integer deleteAppRelease(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notNull(request.getIdList());
         return applicationReleaseService.deleteRelease(idList);
     }
 
-    /**
-     * 发布状态列表
-     */
     @IgnoreLog
-    @RequestMapping("/list-status")
+    @PostMapping("/list-status")
+    @ApiOperation(value = "获取发布状态列表")
     public List<ApplicationReleaseStatusVO> getReleaseStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationReleaseService.getReleaseStatusList(idList, request.getMachineIdList());
     }
 
-    /**
-     * 发布状态
-     */
     @IgnoreLog
-    @RequestMapping("/status")
+    @PostMapping("/status")
+    @ApiOperation(value = "获取发布状态")
     public ApplicationReleaseStatusVO getReleaseStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationReleaseService.getReleaseStatus(id);
     }
 
-    /**
-     * 发布机器状态列表
-     */
     @IgnoreLog
-    @RequestMapping("/list-machine-status")
+    @PostMapping("/list-machine-status")
+    @ApiOperation(value = "获取发布机器状态列表")
     public List<ApplicationReleaseMachineStatusVO> getReleaseMachineStatusList(@RequestBody ApplicationReleaseRequest request) {
         List<Long> idList = Valid.notEmpty(request.getReleaseMachineIdList());
         return applicationReleaseService.getReleaseMachineStatusList(idList);
     }
 
-    /**
-     * 发布机器状态
-     */
     @IgnoreLog
-    @RequestMapping("/machine-status")
+    @PostMapping("/machine-status")
+    @ApiOperation(value = "获取发布机器状态")
     public ApplicationReleaseMachineStatusVO getReleaseMachineStatus(@RequestBody ApplicationReleaseRequest request) {
         Long id = Valid.notNull(request.getReleaseMachineId());
         return applicationReleaseService.getReleaseMachineStatus(id);

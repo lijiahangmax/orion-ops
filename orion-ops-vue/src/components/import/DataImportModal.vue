@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { downloadFile } from '@/lib/utils'
+
 export default {
   name: 'DataImportModal',
   props: {
@@ -150,7 +152,7 @@ export default {
       this.$api.getImportTemplate({
         type: this.importType.value
       }).then((e) => {
-        this.$utils.downloadFile(e)
+        downloadFile(e)
       }).catch(() => {
         this.$message.error('下载失败')
       })

@@ -1,28 +1,27 @@
 package com.orion.ops.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * cron 下次执行时间
+ * cron下次执行时间响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/23 10:48
  */
 @Data
+@ApiModel(value = "cron下次执行时间响应")
 public class CronNextVO {
 
-    /**
-     * 是否有效
-     */
+    @ApiModelProperty(value = "是否有效")
     private Boolean valid;
 
-    /**
-     * 下次执行时间
-     */
+    @ApiModelProperty(value = "下次执行时间")
     private List<Date> next;
 
 }

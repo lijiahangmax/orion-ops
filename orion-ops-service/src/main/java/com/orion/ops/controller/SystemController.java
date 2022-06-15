@@ -18,6 +18,9 @@ import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
 import com.orion.ops.service.api.SystemService;
 import com.orion.ops.utils.Valid;
 import com.orion.servlet.web.Servlets;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,12 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 系统配置
+ * 系统设置 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/15 22:07
  */
+@Api(tags = "系统设置")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/system")
@@ -41,29 +45,23 @@ public class SystemController {
     @Resource
     private SystemService systemService;
 
-    /**
-     * 获取 ip 配置
-     */
-    @RequestMapping("/ip-info")
+    @PostMapping("/ip-info")
+    @ApiOperation(value = "获取ip信息")
     public IpListConfigVO getIpInfo(HttpServletRequest request) {
         return systemService.getIpInfo(Servlets.getRemoteAddr(request));
     }
 
-    /**
-     * 配置 ip 列表
-     */
-    @RequestMapping("/config-ip")
+    @PostMapping("/config-ip")
+    @ApiOperation(value = "配置ip过滤器列表")
     @EventLog(EventType.CONFIG_IP_LIST)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> configIpList(@RequestBody ConfigIpListRequest request) {
-        systemService.configIpList(request);
+        systemService.configIpFilterList(request);
         return HttpWrapper.ok();
     }
 
-    /**
-     * 清理系统文件
-     */
-    @RequestMapping("/clean-system-file")
+    @PostMapping("/clean-system-file")
+    @ApiOperation(value = "清理系统文件")
     @EventLog(EventType.CLEAN_SYSTEM_FILE)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> cleanSystemFile(@RequestBody SystemFileCleanRequest request) {
@@ -72,18 +70,14 @@ public class SystemController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 获取系统分析信息
-     */
-    @RequestMapping("/get-system-analysis")
+    @PostMapping("/get-system-analysis")
+    @ApiOperation(value = "获取系统分析信息")
     public SystemAnalysisVO getSystemAnalysis() {
         return systemService.getSystemAnalysis();
     }
 
-    /**
-     * 重新进行系统统计分析
-     */
-    @RequestMapping("/re-analysis")
+    @PostMapping("/re-analysis")
+    @ApiOperation(value = "重新进行系统统计分析")
     @EventLog(EventType.RE_ANALYSIS_SYSTEM)
     @RequireRole(RoleType.ADMINISTRATOR)
     public SystemAnalysisVO reAnalysisSystem() {
@@ -91,10 +85,8 @@ public class SystemController {
         return systemService.getSystemAnalysis();
     }
 
-    /**
-     * 修改系统配置项
-     */
-    @RequestMapping("/update-system-option")
+    @PostMapping("/update-system-option")
+    @ApiOperation(value = "修改系统配置项")
     @EventLog(EventType.UPDATE_SYSTEM_OPTION)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> updateSystemOption(@RequestBody SystemOptionRequest request) {
@@ -104,19 +96,15 @@ public class SystemController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 获取系统配置项
-     */
-    @RequestMapping("/get-system-options")
+    @PostMapping("/get-system-options")
+    @ApiOperation(value = "获取系统配置项")
     @RequireRole(RoleType.ADMINISTRATOR)
     public SystemOptionVO getSystemOptions() {
         return systemService.getSystemOptions();
     }
 
-    /**
-     * 获取线程池指标
-     */
-    @RequestMapping("/get-thread-metrics")
+    @PostMapping("/get-thread-metrics")
+    @ApiOperation(value = "获取线程池指标")
     @RequireRole(RoleType.ADMINISTRATOR)
     public List<ThreadPoolMetricsVO> getThreadMetrics() {
         return systemService.getThreadPoolMetrics();

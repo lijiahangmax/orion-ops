@@ -2,31 +2,28 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.dto.ApplicationProfileDTO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 应用环境
+ * 应用环境响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/1/20 15:06
  */
 @Data
+@ApiModel(value = "应用环境响应")
 public class ApplicationProfileFastVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * tag
-     */
+    @ApiModelProperty(value = "唯一标识")
     private String tag;
 
     static {

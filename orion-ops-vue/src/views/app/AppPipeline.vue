@@ -55,7 +55,8 @@
         <template v-slot:detail="record">
           <div class="pipeline-stage-wrapper">
             <span v-for="(detail, index) of record.details" :key="detail.id">
-              {{ `${$enum.valueOf($enum.STAGE_TYPE, detail.stageType).label}${detail.appName}` }}
+              {{ detail.stageType | formatStageType('label') }}
+              {{ detail.appName }}
               <a-icon class="span-blue" v-if="index !== record.details.length - 1" type="swap-right"/>
             </span>
           </div>
@@ -99,9 +100,9 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, STAGE_TYPE } from '@/lib/enum'
 import AppPipelineDetailViewDrawer from '@/components/app/AppPipelineDetailViewDrawer'
-import _filters from '@/lib/filters'
 import AddPipelineModal from '@/components/app/AddPipelineModal'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 
@@ -236,7 +237,10 @@ export default {
     this.getList({})
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatStageType(type, f) {
+      return enumValueOf(STAGE_TYPE, type)[f]
+    }
   }
 }
 </script>

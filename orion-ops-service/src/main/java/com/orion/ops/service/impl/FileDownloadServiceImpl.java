@@ -146,7 +146,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 break;
         }
         // 检查文件是否存在
-        if (path == null || (type.isLocal() && !Files1.isFile(path))) {
+        if (path == null || (Const.HOST_MACHINE_ID.equals(machineId) && !Files1.isFile(path))) {
             throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.FILE_MISSING));
         }
         // 设置缓存
@@ -188,11 +188,11 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         if (downloadFile == null) {
             throw Exceptions.notFound();
         }
+        Long machineId = downloadFile.getMachineId();
         InputStream inputStream = null;
         DirectDownloader downloader = null;
         try {
-            // 获取类型
-            if (FileDownloadType.of(downloadFile.getType()).isLocal()) {
+            if (Const.HOST_MACHINE_ID.equals(machineId)) {
                 // 本地文件
                 File file = Optional.of(downloadFile)
                         .map(FileDownloadDTO::getFilePath)
@@ -203,7 +203,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 inputStream = Files1.openInputStreamFastSafe(file);
             } else {
                 // 远程文件
-                downloader = new DirectDownloader(downloadFile.getMachineId());
+                downloader = new DirectDownloader(machineId);
                 inputStream = downloader.open().getFile(downloadFile.getFilePath());
             }
             // 返回
@@ -212,7 +212,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             Streams.close(inputStream);
             Streams.close(downloader);
         }
-
     }
 
     /**

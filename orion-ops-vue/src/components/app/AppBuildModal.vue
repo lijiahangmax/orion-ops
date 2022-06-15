@@ -104,8 +104,8 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
+import { CONFIG_STATUS } from '@/lib/enum'
 
 export default {
   name: 'AppBuildModal',
@@ -172,7 +172,7 @@ export default {
         profileId: this.profileId,
         limit: 10000
       })
-      this.appList = rows.filter(s => s.isConfig === this.$enum.CONFIG_STATUS.CONFIGURED.value)
+      this.appList = rows.filter(s => s.isConfig === CONFIG_STATUS.CONFIGURED.value)
     },
     async reselectAppList() {
       this.selectAppPage = true
@@ -286,7 +286,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

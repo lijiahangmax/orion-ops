@@ -49,8 +49,8 @@
                              size="default"
                              :appendStyle="{height: 'calc(100vh - 100px)'}"
                              :relId="selectedTailFile.id"
-                             :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                             :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
+                             :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
+                             :downloadType="FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
                              @open="loggerOpened(selectedTailFile)"
                              @close="loggerClosed(selectedTailFile)">
                   <!-- 左侧工具栏 -->
@@ -107,6 +107,8 @@
 </template>
 
 <script>
+import { ENABLE_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_MODE, FILE_TAIL_TYPE } from '@/lib/enum'
+
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -116,6 +118,8 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
       listLoading: false,
       selectedKeys: [],
       selectedTailFiles: [],
@@ -156,7 +160,7 @@ export default {
           limit: 10000
         })
         this.tailList = tailListRes.data.rows
-          .filter(i => i.machineStatus === this.$enum.ENABLE_STATUS.ENABLE.value)
+          .filter(i => i.machineStatus === ENABLE_STATUS.ENABLE.value)
           .map(i => {
             return {
               id: i.id,
@@ -235,7 +239,7 @@ export default {
     loggerOpened(file) {
       const $ref = this.$refs['appender' + file.id]
       if ($ref && $ref.length) {
-        if ($ref[0].token.tailMode === this.$enum.FILE_TAIL_MODE.TAIL.value) {
+        if ($ref[0].token.tailMode === FILE_TAIL_MODE.TAIL.value) {
           setTimeout(() => {
             if (!file.closed) {
               file.visibleCommand = true

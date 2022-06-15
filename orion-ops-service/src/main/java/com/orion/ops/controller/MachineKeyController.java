@@ -11,7 +11,10 @@ import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 机器秘钥
+ * 机器秘钥 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/3 23:10
  */
+@Api(tags = "机器秘钥")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/key")
@@ -36,10 +40,8 @@ public class MachineKeyController {
     @Resource
     private MachineKeyService machineKeyService;
 
-    /**
-     * 添加秘钥
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加机器秘钥")
     @EventLog(EventType.ADD_MACHINE_KEY)
     public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
@@ -53,10 +55,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 更新秘钥
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "更新机器秘钥")
     @EventLog(EventType.UPDATE_MACHINE_KEY)
     public Integer updateKey(@RequestBody MachineKeyRequest request) {
         Valid.notNull(request.getId());
@@ -68,10 +68,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 删除秘钥
-     */
-    @RequestMapping("/remove")
+    @PostMapping("/remove")
+    @ApiOperation(value = "删除机器秘钥")
     @EventLog(EventType.DELETE_MACHINE_KEY)
     public Integer removeKey(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -83,27 +81,21 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取机器秘钥列表")
     public DataGrid<MachineSecretKeyVO> listKeys(@RequestBody MachineKeyRequest request) {
         return machineKeyService.listKeys(request);
     }
 
-    /**
-     * 详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取机器秘钥详情")
     public MachineSecretKeyVO getKeyDetail(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineKeyService.getKeyDetail(id);
     }
 
-    /**
-     * 挂载秘钥
-     */
-    @RequestMapping("/mount")
+    @PostMapping("/mount")
+    @ApiOperation(value = "挂载机器秘钥")
     @EventLog(EventType.MOUNT_MACHINE_KEY)
     public Map<String, Integer> mountKeys(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -115,10 +107,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 卸载秘钥
-     */
-    @RequestMapping("/dump")
+    @PostMapping("/dump")
+    @ApiOperation(value = "卸载机器秘钥")
     @EventLog(EventType.DUMP_MACHINE_KEY)
     public Map<String, Integer> dumpKeys(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -130,10 +120,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 挂载所有秘钥
-     */
-    @RequestMapping("/mount-all")
+    @PostMapping("/mount-all")
+    @ApiOperation(value = "挂载所有机器秘钥")
     @EventLog(EventType.MOUNT_ALL_MACHINE_KEY)
     public void mountAllKey() {
         try {
@@ -144,10 +132,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 卸载所有秘钥
-     */
-    @RequestMapping("/dump-all")
+    @PostMapping("/dump-all")
+    @ApiOperation(value = "卸载所有机器秘钥")
     @EventLog(EventType.DUMP_ALL_MACHINE_KEY)
     public void dumpAllKey() {
         try {
@@ -158,10 +144,8 @@ public class MachineKeyController {
         }
     }
 
-    /**
-     * 临时挂载秘钥
-     */
-    @RequestMapping("/temp-mount")
+    @PostMapping("/temp-mount")
+    @ApiOperation(value = "临时挂载机器秘钥")
     @EventLog(EventType.TEMP_MOUNT_MACHINE_KEY)
     public Integer tempMount(@RequestBody MachineKeyRequest request) {
         String file = Valid.notBlank(request.getFile());

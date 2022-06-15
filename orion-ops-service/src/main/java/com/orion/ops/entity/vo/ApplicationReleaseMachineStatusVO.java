@@ -4,6 +4,8 @@ import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,60 +13,44 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 发布机器id
+ * 发布机器状态响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/29 21:52
  */
 @Data
+@ApiModel(value = "发布机器状态响应")
 public class ApplicationReleaseMachineStatusVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
-     * 状态
-     *
      * @see com.orion.ops.consts.app.ActionStatus
      */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
-    /**
-     * 发布开始时间
-     */
+    @ApiModelProperty(value = "发布开始时间")
     private Date startTime;
 
-    /**
-     * 发布开始时间
-     */
+    @ApiModelProperty(value = "发布开始时间")
     private String startTimeAgo;
 
-    /**
-     * 发布结束时间
-     */
+    @ApiModelProperty(value = "发布结束时间")
     private Date endTime;
 
-    /**
-     * 发布结束时间
-     */
+    @ApiModelProperty(value = "发布结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
-    /**
-     * action状态
-     */
+    @ApiModelProperty(value = "发布操作状态")
     private List<ApplicationActionStatusVO> actions;
 
     static {

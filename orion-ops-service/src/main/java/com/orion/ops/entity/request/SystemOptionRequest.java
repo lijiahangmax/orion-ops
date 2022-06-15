@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,18 +12,16 @@ import lombok.Data;
  * @since 2022/2/18 22:23
  */
 @Data
+@ApiModel(value = "系统配置请求")
 public class SystemOptionRequest {
 
     /**
-     * 配置项
-     *
      * @see com.orion.ops.consts.system.SystemConfigKey
      */
+    @ApiModelProperty(value = "配置项")
     private Integer option;
 
-    /**
-     * 值
-     */
+    @ApiModelProperty(value = "配置值")
     private String value;
 
 }

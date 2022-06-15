@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,48 +17,34 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "应用流水线请求")
 public class ApplicationPipelineRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * idList
-     */
+    @ApiModelProperty(value = "idList")
     private List<Long> idList;
 
-    /**
-     * 环境id
-     */
-    private List<Long> profileIdList;
-
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 流水线名称
-     */
+    @ApiModelProperty(value = "环境id")
+    private List<Long> profileIdList;
+
+    @ApiModelProperty(value = "流水线名称")
     private String name;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 是否查询详情
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      */
+    @ApiModelProperty(value = "是否查询详情")
     private Integer queryDetail;
 
-    /**
-     * 详情
-     */
+    @ApiModelProperty(value = "详情")
     private List<ApplicationPipelineDetailRequest> details;
 
 }

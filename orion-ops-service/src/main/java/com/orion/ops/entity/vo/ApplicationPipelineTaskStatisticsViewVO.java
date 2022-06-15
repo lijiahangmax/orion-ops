@@ -1,37 +1,32 @@
 package com.orion.ops.entity.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 应用流水线统计分析操作
+ * 应用流水线统计分析操作响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/10 11:13
  */
 @Data
+@ApiModel(value = "应用流水线统计分析操作响应")
 public class ApplicationPipelineTaskStatisticsViewVO {
 
-    /**
-     * 平均执行时长ms (成功)
-     */
+    @ApiModelProperty(value = "成功平均执行时长毫秒")
     private Long avgUsed;
 
-    /**
-     * 平均执行时长 (成功)
-     */
+    @ApiModelProperty(value = "成功平均执行时长")
     private String avgUsedInterval;
 
-    /**
-     * 流水线操作
-     */
+    @ApiModelProperty(value = "流水线操作")
     private List<ApplicationPipelineStatisticsDetailVO> details;
 
-    /**
-     * 流水线执行记录
-     */
+    @ApiModelProperty(value = "流水线执行记录")
     private List<ApplicationPipelineTaskStatisticsTaskVO> pipelineTaskList;
 
 }

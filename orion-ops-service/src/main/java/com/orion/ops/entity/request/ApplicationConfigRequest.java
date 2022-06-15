@@ -1,54 +1,44 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * app配置请求
+ * 应用配置请求
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/5 18:50
  */
 @Data
+@ApiModel(value = "应用配置请求")
 public class ApplicationConfigRequest {
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
     /**
-     * 阶段类型
-     *
      * @see com.orion.ops.consts.app.StageType
      */
+    @ApiModelProperty(value = "阶段类型")
     private Integer stageType;
 
-    /**
-     * 应用环境变量
-     */
+    @ApiModelProperty(value = "应用环境变量")
     private ApplicationConfigEnvRequest env;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 构建操作
-     */
+    @ApiModelProperty(value = "构建操作")
     private List<ApplicationConfigActionRequest> buildActions;
 
-    /**
-     * 发布操作
-     */
+    @ApiModelProperty(value = "发布操作")
     private List<ApplicationConfigActionRequest> releaseActions;
 
 }

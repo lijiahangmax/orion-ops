@@ -26,22 +26,21 @@
           </a-descriptions-item>
           <a-descriptions-item label="认证方式" :span="2">
             <a-tag v-if="detail.authType">
-              {{ $enum.valueOf($enum.MACHINE_AUTH_TYPE, detail.authType).label }}
+              {{ detail.authType | formatAuthType('label') }}
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item label="状态" :span="1">
-            <a-badge
-              v-if="detail.status"
-              :status='$enum.valueOf($enum.ENABLE_STATUS, detail.status).status'
-              :text="$enum.valueOf($enum.ENABLE_STATUS, detail.status).label"/>
+            <a-badge v-if="detail.status"
+                     :status="detail.status | formatEnableStatus('status')"
+                     :text="detail.status | formatEnableStatus('label')"/>
           </a-descriptions-item>
           <a-descriptions-item label="描述" :span="3">
             {{ detail.description }}
           </a-descriptions-item>
           <a-descriptions-item label="代理" v-if="detail.proxyType" :span="3">
             {{ `${detail.proxyHost}:${detail.proxyPort}` }}
-            <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, detail.proxyType).color">
-              {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, detail.proxyType).label }}
+            <a-tag :color="detail.proxyType | formatProxyType('color')">
+              {{ detail.proxyType | formatProxyType('label') }}
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item v-if="detail.createTime" label="创建时间" :span="3">
@@ -60,7 +59,8 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, ENABLE_STATUS, MACHINE_AUTH_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
 
 export default {
   name: 'MachineDetailModal',
@@ -91,7 +91,16 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatAuthType(type, f) {
+      return enumValueOf(MACHINE_AUTH_TYPE, type)[f]
+    },
+    formatEnableStatus(status, f) {
+      return enumValueOf(ENABLE_STATUS, status)[f]
+    },
+    formatProxyType(type, f) {
+      return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
+    }
   }
 }
 </script>

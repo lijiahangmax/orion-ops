@@ -4,6 +4,8 @@ import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,60 +13,44 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 应用构建状态
+ * 应用构建状态响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/3 14:11
  */
 @Data
+@ApiModel(value = "应用构建状态响应")
 public class ApplicationBuildStatusVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
-     * 状态
-     *
      * @see com.orion.ops.consts.app.BuildStatus
      */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
-    /**
-     * 构建开始时间
-     */
+    @ApiModelProperty(value = "构建开始时间")
     private Date startTime;
 
-    /**
-     * 构建开始时间
-     */
+    @ApiModelProperty(value = "构建开始时间")
     private String startTimeAgo;
 
-    /**
-     * 构建结束时间
-     */
+    @ApiModelProperty(value = "构建结束时间")
     private Date endTime;
 
-    /**
-     * 构建结束时间
-     */
+    @ApiModelProperty(value = "构建结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
-    /**
-     * action
-     */
+    @ApiModelProperty(value = "构建操作")
     private List<ApplicationActionStatusVO> actions;
 
     static {

@@ -5,6 +5,8 @@ import com.orion.office.excel.annotation.ExportSheet;
 import com.orion.office.excel.annotation.ExportTitle;
 import com.orion.ops.entity.domain.ApplicationInfoDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -15,37 +17,28 @@ import lombok.Data;
  * @since 2022/5/26 15:08
  */
 @Data
+@ApiModel(value = "应用信息导出")
 @ExportTitle(title = "应用信息导出")
 @ExportSheet(name = "应用信息", height = 22, freezeHeader = true, filterHeader = true)
 public class ApplicationExportDTO {
 
-    /**
-     * 应用名称
-     */
+    @ApiModelProperty(value = "应用名称")
     @ExportField(index = 0, header = "应用名称", width = 35)
     private String name;
 
-    /**
-     * 唯一标识
-     */
+    @ApiModelProperty(value = "唯一标识")
     @ExportField(index = 1, header = "唯一标识", width = 30)
     private String tag;
 
-    /**
-     * 应用仓库名称
-     */
+    @ApiModelProperty(value = "应用仓库名称")
     @ExportField(index = 2, header = "应用仓库名称", width = 30)
     private String vcsName;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ExportField(index = 3, header = "描述", width = 35, wrapText = true)
     private String description;
 
-    /**
-     * 仓库id
-     */
+    @ApiModelProperty(value = "仓库id", hidden = true)
     private Long vcsId;
 
     static {

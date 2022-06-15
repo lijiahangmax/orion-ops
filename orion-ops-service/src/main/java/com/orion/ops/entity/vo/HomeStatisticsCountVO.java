@@ -2,36 +2,31 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.dto.StatisticsCountDTO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 首页统计数量返回
+ * 首页统计数量返回响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/1/20 14:08
  */
 @Data
+@ApiModel(value = "首页统计数量返回响应")
 public class HomeStatisticsCountVO {
 
-    /**
-     * 机器数量
-     */
+    @ApiModelProperty(value = "机器数量")
     private Integer machineCount;
 
-    /**
-     * 环境数量
-     */
+    @ApiModelProperty(value = "环境数量")
     private Integer profileCount;
 
-    /**
-     * 应用数量
-     */
+    @ApiModelProperty(value = "应用数量")
     private Integer appCount;
 
-    /**
-     * 流水线数量
-     */
+    @ApiModelProperty(value = "流水线数量")
     private Integer pipelineCount;
 
     static {

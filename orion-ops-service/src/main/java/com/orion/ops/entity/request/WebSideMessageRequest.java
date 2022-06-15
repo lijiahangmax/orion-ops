@@ -1,6 +1,8 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.wrapper.PageRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,59 +16,45 @@ import java.util.List;
  * @version 1.0.0
  * @since 2022/3/25 16:19
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "站内信请求")
 public class WebSideMessageRequest extends PageRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * id list
-     */
+    @ApiModelProperty(value = "id")
     private List<Long> idList;
 
     /**
-     * 消息分类
-     *
      * @see com.orion.ops.consts.message.MessageClassify
      */
+    @ApiModelProperty(value = "消息分类")
     private Integer classify;
 
     /**
-     * 消息类型
-     *
      * @see com.orion.ops.consts.message.MessageType
      */
+    @ApiModelProperty(value = "消息类型")
     private Integer type;
 
     /**
-     * 是否已读 1未读 2已读
-     *
      * @see com.orion.ops.consts.message.ReadStatus
      */
+    @ApiModelProperty(value = "是否已读 1未读 2已读")
     private Integer status;
 
-    /**
-     * 消息
-     */
+    @ApiModelProperty(value = "消息")
     private String message;
 
-    /**
-     * 最大id
-     */
+    @ApiModelProperty(value = "最大id")
     private Long maxId;
 
-    /**
-     * 开始时间区间-开始
-     */
+    @ApiModelProperty(value = "开始时间区间-开始")
     private Date rangeStart;
 
-    /**
-     * 开始时间区间-结束
-     */
+    @ApiModelProperty(value = "开始时间区间-结束")
     private Date rangeEnd;
 
 }

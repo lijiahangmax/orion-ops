@@ -38,17 +38,17 @@
         <!-- 执行序列 -->
         <a-form-item class="no-extra-form-item" label="执行序列">
           <a-radio-group v-decorator="decorators.serializeType">
-            <a-radio v-for="type of $enum.SERIAL_TYPE" :key="type.value" :value="type.value">
+            <a-radio v-for="type of SERIAL_TYPE" :key="type.value" :value="type.value">
               {{ type.label }}
             </a-radio>
           </a-radio-group>
         </a-form-item>
         <!-- 异常处理 -->
-        <a-form-item v-if="form.getFieldValue('serializeType') === $enum.SERIAL_TYPE.SERIAL.value"
+        <a-form-item v-if="form.getFieldValue('serializeType') === SERIAL_TYPE.SERIAL.value"
                      class="no-extra-form-item"
                      label="异常处理">
           <a-radio-group v-decorator="decorators.exceptionHandler">
-            <a-tooltip v-for="type of $enum.EXCEPTION_HANDLER_TYPE" :key="type.value" :title="type.title">
+            <a-tooltip v-for="type of EXCEPTION_HANDLER_TYPE" :key="type.value" :title="type.title">
               <a-radio :value="type.value">
                 {{ type.label }}
               </a-radio>
@@ -81,8 +81,8 @@
 
 <script>
 import { pick } from 'lodash'
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
+import { formatDate } from '@/lib/filters'
+import { EXCEPTION_HANDLER_TYPE, SERIAL_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import MachineMultiSelector from '@/components/machine/MachineMultiSelector'
 import TemplateSelector from '@/components/template/TemplateSelector'
@@ -139,10 +139,10 @@ function getDecorators() {
       }]
     }],
     serializeType: ['serializeType', {
-      initialValue: _enum.SERIAL_TYPE.PARALLEL.value
+      initialValue: SERIAL_TYPE.PARALLEL.value
     }],
     exceptionHandler: ['exceptionHandler', {
-      initialValue: _enum.EXCEPTION_HANDLER_TYPE.SKIP_ALL.value
+      initialValue: EXCEPTION_HANDLER_TYPE.SKIP_ALL.value
     }],
     description: ['description', {
       rules: [{
@@ -162,6 +162,8 @@ export default {
   },
   data: function() {
     return {
+      SERIAL_TYPE,
+      EXCEPTION_HANDLER_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -209,7 +211,7 @@ export default {
         resolve()
       }).then(() => {
         // 设置异常处理
-        if (this.record.serializeType === this.$enum.SERIAL_TYPE.SERIAL.value) {
+        if (this.record.serializeType === SERIAL_TYPE.SERIAL.value) {
           this.$nextTick(() => {
             const exceptionHandler = row.exceptionHandler
             this.record.exceptionHandler = exceptionHandler
@@ -289,7 +291,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- * 发布单 Mapper 接口
+ * 发布任务 Mapper 接口
  * </p>
  *
  * @author Jiahang Li

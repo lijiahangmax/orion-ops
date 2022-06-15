@@ -2,67 +2,52 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationInfoDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 应用信息
+ * 应用信息响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/2 18:58
  */
 @Data
+@ApiModel(value = "应用信息响应")
 public class ApplicationInfoVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 应用唯一标识
-     */
+    @ApiModelProperty(value = "应用唯一标识")
     private String tag;
 
-    /**
-     * 排序
-     */
+    @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    /**
-     * 版本控制id
-     */
+    @ApiModelProperty(value = "应用版本仓库id")
     private Long vcsId;
 
-    /**
-     * 版本控制名称
-     */
+    @ApiModelProperty(value = "应用版本仓库名称")
     private String vcsName;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 是否已经配置
-     * 1已配置 2未配置
-     *
      * @see com.orion.ops.consts.Const#CONFIGURED
      * @see com.orion.ops.consts.Const#NOT_CONFIGURED
      */
+    @ApiModelProperty(value = "是否已经配置 1已配置 2未配置")
     private Integer isConfig;
 
-    /**
-     * 应用机器
-     */
+    @ApiModelProperty(value = "应用机器")
     private List<ApplicationMachineVO> machines;
 
     static {

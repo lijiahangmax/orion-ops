@@ -56,6 +56,12 @@ export default {
       }
       this.visibleUser = this.userList.filter(s => s.username.toLowerCase().includes(value.toLowerCase()))
     },
+    set(id) {
+      const filterUsers = this.userList.filter(s => s.id === id)
+      if (filterUsers.length) {
+        this.value = JSON.stringify(filterUsers[0])
+      }
+    },
     reset() {
       this.value = undefined
     }

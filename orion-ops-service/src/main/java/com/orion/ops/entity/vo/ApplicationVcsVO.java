@@ -2,81 +2,66 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 应用版本控制信息
+ * 应用版本仓库信息响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/11/28 13:47
  */
 @Data
+@ApiModel(value = "应用版本仓库信息响应")
 public class ApplicationVcsVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * 类型 1git
-     *
      * @see com.orion.ops.consts.app.VcsType
      */
+    @ApiModelProperty(value = "类型 1git")
     private Integer type;
 
-    /**
-     * url
-     */
+    @ApiModelProperty(value = "url")
     private String url;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
     /**
-     * 状态 10未初始化 20初始化中 30正常 40失败
-     *
      * @see com.orion.ops.consts.app.VcsStatus
      */
+    @ApiModelProperty(value = "状态 10未初始化 20初始化中 30正常 40失败")
     private Integer status;
 
     /**
-     * 认证类型 10密码 20令牌
-     *
      * @see com.orion.ops.consts.app.VcsAuthType
      */
+    @ApiModelProperty(value = "认证类型 10密码 20令牌")
     private Integer authType;
 
     /**
-     * 令牌类型 10github 20gitee 30gitlab
-     *
      * @see com.orion.ops.consts.app.VcsTokenType
      */
+    @ApiModelProperty(value = "令牌类型 10github 20gitee 30gitlab")
     private Integer tokenType;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
     static {

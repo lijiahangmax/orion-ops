@@ -7,6 +7,8 @@ import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;
 import com.orion.utils.Strings;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,55 +21,40 @@ import java.util.Optional;
  * @version 1.0.0
  * @since 2022/5/31 9:54
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "机器代理导入")
 public class MachineProxyImportDTO extends BaseDataImportDTO {
 
-    /**
-     * 代理主机
-     */
+    @ApiModelProperty(value = "代理主机")
     @ImportField(index = 0)
     private String host;
 
-    /**
-     * 代理端口
-     */
+    @ApiModelProperty(value = "代理端口")
     @ImportField(index = 1)
     private Integer port;
 
-    /**
-     * 代理类型
-     */
+    @ApiModelProperty(value = "代理类型")
     @ImportField(index = 2)
     private String proxyType;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     @ImportField(index = 3)
     private String username;
 
-    /**
-     * 导出密码 (密文)
-     */
+    @ApiModelProperty(value = "导出密码 (密文)")
     @ImportField(index = 4)
     private String encryptPassword;
 
-    /**
-     * 导入密码 (明文)
-     */
+    @ApiModelProperty(value = "导入密码 (明文)")
     @ImportField(index = 5)
     private String importPassword;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ImportField(index = 6)
     private String description;
 
-    /**
-     * 密码密文解密后的明文
-     */
+    @ApiModelProperty(value = "密码密文解密后的明文", hidden = true)
     private String decryptPassword;
 
     static {

@@ -3,105 +3,75 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 流水线明细详情
+ * 流水线明细详情响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/8 10:37
  */
 @Data
+@ApiModel(value = "流水线明细详情响应")
 public class ApplicationPipelineTaskListVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 流水线id
-     */
+    @ApiModelProperty(value = "流水线id")
     private Long pipelineId;
 
-    /**
-     * 流水线名称
-     */
+    @ApiModelProperty(value = "流水线名称")
     private String pipelineName;
 
-    /**
-     * 执行标题
-     */
+    @ApiModelProperty(value = "执行标题")
     private String title;
 
-    /**
-     * 执行描述
-     */
+    @ApiModelProperty(value = "执行描述")
     private String description;
 
     /**
-     * 执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败
-     *
      * @see com.orion.ops.consts.app.PipelineStatus
      */
+    @ApiModelProperty(value = "执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败")
     private Integer status;
 
-    /**
-     * 是否是定时执行 10普通执行 20定时执行
-     */
+    @ApiModelProperty(value = "是否是定时执行 10普通执行 20定时执行")
     private Integer timedExec;
 
-    /**
-     * 定时执行时间
-     */
+    @ApiModelProperty(value = "定时执行时间")
     private Date timedExecTime;
 
-    /**
-     * 创建人id
-     */
+    @ApiModelProperty(value = "创建人id")
     private Long createUserId;
 
-    /**
-     * 创建人名称
-     */
+    @ApiModelProperty(value = "创建人名称")
     private String createUserName;
 
-    /**
-     * 执行人id
-     */
+    @ApiModelProperty(value = "执行人id")
     private Long execUserId;
 
-    /**
-     * 执行人名称
-     */
+    @ApiModelProperty(value = "执行人名称")
     private String execUserName;
 
-    /**
-     * 执行开始时间
-     */
+    @ApiModelProperty(value = "执行开始时间")
     private Date execStartTime;
 
-    /**
-     * 执行结束时间
-     */
+    @ApiModelProperty(value = "执行结束时间")
     private Date execEndTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
     static {

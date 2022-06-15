@@ -4,6 +4,8 @@ import com.orion.office.excel.annotation.ImportField;
 import com.orion.ops.entity.domain.CommandTemplateDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,25 +16,20 @@ import lombok.EqualsAndHashCode;
  * @version 1.0.0
  * @since 2022/6/1 9:58
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "命令模板导入")
 public class CommandTemplateImportDTO extends BaseDataImportDTO {
 
-    /**
-     * 模板名称
-     */
+    @ApiModelProperty(value = "模板名称")
     @ImportField(index = 0)
     private String name;
 
-    /**
-     * 模板命令
-     */
+    @ApiModelProperty(value = "模板命令")
     @ImportField(index = 1)
     private String template;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ImportField(index = 2)
     private String description;
 

@@ -4,123 +4,88 @@ import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 命令执行 vo
+ * 命令执行响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/8 15:28
  */
 @Data
+@ApiModel(value = "命令执行响应")
 public class CommandExecVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 执行用户id
-     */
+    @ApiModelProperty(value = "执行用户id")
     private Long userId;
 
-    /**
-     * 执行用户名称
-     */
+    @ApiModelProperty(value = "执行用户名称")
     private String username;
 
     /**
-     * 类型
-     *
      * @see com.orion.ops.consts.command.ExecType
      */
+    @ApiModelProperty(value = "类型")
     private Integer type;
 
     /**
-     * 状态
-     *
      * @see com.orion.ops.consts.command.ExecStatus
      */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 执行机器id
-     */
+    @ApiModelProperty(value = "执行机器id")
     private Long machineId;
 
-    /**
-     * 执行机器名称
-     */
+    @ApiModelProperty(value = "执行机器名称")
     private String machineName;
 
-    /**
-     * 执行机器主机
-     */
+    @ApiModelProperty(value = "执行机器主机")
     private String machineHost;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
-    /**
-     * 执行退出码
-     */
+    @ApiModelProperty(value = "执行退出码")
     private Integer exitCode;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     private String command;
 
-    /**
-     * 执行开始时间
-     */
+    @ApiModelProperty(value = "执行开始时间")
     private Date startDate;
 
-    /**
-     * 执行开始时间
-     */
+    @ApiModelProperty(value = "执行开始时间")
     private String startDateAgo;
 
-    /**
-     * 执行结束时间
-     */
+    @ApiModelProperty(value = "执行结束时间")
     private Date endDate;
 
-    /**
-     * 执行结束时间
-     */
+    @ApiModelProperty(value = "执行结束时间")
     private String endDateAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private String createTimeAgo;
 
     static {

@@ -83,7 +83,7 @@ public class ApplicationBuildDO implements Serializable {
     private String commitId;
 
     /**
-     * 版本控制id
+     * 应用版本仓库id
      */
     @TableField("vcs_id")
     private Long vcsId;

@@ -1,12 +1,14 @@
 package com.orion.ops.entity.request.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 /**
- * sftp rm -rf 命令
+ * sftp 删除文件命令
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -14,11 +16,10 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "删除文件命令")
 public class FileRemoveRequest extends FileBaseRequest {
 
-    /**
-     * 路径 绝对路径
-     */
+    @ApiModelProperty(value = "绝对路径")
     private List<String> paths;
 
 }

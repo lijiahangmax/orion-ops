@@ -17,11 +17,11 @@ public class MachineConst {
     /**
      * 远程连接尝试次数
      */
-    public static final int CONNECT_RETRY_TIMES = 2;
+    public static final int CONNECT_RETRY_TIMES = 1;
 
     /**
      * 远程连接超时时间
      */
-    public static final int CONNECT_TIMEOUT = Const.MS_S_3;
+    public static final int CONNECT_TIMEOUT = Const.MS_S_5;
 
 }

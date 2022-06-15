@@ -56,7 +56,7 @@
                          v-model="query.status"
                          @change="getList({})">
             <a-radio-button :value="undefined">全部</a-radio-button>
-            <a-radio-button v-for="status in $enum.BATCH_EXEC_STATUS"
+            <a-radio-button v-for="status in BATCH_EXEC_STATUS"
                             :key="status.value"
                             :value="status.value">
               {{ status.label }}
@@ -108,8 +108,8 @@
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-tag class="m0" :color="$enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).color">
-            {{ $enum.valueOf($enum.BATCH_EXEC_STATUS, record.status).label }}
+          <a-tag class="m0" :color="record.status | formatExecStatus('color')">
+            {{ record.status | formatExecStatus('label') }}
           </a-tag>
         </template>
         <!-- 退出码 -->
@@ -147,7 +147,7 @@
           <a @click="detail(record.id)">详情</a>
           <a-divider type="vertical"/>
           <!-- 再次执行 -->
-          <a-popconfirm :title="record.status === $enum.BATCH_EXEC_STATUS.RUNNABLE.value ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
+          <a-popconfirm :title="record.status === BATCH_EXEC_STATUS.RUNNABLE.value ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
@@ -194,15 +194,15 @@
 </template>
 
 <script>
-
+import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, BATCH_EXEC_STATUS, FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
 import TextPreview from '@/components/preview/TextPreview'
 import ExecTaskDetailModal from '@/components/exec/ExecTaskDetailModal'
 import ExecLoggerAppenderModal from '@/components/log/ExecLoggerAppenderModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import BatchExecClearModal from '@/components/clear/BatchExecClearModal'
 
 /**
@@ -210,10 +210,10 @@ import BatchExecClearModal from '@/components/clear/BatchExecClearModal'
  */
 const visibleHolder = {
   visibleTerminate(status) {
-    return status === _enum.BATCH_EXEC_STATUS.RUNNABLE.value
+    return status === BATCH_EXEC_STATUS.RUNNABLE.value
   },
   visibleDelete(status) {
-    return status !== _enum.BATCH_EXEC_STATUS.WAITING.value && status !== _enum.BATCH_EXEC_STATUS.RUNNABLE.value
+    return status !== BATCH_EXEC_STATUS.WAITING.value && status !== BATCH_EXEC_STATUS.RUNNABLE.value
   }
 }
 
@@ -321,6 +321,7 @@ export default {
   },
   data: function() {
     return {
+      BATCH_EXEC_STATUS,
       query: {
         command: undefined,
         exitCode: undefined,
@@ -356,8 +357,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
-              record.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value
+            disabled: record.status === BATCH_EXEC_STATUS.WAITING.value ||
+              record.status === BATCH_EXEC_STATUS.RUNNABLE.value
           }
         })
       }
@@ -374,7 +375,7 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'downloadUrl')
+        defineArrayKey(data.rows, 'downloadUrl')
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []
@@ -475,7 +476,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: this.$enum.FILE_DOWNLOAD_TYPE.EXEC_LOG.value,
+          type: FILE_DOWNLOAD_TYPE.EXEC_LOG.value,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
@@ -492,8 +493,8 @@ export default {
       if (!this.rows || !this.rows.length) {
         return
       }
-      const idList = this.rows.filter(r => r.status === this.$enum.BATCH_EXEC_STATUS.WAITING.value ||
-        r.status === this.$enum.BATCH_EXEC_STATUS.RUNNABLE.value)
+      const idList = this.rows.filter(r => r.status === BATCH_EXEC_STATUS.WAITING.value ||
+        r.status === BATCH_EXEC_STATUS.RUNNABLE.value)
         .map(s => s.id)
       if (!idList.length) {
         return
@@ -515,7 +516,10 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatExecStatus(status, f) {
+      return enumValueOf(BATCH_EXEC_STATUS, status)[f]
+    }
   },
   mounted() {
     // 设置轮询

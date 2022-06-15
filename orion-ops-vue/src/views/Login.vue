@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { md5 } from '@/lib/utils'
 
 const rules = {
   username: [{
@@ -88,7 +89,7 @@ export default {
       }
       this.$api.login({
         username: this.form.username.trim(),
-        password: this.$utils.md5(this.form.password.trim())
+        password: md5(this.form.password.trim())
       }).then(({ data }) => {
         this.isSubmit = true
         const user = {

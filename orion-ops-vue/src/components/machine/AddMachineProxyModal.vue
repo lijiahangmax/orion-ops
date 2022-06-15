@@ -24,7 +24,7 @@
         </a-form-item>
         <a-form-item label="代理类型">
           <a-select v-decorator="decorators.type" placeholder="请选择">
-            <a-select-option :value="type.value" v-for="type in $enum.MACHINE_PROXY_TYPE" :key="type.value">
+            <a-select-option :value="type.value" v-for="type in MACHINE_PROXY_TYPE" :key="type.value">
               {{ type.label }}
             </a-select-option>
           </a-select>
@@ -39,6 +39,7 @@
 
 <script>
 import { pick } from 'lodash'
+import { MACHINE_PROXY_TYPE } from '@/lib/enum'
 import { validatePort } from '@/lib/validate'
 
 const layout = {
@@ -60,9 +61,6 @@ function getDecorators() {
     port: ['port', {
       initialValue: 22,
       rules: [{
-        required: true,
-        message: '请输入端口'
-      }, {
         validator: validatePort
       }]
     }],
@@ -101,6 +99,7 @@ export default {
   name: 'AddMachineProxyModal',
   data: function() {
     return {
+      MACHINE_PROXY_TYPE,
       id: null,
       visible: false,
       title: null,

@@ -3,74 +3,60 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.WebSideMessageDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 站内信 vo
+ * 站内信响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/25 16:25
  */
 @Data
+@ApiModel(value = "站内信响应")
 public class WebSideMessageVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
     /**
-     * 消息分类
-     *
      * @see com.orion.ops.consts.message.MessageClassify
      */
+    @ApiModelProperty(value = "消息分类")
     private Integer classify;
 
     /**
-     * 消息类型
-     *
      * @see com.orion.ops.consts.message.MessageType
      */
+    @ApiModelProperty(value = "消息类型")
     private Integer type;
 
     /**
-     * 是否已读 1未读 2已读
-     *
      * @see com.orion.ops.consts.message.ReadStatus
      */
+    @ApiModelProperty(value = "是否已读 1未读 2已读")
     private Integer status;
 
-    /**
-     * 收信人id
-     */
+    @ApiModelProperty(value = "收信人id")
     private Long toUserId;
 
-    /**
-     * 收信人名称
-     */
+    @ApiModelProperty(value = "收信人名称")
     private String toUserName;
 
-    /**
-     * 消息
-     */
+    @ApiModelProperty(value = "消息")
     private String message;
 
-    /**
-     * 参数
-     */
+    @ApiModelProperty(value = "参数")
     private String paramsJson;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private String createTimeAgo;
 
     static {

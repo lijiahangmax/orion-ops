@@ -2,38 +2,34 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationActionDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * app操作
+ * 应用操作响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/8 18:23
  */
 @Data
+@ApiModel(value = "应用操作响应")
 public class ApplicationActionVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
     /**
-     * 类型
-     *
      * @see com.orion.ops.consts.app.ActionType
      */
+    @ApiModelProperty(value = "类型")
     private Integer type;
 
-    /**
-     * 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
     static {

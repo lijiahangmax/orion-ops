@@ -9,6 +9,8 @@ import com.orion.ops.consts.app.VcsAuthType;
 import com.orion.ops.consts.app.VcsTokenType;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Optional;
@@ -21,55 +23,40 @@ import java.util.Optional;
  * @since 2022/5/26 15:08
  */
 @Data
+@ApiModel(value = "应用仓库导出")
 @ExportTitle(title = "应用仓库导出")
 @ExportSheet(name = "应用仓库", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
 public class ApplicationVcsExportDTO {
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     @ExportField(index = 0, header = "名称", width = 20)
     private String name;
 
-    /**
-     * url
-     */
+    @ApiModelProperty(value = "url")
     @ExportField(index = 1, header = "url", width = 40, wrapText = true)
     private String url;
 
-    /**
-     * 认证方式
-     */
+    @ApiModelProperty(value = "认证方式(密码/令牌)")
     @ExportField(index = 2, header = "认证方式(密码/令牌)", width = 23, selectOptions = {CnConst.PASSWORD, CnConst.TOKEN})
     private String authType;
 
-    /**
-     * 令牌类型
-     */
+    @ApiModelProperty(value = "令牌类型")
     @ExportField(index = 3, header = "令牌类型", width = 13, selectOptions = {Const.GITHUB, Const.GITEE, Const.GITLAB})
     private String tokenType;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     @ExportField(index = 4, header = "用户名", width = 20)
     private String username;
 
-    /**
-     * 导出密码/令牌 (密文)
-     */
+    @ApiModelProperty(value = "导出密码/令牌 (密文)")
     @ExportField(index = 5, header = "导出密码/令牌", width = 21, hidden = true, wrapText = true)
     private String encryptAuthValue;
 
-    /**
-     * 导入密码/令牌 (明文)
-     */
+    @ApiModelProperty(value = "导入密码/令牌 (明文)")
     @ExportField(index = 6, header = "导入密码/令牌", width = 21, wrapText = true)
     private String importAuthValue;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @ExportField(index = 7, header = "描述", width = 25, wrapText = true)
     private String description;
 

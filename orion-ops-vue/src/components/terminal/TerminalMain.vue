@@ -49,9 +49,10 @@ import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { WebglAddon } from 'xterm-addon-webgl'
+import { copyToClipboard, fitDimensions, getClipboardText } from '@/lib/utils'
+import { enumValueOf, TERMINAL_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
 
 import 'xterm/css/xterm.css'
-import RightClickMenu from '@/components/common/RightClickMenu'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
 
 /**
@@ -141,13 +142,13 @@ const terminalEventHandler = {
   },
   copy() {
     // 复制
-    this.$utils.copyToClipboard(this.term.getSelection())
+    copyToClipboard(this.term.getSelection())
     this.term.clearSelection()
     this.term.focus()
   },
   paste() {
     // 粘贴
-    this.$utils.getClipboardText().then(clipText => {
+    getClipboardText().then(clipText => {
       terminalOperator.key.call(this, clipText)
       this.term.focus()
     })
@@ -160,7 +161,7 @@ const terminalEventHandler = {
 const clientHandler = {
   onopen() {
     console.log('open')
-    this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
+    this.status = TERMINAL_STATUS.UNAUTHORIZED.value
     this.$emit('initFinish', true)
     // 建立连接
     terminalOperator.connect.call(this)
@@ -178,14 +179,14 @@ const clientHandler = {
   },
   onerror() {
     console.log('error')
-    this.status = this.$enum.TERMINAL_STATUS.ERROR.value
+    this.status = TERMINAL_STATUS.ERROR.value
     this.$emit('initFinish', false)
     this.$message.error('无法连接至服务器', 2)
     this.term.write('\r\n\x1b[91mfailed to establish connection\x1b[0m')
   },
   onclose(e) {
     console.log('close')
-    this.status = this.$enum.TERMINAL_STATUS.DISCONNECTED.value
+    this.status = TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
     // 关闭窗口大小监听器
     window.removeEventListener('resize', this.debouncedWindowResize)
@@ -207,36 +208,36 @@ const terminalOperator = {
     const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
     const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
     const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
-    const body = `${this.$enum.TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
+    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
     this.client.send(body)
   },
   resize(cols, rows) {
     // 防抖
-    if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
+    if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
       return
     }
     console.log('resize', cols, rows)
     // xx|cols|rows|width|height
     const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
     const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
-    const body = `${this.$enum.TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
+    const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
     this.client.send(body)
   },
   key(e) {
-    if (this.status !== this.$enum.TERMINAL_STATUS.CONNECTED.value) {
+    if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
       return
     }
-    const body = `${this.$enum.TERMINAL_OPERATOR.KEY.value}|${e}`
+    const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
     this.client.send(body)
   },
   disconnect() {
     console.log('disconnect')
     this.pingThread && clearInterval(this.pingThread)
-    this.client && this.client.send(this.$enum.TERMINAL_OPERATOR.DISCONNECT.value)
+    this.client && this.client.readyState === 1 && this.client.send(TERMINAL_OPERATOR.DISCONNECT.value)
   },
   ping() {
     console.log('ping')
-    this.client.send(this.$enum.TERMINAL_OPERATOR.PING.value)
+    this.client.send(TERMINAL_OPERATOR.PING.value)
   }
 }
 
@@ -282,19 +283,19 @@ function parseProtocol(msg) {
   const code = msg.substring(0, 3)
   const len = msg.length
   switch (code) {
-    case this.$enum.WS_PROTOCOL.ACK.value:
-      this.status = this.$enum.TERMINAL_STATUS.UNAUTHORIZED.value
+    case WS_PROTOCOL.ACK.value:
+      this.status = TERMINAL_STATUS.UNAUTHORIZED.value
       this.term.focus()
       break
-    case this.$enum.WS_PROTOCOL.CONNECTED.value:
-      this.status = this.$enum.TERMINAL_STATUS.CONNECTED.value
+    case WS_PROTOCOL.CONNECTED.value:
+      this.status = TERMINAL_STATUS.CONNECTED.value
       this.term.focus()
       break
-    case this.$enum.WS_PROTOCOL.OK.value:
+    case WS_PROTOCOL.OK.value:
       this.term.write(msg.substring(4, len))
       break
     default:
-      console.log(this.$enum.valueOf(this.$enum.WS_PROTOCOL, code).label)
+      console.log(enumValueOf(WS_PROTOCOL, code).label)
       break
   }
 }
@@ -375,7 +376,7 @@ export default {
     },
     fitTerminal() {
       setTimeout(() => {
-        const dimensions = this.$utils.fitDimensions(this.term, this.$refs.terminal)
+        const dimensions = fitDimensions(this.term, this.$refs.terminal)
         if (dimensions?.cols && dimensions?.rows) {
           this.term.resize(dimensions.cols, dimensions.rows)
         }

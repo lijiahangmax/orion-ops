@@ -20,7 +20,7 @@
         </a-form-item>
         <a-form-item label="角色">
           <a-select v-decorator="decorators.role">
-            <a-select-option :value="type.value" v-for="type in $enum.ROLE_TYPE" :key="type.value">
+            <a-select-option :value="type.value" v-for="type in ROLE_TYPE" :key="type.value">
               {{ type.label }}
             </a-select-option>
           </a-select>
@@ -37,8 +37,9 @@
 </template>
 
 <script>
-
 import { pick } from 'lodash'
+import { md5 } from '@/lib/utils'
+import { ROLE_TYPE } from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -105,6 +106,7 @@ export default {
   name: 'AddUserModal',
   data: function() {
     return {
+      ROLE_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -151,7 +153,7 @@ export default {
       try {
         if (!this.id) {
           // 添加
-          values.password = this.$utils.md5(values.password)
+          values.password = md5(values.password)
           res = await this.$api.addUser({
             ...values
           })

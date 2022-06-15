@@ -3,91 +3,67 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 终端日志
+ * 终端日志响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/19 20:59
  */
 @Data
+@ApiModel(value = "终端日志响应")
 public class MachineTerminalLogVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
-    /**
-     * 机器host
-     */
+    @ApiModelProperty(value = "机器host")
     private String machineHost;
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "访问token")
     private String accessToken;
 
-    /**
-     * 建立连接时间
-     */
+    @ApiModelProperty(value = "建立连接时间")
     private Date connectedTime;
 
-    /**
-     * 断开连接时间
-     */
+    @ApiModelProperty(value = "断开连接时间")
     private Date disconnectedTime;
 
-    /**
-     * 建立连接时间
-     */
+    @ApiModelProperty(value = "建立连接时间")
     private String connectedTimeAgo;
 
-    /**
-     * 断开连接时间
-     */
+    @ApiModelProperty(value = "断开连接时间")
     private String disconnectedTimeAgo;
 
     /**
-     * close code
-     *
      * @see com.orion.ops.consts.ws.WsCloseCode
      */
+    @ApiModelProperty(value = "close code")
     private Integer closeCode;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
     static {

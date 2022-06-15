@@ -56,8 +56,8 @@
         </template>
         <!-- 审核 -->
         <template v-slot:releaseAudit="record">
-          <a-tag v-if="record.releaseAudit" :color=" $enum.valueOf($enum.PROFILE_AUDIT_STATUS,record.releaseAudit).color">
-            {{ $enum.valueOf($enum.PROFILE_AUDIT_STATUS, record.releaseAudit).label }}
+          <a-tag v-if="record.releaseAudit" :color="record.releaseAudit | formatReleaseAudit('color')">
+            {{ record.releaseAudit | formatReleaseAudit('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
@@ -83,13 +83,13 @@
       <!-- 导出模态框 -->
       <AppProfileExportModal ref="export"/>
       <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="$enum.IMPORT_TYPE.PROFILE"/>
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
 <script>
-
+import { enumValueOf, IMPORT_TYPE, PROFILE_AUDIT_STATUS } from '@/lib/enum'
 import AddAppProfileModal from '@/components/app/AddAppProfileModal'
 import AppProfileExportModal from '@/components/export/AppProfileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
@@ -172,6 +172,7 @@ export default {
         }
       },
       loading: false,
+      importType: IMPORT_TYPE.PROFILE,
       columns
     }
   },
@@ -219,6 +220,11 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.getList({})
+    }
+  },
+  filters: {
+    formatReleaseAudit(status, f) {
+      return enumValueOf(PROFILE_AUDIT_STATUS, status)[f]
     }
   },
   mounted() {

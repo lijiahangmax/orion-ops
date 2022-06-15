@@ -3,51 +3,40 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.dto.SchedulerTaskRecordStatisticsDTO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 调度任务机器执行统计
+ * 调度任务机器执行统计响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/21 10:37
  */
 @Data
+@ApiModel(value = "调度任务机器执行统计响应")
 public class SchedulerTaskMachineRecordStatisticsVO {
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 调度次数
-     */
+    @ApiModelProperty(value = "调度次数")
     private Integer scheduledCount;
 
-    /**
-     * 成功次数
-     */
+    @ApiModelProperty(value = "成功次数")
     private Integer successCount;
 
-    /**
-     * 失败次数
-     */
+    @ApiModelProperty(value = "失败次数")
     private Integer failureCount;
 
-    /**
-     * 机器平均执行时长ms (成功)
-     */
+    @ApiModelProperty(value = "成功机器平均执行时长毫秒")
     private Long avgUsed;
 
-    /**
-     * 机器平均执行时长 (成功)
-     */
+    @ApiModelProperty(value = "成功机器平均执行时长")
     private String avgUsedInterval;
 
     static {

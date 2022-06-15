@@ -36,7 +36,7 @@ public class MessageConst {
 
     public static final String PARSE_TEMPLATE_DATA_ERROR = "模板解析失败 请检查模板数据";
 
-    public static final String VCS_OPERATOR_ERROR = "版本控制仓库操作执行失败";
+    public static final String VCS_OPERATOR_ERROR = "应用版本仓库操作执行失败";
 
     public static final String TASK_ERROR = "任务执行异常";
 
@@ -83,6 +83,8 @@ public class MessageConst {
     public static final String AUTH_EXCEPTION_MESSAGE = "认证失败";
 
     public static final String IO_EXCEPTION_MESSAGE = "网络异常";
+
+    public static final String SQL_EXCEPTION_MESSAGE = "数据异常";
 
     public static final String UNCONNECTED = "未建立连接";
 
@@ -146,7 +148,7 @@ public class MessageConst {
 
     public static final String AUDIT_NOT_REQUIRED = "无需审核";
 
-    public static final String RELEASE_ABSENT = "发布单不存在";
+    public static final String RELEASE_ABSENT = "发布任务不存在";
 
     public static final String RELEASE_MACHINE_ABSENT = "发布机器不存在";
 

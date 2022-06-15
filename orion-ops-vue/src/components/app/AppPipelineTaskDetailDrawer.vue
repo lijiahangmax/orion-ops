@@ -26,8 +26,8 @@
           {{ detail.description }}
         </a-descriptions-item>
         <a-descriptions-item label="执行状态" :span="3">
-          <a-tag :color="$enum.valueOf($enum.PIPELINE_STATUS, detail.status).color">
-            {{ $enum.valueOf($enum.PIPELINE_STATUS, detail.status).label }}
+          <a-tag :color="detail.status | formatPipelineStatus('color')">
+            {{ detail.status | formatPipelineStatus('label') }}
           </a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="调度时间" :span="3" v-if="detail.timedExecTime !== null">
@@ -68,17 +68,17 @@
           <a-list-item>
             <a-descriptions size="middle">
               <a-descriptions-item label="执行操作" :span="3">
-               <span class="span-blue">
-                 {{ $enum.valueOf($enum.STAGE_TYPE, item.stageType).label }}
-               </span>
+                <span class="span-blue">
+                  {{ item.stageType | formatStageType('label') }}
+                </span>
                 {{ item.appName }}
               </a-descriptions-item>
               <a-descriptions-item label="执行状态" :span="3">
-                <a-tag :color="$enum.valueOf($enum.PIPELINE_DETAIL_STATUS, item.status).color">
-                  {{ $enum.valueOf($enum.PIPELINE_DETAIL_STATUS, item.status).label }}
+                <a-tag :color="item.status | formatPipelineDetailStatus('color')">
+                  {{ item.status | formatPipelineDetailStatus('label') }}
                 </a-tag>
               </a-descriptions-item>
-              <a-descriptions-item label="构建分支" :span="3" v-if="item.stageType === $enum.STAGE_TYPE.BUILD.value && item.config.branchName">
+              <a-descriptions-item label="构建分支" :span="3" v-if="item.stageType === STAGE_TYPE.BUILD.value && item.config.branchName">
                 <a-icon type="branches"/>
                 {{ item.config.branchName }}
                 <a-tooltip v-if="item.config.commitId">
@@ -90,12 +90,12 @@
                   </span>
                 </a-tooltip>
               </a-descriptions-item>
-              <a-descriptions-item label="发布版本" :span="3" v-if="item.stageType === $enum.STAGE_TYPE.RELEASE.value">
+              <a-descriptions-item label="发布版本" :span="3" v-if="item.stageType === STAGE_TYPE.RELEASE.value">
                 <span class="span-blue">
                   {{ item.config.buildSeq ? `#${item.config.buildSeq}` : '最新版本' }}
                 </span>
               </a-descriptions-item>
-              <a-descriptions-item label="发布机器" :span="3" v-if="item.stageType === $enum.STAGE_TYPE.RELEASE.value">
+              <a-descriptions-item label="发布机器" :span="3" v-if="item.stageType === STAGE_TYPE.RELEASE.value">
                 <span v-if="item.config.machineIdList && item.config.machineIdList.length" class="span-blue">
                   {{ item.config.machineList.map(s => s.name).join(', ') }}
                 </span>
@@ -119,12 +119,14 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, PIPELINE_DETAIL_STATUS, PIPELINE_STATUS, STAGE_TYPE } from '@/lib/enum'
 
 export default {
   name: 'AppPipelineTaskDetailDrawer',
   data() {
     return {
+      STAGE_TYPE,
       visible: false,
       loading: true,
       pollId: null,
@@ -147,11 +149,11 @@ export default {
         this.loading = false
         this.detail = data
         // 轮询状态
-        if (data.status === this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value ||
-          data.status === this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value ||
-          data.status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
-          data.status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value ||
-          data.status === this.$enum.PIPELINE_STATUS.RUNNABLE.value) {
+        if (data.status === PIPELINE_STATUS.WAIT_AUDIT.value ||
+          data.status === PIPELINE_STATUS.AUDIT_REJECT.value ||
+          data.status === PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+          data.status === PIPELINE_STATUS.WAIT_SCHEDULE.value ||
+          data.status === PIPELINE_STATUS.RUNNABLE.value) {
           this.pollId = setInterval(this.pollStatus, 5000)
         }
       }).catch(() => {
@@ -170,11 +172,11 @@ export default {
       if (!this.detail || !this.detail.status) {
         return
       }
-      if (this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value &&
-        this.detail.status !== this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value &&
-        this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value &&
-        this.detail.status !== this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value &&
-        this.detail.status !== this.$enum.PIPELINE_STATUS.RUNNABLE.value) {
+      if (this.detail.status !== PIPELINE_STATUS.WAIT_AUDIT.value &&
+        this.detail.status !== PIPELINE_STATUS.AUDIT_REJECT.value &&
+        this.detail.status !== PIPELINE_STATUS.WAIT_RUNNABLE.value &&
+        this.detail.status !== PIPELINE_STATUS.WAIT_SCHEDULE.value &&
+        this.detail.status !== PIPELINE_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
         this.pollId = null
         return
@@ -206,7 +208,16 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatPipelineStatus(status, f) {
+      return enumValueOf(PIPELINE_STATUS, status)[f]
+    },
+    formatPipelineDetailStatus(status, f) {
+      return enumValueOf(PIPELINE_DETAIL_STATUS, status)[f]
+    },
+    formatStageType(type, f) {
+      return enumValueOf(STAGE_TYPE, type)[f]
+    }
   }
 }
 </script>

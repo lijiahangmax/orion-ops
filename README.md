@@ -57,6 +57,7 @@ demo: http://101.43.254.243/ops/#/
 开发文档: https://lijiahangmax.gitee.io/orion-ops/#/advance/second-dev   
 操作手册: https://lijiahangmax.gitee.io/orion-ops/#/operator/machine  
 常见问题: https://lijiahangmax.gitee.io/orion-ops/#/quickstart/faq  
+通用模板: https://lijiahangmax.gitee.io/orion-ops/#/template/java-springboot-template  
 roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 ## 技术栈

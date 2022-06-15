@@ -2,38 +2,33 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 批量上传文件检查文件vo
+ * 批量上传文件检查文件响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/13 16:30
  */
 @Data
+@ApiModel(value = "批量上传文件检查文件响应")
 public class BatchUploadCheckFileVO {
 
-    /**
-     * 机器 id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long id;
 
-    /**
-     * 机器 名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String name;
 
-    /**
-     * 机器 主机
-     */
+    @ApiModelProperty(value = "机器主机")
     private String host;
 
-    /**
-     * 已存在的文件
-     */
+    @ApiModelProperty(value = "已存在的文件")
     private List<String> presentFiles;
 
     static {

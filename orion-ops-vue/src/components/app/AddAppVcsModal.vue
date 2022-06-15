@@ -17,7 +17,7 @@
         </a-form-item>
         <a-form-item label="认证方式">
           <a-radio-group v-decorator="decorators.authType">
-            <a-radio :value="type.value" v-for="type in $enum.VCS_AUTH_TYPE" :key="type.value">
+            <a-radio :value="type.value" v-for="type in VCS_AUTH_TYPE" :key="type.value">
               {{ type.label }}
             </a-radio>
           </a-radio-group>
@@ -28,7 +28,7 @@
         <a-form-item label="认证令牌" v-if="!visiblePassword()" style="margin-bottom: 0">
           <a-form-item style="display: inline-block; width: 30%">
             <a-select v-decorator="decorators.tokenType">
-              <a-select-option :value="type.value" v-for="type in $enum.VCS_TOKEN_TYPE" :key="type.value">
+              <a-select-option :value="type.value" v-for="type in VCS_TOKEN_TYPE" :key="type.value">
                 {{ type.label }}
               </a-select-option>
             </a-select>
@@ -51,8 +51,8 @@
 </template>
 
 <script>
+import { enumValueOf, VCS_AUTH_TYPE, VCS_TOKEN_TYPE } from '@/lib/enum'
 import { pick } from 'lodash'
-import _enum from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -80,10 +80,10 @@ function getDecorators() {
       }]
     }],
     authType: ['authType', {
-      initialValue: _enum.VCS_AUTH_TYPE.PASSWORD.value
+      initialValue: VCS_AUTH_TYPE.PASSWORD.value
     }],
     tokenType: ['tokenType', {
-      initialValue: _enum.VCS_TOKEN_TYPE.GITHUB.value
+      initialValue: VCS_TOKEN_TYPE.GITHUB.value
     }],
     privateToken: ['privateToken', {
       rules: [{
@@ -122,6 +122,8 @@ export default {
   name: 'AddAppVcsModal',
   data: function() {
     return {
+      VCS_AUTH_TYPE,
+      VCS_TOKEN_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -160,7 +162,7 @@ export default {
         resolve()
       }).then(() => {
         // 加载令牌类型
-        if (this.record.authType === this.$enum.VCS_AUTH_TYPE.TOKEN.value) {
+        if (this.record.authType === VCS_AUTH_TYPE.TOKEN.value) {
           this.$nextTick(() => {
             this.record.tokenType = tokenType
             this.form.setFieldsValue({ tokenType })
@@ -186,7 +188,7 @@ export default {
     validateUsername(rule, value, callback) {
       if (this.form.getFieldValue('password') && !value) {
         callback(new Error('用户名和密码须同时存在'))
-      } else if (this.form.getFieldValue('tokenType') === this.$enum.VCS_TOKEN_TYPE.GITEE.value && !value) {
+      } else if (this.form.getFieldValue('tokenType') === VCS_TOKEN_TYPE.GITEE.value && !value) {
         callback(new Error('gitee 令牌认证用户名必填'))
       } else {
         callback()
@@ -200,16 +202,15 @@ export default {
       }
     },
     visibleUsername(authType = this.form.getFieldValue('authType'), tokenType = this.form.getFieldValue('tokenType')) {
-      return authType !== this.$enum.VCS_AUTH_TYPE.TOKEN.value ||
-        (authType === this.$enum.VCS_AUTH_TYPE.TOKEN.value &&
-          tokenType === this.$enum.VCS_AUTH_TYPE.TOKEN.value)
+      return authType !== VCS_AUTH_TYPE.TOKEN.value ||
+        (authType === VCS_AUTH_TYPE.TOKEN.value && tokenType === VCS_AUTH_TYPE.TOKEN.value)
     },
     visiblePassword() {
-      return this.form.getFieldValue('authType') === this.$enum.VCS_AUTH_TYPE.PASSWORD.value
+      return this.form.getFieldValue('authType') === VCS_AUTH_TYPE.PASSWORD.value
     },
     getPrivateTokenPlaceholder() {
-      return this.$enum.valueOf(this.$enum.VCS_TOKEN_TYPE, this.form.getFieldValue('tokenType')).description ||
-        this.$enum.VCS_TOKEN_TYPE.GITHUB.description
+      return enumValueOf(VCS_TOKEN_TYPE, this.form.getFieldValue('tokenType')).description ||
+        VCS_TOKEN_TYPE.GITHUB.description
     },
     check() {
       this.loading = true

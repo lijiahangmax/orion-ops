@@ -57,6 +57,11 @@
 账号: `orionadmin`  
 密码: `orionadmin`
 
+### swagger
+
+地址: http://127.0.0.1:9119/doc.html#/home  
+这个只有在 `dev` `local` 环境才可以访问
+
 ### 配置系统
 
 登录后需要配置宿主机 SSH 信息, 本地调试阶段宿主机可以改为远程机器   

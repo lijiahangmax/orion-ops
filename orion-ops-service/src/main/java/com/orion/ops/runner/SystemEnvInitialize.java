@@ -105,6 +105,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.VCS_PATH);
             case DIST_PATH:
                 return createOrionOpsPath(Const.DIST_PATH);
+            case TAIL_FILE_UPLOAD_PATH:
+                return createOrionOpsPath(Const.TAIL_FILE_PATH);
             case TAIL_MODE:
                 return FileTailMode.TRACKER.getMode();
             case TRACKER_DELAY_TIME:

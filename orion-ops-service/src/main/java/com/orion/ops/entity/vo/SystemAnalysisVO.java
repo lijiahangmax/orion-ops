@@ -2,91 +2,64 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 系统分析返回
+ * 系统分析响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/16 22:25
  */
 @Data
+@ApiModel(value = "系统分析响应")
 public class SystemAnalysisVO {
 
-    /**
-     * 已挂载秘钥数量
-     */
+    @ApiModelProperty(value = "已挂载秘钥数量")
     private Integer mountKeyCount;
 
-    /**
-     * 临时文件数量
-     */
+    @ApiModelProperty(value = "临时文件数量")
     private Integer tempFileCount;
 
-    /**
-     * 临时文件大小
-     */
+    @ApiModelProperty(value = "临时文件大小")
     private String tempFileSize;
 
-    /**
-     * 日志文件数量
-     */
+    @ApiModelProperty(value = "日志文件数量")
     private Integer logFileCount;
 
-    /**
-     * 日志文件大小
-     */
+    @ApiModelProperty(value = "日志文件大小")
     private String logFileSize;
 
-    /**
-     * 交换文件数量
-     */
+    @ApiModelProperty(value = "交换文件数量")
     private Integer swapFileCount;
 
-    /**
-     * 交换文件大小
-     */
+    @ApiModelProperty(value = "交换文件大小")
     private String swapFileSize;
 
-    /**
-     * 构建产物版本数
-     */
+    @ApiModelProperty(value = "构建产物版本数")
     private Integer distVersionCount;
 
-    /**
-     * 构建产物大小
-     */
+    @ApiModelProperty(value = "构建产物大小")
     private String distFileSize;
 
-    /**
-     * 应用仓库版本数
-     */
+    @ApiModelProperty(value = "应用仓库版本数")
     private Integer vcsVersionCount;
 
-    /**
-     * 应用仓库大小
-     */
+    @ApiModelProperty(value = "应用仓库大小")
     private String vcsVersionFileSize;
 
-    /**
-     * 黑名单数量
-     */
+    @ApiModelProperty(value = "黑名单数量")
     private Long blackIpListCount;
 
-    /**
-     * 白名单数量
-     */
+    @ApiModelProperty(value = "白名单数量")
     private Long whiteIpListCount;
 
-    /**
-     * 文件清理阈值
-     */
+    @ApiModelProperty(value = "文件清理阈值")
     private Integer fileCleanThreshold;
 
-    /**
-     * 自动清理文件
-     */
+    @ApiModelProperty(value = "自动清理文件")
     private Boolean autoCleanFile;
 
     static {

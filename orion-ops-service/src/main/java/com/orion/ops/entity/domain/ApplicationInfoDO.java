@@ -47,7 +47,7 @@ public class ApplicationInfoDO implements Serializable {
     private Integer appSort;
 
     /**
-     * 版本控制id
+     * 应用版本仓库id
      */
     @TableField(value = "vcs_id", updateStrategy = FieldStrategy.IGNORED)
     private Long vcsId;

@@ -54,8 +54,7 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
 
 const layout = {
   labelCol: { span: 4 },
@@ -183,7 +182,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

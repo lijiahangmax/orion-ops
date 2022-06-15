@@ -4,61 +4,49 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 应用环境变量
+ * 应用环境变量响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/4 11:25
  */
 @Data
+@ApiModel(value = "应用环境变量响应")
 public class ApplicationEnvVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * key
-     */
+    @ApiModelProperty(value = "key")
     private String key;
 
-    /**
-     * value
-     */
+    @ApiModelProperty(value = "value")
     private String value;
 
     /**
-     * 是否禁止删除 1可以删除 2禁止删除
-     *
      * @see com.orion.ops.consts.Const#FORBID_DELETE_CAN
      * @see com.orion.ops.consts.Const#FORBID_DELETE_NOT
      */
+    @ApiModelProperty(value = "是否禁止删除 1可以删除 2禁止删除")
     private Integer forbidDelete;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
     static {

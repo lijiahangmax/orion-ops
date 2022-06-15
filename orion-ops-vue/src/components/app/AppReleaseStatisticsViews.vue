@@ -49,8 +49,8 @@
                           {{ releaseRecord.releaseTitle }}
                         </span>
                         <!-- 发布状态 -->
-                        <a-tag class="mx4" :color="$enum.valueOf($enum.RELEASE_STATUS, releaseRecord.status).color">
-                          {{ $enum.valueOf($enum.RELEASE_STATUS, releaseRecord.status).label }}
+                        <a-tag class="mx4" :color="releaseRecord.status | formatReleaseStatus('color')">
+                          {{ releaseRecord.status | formatReleaseStatus('label') }}
                         </a-tag>
                       </div>
                       <div class="app-release-record-info">
@@ -72,8 +72,8 @@
                       <div :class="['app-release-machine-info', index !== releaseRecord.machines.length - 1 ? 'app-release-machine-info-next' : '']">
                         <span class="app-release-machine-info-name" :title=" machine.machineName">{{ machine.machineName }}</span>
                         <div class="app-release-machine-info-status">
-                          <a-tag :color="$enum.valueOf($enum.ACTION_STATUS, machine.status).color">
-                            {{ $enum.valueOf($enum.ACTION_STATUS, machine.status).label }}
+                          <a-tag :color="machine.status | formatActionStatus('color')">
+                            {{ machine.status | formatActionStatus('label') }}
                           </a-tag>
                           <span class="app-release-machine-info-used" v-if="machine.usedInterval">{{ machine.usedInterval }}</span>
                           <span v-else/>
@@ -134,7 +134,8 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { formatDate } from '@/lib/filters'
+import { ACTION_STATUS, enumValueOf, RELEASE_STATUS } from '@/lib/enum'
 import AppActionLogAppenderModal from '@/components/log/AppActionLogAppenderModal'
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
@@ -190,14 +191,14 @@ export default {
     },
     getCanOpenLog(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).log
+        return enumValueOf(ACTION_STATUS, actionLog.status).log
       } else {
         return false
       }
     },
     getActionLogStyle(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).actionStyle
+        return enumValueOf(ACTION_STATUS, actionLog.status).actionStyle
       } else {
         return {
           background: '#FFD43B'
@@ -206,7 +207,7 @@ export default {
     },
     getActionLogValue(actionLog) {
       if (actionLog) {
-        return this.$enum.valueOf(this.$enum.ACTION_STATUS, actionLog.status).actionValue(actionLog)
+        return enumValueOf(ACTION_STATUS, actionLog.status).actionValue(actionLog)
       } else {
         return '未执行'
       }
@@ -216,7 +217,13 @@ export default {
     this.clean()
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatReleaseStatus(status, f) {
+      return enumValueOf(RELEASE_STATUS, status)[f]
+    },
+    formatActionStatus(status, f) {
+      return enumValueOf(ACTION_STATUS, status)[f]
+    }
   }
 }
 </script>

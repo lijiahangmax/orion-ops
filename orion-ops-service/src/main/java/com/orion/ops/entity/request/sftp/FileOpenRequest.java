@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,11 +12,10 @@ import lombok.Data;
  * @since 2021/6/23 19:50
  */
 @Data
+@ApiModel(value = "sftp打开请求")
 public class FileOpenRequest {
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
 }

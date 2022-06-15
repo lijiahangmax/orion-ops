@@ -2,58 +2,46 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationPipelineDetailDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 应用流水线详情
+ * 应用流水线详情响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/2 10:30
  */
 @Data
+@ApiModel(value = "应用流水线详情响应")
 public class ApplicationPipelineDetailVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 流水线id
-     */
+    @ApiModelProperty(value = "流水线id")
     private Long pipelineId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     private Long appId;
 
-    /**
-     * 应用名称
-     */
+    @ApiModelProperty(value = "应用名称")
     private String appName;
 
-    /**
-     * 应用唯一标识
-     */
+    @ApiModelProperty(value = "应用唯一标识")
     private String appTag;
 
-    /**
-     * 版本控制id
-     */
+    @ApiModelProperty(value = "应用版本仓库id")
     private Long vcsId;
 
     /**
-     * 阶段类型 10构建 20发布
-     *
      * @see com.orion.ops.consts.app.StageType
      */
+    @ApiModelProperty(value = "阶段类型 10构建 20发布")
     private Integer stageType;
 
     static {

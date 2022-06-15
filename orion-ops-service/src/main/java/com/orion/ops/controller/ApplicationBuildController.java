@@ -12,6 +12,9 @@ import com.orion.ops.entity.vo.ApplicationBuildStatusVO;
 import com.orion.ops.entity.vo.ApplicationBuildVO;
 import com.orion.ops.service.api.ApplicationBuildService;
 import com.orion.ops.utils.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +23,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 应用构建api
+ * 应用构建 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/6 22:02
  */
+@Api(tags = "应用构建")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/app-build")
@@ -34,58 +38,46 @@ public class ApplicationBuildController {
     @Resource
     private ApplicationBuildService applicationBuildService;
 
-    /**
-     * 提交执行
-     */
-    @RequestMapping("/submit")
+    @PostMapping("/submit")
+    @ApiOperation(value = "提交执行")
     @EventLog(EventType.SUBMIT_BUILD)
     public Long submitAppBuild(@RequestBody ApplicationBuildRequest request) {
         Valid.allNotNull(request.getAppId(), request.getProfileId());
         return applicationBuildService.submitBuildTask(request, true);
     }
 
-    /**
-     * 构建列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取构建列表")
     public DataGrid<ApplicationBuildVO> getBuildList(@RequestBody ApplicationBuildRequest request) {
         Valid.notNull(request.getProfileId());
         return applicationBuildService.getBuildList(request);
     }
 
-    /**
-     * 构建详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取构建详情")
     public ApplicationBuildVO getBuildDetail(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.getBuildDetail(id);
     }
 
-    /**
-     * 查询构建状态
-     */
     @IgnoreLog
-    @RequestMapping("/status")
+    @PostMapping("/status")
+    @ApiOperation(value = "查询构建状态")
     public ApplicationBuildStatusVO getBuildStatus(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.getBuildStatus(id);
     }
 
-    /**
-     * 查询构建状态列表
-     */
     @IgnoreLog
-    @RequestMapping("/list-status")
+    @PostMapping("/list-status")
+    @ApiOperation(value = "查询构建状态列表")
     public List<ApplicationBuildStatusVO> getListStatus(@RequestBody ApplicationBuildRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationBuildService.getBuildStatusList(idList);
     }
 
-    /**
-     * 终止构建
-     */
-    @RequestMapping("/terminate")
+    @PostMapping("/terminate")
+    @ApiOperation(value = "终止构建")
     @EventLog(EventType.BUILD_TERMINATE)
     public HttpWrapper<?> terminateTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -93,10 +85,8 @@ public class ApplicationBuildController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 输入命令
-     */
-    @RequestMapping("/write")
+    @PostMapping("/write")
+    @ApiOperation(value = "输入命令")
     public HttpWrapper<?> writeTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         String command = Valid.notEmpty(request.getCommand());
@@ -104,30 +94,24 @@ public class ApplicationBuildController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 删除构建
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除构建")
     @EventLog(EventType.DELETE_BUILD)
     public Integer deleteTask(@RequestBody ApplicationBuildRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationBuildService.deleteBuildTask(idList);
     }
 
-    /**
-     * 重新构建
-     */
-    @RequestMapping("/rebuild")
+    @PostMapping("/rebuild")
+    @ApiOperation(value = "删除构建")
     @EventLog(EventType.SUBMIT_REBUILD)
     public Long rebuildTask(@RequestBody ApplicationBuildRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationBuildService.rebuild(id);
     }
 
-    /**
-     * 发布构建列表
-     */
-    @RequestMapping("/release-list")
+    @PostMapping("/release-list")
+    @ApiOperation(value = "获取发布构建列表")
     public List<ApplicationBuildReleaseListVO> getBuildReleaseList(@RequestBody ApplicationBuildRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());

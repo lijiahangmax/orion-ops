@@ -15,6 +15,9 @@ import com.orion.ops.service.api.ApplicationEnvService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Maps;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +33,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2021/7/4 11:10
  */
+@Api(tags = "应用环境变量")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/app-env")
@@ -38,10 +42,8 @@ public class ApplicationEnvController {
     @Resource
     private ApplicationEnvService applicationEnvService;
 
-    /**
-     * 添加应用变量
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加环境变量")
     public Long addAppEnv(@RequestBody ApplicationEnvRequest request) {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
@@ -50,48 +52,38 @@ public class ApplicationEnvController {
         return applicationEnvService.addAppEnv(request);
     }
 
-    /**
-     * 删除应用变量
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_APP_ENV)
     public Integer deleteAppEnv(@RequestBody ApplicationEnvRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return applicationEnvService.deleteAppEnv(idList);
     }
 
-    /**
-     * 更新应用变量
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "更新环境变量")
     public Integer updateAppEnv(@RequestBody ApplicationEnvRequest request) {
         Valid.notNull(request.getId());
         return applicationEnvService.updateAppEnv(request);
     }
 
-    /**
-     * 应用环境变量列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取环境变量列表")
     public DataGrid<ApplicationEnvVO> listAppEnv(@RequestBody ApplicationEnvRequest request) {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
         return applicationEnvService.listAppEnv(request);
     }
 
-    /**
-     * 应用环境变量详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取环境变量详情")
     public ApplicationEnvVO appEnvDetail(@RequestBody ApplicationEnvRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationEnvService.getAppEnvDetail(id);
     }
 
-    /**
-     * 同步应用环境变量到其他环境
-     */
-    @RequestMapping("/sync")
+    @PostMapping("/sync")
+    @ApiOperation(value = "同步环境变量到其他环境")
     @EventLog(EventType.SYNC_APP_ENV)
     public HttpWrapper<?> syncAppEnv(@RequestBody ApplicationEnvRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -102,10 +94,8 @@ public class ApplicationEnvController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 视图
-     */
-    @RequestMapping("/view")
+    @PostMapping("/view")
+    @ApiOperation(value = "获取环境变量视图")
     public String view(@RequestBody ApplicationEnvRequest request) {
         Valid.notNull(request.getAppId());
         Valid.notNull(request.getProfileId());
@@ -117,10 +107,8 @@ public class ApplicationEnvController {
         return viewType.toValue(env);
     }
 
-    /**
-     * 视图保存
-     */
-    @RequestMapping("/view-save")
+    @PostMapping("/view-save")
+    @ApiOperation(value = "保存环境变量视图")
     public Integer viewSave(@RequestBody ApplicationEnvRequest request) {
         Long appId = Valid.notNull(request.getAppId());
         Long profileId = Valid.notNull(request.getProfileId());

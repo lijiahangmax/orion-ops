@@ -2,54 +2,43 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.ApplicationPipelineDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * 应用流水线
+ * 应用流水线响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/4/2 10:30
  */
 @Data
+@ApiModel(value = "应用流水线响应")
 public class ApplicationPipelineVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     private Long profileId;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
-    /**
-     * 详情
-     */
+    @ApiModelProperty(value = "详情")
     private List<ApplicationPipelineDetailVO> details;
 
     static {

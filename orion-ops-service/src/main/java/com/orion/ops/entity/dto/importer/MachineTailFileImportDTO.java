@@ -6,6 +6,8 @@ import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,49 +18,36 @@ import lombok.EqualsAndHashCode;
  * @version 1.0.0
  * @since 2022/5/31 9:54
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "机器代理导入")
 public class MachineTailFileImportDTO extends BaseDataImportDTO {
 
-    /**
-     * 机器标识
-     */
+    @ApiModelProperty(value = "机器标识")
     @ImportField(index = 1)
     private String machineTag;
 
-    /**
-     * 别名
-     */
+    @ApiModelProperty(value = "别名")
     @ImportField(index = 2)
     private String name;
 
-    /**
-     * 文件路径
-     */
+    @ApiModelProperty(value = "文件路径")
     @ImportField(index = 3)
     private String path;
 
-    /**
-     * 文件编码
-     */
+    @ApiModelProperty(value = "文件编码")
     @ImportField(index = 4)
     private String charset;
 
-    /**
-     * 尾部偏移行
-     */
+    @ApiModelProperty(value = "尾部偏移行")
     @ImportField(index = 5)
     private Integer offset;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     @ImportField(index = 6)
     private String command;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id", hidden = true)
     private Long machineId;
 
     static {

@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.request.sftp.DataClearRequest;
+import com.orion.ops.entity.request.DataClearRequest;
 
 /**
  * 数据清理服务

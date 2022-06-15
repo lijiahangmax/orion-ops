@@ -4,6 +4,8 @@ import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,83 +13,59 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * 应用发布机器响应
+ *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/20 14:15
  */
 @Data
+@ApiModel(value = "应用发布机器响应")
 public class ApplicationReleaseMachineVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 上线单id
-     */
+    @ApiModelProperty(value = "发布任务id")
     private Long releaseId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     private String machineHost;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
-     *
      * @see com.orion.ops.consts.app.ActionType
      */
+    @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     private Integer status;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private Date startTime;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     private String startTimeAgo;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private Date endTime;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     private String endTimeAgo;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
-    /**
-     * 操作
-     */
+    @ApiModelProperty(value = "操作")
     private List<ApplicationActionLogVO> actions;
 
     static {

@@ -18,7 +18,7 @@
             <a-select class="param-input"
                       placeholder="全部"
                       @change="(e) => classify = e">
-              <a-select-option v-for="classify in $enum.EVENT_CLASSIFY" :key="classify.value" :value="classify.value">
+              <a-select-option v-for="classify in EVENT_CLASSIFY" :key="classify.value" :value="classify.value">
                 {{ classify.label }}
               </a-select-option>
             </a-select>
@@ -51,7 +51,8 @@
 </template>
 
 <script>
-
+import { downloadFile } from '@/lib/utils'
+import { EVENT_CLASSIFY } from '@/lib/enum'
 import UserSelector from '@/components/user/UserSelector'
 
 export default {
@@ -62,6 +63,7 @@ export default {
   },
   data: function() {
     return {
+      EVENT_CLASSIFY,
       visible: false,
       loading: false,
       protectPassword: undefined,
@@ -90,7 +92,7 @@ export default {
         this.loading = false
         this.visible = false
         this.$message.success('导出成功, 片刻后自动下载')
-        this.$utils.downloadFile(e)
+        downloadFile(e)
       }).catch(() => {
         this.loading = false
         this.$message.error('导出失败')

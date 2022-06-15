@@ -40,6 +40,8 @@
   </a-modal>
 </template>
 <script>
+import { getPath, isEmptyStr } from '@/lib/utils'
+
 export default {
   name: 'SftpTouchModal',
   props: {
@@ -63,7 +65,7 @@ export default {
       this.visible = true
     },
     async handleTouch(isTouchFile) {
-      if (this.$utils.isEmptyStr(this.path)) {
+      if (isEmptyStr(this.path)) {
         this.$message.warning('路径不能为空')
         return
       }
@@ -81,7 +83,7 @@ export default {
         default:
           parentPath = ''
       }
-      this.realPath = this.$utils.getPath(parentPath + '/' + this.path)
+      this.realPath = getPath(parentPath + '/' + this.path)
       // 创建
       const data = {
         sessionToken: this.sessionToken,

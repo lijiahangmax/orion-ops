@@ -3,69 +3,52 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.handler.terminal.TerminalConnectHint;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.Optional;
 
 /**
- * 机器终端 管理员面板
+ * 机器终端管理响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/19 22:42
  */
 @Data
+@ApiModel(value = "机器终端管理响应")
 public class MachineTerminalManagerVO {
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * username
-     */
+    @ApiModelProperty(value = "username")
     private String userName;
 
-    /**
-     * 连接时间
-     */
+    @ApiModelProperty(value = "连接时间")
     private Date connectedTime;
 
-    /**
-     * 连接时间
-     */
+    @ApiModelProperty(value = "连接时间")
     private String connectedTimeAgo;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器host
-     */
+    @ApiModelProperty(value = "机器host")
     private String machineHost;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
-    /**
-     * logId
-     */
+    @ApiModelProperty(value = "logId")
     private Long logId;
 
     static {

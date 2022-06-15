@@ -2,89 +2,77 @@ package com.orion.ops.entity.vo;
 
 import com.orion.ops.entity.domain.MachineTerminalDO;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 终端配置VO
+ * 终端终端配置响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/11/2 21:02
  */
 @Data
+@ApiModel(value = "终端终端配置响应")
 public class MachineTerminalVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
     /**
-     * 终端类型
-     *
-     * @see com.orion.remote.TerminalType
+     * @see com.orion.net.remote.TerminalType
      */
+    @ApiModelProperty(value = "终端类型")
     private String terminalType;
 
     /**
-     * 背景色
-     *
      * @see com.orion.ops.consts.terminal.TerminalConst#BACKGROUND_COLOR
      */
+    @ApiModelProperty(value = "背景色")
     private String backgroundColor;
 
     /**
-     * 字体颜色
-     *
      * @see com.orion.ops.consts.terminal.TerminalConst#FONT_COLOR
      */
+    @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
     /**
-     * 字体大小
-     *
      * @see com.orion.ops.consts.terminal.TerminalConst#FONT_SIZE
      */
+    @ApiModelProperty(value = "字体大小")
     private Integer fontSize;
 
     /**
-     * 字体名称
-     *
      * @see com.orion.ops.consts.terminal.TerminalConst#FONT_FAMILY
      */
+    @ApiModelProperty(value = "字体名称")
     private String fontFamily;
 
     /**
-     * 是否开启url link 1开启 2关闭
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否开启url link 1开启 2关闭")
     private Integer enableWebLink;
 
     /**
-     * 是否开启webGL加速 1开启 2关闭
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "是否开启webGL加速 1开启 2关闭")
     private Integer enableWebGL;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 
     static {

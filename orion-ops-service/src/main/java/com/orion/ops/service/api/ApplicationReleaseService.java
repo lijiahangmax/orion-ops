@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- * 发布单 服务类
+ * 发布任务 服务类
  * </p>
  *
  * @author Jiahang Li

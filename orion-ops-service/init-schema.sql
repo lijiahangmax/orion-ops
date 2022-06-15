@@ -71,7 +71,7 @@ CREATE TABLE `application_build`
     `build_seq`        int(11)                                                  NULL DEFAULT NULL COMMENT '构建序列',
     `branch_name`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '构建分支',
     `commit_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '构建提交id',
-    `vcs_id`           bigint(20)                                               NULL DEFAULT NULL COMMENT '版本控制id',
+    `vcs_id`           bigint(20)                                               NULL DEFAULT NULL COMMENT '应用版本仓库id',
     `log_path`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '构建日志路径',
     `bundle_path`      varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '构建产物路径',
     `build_status`     tinyint(4)                                               NULL DEFAULT 10 COMMENT '状态 10未开始 20执行中 30已完成 40执行失败 50已取消',
@@ -124,7 +124,7 @@ CREATE TABLE `application_info`
     `app_name`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用名称',
     `app_tag`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识',
     `app_sort`    int(11)                                                NULL DEFAULT NULL COMMENT '排序',
-    `vcs_id`      bigint(20)                                             NULL DEFAULT NULL COMMENT '版本控制id',
+    `vcs_id`      bigint(20)                                             NULL DEFAULT NULL COMMENT '应用版本仓库id',
     `description` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
     `deleted`     tinyint(4)                                             NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time` datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
@@ -359,7 +359,7 @@ CREATE TABLE `application_release`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
-  COLLATE = utf8_general_ci COMMENT = '发布单'
+  COLLATE = utf8_general_ci COMMENT = '发布任务'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -369,7 +369,7 @@ DROP TABLE IF EXISTS `application_release_machine`;
 CREATE TABLE `application_release_machine`
 (
     `id`           bigint(20)                                              NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `release_id`   bigint(20)                                              NULL DEFAULT NULL COMMENT '上线单id',
+    `release_id`   bigint(20)                                              NULL DEFAULT NULL COMMENT '发布任务id',
     `machine_id`   bigint(20)                                              NULL DEFAULT NULL COMMENT '机器id',
     `machine_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '机器名称',
     `machine_tag`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '机器唯一标识',
@@ -386,7 +386,7 @@ CREATE TABLE `application_release_machine`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
-  COLLATE = utf8_general_ci COMMENT = '发布单机器表'
+  COLLATE = utf8_general_ci COMMENT = '发布任务机器表'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -413,7 +413,7 @@ CREATE TABLE `application_vcs`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
-  COLLATE = utf8_general_ci COMMENT = '应用版本控制'
+  COLLATE = utf8_general_ci COMMENT = '应用版本仓库'
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------

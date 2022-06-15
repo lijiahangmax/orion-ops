@@ -7,10 +7,13 @@ import com.orion.ops.consts.Const;
 import com.orion.ops.consts.clear.DataClearRange;
 import com.orion.ops.consts.event.EventType;
 import com.orion.ops.consts.user.RoleType;
-import com.orion.ops.entity.request.sftp.DataClearRequest;
+import com.orion.ops.entity.request.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * 数据清理
+ * 数据清理 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/24 16:50
  */
+@Api(tags = "数据清理")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/data-clear")
@@ -32,10 +36,8 @@ public class DataClearController {
     @Resource
     private DataClearService dataClearService;
 
-    /**
-     * 清理 批量执行
-     */
-    @RequestMapping("/batch-exec")
+    @PostMapping("/batch-exec")
+    @ApiOperation(value = "清理批量执行记录")
     @EventLog(EventType.DATA_CLEAR_BATCH_EXEC)
     public Integer clearBatchExec(@RequestBody DataClearRequest request) {
         this.validParams(request);
@@ -45,10 +47,8 @@ public class DataClearController {
         return dataClearService.clearBatchExec(request);
     }
 
-    /**
-     * 清理 终端日志
-     */
-    @RequestMapping("/terminal-log")
+    @PostMapping("/terminal-log")
+    @ApiOperation(value = "清理终端日志记录")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.DATA_CLEAR_TERMINAL_LOG)
     public Integer clearTerminalLog(@RequestBody DataClearRequest request) {
@@ -56,20 +56,16 @@ public class DataClearController {
         return dataClearService.clearTerminalLog(request);
     }
 
-    /**
-     * 清理 调度记录
-     */
-    @RequestMapping("/scheduler-record")
+    @PostMapping("/scheduler-record")
+    @ApiOperation(value = "清理调度任务记录")
     @EventLog(EventType.DATA_CLEAR_SCHEDULER_RECORD)
     public Integer clearSchedulerRecord(@RequestBody DataClearRequest request) {
         this.validParams(request);
         return dataClearService.clearSchedulerRecord(request);
     }
 
-    /**
-     * 清理 应用构建
-     */
-    @RequestMapping("/app-build")
+    @PostMapping("/app-build")
+    @ApiOperation(value = "清理应用构建记录")
     @EventLog(EventType.DATA_CLEAR_APP_BUILD)
     public Integer clearAppBuild(@RequestBody DataClearRequest request) {
         this.validParams(request);
@@ -77,10 +73,8 @@ public class DataClearController {
         return dataClearService.clearAppBuild(request);
     }
 
-    /**
-     * 清理 应用发布
-     */
-    @RequestMapping("/app-release")
+    @PostMapping("/app-release")
+    @ApiOperation(value = "清理应用发布记录")
     @EventLog(EventType.DATA_CLEAR_APP_RELEASE)
     public Integer clearAppRelease(@RequestBody DataClearRequest request) {
         this.validParams(request);
@@ -88,10 +82,8 @@ public class DataClearController {
         return dataClearService.clearAppRelease(request);
     }
 
-    /**
-     * 清理 应用流水线
-     */
-    @RequestMapping("/app-pipeline")
+    @PostMapping("/app-pipeline")
+    @ApiOperation(value = "清理应用流水线任务记录")
     @EventLog(EventType.DATA_CLEAR_APP_PIPELINE)
     public Integer clearAppPipeline(@RequestBody DataClearRequest request) {
         this.validParams(request);
@@ -99,20 +91,16 @@ public class DataClearController {
         return dataClearService.clearAppPipeline(request);
     }
 
-    /**
-     * 清理 站内信
-     */
-    @RequestMapping("/web-side-message")
+    @PostMapping("/web-side-message")
+    @ApiOperation(value = "清理站内信")
     @EventLog(EventType.DATA_CLEAR_WEB_SIDE_MESSAGE)
     public Integer clearWebSideMessage(@RequestBody DataClearRequest request) {
         this.validParams(request);
         return dataClearService.clearWebSideMessage(request);
     }
 
-    /**
-     * 清理 操作日志
-     */
-    @RequestMapping("/event-log")
+    @PostMapping("/event-log")
+    @ApiOperation(value = "清理用户操作日志")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.DATA_CLEAR_EVENT_LOG)
     public Integer clearEventLog(@RequestBody DataClearRequest request) {

@@ -14,13 +14,13 @@
           <MachineSelector ref="machineSelector"
                            placeholder="请选择"
                            @change="setDefaultConfig"
-                           :query="{status: $enum.ENABLE_STATUS.ENABLE.value}"
+                           :query="machineQuery"
                            v-decorator="decorators.machineId"/>
         </a-form-item>
         <!-- 追踪模式 -->
         <a-form-item v-if="form.getFieldValue('machineId') === 1" label="追踪模式">
           <a-radio-group v-decorator="decorators.tailMode">
-            <a-tooltip v-for="type of $enum.FILE_TAIL_MODE" :key="type.value" :title="type.tips">
+            <a-tooltip v-for="type of FILE_TAIL_MODE" :key="type.value" :title="type.tips">
               <a-radio :value="type.value">
                 {{ type.label }}
               </a-radio>
@@ -36,7 +36,7 @@
         <a-form-item label="命令" style="margin-bottom: 12px">
           <a-textarea v-decorator="decorators.command"
                       :disabled="form.getFieldValue('machineId') === 1 &&
-                       form.getFieldValue('tailMode') === $enum.FILE_TAIL_MODE.TRACKER.value"
+                       form.getFieldValue('tailMode') === FILE_TAIL_MODE.TRACKER.value"
                       allowClear/>
         </a-form-item>
         <a-form-item label="文件偏移量(行)" hasFeedback>
@@ -51,10 +51,9 @@
 </template>
 
 <script>
-
 import { pick } from 'lodash'
+import { ENABLE_STATUS, FILE_TAIL_MODE } from '@/lib/enum'
 import MachineSelector from '@/components/machine/MachineSelector'
-import _enum from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -83,7 +82,7 @@ function getDecorators() {
         required: true,
         message: '请选择追踪模式'
       }],
-      initialValue: _enum.FILE_TAIL_MODE.TRACKER.value
+      initialValue: FILE_TAIL_MODE.TRACKER.value
     }],
     path: ['path', {
       rules: [{
@@ -130,6 +129,7 @@ export default {
   },
   data: function() {
     return {
+      FILE_TAIL_MODE,
       id: null,
       visible: false,
       title: null,
@@ -138,7 +138,8 @@ export default {
       updateConfig: true,
       layout,
       decorators: getDecorators.call(this),
-      form: this.$form.createForm(this)
+      form: this.$form.createForm(this),
+      machineQuery: { status: ENABLE_STATUS.ENABLE.value }
     }
   },
   methods: {

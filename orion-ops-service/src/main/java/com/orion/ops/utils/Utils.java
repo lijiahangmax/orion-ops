@@ -36,11 +36,11 @@ public class Utils {
     }
 
     /**
-     * 获取复制后缀
+     * 获取随机后缀
      *
      * @return suffix
      */
-    public static String getCopySuffix() {
+    public static String getRandomSuffix() {
         return UUIds.random32().substring(0, 5).toUpperCase();
     }
 
@@ -188,7 +188,7 @@ public class Utils {
     }
 
     /**
-     * 获取高亮字体
+     * 获取 ANSI 高亮颜色行
      *
      * @param key  key
      * @param code code
@@ -197,6 +197,17 @@ public class Utils {
      */
     public static String getStainKeyWords(Object key, int code) {
         return StainCode.prefix(code) + key + StainCode.SUFFIX;
+    }
+
+    /**
+     * 清除 ANSI 高亮颜色行
+     *
+     * @param s s
+     * @return 清除 ANSI 属性
+     * @see com.orion.ops.consts.StainCode
+     */
+    public static String cleanStainAnsiCode(String s) {
+        return s.replaceAll("\\u001B\\[\\w{1,3}m", Const.EMPTY);
     }
 
     /**

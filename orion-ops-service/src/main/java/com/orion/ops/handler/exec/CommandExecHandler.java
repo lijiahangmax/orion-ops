@@ -187,7 +187,6 @@ public class CommandExecHandler implements IExecHandler {
                 .append(Letters.LF);
         sb.append("执行任务: ")
                 .append(Utils.getStainKeyWords(execId, StainCode.GLOSS_BLUE))
-                .append(StainCode.SUFFIX)
                 .append(Letters.LF);
         sb.append("执行机器: ")
                 .append(Utils.getStainKeyWords(machine.getMachineName(), StainCode.GLOSS_BLUE))

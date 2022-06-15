@@ -15,6 +15,9 @@ import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.Valid;
 import com.orion.utils.Exceptions;
 import com.orion.utils.collect.Maps;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,12 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 机器环境变量
+ * 机器环境变量 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/15 10:06
  */
+@Api(tags = "机器环境变量")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/machine-env")
@@ -38,10 +42,8 @@ public class MachineEnvController {
     @Resource
     private MachineEnvService machineEnvService;
 
-    /**
-     * 添加
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加环境变量")
     public Long add(@RequestBody MachineEnvRequest request) {
         Valid.notBlank(request.getKey());
         Valid.notNull(request.getValue());
@@ -49,48 +51,38 @@ public class MachineEnvController {
         return machineEnvService.addEnv(request);
     }
 
-    /**
-     * 更新
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改环境变量")
     public Integer update(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getId());
         Valid.notNull(request.getValue());
         return machineEnvService.updateEnv(request);
     }
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_MACHINE_ENV)
     public Integer delete(@RequestBody MachineEnvRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
         return machineEnvService.deleteEnv(idList);
     }
 
-    /**
-     * 列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取环境变量列表")
     public DataGrid<MachineEnvVO> list(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getMachineId());
         return machineEnvService.listEnv(request);
     }
 
-    /**
-     * 详情
-     */
-    @RequestMapping("/detail")
+    @PostMapping("/detail")
+    @ApiOperation(value = "获取环境变量详情")
     public MachineEnvVO detail(@RequestBody MachineEnvRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineEnvService.getEnvDetail(id);
     }
 
-    /**
-     * 同步
-     */
-    @RequestMapping("/sync")
+    @PostMapping("/sync")
+    @ApiOperation(value = "同步环境变量")
     @EventLog(EventType.SYNC_MACHINE_ENV)
     public HttpWrapper<?> sync(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getId());
@@ -100,10 +92,8 @@ public class MachineEnvController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 视图
-     */
-    @RequestMapping("/view")
+    @PostMapping("/view")
+    @ApiOperation(value = "获取环境变量视图")
     public String view(@RequestBody MachineEnvRequest request) {
         Valid.notNull(request.getMachineId());
         EnvViewType viewType = Valid.notNull(EnvViewType.of(request.getViewType()));
@@ -114,10 +104,8 @@ public class MachineEnvController {
         return viewType.toValue(env);
     }
 
-    /**
-     * 视图保存
-     */
-    @RequestMapping("/view-save")
+    @PostMapping("/view-save")
+    @ApiOperation(value = "保存环境变量视图")
     public Integer viewSave(@RequestBody MachineEnvRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         String value = Valid.notBlank(request.getValue());

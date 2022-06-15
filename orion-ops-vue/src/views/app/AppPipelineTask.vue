@@ -17,7 +17,7 @@
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.status" v-for="status in $enum.PIPELINE_STATUS" :key="status.value">
+                <a-select-option :value="status.status" v-for="status in PIPELINE_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -80,13 +80,13 @@
             <!-- 操作 -->
             <template v-slot:stage="detail">
               <span class="span-blue">
-                {{ $enum.valueOf($enum.STAGE_TYPE, detail.stageType).label }}
+                {{ detail.stageType | formatStageType('label') }}
               </span>
             </template>
             <!-- 配置 -->
             <template v-slot:config="detail">
               <!-- 构建 -->
-              <div v-if="detail.stageType === $enum.STAGE_TYPE.BUILD.value && detail.config.branchName">
+              <div v-if="detail.stageType === STAGE_TYPE.BUILD.value && detail.config.branchName">
                 <a-icon type="branches"/>
                 {{ detail.config.branchName }}
                 <a-tooltip v-if="detail.config.commitId">
@@ -99,7 +99,7 @@
                 </a-tooltip>
               </div>
               <!-- 发布 -->
-              <div v-if="detail.stageType === $enum.STAGE_TYPE.RELEASE.value">
+              <div v-if="detail.stageType === STAGE_TYPE.RELEASE.value">
                 <!-- 发布版本 -->
                 <span class="stage-config-release-version">
                   发布版本:
@@ -124,8 +124,8 @@
             </template>
             <!-- 状态 -->
             <template v-slot:status="detail">
-              <a-tag class="m0" :color="$enum.valueOf($enum.PIPELINE_DETAIL_STATUS, detail.status).color">
-                {{ $enum.valueOf($enum.PIPELINE_DETAIL_STATUS, detail.status).label }}
+              <a-tag class="m0" :color="detail.status | formatPipelineDetailStatus('color')">
+                {{ detail.status | formatPipelineDetailStatus('label') }}
               </a-tag>
             </template>
             <!-- 操作 -->
@@ -133,7 +133,7 @@
               <!-- 日志 -->
               <a-tooltip :disabled="!statusHolder.visibleDetailLog(detail.status)" title="ctrl 点击打开新页面">
                 <a target="_blank"
-                   :href="`#/app/${detail.stageType === $enum.STAGE_TYPE.BUILD.value ? 'build' : 'release'}/log/view/${detail.relId}`"
+                   :href="`#/app/${detail.stageType === STAGE_TYPE.BUILD.value ? 'build' : 'release'}/log/view/${detail.relId}`"
                    @click="openDetailLog($event, detail.relId, detail.stageType)">日志</a>
               </a-tooltip>
               <!-- 停止 -->
@@ -163,7 +163,7 @@
         <template v-slot:pipelineTitle="record">
           <div class="timed-wrapper">
             <!-- 定时图标 -->
-            <a-tooltip v-if="record.timedExec === $enum.TIMED_TYPE.TIMED.value">
+            <a-tooltip v-if="record.timedExec === TIMED_TYPE.TIMED.value">
               <template #title>
                 调度时间: {{ record.timedExecTime | formatDate }}
               </template>
@@ -175,8 +175,8 @@
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-tag class="m0" :color="$enum.valueOf($enum.PIPELINE_STATUS, record.status).color">
-            {{ $enum.valueOf($enum.PIPELINE_STATUS, record.status).label }}
+          <a-tag class="m0" :color="record.status | formatPipelineStatus('color')">
+            {{ record.status | formatPipelineStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
@@ -270,8 +270,9 @@
 </template>
 
 <script>
-
-import _filters from '@/lib/filters'
+import { defineArrayKey } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, PIPELINE_DETAIL_STATUS, PIPELINE_STATUS, STAGE_TYPE, TIMED_TYPE } from '@/lib/enum'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
 import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
 import AppPipelineExecAuditModal from '@/components/app/AppPipelineExecAuditModal'
@@ -287,48 +288,48 @@ function statusHolder() {
       return true
     },
     visibleCancel: (status) => {
-      return status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
+      return status === PIPELINE_STATUS.WAIT_SCHEDULE.value
     },
     visibleAudit: (status) => {
-      return (status === this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value ||
-        status === this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
+      return (status === PIPELINE_STATUS.WAIT_AUDIT.value ||
+        status === PIPELINE_STATUS.AUDIT_REJECT.value) && this.$isAdmin()
     },
     visibleExec: (status) => {
-      return status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
-        status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
+      return status === PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+        status === PIPELINE_STATUS.WAIT_SCHEDULE.value
     },
     visibleTimed: (status) => {
-      return status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
-        status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
+      return status === PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+        status === PIPELINE_STATUS.WAIT_SCHEDULE.value
     },
     visibleDetail: (status) => {
       return true
     },
     visibleTerminate: (status) => {
-      return status === this.$enum.PIPELINE_STATUS.RUNNABLE.value
+      return status === PIPELINE_STATUS.RUNNABLE.value
     },
     visibleDelete: (status) => {
-      return status !== this.$enum.PIPELINE_STATUS.RUNNABLE.value &&
-        status !== this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
+      return status !== PIPELINE_STATUS.RUNNABLE.value &&
+        status !== PIPELINE_STATUS.WAIT_SCHEDULE.value
     },
     visibleLog: (status) => {
-      return status === this.$enum.PIPELINE_STATUS.RUNNABLE.value ||
-        status === this.$enum.PIPELINE_STATUS.FINISH.value ||
-        status === this.$enum.PIPELINE_STATUS.FAILURE.value ||
-        status === this.$enum.PIPELINE_STATUS.TERMINATED.value
+      return status === PIPELINE_STATUS.RUNNABLE.value ||
+        status === PIPELINE_STATUS.FINISH.value ||
+        status === PIPELINE_STATUS.FAILURE.value ||
+        status === PIPELINE_STATUS.TERMINATED.value
     },
     visibleDetailLog: (status) => {
-      return status === this.$enum.PIPELINE_DETAIL_STATUS.RUNNABLE.value ||
-        status === this.$enum.PIPELINE_DETAIL_STATUS.FINISH.value ||
-        status === this.$enum.PIPELINE_DETAIL_STATUS.FAILURE.value ||
-        status === this.$enum.PIPELINE_DETAIL_STATUS.TERMINATED.value
+      return status === PIPELINE_DETAIL_STATUS.RUNNABLE.value ||
+        status === PIPELINE_DETAIL_STATUS.FINISH.value ||
+        status === PIPELINE_DETAIL_STATUS.FAILURE.value ||
+        status === PIPELINE_DETAIL_STATUS.TERMINATED.value
     },
     visibleDetailTerminate: (status) => {
-      return status === this.$enum.PIPELINE_DETAIL_STATUS.RUNNABLE.value
+      return status === PIPELINE_DETAIL_STATUS.RUNNABLE.value
     },
     visibleDetailSkip: (status, detailStatus) => {
-      return status === this.$enum.PIPELINE_STATUS.RUNNABLE.value &&
-        detailStatus === this.$enum.PIPELINE_DETAIL_STATUS.WAIT.value
+      return status === PIPELINE_STATUS.RUNNABLE.value &&
+        detailStatus === PIPELINE_DETAIL_STATUS.WAIT.value
     }
   }
 }
@@ -456,8 +457,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.PIPELINE_STATUS.RUNNABLE.value ||
-              record.status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value
+            disabled: record.status === PIPELINE_STATUS.RUNNABLE.value ||
+              record.status === PIPELINE_STATUS.WAIT_SCHEDULE.value
           }
         })
       }
@@ -465,6 +466,9 @@ export default {
   },
   data: function() {
     return {
+      PIPELINE_STATUS,
+      STAGE_TYPE,
+      TIMED_TYPE,
       query: {
         profileId: undefined,
         pipelineId: undefined,
@@ -508,8 +512,8 @@ export default {
         const pagination = { ...this.pagination }
         pagination.total = data.total
         pagination.current = data.page
-        this.$utils.defineArrayKey(data.rows, 'loading', false)
-        this.$utils.defineArrayKey(data.rows, 'details', [])
+        defineArrayKey(data.rows, 'loading', false)
+        defineArrayKey(data.rows, 'details', [])
         this.rows = data.rows || []
         this.pagination = pagination
         this.selectedRowKeys = []
@@ -551,7 +555,7 @@ export default {
     auditPipeline(id, res) {
       const match = this.rows.filter(s => s.id === id)
       if (match && match.length) {
-        match[0].status = (res ? this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value : this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value)
+        match[0].status = (res ? PIPELINE_STATUS.WAIT_RUNNABLE.value : PIPELINE_STATUS.AUDIT_REJECT.value)
       }
     },
     copyPipeline(id) {
@@ -567,7 +571,7 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('已开始执行')
-        record.status = this.$enum.PIPELINE_STATUS.RUNNABLE.value
+        record.status = PIPELINE_STATUS.RUNNABLE.value
       })
     },
     openTimed(id) {
@@ -578,8 +582,8 @@ export default {
         id: record.id
       }).then(() => {
         this.$message.success('已取消定时执行')
-        record.status = this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value
-        record.timedExec = this.$enum.TIMED_TYPE.NORMAL.value
+        record.status = PIPELINE_STATUS.WAIT_RUNNABLE.value
+        record.timedExec = TIMED_TYPE.NORMAL.value
         record.timedExecTime = undefined
         // 强制刷新状态
         this.forceUpdateRows()
@@ -609,7 +613,7 @@ export default {
       if (!e.ctrlKey) {
         e.preventDefault()
         // 打开模态框
-        if (stageType === this.$enum.STAGE_TYPE.BUILD.value) {
+        if (stageType === STAGE_TYPE.BUILD.value) {
           this.$refs.buildAppender.open(id)
         } else {
           this.$refs.releaseAppender.open(id)
@@ -654,11 +658,11 @@ export default {
       if (!this.rows || !this.rows.length) {
         return
       }
-      const pollItems = this.rows.filter(r => r.status === this.$enum.PIPELINE_STATUS.WAIT_AUDIT.value ||
-        r.status === this.$enum.PIPELINE_STATUS.AUDIT_REJECT.value ||
-        r.status === this.$enum.PIPELINE_STATUS.WAIT_RUNNABLE.value ||
-        r.status === this.$enum.PIPELINE_STATUS.WAIT_SCHEDULE.value ||
-        r.status === this.$enum.PIPELINE_STATUS.RUNNABLE.value)
+      const pollItems = this.rows.filter(r => r.status === PIPELINE_STATUS.WAIT_AUDIT.value ||
+        r.status === PIPELINE_STATUS.AUDIT_REJECT.value ||
+        r.status === PIPELINE_STATUS.WAIT_RUNNABLE.value ||
+        r.status === PIPELINE_STATUS.WAIT_SCHEDULE.value ||
+        r.status === PIPELINE_STATUS.RUNNABLE.value)
       if (!pollItems.length) {
         return
       }
@@ -702,6 +706,18 @@ export default {
       })
     }
   },
+  filters: {
+    formatDate,
+    formatStageType(type, f) {
+      return enumValueOf(STAGE_TYPE, type)[f]
+    },
+    formatPipelineStatus(status, f) {
+      return enumValueOf(PIPELINE_STATUS, status)[f]
+    },
+    formatPipelineDetailStatus(status, f) {
+      return enumValueOf(PIPELINE_DETAIL_STATUS, status)[f]
+    }
+  },
   async mounted() {
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
@@ -719,9 +735,6 @@ export default {
   beforeDestroy() {
     this.pollId !== null && clearInterval(this.pollId)
     this.pollId = null
-  },
-  filters: {
-    ..._filters
   }
 }
 </script>

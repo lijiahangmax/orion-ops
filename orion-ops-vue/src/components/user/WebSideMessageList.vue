@@ -12,7 +12,7 @@
           <a-col :span="4">
             <a-form-model-item label="分类" prop="classify">
               <a-select v-model="query.classify" placeholder="消息分类" allowClear>
-                <a-select-option :value="classify.value" v-for="classify in $enum.MESSAGE_CLASSIFY" :key="classify.value">
+                <a-select-option :value="classify.value" v-for="classify in MESSAGE_CLASSIFY" :key="classify.value">
                   {{ classify.label }}
                 </a-select-option>
               </a-select>
@@ -21,7 +21,7 @@
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.value" v-for="status in $enum.READ_STATUS" :key="status.value">
+                <a-select-option :value="status.value" v-for="status in READ_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -61,11 +61,12 @@
             <div class="message-item-container">
               <!-- 上半部分 标题 -->
               <div class="message-item-container-top">
-                <a-badge class="message-item-dot" :dot="item.status === $enum.READ_STATUS.UNREAD.value">
+                <a-badge class="message-item-dot" :dot="item.status === READ_STATUS.UNREAD.value">
                   <span class="message-item-title"
                         title="详情"
-                        @click="openDetail(item)"
-                        v-text="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).label"/>
+                        @click="openDetail(item)">
+                    {{ item.classify | formatMessageType(item.type, 'label') }}
+                  </span>
                 </a-badge>
               </div>
               <!-- 下半部分 消息 -->
@@ -77,7 +78,7 @@
                 <div class="message-item-container-right">
                   <!-- 类型 -->
                   <span class="message-item-type span-blue" @click="chooseClassify(item.classify)">
-                    {{ $enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).label }}
+                    {{ item.classify | formatMessageClassify('label') }}
                   </span>
                   <!-- 时间 -->
                   <span class="message-item-date">{{ item.createTime | formatDate }} ({{ item.createTimeAgo }})</span>
@@ -87,7 +88,7 @@
                     <span class="span-blue pointer" title="详情" @click="openDetail(item)">详情</span>
                     <a-divider type="vertical"/>
                     <!-- 跳转 -->
-                    <a :href="$enum.valueOf($enum.valueOf($enum.MESSAGE_CLASSIFY, item.classify).type, item.type).redirect" title="跳转">跳转</a>
+                    <a :href="item.classify | formatMessageType(item.type, 'redirect')" title="跳转">跳转</a>
                     <a-divider type="vertical"/>
                     <!-- 删除 -->
                     <a-popconfirm title="确认删除这条消息?"
@@ -118,7 +119,9 @@
 </template>
 
 <script>
-import _filters from '@/lib/filters'
+import { replaceStainKeywords } from '@/lib/utils'
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, MESSAGE_CLASSIFY, READ_STATUS } from '@/lib/enum'
 import WebSideMessageModal from '@/components/user/WebSideMessageModal'
 import WebSideMessageClearModal from '@/components/clear/WebSideMessageClearModal'
 import WebSideMessageExportModal from '@/components/export/WebSideMessageExportModal'
@@ -132,6 +135,8 @@ export default {
   },
   data() {
     return {
+      MESSAGE_CLASSIFY,
+      READ_STATUS,
       loading: false,
       rows: [],
       query: {
@@ -168,7 +173,7 @@ export default {
         pagination.current = data.page
         this.rows = data.rows || []
         this.rows.forEach((row) => {
-          row.message = this.$utils.replaceStainKeywords(row.message)
+          row.message = replaceStainKeywords(row.message)
         })
         this.pagination = pagination
         this.loading = false
@@ -185,7 +190,7 @@ export default {
         this.$message.success('已完成')
       })
       this.rows.forEach(row => {
-        row.status = this.$enum.READ_STATUS.READ.value
+        row.status = READ_STATUS.READ.value
       })
     },
     remove(id) {
@@ -203,7 +208,7 @@ export default {
       this.$refs.export.open()
     },
     openDetail(detail) {
-      detail.status = this.$enum.READ_STATUS.READ.value
+      detail.status = READ_STATUS.READ.value
       this.$api.getWebSideMessageDetail({
         id: detail.id
       }).then(({ data }) => {
@@ -226,7 +231,14 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatMessageClassify(classify, f) {
+      return enumValueOf(MESSAGE_CLASSIFY, classify)[f]
+    },
+    formatMessageType(classify, type, f) {
+      const messageType = enumValueOf(MESSAGE_CLASSIFY, classify).type
+      return enumValueOf(messageType, type)[f]
+    }
   },
   async mounted() {
     // 打开消息

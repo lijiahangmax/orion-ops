@@ -4,19 +4,19 @@
                  size="default"
                  :appendStyle="{height: appenderHeight}"
                  :relId="id"
-                 :tailType="$enum.FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
-                 :downloadType="$enum.FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
+                 :tailType="FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
+                 :downloadType="FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">
       <!-- 左侧工具栏 -->
       <template #left-tools>
         <div class="appender-left-tools">
           <!-- 状态 -->
-          <a-tag v-if="status" :color="$enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, status).color">
-            {{ $enum.valueOf($enum.SCHEDULER_TASK_MACHINE_STATUS, status).label }}
+          <a-tag v-if="status" :color="status | formatMachineStatus('color')">
+            {{ status | formatMachineStatus('label') }}
           </a-tag>
           <!-- used -->
           <span class="mx8" title="用时"
-                v-if="keepTime && $enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value !== status
-                  && $enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value !== status">
+                v-if="keepTime && SCHEDULER_TASK_MACHINE_STATUS.WAIT.value !== status
+                  && SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value !== status">
             {{ `${keepTime} (${used}ms)` }}
           </span>
           <!-- exitCode -->
@@ -28,7 +28,7 @@
           <!-- 命令输入 -->
           <a-input-search class="command-write-input"
                           size="default"
-                          v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === status"
+                          v-if="SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === status"
                           v-model="command"
                           placeholder="输入"
                           @search="sendCommand">
@@ -44,7 +44,7 @@
             </template>
           </a-input-search>
           <!-- 停止 -->
-          <a-popconfirm v-if="$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === status"
+          <a-popconfirm v-if="SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value === status"
                         title="是否要停止执行?"
                         placement="bottomLeft"
                         ok-text="确定"
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import { enumValueOf, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE, SCHEDULER_TASK_MACHINE_STATUS } from '@/lib/enum'
 import LogAppender from './LogAppender'
 
 export default {
@@ -74,6 +75,9 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
+      SCHEDULER_TASK_MACHINE_STATUS,
       id: null,
       status: null,
       command: null,
@@ -97,8 +101,8 @@ export default {
       // 获取状态
       await this.getStatus()
       // 检查轮询状态
-      if (this.status === this.$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value ||
-        this.status === this.$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value) {
+      if (this.status === SCHEDULER_TASK_MACHINE_STATUS.WAIT.value ||
+        this.status === SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value) {
         // 轮询状态
         this.pollId = setInterval(this.pollStatus, 2000)
       }
@@ -133,7 +137,7 @@ export default {
       })
     },
     terminate() {
-      this.status = this.$enum.SCHEDULER_TASK_MACHINE_STATUS.TERMINATED.value
+      this.status = SCHEDULER_TASK_MACHINE_STATUS.TERMINATED.value
       this.$api.terminateMachineSchedulerTaskRecord({
         machineRecordId: this.id
       }).then(() => {
@@ -155,11 +159,16 @@ export default {
     },
     async pollStatus() {
       await this.getStatus()
-      if (this.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
-        this.status !== this.$enum.SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value) {
+      if (this.status !== SCHEDULER_TASK_MACHINE_STATUS.WAIT.value &&
+        this.status !== SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value) {
         clearInterval(this.pollId)
         this.pollId = null
       }
+    }
+  },
+  filters: {
+    formatMachineStatus(status, f) {
+      return enumValueOf(SCHEDULER_TASK_MACHINE_STATUS, status)[f]
     }
   },
   beforeDestroy() {

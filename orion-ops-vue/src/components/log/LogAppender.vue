@@ -43,22 +43,22 @@
           <!-- 状态 -->
           <div class="log-status-wrapper nowrap" v-if="rightToolsProps.status !== false">
             <!-- 状态 执行中 -->
-            <template v-if="$enum.LOG_TAIL_STATUS.RUNNABLE.value === status">
+            <template v-if="LOG_TAIL_STATUS.RUNNABLE.value === status">
               <a-popconfirm title="确认关闭当前日志连接?"
                             placement="topRight"
                             ok-text="确定"
                             cancel-text="取消"
                             @confirm="close">
                 <a-badge class="pointer usn"
-                         :status="$enum.LOG_TAIL_STATUS.RUNNABLE.status"
-                         :text="$enum.LOG_TAIL_STATUS.RUNNABLE.label"/>
+                         :status="LOG_TAIL_STATUS.RUNNABLE.status"
+                         :text="LOG_TAIL_STATUS.RUNNABLE.label"/>
               </a-popconfirm>
             </template>
             <!-- 状态 其他 -->
             <template v-else>
               <a-badge class="usn"
-                       :status="$enum.valueOf($enum.LOG_TAIL_STATUS, status).status"
-                       :text="$enum.valueOf($enum.LOG_TAIL_STATUS, status).label"/>
+                       :status="status | formatLogStatus('status')"
+                       :text="status | formatLogStatus('label')"/>
             </template>
           </div>
         </div>
@@ -101,11 +101,11 @@
 </template>
 
 <script>
-
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { enumValueOf, LOG_TAIL_STATUS } from '@/lib/enum'
 
 import 'xterm/css/xterm.css'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
@@ -176,9 +176,10 @@ export default {
   },
   data() {
     return {
+      LOG_TAIL_STATUS,
       client: null,
       fixedLog: true,
-      status: this.$enum.LOG_TAIL_STATUS.WAITING.value,
+      status: LOG_TAIL_STATUS.WAITING.value,
       downloadUrl: null,
       visibleRightMenu: false,
       term: null,
@@ -264,15 +265,15 @@ export default {
       // 打开websocket
       this.client = new WebSocket(this.$api.fileTail({ token: data.token }))
       this.client.onopen = () => {
-        this.status = this.$enum.LOG_TAIL_STATUS.RUNNABLE.value
+        this.status = LOG_TAIL_STATUS.RUNNABLE.value
         this.$emit('open')
       }
       this.client.onerror = () => {
-        this.status = this.$enum.LOG_TAIL_STATUS.ERROR.value
+        this.status = LOG_TAIL_STATUS.ERROR.value
       }
       this.client.onclose = (e) => {
         console.log('closed', e.code, e.reason)
-        this.status = this.$enum.LOG_TAIL_STATUS.CLOSE.value
+        this.status = LOG_TAIL_STATUS.CLOSE.value
         if (e.code > 4000 && e.code < 5000) {
           // 自定义错误信息
           this.term.write(`\x1b[93m${e.reason}\x1b[0m`)
@@ -327,6 +328,11 @@ export default {
       setTimeout(() => {
         this.downloadUrl = null
       })
+    }
+  },
+  filters: {
+    formatLogStatus(status, f) {
+      return enumValueOf(LOG_TAIL_STATUS, status)[f]
     }
   },
   beforeDestroy() {

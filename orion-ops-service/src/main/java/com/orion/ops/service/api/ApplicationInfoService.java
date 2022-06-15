@@ -60,7 +60,7 @@ public interface ApplicationInfoService {
     DataGrid<ApplicationInfoVO> listApp(ApplicationInfoRequest request);
 
     /**
-     * 获取app机器
+     * 获取应用机器
      *
      * @param appId     appId
      * @param profileId profileId
@@ -78,14 +78,14 @@ public interface ApplicationInfoService {
     ApplicationDetailVO getAppDetail(Long appId, Long profileId);
 
     /**
-     * 配置app环境
+     * 配置应用环境配置
      *
      * @param request request
      */
     void configAppProfile(ApplicationConfigRequest request);
 
     /**
-     * 同步app环境
+     * 同步应用环境配置
      *
      * @param appId             appId
      * @param profileId         profileId
@@ -94,18 +94,18 @@ public interface ApplicationInfoService {
     void syncAppProfileConfig(Long appId, Long profileId, List<Long> targetProfileList);
 
     /**
-     * 复制app
+     * 复制应用
      *
      * @param appId appId
      */
     void copyApplication(Long appId);
 
     /**
-     * 检查app是否已经配置
+     * 检测应用是否已经配置
      *
      * @param appId     appId
      * @param profileId profileId
-     * @return 检测app是否已经配置
+     * @return 检测应用是否已经配置
      */
     boolean checkAppConfig(Long appId, Long profileId);
 

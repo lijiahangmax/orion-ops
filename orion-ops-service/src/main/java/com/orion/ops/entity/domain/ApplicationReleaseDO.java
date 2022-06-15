@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 发布单
+ * 发布任务
  * </p>
  *
  * @author Jiahang Li

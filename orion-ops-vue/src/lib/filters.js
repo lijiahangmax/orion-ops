@@ -1,12 +1,8 @@
-import _utils from './utils'
+import { dateFormat } from './utils'
 
 /**
  * 格式化时间
  */
-function formatDate(origin, pattern = 'yyyy-MM-dd HH:mm:ss') {
-  return _utils.dateFormat(new Date(origin), pattern)
-}
-
-export default {
-  formatDate
+export function formatDate(origin, pattern = 'yyyy-MM-dd HH:mm:ss') {
+  return dateFormat(new Date(origin), pattern)
 }

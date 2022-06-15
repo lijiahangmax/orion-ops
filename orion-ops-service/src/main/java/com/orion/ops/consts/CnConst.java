@@ -46,4 +46,6 @@ public class CnConst {
 
     public static final String UNREAD = "未读";
 
+    public static final String ORION_OPS_AUTHOR = "李佳航";
+
 }

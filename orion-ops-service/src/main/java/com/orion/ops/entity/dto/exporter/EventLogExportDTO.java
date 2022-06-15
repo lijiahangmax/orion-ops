@@ -10,6 +10,8 @@ import com.orion.ops.entity.domain.UserEventLogDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,25 +25,32 @@ import java.util.Optional;
  * @since 2022/5/30 14:02
  */
 @Data
+@ApiModel(value = "站内信导出")
 @ExportTitle(title = "操作日志导出")
 @ExportSheet(name = "操作日志", height = 22, freezeHeader = true, filterHeader = true)
 public class EventLogExportDTO {
 
+    @ApiModelProperty(value = "用户名")
     @ExportField(index = 0, header = "用户名", width = 15, wrapText = true)
     private String username;
 
+    @ApiModelProperty(value = "事件分类")
     @ExportField(index = 1, header = "事件分类", width = 17)
     private String classify;
 
+    @ApiModelProperty(value = "事件类型")
     @ExportField(index = 2, header = "事件类型", width = 22)
     private String type;
 
+    @ApiModelProperty(value = "触发时间")
     @ExportField(index = 3, header = "触发时间", width = 20, wrapText = true, type = ExcelFieldType.DATE, format = Dates.YMD_HMS)
     private Date time;
 
+    @ApiModelProperty(value = "日志信息")
     @ExportField(index = 4, header = "日志信息", width = 70, wrapText = true)
     private String message;
 
+    @ApiModelProperty(value = "参数")
     @ExportField(index = 5, header = "参数", width = 20, wrapText = true)
     private String params;
 

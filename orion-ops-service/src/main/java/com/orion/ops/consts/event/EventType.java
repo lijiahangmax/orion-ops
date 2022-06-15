@@ -272,7 +272,12 @@ public enum EventType {
     /**
      * 删除日志文件
      */
-    DELETE_TAIL_FILE(2715, EventClassify.TAIL, "删除日志文件", "删除日志文件 <sb>${name}</sb>"),
+    DELETE_TAIL_FILE(2715, EventClassify.TAIL, "删除日志文件", "删除日志文件 <sb>${count}</sb>个"),
+
+    /**
+     * 上传日志文件
+     */
+    UPLOAD_TAIL_FILE(2720, EventClassify.TAIL, "上传日志文件", "上传日志文件 <sb>${count}</sb>个"),
 
     // -------------------- 模板操作 --------------------
 

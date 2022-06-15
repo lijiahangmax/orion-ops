@@ -20,6 +20,8 @@ import com.orion.utils.Exceptions;
 import com.orion.utils.Strings;
 import com.orion.utils.Threads;
 import com.orion.utils.io.Streams;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,12 +35,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * 数据导入 controller
+ * 数据导入 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/26 14:02
  */
+@Api(tags = "数据导入")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/data-import")
@@ -47,13 +50,11 @@ public class DataImportController {
     @Resource
     private DataImportService dataImportService;
 
-    /**
-     * 获取导入模板
-     */
-    @GetMapping("/get-template")
     @IgnoreWrapper
     @IgnoreLog
     @IgnoreAuth
+    @GetMapping("/get-template")
+    @ApiOperation(value = "获取导入模板")
     public void getTemplate(Integer type, HttpServletResponse response) throws IOException {
         ImportType importType = Valid.notNull(ImportType.of(type));
         Servlets.setDownloadHeader(response, importType.getTemplateName());
@@ -62,10 +63,8 @@ public class DataImportController {
         Streams.transfer(in, response.getOutputStream());
     }
 
-    /**
-     * 检查导入信息
-     */
-    @RequestMapping("/check-data")
+    @PostMapping("/check-data")
+    @ApiOperation(value = "检查导入信息")
     @SuppressWarnings("unchecked")
     public DataImportCheckVO checkImportData(@RequestParam("file") MultipartFile file,
                                              @RequestParam("type") Integer type,
@@ -107,10 +106,8 @@ public class DataImportController {
         }
     }
 
-    /**
-     * 导入机器
-     */
-    @RequestMapping("/import-machine")
+    @PostMapping("/import-machine")
+    @ApiOperation(value = "导入机器信息")
     @EventLog(EventType.DATA_IMPORT_MACHINE)
     public HttpWrapper<?> importMachineInfoData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -119,10 +116,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入机器代理
-     */
-    @RequestMapping("/import-machine-proxy")
+    @PostMapping("/import-machine-proxy")
+    @ApiOperation(value = "导入机器代理")
     @EventLog(EventType.DATA_IMPORT_MACHINE_PROXY)
     public HttpWrapper<?> importMachineProxyData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -131,10 +126,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入日志文件
-     */
-    @RequestMapping("/import-tail-file")
+    @PostMapping("/import-tail-file")
+    @ApiOperation(value = "导入日志文件")
     @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
     public HttpWrapper<?> importMachineTailFileData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -143,10 +136,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入应用环境
-     */
-    @RequestMapping("/import-app-profile")
+    @PostMapping("/import-app-profile")
+    @ApiOperation(value = "导入应用环境")
     @EventLog(EventType.DATA_IMPORT_APP_PROFILE)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> importAppProfileData(@RequestBody DataImportRequest request) {
@@ -156,10 +147,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入应用信息
-     */
-    @RequestMapping("/import-application")
+    @PostMapping("/import-application")
+    @ApiOperation(value = "导入应用信息")
     @EventLog(EventType.DATA_IMPORT_APPLICATION)
     public HttpWrapper<?> importApplicationData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -168,10 +157,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入应用版本仓库
-     */
-    @RequestMapping("/import-app-vcs")
+    @PostMapping("/import-app-vcs")
+    @ApiOperation(value = "导入应用版本仓库")
     @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
     public HttpWrapper<?> importAppVcsData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -180,10 +167,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 导入命令模板
-     */
-    @RequestMapping("/import-command-template")
+    @PostMapping("/import-command-template")
+    @ApiOperation(value = "导入命令模板")
     @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
     public HttpWrapper<?> importCommandTemplateData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -192,10 +177,8 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    /**
-     * 取消导入
-     */
-    @RequestMapping("/cancel-import")
+    @PostMapping("/cancel-import")
+    @ApiOperation(value = "取消导入")
     public HttpWrapper<?> cancelImportData(@RequestBody DataImportRequest request) {
         String token = request.getImportToken();
         if (Strings.isBlank(token)) {

@@ -26,6 +26,7 @@
 
 <script>
 import { pick } from 'lodash'
+import { VCS_STATUS } from '@/lib/enum'
 
 function getDecorators() {
   return {
@@ -104,7 +105,7 @@ export default {
     async getVcsList() {
       this.$api.getVcsList({
         limit: 10000,
-        status: this.$enum.VCS_STATUS.OK.value
+        status: VCS_STATUS.OK.value
       }).then(({ data }) => {
         if (data && data.rows && data.rows.length) {
           this.vcsList = data.rows.map(s => {

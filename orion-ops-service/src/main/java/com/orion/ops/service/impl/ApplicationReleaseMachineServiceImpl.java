@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 发布单机器表 服务实现类
+ * 发布任务机器表 服务实现类
  * </p>
  *
  * @author Jiahang Li

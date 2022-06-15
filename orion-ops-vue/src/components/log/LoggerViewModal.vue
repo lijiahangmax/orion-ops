@@ -15,8 +15,8 @@
                    size="default"
                    :appendStyle="{height: 'calc(100vh - 92px)'}"
                    :relId="id"
-                   :tailType="$enum.FILE_TAIL_TYPE.TAIL_LIST.value"
-                   :downloadType="$enum.FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
+                   :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
+                   :downloadType="FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
                    @open="loggerOpened"
                    @close="loggerClosed">
         <!-- 左侧工具栏 -->
@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { FILE_DOWNLOAD_TYPE, FILE_TAIL_MODE, FILE_TAIL_TYPE } from '@/lib/enum'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
@@ -73,6 +74,8 @@ export default {
   },
   data() {
     return {
+      FILE_TAIL_TYPE,
+      FILE_DOWNLOAD_TYPE,
       id: null,
       file: {},
       visible: false,
@@ -108,7 +111,7 @@ export default {
       })
     },
     loggerOpened() {
-      if (this.$refs.appender.token.tailMode === this.$enum.FILE_TAIL_MODE.TAIL.value) {
+      if (this.$refs.appender.token.tailMode === FILE_TAIL_MODE.TAIL.value) {
         setTimeout(() => {
           if (!this.closed) {
             this.visibleCommand = true

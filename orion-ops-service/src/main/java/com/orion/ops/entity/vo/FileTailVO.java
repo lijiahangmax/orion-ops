@@ -4,102 +4,79 @@ import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.utils.convert.TypeStore;
 import com.orion.utils.io.Files1;
 import com.orion.utils.time.Dates;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 文件tail 返回
+ * 文件tail响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/20 19:17
  */
 @Data
+@ApiModel(value = "文件tail响应")
 public class FileTailVO {
 
-    /**
-     * token
-     */
+    @ApiModelProperty(value = "token")
     private String token;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * name
-     */
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
-    /**
-     * 机器host
-     */
+    @ApiModelProperty(value = "机器host")
     private String machineHost;
 
     /**
-     * 机器状态 1有效 2无效
-     *
      * @see com.orion.ops.consts.Const#ENABLE
      * @see com.orion.ops.consts.Const#DISABLE
      */
+    @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer machineStatus;
 
-    /**
-     * 文件
-     */
+    @ApiModelProperty(value = "文件路径")
     private String path;
 
-    /**
-     * 文件名称
-     */
+    @ApiModelProperty(value = "文件名称")
     private String fileName;
 
     /**
-     * offset
-     *
      * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
      */
+    @ApiModelProperty(value = "偏移量")
     private Integer offset;
 
     /**
-     * 编码集
-     *
      * @see com.orion.ops.consts.Const#UTF_8
      */
+    @ApiModelProperty(value = "编码集")
     private String charset;
 
-    /**
-     * tail 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
     /**
-     * 宿主机文件追踪类型 tracker/tail
-     *
      * @see com.orion.ops.consts.tail.FileTailMode
      */
+    @ApiModelProperty(value = "宿主机文件追踪类型 tracker/tail")
     private String tailMode;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateTime;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private String updateTimeAgo;
 
     static {

@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.sql.SQLException;
 
 /**
  * spring mvc 配置
@@ -122,6 +123,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HttpWrapper<?> ioExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("ioExceptionHandler url: {}, io异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
         return HttpWrapper.error().msg(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = SQLException.class)
+    public HttpWrapper<?> sqlExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("sqlExceptionHandler url: {}, sql异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
+        return HttpWrapper.error().msg(MessageConst.SQL_EXCEPTION_MESSAGE);
     }
 
     @ExceptionHandler(value = {SftpException.class, com.jcraft.jsch.SftpException.class})

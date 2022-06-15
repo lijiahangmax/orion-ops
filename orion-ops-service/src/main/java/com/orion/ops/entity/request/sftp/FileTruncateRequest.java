@@ -1,10 +1,12 @@
 package com.orion.ops.entity.request.sftp;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * sftp truncate 请求
+ * sftp 截断文件请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,11 +14,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "截断文件请求")
 public class FileTruncateRequest extends FileBaseRequest {
 
-    /**
-     * 路径 绝对路径
-     */
+    @ApiModelProperty(value = "绝对路径")
     private String path;
 
 }

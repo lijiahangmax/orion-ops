@@ -17,7 +17,7 @@
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="请选择" allowClear>
-                <a-select-option v-for="status of $enum.BUILD_STATUS" :key="status.value" :value="status.value">
+                <a-select-option v-for="status of BUILD_STATUS" :key="status.value" :value="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -96,8 +96,8 @@
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-tag class="m0" :color="$enum.valueOf($enum.BUILD_STATUS, record.status).color">
-            {{ $enum.valueOf($enum.BUILD_STATUS, record.status).label }}
+          <a-tag class="m0" :color="record.status | formatBuildStatus('color')">
+            {{ record.status | formatBuildStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
@@ -162,12 +162,12 @@
 </template>
 
 <script>
+import { formatDate } from '@/lib/filters'
+import { enumValueOf, BUILD_STATUS } from '@/lib/enum'
 import AppSelector from '@/components/app/AppSelector'
 import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
-import _filters from '@/lib/filters'
-import _enum from '@/lib/enum'
 import AppBuildClearModal from '@/components/clear/AppBuildClearModal'
 
 /**
@@ -175,10 +175,10 @@ import AppBuildClearModal from '@/components/clear/AppBuildClearModal'
  */
 const visibleHolder = {
   visibleTerminate(status) {
-    return status === _enum.BUILD_STATUS.RUNNABLE.value
+    return status === BUILD_STATUS.RUNNABLE.value
   },
   visibleDelete(status) {
-    return status !== _enum.BUILD_STATUS.WAIT.value && status !== _enum.BUILD_STATUS.RUNNABLE.value
+    return status !== BUILD_STATUS.WAIT.value && status !== BUILD_STATUS.RUNNABLE.value
   }
 }
 
@@ -258,6 +258,7 @@ export default {
   },
   data: function() {
     return {
+      BUILD_STATUS,
       query: {
         profileId: null,
         seq: null,
@@ -291,7 +292,8 @@ export default {
         },
         getCheckboxProps: record => ({
           props: {
-            disabled: record.status === this.$enum.BUILD_STATUS.WAIT.value || record.status === this.$enum.BUILD_STATUS.RUNNABLE.value
+            disabled: record.status === BUILD_STATUS.WAIT.value ||
+              record.status === BUILD_STATUS.RUNNABLE.value
           }
         })
       }
@@ -376,8 +378,8 @@ export default {
       if (!this.rows || !this.rows.length) {
         return
       }
-      const idList = this.rows.filter(r => r.status === this.$enum.BUILD_STATUS.WAIT.value ||
-        r.status === this.$enum.BUILD_STATUS.RUNNABLE.value)
+      const idList = this.rows.filter(r => r.status === BUILD_STATUS.WAIT.value ||
+        r.status === BUILD_STATUS.RUNNABLE.value)
         .map(s => s.id)
       if (!idList.length) {
         return
@@ -401,7 +403,10 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate,
+    formatBuildStatus(status, f) {
+      return enumValueOf(BUILD_STATUS, status)[f]
+    }
   },
   mounted() {
     // 读取当前环境

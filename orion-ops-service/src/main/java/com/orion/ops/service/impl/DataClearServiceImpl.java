@@ -15,7 +15,7 @@ import com.orion.ops.consts.message.ReadStatus;
 import com.orion.ops.consts.scheduler.SchedulerTaskStatus;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
-import com.orion.ops.entity.request.sftp.DataClearRequest;
+import com.orion.ops.entity.request.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
 import com.orion.utils.time.Dates;

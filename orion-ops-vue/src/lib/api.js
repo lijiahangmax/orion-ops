@@ -905,6 +905,33 @@ const $api = {
   },
 
   /**
+   * 上传 tail 文件
+   */
+  uploadTailFile: param => {
+    return $http.$post('/file-tail/upload', param, {
+      loading: '正在上传...',
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+
+  /**
+   * 清理文件 ANSI 码
+   */
+  cleanFileAnsiCode: param => {
+    return $http.$post('/file-tail/clean-ansi', param, {
+      skipRespInterceptor: true,
+      responseType: 'blob',
+      timeout: 18000000,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+
+  /**
    * 删除 tail 文件
    */
   deleteTailFile: param => {

@@ -3,41 +3,32 @@ package com.orion.ops.entity.vo;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.utils.Utils;
 import com.orion.utils.convert.TypeStore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 命令执行状态
- *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/12/12 18:03
  */
 @Data
+@ApiModel(value = "命令执行状态响应")
 public class CommandExecStatusVO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * exitCode
-     */
+    @ApiModelProperty(value = "exitCode")
     private Integer exitCode;
 
-    /**
-     * 状态
-     */
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
-    /**
-     * 使用时间 ms
-     */
+    @ApiModelProperty(value = "使用时间毫秒")
     private Long used;
 
-    /**
-     * 使用时间
-     */
+    @ApiModelProperty(value = "使用时间")
     private String keepTime;
 
     static {

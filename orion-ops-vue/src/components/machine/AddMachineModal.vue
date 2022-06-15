@@ -40,7 +40,7 @@
             <a-form-item label="认证方式" style="margin-bottom: 0">
               <a-form-item style="display: inline-block; width: 30%">
                 <a-select v-decorator="decorators.authType">
-                  <a-select-option :value="type.value" v-for="type in $enum.MACHINE_AUTH_TYPE" :key="type.value">
+                  <a-select-option :value="type.value" v-for="type in MACHINE_AUTH_TYPE" :key="type.value">
                     {{ type.label }}
                   </a-select-option>
                 </a-select>
@@ -58,8 +58,8 @@
                 <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
                   <div class="proxy-select-option">
                     <span>{{ proxy.host }}:{{ proxy.port }}</span>
-                    <a-tag :color="$enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).color">
-                      {{ $enum.valueOf($enum.MACHINE_PROXY_TYPE, proxy.type).label }}
+                    <a-tag :color="proxy.type | formatProxyType('color')">
+                      {{ proxy.type | formatProxyType('label') }}
                     </a-tag>
                   </div>
                 </a-select-option>
@@ -84,9 +84,10 @@
 </template>
 
 <script>
-import _enum from '@/lib/enum'
-import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 import { pick } from 'lodash'
+import { enumValueOf, MACHINE_AUTH_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
+import { validatePort } from '@/lib/validate'
+import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 
 const layout = {
   labelCol: { span: 4 },
@@ -127,11 +128,11 @@ function getDecorators() {
     sshPort: ['sshPort', {
       initialValue: 22,
       rules: [{
-        validator: this.validatePort
+        validator: validatePort
       }]
     }],
     authType: ['authType', {
-      initialValue: _enum.MACHINE_AUTH_TYPE.KEY.value
+      initialValue: MACHINE_AUTH_TYPE.KEY.value
     }],
     password: ['password', {
       rules: [{
@@ -158,6 +159,7 @@ export default {
   },
   data: function() {
     return {
+      MACHINE_AUTH_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -184,15 +186,6 @@ export default {
         callback(new Error('请输入主机'))
       } else if (value.length > 128) {
         callback(new Error('主机长度不能大于128位'))
-      } else {
-        callback()
-      }
-    },
-    validatePort(rule, value, callback) {
-      if (!value) {
-        callback(new Error('请输入端口'))
-      } else if (parseInt(value) < 2 || parseInt(value) > 65534) {
-        callback(new Error('端口必须在2~65534之间'))
       } else {
         callback()
       }
@@ -278,6 +271,11 @@ export default {
     close() {
       this.visible = false
       this.loading = false
+    }
+  },
+  filters: {
+    formatProxyType(type, f) {
+      return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
     }
   },
   mounted() {

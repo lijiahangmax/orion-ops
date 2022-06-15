@@ -14,6 +14,9 @@ import com.orion.ops.utils.Valid;
 import com.orion.utils.collect.Lists;
 import com.orion.utils.time.cron.Cron;
 import com.orion.utils.time.cron.CronSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * 调度任务api
+ * 调度任务 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/2/22 10:41
  */
+@Api(tags = "调度任务")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/scheduler")
@@ -35,10 +39,8 @@ public class SchedulerController {
     @Resource
     private SchedulerTaskService schedulerTaskService;
 
-    /**
-     * 获取 cron 下几次执行时间
-     */
-    @RequestMapping("/cron-next")
+    @PostMapping("/cron-next")
+    @ApiOperation(value = "获取cron下几次执行时间")
     public CronNextVO getCronNextTime(@RequestBody SchedulerTaskRequest request) {
         String cron = Valid.notBlank(request.getExpression()).trim();
         Integer times = Valid.gt(request.getTimes(), 0);
@@ -53,10 +55,8 @@ public class SchedulerController {
         return next;
     }
 
-    /**
-     * 添加任务
-     */
-    @RequestMapping("/add")
+    @PostMapping("/add")
+    @ApiOperation(value = "添加调度任务")
     @EventLog(EventType.ADD_SCHEDULER_TASK)
     public Long addTask(@RequestBody SchedulerTaskRequest request) {
         Valid.allNotBlank(request.getName(), request.getCommand(), request.getExpression());
@@ -66,10 +66,8 @@ public class SchedulerController {
         return schedulerTaskService.addTask(request);
     }
 
-    /**
-     * 修改任务
-     */
-    @RequestMapping("/update")
+    @PostMapping("/update")
+    @ApiOperation(value = "修改调度任务")
     @EventLog(EventType.UPDATE_SCHEDULER_TASK)
     public Integer updateTask(@RequestBody SchedulerTaskRequest request) {
         Valid.notNull(request.getId());
@@ -79,27 +77,21 @@ public class SchedulerController {
         return schedulerTaskService.updateTask(request);
     }
 
-    /**
-     * 任务详情
-     */
-    @RequestMapping("/get")
+    @PostMapping("/get")
+    @ApiOperation(value = "获取调度任务详情")
     public SchedulerTaskVO getTaskDetail(@RequestBody SchedulerTaskRequest request) {
         Long id = Valid.notNull(request.getId());
         return schedulerTaskService.getTaskDetail(id);
     }
 
-    /**
-     * 任务列表
-     */
-    @RequestMapping("/list")
+    @PostMapping("/list")
+    @ApiOperation(value = "获取调度任务列表")
     public DataGrid<SchedulerTaskVO> getTaskList(@RequestBody SchedulerTaskRequest request) {
         return schedulerTaskService.getTaskList(request);
     }
 
-    /**
-     * 更新状态
-     */
-    @RequestMapping("/update-status")
+    @PostMapping("/update-status")
+    @ApiOperation(value = "更新调度任务状态")
     @EventLog(EventType.UPDATE_SCHEDULER_TASK_STATUS)
     public Integer updateTaskStatus(@RequestBody SchedulerTaskRequest request) {
         Long id = Valid.notNull(request.getId());
@@ -107,20 +99,16 @@ public class SchedulerController {
         return schedulerTaskService.updateTaskStatus(id, status);
     }
 
-    /**
-     * 删除任务
-     */
-    @RequestMapping("/delete")
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除调度任务")
     @EventLog(EventType.DELETE_SCHEDULER_TASK)
     public Integer deleteTask(@RequestBody SchedulerTaskRequest request) {
         Long id = Valid.notNull(request.getId());
         return schedulerTaskService.deleteTask(id);
     }
 
-    /**
-     * 手动触发任务
-     */
-    @RequestMapping("/manual-trigger")
+    @PostMapping("/manual-trigger")
+    @ApiOperation(value = "手动触发调度任务")
     @EventLog(EventType.MANUAL_TRIGGER_SCHEDULER_TASK)
     public HttpWrapper<?> manualTriggerTask(@RequestBody SchedulerTaskRequest request) {
         Long id = Valid.notNull(request.getId());

@@ -75,13 +75,13 @@
           <div class="release-form-item">
             <span class="release-form-item-label normal-label required-label">发布类型</span>
             <a-radio-group v-model="submit.timedRelease" buttonStyle="solid">
-              <a-radio-button :value="type.value" v-for="type in $enum.TIMED_TYPE" :key="type.value">
+              <a-radio-button :value="type.value" v-for="type in TIMED_TYPE" :key="type.value">
                 {{ type.releaseLabel }}
               </a-radio-button>
             </a-radio-group>
           </div>
           <!-- 调度时间 -->
-          <div class="release-form-item" v-if="submit.timedRelease === $enum.TIMED_TYPE.TIMED.value">
+          <div class="release-form-item" v-if="submit.timedRelease === TIMED_TYPE.TIMED.value">
             <span class="release-form-item-label normal-label required-label">调度时间</span>
             <a-date-picker v-model="submit.timedReleaseTime" :showTime="true" format="YYYY-MM-DD HH:mm:ss"/>
           </div>
@@ -129,10 +129,9 @@
 </template>
 
 <script>
-
+import { formatDate } from '@/lib/filters'
+import { CONFIG_STATUS, TIMED_TYPE } from '@/lib/enum'
 import MachineChecker from '@/components/machine/MachineChecker'
-import _enum from '@/lib/enum'
-import _filters from '@/lib/filters'
 
 export default {
   name: 'AppReleaseModal',
@@ -144,6 +143,7 @@ export default {
   },
   data: function() {
     return {
+      TIMED_TYPE,
       selectAppPage: true,
       appId: null,
       profileId: null,
@@ -155,7 +155,7 @@ export default {
         title: undefined,
         buildId: undefined,
         description: undefined,
-        timedRelease: _enum.TIMED_TYPE.NORMAL.value,
+        timedRelease: undefined,
         timedReleaseTime: undefined,
         machineIdList: []
       },
@@ -210,7 +210,7 @@ export default {
       this.submit.title = undefined
       this.submit.buildId = undefined
       this.submit.description = undefined
-      this.submit.timedRelease = this.$enum.TIMED_TYPE.NORMAL.value
+      this.submit.timedRelease = TIMED_TYPE.NORMAL.value
       this.submit.timedReleaseTime = undefined
       this.submit.machineIdList = []
     },
@@ -241,7 +241,7 @@ export default {
         profileId: this.profileId,
         limit: 10000
       })
-      this.appList = rows.filter(s => s.isConfig === this.$enum.CONFIG_STATUS.CONFIGURED.value)
+      this.appList = rows.filter(s => s.isConfig === CONFIG_STATUS.CONFIGURED.value)
     },
     async reselectAppList() {
       this.selectAppPage = true
@@ -278,7 +278,7 @@ export default {
         this.$message.warning('请选择发布机器')
         return
       }
-      if (this.submit.timedRelease === this.$enum.TIMED_TYPE.TIMED.value) {
+      if (this.submit.timedRelease === TIMED_TYPE.TIMED.value) {
         if (!this.submit.timedReleaseTime) {
           this.$message.warning('请选择调度时间')
           return
@@ -309,7 +309,7 @@ export default {
     }
   },
   filters: {
-    ..._filters
+    formatDate
   }
 }
 </script>

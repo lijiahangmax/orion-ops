@@ -1,5 +1,7 @@
 package com.orion.ops.entity.request;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,64 +14,40 @@ import java.util.List;
  * @since 2022/4/7 10:46
  */
 @Data
+@ApiModel(value = "流水线详情明细请求")
 public class ApplicationPipelineTaskDetailRequest {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 分支名称
-     */
+    @ApiModelProperty(value = "分支名称")
     private String branchName;
 
-    /**
-     * 提交id
-     */
+    @ApiModelProperty(value = "提交id")
     private String commitId;
 
-    /**
-     * 构建id
-     */
+    @ApiModelProperty(value = "构建id")
     private Long buildId;
 
-    /**
-     * 发布标题
-     */
+    @ApiModelProperty(value = "发布标题")
     private String title;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 发布机器id
-     */
+    @ApiModelProperty(value = "发布机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 应用id
-     * <p>
-     * 手动设置
-     */
+    @ApiModelProperty(value = "应用id", hidden = true)
     private Long appId;
 
-    /**
-     * 环境id
-     * <p>
-     * 手动设置
-     */
+    @ApiModelProperty(value = "环境id", hidden = true)
     private Long profileId;
 
     /**
-     * 阶段类型 10构建 20发布
-     * <p>
-     * 手动设置
-     *
      * @see com.orion.ops.consts.app.StageType
      */
+    @ApiModelProperty(value = "阶段类型 10构建 20发布", hidden = true)
     private Integer stageType;
 
 }
