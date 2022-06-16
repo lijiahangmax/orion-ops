@@ -1,5 +1,14 @@
 <template>
   <div class="login-container">
+    <!-- 背景图1 -->
+    <div class="login-bg-container1">
+      <img src="../assets/left-top-bg.png">
+    </div>
+    <!-- 背景图2 -->
+    <div class="login-bg-container2">
+      <img src="../assets/right-bottom-bg.png">
+    </div>
+    <!-- 登录框 -->
     <div class="login-form-main">
       <div class="login-form-wrapper">
         <!-- 标题 -->
@@ -114,15 +123,42 @@ export default {
 .login-container {
   position: relative;
   height: 100vh;
-  background: #F2F4F7;
-  border-top: 1px solid #F2F4F7;
+  background: #F5F5FF;
+  border-top: 1px solid #F5F5FF;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  overflow: hidden;
+
+  .login-bg-container1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    img {
+      -webkit-user-drag: none;
+      width: 919px;
+      height: 683px;
+    }
+  }
+
+  .login-bg-container2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+
+    img {
+      -webkit-user-drag: none;
+      width: 502px;
+      height: 397px;
+    }
+  }
 
   .login-form-main {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 70%;
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
