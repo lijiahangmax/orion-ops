@@ -54,7 +54,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("orion-ops restful API")
                 .contact(new Contact(Const.ORION_AUTHOR, Const.ORION_GITEE, Const.ORION_EMAIL))
-                .version(CnConst.ORION_OPS_AUTHOR)
+                .version(Const.ORION_OPS_VERSION)
                 .description("orion-ops api 管理")
                 .build();
     }
