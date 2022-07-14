@@ -1,6 +1,5 @@
 package com.orion.ops.interceptor;
 
-import com.orion.ops.aspect.LogAspect;
 import com.orion.ops.consts.EnableType;
 import com.orion.ops.consts.KeyConst;
 import com.orion.ops.consts.event.EventKeys;
@@ -37,7 +36,7 @@ public class UserActiveInterceptor implements HandlerInterceptor {
      * key: 用户id
      * value: 活跃时间戳
      */
-    private Map<Long, Long> activeUsers = Maps.newCurrentHashMap();
+    private final Map<Long, Long> activeUsers = Maps.newCurrentHashMap();
 
     @Resource
     private UserInfoDAO userInfoDAO;
@@ -92,7 +91,7 @@ public class UserActiveInterceptor implements HandlerInterceptor {
         // 记录日志
         EventParamsHolder.addParam(EventKeys.INNER_USER_ID, userId);
         EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
+        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogPrintInterceptor.SEQ_HOLDER.get());
         userEventLogService.recordLog(EventType.LOGIN, true);
         // 如果开启自动续签 刷新登陆token 绑定token
         if (EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue()) {

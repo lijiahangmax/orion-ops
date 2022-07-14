@@ -7,7 +7,7 @@ import java.lang.annotation.*;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.aspect.LogAspect
+ * @see com.orion.ops.interceptor.LogPrintInterceptor
  * @since 2022/4/20 10:33
  */
 @Target({ElementType.METHOD})

@@ -1,4 +1,4 @@
-package com.orion.ops.aspect;
+package com.orion.ops.interceptor;
 
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.consts.event.EventKeys;
@@ -41,7 +41,7 @@ public class UserEventLogAspect {
     @Before(value = "eventLogPoint(e)", argNames = "e")
     public void beforeLogRecord(EventLog e) {
         EventParamsHolder.remove();
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
+        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogPrintInterceptor.SEQ_HOLDER.get());
         EventParamsHolder.addParam(EventKeys.INNER_REQUEST_TIME, Dates.current());
         // 有可能是登陆接口有可能为空 则用内部常量策略
         UserDTO user = Currents.getUser();
