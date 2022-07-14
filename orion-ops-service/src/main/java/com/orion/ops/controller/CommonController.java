@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.orion.ops.OrionOpsServiceApplication;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
+import com.orion.ops.consts.PropertiesConst;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.vo.SystemVersionVO;
@@ -62,7 +63,7 @@ public class CommonController {
     public SystemVersionVO getVersion() {
         return SystemVersionVO.builder()
                 .orionKitVersion(Const.ORION_VERSION)
-                .orionOpsVersion(Const.ORION_OPS_VERSION)
+                .orionOpsVersion(PropertiesConst.ORION_OPS_VERSION)
                 .build();
     }
 

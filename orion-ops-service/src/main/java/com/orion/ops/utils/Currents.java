@@ -1,7 +1,7 @@
 package com.orion.ops.utils;
 
 import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.Const;
+import com.orion.ops.consts.PropertiesConst;
 import com.orion.ops.consts.ResultCode;
 import com.orion.ops.consts.user.RoleType;
 import com.orion.ops.consts.user.UserHolder;
@@ -30,7 +30,7 @@ public class Currents {
      * @return token
      */
     public static String getLoginToken(HttpServletRequest request) {
-        return getToken(request, Const.LOGIN_TOKEN);
+        return getToken(request, PropertiesConst.LOGIN_TOKEN_HEADER);
     }
 
     /**
