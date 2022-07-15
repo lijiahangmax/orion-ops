@@ -36,14 +36,14 @@ public class UserInfoRequest extends PageRequest {
     private String password;
 
     /**
-     * @see com.orion.ops.consts.user.RoleType
+     * @see com.orion.ops.constant.user.RoleType
      */
     @ApiModelProperty(value = "角色类型 10管理员 20开发 30运维")
     private Integer role;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "用户状态 1启用 2禁用")
     private Integer status;

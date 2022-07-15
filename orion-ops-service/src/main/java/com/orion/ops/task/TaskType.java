@@ -1,6 +1,6 @@
 package com.orion.ops.task;
 
-import com.orion.ops.consts.Const;
+import com.orion.ops.constant.Const;
 import com.orion.ops.task.impl.PipelineTaskImpl;
 import com.orion.ops.task.impl.ReleaseTaskImpl;
 import com.orion.ops.task.impl.SchedulerTaskImpl;

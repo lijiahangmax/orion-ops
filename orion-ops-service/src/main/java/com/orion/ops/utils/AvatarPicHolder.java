@@ -7,8 +7,8 @@ import com.orion.lang.utils.awt.Images;
 import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.io.FileReaders;
 import com.orion.lang.utils.io.Files1;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;

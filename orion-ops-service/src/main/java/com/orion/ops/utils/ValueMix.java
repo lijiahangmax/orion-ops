@@ -8,7 +8,7 @@ import com.orion.lang.utils.crypto.enums.PaddingMode;
 import com.orion.lang.utils.crypto.enums.WorkingMode;
 import com.orion.lang.utils.crypto.symmetric.EcbSymmetric;
 import com.orion.lang.utils.crypto.symmetric.SymmetricBuilder;
-import com.orion.ops.consts.PropertiesConst;
+import com.orion.ops.constant.PropertiesConst;
 
 import java.util.Arrays;
 import java.util.Optional;

@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.lang.utils.convert.TypeStore;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.machine.MachineEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.machine.MachineEnvAttr;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -43,8 +43,8 @@ public class MachineEnvVO {
     private Date updateTime;
 
     /**
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_CAN
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_NOT
+     * @see com.orion.ops.constant.Const#FORBID_DELETE_CAN
+     * @see com.orion.ops.constant.Const#FORBID_DELETE_NOT
      */
     @ApiModelProperty(value = "是否禁止删除 1可以删除 2禁止删除")
     private Integer forbidDelete;

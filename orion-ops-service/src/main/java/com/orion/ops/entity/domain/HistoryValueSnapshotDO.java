@@ -40,7 +40,7 @@ public class HistoryValueSnapshotDO implements Serializable {
     /**
      * 操作类型 1新增 2修改 3删除
      *
-     * @see com.orion.ops.consts.history.HistoryOperator
+     * @see com.orion.ops.constant.history.HistoryOperator
      */
     @TableField("operator_type")
     private Integer operatorType;
@@ -48,7 +48,7 @@ public class HistoryValueSnapshotDO implements Serializable {
     /**
      * 值类型 10机器环境变量 20应用环境变量
      *
-     * @see com.orion.ops.consts.history.HistoryValueType
+     * @see com.orion.ops.constant.history.HistoryValueType
      */
     @TableField("value_type")
     private Integer valueType;

@@ -25,7 +25,7 @@ public class HistoryValueRequest extends PageRequest {
     private Long valueId;
 
     /**
-     * @see com.orion.ops.consts.history.HistoryValueType
+     * @see com.orion.ops.constant.history.HistoryValueType
      */
     @ApiModelProperty(value = "值类型")
     private Integer valueType;

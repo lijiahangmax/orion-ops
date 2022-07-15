@@ -27,7 +27,7 @@ public class ApplicationPipelineTaskStatusVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineStatus
+     * @see com.orion.ops.constant.app.PipelineStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

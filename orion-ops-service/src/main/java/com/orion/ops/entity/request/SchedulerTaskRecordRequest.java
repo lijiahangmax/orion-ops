@@ -42,7 +42,7 @@ public class SchedulerTaskRecordRequest extends PageRequest {
     private String taskName;
 
     /**
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

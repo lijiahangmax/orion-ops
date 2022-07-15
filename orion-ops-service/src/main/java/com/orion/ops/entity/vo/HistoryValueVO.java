@@ -24,7 +24,7 @@ public class HistoryValueVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.history.HistoryOperator
+     * @see com.orion.ops.constant.history.HistoryOperator
      */
     @ApiModelProperty(value = "操作类型 1新增 2修改 3删除")
     private Integer type;

@@ -55,7 +55,7 @@ public class MachineProxyDO implements Serializable {
     /**
      * 代理类型 1http代理 2socket4代理 3socket5代理
      *
-     * @see com.orion.ops.consts.machine.ProxyType
+     * @see com.orion.ops.constant.machine.ProxyType
      */
     @TableField("proxy_type")
     private Integer proxyType;
@@ -69,8 +69,8 @@ public class MachineProxyDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

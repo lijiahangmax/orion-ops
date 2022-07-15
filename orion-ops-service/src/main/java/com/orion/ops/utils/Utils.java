@@ -8,10 +8,10 @@ import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.lang.utils.net.IPs;
 import com.orion.lang.utils.time.Dates;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.system.ThreadPoolMetricsType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.system.ThreadPoolMetricsType;
 import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.spring.SpringHolder;
@@ -193,7 +193,7 @@ public class Utils {
      * @param key  key
      * @param code code
      * @return 高亮字体
-     * @see com.orion.ops.consts.StainCode
+     * @see com.orion.ops.constant.StainCode
      */
     public static String getStainKeyWords(Object key, int code) {
         return StainCode.prefix(code) + key + StainCode.SUFFIX;
@@ -204,7 +204,7 @@ public class Utils {
      *
      * @param s s
      * @return 清除 ANSI 属性
-     * @see com.orion.ops.consts.StainCode
+     * @see com.orion.ops.constant.StainCode
      */
     public static String cleanStainAnsiCode(String s) {
         return s.replaceAll("\\u001B\\[\\w{1,3}m", Const.EMPTY);

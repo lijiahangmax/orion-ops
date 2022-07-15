@@ -1,7 +1,7 @@
 package com.orion.ops.handler.scheduler;
 
-import com.orion.ops.consts.ExceptionHandlerType;
-import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
+import com.orion.ops.constant.ExceptionHandlerType;
+import com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.handler.scheduler.machine.ITaskMachineHandler;
 
 import java.util.Collection;

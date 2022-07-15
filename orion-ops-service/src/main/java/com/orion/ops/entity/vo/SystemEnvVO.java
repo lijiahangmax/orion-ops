@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.lang.utils.convert.TypeStore;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

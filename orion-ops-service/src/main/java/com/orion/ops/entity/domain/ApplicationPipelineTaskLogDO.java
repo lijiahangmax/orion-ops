@@ -43,7 +43,7 @@ public class ApplicationPipelineTaskLogDO implements Serializable {
     /**
      * 日志状态 10创建 20执行 30成功 40失败 50停止 60跳过
      *
-     * @see com.orion.ops.consts.app.PipelineLogStatus
+     * @see com.orion.ops.constant.app.PipelineLogStatus
      */
     @TableField("log_status")
     private Integer logStatus;
@@ -51,7 +51,7 @@ public class ApplicationPipelineTaskLogDO implements Serializable {
     /**
      * 阶段类型 10构建 20发布
      *
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @TableField("stage_type")
     private Integer stageType;
@@ -65,8 +65,8 @@ public class ApplicationPipelineTaskLogDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

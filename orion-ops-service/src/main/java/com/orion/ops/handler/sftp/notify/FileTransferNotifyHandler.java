@@ -2,8 +2,8 @@ package com.orion.ops.handler.sftp.notify;
 
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.collect.Lists;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ws.WsCloseCode;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.ws.WsCloseCode;
 import com.orion.ops.entity.dto.SftpSessionTokenDTO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.handler.sftp.TransferProcessorManager;

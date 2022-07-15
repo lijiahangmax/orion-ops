@@ -39,7 +39,7 @@ public class ApplicationPipelineRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "是否查询详情")
     private Integer queryDetail;

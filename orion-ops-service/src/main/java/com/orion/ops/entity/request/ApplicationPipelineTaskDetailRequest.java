@@ -45,7 +45,7 @@ public class ApplicationPipelineTaskDetailRequest {
     private Long profileId;
 
     /**
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @ApiModelProperty(value = "阶段类型 10构建 20发布", hidden = true)
     private Integer stageType;

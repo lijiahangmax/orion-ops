@@ -27,7 +27,7 @@ public class ApplicationBuildStatusVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.app.BuildStatus
+     * @see com.orion.ops.constant.app.BuildStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.consts.system.SystemCleanType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.system.SystemCleanType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.vo.IpListConfigVO;
 import com.orion.ops.entity.vo.SystemAnalysisVO;

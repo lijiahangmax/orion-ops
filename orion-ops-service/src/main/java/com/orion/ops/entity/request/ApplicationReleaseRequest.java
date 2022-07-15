@@ -43,13 +43,13 @@ public class ApplicationReleaseRequest extends PageRequest {
     private List<Long> machineIdList;
 
     /**
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.constant.app.ReleaseStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.app.TimedType
+     * @see com.orion.ops.constant.app.TimedType
      */
     @ApiModelProperty(value = "是否是定时发布 10普通发布 20定时发布")
     private Integer timedRelease;
@@ -58,7 +58,7 @@ public class ApplicationReleaseRequest extends PageRequest {
     private Date timedReleaseTime;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;

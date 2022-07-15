@@ -27,7 +27,7 @@ public class ApplicationStatisticsActionLogVO {
     private Long actionId;
 
     /**
-     * @see com.orion.ops.consts.app.ActionStatus
+     * @see com.orion.ops.constant.app.ActionStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     private Integer status;

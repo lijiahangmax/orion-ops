@@ -32,21 +32,21 @@ public class UserInfoVO {
     private String nickname;
 
     /**
-     * @see com.orion.ops.consts.user.RoleType
+     * @see com.orion.ops.constant.user.RoleType
      */
     @ApiModelProperty(value = "角色类型 10管理员 20开发 30运维")
     private Integer role;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "用户状态 1启用 2停用")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "锁定状态 1正常 2锁定")
     private Integer locked;

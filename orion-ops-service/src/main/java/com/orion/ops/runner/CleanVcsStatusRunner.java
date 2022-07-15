@@ -2,7 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.io.Files1;
-import com.orion.ops.consts.app.VcsStatus;
+import com.orion.ops.constant.app.VcsStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.utils.Utils;

@@ -3,7 +3,7 @@ package com.orion.ops.entity.dto.importer;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.office.excel.annotation.ImportField;
-import com.orion.ops.consts.machine.MachineAuthType;
+import com.orion.ops.constant.machine.MachineAuthType;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;

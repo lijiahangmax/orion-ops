@@ -43,7 +43,7 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 类型 1git
      *
-     * @see com.orion.ops.consts.app.VcsType
+     * @see com.orion.ops.constant.app.VcsType
      */
     @TableField("vcs_type")
     private Integer vcsType;
@@ -75,7 +75,7 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 状态 10未初始化 20初始化中 30正常 40失败
      *
-     * @see com.orion.ops.consts.app.VcsStatus
+     * @see com.orion.ops.constant.app.VcsStatus
      */
     @TableField("vcs_status")
     private Integer vcsStatus;
@@ -83,7 +83,7 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 认证类型 10密码 20令牌
      *
-     * @see com.orion.ops.consts.app.VcsAuthType
+     * @see com.orion.ops.constant.app.VcsAuthType
      */
     @TableField("vcs_auth_type")
     private Integer vcsAuthType;
@@ -91,7 +91,7 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 令牌类型 10github 20gitee 30gitlab
      *
-     * @see com.orion.ops.consts.app.VcsTokenType
+     * @see com.orion.ops.constant.app.VcsTokenType
      */
     @TableField("vcs_token_type")
     private Integer vcsTokenType;
@@ -99,8 +99,8 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

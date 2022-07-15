@@ -23,7 +23,7 @@ public class DataImportDTO {
     /**
      * 类型
      *
-     * @see com.orion.ops.consts.export.ImportType
+     * @see com.orion.ops.constant.export.ImportType
      */
     private Integer type;
 

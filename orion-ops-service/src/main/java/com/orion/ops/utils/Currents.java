@@ -2,10 +2,10 @@ package com.orion.ops.utils;
 
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Exceptions;
-import com.orion.ops.consts.PropertiesConst;
-import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.user.RoleType;
-import com.orion.ops.consts.user.UserHolder;
+import com.orion.ops.constant.PropertiesConst;
+import com.orion.ops.constant.ResultCode;
+import com.orion.ops.constant.user.RoleType;
+import com.orion.ops.constant.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
 
 import javax.servlet.http.HttpServletRequest;

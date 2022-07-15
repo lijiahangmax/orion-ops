@@ -4,9 +4,9 @@ import com.orion.lang.able.Executable;
 import com.orion.lang.able.SafeCloseable;
 import com.orion.lang.function.select.Branches;
 import com.orion.lang.function.select.Selector;
-import com.orion.ops.consts.app.ActionStatus;
-import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.TransferMode;
+import com.orion.ops.constant.app.ActionStatus;
+import com.orion.ops.constant.app.ActionType;
+import com.orion.ops.constant.app.TransferMode;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 
 import java.util.List;

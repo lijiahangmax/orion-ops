@@ -1,6 +1,6 @@
 package com.orion.ops.handler.terminal;
 
-import com.orion.ops.consts.terminal.TerminalOperate;
+import com.orion.ops.constant.terminal.TerminalOperate;
 import com.orion.ops.handler.terminal.manager.TerminalManagementHandler;
 
 /**

@@ -88,7 +88,7 @@ public class MachineTerminalLogDO implements Serializable {
     /**
      * close code
      *
-     * @see com.orion.ops.consts.ws.WsCloseCode
+     * @see com.orion.ops.constant.ws.WsCloseCode
      */
     @TableField("close_code")
     private Integer closeCode;

@@ -5,9 +5,9 @@ import com.orion.lang.utils.collect.Maps;
 import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
@@ -21,8 +21,8 @@ import java.util.Map;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.consts.app.ActionType#RELEASE_TRANSFER
- * @see com.orion.ops.consts.app.TransferMode#SFTP
+ * @see com.orion.ops.constant.app.ActionType#RELEASE_TRANSFER
+ * @see com.orion.ops.constant.app.TransferMode#SFTP
  * @since 2022/4/26 23:57
  */
 public class SftpTransferActionHandler extends AbstractActionHandler {

@@ -3,7 +3,7 @@ package com.orion.ops.handler.tail;
 import com.orion.lang.able.SafeCloseable;
 import com.orion.lang.function.select.Branches;
 import com.orion.lang.function.select.Selector;
-import com.orion.ops.consts.tail.FileTailMode;
+import com.orion.ops.constant.tail.FileTailMode;
 import com.orion.ops.handler.tail.impl.ExecTailFileHandler;
 import com.orion.ops.handler.tail.impl.TrackerTailFileHandler;
 import org.springframework.web.socket.WebSocketSession;

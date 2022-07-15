@@ -73,8 +73,8 @@ public class CommandTemplateDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

@@ -43,7 +43,7 @@ public class UserEventLogDO implements Serializable {
     /**
      * 事件分类
      *
-     * @see com.orion.ops.consts.event.EventClassify
+     * @see com.orion.ops.constant.event.EventClassify
      */
     @TableField("event_classify")
     private Integer eventClassify;
@@ -51,7 +51,7 @@ public class UserEventLogDO implements Serializable {
     /**
      * 事件类型
      *
-     * @see com.orion.ops.consts.event.EventType
+     * @see com.orion.ops.constant.event.EventType
      */
     @TableField("event_type")
     private Integer eventType;
@@ -71,8 +71,8 @@ public class UserEventLogDO implements Serializable {
     /**
      * 是否执行成功 1成功 2失败
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("exec_result")
     private Integer execResult;
@@ -80,8 +80,8 @@ public class UserEventLogDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

@@ -24,7 +24,7 @@ public class ApplicationActionVO {
     private String name;
 
     /**
-     * @see com.orion.ops.consts.app.ActionType
+     * @see com.orion.ops.constant.app.ActionType
      */
     @ApiModelProperty(value = "类型")
     private Integer type;

@@ -79,7 +79,7 @@ public class SchedulerTaskMachineRecordDO implements Serializable {
     /**
      * 执行状态 10待调度 20调度中 30调度成功 40调度失败 50已跳过 60已停止
      *
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus
      */
     @TableField("exec_status")
     private Integer execStatus;
@@ -93,8 +93,8 @@ public class SchedulerTaskMachineRecordDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

@@ -48,7 +48,7 @@ public class ApplicationPipelineTaskVO {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineStatus
+     * @see com.orion.ops.constant.app.PipelineStatus
      */
     @ApiModelProperty(value = "执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败")
     private Integer status;

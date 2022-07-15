@@ -4,7 +4,7 @@ import com.orion.lang.exception.AuthenticationException;
 import com.orion.lang.exception.ConnectionRuntimeException;
 import com.orion.lang.exception.DisabledException;
 import com.orion.lang.utils.Urls;
-import com.orion.ops.consts.ws.WsCloseCode;
+import com.orion.ops.constant.ws.WsCloseCode;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.socket.WebSocketSession;
 

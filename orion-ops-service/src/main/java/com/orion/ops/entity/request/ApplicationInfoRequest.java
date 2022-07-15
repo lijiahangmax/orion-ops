@@ -37,8 +37,8 @@ public class ApplicationInfoRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#INCREMENT
-     * @see com.orion.ops.consts.Const#DECREMENT
+     * @see com.orion.ops.constant.Const#INCREMENT
+     * @see com.orion.ops.constant.Const#DECREMENT
      */
     @ApiModelProperty(value = "排序调整方向")
     private Integer sortAdjust;
@@ -47,7 +47,7 @@ public class ApplicationInfoRequest extends PageRequest {
     private Long machineId;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "是否查询机器")
     private Integer queryMachine;

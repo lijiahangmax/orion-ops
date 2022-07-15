@@ -43,7 +43,7 @@ public class SchedulerTaskRecordDO implements Serializable {
     /**
      * 任务状态 10待调度 20调度中 30调度成功 40调度失败 50已停止
      *
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @TableField("task_status")
     private Integer taskStatus;
@@ -51,8 +51,8 @@ public class SchedulerTaskRecordDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

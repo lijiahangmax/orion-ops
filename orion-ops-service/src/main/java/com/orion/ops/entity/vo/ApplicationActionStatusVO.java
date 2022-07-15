@@ -26,7 +26,7 @@ public class ApplicationActionStatusVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.app.ActionStatus
+     * @see com.orion.ops.constant.app.ActionStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

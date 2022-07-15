@@ -1,8 +1,8 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.sftp.SftpTransferStatus;
-import com.orion.ops.consts.sftp.SftpTransferType;
+import com.orion.ops.constant.sftp.SftpTransferStatus;
+import com.orion.ops.constant.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import lombok.extern.slf4j.Slf4j;

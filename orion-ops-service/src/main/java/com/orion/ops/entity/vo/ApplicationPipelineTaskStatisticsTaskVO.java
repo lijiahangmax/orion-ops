@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.lang.utils.convert.TypeStore;
-import com.orion.ops.consts.app.PipelineStatus;
+import com.orion.ops.constant.app.PipelineStatus;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
 import com.orion.ops.utils.Utils;
 import io.swagger.annotations.ApiModel;

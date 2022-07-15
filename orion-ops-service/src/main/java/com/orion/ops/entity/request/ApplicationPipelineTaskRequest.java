@@ -49,7 +49,7 @@ public class ApplicationPipelineTaskRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.app.TimedType
+     * @see com.orion.ops.constant.app.TimedType
      */
     @ApiModelProperty(value = "是否是定时执行 10普通执行 20定时执行")
     private Integer timedExec;
@@ -58,13 +58,13 @@ public class ApplicationPipelineTaskRequest extends PageRequest {
     private Date timedExecTime;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineStatus
+     * @see com.orion.ops.constant.app.PipelineStatus
      */
     @ApiModelProperty(value = "执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.AuditStatus
+     * @see com.orion.ops.constant.AuditStatus
      */
     @ApiModelProperty(value = "审核状态 10通过 20驳回")
     private Integer auditStatus;

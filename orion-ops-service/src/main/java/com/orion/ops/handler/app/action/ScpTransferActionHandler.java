@@ -9,11 +9,11 @@ import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.command.CommandConst;
-import com.orion.ops.consts.env.EnvConst;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.command.CommandConst;
+import com.orion.ops.constant.env.EnvConst;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
@@ -27,8 +27,8 @@ import java.util.Map;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.consts.app.ActionType#RELEASE_TRANSFER
- * @see com.orion.ops.consts.app.TransferMode#SCP
+ * @see com.orion.ops.constant.app.ActionType#RELEASE_TRANSFER
+ * @see com.orion.ops.constant.app.TransferMode#SCP
  * @since 2022/4/26 23:58
  */
 public class ScpTransferActionHandler extends AbstractActionHandler {

@@ -6,7 +6,7 @@ import com.orion.lang.utils.convert.Converts;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserInfoVO;

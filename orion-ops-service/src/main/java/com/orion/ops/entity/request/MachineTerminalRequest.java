@@ -40,15 +40,15 @@ public class MachineTerminalRequest {
     private String fontFamily;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否开启url link 1开启 2关闭")
     private Integer enableWebLink;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否开启webGL加速 1开启 2关闭")
     private Integer enableWebGL;

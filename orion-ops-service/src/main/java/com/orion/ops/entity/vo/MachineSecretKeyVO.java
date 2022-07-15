@@ -35,7 +35,7 @@ public class MachineSecretKeyVO {
     private Date createTime;
 
     /**
-     * @see com.orion.ops.consts.machine.MountKeyStatus
+     * @see com.orion.ops.constant.machine.MountKeyStatus
      */
     @ApiModelProperty(value = "挂载状态 1未找到 2已挂载 3未挂载")
     private Integer mountStatus;

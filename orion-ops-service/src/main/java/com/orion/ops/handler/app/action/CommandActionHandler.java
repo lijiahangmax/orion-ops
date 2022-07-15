@@ -6,7 +6,7 @@ import com.orion.lang.utils.io.Streams;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.ops.consts.StainCode;
+import com.orion.ops.constant.StainCode;
 import com.orion.ops.utils.Utils;
 import lombok.Getter;
 
@@ -15,8 +15,8 @@ import lombok.Getter;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.consts.app.ActionType#BUILD_COMMAND
- * @see com.orion.ops.consts.app.ActionType#RELEASE_COMMAND
+ * @see com.orion.ops.constant.app.ActionType#BUILD_COMMAND
+ * @see com.orion.ops.constant.app.ActionType#RELEASE_COMMAND
  * @since 2022/2/11 15:59
  */
 public class CommandActionHandler extends AbstractActionHandler {

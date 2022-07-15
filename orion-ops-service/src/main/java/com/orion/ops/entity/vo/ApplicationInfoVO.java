@@ -41,8 +41,8 @@ public class ApplicationInfoVO {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#CONFIGURED
-     * @see com.orion.ops.consts.Const#NOT_CONFIGURED
+     * @see com.orion.ops.constant.Const#CONFIGURED
+     * @see com.orion.ops.constant.Const#NOT_CONFIGURED
      */
     @ApiModelProperty(value = "是否已经配置 1已配置 2未配置")
     private Integer isConfig;

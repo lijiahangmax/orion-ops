@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.EventLogRequest;
 import com.orion.ops.entity.vo.EventLogVO;
 

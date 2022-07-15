@@ -49,7 +49,7 @@ public class ApplicationPipelineDetailDO implements Serializable {
     /**
      * 阶段类型 10构建 20发布
      *
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @TableField("stage_type")
     private Integer stageType;
@@ -57,8 +57,8 @@ public class ApplicationPipelineDetailDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

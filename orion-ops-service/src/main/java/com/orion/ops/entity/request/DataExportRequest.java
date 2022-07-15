@@ -16,8 +16,8 @@ import lombok.Data;
 public class DataExportRequest {
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否导出密码")
     private Integer exportPassword;
@@ -38,7 +38,7 @@ public class DataExportRequest {
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;

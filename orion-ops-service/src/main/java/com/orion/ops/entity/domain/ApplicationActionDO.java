@@ -49,7 +49,7 @@ public class ApplicationActionDO implements Serializable {
     /**
      * 类型
      *
-     * @see com.orion.ops.consts.app.ActionType
+     * @see com.orion.ops.constant.app.ActionType
      */
     @TableField("action_type")
     private Integer actionType;
@@ -57,7 +57,7 @@ public class ApplicationActionDO implements Serializable {
     /**
      * 阶段类型
      *
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @TableField("stage_type")
     private Integer stageType;
@@ -71,8 +71,8 @@ public class ApplicationActionDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

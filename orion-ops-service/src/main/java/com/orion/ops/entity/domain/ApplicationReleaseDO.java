@@ -91,7 +91,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 发布类型 10正常发布 20回滚发布
      *
-     * @see com.orion.ops.consts.app.ReleaseType
+     * @see com.orion.ops.constant.app.ReleaseType
      */
     @TableField("release_type")
     private Integer releaseType;
@@ -99,7 +99,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 发布状态 10待审核 20审核驳回 30待发布 35待调度 40发布中 50发布完成 60发布停止 70发布失败
      *
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.constant.app.ReleaseStatus
      */
     @TableField("release_status")
     private Integer releaseStatus;
@@ -107,7 +107,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 发布序列 10串行 20并行
      *
-     * @see com.orion.ops.consts.SerialType
+     * @see com.orion.ops.constant.SerialType
      */
     @TableField("release_serialize")
     private Integer releaseSerialize;
@@ -115,7 +115,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 异常处理 10跳过所有 20跳过错误
      *
-     * @see com.orion.ops.consts.ExceptionHandlerType
+     * @see com.orion.ops.constant.ExceptionHandlerType
      */
     @TableField("exception_handler")
     private Integer exceptionHandler;
@@ -135,7 +135,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 产物传输方式
      *
-     * @see com.orion.ops.consts.app.TransferMode
+     * @see com.orion.ops.constant.app.TransferMode
      */
     @TableField("transfer_mode")
     private String transferMode;
@@ -149,7 +149,7 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 是否是定时发布 10普通发布 20定时发布
      *
-     * @see com.orion.ops.consts.app.TimedType
+     * @see com.orion.ops.constant.app.TimedType
      */
     @TableField("timed_release")
     private Integer timedRelease;
@@ -229,8 +229,8 @@ public class ApplicationReleaseDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

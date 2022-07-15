@@ -42,8 +42,8 @@ public class EventLogVO {
     private String params;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否执行成功 1成功 2失败")
     private Integer result;

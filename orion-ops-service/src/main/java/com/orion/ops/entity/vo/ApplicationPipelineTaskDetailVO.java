@@ -44,7 +44,7 @@ public class ApplicationPipelineTaskDetailVO {
     private String appTag;
 
     /**
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @ApiModelProperty(value = "阶段类型 10构建 20发布")
     private Integer stageType;
@@ -53,7 +53,7 @@ public class ApplicationPipelineTaskDetailVO {
     private ApplicationPipelineStageConfigVO config;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineDetailStatus
+     * @see com.orion.ops.constant.app.PipelineDetailStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止")
     private Integer status;

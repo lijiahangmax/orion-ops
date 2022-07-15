@@ -30,7 +30,7 @@ public class FileDownloadDTO {
     /**
      * type
      *
-     * @see com.orion.ops.consts.download.FileDownloadType
+     * @see com.orion.ops.constant.download.FileDownloadType
      */
     private Integer type;
 

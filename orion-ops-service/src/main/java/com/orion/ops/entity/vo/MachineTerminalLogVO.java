@@ -58,7 +58,7 @@ public class MachineTerminalLogVO {
     private String disconnectedTimeAgo;
 
     /**
-     * @see com.orion.ops.consts.ws.WsCloseCode
+     * @see com.orion.ops.constant.ws.WsCloseCode
      */
     @ApiModelProperty(value = "close code")
     private Integer closeCode;

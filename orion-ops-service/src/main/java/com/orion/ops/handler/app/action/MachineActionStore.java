@@ -102,7 +102,7 @@ public class MachineActionStore {
      *
      * @see SftpTransferActionHandler
      * @see ScpTransferActionHandler
-     * @see com.orion.ops.consts.app.TransferMode
+     * @see com.orion.ops.constant.app.TransferMode
      */
     private String transferMode;
 

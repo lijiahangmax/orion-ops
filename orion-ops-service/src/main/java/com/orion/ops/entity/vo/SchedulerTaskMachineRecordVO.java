@@ -44,7 +44,7 @@ public class SchedulerTaskMachineRecordVO {
     private String command;
 
     /**
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus
      */
     @ApiModelProperty(value = "执行状态 10待调度 20调度中 30调度成功 40调度失败 50已跳过 60已停止")
     private Integer status;

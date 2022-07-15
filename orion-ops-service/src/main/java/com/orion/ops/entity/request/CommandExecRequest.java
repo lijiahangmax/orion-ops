@@ -48,13 +48,13 @@ public class CommandExecRequest extends PageRequest {
     private String username;
 
     /**
-     * @see com.orion.ops.consts.command.ExecStatus
+     * @see com.orion.ops.constant.command.ExecStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.command.ExecType
+     * @see com.orion.ops.constant.command.ExecType
      */
     @ApiModelProperty(value = "类型")
     private Integer type;

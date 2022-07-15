@@ -2,8 +2,8 @@ package com.orion.ops.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.orion.lang.utils.collect.Lists;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.PropertiesConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.PropertiesConst;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

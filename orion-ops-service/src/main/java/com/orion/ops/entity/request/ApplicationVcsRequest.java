@@ -31,25 +31,25 @@ public class ApplicationVcsRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.app.VcsType
+     * @see com.orion.ops.constant.app.VcsType
      */
     @ApiModelProperty(value = "类型 1git")
     private Integer type;
 
     /**
-     * @see com.orion.ops.consts.app.VcsStatus
+     * @see com.orion.ops.constant.app.VcsStatus
      */
     @ApiModelProperty(value = "状态 10未初始化 20初始化中 30正常 40失败")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.app.VcsAuthType
+     * @see com.orion.ops.constant.app.VcsAuthType
      */
     @ApiModelProperty(value = "认证类型 10密码 20令牌")
     private Integer authType;
 
     /**
-     * @see com.orion.ops.consts.app.VcsTokenType
+     * @see com.orion.ops.constant.app.VcsTokenType
      */
     @ApiModelProperty(value = "令牌类型 10github 20gitee 30gitlab")
     private Integer tokenType;

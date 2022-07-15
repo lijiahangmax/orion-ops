@@ -2,8 +2,8 @@ package com.orion.ops.handler.app.pipeline.stage;
 
 import com.orion.lang.able.Executable;
 import com.orion.lang.utils.Exceptions;
-import com.orion.ops.consts.app.PipelineDetailStatus;
-import com.orion.ops.consts.app.StageType;
+import com.orion.ops.constant.app.PipelineDetailStatus;
+import com.orion.ops.constant.app.StageType;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 

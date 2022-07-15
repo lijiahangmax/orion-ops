@@ -33,7 +33,7 @@ public class SchedulerTaskRecordVO {
     private String taskName;
 
     /**
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @ApiModelProperty(value = "任务状态 10待调度 20调度中 30调度成功 40调度失败 50已停止")
     private Integer status;

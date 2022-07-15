@@ -7,7 +7,7 @@ import com.orion.lang.exception.argument.HttpWrapperException;
 import com.orion.lang.exception.argument.InvalidArgumentException;
 import com.orion.lang.exception.argument.RpcWrapperException;
 import com.orion.lang.utils.Exceptions;
-import com.orion.ops.consts.MessageConst;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;

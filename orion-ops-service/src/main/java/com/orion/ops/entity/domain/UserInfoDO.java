@@ -55,7 +55,7 @@ public class UserInfoDO implements Serializable {
     /**
      * 角色类型 10管理员 20开发 30运维
      *
-     * @see com.orion.ops.consts.user.RoleType
+     * @see com.orion.ops.constant.user.RoleType
      */
     @TableField("role_type")
     private Integer roleType;
@@ -63,8 +63,8 @@ public class UserInfoDO implements Serializable {
     /**
      * 用户状态 1启用 2禁用
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("user_status")
     private Integer userStatus;
@@ -72,8 +72,8 @@ public class UserInfoDO implements Serializable {
     /**
      * 锁定状态 1正常 2锁定
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("lock_status")
     private Integer lockStatus;
@@ -111,8 +111,8 @@ public class UserInfoDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

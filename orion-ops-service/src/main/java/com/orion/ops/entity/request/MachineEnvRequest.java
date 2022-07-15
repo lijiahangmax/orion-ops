@@ -39,7 +39,7 @@ public class MachineEnvRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.env.EnvViewType
+     * @see com.orion.ops.constant.env.EnvViewType
      */
     @ApiModelProperty(value = "视图类型")
     private Integer viewType;

@@ -36,13 +36,13 @@ public class FileTailRequest extends PageRequest {
     private Long machineId;
 
     /**
-     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
+     * @see com.orion.ops.constant.Const#TAIL_OFFSET_LINE
      */
     @ApiModelProperty(value = "文件尾部偏移行")
     private Integer offset;
 
     /**
-     * @see com.orion.ops.consts.Const#UTF_8
+     * @see com.orion.ops.constant.Const#UTF_8
      */
     @ApiModelProperty(value = "编码集")
     private String charset;
@@ -51,7 +51,7 @@ public class FileTailRequest extends PageRequest {
     private String command;
 
     /**
-     * @see com.orion.ops.consts.tail.FileTailMode
+     * @see com.orion.ops.constant.tail.FileTailMode
      */
     @ApiModelProperty(value = "宿主机文件追踪类型 tracker/tail")
     private String tailMode;
@@ -60,7 +60,7 @@ public class FileTailRequest extends PageRequest {
     private Long relId;
 
     /**
-     * @see com.orion.ops.consts.tail.FileTailType
+     * @see com.orion.ops.constant.tail.FileTailType
      */
     @ApiModelProperty(value = "类型")
     private Integer type;

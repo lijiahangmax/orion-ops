@@ -49,7 +49,7 @@ public class FileTransferLogDO implements Serializable {
     /**
      * 传输类型 10上传 20下载 30传输
      *
-     * @see com.orion.ops.consts.sftp.SftpTransferType
+     * @see com.orion.ops.constant.sftp.SftpTransferType
      */
     @TableField("transfer_type")
     private Integer transferType;
@@ -93,7 +93,7 @@ public class FileTransferLogDO implements Serializable {
     /**
      * 传输状态 10未开始 20进行中 30已暂停 40已完成 50已取消 60传输异常
      *
-     * @see com.orion.ops.consts.sftp.SftpTransferStatus
+     * @see com.orion.ops.constant.sftp.SftpTransferStatus
      */
     @TableField("transfer_status")
     private Integer transferStatus;
@@ -101,8 +101,8 @@ public class FileTransferLogDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

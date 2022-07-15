@@ -39,7 +39,7 @@ public class MachineProxyRequest extends PageRequest {
     private String password;
 
     /**
-     * @see com.orion.ops.consts.machine.ProxyType
+     * @see com.orion.ops.constant.machine.ProxyType
      */
     @ApiModelProperty(value = "代理类型")
     private Integer type;

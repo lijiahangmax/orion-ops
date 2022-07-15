@@ -5,7 +5,7 @@ import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecStatusVO;
 import com.orion.ops.entity.vo.CommandExecVO;

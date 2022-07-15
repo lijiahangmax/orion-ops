@@ -21,7 +21,7 @@ public class ApplicationVcsBranchVO {
     private String name;
 
     /**
-     * @see com.orion.ops.consts.Const#IS_DEFAULT
+     * @see com.orion.ops.constant.Const#IS_DEFAULT
      */
     @ApiModelProperty(value = "是否为默认")
     private Integer isDefault;

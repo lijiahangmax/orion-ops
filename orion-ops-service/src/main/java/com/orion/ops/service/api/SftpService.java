@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.consts.sftp.SftpPackageType;
+import com.orion.ops.constant.sftp.SftpPackageType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.SftpSessionTokenDTO;
 import com.orion.ops.entity.dto.SftpUploadInfoDTO;

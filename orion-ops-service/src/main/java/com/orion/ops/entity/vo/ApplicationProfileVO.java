@@ -30,8 +30,8 @@ public class ApplicationProfileVO {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "发布是否需要审核 1需要 2无需")
     private Integer releaseAudit;

@@ -27,7 +27,7 @@ public class ApplicationReleaseStatusVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.constant.app.ReleaseStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

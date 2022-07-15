@@ -40,8 +40,8 @@ public class FileTailVO {
     private String machineHost;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer machineStatus;
@@ -53,13 +53,13 @@ public class FileTailVO {
     private String fileName;
 
     /**
-     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
+     * @see com.orion.ops.constant.Const#TAIL_OFFSET_LINE
      */
     @ApiModelProperty(value = "偏移量")
     private Integer offset;
 
     /**
-     * @see com.orion.ops.consts.Const#UTF_8
+     * @see com.orion.ops.constant.Const#UTF_8
      */
     @ApiModelProperty(value = "编码集")
     private String charset;
@@ -68,7 +68,7 @@ public class FileTailVO {
     private String command;
 
     /**
-     * @see com.orion.ops.consts.tail.FileTailMode
+     * @see com.orion.ops.constant.tail.FileTailMode
      */
     @ApiModelProperty(value = "宿主机文件追踪类型 tracker/tail")
     private String tailMode;

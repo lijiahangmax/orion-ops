@@ -16,7 +16,7 @@ import lombok.Data;
 public class SystemFileCleanRequest {
 
     /**
-     * @see com.orion.ops.consts.system.SystemCleanType
+     * @see com.orion.ops.constant.system.SystemCleanType
      */
     @ApiModelProperty(value = "文件清理类型")
     private Integer cleanType;

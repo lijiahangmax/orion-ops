@@ -2,7 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.net.remote.channel.SessionStore;
-import com.orion.ops.consts.machine.MachineProperties;
+import com.orion.ops.constant.machine.MachineProperties;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;

@@ -3,9 +3,9 @@ package com.orion.ops.handler.app.action;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.StainCode;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.StainCode;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.utils.Utils;
@@ -22,12 +22,12 @@ import java.io.File;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.consts.app.ActionType#BUILD_CHECKOUT
+ * @see com.orion.ops.constant.app.ActionType#BUILD_CHECKOUT
  * @since 2022/2/11 15:57
  */
 public class CheckoutActionHandler extends AbstractActionHandler {
 
-    private static ApplicationVcsService applicationVcsService = SpringHolder.getBean(ApplicationVcsService.class);
+    private static final ApplicationVcsService applicationVcsService = SpringHolder.getBean(ApplicationVcsService.class);
 
     private Git git;
 

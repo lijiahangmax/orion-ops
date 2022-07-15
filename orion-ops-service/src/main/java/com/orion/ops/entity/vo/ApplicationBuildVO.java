@@ -60,7 +60,7 @@ public class ApplicationBuildVO {
     private String commitId;
 
     /**
-     * @see com.orion.ops.consts.app.BuildStatus
+     * @see com.orion.ops.constant.app.BuildStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20执行中 30已完成 40执行失败 50已取消")
     private Integer status;

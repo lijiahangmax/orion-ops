@@ -1,8 +1,8 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.dao.ApplicationMachineDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.ApplicationMachineDO;

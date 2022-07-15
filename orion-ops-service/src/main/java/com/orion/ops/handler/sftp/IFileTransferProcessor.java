@@ -4,7 +4,7 @@ import com.orion.lang.able.Executable;
 import com.orion.lang.able.Stoppable;
 import com.orion.lang.function.select.Branches;
 import com.orion.lang.function.select.Selector;
-import com.orion.ops.consts.sftp.SftpTransferType;
+import com.orion.ops.constant.sftp.SftpTransferType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.handler.sftp.hint.FilePackageHint;
 import com.orion.ops.handler.sftp.hint.FileTransferHint;

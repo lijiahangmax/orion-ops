@@ -45,7 +45,7 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 背景色
      *
-     * @see com.orion.ops.consts.terminal.TerminalConst#BACKGROUND_COLOR
+     * @see com.orion.ops.constant.terminal.TerminalConst#BACKGROUND_COLOR
      */
     @TableField("background_color")
     private String backgroundColor;
@@ -53,7 +53,7 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 字体颜色
      *
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_COLOR
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_COLOR
      */
     @TableField("font_color")
     private String fontColor;
@@ -61,7 +61,7 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 字体大小
      *
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_SIZE
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_SIZE
      */
     @TableField("font_size")
     private Integer fontSize;
@@ -69,7 +69,7 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 字体名称
      *
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_FAMILY
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_FAMILY
      */
     @TableField("font_family")
     private String fontFamily;
@@ -77,8 +77,8 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 是否开启url link 1开启 2关闭
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("enable_web_link")
     private Integer enableWebLink;
@@ -86,8 +86,8 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 是否开启webGL加速 1开启 2关闭
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("enable_web_gl")
     private Integer enableWebGL;
@@ -95,8 +95,8 @@ public class MachineTerminalDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;
