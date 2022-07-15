@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Strings;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.event.EventType;
@@ -9,7 +10,6 @@ import com.orion.ops.entity.request.MachineProxyRequest;
 import com.orion.ops.entity.vo.MachineProxyVO;
 import com.orion.ops.service.api.MachineProxyService;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;

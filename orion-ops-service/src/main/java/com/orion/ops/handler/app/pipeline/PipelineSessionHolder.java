@@ -1,6 +1,6 @@
 package com.orion.ops.handler.app.pipeline;
 
-import com.orion.utils.collect.Maps;
+import com.orion.lang.utils.collect.Maps;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +18,7 @@ public class PipelineSessionHolder {
     /**
      * session
      */
-    private ConcurrentHashMap<Long, IPipelineProcessor> session = Maps.newCurrentHashMap();
+    private final ConcurrentHashMap<Long, IPipelineProcessor> session = Maps.newCurrentHashMap();
 
     /**
      * 添加 session

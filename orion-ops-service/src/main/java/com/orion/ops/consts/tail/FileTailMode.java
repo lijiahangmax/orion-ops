@@ -1,7 +1,7 @@
 package com.orion.ops.consts.tail;
 
+import com.orion.lang.utils.Strings;
 import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,13 +1,13 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.ext.vcs.git.Gits;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
 import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
 import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
 import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
-import com.orion.vcs.git.Gits;
 
 import java.util.List;
 

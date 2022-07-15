@@ -1,9 +1,9 @@
 package com.orion.ops.consts.ws;
 
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.Valid;
-import com.orion.utils.io.Streams;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Valid;
+import com.orion.lang.utils.io.Streams;
 import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayOutputStream;

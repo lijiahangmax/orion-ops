@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.io.Files1;
 import com.orion.ops.entity.domain.FileTransferLogDO;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.io.Files1;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.orion.ops.handler.app.pipeline;
 
-import com.orion.able.Executable;
+import com.orion.lang.able.Executable;
 
 /**
  * 流水线处理器

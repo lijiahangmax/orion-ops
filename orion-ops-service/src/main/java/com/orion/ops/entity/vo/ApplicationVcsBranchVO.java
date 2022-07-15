@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.utils.convert.TypeStore;
-import com.orion.vcs.git.info.BranchInfo;
+import com.orion.ext.vcs.git.info.BranchInfo;
+import com.orion.lang.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

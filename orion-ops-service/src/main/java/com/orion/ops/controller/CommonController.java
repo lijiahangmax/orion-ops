@@ -1,6 +1,8 @@
 package com.orion.ops.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.io.StreamReaders;
 import com.orion.ops.OrionOpsServiceApplication;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.consts.Const;
@@ -10,8 +12,6 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.vo.SystemVersionVO;
 import com.orion.ops.service.api.CommonService;
 import com.orion.ops.utils.Currents;
-import com.orion.utils.Exceptions;
-import com.orion.utils.io.StreamReaders;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,7 +62,7 @@ public class CommonController {
     @ApiOperation(value = "获取系统版本")
     public SystemVersionVO getVersion() {
         return SystemVersionVO.builder()
-                .orionKitVersion(Const.ORION_VERSION)
+                .orionKitVersion(Const.ORION_KIT_VERSION)
                 .orionOpsVersion(PropertiesConst.ORION_OPS_VERSION)
                 .build();
     }

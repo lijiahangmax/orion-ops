@@ -1,6 +1,6 @@
 package com.orion.ops.entity.dto;
 
-import com.orion.utils.Strings;
+import com.orion.lang.utils.Strings;
 import lombok.Data;
 
 import java.util.function.Supplier;

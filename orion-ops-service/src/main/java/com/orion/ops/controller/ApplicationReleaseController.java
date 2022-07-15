@@ -1,7 +1,7 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RequireRole;

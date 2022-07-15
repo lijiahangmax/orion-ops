@@ -1,7 +1,7 @@
 package com.orion.ops.utils;
 
-import com.orion.process.Processes;
-import com.orion.utils.Strings;
+import com.orion.ext.process.Processes;
+import com.orion.lang.utils.Strings;
 import lombok.extern.slf4j.Slf4j;
 
 /**

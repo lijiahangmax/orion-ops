@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.app.ApplicationEnvAttr;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

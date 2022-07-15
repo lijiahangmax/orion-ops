@@ -1,7 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.vo.FileTailVO;
-import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 /**

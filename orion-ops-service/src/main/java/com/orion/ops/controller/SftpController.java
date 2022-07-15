@@ -1,6 +1,9 @@
 package com.orion.ops.controller;
 
-import com.orion.id.ObjectIds;
+import com.orion.lang.id.ObjectIds;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.io.Files1;
 import com.orion.net.base.file.sftp.SftpErrorMessage;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
@@ -19,9 +22,6 @@ import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.io.Files1;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -204,7 +204,7 @@ public class SftpController {
         List<FileUploadRequest> requestFiles = Lists.newList();
         for (MultipartFile file : files) {
             // 传输文件到本地
-            String fileToken = ObjectIds.next();
+            String fileToken = ObjectIds.nextId();
             String localPath = PathBuilders.getSftpUploadFilePath(fileToken);
             Path localAbsolutePath = Paths.get(SystemEnvAttr.SWAP_PATH.getValue(), localPath);
             Files1.touch(localAbsolutePath);

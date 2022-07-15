@@ -1,6 +1,6 @@
 package com.orion.ops.handler.app.machine;
 
-import com.orion.able.SafeCloseable;
+import com.orion.lang.able.SafeCloseable;
 
 /**
  * 机器执行器

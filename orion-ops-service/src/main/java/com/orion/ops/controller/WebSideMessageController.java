@@ -1,6 +1,6 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.annotation.IgnoreLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.WebSideMessageRequest;

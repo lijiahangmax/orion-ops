@@ -1,9 +1,9 @@
 package com.orion.ops.consts.app;
 
+import com.orion.lang.utils.Strings;
 import com.orion.ops.consts.CnConst;
 import com.orion.ops.entity.dto.importer.ApplicationProfileImportDTO;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 
 /**
  * 应用环境表字段常量

@@ -1,9 +1,9 @@
 package com.orion.ops.consts;
 
-import com.orion.lang.wrapper.CodeInfo;
+import com.orion.lang.define.wrapper.CodeInfo;
 
 /**
- * 返回code
+ * wrapper 返回 code
  *
  * @author Jiahang Li
  * @version 1.0.0

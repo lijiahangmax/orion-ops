@@ -1,8 +1,8 @@
 package com.orion.ops.task.impl;
 
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.service.api.ApplicationPipelineTaskService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,7 +17,7 @@ public class PipelineTaskImpl implements Runnable {
 
     protected static ApplicationPipelineTaskService applicationPipelineTaskService = SpringHolder.getBean(ApplicationPipelineTaskService.class);
 
-    private Long pipelineRecordId;
+    private final Long pipelineRecordId;
 
     public PipelineTaskImpl(Long pipelineRecordId) {
         this.pipelineRecordId = pipelineRecordId;

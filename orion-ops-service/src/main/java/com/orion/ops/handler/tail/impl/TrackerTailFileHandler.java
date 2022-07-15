@@ -1,18 +1,18 @@
 package com.orion.ops.handler.tail.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.thread.HookRunnable;
+import com.orion.ext.tail.Tracker;
+import com.orion.ext.tail.delay.DelayTrackerListener;
+import com.orion.ext.tail.handler.DataHandler;
+import com.orion.ext.tail.mode.FileNotFoundMode;
+import com.orion.ext.tail.mode.FileOffsetMode;
+import com.orion.lang.define.thread.HookRunnable;
+import com.orion.lang.utils.Threads;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.SchedulerPools;
 import com.orion.ops.consts.ws.WsCloseCode;
 import com.orion.ops.handler.tail.ITailHandler;
 import com.orion.ops.handler.tail.TailFileHint;
-import com.orion.tail.Tracker;
-import com.orion.tail.delay.DelayTrackerListener;
-import com.orion.tail.handler.DataHandler;
-import com.orion.tail.mode.FileNotFoundMode;
-import com.orion.tail.mode.FileOffsetMode;
-import com.orion.utils.Threads;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -30,24 +30,24 @@ import org.springframework.web.socket.WebSocketSession;
 public class TrackerTailFileHandler implements ITailHandler, DataHandler {
 
     @Getter
-    private String token;
+    private final String token;
 
     /**
      * session
      */
-    private WebSocketSession session;
+    private final WebSocketSession session;
 
     /**
      * hint
      */
-    private TailFileHint hint;
+    private final TailFileHint hint;
 
     private DelayTrackerListener tracker;
 
     private volatile boolean close;
 
     @Getter
-    private String filePath;
+    private final String filePath;
 
     public TrackerTailFileHandler(TailFileHint hint, WebSocketSession session) {
         this.token = hint.getToken();

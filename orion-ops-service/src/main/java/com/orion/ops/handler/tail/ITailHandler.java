@@ -1,8 +1,8 @@
 package com.orion.ops.handler.tail;
 
-import com.orion.able.SafeCloseable;
-import com.orion.function.select.Branches;
-import com.orion.function.select.Selector;
+import com.orion.lang.able.SafeCloseable;
+import com.orion.lang.function.select.Branches;
+import com.orion.lang.function.select.Selector;
 import com.orion.ops.consts.tail.FileTailMode;
 import com.orion.ops.handler.tail.impl.ExecTailFileHandler;
 import com.orion.ops.handler.tail.impl.TrackerTailFileHandler;

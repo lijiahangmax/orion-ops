@@ -1,8 +1,8 @@
 package com.orion.ops.consts.command;
 
+import com.orion.lang.utils.Strings;
 import com.orion.ops.entity.dto.importer.CommandTemplateImportDTO;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 
 /**
  * 命令模板字段常量

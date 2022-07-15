@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.request.CommandExecRequest;
 import com.orion.ops.entity.vo.CommandExecStatusVO;

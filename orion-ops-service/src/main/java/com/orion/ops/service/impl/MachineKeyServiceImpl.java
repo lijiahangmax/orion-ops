@@ -1,9 +1,15 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.id.ObjectIds;
-import com.orion.lang.collect.LimitList;
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.collect.LimitList;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.id.ObjectIds;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.codec.Base64s;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.FileWriters;
+import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.channel.SessionHolder;
 import com.orion.ops.consts.Const;
 import com.orion.ops.consts.MessageConst;
@@ -19,12 +25,6 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
-import com.orion.utils.Strings;
-import com.orion.utils.codec.Base64s;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.FileWriters;
-import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -253,7 +253,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     public Integer tempMountKey(String fileData, String password) {
-        String path = "/temp_" + ObjectIds.next() + "_id_rsa";
+        String path = "/temp_" + ObjectIds.nextId() + "_id_rsa";
         path = MachineKeyService.getKeyPath(path);
         Files1.touchOnDelete(path);
         byte[] keyFileData = Base64s.decode(Strings.bytes(fileData));

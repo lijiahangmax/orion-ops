@@ -1,9 +1,9 @@
 package com.orion.ops.consts.machine;
 
+import com.orion.lang.utils.Strings;
 import com.orion.ops.entity.dto.importer.MachineProxyImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
-import com.orion.utils.Strings;
 
 /**
  * 机器代理表字段常量

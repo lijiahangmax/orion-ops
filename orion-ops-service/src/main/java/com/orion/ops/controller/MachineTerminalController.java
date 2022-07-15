@@ -1,7 +1,8 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Wrapper;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.Wrapper;
+import com.orion.lang.utils.Strings;
 import com.orion.net.remote.TerminalType;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
@@ -20,7 +21,6 @@ import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

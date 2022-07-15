@@ -1,8 +1,8 @@
 package com.orion.ops.consts;
 
-import com.orion.lang.thread.ExecutorBuilder;
-import com.orion.utils.Systems;
-import com.orion.utils.Threads;
+import com.orion.lang.define.thread.ExecutorBuilder;
+import com.orion.lang.utils.Systems;
+import com.orion.lang.utils.Threads;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;

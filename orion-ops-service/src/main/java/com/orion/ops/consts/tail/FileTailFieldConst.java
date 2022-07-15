@@ -1,8 +1,8 @@
 package com.orion.ops.consts.tail;
 
+import com.orion.lang.utils.Charsets;
 import com.orion.ops.entity.dto.importer.MachineTailFileImportDTO;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Charsets;
 
 /**
  * 文件tail字段常量

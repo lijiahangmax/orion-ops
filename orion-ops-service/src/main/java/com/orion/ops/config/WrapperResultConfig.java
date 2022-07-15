@@ -1,7 +1,7 @@
 package com.orion.ops.config;
 
+import com.orion.lang.utils.collect.Lists;
 import com.orion.ops.handler.WrapperResultHandler;
-import com.orion.utils.collect.Lists;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;

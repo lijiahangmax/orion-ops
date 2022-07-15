@@ -1,8 +1,8 @@
 package com.orion.ops.entity.dto;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.request.BatchUploadRequest;
 import com.orion.ops.entity.request.sftp.FileUploadRequest;
-import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 import java.util.List;

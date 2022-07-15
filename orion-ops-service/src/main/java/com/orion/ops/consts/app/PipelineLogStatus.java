@@ -1,7 +1,7 @@
 package com.orion.ops.consts.app;
 
+import com.orion.lang.utils.Strings;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,6 +1,9 @@
 package com.orion.ops.handler.sftp.direct;
 
-import com.orion.able.SafeCloseable;
+import com.orion.lang.able.SafeCloseable;
+import com.orion.lang.utils.Valid;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.io.Streams;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.consts.MessageConst;
@@ -8,9 +11,6 @@ import com.orion.ops.handler.sftp.SftpSupport;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Valid;
-import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -26,14 +26,14 @@ import java.io.InputStream;
 @Slf4j
 public class DirectDownloader implements SafeCloseable {
 
-    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
+    private static final MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    private static MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
+    private static final MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
 
     /**
      * 机器id
      */
-    private Long machineId;
+    private final Long machineId;
 
     /**
      * session

@@ -1,6 +1,6 @@
 package com.orion.ops.consts;
 
-import com.orion.utils.collect.Lists;
+import com.orion.lang.utils.collect.Lists;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2021/3/30 10:07
  */
-public class Const extends com.orion.constant.Const {
+public class Const extends com.orion.lang.constant.Const {
 
     private Const() {
     }
