@@ -31,7 +31,7 @@ public enum ImportType {
      * 导入机器
      */
     MACHINE(100,
-            "/templates/machine-import-template.xlsx",
+            "/templates/import/machine-import-template.xlsx",
             "机器导入模板.xlsx",
             MachineInfoImportDTO.class,
             MachineFieldConst::validData,
@@ -43,7 +43,7 @@ public enum ImportType {
      * 导入机器代理
      */
     MACHINE_PROXY(110,
-            "/templates/machine-proxy-import-template.xlsx",
+            "/templates/import/machine-proxy-import-template.xlsx",
             "机器代理导入模板.xlsx",
             MachineProxyImportDTO.class,
             MachineProxyFieldConst::validData,
@@ -55,7 +55,7 @@ public enum ImportType {
      * 导入日志文件
      */
     MACHINE_TAIL_FILE(130,
-            "/templates/tail-file-import-template.xlsx",
+            "/templates/import/tail-file-import-template.xlsx",
             "日志文件导入模板.xlsx",
             MachineTailFileImportDTO.class,
             FileTailFieldConst::validData,
@@ -67,7 +67,7 @@ public enum ImportType {
      * 导入应用环境
      */
     PROFILE(200,
-            "/templates/app-profile-import-template.xlsx",
+            "/templates/import/app-profile-import-template.xlsx",
             "应用环境导入模板.xlsx",
             ApplicationProfileImportDTO.class,
             ApplicationProfileFieldConst::validData,
@@ -79,7 +79,7 @@ public enum ImportType {
      * 导入应用
      */
     APPLICATION(210,
-            "/templates/application-import-template.xlsx",
+            "/templates/import/application-import-template.xlsx",
             "应用导入模板.xlsx",
             ApplicationImportDTO.class,
             ApplicationFieldConst::validData,
@@ -91,7 +91,7 @@ public enum ImportType {
      * 导入应用仓库
      */
     VCS(220,
-            "/templates/app-vcs-import-template.xlsx",
+            "/templates/import/app-vcs-import-template.xlsx",
             "应用仓库导入模板.xlsx",
             ApplicationVcsImportDTO.class,
             ApplicationVcsFieldConst::validData,
@@ -103,7 +103,7 @@ public enum ImportType {
      * 导入命令模板
      */
     COMMAND_TEMPLATE(310,
-            "/templates/command-template-import-template.xlsx",
+            "/templates/import/command-template-import-template.xlsx",
             "命令模板导入模板.xlsx",
             CommandTemplateImportDTO.class,
             CommandTemplateFieldConst::validData,
