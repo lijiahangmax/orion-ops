@@ -1,0 +1,5 @@
+<b>报警机器:</b> <sb 0>${machineName}</sb>
+<b>报警主机:</b> <sb 0>${machineHost}</sb>
+<b>报警内容:</b> 当前${metrics}使用率为 <sr 0>${usage}%</sr>
+<b>报警时间:</b> <sb 0>${time}</sb>
+<b><sr 0>机器发生报警, 请及时排查处理!</sr><b/>
