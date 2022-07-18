@@ -23,6 +23,7 @@
         <swagger.version>2.9.2</swagger.version>
         <knife4j.version>2.0.5</knife4j.version>
         <orion.all.version>1.0.3</orion.all.version>
+        <dingding.service.version>1.0.1</dingding.service.version>
     </properties>
 
     <dependencies>
@@ -127,6 +128,13 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-ui</artifactId>
             <version>${knife4j.version}</version>
+        </dependency>
+
+        <!-- dingding -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibaba-dingtalk-service-sdk</artifactId>
+            <version>${dingding.service.version}</version>
         </dependency>
 
         <!-- orion -->

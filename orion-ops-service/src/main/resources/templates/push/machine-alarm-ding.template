@@ -1,0 +1,5 @@
+#### 报警机器: <font color="#1890FF">${machineName}</font>
+#### 报警主机: <font color="#1890FF">${machineHost}</font>
+#### 报警内容: 当前${metrics}使用率为<font color="#F5222D">${usage}%</font>
+#### 报警时间: <font color="#1890FF">${time}</font>
+#### <font color="#F5222D">机器发生报警, 请及时排查处理!</font>
