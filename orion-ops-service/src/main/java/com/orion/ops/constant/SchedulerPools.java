@@ -27,7 +27,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -39,7 +39,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -51,7 +51,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
 
@@ -64,7 +64,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
 
@@ -77,7 +77,7 @@ public class SchedulerPools {
             .setMaxPoolSize(6)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -89,7 +89,7 @@ public class SchedulerPools {
             .setMaxPoolSize(6)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -101,7 +101,7 @@ public class SchedulerPools {
             .setMaxPoolSize(4)
             .setKeepAliveTime(Const.MS_S_60)
             .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -113,7 +113,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -125,7 +125,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -137,7 +137,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -149,7 +149,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -161,7 +161,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -173,7 +173,7 @@ public class SchedulerPools {
             .setMaxPoolSize(Integer.MAX_VALUE)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     /**
@@ -185,7 +185,7 @@ public class SchedulerPools {
             .setMaxPoolSize(4)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeOut(true)
+            .setAllowCoreThreadTimeout(true)
             .build();
 
     static {
