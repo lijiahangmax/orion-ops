@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+  orion-ops-service:
+    build: 
+      context: .
+      dockerfile: docker/orion-ops-service/Dockerfile
+    image: orion-ops:1.0
+    # 启动的时候需要填写对应mysql,redis的地址和用户密码
+    # environment:  
+    #   - REDIS_HOST=
+    #   - REDIS_PORT=
+    #   - REDIS_PASSWORD=
+    #   - MYSQL_HOST=
+    #   - USER_NAME=
+    #   - USER_PASSWORD=
