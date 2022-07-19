@@ -17,21 +17,23 @@ public enum RoleType {
     /**
      * 管理员
      */
-    ADMINISTRATOR(10),
+    ADMINISTRATOR(10, "/menu/menu-admin.json"),
 
     /**
      * 开发
      */
-    DEVELOPER(20),
+    DEVELOPER(20, "/menu/menu-dev.json"),
 
     /**
      * 运维
      */
-    OPERATION(30),
+    OPERATION(30, "/menu/menu-opt.json"),
 
     ;
 
     private final Integer type;
+
+    private final String menuPath;
 
     public static RoleType of(Integer type) {
         if (type == null) {

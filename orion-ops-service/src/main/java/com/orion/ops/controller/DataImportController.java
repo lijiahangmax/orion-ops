@@ -6,8 +6,9 @@ import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.io.Streams;
 import com.orion.office.excel.Excels;
-import com.orion.ops.OrionOpsServiceApplication;
+import com.orion.ops.OrionApplication;
 import com.orion.ops.annotation.*;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.SchedulerPools;
 import com.orion.ops.constant.event.EventType;
 import com.orion.ops.constant.export.ImportType;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,10 +59,16 @@ public class DataImportController {
     @ApiOperation(value = "获取导入模板")
     public void getTemplate(Integer type, HttpServletResponse response) throws IOException {
         ImportType importType = Valid.notNull(ImportType.of(type));
-        Servlets.setDownloadHeader(response, importType.getTemplateName());
+        String templateName = importType.getTemplateName();
+        Servlets.setDownloadHeader(response, templateName);
         // 读取文件
-        InputStream in = OrionOpsServiceApplication.class.getResourceAsStream(importType.getTemplatePath());
-        Streams.transfer(in, response.getOutputStream());
+        InputStream in = OrionApplication.class.getResourceAsStream(importType.getTemplatePath());
+        ServletOutputStream out = response.getOutputStream();
+        if (in == null) {
+            out.write(Strings.bytes(Strings.format(MessageConst.FILE_NOT_FOUND, templateName)));
+            return;
+        }
+        Streams.transfer(in, out);
     }
 
     @PostMapping("/check-data")

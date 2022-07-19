@@ -11,10 +11,10 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication
 @ImportResource(locations = {"classpath:config/spring-*.xml"})
 @MapperScan("com.orion.ops.dao")
-public class OrionOpsServiceApplication {
+public class OrionApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OrionOpsServiceApplication.class, args);
+        SpringApplication.run(OrionApplication.class, args);
     }
 
 }

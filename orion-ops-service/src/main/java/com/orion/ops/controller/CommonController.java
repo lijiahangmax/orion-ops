@@ -1,9 +1,9 @@
 package com.orion.ops.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.io.StreamReaders;
-import com.orion.ops.OrionOpsServiceApplication;
+import com.orion.ops.OrionApplication;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.PropertiesConst;
@@ -44,17 +44,11 @@ public class CommonController {
     @ApiOperation(value = "获取菜单")
     public List<?> getMenu() throws IOException {
         UserDTO user = Currents.getUser();
-        String menuFile;
-        if (RoleType.ADMINISTRATOR.getType().equals(user.getRoleType())) {
-            menuFile = "menu-admin.json";
-        } else if (RoleType.DEVELOPER.getType().equals(user.getRoleType())) {
-            menuFile = "menu-dev.json";
-        } else if (RoleType.OPERATION.getType().equals(user.getRoleType())) {
-            menuFile = "menu-opt.json";
-        } else {
-            throw Exceptions.app();
+        String menuFile = RoleType.of(user.getRoleType()).getMenuPath();
+        InputStream menu = OrionApplication.class.getResourceAsStream(menuFile);
+        if (menu == null) {
+            return Lists.empty();
         }
-        InputStream menu = OrionOpsServiceApplication.class.getResourceAsStream("/menu/" + menuFile);
         return JSON.parseArray(new String(StreamReaders.readAllBytes(menu)));
     }
 

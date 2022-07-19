@@ -18,7 +18,10 @@ import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.PassportService;
-import com.orion.ops.utils.*;
+import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.RedisUtils;
+import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.ValueMix;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -80,12 +83,6 @@ public class PassportServiceImpl implements PassportService {
         String ip = request.getIp();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
-        // 检查头像
-        if (!AvatarPicHolder.isExist(userInfo.getAvatarPic())) {
-            String url = AvatarPicHolder.generatorUserAvatar(userId, userInfo.getNickname());
-            userInfo.setAvatarPic(url);
-            updateUser.setAvatarPic(url);
-        }
         updateUser.setFailedLoginCount(0);
         updateUser.setUpdateTime(new Date());
         updateUser.setLastLoginTime(new Date());

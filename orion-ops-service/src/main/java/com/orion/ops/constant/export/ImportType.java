@@ -131,18 +131,18 @@ public enum ImportType {
     /**
      * importClass
      */
-    private Class<? extends BaseDataImportDTO> importClass;
+    private final Class<? extends BaseDataImportDTO> importClass;
 
     /**
      * 数据验证器
      */
-    private Consumer<Object> valid;
+    private final Consumer<Object> valid;
 
-    private Class<? extends Serializable> convertClass;
+    private final Class<? extends Serializable> convertClass;
 
-    private MessageType successType;
+    private final MessageType successType;
 
-    private MessageType failureType;
+    private final MessageType failureType;
 
     public static ImportType of(Integer type) {
         if (type == null) {

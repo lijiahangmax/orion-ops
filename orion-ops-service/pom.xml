@@ -23,7 +23,7 @@
         <swagger.version>2.9.2</swagger.version>
         <knife4j.version>2.0.5</knife4j.version>
         <orion.all.version>1.0.3</orion.all.version>
-        <dingding.service.version>1.0.1</dingding.service.version>
+        <dingding.service.version>2.0.0</dingding.service.version>
     </properties>
 
     <dependencies>

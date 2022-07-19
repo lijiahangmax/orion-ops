@@ -2,7 +2,7 @@ package com.orion.ops.runner;
 
 import com.orion.lang.support.Attempt;
 import com.orion.lang.utils.reflect.PackageScanner;
-import com.orion.ops.OrionOpsServiceApplication;
+import com.orion.ops.OrionApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -28,7 +28,7 @@ public class TypeStoreRegisterRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("注册对象转换器-开始");
         new PackageScanner(scanPackages)
-                .with(OrionOpsServiceApplication.class)
+                .with(OrionApplication.class)
                 .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {

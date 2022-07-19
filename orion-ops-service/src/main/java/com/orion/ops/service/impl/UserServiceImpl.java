@@ -79,13 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoVO userDetail(UserInfoRequest request) {
         Long id = Objects1.def(request.getId(), Currents::getUserId);
-        UserInfoDO user = userInfoDAO.selectById(id);
-        Valid.notNull(user, MessageConst.UNKNOWN_USER);
-        UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
-        if (AvatarPicHolder.isExist(user.getAvatarPic())) {
-            userVo.setAvatar(AvatarPicHolder.getBase64(user.getAvatarPic()));
-        }
-        return userVo;
+        UserInfoDO info = userInfoDAO.selectById(id);
+        Valid.notNull(info, MessageConst.UNKNOWN_USER);
+        UserInfoVO user = Converts.to(info, UserInfoVO.class);
+        user.setAvatar(AvatarPicHolder.getUserAvatar(info.getAvatarPic()));
+        return user;
     }
 
     @Override
@@ -111,17 +109,9 @@ public class UserServiceImpl implements UserService {
         insert.setContactPhone(request.getPhone());
         insert.setContactEmail(request.getEmail());
         userInfoDAO.insert(insert);
-        Long userId = insert.getId();
-        // 生成头像
-        String avatar = AvatarPicHolder.generatorUserAvatar(userId, request.getNickname());
-        UserInfoDO update = new UserInfoDO();
-        update.setId(userId);
-        update.setAvatarPic(avatar);
-        update.setUpdateTime(new Date());
-        userInfoDAO.updateById(update);
         // 设置日志参数
         EventParamsHolder.addParams(insert);
-        return userId;
+        return insert.getId();
     }
 
     @Override
@@ -250,7 +240,7 @@ public class UserServiceImpl implements UserService {
         // 密码
         String salt = UUIds.random19();
         String password = ValueMix.encPassword(Signatures.md5(DEFAULT_USERNAME), salt);
-        // 创建
+        // 创建用户
         UserInfoDO insert = new UserInfoDO();
         insert.setUsername(DEFAULT_USERNAME);
         insert.setNickname(DEFAULT_NICKNAME);
