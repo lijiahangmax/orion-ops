@@ -257,4 +257,9 @@ public class EventKeys {
      */
     public static final String STATUS = "status";
 
+    /**
+     * 是否为自动续签登陆
+     */
+    public static final String REFRESH_LOGIN = "refreshLogin";
+
 }

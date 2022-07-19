@@ -2,6 +2,7 @@ package com.orion.ops.interceptor;
 
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.constant.Const;
 import com.orion.ops.constant.EnableType;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.event.EventKeys;
@@ -85,13 +86,11 @@ public class UserActiveInterceptor implements HandlerInterceptor {
      */
     private void refreshActive(UserDTO user) {
         Long userId = user.getId();
-        String username = user.getUsername();
         // 刷新登陆时间
         userInfoDAO.updateLastLoginTime(userId);
         // 记录日志
-        EventParamsHolder.addParam(EventKeys.INNER_USER_ID, userId);
-        EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogPrintInterceptor.SEQ_HOLDER.get());
+        EventParamsHolder.addParam(EventKeys.REFRESH_LOGIN, Const.ENABLE);
+        EventParamsHolder.setDefaultEventParams();
         userEventLogService.recordLog(EventType.LOGIN, true);
         // 如果开启自动续签 刷新登陆token 绑定token
         if (EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue()) {

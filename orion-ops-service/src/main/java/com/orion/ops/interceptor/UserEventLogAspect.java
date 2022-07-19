@@ -1,22 +1,14 @@
 package com.orion.ops.interceptor;
 
-import com.orion.lang.utils.time.Dates;
 import com.orion.ops.annotation.EventLog;
-import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.event.EventParamsHolder;
-import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.UserEventLogService;
-import com.orion.ops.utils.Currents;
-import com.orion.web.servlet.web.Servlets;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * 用户操作日志切面
@@ -41,22 +33,8 @@ public class UserEventLogAspect {
     @Before(value = "eventLogPoint(e)", argNames = "e")
     public void beforeLogRecord(EventLog e) {
         EventParamsHolder.remove();
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogPrintInterceptor.SEQ_HOLDER.get());
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_TIME, Dates.current());
-        // 有可能是登陆接口有可能为空 则用内部常量策略
-        UserDTO user = Currents.getUser();
-        if (user != null) {
-            EventParamsHolder.addParam(EventKeys.INNER_USER_ID, user.getId());
-            EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, user.getUsername());
-        }
-        // 浏览器
-        Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                .map(s -> (ServletRequestAttributes) s)
-                .map(ServletRequestAttributes::getRequest)
-                .ifPresent(request -> {
-                    EventParamsHolder.addParam(EventKeys.INNER_REQUEST_USER_AGENT, Servlets.getUserAgent(request));
-                    EventParamsHolder.addParam(EventKeys.INNER_REQUEST_IP, Servlets.getRemoteAddr(request));
-                });
+        // 设置默认参数
+        EventParamsHolder.setDefaultEventParams();
     }
 
     @AfterReturning(pointcut = "eventLogPoint(e)", argNames = "e")
