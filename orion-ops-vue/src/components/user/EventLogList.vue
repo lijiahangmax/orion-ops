@@ -158,7 +158,7 @@ export default {
   methods: {
     getEventLog(page = 1) {
       this.loading = true
-      this.$api.getLogList({
+      this.$api.getEventLogList({
         ...this.query,
         ...this.baseQuery,
         page,

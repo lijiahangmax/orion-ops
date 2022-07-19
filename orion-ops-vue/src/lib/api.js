@@ -1633,10 +1633,10 @@ const $api = {
   },
 
   /**
-   * 获取日志列表
+   * 获取操作日志列表
    */
-  getLogList: param => {
-    return $http.$post('/log/list', param)
+  getEventLogList: param => {
+    return $http.$post('/event-log/list', param)
   },
 
   /**
