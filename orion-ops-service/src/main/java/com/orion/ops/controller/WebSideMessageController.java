@@ -10,10 +10,7 @@ import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Valid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -34,7 +31,7 @@ public class WebSideMessageController {
     @Resource
     private WebSideMessageService webSideMessageService;
 
-    @PostMapping("/unread-count")
+    @GetMapping("/unread-count")
     @ApiOperation(value = "获取站内信未读数量")
     public Integer getUnreadCount() {
         return webSideMessageService.getUnreadCount();
@@ -47,7 +44,7 @@ public class WebSideMessageController {
         return webSideMessageService.pollMessage(request.getMaxId());
     }
 
-    @PostMapping("/set-all-read")
+    @GetMapping("/set-all-read")
     @ApiOperation(value = "设置站内信全部已读")
     public Integer setAllRead() {
         return webSideMessageService.setAllRead();

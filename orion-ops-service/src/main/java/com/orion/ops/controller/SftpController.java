@@ -240,55 +240,55 @@ public class SftpController {
         sftpService.packageDownload(request);
     }
 
-    @PostMapping("/transfer/{fileToken}/pause")
+    @GetMapping("/transfer/{fileToken}/pause")
     @ApiOperation(value = "暂停文件传输")
     public void transferPause(@PathVariable("fileToken") String fileToken) {
         sftpService.transferPause(fileToken);
     }
 
-    @PostMapping("/transfer/{fileToken}/resume")
+    @GetMapping("/transfer/{fileToken}/resume")
     @ApiOperation(value = "恢复文件传输")
     public void transferResume(@PathVariable("fileToken") String fileToken) {
         sftpService.transferResume(fileToken);
     }
 
-    @PostMapping("/transfer/{fileToken}/retry")
+    @GetMapping("/transfer/{fileToken}/retry")
     @ApiOperation(value = "传输失败重试")
     public void transferRetry(@PathVariable("fileToken") String fileToken) {
         sftpService.transferRetry(fileToken);
     }
 
-    @PostMapping("/transfer/{fileToken}/re-upload")
+    @GetMapping("/transfer/{fileToken}/re-upload")
     @ApiOperation(value = "重新上传文件")
     public void transferReUpload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReUpload(fileToken);
     }
 
-    @PostMapping("/transfer/{fileToken}/re-download")
+    @GetMapping("/transfer/{fileToken}/re-download")
     @ApiOperation(value = "重新下载文件")
     public void transferReDownload(@PathVariable("fileToken") String fileToken) {
         sftpService.transferReDownload(fileToken);
     }
 
-    @PostMapping("/transfer/{sessionToken}/pause-all")
+    @GetMapping("/transfer/{sessionToken}/pause-all")
     @ApiOperation(value = "暂停所有传输")
     public void transferPauseAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferPauseAll(sessionToken);
     }
 
-    @PostMapping("/transfer/{sessionToken}/resume-all")
+    @GetMapping("/transfer/{sessionToken}/resume-all")
     @ApiOperation(value = "恢复所有传输")
     public void transferResumeAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferResumeAll(sessionToken);
     }
 
-    @PostMapping("/transfer/{sessionToken}/retry-all")
+    @GetMapping("/transfer/{sessionToken}/retry-all")
     @ApiOperation(value = "失败重试所有")
     public void transferRetryAll(@PathVariable("sessionToken") String sessionToken) {
         sftpService.transferRetryAll(sessionToken);
     }
 
-    @PostMapping("/transfer/{sessionToken}/list")
+    @GetMapping("/transfer/{sessionToken}/list")
     @ApiOperation(value = "获取传输列表")
     public List<FileTransferLogVO> transferList(@PathVariable("sessionToken") String sessionToken) {
         SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
@@ -296,13 +296,13 @@ public class SftpController {
         return sftpService.transferList(tokenInfo.getMachineId());
     }
 
-    @PostMapping("/transfer/{fileToken}/remove")
+    @GetMapping("/transfer/{fileToken}/remove")
     @ApiOperation(value = "删除单个传输记录 (包含进行中的)")
     public void transferRemove(@PathVariable("fileToken") String fileToken) {
         sftpService.transferRemove(fileToken);
     }
 
-    @PostMapping("/transfer/{sessionToken}/clear")
+    @GetMapping("/transfer/{sessionToken}/clear")
     @ApiOperation(value = "清空全部传输记录 (不包含进行中的)")
     public Integer transferClear(@PathVariable("sessionToken") String sessionToken) {
         SftpSessionTokenDTO tokenInfo = sftpService.getTokenInfo(sessionToken);
@@ -310,7 +310,7 @@ public class SftpController {
         return sftpService.transferClear(tokenInfo.getMachineId());
     }
 
-    @PostMapping("/transfer/{sessionToken}/{packageType}/package")
+    @GetMapping("/transfer/{sessionToken}/{packageType}/package")
     @ApiOperation(value = "传输打包全部已完成未删除的文件")
     @EventLog(EventType.SFTP_PACKAGE)
     public void transferPackage(@PathVariable("sessionToken") String sessionToken, @PathVariable("packageType") Integer packageType) {

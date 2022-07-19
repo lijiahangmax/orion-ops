@@ -5,17 +5,13 @@ import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.io.StreamReaders;
 import com.orion.ops.OrionApplication;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.constant.Const;
-import com.orion.ops.constant.PropertiesConst;
 import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.entity.vo.SystemVersionVO;
 import com.orion.ops.service.api.CommonService;
 import com.orion.ops.utils.Currents;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +36,7 @@ public class CommonController {
     @Resource
     private CommonService commonService;
 
-    @PostMapping("/menu")
+    @GetMapping("/menu")
     @ApiOperation(value = "获取菜单")
     public List<?> getMenu() throws IOException {
         UserDTO user = Currents.getUser();
@@ -50,15 +46,6 @@ public class CommonController {
             return Lists.empty();
         }
         return JSON.parseArray(new String(StreamReaders.readAllBytes(menu)));
-    }
-
-    @GetMapping("/version")
-    @ApiOperation(value = "获取系统版本")
-    public SystemVersionVO getVersion() {
-        return SystemVersionVO.builder()
-                .orionKitVersion(Const.ORION_KIT_VERSION)
-                .orionOpsVersion(PropertiesConst.ORION_OPS_VERSION)
-                .build();
     }
 
 }

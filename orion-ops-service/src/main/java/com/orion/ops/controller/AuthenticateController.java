@@ -17,10 +17,7 @@ import com.orion.ops.utils.Valid;
 import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +53,7 @@ public class AuthenticateController {
     }
 
     @IgnoreAuth
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     @ApiOperation(value = "登出")
     @EventLog(EventType.LOGOUT)
     public HttpWrapper<?> logout() {
@@ -75,7 +72,7 @@ public class AuthenticateController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/valid")
+    @GetMapping("/valid")
     @ApiOperation(value = "检查用户信息")
     public UserInfoVO validToken() {
         return Converts.to(Currents.getUser(), UserInfoVO.class);

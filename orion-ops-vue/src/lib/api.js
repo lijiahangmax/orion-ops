@@ -64,8 +64,8 @@ const $api = {
   /**
    * 登出
    */
-  logout: param => {
-    return $http.$post('/auth/logout', param, { auth: false })
+  logout: () => {
+    return $http.$get('/auth/logout', null, { auth: false })
   },
 
   /**
@@ -78,15 +78,15 @@ const $api = {
   /**
    * 检查token是否有效
    */
-  validToken: param => {
-    return $http.$post('/auth/valid', param)
+  validToken: () => {
+    return $http.$get('/auth/valid')
   },
 
   /**
    * 获取菜单
    */
   getMenu: () => {
-    return $http.$post('/common/menu')
+    return $http.$get('/common/menu')
   },
 
   /**
@@ -243,15 +243,15 @@ const $api = {
   /**
    * 获取支持的终端类型
    */
-  getTerminalSupportPyt: param => {
-    return $http.$post('/terminal/support/pty', param)
+  getTerminalSupportPyt: () => {
+    return $http.$get('/terminal/support/pty')
   },
 
   /**
    * 获取机器终端配置
    */
   getTerminalSetting: param => {
-    return $http.$post(`/terminal/get/${param.machineId}`, param)
+    return $http.$get(`/terminal/get/${param.machineId}`)
   },
 
   /**
@@ -440,49 +440,49 @@ const $api = {
    * sftp 传输列表
    */
   sftpTransferList: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/list`, param)
+    return $http.$get(` / sftp / transfer /${param.sessionToken}/list`)
   },
 
   /**
    * sftp 传输暂停
    */
   sftpTransferPause: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/pause`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/pause`)
   },
 
   /**
    * sftp 传输恢复
    */
   sftpTransferResume: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/resume`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/resume`)
   },
 
   /**
    * sftp 传输失败重试
    */
   sftpTransferRetry: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/retry`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/retry`)
   },
 
   /**
    * sftp 重新上传
    */
   sftpTransferReUpload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re-upload`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/re-upload`)
   },
 
   /**
    * sftp 重新下载
    */
   sftpTransferReDownload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re-download`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/re-download`)
   },
 
   /**
    * sftp 传输暂停全部
    */
   sftpTransferPauseAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/pause-all`, null, {
       timeout: 180000
     })
   },
@@ -491,7 +491,7 @@ const $api = {
    * sftp 传输恢复全部
    */
   sftpTransferResumeAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/resume-all`, null, {
       timeout: 180000
     })
   },
@@ -500,7 +500,7 @@ const $api = {
    * sftp 传输失败重试全部
    */
   sftpTransferRetryAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/retry-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/retry-all`, null, {
       timeout: 180000
     })
   },
@@ -509,21 +509,21 @@ const $api = {
    * sftp 传输删除(单个)
    */
   sftpTransferRemove: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/remove`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/remove`)
   },
 
   /**
    * sftp 传输清空(全部)
    */
   sftpTransferClear: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/clear`, param)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/clear`)
   },
 
   /**
    * sftp 传输打包
    */
   sftpTransferPackage: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/${param.packageType}/package`, param)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/${param.packageType}/package`)
   },
 
   /**
@@ -639,7 +639,7 @@ const $api = {
    * 挂载所有秘钥
    */
   mountAllMachineKey: () => {
-    return $http.$post('/key/mount-all', {}, {
+    return $http.$get('/key/mount-all', null, {
       skipErrorMessage: true,
       loading: '正在挂载...'
     })
@@ -649,7 +649,7 @@ const $api = {
    * 卸载所有秘钥
    */
   dumpAllMachineKey: () => {
-    return $http.$post('/key/dump-all', {}, {
+    return $http.$get('/key/dump-all', null, {
       skipErrorMessage: true,
       loading: '正在卸载...'
     })
@@ -979,7 +979,7 @@ const $api = {
    * 应用环境列表 (快速)
    */
   fastGetProfileList: param => {
-    return $http.$post('/app-profile/fast-list', param)
+    return $http.$get('/app-profile/fast-list', param)
   },
 
   /**
@@ -1702,8 +1702,8 @@ const $api = {
   /**
    * 获取 ip 配置
    */
-  getIpInfo: param => {
-    return $http.$post('/system/ip-info', param)
+  getIpInfo: () => {
+    return $http.$get('/system/ip-info')
   },
 
   /**
@@ -1718,15 +1718,15 @@ const $api = {
   /**
    * 获取系统分析信息
    */
-  getSystemAnalysis: param => {
-    return $http.$post('/system/get-system-analysis', param)
+  getSystemAnalysis: () => {
+    return $http.$get('/system/get-system-analysis')
   },
 
   /**
    * 重新进行系统统计分析
    */
-  reAnalysisSystem: param => {
-    return $http.$post('/system/re-analysis', param, {
+  reAnalysisSystem: () => {
+    return $http.$get('/system/re-analysis', null, {
       timeout: 600000
     })
   },
@@ -1748,15 +1748,22 @@ const $api = {
   /**
    * 获取系统配置项
    */
-  getSystemOptions: param => {
-    return $http.$post('/system/get-system-options', param)
+  getSystemOptions: () => {
+    return $http.$get('/system/get-system-options')
   },
 
   /**
    * 获取系统线程池指标
    */
-  getSystemThreadMetrics: param => {
-    return $http.$post('/system/get-thread-metrics', param)
+  getSystemThreadMetrics: () => {
+    return $http.$get('/system/get-thread-metrics')
+  },
+
+  /**
+   * 获取系统信息
+   */
+  getSystemAbout: () => {
+    return $http.$get('/system/about')
   },
 
   /**
@@ -1910,8 +1917,8 @@ const $api = {
   /**
    * 获取站内信未读数量
    */
-  getWebSideMessageUnreadCount: param => {
-    return $http.$post('/message/unread-count', param, {
+  getWebSideMessageUnreadCount: () => {
+    return $http.$get('/message/unread-count', null, {
       skipErrorMessage: true
     })
   },
@@ -1928,8 +1935,8 @@ const $api = {
   /**
    * 设置站内信全部已读
    */
-  setWebSideMessageAllRead: param => {
-    return $http.$post('/message/set-all-read', param)
+  setWebSideMessageAllRead: () => {
+    return $http.$get('/message/set-all-read')
   },
 
   /**
