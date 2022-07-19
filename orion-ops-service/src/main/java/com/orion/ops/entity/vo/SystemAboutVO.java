@@ -13,8 +13,8 @@ import lombok.Data;
  */
 @Data
 @Builder
-@ApiModel(value = "系统配置响应")
-public class SystemVersionVO {
+@ApiModel(value = "系统信息响应")
+public class SystemAboutVO {
 
     /**
      * orion-kit 版本
@@ -25,5 +25,15 @@ public class SystemVersionVO {
      * orion-ops 版本
      */
     private String orionOpsVersion;
+
+    /**
+     * 作者
+     */
+    private String author;
+
+    /**
+     * 作者
+     */
+    private String authorCn;
 
 }

@@ -50,12 +50,6 @@ public class SystemAnalysisVO {
     @ApiModelProperty(value = "应用仓库大小")
     private String vcsVersionFileSize;
 
-    @ApiModelProperty(value = "黑名单数量")
-    private Long blackIpListCount;
-
-    @ApiModelProperty(value = "白名单数量")
-    private Long whiteIpListCount;
-
     @ApiModelProperty(value = "文件清理阈值")
     private Integer fileCleanThreshold;
 
