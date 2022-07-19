@@ -48,7 +48,6 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
-import { WebglAddon } from 'xterm-addon-webgl'
 import { copyToClipboard, fitDimensions, getClipboardText } from '@/lib/utils'
 import { enumValueOf, TERMINAL_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
 
@@ -81,15 +80,6 @@ function initTerminal() {
   if (this.setting.enableWebLink === 1) {
     this.plugin.links = new WebLinksAddon()
     this.term.loadAddon(this.plugin.links)
-  }
-  // 注册 webgl web加速组件
-  if (this.setting.enableWebGL === 1) {
-    this.plugin.webgl = new WebglAddon()
-    try {
-      this.term.loadAddon(this.plugin.webgl)
-    } catch (e) {
-      console.error('loading addon webgl error', e)
-    }
   }
 
   setTimeout(() => {
@@ -316,15 +306,13 @@ export default {
       plugin: {
         fit: null,
         search: null,
-        links: null,
-        webgl: null
+        links: null
       },
       status: 0,
       pingThread: null,
       setting: {
         accessToken: null,
-        enableWebLink: 2,
-        enableWebGL: 2
+        enableWebLink: 2
       },
       options: {
         cursorStyle: 'bar',
@@ -355,7 +343,6 @@ export default {
       this.options.theme.background = options.backgroundColor || this.options.theme.background
       this.setting.accessToken = setting.accessToken
       this.setting.enableWebLink = setting.enableWebLink
-      this.setting.enableWebGL = setting.enableWebGL
       initTerminal.call(this)
     },
     initSocket() {

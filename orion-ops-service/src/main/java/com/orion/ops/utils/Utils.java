@@ -254,7 +254,9 @@ public class Utils {
                 .replaceAll("<sr>", Const.EMPTY)
                 .replaceAll("<sr 0>", Const.EMPTY)
                 .replaceAll("<sr 2>", Const.EMPTY)
-                .replaceAll("</sr>", Const.EMPTY);
+                .replaceAll("</sr>", Const.EMPTY)
+                .replaceAll("<b>", Const.EMPTY)
+                .replaceAll("</b>", Const.EMPTY);
     }
 
 }

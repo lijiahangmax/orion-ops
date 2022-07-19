@@ -12,7 +12,6 @@
         <result column="font_size" property="fontSize"/>
         <result column="font_family" property="fontFamily"/>
         <result column="enable_web_link" property="enableWebLink"/>
-        <result column="enable_web_gl" property="enableWebGL"/>
         <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
@@ -21,7 +20,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, machine_id, terminal_type, background_color, font_color, font_size, font_family,
-        enable_web_link, enable_web_gl, deleted, create_time, update_time
+        enable_web_link, deleted, create_time, update_time
     </sql>
 
 </mapper>

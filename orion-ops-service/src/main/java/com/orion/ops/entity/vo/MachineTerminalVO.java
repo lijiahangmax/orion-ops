@@ -62,13 +62,6 @@ public class MachineTerminalVO {
     @ApiModelProperty(value = "是否开启url link 1开启 2关闭")
     private Integer enableWebLink;
 
-    /**
-     * @see com.orion.ops.constant.Const#ENABLE
-     * @see com.orion.ops.constant.Const#DISABLE
-     */
-    @ApiModelProperty(value = "是否开启webGL加速 1开启 2关闭")
-    private Integer enableWebGL;
-
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
@@ -86,7 +79,6 @@ public class MachineTerminalVO {
             vo.setFontSize(p.getFontSize());
             vo.setFontFamily(p.getFontFamily());
             vo.setEnableWebLink(p.getEnableWebLink());
-            vo.setEnableWebGL(p.getEnableWebGL());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             return vo;

@@ -82,9 +82,6 @@ public class MachineTerminalController {
         if (request.getEnableWebLink() != null) {
             Valid.in(request.getEnableWebLink(), Const.ENABLE, Const.DISABLE);
         }
-        if (request.getEnableWebGL() != null) {
-            Valid.in(request.getEnableWebGL(), Const.ENABLE, Const.DISABLE);
-        }
         return machineTerminalService.updateSetting(request);
     }
 
