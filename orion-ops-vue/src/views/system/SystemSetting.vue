@@ -21,6 +21,10 @@
       <a-tab-pane key="5" tab="线程池指标">
         <ThreadMetrics/>
       </a-tab-pane>
+      <!-- 关于 -->
+      <a-tab-pane key="6" tab="关于">
+        <SystemAbout/>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -36,7 +40,8 @@ export default {
     SecurityConfig: () => import('@/components/system/SecurityConfig'),
     IpConfig: () => import('@/components/system/IpConfig'),
     OtherConfig: () => import('@/components/system/OtherConfig'),
-    ThreadMetrics: () => import('@/components/system/ThreadMetrics')
+    ThreadMetrics: () => import('@/components/system/ThreadMetrics'),
+    SystemAbout: () => import('@/components/system/SystemAbout')
   }
 }
 </script>
