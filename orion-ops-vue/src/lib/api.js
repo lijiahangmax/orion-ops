@@ -2222,15 +2222,6 @@ const $api = {
   },
 
   /**
-   * 清理站内信
-   */
-  clearWebSideMessage: param => {
-    return $http.$post('/data-clear/web-side-message', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
    * 清理操作日志
    */
   clearEventLog: param => {
@@ -2293,13 +2284,6 @@ const $api = {
    */
   exportCommandTemplate: param => {
     return $http.$export('/data-export/command-template', param)
-  },
-
-  /**
-   * 导出站内信
-   */
-  exportWebSideMessage: param => {
-    return $http.$export('/data-export/web-side-message', param)
   },
 
   /**

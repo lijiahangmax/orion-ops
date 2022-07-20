@@ -64,9 +64,6 @@ public class DataExportServiceImpl implements DataExportService {
     private CommandTemplateDAO commandTemplateDAO;
 
     @Resource
-    private WebSideMessageDAO webSideMessageDAO;
-
-    @Resource
     private UserEventLogDAO userEventLogDAO;
 
     @Override
@@ -223,28 +220,6 @@ public class DataExportServiceImpl implements DataExportService {
         exporter.addRows(exportList);
         // 写入
         this.writeWorkbook(request, response, exporter, ExportType.COMMAND_TEMPLATE);
-    }
-
-    @Override
-    public void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException {
-        // 查询数据
-        Integer classify = request.getClassify();
-        Integer status = request.getStatus();
-        LambdaQueryWrapper<WebSideMessageDO> wrapper = new LambdaQueryWrapper<WebSideMessageDO>()
-                .eq(WebSideMessageDO::getToUserId, Currents.getUserId())
-                .eq(Objects.nonNull(classify), WebSideMessageDO::getMessageClassify, classify)
-                .eq(Objects.nonNull(status), WebSideMessageDO::getReadStatus, status)
-                .orderByDesc(WebSideMessageDO::getCreateTime);
-        List<WebSideMessageDO> messageList = webSideMessageDAO.selectList(wrapper);
-        List<WebSideMessageExportDTO> exportList = Converts.toList(messageList, WebSideMessageExportDTO.class);
-        // 导出
-        ExcelExport<WebSideMessageExportDTO> exporter = new ExcelExport<>(WebSideMessageExportDTO.class).init();
-        exporter.addRows(exportList);
-        // 写入
-        this.writeWorkbook(request, response, exporter, ExportType.WEB_SIDE_MESSAGE);
-        // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.CLASSIFY, classify);
-        EventParamsHolder.addParam(EventKeys.STATUS, status);
     }
 
     @Override

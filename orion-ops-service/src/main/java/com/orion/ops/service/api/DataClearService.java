@@ -60,14 +60,6 @@ public interface DataClearService {
     Integer clearAppPipeline(DataClearRequest request);
 
     /**
-     * 清理 站内信
-     *
-     * @param request request
-     * @return 删除数量
-     */
-    Integer clearWebSideMessage(DataClearRequest request);
-
-    /**
      * 清理 操作日志
      *
      * @param request request

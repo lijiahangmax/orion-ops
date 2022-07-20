@@ -87,15 +87,6 @@ public interface DataExportService {
     void exportCommandTemplate(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
-     * 导出站内信
-     *
-     * @param request  request
-     * @param response response
-     * @throws IOException IOException
-     */
-    void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException;
-
-    /**
      * 导出操作日志
      *
      * @param request  request

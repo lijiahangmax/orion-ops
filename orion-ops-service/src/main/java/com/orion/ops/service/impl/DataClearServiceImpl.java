@@ -12,7 +12,6 @@ import com.orion.ops.constant.clear.DataClearRange;
 import com.orion.ops.constant.command.ExecStatus;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.event.EventParamsHolder;
-import com.orion.ops.constant.message.ReadStatus;
 import com.orion.ops.constant.scheduler.SchedulerTaskStatus;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -51,9 +50,6 @@ public class DataClearServiceImpl implements DataClearService {
 
     @Resource
     private ApplicationPipelineTaskDAO applicationPipelineTaskDAO;
-
-    @Resource
-    private WebSideMessageDAO webSideMessageDAO;
 
     @Resource
     private UserEventLogDAO userEventLogDAO;
@@ -168,24 +164,6 @@ public class DataClearServiceImpl implements DataClearService {
                 ApplicationPipelineTaskDO::getPipelineId,
                 request);
         int count = applicationPipelineTaskDAO.delete(wrapper);
-        // 设置日志参数
-        EventParamsHolder.addParams(request);
-        EventParamsHolder.addParam(EventKeys.COUNT, count);
-        return count;
-    }
-
-    @Override
-    public Integer clearWebSideMessage(DataClearRequest request) {
-        LambdaQueryWrapper<WebSideMessageDO> wrapper = new LambdaQueryWrapper<WebSideMessageDO>()
-                .eq(WebSideMessageDO::getToUserId, Currents.getUserId())
-                .eq(Const.ENABLE.equals(request.getOnlyRead()), WebSideMessageDO::getReadStatus, ReadStatus.READ.getStatus());
-        // 设置删除筛选条件
-        this.setDeleteWrapper(webSideMessageDAO, wrapper,
-                WebSideMessageDO::getId,
-                WebSideMessageDO::getCreateTime,
-                WebSideMessageDO::getMessageClassify,
-                request);
-        int count = webSideMessageDAO.delete(wrapper);
         // 设置日志参数
         EventParamsHolder.addParams(request);
         EventParamsHolder.addParam(EventKeys.COUNT, count);
