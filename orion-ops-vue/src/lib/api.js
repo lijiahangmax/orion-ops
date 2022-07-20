@@ -1924,15 +1924,6 @@ const $api = {
   },
 
   /**
-   * 轮询获取站内信
-   */
-  pollWebSideMessage: param => {
-    return $http.$post('/message/poll-message', param, {
-      skipErrorMessage: true
-    })
-  },
-
-  /**
    * 设置站内信全部已读
    */
   setWebSideMessageAllRead: () => {
@@ -1940,10 +1931,24 @@ const $api = {
   },
 
   /**
-   * 获取站内信列表
+   * 设置已读站内信
    */
-  getWebSideMessageList: param => {
-    return $http.$post('/message/list', param)
+  setMessageRead: params => {
+    return $http.$post('/message/read', params)
+  },
+
+  /**
+   * 删除全部已读站内信
+   */
+  deleteAllReadMessage: () => {
+    return $http.$get('/message/delete-all-read')
+  },
+
+  /**
+   * 删除站内信
+   */
+  deleteWebSideMessage: param => {
+    return $http.$post('/message/delete', param)
   },
 
   /**
@@ -1954,11 +1959,32 @@ const $api = {
   },
 
   /**
-   * 删除站内信
+   * 获取站内信列表
    */
-  deleteWebSideMessage: param => {
-    return $http.$post('/message/delete', param, {
-      loading: '正在删除...'
+  getWebSideMessageList: param => {
+    return $http.$post('/message/list', param)
+  },
+
+  /**
+   * 获取最新站内信
+   */
+  getNewMessage: param => {
+    return $http.$post('/message/get-new-message', param)
+  },
+
+  /**
+   * 获取更多站内信
+   */
+  getMoreMessage: param => {
+    return $http.$post('/message/get-more-message', param)
+  },
+
+  /**
+   * 轮询获取站内信
+   */
+  pollWebSideMessage: param => {
+    return $http.$post('/message/poll-new-message', param, {
+      skipErrorMessage: true
     })
   },
 

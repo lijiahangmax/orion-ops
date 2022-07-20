@@ -328,6 +328,7 @@ export function clearStainKeywords(message) {
     .replaceAll('&lt;/sr&gt;', '')
     .replaceAll('&lt;b&gt;', '')
     .replaceAll('&lt;/b&gt;', '')
+    .replaceAll('<br/>', '\n')
 }
 
 /**

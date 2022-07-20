@@ -1915,6 +1915,7 @@ export const MESSAGE_CLASSIFY = {
   SYSTEM: {
     value: 10,
     label: '系统消息',
+    icon: 'setting',
     type: {
       EXEC_SUCCESS: {
         value: 1010,
@@ -2005,6 +2006,7 @@ export const MESSAGE_CLASSIFY = {
   IMPORT: {
     value: 20,
     label: '数据导入',
+    icon: 'import',
     type: {
       MACHINE_IMPORT_SUCCESS: {
         value: 2010,
@@ -2091,6 +2093,208 @@ export const MESSAGE_CLASSIFY = {
         redirect: '#/template/list'
       }
     }
+  }
+}
+
+/**
+ * 消息类型
+ */
+export const MESSAGE_TYPE = {
+  EXEC_SUCCESS: {
+    classify: 10,
+    value: 1010,
+    label: '命令执行完成',
+    notify: 'success',
+    redirect: '/batch/exec/list'
+  },
+  EXEC_FAILURE: {
+    classify: 10,
+    value: 1020,
+    label: '命令执行失败',
+    notify: 'error',
+    redirect: '/batch/exec/list'
+  },
+  VCS_INIT_SUCCESS: {
+    classify: 10,
+    value: 1030,
+    label: '版本仓库初始化成功',
+    notify: 'success',
+    redirect: '/app/vcs'
+  },
+  VCS_INIT_FAILURE: {
+    classify: 10,
+    value: 1040,
+    label: '版本仓库初始化失败',
+    notify: 'error',
+    redirect: '/app/vcs'
+  },
+  BUILD_SUCCESS: {
+    classify: 10,
+    value: 1050,
+    label: '构建执行成功',
+    notify: 'success',
+    redirect: '/app/build/list'
+  },
+  BUILD_FAILURE: {
+    classify: 10,
+    value: 1060,
+    label: '构建执行失败',
+    notify: 'error',
+    redirect: '/app/build/list'
+  },
+  RELEASE_AUDIT_RESOLVE: {
+    classify: 10,
+    value: 1070,
+    label: '发布审批通过',
+    notify: 'success',
+    redirect: '/app/release/list'
+  },
+  RELEASE_AUDIT_REJECT: {
+    classify: 10,
+    value: 1080,
+    label: '发布审批驳回',
+    notify: 'warning',
+    redirect: '/app/release/list'
+  },
+  RELEASE_SUCCESS: {
+    classify: 10,
+    value: 1090,
+    label: '发布执行成功',
+    notify: 'success',
+    redirect: '/app/release/list'
+  },
+  RELEASE_FAILURE: {
+    classify: 10,
+    value: 1100,
+    label: '发布执行失败',
+    notify: 'error',
+    redirect: '/app/release/list'
+  },
+  PIPELINE_AUDIT_RESOLVE: {
+    classify: 10,
+    value: 1110,
+    label: '应用流水线审批通过',
+    notify: 'success',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_AUDIT_REJECT: {
+    classify: 10,
+    value: 1120,
+    label: '应用流水线审批驳回',
+    notify: 'warning',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_EXEC_SUCCESS: {
+    classify: 10,
+    value: 1130,
+    label: '流水线执行成功',
+    notify: 'success',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_EXEC_FAILURE: {
+    classify: 10,
+    value: 1140,
+    label: '流水线执行失败',
+    notify: 'error',
+    redirect: '/app/pipeline/record'
+  },
+  MACHINE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2010,
+    label: '机器信息导入成功',
+    notify: 'success',
+    redirect: '/machine/list'
+  },
+  MACHINE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2020,
+    label: '机器信息导入失败',
+    notify: 'error',
+    redirect: '/machine/list'
+  },
+  MACHINE_PROXY_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2030,
+    label: '机器代理导入成功',
+    notify: 'success',
+    redirect: '/machine/proxy'
+  },
+  MACHINE_PROXY_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2040,
+    label: '机器代理导入失败',
+    notify: 'error',
+    redirect: '/machine/proxy'
+  },
+  MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2050,
+    label: '日志文件导入成功',
+    notify: 'success',
+    redirect: '/log/list'
+  },
+  MACHINE_TAIL_FILE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2060,
+    label: '日志文件导入失败',
+    notify: 'error',
+    redirect: '/log/list'
+  },
+  APP_PROFILE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2070,
+    label: '应用环境导入成功',
+    notify: 'success',
+    redirect: '/app/profile'
+  },
+  APP_PROFILE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2080,
+    label: '应用环境导入失败',
+    notify: 'error',
+    redirect: '/app/profile'
+  },
+  APPLICATION_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2090,
+    label: '应用信息导入成功',
+    notify: 'success',
+    redirect: '/app/list'
+  },
+  APPLICATION_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2100,
+    label: '应用信息导入失败',
+    notify: 'error',
+    redirect: '/app/list'
+  },
+  APP_VCS_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2110,
+    label: '版本仓库导入成功',
+    notify: 'success',
+    redirect: '/app/vcs'
+  },
+  APP_VCS_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2120,
+    label: '版本仓库导入失败',
+    notify: 'error',
+    redirect: '/app/vcs'
+  },
+  COMMAND_TEMPLATE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2130,
+    label: '命令模板导入成功',
+    notify: 'success',
+    redirect: '/template/list'
+  },
+  COMMAND_TEMPLATE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2140,
+    label: '命令模板导入失败',
+    notify: 'error',
+    redirect: '/template/list'
   }
 }
 
