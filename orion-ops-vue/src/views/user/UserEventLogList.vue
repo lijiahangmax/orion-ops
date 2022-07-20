@@ -1,11 +1,11 @@
 <template>
-  <div class="log-list-container">
-    <!-- 筛选 -->
-    <div class="log-list-filter table-search-columns">
+  <div class="user-event-log-container">
+    <!-- 搜索列 -->
+    <div class="table-search-columns">
       <a-form-model ref="query" :model="query">
         <a-row>
           <a-col :span="5">
-            <a-form-model-item label="用户" prop="user">
+            <a-form-model-item label="操作用户" prop="user">
               <UserAutoComplete ref="userSelector" @change="selectedUser"/>
             </a-form-model-item>
           </a-col>
@@ -14,8 +14,8 @@
               <a-input v-model="query.log" placeholder="日志关键字" allowClear/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="6">
-            <a-form-model-item label="分类" prop="classify">
+          <a-col :span="7">
+            <a-form-model-item label="日志分类" prop="classify">
               <a-input-group compact>
                 <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
                   <a-select-option :value="classify.value" v-for="classify in EVENT_CLASSIFY" :key="classify.value">
@@ -30,65 +30,48 @@
               </a-input-group>
             </a-form-model-item>
           </a-col>
-          <a-col :span="6">
-            <a-form-model-item label="时间" prop="date">
+          <a-col :span="7">
+            <a-form-model-item label="时间区间" prop="date">
               <a-range-picker v-model="dateRange" @change="selectedDate"/>
             </a-form-model-item>
-          </a-col>
-          <a-col :span="2">
-            <div class="table-tools-bar p0 log-search-bar">
-              <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-              <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-              <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
-              <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-            </div>
           </a-col>
         </a-row>
       </a-form-model>
     </div>
-    <!-- 列表 -->
-    <div class="log-list-rows-container">
-      <a-list :loading="loading"
-              :pagination="pagination"
-              :dataSource="rows">
-        <template v-slot:renderItem="item">
-          <a-list-item key="item.title">
-            <!-- 日志主体 -->
-            <div class="log-item-container">
-              <div class="log-item-container-left">
-                <span class="log-info" v-html="item.log"></span>
-              </div>
-              <div class="log-item-container-right">
-                <!-- 操作人 -->
-                <span class="log-item-user span-blue pointer"
-                      :title="item.username"
-                      @click="chooseUser(item.userId)">
-                  {{ item.username }}
-                </span>
-                <!-- 操作类型 -->
-                <span class="log-item-type">
-                  <span class="span-blue pointer" @click="chooseClassify(item.classify)">
-                    {{ item.classify | filterClassify }}
-                  </span> /
-                  <span class="span-blue pointer" @click="chooseType(item.classify, item.type)">
-                    {{ item.type | filterType(item.classify) }}
-                  </span>
-                </span>
-                <!-- 操作时间 -->
-                <span class="log-item-date">
-                  {{ item.createTime | formatDate }} ({{ item.createTimeAgo }})</span>
-              </div>
-            </div>
-            <!-- 操作 -->
-            <template #actions>
-              <span class="span-blue" title="查看参数" @click="preview(item.params)">参数</span>
-            </template>
-          </a-list-item>
+    <!-- 工具栏 -->
+    <div class="table-tools-bar">
+      <!-- 左侧 -->
+      <div class="tools-fixed-left">
+        <span class="table-title">操作日志</span>
+      </div>
+      <!-- 右侧 -->
+      <div class="tools-fixed-right">
+        <div class="table-tools-bar p0 log-search-bar">
+          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+    </div>
+    <!-- 表格 -->
+    <div class="table-main-container table-scroll-x-auto">
+      <a-table :columns="columns"
+               :dataSource="rows"
+               :pagination="pagination"
+               rowKey="id"
+               @change="getList"
+               :scroll="{x: '100%'}"
+               :loading="loading"
+               size="middle">
+        <!-- beforeValue -->
+        <template v-slot:classify="record">
+          {{ record.classify | filterClassify }}
         </template>
-      </a-list>
+      </a-table>
     </div>
     <!-- 事件 -->
-    <div class="log-list-event">
+    <div class="command-template-event">
       <!-- 预览 -->
       <EditorPreview ref="preview" title="参数预览" :editorConfig="{lang: 'json'}"/>
       <!-- 清理模态框 -->
@@ -100,13 +83,62 @@
 </template>
 
 <script>
-import { replaceStainKeywords } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
 import { enumValueOf, EVENT_CLASSIFY } from '@/lib/enum'
-import UserAutoComplete from '@/components/user/UserAutoComplete'
 import EditorPreview from '@/components/preview/EditorPreview'
+import UserAutoComplete from '@/components/user/UserAutoComplete'
+import { replaceStainKeywords } from '@/lib/utils'
 import EventLogClearModal from '@/components/clear/EventLogClearModal'
 import EventLogExportExportModal from '@/components/export/EventLogExportExportModal'
+
+/**
+ * 列
+ */
+const columns = [
+  {
+    title: '操作日志',
+    dataIndex: 'log',
+    key: 'log'
+  },
+  {
+    title: '操作分类',
+    key: 'classify',
+    width: 120,
+    scopedSlots: { customRender: 'classify' }
+  },
+  {
+    title: '操作类型',
+    key: 'type',
+    width: 120,
+    scopedSlots: { customRender: 'type' }
+  },
+  {
+    title: '操作用户',
+    key: 'username',
+    width: 120,
+    scopedSlots: { customRender: 'username' }
+  },
+  {
+    title: '操作ip',
+    key: 'ip',
+    width: 120,
+    scopedSlots: { customRender: 'ip' }
+  },
+  {
+    title: '操作时间',
+    key: 'time',
+    width: 150,
+    scopedSlots: { customRender: 'time' }
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    width: 120,
+    align: 'center',
+    scopedSlots: { customRender: 'action' }
+  }
+]
 
 export default {
   name: 'UserEventLogList',
