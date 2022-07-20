@@ -37,23 +37,30 @@ public class WebSideMessageController {
         return webSideMessageService.getUnreadCount();
     }
 
-    @IgnoreLog
-    @PostMapping("/poll-message")
-    @ApiOperation(value = "轮询站内信")
-    public WebSideMessagePollVO pollMessage(@RequestBody WebSideMessageRequest request) {
-        return webSideMessageService.pollMessage(request.getMaxId());
-    }
-
     @GetMapping("/set-all-read")
     @ApiOperation(value = "设置站内信全部已读")
     public Integer setAllRead() {
         return webSideMessageService.setAllRead();
     }
 
-    @PostMapping("/list")
-    @ApiOperation(value = "获取站内信列表")
-    public DataGrid<WebSideMessageVO> getMessageList(@RequestBody WebSideMessageRequest request) {
-        return webSideMessageService.getMessageList(request);
+    @PostMapping("/read")
+    @ApiOperation(value = "设置已读站内信")
+    public Integer readMessage(@RequestBody WebSideMessageRequest request) {
+        List<Long> idList = Valid.notNull(request.getIdList());
+        return webSideMessageService.readMessage(idList);
+    }
+
+    @GetMapping("/delete-all-read")
+    @ApiOperation(value = "删除全部已读站内信")
+    public Integer deleteAllRead() {
+        return webSideMessageService.deleteAllRead();
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除站内信")
+    public Integer deleteMessage(@RequestBody WebSideMessageRequest request) {
+        List<Long> idList = Valid.notNull(request.getIdList());
+        return webSideMessageService.deleteMessage(idList);
     }
 
     @PostMapping("/detail")
@@ -63,11 +70,30 @@ public class WebSideMessageController {
         return webSideMessageService.getMessageDetail(id);
     }
 
-    @PostMapping("/delete")
-    @ApiOperation(value = "删除站内信")
-    public Integer deleteMessage(@RequestBody WebSideMessageRequest request) {
-        List<Long> idList = Valid.notNull(request.getIdList());
-        return webSideMessageService.deleteMessage(idList);
+    @PostMapping("/list")
+    @ApiOperation(value = "获取站内信列表")
+    public DataGrid<WebSideMessageVO> getMessageList(@RequestBody WebSideMessageRequest request) {
+        return webSideMessageService.getMessageList(request);
+    }
+
+    @PostMapping("/get-new-message")
+    @ApiOperation(value = "获取最新站内信")
+    public WebSideMessagePollVO getNewMessage(@RequestBody WebSideMessageRequest request) {
+        return webSideMessageService.getNewMessage(request);
+    }
+
+    @PostMapping("/get-more-message")
+    @ApiOperation(value = "获取更多站内信")
+    public List<WebSideMessageVO> getMoreMessage(@RequestBody WebSideMessageRequest request) {
+        Valid.notNull(request.getMaxId());
+        return webSideMessageService.getMoreMessage(request);
+    }
+
+    @IgnoreLog
+    @PostMapping("/poll-new-message")
+    @ApiOperation(value = "轮询最新站内信")
+    public WebSideMessagePollVO pollWebSideMessage(@RequestBody WebSideMessageRequest request) {
+        return webSideMessageService.pollWebSideMessage(request.getMaxId());
     }
 
 }
