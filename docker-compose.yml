@@ -1,15 +1,29 @@
 version: '3.3'
 services:
-  orion-ops-service:
+  orion-ops:
     build: 
       context: .
-      dockerfile: docker/orion-ops-service/Dockerfile
-    image: orion-ops:1.0
-    # 启动的时候需要填写对应mysql,redis的地址和用户密码
-    # environment:  
-    #   - REDIS_HOST=
-    #   - REDIS_PORT=
-    #   - REDIS_PASSWORD=
-    #   - MYSQL_HOST=
-    #   - USER_NAME=
-    #   - USER_PASSWORD=
+      dockerfile: docker/orion-ops/Dockerfile
+    image: orion-ops:1.1.4
+    ports:
+      - "3090:80"
+    environment:
+      - MYSQL_HOST=orion-db
+      - REDIS_HOST=orion-redis
+    depends_on:
+      - orion-db
+      - orion-redis
+  orion-db:
+    build: 
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    environment:
+      - MYSQL_DATABASE=orion-ops
+      - MYSQL_USER=lijiahang
+      - MYSQL_PASSWORD=lijiahang
+      - MYSQL_ROOT_PASSWORD=admin123
+    image: mysql:5.7
+  orion-redis:
+    image: redis:6.0.16-alpine
+    command: redis-server --requirepass lijiahang
+
