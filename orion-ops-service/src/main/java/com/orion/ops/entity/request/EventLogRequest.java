@@ -63,4 +63,10 @@ public class EventLogRequest extends PageRequest {
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
 
+    /**
+     * @see com.orion.ops.constant.Const#ENABLE
+     */
+    @ApiModelProperty(value = "是否解析ip")
+    private Integer parserIp;
+
 }

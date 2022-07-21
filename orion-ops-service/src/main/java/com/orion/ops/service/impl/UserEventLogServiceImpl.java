@@ -1,6 +1,7 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.define.collect.MutableMap;
 import com.orion.lang.define.wrapper.DataGrid;
@@ -21,11 +22,13 @@ import com.orion.ops.service.api.UserEventLogService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.EventLogUtils;
+import com.orion.ops.utils.Utils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户日志实现
@@ -90,10 +93,24 @@ public class UserEventLogServiceImpl implements UserEventLogService {
                 .between(Objects1.isNoneNull(request.getRangeStart(), request.getRangeEnd()), UserEventLogDO::getCreateTime,
                         request.getRangeStart(), request.getRangeEnd())
                 .orderByDesc(UserEventLogDO::getCreateTime);
-        return DataQuery.of(userEventLogDAO)
+        // 查询
+        DataGrid<EventLogVO> logs = DataQuery.of(userEventLogDAO)
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(EventLogVO.class);
+        if (!Const.ENABLE.equals(request.getParserIp())) {
+            return logs;
+        }
+        // 解析ip
+        logs.forEach(log -> {
+            String ip = Optional.ofNullable(log.getParams())
+                    .map(JSON::parseObject)
+                    .map(s -> s.getString(EventKeys.INNER_REQUEST_IP))
+                    .orElse(null);
+            log.setIp(ip);
+            log.setIpLocation(Utils.getIpLocation(ip));
+        });
+        return logs;
     }
 
 }

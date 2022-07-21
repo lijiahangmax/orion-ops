@@ -1,5 +1,7 @@
 package com.orion.ops.utils;
 
+import com.orion.ext.location.region.LocationRegions;
+import com.orion.ext.location.region.core.Region;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -8,6 +10,7 @@ import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.lang.utils.net.IPs;
 import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.StainCode;
 import com.orion.ops.constant.system.SystemEnvAttr;
@@ -257,6 +260,34 @@ public class Utils {
                 .replaceAll("</sr>", Const.EMPTY)
                 .replaceAll("<b>", Const.EMPTY)
                 .replaceAll("</b>", Const.EMPTY);
+    }
+
+    /**
+     * 获取 ip 位置
+     *
+     * @param ip ip
+     * @return ip 位置
+     */
+    public static String getIpLocation(String ip) {
+        if (ip == null) {
+            return CnConst.UNKNOWN;
+        }
+        Region region = LocationRegions.getRegion(ip);
+        if (region != null) {
+            String net = region.getNet();
+            if (net.equals(CnConst.INTRANET_IP)) {
+                return net;
+            }
+            StringBuilder location = new StringBuilder()
+                    .append(region.getProvince())
+                    .append(Const.DASHED)
+                    .append(region.getCity())
+                    .append(Const.DASHED)
+                    .append(region.getCountry());
+            location.append(" (").append(net).append(')');
+            return location.toString();
+        }
+        return CnConst.UNKNOWN;
     }
 
 }

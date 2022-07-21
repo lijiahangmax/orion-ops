@@ -8,21 +8,22 @@
       <a-spin :spinning="loading">
         <a-timeline>
           <a-timeline-item v-for="log of loginLogs" :key="log.id">
+            <!-- 图标 -->
             <template #dot>
-              <!-- 图标 -->
               <div class="login-icon-wrapper">
                 <a-icon class="login-icon" type="desktop"/>
               </div>
             </template>
             <!-- 登陆ip -->
             <span class="login-info login-ip">
-              {{ log.ip }}
-              <!-- 登陆方式 -->
-              <span v-if="log.refreshLogin" class="login-mode">(自动登陆)</span>
-              <span v-else class="login-mode">(手动登陆)</span>
+              <span v-if="log.ip" class="mr8">{{ log.ip }}</span>
+              <span>{{ log.ipLocation }}</span>
             </span>
             <!-- 登陆时间 -->
-            <span class="login-info login-time">{{ log.createTime | formatDate }} ({{ log.createTimeAgo }})</span>
+            <span class="login-info login-time">
+              <span>{{ log.createTime | formatDate }} ({{ log.createTimeAgo }})</span>
+              <a-icon v-if="log.refreshLogin" class="login-mode" type="clock-circle" theme="twoTone" title="自动登陆"/>
+            </span>
             <!-- ua -->
             <span class="login-info login-ua">{{ log.userAgent }}</span>
           </a-timeline-item>
@@ -34,13 +35,13 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
-import { EVENT_CLASSIFY } from '@/lib/enum'
+import { EVENT_TYPE } from '@/lib/enum'
 
 export default {
   name: 'LoginHistory',
   data() {
     return {
-      type: EVENT_CLASSIFY.AUTHENTICATION.type.LOGIN.value,
+      type: EVENT_TYPE.LOGIN.value,
       loading: false,
       loginLogs: []
     }
@@ -51,6 +52,7 @@ export default {
       this.$api.getEventLogList({
         result: 1,
         onlyMyself: 1,
+        parserIp: 1,
         type: this.type,
         page: 1,
         limit: 30
@@ -61,7 +63,8 @@ export default {
           return {
             createTime: row.createTime,
             createTimeAgo: row.createTimeAgo,
-            ip: params.ip,
+            ip: row.ip,
+            ipLocation: row.ipLocation,
             userAgent: params.userAgent,
             refreshLogin: params.refreshLogin
           }
@@ -124,18 +127,19 @@ export default {
 }
 
 .login-info {
-  display: block;
+  display: flex;
   margin-bottom: 2px;
+  align-items: center;
 }
 
 .login-ip {
   color: rgba(0, 0, 0, 0.8);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .login-mode {
-  color: #52C41A;
+  font-size: 17px;
+  margin-left: 8px;
 }
-
 </style>

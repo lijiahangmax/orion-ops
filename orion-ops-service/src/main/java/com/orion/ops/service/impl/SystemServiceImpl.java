@@ -1,8 +1,6 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.ext.location.region.LocationRegions;
-import com.orion.ext.location.region.core.Region;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.Valid;
@@ -51,7 +49,7 @@ import java.util.stream.Collectors;
 @Service("systemService")
 public class SystemServiceImpl implements SystemService {
 
-    private SystemSpaceAnalysisDTO systemSpace;
+    private final SystemSpaceAnalysisDTO systemSpace;
 
     @Resource
     private SystemEnvService systemEnvService;
@@ -76,17 +74,8 @@ public class SystemServiceImpl implements SystemService {
         ipConfig.setEnableWhiteIpList(EnableType.of(SystemEnvAttr.ENABLE_WHITE_IP_LIST.getValue()).getValue());
         // ip
         ipConfig.setCurrentIp(ip);
-        Region region = LocationRegions.getRegion(ip);
-        if (region != null) {
-            StringBuilder location = new StringBuilder()
-                    .append(region.getProvince())
-                    .append(Const.DASHED)
-                    .append(region.getCity())
-                    .append(Const.DASHED)
-                    .append(region.getCountry());
-            location.append(" (").append(region.getNet()).append(')');
-            ipConfig.setIpLocation(location.toString());
-        }
+        // ip 位置
+        ipConfig.setIpLocation(Utils.getIpLocation(ip));
         return ipConfig;
     }
 

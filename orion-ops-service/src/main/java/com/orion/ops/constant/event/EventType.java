@@ -656,7 +656,7 @@ public enum EventType {
     /**
      * 清理 应用流水线
      */
-    DATA_CLEAR_APP_PIPELINE(8130, EventClassify.DATA_CLEAR, "清理", "清理应用流水线执行数据 <sb>${count}</sb>条"),
+    DATA_CLEAR_APP_PIPELINE(8130, EventClassify.DATA_CLEAR, "清理应用流水线", "清理应用流水线执行数据 <sb>${count}</sb>条"),
 
     /**
      * 清理 操作日志
