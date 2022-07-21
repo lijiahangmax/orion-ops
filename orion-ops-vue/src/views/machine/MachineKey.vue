@@ -16,7 +16,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="挂载状态" prop="mountStatus">
-              <a-select v-model="query.mountStatus" placeholder="全部" allowClear>
+              <a-select v-model="query.mountStatus" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option :value="type.value" v-for="type in MACHINE_KEY_MOUNT_STATUS" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
@@ -223,8 +223,8 @@ export default {
     return {
       MACHINE_KEY_MOUNT_STATUS,
       query: {
-        name: null,
-        description: null,
+        name: undefined,
+        description: undefined,
         mountStatus: undefined
       },
       rows: [],
@@ -316,10 +316,10 @@ export default {
     },
     mountAll() {
       this.$api.mountAllMachineKey()
-        .then(() => {
-          this.$message.success('挂载成功')
-          this.getList()
-        }).catch(() => {
+      .then(() => {
+        this.$message.success('挂载成功')
+        this.getList()
+      }).catch(() => {
         this.$message.error('挂载失败')
       })
     },
@@ -335,10 +335,10 @@ export default {
     },
     dumpAll() {
       this.$api.dumpAllMachineKey()
-        .then(() => {
-          this.$message.success('卸载成功')
-          this.getList()
-        }).catch(() => {
+      .then(() => {
+        this.$message.success('卸载成功')
+        this.getList()
+      }).catch(() => {
         this.$message.error('卸载失败')
       })
     },

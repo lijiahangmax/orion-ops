@@ -1,5 +1,7 @@
 package com.orion.ops.utils;
 
+import com.orion.ext.location.region.LocationRegions;
+import com.orion.ext.location.region.core.Region;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -8,6 +10,7 @@ import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.lang.utils.net.IPs;
 import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.StainCode;
 import com.orion.ops.constant.system.SystemEnvAttr;
@@ -254,7 +257,46 @@ public class Utils {
                 .replaceAll("<sr>", Const.EMPTY)
                 .replaceAll("<sr 0>", Const.EMPTY)
                 .replaceAll("<sr 2>", Const.EMPTY)
-                .replaceAll("</sr>", Const.EMPTY);
+                .replaceAll("</sr>", Const.EMPTY)
+                .replaceAll("<b>", Const.EMPTY)
+                .replaceAll("</b>", Const.EMPTY);
+    }
+
+    /**
+     * 获取 ip 位置
+     *
+     * @param ip ip
+     * @return ip 位置
+     */
+    public static String getIpLocation(String ip) {
+        if (ip == null) {
+            return CnConst.UNKNOWN;
+        }
+        Region region;
+        try {
+            region = LocationRegions.getRegion(ip, 3);
+        } catch (Exception e) {
+            return CnConst.UNKNOWN;
+        }
+        if (region != null) {
+            String net = region.getNet();
+            String province = region.getProvince();
+            if (net.equals(CnConst.INTRANET_IP)) {
+                return net;
+            }
+            if (province.equals(CnConst.UNKNOWN)) {
+                return province;
+            }
+            StringBuilder location = new StringBuilder()
+                    .append(region.getCountry())
+                    .append(Const.DASHED)
+                    .append(province)
+                    .append(Const.DASHED)
+                    .append(region.getCity());
+            location.append(" (").append(net).append(')');
+            return location.toString();
+        }
+        return CnConst.UNKNOWN;
     }
 
 }

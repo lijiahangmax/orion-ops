@@ -93,7 +93,7 @@
     ]
   },
   {
-    "name": "CI/CD",
+    "name": "构建发布",
     "icon": "deployment-unit",
     "children": [
       {

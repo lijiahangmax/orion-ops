@@ -1,8 +1,6 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.ext.location.region.LocationRegions;
-import com.orion.ext.location.region.core.Region;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.Valid;
@@ -51,7 +49,7 @@ import java.util.stream.Collectors;
 @Service("systemService")
 public class SystemServiceImpl implements SystemService {
 
-    private SystemSpaceAnalysisDTO systemSpace;
+    private final SystemSpaceAnalysisDTO systemSpace;
 
     @Resource
     private SystemEnvService systemEnvService;
@@ -76,17 +74,8 @@ public class SystemServiceImpl implements SystemService {
         ipConfig.setEnableWhiteIpList(EnableType.of(SystemEnvAttr.ENABLE_WHITE_IP_LIST.getValue()).getValue());
         // ip
         ipConfig.setCurrentIp(ip);
-        Region region = LocationRegions.getRegion(ip);
-        if (region != null) {
-            StringBuilder location = new StringBuilder()
-                    .append(region.getProvince())
-                    .append(Const.DASHED)
-                    .append(region.getCity())
-                    .append(Const.DASHED)
-                    .append(region.getCountry());
-            location.append(" (").append(region.getNet()).append(')');
-            ipConfig.setIpLocation(location.toString());
-        }
+        // ip 位置
+        ipConfig.setIpLocation(Utils.getIpLocation(ip));
         return ipConfig;
     }
 
@@ -176,7 +165,7 @@ public class SystemServiceImpl implements SystemService {
         buildFiles.clear();
 
         // 文件太多会导致 oom
-        // // vcs产物
+        // // vcs仓库
         // File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
         // List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
         // int vcsVersionCount = 0;
@@ -197,26 +186,6 @@ public class SystemServiceImpl implements SystemService {
         SystemAnalysisVO vo = Converts.to(systemSpace, SystemAnalysisVO.class);
         // 挂载秘钥数
         vo.setMountKeyCount(SessionHolder.getLoadKeys().size());
-        // IP黑名单
-        String blackIpList = systemEnvService.getEnvValue(SystemEnvAttr.BLACK_IP_LIST.getKey());
-        if (Strings.isBlank(blackIpList)) {
-            vo.setBlackIpListCount(0L);
-        } else {
-            long validBlackIpCount = Arrays.stream(blackIpList.split(Const.LF))
-                    .filter(Strings::isNotBlank)
-                    .count();
-            vo.setBlackIpListCount(validBlackIpCount);
-        }
-        // IP白名单
-        String whiteIpList = systemEnvService.getEnvValue(SystemEnvAttr.WHITE_IP_LIST.getKey());
-        if (Strings.isBlank(whiteIpList)) {
-            vo.setWhiteIpListCount(0L);
-        } else {
-            long validWhiteIpCount = Arrays.stream(whiteIpList.split(Const.LF))
-                    .filter(Strings::isNotBlank)
-                    .count();
-            vo.setWhiteIpListCount(validWhiteIpCount);
-        }
         // 文件清理
         vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
         vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());

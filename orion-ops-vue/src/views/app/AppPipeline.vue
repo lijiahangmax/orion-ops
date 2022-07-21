@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name" allowClear/>
+              <PipelineAutoComplete ref="pipelineSelector" @change="selectedPipeline" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -105,6 +105,7 @@ import { enumValueOf, STAGE_TYPE } from '@/lib/enum'
 import AppPipelineDetailViewDrawer from '@/components/app/AppPipelineDetailViewDrawer'
 import AddPipelineModal from '@/components/app/AddPipelineModal'
 import AppPipelineExecModal from '@/components/app/AppPipelineExecModal'
+import PipelineAutoComplete from '@/components/app/PipelineAutoComplete'
 
 /**
  * 列
@@ -151,13 +152,20 @@ const columns = [
 export default {
   name: 'AppPipeline',
   components: {
+    PipelineAutoComplete,
     AppPipelineExecModal,
     AddPipelineModal,
     AppPipelineDetailViewDrawer
   },
+  watch: {
+    'query.profileId'(e) {
+      this.$refs.pipelineSelector.loadData(e)
+    }
+  },
   data: function() {
     return {
       query: {
+        id: undefined,
         profileId: undefined,
         name: undefined,
         description: undefined
@@ -179,7 +187,7 @@ export default {
   methods: {
     chooseProfile({ id }) {
       this.query.profileId = id
-      this.getList({})
+      this.resetForm()
     },
     getList(page = this.pagination) {
       this.loading = true
@@ -199,6 +207,18 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    selectedPipeline(id, name) {
+      if (id) {
+        this.query.id = id
+        this.query.name = undefined
+      } else {
+        this.query.id = undefined
+        this.query.name = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     remove(idList) {
       this.$api.deleteAppPipeline({
@@ -223,6 +243,9 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.$refs.pipelineSelector.reset()
+      this.query.id = undefined
+      this.query.name = undefined
       this.getList({})
     }
   },

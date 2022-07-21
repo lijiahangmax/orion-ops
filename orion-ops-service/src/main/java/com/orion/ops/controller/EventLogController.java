@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 @Api(tags = "操作日志")
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/log")
+@RequestMapping("/orion/api/event-log")
 public class EventLogController {
 
     @Resource

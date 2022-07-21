@@ -49,7 +49,10 @@
       <!-- 操作日志 -->
       <div class="event-log-container">
         <a-card title="操作日志" :bordered="false" style="width: 100%; height: 100%;">
-          <EventLogList class="event-log-list-wrapper" :disableSearch="true"/>
+          <EventLogList class="event-log-list-wrapper"
+                        :disableSearch="true"
+                        :disableAction="true"
+                        :disableClick="true"/>
         </a-card>
       </div>
     </div>

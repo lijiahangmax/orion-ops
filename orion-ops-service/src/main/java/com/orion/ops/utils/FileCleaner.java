@@ -40,7 +40,7 @@ public class FileCleaner {
         releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.SWAP_PATH.getValue()));
         // 构建产物
         releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.DIST_PATH.getValue()));
-        // // vcs产物 文件太多会 oom
+        // // vcs仓库 文件太多会 oom
         // File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
         // List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
         // for (File vcs : vcsPaths) {
@@ -77,7 +77,7 @@ public class FileCleaner {
                 releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.DIST_PATH.getValue()));
                 break;
             case VCS_FILE:
-                // vcs产物
+                // vcs仓库
                 File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
                 List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
                 for (File vcs : vcsPaths) {

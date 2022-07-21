@@ -6,11 +6,11 @@
                    @search="search"
                    allowClear>
     <template #dataSource>
-      <a-select-option v-for="user in visibleUser"
-                       :key="user.id"
-                       :value="JSON.stringify(user)"
+      <a-select-option v-for="profile in visibleProfile"
+                       :key="profile.id"
+                       :value="JSON.stringify(profile)"
                        @click="choose">
-        {{ user.username }}
+        {{ profile.name }}
       </a-select-option>
     </template>
   </a-auto-complete>
@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'UserAutoComplete',
+  name: 'ProfileAutoComplete',
   props: {
     disabled: {
       type: Boolean,
@@ -31,8 +31,8 @@ export default {
   },
   data() {
     return {
-      userList: [],
-      visibleUser: [],
+      profileList: [],
+      visibleProfile: [],
       value: undefined
     }
   },
@@ -44,7 +44,7 @@ export default {
         const v = JSON.parse(value)
         if (typeof v === 'object') {
           id = v.id
-          val = v.username
+          val = v.name
         }
       } catch (e) {
       }
@@ -58,33 +58,30 @@ export default {
     },
     search(value) {
       if (!value) {
-        this.visibleUser = this.userList
+        this.visibleProfile = this.profileList
         return
       }
-      this.visibleUser = this.userList.filter(s => s.username.toLowerCase().includes(value.toLowerCase()))
-    },
-    set(id) {
-      const filterUsers = this.userList.filter(s => s.id === id)
-      if (filterUsers.length) {
-        this.value = JSON.stringify(filterUsers[0])
-      }
+      this.visibleProfile = this.profileList.filter(s => s.name.toLowerCase().includes(value.toLowerCase()))
     },
     reset() {
       this.value = undefined
-      this.visibleUser = this.userList
+      this.visibleProfile = this.profileList
     }
   },
   async created() {
-    const userListRes = await this.$api.getUserList({ limit: 10000 })
-    if (userListRes.data && userListRes.data.rows && userListRes.data.rows.length) {
-      for (const row of userListRes.data.rows) {
-        this.userList.push({
+    const { data } = await this.$api.getProfileList({
+      limit: 10000
+    })
+    console.log(data)
+    if (data && data.rows && data.rows.length) {
+      for (const row of data.rows) {
+        this.profileList.push({
           id: row.id,
-          username: row.username,
-          nickname: row.nickname
+          name: row.name
         })
       }
-      this.visibleUser = this.userList
+      console.log(this.profileList)
+      this.visibleProfile = this.profileList
     }
   }
 }

@@ -658,7 +658,6 @@ CREATE TABLE `machine_terminal`
     `font_size`        int(11)                                                 NULL DEFAULT 14 COMMENT '字体大小',
     `font_family`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字体名称',
     `enable_web_link`  tinyint(4)                                              NULL DEFAULT 2 COMMENT '是否开启url link 1开启 2关闭',
-    `enable_web_gl`    tinyint(4)                                              NULL DEFAULT 2 COMMENT '是否开启webGL加速 1开启 2关闭',
     `deleted`          tinyint(4)                                              NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time`      datetime(4)                                             NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
     `update_time`      datetime(4)                                             NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',

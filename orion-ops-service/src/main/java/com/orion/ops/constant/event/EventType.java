@@ -656,12 +656,7 @@ public enum EventType {
     /**
      * 清理 应用流水线
      */
-    DATA_CLEAR_APP_PIPELINE(8130, EventClassify.DATA_CLEAR, "清理", "清理应用流水线执行数据 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 站内信
-     */
-    DATA_CLEAR_WEB_SIDE_MESSAGE(8135, EventClassify.DATA_CLEAR, "清理站内信", "清理站内信 <sb>${count}</sb>条"),
+    DATA_CLEAR_APP_PIPELINE(8130, EventClassify.DATA_CLEAR, "清理应用流水线", "清理应用流水线执行数据 <sb>${count}</sb>条"),
 
     /**
      * 清理 操作日志
@@ -746,11 +741,6 @@ public enum EventType {
      * 导出命令模板
      */
     DATA_EXPORT_COMMAND_TEMPLATE(8605, EventClassify.DATA_EXPORT, "导出命令模板", "导出命令模板 <sb>${count}</sb>条"),
-
-    /**
-     * 导出站内信
-     */
-    DATA_EXPORT_WEB_SIDE_MESSAGE(8610, EventClassify.DATA_EXPORT, "导出站内信", "导出站内信 <sb>${count}</sb>条"),
 
     /**
      * 导出操作日志

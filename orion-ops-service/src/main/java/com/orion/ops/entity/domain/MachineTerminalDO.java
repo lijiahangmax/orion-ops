@@ -84,15 +84,6 @@ public class MachineTerminalDO implements Serializable {
     private Integer enableWebLink;
 
     /**
-     * 是否开启webGL加速 1开启 2关闭
-     *
-     * @see com.orion.ops.constant.Const#ENABLE
-     * @see com.orion.ops.constant.Const#DISABLE
-     */
-    @TableField("enable_web_gl")
-    private Integer enableWebGL;
-
-    /**
      * 是否删除 1未删除 2已删除
      *
      * @see com.orion.ops.constant.Const#NOT_DELETED

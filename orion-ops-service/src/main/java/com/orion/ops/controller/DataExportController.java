@@ -91,13 +91,6 @@ public class DataExportController {
         dataExportService.exportCommandTemplate(request, response);
     }
 
-    @PostMapping("/web-side-message")
-    @ApiOperation(value = "导出站内信")
-    @EventLog(EventType.DATA_EXPORT_WEB_SIDE_MESSAGE)
-    public void exportWebSideMessage(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
-        dataExportService.exportWebSideMessage(request, response);
-    }
-
     @PostMapping("/event-log")
     @ApiOperation(value = "导出用户操作日志")
     @EventLog(EventType.DATA_EXPORT_EVENT_LOG)

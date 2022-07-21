@@ -89,7 +89,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setFontFamily(config.getFontFamily());
         access.setFontColor(config.getFontColor());
         access.setEnableWebLink(config.getEnableWebLink());
-        access.setEnableWebGL(config.getEnableWebGL());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(cacheKey, machineId + Strings.EMPTY,
@@ -113,7 +112,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
             insert.setFontSize(TerminalConst.FONT_SIZE);
             insert.setFontFamily(TerminalConst.FONT_FAMILY);
             insert.setEnableWebLink(Const.DISABLE);
-            insert.setEnableWebGL(Const.DISABLE);
             machineTerminalDAO.insert(insert);
             config = insert;
         }
@@ -139,7 +137,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setBackgroundColor(request.getBackgroundColor());
         update.setUpdateTime(new Date());
         update.setEnableWebLink(request.getEnableWebLink());
-        update.setEnableWebGL(request.getEnableWebGL());
         // 修改
         int effect = machineTerminalDAO.updateById(update);
         // 设置日志参数

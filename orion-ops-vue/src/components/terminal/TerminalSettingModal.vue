@@ -33,15 +33,6 @@
         <a-form-item label="启用链接插件">
           <a-switch v-decorator="decorators.enableWebLink"/>
         </a-form-item>
-        <a-form-item label="启用webGL加速">
-          <a-tooltip>
-            <template #title>
-              启用webGL加速 (如果可用)<br>
-              ⚠试验性功能, 可能不稳定
-            </template>
-            <a-switch v-decorator="decorators.enableWebGL"/>
-          </a-tooltip>
-        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
@@ -96,9 +87,6 @@ function getDecorators() {
     }],
     enableWebLink: ['enableWebLink', {
       valuePropName: 'checked'
-    }],
-    enableWebGL: ['enableWebGL', {
-      valuePropName: 'checked'
     }]
   }
 }
@@ -151,7 +139,6 @@ export default {
         this.id = data.id
         this.setting = pick(Object.assign({}, data), 'terminalType', 'fontSize', 'fontFamily', 'fontColor', 'backgroundColor')
         this.setting.enableWebLink = data.enableWebLink === 1
-        this.setting.enableWebGL = data.enableWebGL === 1
         this.$nextTick(() => {
           this.form.setFieldsValue(this.setting)
         })
@@ -179,8 +166,7 @@ export default {
           fontFamily: values.fontFamily,
           fontColor: values.fontColor,
           backgroundColor: values.backgroundColor,
-          enableWebLink: values.enableWebLink ? 1 : 2,
-          enableWebGL: values.enableWebGL ? 1 : 2
+          enableWebLink: values.enableWebLink ? 1 : 2
         })
         this.$message.success('配置修改成功, 重新连接后后生效')
         this.close()

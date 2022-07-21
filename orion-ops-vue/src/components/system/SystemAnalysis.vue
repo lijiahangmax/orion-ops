@@ -45,8 +45,8 @@
     <!-- 系统统计分析 -->
     <div class="system-analysis-descriptions">
       <a-descriptions title="系统统计分析">
-        <!-- 已挂载秘钥数量 -->
-        <a-descriptions-item label="已挂载秘钥数量" :span="3">
+        <!-- 已挂载秘钥 -->
+        <a-descriptions-item label="已挂载秘钥" :span="3">
           <span class="analysis-count">
             <span class="analysis-field">{{ analysis.mountKeyCount }}</span>个
           </span>
@@ -102,8 +102,8 @@
             </span>
           </div>
         </a-descriptions-item>
-        <!-- 旧版本构建产物 -->
-        <a-descriptions-item label="旧版本构建产物" :span="3">
+        <!-- 构建产物 -->
+        <a-descriptions-item label="构建产物" :span="3">
           <span class="analysis-count">
             <span class="analysis-field">{{ analysis.distVersionCount }}</span>个
           </span>
@@ -119,8 +119,8 @@
            </span>
           </div>
         </a-descriptions-item>
-        <!-- 旧版本应用仓库 -->
-        <!--        <a-descriptions-item label="旧版本应用仓库" :span="3">-->
+        <!-- 应用代码仓库 -->
+        <!--        <a-descriptions-item label="应用代码仓库" :span="3">-->
         <!--          <span class="analysis-count">-->
         <!--            <span class="analysis-field">{{ analysis.vcsVersionCount }}</span>个-->
         <!--          </span>-->
@@ -136,18 +136,6 @@
         <!--           </span>-->
         <!--          </div>-->
         <!--        </a-descriptions-item>-->
-        <!-- IP白名单数 -->
-        <a-descriptions-item label="IP白名单数" :span="3">
-        <span class="analysis-count">
-          <span class="analysis-field">{{ analysis.whiteIpListCount }}</span>个
-        </span>
-        </a-descriptions-item>
-        <!-- IP黑名单数 -->
-        <a-descriptions-item label="IP黑名单数" :span="3">
-        <span class="analysis-count">
-          <span class="analysis-field">{{ analysis.blackIpListCount }}</span>个
-        </span>
-        </a-descriptions-item>
       </a-descriptions>
     </div>
     <!-- 操作 -->
@@ -187,9 +175,7 @@ export default {
         distVersionCount: 0,
         distFileSize: '0 B',
         vcsVersionCount: 0,
-        vcsVersionFileSize: '0 B',
-        blackIpListCount: 0,
-        whiteIpListCount: 0
+        vcsVersionFileSize: '0 B'
       },
       visibleClean: {
         tempFile: true,

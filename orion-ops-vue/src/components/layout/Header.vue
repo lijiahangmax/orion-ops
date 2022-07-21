@@ -24,8 +24,7 @@
                            v-show="profileSelectorVisible"
                            @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
       <!-- 站内信 -->
-      <WebSideMessageDropdown id="web-side-message-dropdown"
-                              class="header-block-container"/>
+      <WebSideMessageDrawer id="web-side-message-drawer" class="header-block-container"/>
       <!-- 用户下拉 -->
       <HeaderUser id="header-user" class="header-block-container"/>
     </div>
@@ -36,12 +35,12 @@
 
 import HeaderProfileSelect from './HeaderProfileSelect'
 import HeaderUser from './HeaderUser'
-import WebSideMessageDropdown from '@/components/layout/WebSideMessageDropdown'
+import WebSideMessageDrawer from '@/components/layout/WebSideMessageDrawer'
 
 export default {
   name: 'Header',
   components: {
-    WebSideMessageDropdown,
+    WebSideMessageDrawer,
     HeaderProfileSelect,
     HeaderUser
   },
@@ -124,7 +123,7 @@ export default {
       }
     }
 
-    #web-side-message-dropdown {
+    #web-side-message-drawer {
       padding: 0 16px;
       height: 48px;
       display: flex;

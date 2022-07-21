@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name" allowClear/>
+              <MachineAutoComplete ref="machineSelector" @change="selectedMachine" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="全部" allowClear>
+              <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option :value="status.value" v-for="status in ENABLE_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
@@ -239,6 +239,7 @@ import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
 import MachineExportModal from '@/components/export/MachineExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
+import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 
 const columns = [
   {
@@ -371,6 +372,7 @@ const moreMenuHandler = {
 export default {
   name: 'MachineList',
   components: {
+    MachineAutoComplete,
     DataImportModal,
     MachineExportModal,
     TerminalModal,
@@ -382,11 +384,12 @@ export default {
       ENABLE_STATUS,
       rows: [],
       query: {
-        name: null,
-        tag: null,
-        host: null,
+        id: undefined,
+        name: undefined,
+        tag: undefined,
+        host: undefined,
         status: undefined,
-        description: null
+        description: undefined
       },
       pagination: {
         current: 1,
@@ -437,6 +440,18 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    selectedMachine(id, name) {
+      if (id) {
+        this.query.id = id
+        this.query.name = undefined
+      } else {
+        this.query.id = undefined
+        this.query.name = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     openAdd() {
       this.$refs.addModal.add()
@@ -545,6 +560,9 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.$refs.machineSelector.reset()
+      this.query.id = undefined
+      this.query.name = undefined
       this.getList({})
     }
   },

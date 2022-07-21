@@ -6,11 +6,11 @@
                    @search="search"
                    allowClear>
     <template #dataSource>
-      <a-select-option v-for="user in visibleUser"
-                       :key="user.id"
-                       :value="JSON.stringify(user)"
+      <a-select-option v-for="app in visibleApp"
+                       :key="app.id"
+                       :value="JSON.stringify(app)"
                        @click="choose">
-        {{ user.username }}
+        {{ app.name }}
       </a-select-option>
     </template>
   </a-auto-complete>
@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'UserAutoComplete',
+  name: 'AppAutoComplete',
   props: {
     disabled: {
       type: Boolean,
@@ -31,8 +31,8 @@ export default {
   },
   data() {
     return {
-      userList: [],
-      visibleUser: [],
+      appList: [],
+      visibleApp: [],
       value: undefined
     }
   },
@@ -44,7 +44,7 @@ export default {
         const v = JSON.parse(value)
         if (typeof v === 'object') {
           id = v.id
-          val = v.username
+          val = v.name
         }
       } catch (e) {
       }
@@ -58,33 +58,28 @@ export default {
     },
     search(value) {
       if (!value) {
-        this.visibleUser = this.userList
+        this.visibleApp = this.appList
         return
       }
-      this.visibleUser = this.userList.filter(s => s.username.toLowerCase().includes(value.toLowerCase()))
-    },
-    set(id) {
-      const filterUsers = this.userList.filter(s => s.id === id)
-      if (filterUsers.length) {
-        this.value = JSON.stringify(filterUsers[0])
-      }
+      this.visibleApp = this.appList.filter(s => s.name.toLowerCase().includes(value.toLowerCase()))
     },
     reset() {
       this.value = undefined
-      this.visibleUser = this.userList
+      this.visibleApp = this.appList
     }
   },
   async created() {
-    const userListRes = await this.$api.getUserList({ limit: 10000 })
-    if (userListRes.data && userListRes.data.rows && userListRes.data.rows.length) {
-      for (const row of userListRes.data.rows) {
-        this.userList.push({
+    const { data } = await this.$api.getAppList({
+      limit: 10000
+    })
+    if (data && data.rows && data.rows.length) {
+      for (const row of data.rows) {
+        this.appList.push({
           id: row.id,
-          username: row.username,
-          nickname: row.nickname
+          name: row.name
         })
       }
-      this.visibleUser = this.userList
+      this.visibleApp = this.appList
     }
   }
 }

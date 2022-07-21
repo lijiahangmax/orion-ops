@@ -56,7 +56,7 @@ public class MachineTerminalController {
         return machineTerminalService.getAccessConfig(machineId);
     }
 
-    @PostMapping("/support/pty")
+    @GetMapping("/support/pty")
     @ApiOperation(value = "获取支持的终端类型")
     public String[] getSupportedPty() {
         return Arrays.stream(TerminalType.values())
@@ -64,7 +64,7 @@ public class MachineTerminalController {
                 .toArray(String[]::new);
     }
 
-    @PostMapping("/get/{machineId}")
+    @GetMapping("/get/{machineId}")
     @ApiOperation(value = "获取终端配置")
     public MachineTerminalVO getSetting(@PathVariable Long machineId) {
         return machineTerminalService.getMachineConfig(machineId);
@@ -81,9 +81,6 @@ public class MachineTerminalController {
         }
         if (request.getEnableWebLink() != null) {
             Valid.in(request.getEnableWebLink(), Const.ENABLE, Const.DISABLE);
-        }
-        if (request.getEnableWebGL() != null) {
-            Valid.in(request.getEnableWebGL(), Const.ENABLE, Const.DISABLE);
         }
         return machineTerminalService.updateSetting(request);
     }

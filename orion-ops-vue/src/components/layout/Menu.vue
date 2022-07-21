@@ -5,9 +5,11 @@
           :defaultOpenKeys="defaultOpenKeys">
     <template v-for="menuItem in menuList">
       <!-- 一级菜单 -->
-      <a-menu-item v-if="!menuItem.children" @click="toRoute(menuItem.path)" :key="menuItem.id">
-        <a-icon :type="menuItem.icon"/>
-        <span class="usn">{{ menuItem.name }}</span>
+      <a-menu-item v-if="!menuItem.children" :key="menuItem.id">
+        <a :href="`#${menuItem.path}`" :title="menuItem.name">
+          <a-icon :type="menuItem.icon"/>
+          {{ menuItem.name }}
+        </a>
       </a-menu-item>
       <!-- 二级菜单 -->
       <a-sub-menu v-else :key="menuItem.id">
@@ -15,10 +17,10 @@
           <a-icon :type="menuItem.icon"/>
           <span class="usn">{{ menuItem.name }}</span>
         </template>
-        <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id" @click="toRoute(subMenuItem.path)">
-          <span class="usn">
+        <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id">
+          <a :href="`#${subMenuItem.path}`" :title="subMenuItem.name">
             {{ subMenuItem.name }}
-          </span>
+          </a>
         </a-menu-item>
       </a-sub-menu>
     </template>
@@ -36,9 +38,6 @@ export default {
     }
   },
   methods: {
-    toRoute(path) {
-      this.$router.push({ path })
-    },
     chooseMenu(route = this.$route) {
       const routerPath = route.path
       for (const menu of this.menuList) {

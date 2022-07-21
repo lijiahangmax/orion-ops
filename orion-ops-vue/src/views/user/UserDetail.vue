@@ -9,9 +9,9 @@
       <a-tab-pane :key="2" tab="操作日志">
         <EventLogList/>
       </a-tab-pane>
-      <!-- 站内信 -->
-      <a-tab-pane :key="3" tab="站内信">
-        <WebSideMessageList/>
+      <!-- 登陆历史 -->
+      <a-tab-pane :key="3" tab="登陆历史">
+        <LoginHistory/>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -30,7 +30,7 @@ export default {
   components: {
     UserBasicForm,
     EventLogList: () => import('@/components/user/EventLogList'),
-    WebSideMessageList: () => import('@/components/user/WebSideMessageList')
+    LoginHistory: () => import('@/components/user/LoginHistory')
   },
   methods: {
     changeTab(key) {
@@ -42,7 +42,7 @@ export default {
           document.title = '操作日志'
           break
         case 3:
-          document.title = '站内信'
+          document.title = '登陆历史'
           break
         default:
           break

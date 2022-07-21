@@ -258,10 +258,10 @@ export default {
       machineList: [],
       rows: [],
       query: {
-        machineId: null,
-        key: null,
-        value: null,
-        description: null
+        machineId: undefined,
+        key: undefined,
+        value: undefined,
+        description: undefined
       },
       pagination: {
         current: 1,

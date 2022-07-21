@@ -54,6 +54,12 @@ public class EventLogVO {
     @ApiModelProperty(value = "操作时间")
     private String createTimeAgo;
 
+    @ApiModelProperty(value = "操作ip")
+    private String ip;
+
+    @ApiModelProperty(value = "操作ip位置")
+    private String ipLocation;
+
     static {
         TypeStore.STORE.register(UserEventLogDO.class, EventLogVO.class, p -> {
             EventLogVO vo = new EventLogVO();

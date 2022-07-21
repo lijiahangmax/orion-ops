@@ -48,4 +48,10 @@ public class CnConst {
 
     public static final String ORION_OPS_AUTHOR = "李佳航";
 
+    public static final String UNKNOWN = "未知";
+
+    public static final String INTRANET_IP = "内网IP";
+
+    public static final String ZERO = "0";
+
 }

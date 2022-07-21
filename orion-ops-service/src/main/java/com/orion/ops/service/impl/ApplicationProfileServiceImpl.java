@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -138,6 +135,7 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     @Override
     public List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationProfileDO::getId, request.getId())
                 .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationProfileDO::getDescription, request.getDescription());

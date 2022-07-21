@@ -4,6 +4,9 @@ import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.constant.CnConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.PropertiesConst;
 import com.orion.ops.constant.event.EventType;
 import com.orion.ops.constant.system.SystemCleanType;
 import com.orion.ops.constant.system.SystemConfigKey;
@@ -11,19 +14,13 @@ import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.ConfigIpListRequest;
 import com.orion.ops.entity.request.SystemFileCleanRequest;
 import com.orion.ops.entity.request.SystemOptionRequest;
-import com.orion.ops.entity.vo.IpListConfigVO;
-import com.orion.ops.entity.vo.SystemAnalysisVO;
-import com.orion.ops.entity.vo.SystemOptionVO;
-import com.orion.ops.entity.vo.ThreadPoolMetricsVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.SystemService;
 import com.orion.ops.utils.Valid;
 import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +42,7 @@ public class SystemController {
     @Resource
     private SystemService systemService;
 
-    @PostMapping("/ip-info")
+    @GetMapping("/ip-info")
     @ApiOperation(value = "获取ip信息")
     public IpListConfigVO getIpInfo(HttpServletRequest request) {
         return systemService.getIpInfo(Servlets.getRemoteAddr(request));
@@ -70,13 +67,13 @@ public class SystemController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/get-system-analysis")
+    @GetMapping("/get-system-analysis")
     @ApiOperation(value = "获取系统分析信息")
     public SystemAnalysisVO getSystemAnalysis() {
         return systemService.getSystemAnalysis();
     }
 
-    @PostMapping("/re-analysis")
+    @GetMapping("/re-analysis")
     @ApiOperation(value = "重新进行系统统计分析")
     @EventLog(EventType.RE_ANALYSIS_SYSTEM)
     @RequireRole(RoleType.ADMINISTRATOR)
@@ -96,18 +93,29 @@ public class SystemController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/get-system-options")
+    @GetMapping("/get-system-options")
     @ApiOperation(value = "获取系统配置项")
     @RequireRole(RoleType.ADMINISTRATOR)
     public SystemOptionVO getSystemOptions() {
         return systemService.getSystemOptions();
     }
 
-    @PostMapping("/get-thread-metrics")
+    @GetMapping("/get-thread-metrics")
     @ApiOperation(value = "获取线程池指标")
     @RequireRole(RoleType.ADMINISTRATOR)
     public List<ThreadPoolMetricsVO> getThreadMetrics() {
         return systemService.getThreadPoolMetrics();
+    }
+
+    @GetMapping("/about")
+    @ApiOperation(value = "获取应用信息")
+    public SystemAboutVO getSystemAbout() {
+        return SystemAboutVO.builder()
+                .orionKitVersion(Const.ORION_KIT_VERSION)
+                .orionOpsVersion(PropertiesConst.ORION_OPS_VERSION)
+                .author(Const.ORION_AUTHOR)
+                .authorCn(CnConst.ORION_OPS_AUTHOR)
+                .build();
     }
 
 }

@@ -309,6 +309,8 @@ export function replaceStainKeywords(message) {
     .replaceAll('&lt;sr 2&gt;', '<span class="span-red mx2">')
     .replaceAll('&lt;sr&gt;', '<span class="span-red mx4">')
     .replaceAll('&lt;/sr&gt;', '</span>')
+    .replaceAll('&lt;b&gt;', '<b>')
+    .replaceAll('&lt;/b&gt;', '</b>')
 }
 
 /**
@@ -324,6 +326,9 @@ export function clearStainKeywords(message) {
     .replaceAll('&lt;sr 2&gt;', '')
     .replaceAll('&lt;sr&gt;', '')
     .replaceAll('&lt;/sr&gt;', '')
+    .replaceAll('&lt;b&gt;', '')
+    .replaceAll('&lt;/b&gt;', '')
+    .replaceAll('<br/>', '\n')
 }
 
 /**

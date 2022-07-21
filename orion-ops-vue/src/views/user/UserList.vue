@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="4">
             <a-form-model-item label="角色" prop="role">
-              <a-select v-model="query.role" placeholder="全部" allowClear>
+              <a-select v-model="query.role" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option v-for="role in ROLE_TYPE"
                                  :value="role.value"
                                  :key="role.value">
@@ -131,7 +131,7 @@
             <span class="span-blue pointer" @click="update(record.id)">修改</span>
             <a-divider type="vertical"/>
             <!-- 操作日志 -->
-            <a :href="`#/user/event/log/${record.id}`">日志</a>
+            <a :href="`#/user/event/logs/${record.id}`">日志</a>
             <a-divider type="vertical"/>
             <!-- 重置密码 -->
             <a @click="resetPassword(record.id)">重置密码</a>
@@ -147,7 +147,7 @@
           </div>
           <div v-else>
             <!-- 操作日志 -->
-            <a :href="`#/user/event/log/${record.id}`">日志</a>
+            <a :href="`#/user/event/logs/${record.id}`">日志</a>
           </div>
         </template>
       </a-table>
@@ -259,10 +259,10 @@ export default {
     return {
       ROLE_TYPE,
       query: {
-        username: null,
-        nickname: null,
-        phone: null,
-        email: null,
+        username: undefined,
+        nickname: undefined,
+        phone: undefined,
+        email: undefined,
         role: undefined,
         status: undefined
       },

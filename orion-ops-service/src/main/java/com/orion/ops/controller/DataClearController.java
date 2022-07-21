@@ -91,14 +91,6 @@ public class DataClearController {
         return dataClearService.clearAppPipeline(request);
     }
 
-    @PostMapping("/web-side-message")
-    @ApiOperation(value = "清理站内信")
-    @EventLog(EventType.DATA_CLEAR_WEB_SIDE_MESSAGE)
-    public Integer clearWebSideMessage(@RequestBody DataClearRequest request) {
-        this.validParams(request);
-        return dataClearService.clearWebSideMessage(request);
-    }
-
     @PostMapping("/event-log")
     @ApiOperation(value = "清理用户操作日志")
     @RequireRole(RoleType.ADMINISTRATOR)
