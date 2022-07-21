@@ -275,15 +275,19 @@ public class Utils {
         Region region = LocationRegions.getRegion(ip);
         if (region != null) {
             String net = region.getNet();
+            String province = region.getProvince();
             if (net.equals(CnConst.INTRANET_IP)) {
                 return net;
             }
+            if (province.equals(CnConst.UNKNOWN)) {
+                return province;
+            }
             StringBuilder location = new StringBuilder()
-                    .append(region.getProvince())
+                    .append(region.getCountry())
                     .append(Const.DASHED)
-                    .append(region.getCity())
+                    .append(province)
                     .append(Const.DASHED)
-                    .append(region.getCountry());
+                    .append(region.getCity());
             location.append(" (").append(net).append(')');
             return location.toString();
         }

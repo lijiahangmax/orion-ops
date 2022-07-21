@@ -15,7 +15,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="7">
-            <a-form-model-item label="日志分类" prop="classify">
+            <a-form-model-item label="操作分类" prop="classify">
               <a-input-group compact>
                 <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
                   <a-select-option :value="classify.value" v-for="classify in EVENT_CLASSIFY" :key="classify.value">
@@ -49,7 +49,7 @@
         <div class="table-tools-bar p0 log-search-bar">
           <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
           <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-          <a-icon type="search" class="tools-icon" title="查询" @click="getEventLog()"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
           <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
@@ -64,9 +64,43 @@
                :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
-        <!-- beforeValue -->
+        <!-- 操作描述 -->
+        <template v-slot:log="record">
+          <span v-html="record.log"/>
+        </template>
+        <!-- 操作分类 -->
         <template v-slot:classify="record">
-          {{ record.classify | filterClassify }}
+          <span class="span-blue pointer" @click="chooseClassify(record.classify)">
+            {{ record.classify | filterClassify }}
+          </span>
+        </template>
+        <!-- 操作类型 -->
+        <template v-slot:type="record">
+          <span class="span-blue pointer" @click="chooseType(record.classify, record.type)">
+            {{ record.type | filterType }}
+          </span>
+        </template>
+        <!-- 操作用户 -->
+        <template v-slot:username="record">
+          <span class="span-blue pointer" @click="chooseUser(record.userId)">
+            {{ record.username }}
+          </span>
+        </template>
+        <!-- 操作IP -->
+        <template v-slot:ip="record">
+          <span>{{ record.ip }}</span>
+          <br>
+          <span>{{ record.ipLocation }}</span>
+        </template>
+        <!-- 操作时间 -->
+        <template v-slot:time="record">
+          <span>{{ record.createTime | formatDate }}</span>
+          <br>
+          <span>({{ record.createTimeAgo }})</span>
+        </template>
+        <!-- 操作 -->
+        <template v-slot:action="record">
+          <span class="span-blue pointer" @click="preview(record.params)">参数</span>
         </template>
       </a-table>
     </div>
@@ -75,7 +109,7 @@
       <!-- 预览 -->
       <EditorPreview ref="preview" title="参数预览" :editorConfig="{lang: 'json'}"/>
       <!-- 清理模态框 -->
-      <EventLogClearModal ref="clear" @clear="getEventLog()"/>
+      <EventLogClearModal ref="clear" @clear="getList({})"/>
       <!-- 导出模态框 -->
       <EventLogExportExportModal ref="export" :manager="true"/>
     </div>
@@ -84,7 +118,7 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
-import { enumValueOf, EVENT_CLASSIFY } from '@/lib/enum'
+import { enumValueOf, EVENT_CLASSIFY, EVENT_TYPE } from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import { replaceStainKeywords } from '@/lib/utils'
@@ -96,32 +130,32 @@ import EventLogExportExportModal from '@/components/export/EventLogExportExportM
  */
 const columns = [
   {
-    title: '操作日志',
-    dataIndex: 'log',
-    key: 'log'
+    title: '操作描述',
+    key: 'log',
+    scopedSlots: { customRender: 'log' }
   },
   {
     title: '操作分类',
     key: 'classify',
-    width: 120,
+    width: 130,
     scopedSlots: { customRender: 'classify' }
   },
   {
     title: '操作类型',
     key: 'type',
-    width: 120,
+    width: 130,
     scopedSlots: { customRender: 'type' }
   },
   {
     title: '操作用户',
     key: 'username',
-    width: 120,
+    width: 130,
     scopedSlots: { customRender: 'username' }
   },
   {
-    title: '操作ip',
+    title: '操作IP',
     key: 'ip',
-    width: 120,
+    width: 130,
     scopedSlots: { customRender: 'ip' }
   },
   {
@@ -134,7 +168,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 120,
+    width: 80,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -150,11 +184,13 @@ export default {
   },
   data() {
     return {
+      columns,
       EVENT_CLASSIFY,
       loading: false,
       rows: [],
       query: {
         result: 1,
+        parserIp: 1,
         userId: undefined,
         username: undefined,
         classify: undefined,
@@ -169,9 +205,6 @@ export default {
         total: 0,
         showTotal: total => {
           return `共 ${total} 条`
-        },
-        onChange: page => {
-          this.getEventLog(page)
         }
       },
       typeArray: {},
@@ -180,26 +213,24 @@ export default {
   },
   watch: {
     'query.classify'(e) {
+      this.query.type = undefined
+      this.typeArray = {}
       if (e) {
-        const classify = enumValueOf(EVENT_CLASSIFY, e)
-        if (!classify) {
-          return
+        for (const key in EVENT_TYPE) {
+          if (EVENT_TYPE[key].classify === e) {
+            this.typeArray[key] = EVENT_TYPE[key]
+          }
         }
-        this.query.type = undefined
-        this.typeArray = { ...classify.type }
-      } else {
-        this.query.type = undefined
-        this.typeArray = {}
       }
     }
   },
   methods: {
-    getEventLog(page = 1) {
+    getList(page = this.pagination) {
       this.loading = true
       this.$api.getEventLogList({
         ...this.query,
-        page,
-        limit: this.pagination.pageSize
+        page: page.current,
+        limit: page.pageSize
       }).then(({ data }) => {
         const pagination = { ...this.pagination }
         pagination.total = data.total
@@ -228,18 +259,18 @@ export default {
     chooseUser(userId) {
       this.query.userId = userId
       this.$refs.userSelector.set(userId)
-      this.getEventLog()
+      this.getList({})
     },
     chooseClassify(classify) {
       this.query.classify = classify
       this.query.type = undefined
-      this.getEventLog()
+      this.getList({})
     },
     chooseType(classify, type) {
       this.query.classify = classify
       this.$nextTick(() => {
         this.query.type = type
-        this.getEventLog()
+        this.getList({})
       })
     },
     selectedUser(id, name) {
@@ -267,7 +298,7 @@ export default {
       this.query.rangeStart = undefined
       this.query.rangeEnd = undefined
       this.dateRange = undefined
-      this.getEventLog()
+      this.getList({})
     }
   },
   filters: {
@@ -275,16 +306,12 @@ export default {
     filterClassify(origin) {
       return enumValueOf(EVENT_CLASSIFY, origin).label
     },
-    filterType(origin, classify) {
-      const _classify = enumValueOf(EVENT_CLASSIFY, classify)
-      if (!_classify) {
-        return null
-      }
-      return enumValueOf(_classify.type, origin).label
+    filterType(origin) {
+      return enumValueOf(EVENT_TYPE, origin).label
     }
   },
   mounted() {
-    this.getEventLog()
+    this.getList({})
   }
 }
 </script>
