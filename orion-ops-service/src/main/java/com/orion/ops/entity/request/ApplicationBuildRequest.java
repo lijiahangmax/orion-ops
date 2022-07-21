@@ -28,6 +28,9 @@ public class ApplicationBuildRequest extends PageRequest {
     @ApiModelProperty(value = "应用id")
     private Long appId;
 
+    @ApiModelProperty(value = "应用名称")
+    private String appName;
+
     @ApiModelProperty(value = "环境id")
     private Long profileId;
 

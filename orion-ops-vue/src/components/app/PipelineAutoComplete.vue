@@ -6,7 +6,10 @@
                    @search="search"
                    allowClear>
     <template #dataSource>
-      <a-select-option v-for="pipeline in visiblePipeline" :key="pipeline.id" :value="JSON.stringify(pipeline)">
+      <a-select-option v-for="pipeline in visiblePipeline"
+                       :key="pipeline.id"
+                       :value="JSON.stringify(pipeline)"
+                       @click="choose">
         {{ pipeline.name }}
       </a-select-option>
     </template>
@@ -65,6 +68,11 @@ export default {
       this.$emit('change', id, val)
       this.value = val
     },
+    choose() {
+      this.$nextTick(() => {
+        this.$emit('choose')
+      })
+    },
     search(value) {
       if (!value) {
         this.visiblePipeline = this.pipelineList
@@ -74,6 +82,7 @@ export default {
     },
     reset() {
       this.value = undefined
+      this.visiblePipeline = this.pipelineList
     }
   }
 }

@@ -119,6 +119,7 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
     @Override
     public DataGrid<ApplicationPipelineVO> listPipeline(ApplicationPipelineRequest request) {
         LambdaQueryWrapper<ApplicationPipelineDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationPipelineDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationPipelineDO::getProfileId, request.getProfileId())
                 .like(Strings.isNotBlank(request.getName()), ApplicationPipelineDO::getPipelineName, request.getName())
                 .like(Strings.isNotBlank(request.getDescription()), ApplicationPipelineDO::getDescription, request.getDescription());

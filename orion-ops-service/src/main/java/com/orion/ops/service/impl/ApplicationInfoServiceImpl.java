@@ -186,6 +186,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Override
     public DataGrid<ApplicationInfoVO> listApp(ApplicationInfoRequest request) {
         LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationInfoDO::getId, request.getId())
                 .like(!Strings.isBlank(request.getName()), ApplicationInfoDO::getAppName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationInfoDO::getAppTag, request.getTag())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationInfoDO::getDescription, request.getDescription())
