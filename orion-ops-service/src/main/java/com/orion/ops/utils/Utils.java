@@ -272,7 +272,12 @@ public class Utils {
         if (ip == null) {
             return CnConst.UNKNOWN;
         }
-        Region region = LocationRegions.getRegion(ip);
+        Region region;
+        try {
+            region = LocationRegions.getRegion(ip, 3);
+        } catch (Exception e) {
+            return CnConst.UNKNOWN;
+        }
         if (region != null) {
             String net = region.getNet();
             String province = region.getProvince();

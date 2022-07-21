@@ -131,7 +131,7 @@
             <span class="span-blue pointer" @click="update(record.id)">修改</span>
             <a-divider type="vertical"/>
             <!-- 操作日志 -->
-            <a :href="`#/user/event/log/${record.id}`">日志</a>
+            <a :href="`#/user/event/logs/${record.id}`">日志</a>
             <a-divider type="vertical"/>
             <!-- 重置密码 -->
             <a @click="resetPassword(record.id)">重置密码</a>
@@ -147,7 +147,7 @@
           </div>
           <div v-else>
             <!-- 操作日志 -->
-            <a :href="`#/user/event/log/${record.id}`">日志</a>
+            <a :href="`#/user/event/logs/${record.id}`">日志</a>
           </div>
         </template>
       </a-table>

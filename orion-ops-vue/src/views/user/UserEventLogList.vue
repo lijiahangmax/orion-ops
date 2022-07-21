@@ -17,12 +17,20 @@
           <a-col :span="7">
             <a-form-model-item label="操作分类" prop="classify">
               <a-input-group compact>
-                <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
+                <a-select v-model="query.classify"
+                          placeholder="操作分类"
+                          style="width: 50%;"
+                          allowClear>
                   <a-select-option :value="classify.value" v-for="classify in EVENT_CLASSIFY" :key="classify.value">
                     {{ classify.label }}
                   </a-select-option>
                 </a-select>
-                <a-select v-model="query.type" :disabled="!query.classify" placeholder="操作类型" style="width: 50%;" allowClear>
+                <a-select v-model="query.type"
+                          :disabled="!query.classify"
+                          placeholder="操作类型"
+                          style="width: 50%;"
+                          @change="getList({})"
+                          allowClear>
                   <a-select-option :value="typeInfo.value" v-for="typeInfo in typeArray" :key="typeInfo.value">
                     {{ typeInfo.label }}
                   </a-select-option>
@@ -222,6 +230,7 @@ export default {
           }
         }
       }
+      this.getList({})
     }
   },
   methods: {
@@ -311,6 +320,10 @@ export default {
     }
   },
   mounted() {
+    const id = this.$route.params.id
+    if (id) {
+      this.query.userId = id
+    }
     this.getList({})
   }
 }

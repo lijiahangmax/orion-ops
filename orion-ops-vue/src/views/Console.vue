@@ -52,7 +52,7 @@
           <EventLogList class="event-log-list-wrapper"
                         :disableSearch="true"
                         :disableAction="true"
-                        :disableClassify="true"/>
+                        :disableClick="true"/>
         </a-card>
       </div>
     </div>

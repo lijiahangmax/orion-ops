@@ -12,12 +12,20 @@
           <a-col :span="8">
             <a-form-model-item label="分类" prop="classify">
               <a-input-group compact>
-                <a-select v-model="query.classify" placeholder="操作分类" style="width: 50%;" allowClear>
+                <a-select v-model="query.classify"
+                          placeholder="操作分类"
+                          style="width: 50%;"
+                          allowClear>
                   <a-select-option :value="classify.value" v-for="classify in EVENT_CLASSIFY" :key="classify.value">
                     {{ classify.label }}
                   </a-select-option>
                 </a-select>
-                <a-select v-model="query.type" :disabled="!query.classify" placeholder="操作类型" style="width: 50%;" allowClear>
+                <a-select v-model="query.type"
+                          :disabled="!query.classify"
+                          placeholder="操作类型"
+                          style="width: 50%;"
+                          @change="getEventLog(1)"
+                          allowClear>
                   <a-select-option :value="typeInfo.value" v-for="typeInfo in typeArray" :key="typeInfo.value">
                     {{ typeInfo.label }}
                   </a-select-option>
@@ -54,12 +62,9 @@
               </div>
               <div class="log-item-container-right">
                 <!-- 操作类型 -->
-                <span class="log-item-type">
+                <span class="log-item-classify">
                   <span class="span-blue pointer" @click="chooseClassify(item.classify)">
                     {{ item.classify | filterClassify }}
-                  </span> /
-                  <span class="span-blue pointer" @click="chooseType(item.classify, item.type)">
-                    {{ item.type | filterType(item.classify) }}
                   </span>
                 </span>
                 <!-- 操作时间 -->
@@ -88,7 +93,7 @@
 <script>
 import { replaceStainKeywords } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
-import { enumValueOf, EVENT_CLASSIFY } from '@/lib/enum'
+import { enumValueOf, EVENT_CLASSIFY, EVENT_TYPE } from '@/lib/enum'
 import EditorPreview from '@/components/preview/EditorPreview'
 import EventLogExportExportModal from '@/components/export/EventLogExportExportModal'
 
@@ -107,7 +112,7 @@ export default {
       type: Boolean,
       default: false
     },
-    disableClassify: {
+    disableClick: {
       type: Boolean,
       default: false
     },
@@ -150,17 +155,16 @@ export default {
   },
   watch: {
     'query.classify'(e) {
+      this.query.type = undefined
+      this.typeArray = {}
       if (e) {
-        const classify = enumValueOf(EVENT_CLASSIFY, e)
-        if (!classify) {
-          return
+        for (const key in EVENT_TYPE) {
+          if (EVENT_TYPE[key].classify === e) {
+            this.typeArray[key] = EVENT_TYPE[key]
+          }
         }
-        this.query.type = undefined
-        this.typeArray = { ...classify.type }
-      } else {
-        this.query.type = undefined
-        this.typeArray = {}
       }
+      this.getEventLog()
     }
   },
   methods: {
@@ -197,22 +201,12 @@ export default {
       this.query.rangeEnd = dates[1] + ' 23:59:59'
     },
     chooseClassify(classify) {
-      if (this.disableClassify) {
+      if (this.disableClick) {
         return
       }
       this.query.classify = classify
       this.query.type = undefined
       this.getEventLog()
-    },
-    chooseType(classify, type) {
-      if (this.disableClassify) {
-        return
-      }
-      this.query.classify = classify
-      this.$nextTick(() => {
-        this.query.type = type
-        this.getEventLog()
-      })
     },
     openExport() {
       this.$refs.export.open()
@@ -232,12 +226,8 @@ export default {
     filterClassify(origin) {
       return enumValueOf(EVENT_CLASSIFY, origin).label
     },
-    filterType(origin, classify) {
-      const _classify = enumValueOf(EVENT_CLASSIFY, classify)
-      if (!_classify) {
-        return null
-      }
-      return enumValueOf(_classify.type, origin).label
+    filterType(origin) {
+      return enumValueOf(EVENT_TYPE, origin).label
     }
   },
   mounted() {
@@ -275,9 +265,9 @@ export default {
   .log-item-container-right {
     white-space: nowrap;
 
-    .log-item-type {
+    .log-item-classify {
       margin: 0 12px 0 24px;
-      width: 186px;
+      width: 98px;
       display: inline-block;
     }
 
