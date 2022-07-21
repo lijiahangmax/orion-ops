@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="全部" allowClear>
+              <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option :value="type.value" v-for="type in VCS_STATUS" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
@@ -225,10 +225,10 @@ export default {
       VCS_AUTH_TYPE,
       VCS_STATUS,
       query: {
-        name: null,
-        url: null,
-        username: null,
-        description: null,
+        name: undefined,
+        url: undefined,
+        username: undefined,
+        description: undefined,
         status: undefined
       },
       rows: [],

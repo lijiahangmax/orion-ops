@@ -258,11 +258,11 @@ export default {
       appList: [],
       rows: [],
       query: {
-        appId: null,
-        profileId: null,
-        key: null,
-        value: null,
-        description: null
+        appId: undefined,
+        profileId: undefined,
+        key: undefined,
+        value: undefined,
+        description: undefined
       },
       pagination: {
         current: 1,

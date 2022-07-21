@@ -158,9 +158,9 @@ export default {
   data() {
     return {
       query: {
-        name: null,
-        value: null,
-        description: null
+        name: undefined,
+        value: undefined,
+        description: undefined
       },
       rows: [],
       pagination: {

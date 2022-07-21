@@ -208,9 +208,9 @@ export default {
       VIEW_TYPE,
       rows: [],
       query: {
-        key: null,
-        value: null,
-        description: null
+        key: undefined,
+        value: undefined,
+        description: undefined
       },
       pagination: {
         current: 1,

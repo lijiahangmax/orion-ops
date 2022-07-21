@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="4">
             <a-form-model-item label="角色" prop="role">
-              <a-select v-model="query.role" placeholder="全部" allowClear>
+              <a-select v-model="query.role" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option v-for="role in ROLE_TYPE"
                                  :value="role.value"
                                  :key="role.value">
@@ -259,10 +259,10 @@ export default {
     return {
       ROLE_TYPE,
       query: {
-        username: null,
-        nickname: null,
-        phone: null,
-        email: null,
+        username: undefined,
+        nickname: undefined,
+        phone: undefined,
+        email: undefined,
         role: undefined,
         status: undefined
       },

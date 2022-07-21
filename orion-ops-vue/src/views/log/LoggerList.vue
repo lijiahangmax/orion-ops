@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="机器" prop="machine">
-              <MachineSelector ref="machineSelector" @change="machineId => query.machineId = machineId"/>
+              <MachineSelector ref="machineSelector" @change="chooseMachine"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -241,9 +241,9 @@ export default {
       ENABLE_STATUS,
       query: {
         machineId: undefined,
-        name: null,
-        path: null,
-        command: null
+        name: undefined,
+        path: undefined,
+        command: undefined
       },
       rows: [],
       pagination: {
@@ -278,6 +278,10 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    chooseMachine(machineId) {
+      this.query.machineId = machineId
+      this.getList({})
     },
     upload() {
       this.$refs.uploadModal.open()

@@ -7,18 +7,18 @@
         <a-form-model class="scheduler-search-form" ref="query" :model="query">
           <a-row>
             <a-col :span="5">
-              <a-form-model-item label="名称" prop="username">
+              <a-form-model-item label="任务名称" prop="username">
                 <a-input v-model="query.name" allowClear/>
               </a-form-model-item>
             </a-col>
             <a-col :span="5">
-              <a-form-model-item label="描述" prop="description">
+              <a-form-model-item label="任务描述" prop="description">
                 <a-input v-model="query.description" allowClear/>
               </a-form-model-item>
             </a-col>
             <a-col :span="5">
-              <a-form-model-item label="状态" prop="type">
-                <a-select v-model="query.latelyStatus" placeholder="全部" allowClear>
+              <a-form-model-item label="最近状态" prop="type">
+                <a-select v-model="query.latelyStatus" placeholder="全部" @change="getList({})" allowClear>
                   <a-select-option :value="type.value" v-for="type in SCHEDULER_TASK_STATUS" :key="type.value">
                     {{ type.label }}
                   </a-select-option>
@@ -213,8 +213,8 @@ export default {
       SCHEDULER_TASK_STATUS,
       ENABLE_STATUS,
       query: {
-        name: null,
-        description: null,
+        name: undefined,
+        description: undefined,
         enableStatus: undefined,
         latelyStatus: undefined
       },

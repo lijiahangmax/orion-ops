@@ -32,14 +32,14 @@
         <div class="table-search-columns search-columns">
           <a-form-model class="scheduler-search-form" ref="query" :model="query">
             <a-row>
-              <a-col :span="6">
+              <a-col :span="8">
                 <a-form-model-item label="任务名称" prop="taskName">
                   <a-input v-model="query.taskName" allowClear/>
                 </a-form-model-item>
               </a-col>
-              <a-col :span="6">
+              <a-col :span="8">
                 <a-form-model-item label="执行状态" prop="status">
-                  <a-select v-model="query.status" placeholder="全部" allowClear>
+                  <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
                     <a-select-option :value="type.value" v-for="type in SCHEDULER_TASK_STATUS" :key="type.value">
                       {{ type.label }}
                     </a-select-option>
@@ -523,9 +523,9 @@ export default {
         return
       }
       const machineRecordIdList = pollItems.map(s => s.machines)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getSchedulerTaskRecordStatus({
         idList,
         machineRecordIdList

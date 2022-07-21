@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="应用" prop="appId">
-              <AppSelector ref="appSelector" @change="appId => query.appId = appId"/>
+              <AppAutoComplete ref="appSelector" @change="selectedApp" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -16,7 +16,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="请选择" allowClear>
+              <a-select v-model="query.status" placeholder="请选择" @change="getList({})" allowClear>
                 <a-select-option v-for="status of BUILD_STATUS" :key="status.value" :value="status.value">
                   {{ status.label }}
                 </a-select-option>
@@ -163,12 +163,12 @@
 
 <script>
 import { formatDate } from '@/lib/filters'
-import { enumValueOf, BUILD_STATUS } from '@/lib/enum'
-import AppSelector from '@/components/app/AppSelector'
+import { BUILD_STATUS, enumValueOf } from '@/lib/enum'
 import AppBuildDetailDrawer from '@/components/app/AppBuildDetailDrawer'
 import AppBuildModal from '@/components/app/AppBuildModal'
 import AppBuildLogAppenderModal from '@/components/log/AppBuildLogAppenderModal'
 import AppBuildClearModal from '@/components/clear/AppBuildClearModal'
+import AppAutoComplete from '@/components/app/AppAutoComplete'
 
 /**
  * 状态判断
@@ -250,22 +250,23 @@ const columns = [
 export default {
   name: 'AppBuild',
   components: {
+    AppAutoComplete,
     AppBuildClearModal,
     AppBuildLogAppenderModal,
     AppBuildModal,
-    AppSelector,
     AppBuildDetailDrawer
   },
   data: function() {
     return {
       BUILD_STATUS,
       query: {
-        profileId: null,
-        seq: null,
-        appId: null,
+        profileId: undefined,
+        seq: undefined,
+        appId: undefined,
+        appName: undefined,
         status: undefined,
         onlyMyself: false,
-        description: null
+        description: undefined
       },
       rows: [],
       pagination: {
@@ -323,6 +324,18 @@ export default {
         this.loading = false
       })
     },
+    selectedApp(id, name) {
+      if (id) {
+        this.query.appId = id
+        this.query.appName = undefined
+      } else {
+        this.query.appId = undefined
+        this.query.appName = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
+    },
     openBuild() {
       this.$refs.addModal.openBuild(this.query.profileId)
     },
@@ -370,6 +383,7 @@ export default {
       this.$refs.query.resetFields()
       this.$refs.appSelector.reset()
       this.query.appId = undefined
+      this.query.appName = undefined
       this.query.status = undefined
       this.query.onlyMyself = false
       this.getList({})
@@ -379,8 +393,7 @@ export default {
         return
       }
       const idList = this.rows.filter(r => r.status === BUILD_STATUS.WAIT.value ||
-        r.status === BUILD_STATUS.RUNNABLE.value)
-        .map(s => s.id)
+        r.status === BUILD_STATUS.RUNNABLE.value).map(s => s.id)
       if (!idList.length) {
         return
       }
