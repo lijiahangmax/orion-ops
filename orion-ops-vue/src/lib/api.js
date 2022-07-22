@@ -409,7 +409,7 @@ const $api = {
   sftpUploadExec: param => {
     return $http.$post('/sftp/upload/exec', param, {
       timeout: 18000000,
-      loading: '正在提交上传请求...',
+      loading: '正在上传文件...',
       headers: {
         'Content-Type': 'multipart/form-data'
       }

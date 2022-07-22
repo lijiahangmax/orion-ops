@@ -261,6 +261,25 @@ export function getPath(path) {
 }
 
 /**
+ * 获取父级路径
+ */
+export function getParentPath(path) {
+  const paths = getPath(path).split('/')
+  const len = paths.length
+  if (len <= 2) {
+    return '/'
+  }
+  let parent = ''
+  for (let i = 0; i < len - 1; i++) {
+    parent += paths[i]
+    if (i !== len - 2) {
+      parent += '/'
+    }
+  }
+  return parent
+}
+
+/**
  * 获取当前页面的缩放值
  */
 export function detectZoom() {

@@ -378,7 +378,7 @@ export default {
       })
       // 上传
       this.$api.execBatchUpload(formData).then(({ data }) => {
-        this.$message.success('已提交至传输列表')
+        this.$message.success('已添加至传输列表')
         this.fileTokenList = data
         this.status = BATCH_UPLOAD_STATUS.UPLOADING
       }).catch(() => {

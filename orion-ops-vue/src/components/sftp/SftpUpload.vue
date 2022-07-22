@@ -132,18 +132,21 @@ export default {
         return
       }
       this.$emit('changeVisible', false)
+      this.$emit('uploading', true)
       const formData = new FormData()
       formData.append('accessToken', accessToken)
       this.fileList.forEach(file => {
         formData.append('files', file)
       })
       this.$api.sftpUploadExec(formData).then(() => {
-        this.$message.success('已提交至传输列表')
+        this.$message.success('已添加至传输列表')
         this.loading = false
         this.fileList = []
+        this.$emit('uploading', false)
       }).catch(() => {
         this.loading = false
         this.$emit('changeVisible', true)
+        this.$emit('uploading', false)
       })
     }
   },
