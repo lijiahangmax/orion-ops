@@ -1,5 +1,6 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -68,7 +69,7 @@ public class ApplicationProfileController {
 
     @PostMapping("/list")
     @ApiOperation(value = "获取应用环境列表")
-    public List<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
+    public DataGrid<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
         return applicationProfileService.listProfiles(request);
     }
 

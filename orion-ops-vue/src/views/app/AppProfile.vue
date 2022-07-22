@@ -44,7 +44,7 @@
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
-               @change="changePage"
+               @change="getList"
                :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
@@ -188,8 +188,10 @@ export default {
         limit: page.pageSize
       }).then(({ data }) => {
         const pagination = { ...this.pagination }
-        pagination.total = data.length
-        this.rows = data
+        pagination.total = data.total
+        pagination.current = data.page
+        this.rows = data.rows || []
+        this.pagination = pagination
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -207,11 +209,6 @@ export default {
       if (id === undefined && name === undefined) {
         this.getList({})
       }
-    },
-    changePage(page) {
-      const pagination = { ...this.pagination }
-      pagination.current = page.current
-      this.pagination = pagination
     },
     add() {
       this.$refs.addModal.add()

@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.convert.Converts;
@@ -133,14 +134,16 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     }
 
     @Override
-    public List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
+    public DataGrid<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
                 .eq(Objects.nonNull(request.getId()), ApplicationProfileDO::getId, request.getId())
                 .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationProfileDO::getDescription, request.getDescription());
-        List<ApplicationProfileDO> profileList = applicationProfileDAO.selectList(wrapper);
-        return Converts.toList(profileList, ApplicationProfileVO.class);
+        return DataQuery.of(applicationProfileDAO)
+                .wrapper(wrapper)
+                .page(request)
+                .dataGrid(ApplicationProfileVO.class);
     }
 
     @Override
