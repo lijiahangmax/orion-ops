@@ -113,9 +113,9 @@ public class KeyConst {
     /**
      * 主页统计数量 key
      * <p>
-     * data:statistics:home:count
+     * data:statistics:home:count:{profileId}
      */
-    public static final String HOME_STATISTICS_COUNT_KEY = "data:statistics:home:count";
+    public static final String HOME_STATISTICS_COUNT_KEY = "data:statistics:home:count:{}";
 
     /**
      * 调度任务统计 key

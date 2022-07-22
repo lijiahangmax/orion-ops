@@ -179,8 +179,9 @@ export default {
   components: { EventLogList },
   data() {
     return {
+      profileId: undefined,
       topStatistic,
-      quickRouter: quickRouter,
+      quickRouter,
       count: {
         machineCount: '-',
         profileCount: '-',
@@ -189,20 +190,27 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+    chooseProfile({ id }) {
+      this.profileId = id
+      this.statisticsHome()
+    },
+    statisticsHome() {
+      // 加载统计信息
+      this.$api.getHomeStatistics({
+        profileId: this.profileId
+      }).then(({ data }) => {
+        this.count = data.count
+      })
+    }
+  },
   mounted() {
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
-    let profileId = null
     if (activeProfile) {
-      profileId = JSON.parse(activeProfile).id
+      this.profileId = JSON.parse(activeProfile).id
     }
-    // 加载统计信息
-    this.$api.getHomeStatistics({
-      profileId
-    }).then(({ data }) => {
-      this.count = data.count
-    })
+    this.statisticsHome()
   }
 }
 </script>

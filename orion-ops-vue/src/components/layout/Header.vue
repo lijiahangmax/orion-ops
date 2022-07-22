@@ -22,7 +22,7 @@
                            class="header-block-container"
                            ref="profileSelect"
                            v-show="profileSelectorVisible"
-                           @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
+                           @chooseProfile="chooseProfile"/>
       <!-- 站内信 -->
       <WebSideMessageDrawer id="web-side-message-drawer" class="header-block-container"/>
       <!-- 用户下拉 -->
@@ -66,6 +66,9 @@ export default {
     checkVisible(e = this.$route) {
       this.profileSelectorVisible = e.meta.visibleProfile === true
       this.leftProps = e.meta.leftProps || []
+    },
+    chooseProfile(profile) {
+      this.$emit('chooseProfile', profile)
     },
     reloadProfile() {
       this.$refs.profileSelect.loadProfile()

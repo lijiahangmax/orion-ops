@@ -165,7 +165,7 @@ public class StainCode {
     public static final int GLOSS_CYAN = 96;
 
     /**
-     * 白色
+     * 亮白色
      */
     public static final int GLOSS_WHITE = 97;
 
@@ -207,7 +207,7 @@ public class StainCode {
     public static final int BG_GLOSS_CYAN = 106;
 
     /**
-     * 白色 背景色
+     * 亮白色 背景色
      */
     public static final int BG_GLOSS_WHITE = 107;
 

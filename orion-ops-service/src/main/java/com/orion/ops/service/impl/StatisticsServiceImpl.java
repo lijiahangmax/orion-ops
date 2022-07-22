@@ -96,7 +96,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private HomeStatisticsCountVO homeCountStatistics(Long profileId) {
         StatisticsCountDTO count;
         // 查询缓存
-        String countCache = redisTemplate.opsForValue().get(KeyConst.HOME_STATISTICS_COUNT_KEY);
+        String key = Strings.format(KeyConst.HOME_STATISTICS_COUNT_KEY, profileId);
+        String countCache = redisTemplate.opsForValue().get(key);
         if (Strings.isBlank(countCache)) {
             count = new StatisticsCountDTO();
             // 查询机器数量
@@ -114,7 +115,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             count.setProfileCount(profileCount);
             count.setAppCount(appCount);
             count.setPipelineCount(pipelineCount);
-            redisTemplate.opsForValue().set(KeyConst.HOME_STATISTICS_COUNT_KEY, JSON.toJSONString(count),
+            redisTemplate.opsForValue().set(key, JSON.toJSONString(count),
                     Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
         } else {
             count = JSON.parseObject(countCache, StatisticsCountDTO.class);

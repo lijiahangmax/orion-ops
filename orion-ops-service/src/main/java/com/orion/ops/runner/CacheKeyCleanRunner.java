@@ -48,7 +48,7 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 // sftp上传请求token
                 Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*"),
                 // 首页统计key
-                KeyConst.HOME_STATISTICS_COUNT_KEY,
+                Strings.format(KeyConst.HOME_STATISTICS_COUNT_KEY, "*"),
                 // 调度统计key
                 Strings.format(KeyConst.SCHEDULER_TASK_STATISTICS_KEY, "*"),
                 // 环境缓存key

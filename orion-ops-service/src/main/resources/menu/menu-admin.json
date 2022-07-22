@@ -29,7 +29,7 @@
         "path": "/terminal/logs"
       },
       {
-        "name": "终端控制",
+        "name": "终端会话",
         "path": "/terminal/session"
       }
     ]
