@@ -62,7 +62,7 @@ function initTerminal() {
   this.term = new Terminal(this.options)
   this.term.open(this.$refs.terminal)
   // 需要先设置一下 不然modal会闪一下
-  this.term.resize(80, 5)
+  this.term.resize(1, 1)
   // 注册terminal事件
   this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
   this.term.onData(event => terminalEventHandler.onData.call(this, event))

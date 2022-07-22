@@ -253,6 +253,7 @@ public class PathBuilders {
      */
     public static String getSftpPackageTempPath(String username, String fileToken, List<String> paths) {
         return PathBuilders.getHomePath(username)
+                + "/" + Const.ORION_OPS
                 + "/" + Const.TEMP_PACKAGE_PATH
                 + "/" + fileToken
                 + "/" + Files1.getFileName(paths.get(0))

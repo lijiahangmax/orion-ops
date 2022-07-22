@@ -25,8 +25,8 @@ export default {
       // 隐藏光标
       this.term.write('\x1b[?25l')
       // 计算最长长度
-      this.nameMax = Math.max.apply(null, this.machines.map(s => s.name.length))
-      this.hostMax = Math.max.apply(null, this.machines.map(s => s.host.length))
+      this.nameMax = Math.max.apply(null, this.machines.map(s => this.getLength(s.name))) + 3
+      this.hostMax = Math.max.apply(null, this.machines.map(s => this.getLength(s.host))) + 5
       // 加载机器信息
       for (let i = 0; i < this.machines.length; i++) {
         this.term.write('\n ' + this.getMachineLine(i, i === 0))
@@ -38,7 +38,7 @@ export default {
     },
     getMachineLine(i, selected) {
       const machine = this.machines[i]
-      const line = `${machine.name.padEnd(this.nameMax + 3)} ${('(' + machine.host + ')').padEnd(this.hostMax + 5)}`
+      const line = `${this.padString(machine.name, this.nameMax)} ${this.padString('(' + machine.host + ')', this.hostMax)}`
       let stainLine
       if (selected) {
         stainLine = `\t\t\x1b[46;1m👉  ${line} \x1b[0m`
@@ -80,6 +80,19 @@ export default {
       if (event.domEvent.code === 'Enter') {
         this.$emit('open', this.machines[this.curr].id)
       }
+    },
+    getLength(s) {
+      let len = 0
+      for (let i = 0; i < s.length; i++) {
+        len += s.codePointAt(i) > 255 ? 2 : 1
+      }
+      return len
+    },
+    padString(s, len) {
+      return s + ' '.repeat(len - this.getLength(s))
+    },
+    focus() {
+      this.term.focus()
     }
   },
   mounted() {

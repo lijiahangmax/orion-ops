@@ -65,6 +65,9 @@ export default {
     activeKey(k) {
       if (k === null) {
         document.title = '终端'
+        setTimeout(() => {
+          this.$refs.banner.focus()
+        }, 50)
         return
       }
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key === k)
