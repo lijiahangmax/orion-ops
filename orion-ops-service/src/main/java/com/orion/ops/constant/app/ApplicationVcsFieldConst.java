@@ -40,11 +40,11 @@ public class ApplicationVcsFieldConst {
 
     public static final String AUTH_TYPE_EMPTY_MESSAGE = "认证方式不能为空";
 
-    public static final String AUTH_TYPE_VALUE_MESSAGE = "认证方式只能为 " + VcsAuthType.PASSWORD.getLabel() + "和" + VcsAuthType.TOKEN.getLabel();
+    public static final String AUTH_TYPE_VALUE_MESSAGE = "认证方式只能为 " + RepositoryAuthType.PASSWORD.getLabel() + "和" + RepositoryAuthType.TOKEN.getLabel();
 
-    public static final String TOKEN_TYPE_EMPTY_MESSAGE = "认证方式为" + VcsAuthType.TOKEN.getLabel() + "时 令牌类型不能为空";
+    public static final String TOKEN_TYPE_EMPTY_MESSAGE = "认证方式为" + RepositoryAuthType.TOKEN.getLabel() + "时 令牌类型不能为空";
 
-    public static final String TOKEN_TYPE_VALUE_MESSAGE = "令牌类型只能为 " + VcsTokenType.GITHUB.getLabel() + "," + VcsTokenType.GITEE.getLabel() + "," + VcsTokenType.GITLAB.getLabel();
+    public static final String TOKEN_TYPE_VALUE_MESSAGE = "令牌类型只能为 " + RepositoryTokenType.GITHUB.getLabel() + "," + RepositoryTokenType.GITEE.getLabel() + "," + RepositoryTokenType.GITLAB.getLabel();
 
     public static final String PASSWORD_TOKEN_DECRYPT_MESSAGE = "密码/令牌密文解密失败";
 
@@ -52,7 +52,7 @@ public class ApplicationVcsFieldConst {
 
     public static final String TOKEN_EMPTY_MESSAGE = "令牌不能为空";
 
-    public static final String USERNAME_TOKEN_MESSAGE = "令牌类型为 " + VcsTokenType.GITEE.getLabel() + " 时 用户名和秘钥必须同时存在";
+    public static final String USERNAME_TOKEN_MESSAGE = "令牌类型为 " + RepositoryTokenType.GITEE.getLabel() + " 时 用户名和秘钥必须同时存在";
 
     public static final String USERNAME_LEN_MESSAGE = "用户名长度不能大于 " + USERNAME_MAX_LEN + "位";
 
@@ -92,14 +92,14 @@ public class ApplicationVcsFieldConst {
         Valid.notBlank(url, URL_EMPTY_MESSAGE);
         Valid.validLengthLte(url, URL_MAX_LEN, URL_LEN_MESSAGE);
         Valid.notBlank(authTypeValue, AUTH_TYPE_EMPTY_MESSAGE);
-        VcsAuthType authType = VcsAuthType.of(authTypeValue);
+        RepositoryAuthType authType = RepositoryAuthType.of(authTypeValue);
         Valid.notNull(authType, AUTH_TYPE_VALUE_MESSAGE);
         if (!Strings.isEmpty(encryptAuthValue)) {
             String decryptValue = ValueMix.decrypt(encryptAuthValue);
             Valid.notNull(decryptValue, PASSWORD_TOKEN_DECRYPT_MESSAGE);
             row.setDecryptAuthValue(decryptValue);
         }
-        if (VcsAuthType.PASSWORD.equals(authType)) {
+        if (RepositoryAuthType.PASSWORD.equals(authType)) {
             // 密码验证
             if (!Strings.isEmpty(importAuthValue)) {
                 Valid.validLengthLte(importAuthValue, PASSWORD_MAX_LEN, PASSWORD_LEN_MESSAGE);
@@ -110,13 +110,13 @@ public class ApplicationVcsFieldConst {
         } else {
             // 令牌验证
             Valid.notBlank(tokenTypeValue, TOKEN_TYPE_EMPTY_MESSAGE);
-            VcsTokenType tokenType = VcsTokenType.of(tokenTypeValue);
+            RepositoryTokenType tokenType = RepositoryTokenType.of(tokenTypeValue);
             Valid.notNull(tokenType, TOKEN_TYPE_VALUE_MESSAGE);
             if (!Strings.isEmpty(importAuthValue)) {
                 Valid.validLengthLte(importAuthValue, TOKEN_MAX_LEN, TOKEN_LEN_MESSAGE);
             }
             Valid.isTrue(!Strings.isBlank(importAuthValue) || !Strings.isBlank(row.getDecryptAuthValue()), TOKEN_EMPTY_MESSAGE);
-            if (VcsTokenType.GITEE.equals(tokenType)) {
+            if (RepositoryTokenType.GITEE.equals(tokenType)) {
                 Valid.notBlank(username, USERNAME_TOKEN_MESSAGE);
                 Valid.validLengthLte(username, USERNAME_MAX_LEN, USERNAME_LEN_MESSAGE);
             }

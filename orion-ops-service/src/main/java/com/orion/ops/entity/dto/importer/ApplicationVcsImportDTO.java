@@ -3,9 +3,9 @@ package com.orion.ops.entity.dto.importer;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.office.excel.annotation.ImportField;
-import com.orion.ops.constant.app.VcsAuthType;
-import com.orion.ops.constant.app.VcsTokenType;
-import com.orion.ops.constant.app.VcsType;
+import com.orion.ops.constant.app.RepositoryAuthType;
+import com.orion.ops.constant.app.RepositoryTokenType;
+import com.orion.ops.constant.app.RepositoryType;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;
@@ -77,21 +77,21 @@ public class ApplicationVcsImportDTO extends BaseDataImportDTO {
             d.setId(p.getId());
             d.setVcsName(p.name);
             d.setVcsDescription(p.description);
-            d.setVcsType(VcsType.GIT.getType());
+            d.setVcsType(RepositoryType.GIT.getType());
             d.setVscUrl(p.url);
             Optional.ofNullable(p.authType)
-                    .map(VcsAuthType::of)
-                    .map(VcsAuthType::getType)
+                    .map(RepositoryAuthType::of)
+                    .map(RepositoryAuthType::getType)
                     .ifPresent(d::setVcsAuthType);
-            if (VcsAuthType.PASSWORD.getType().equals(d.getVcsAuthType()) || VcsTokenType.GITEE.getLabel().equals(p.tokenType)) {
+            if (RepositoryAuthType.PASSWORD.getType().equals(d.getVcsAuthType()) || RepositoryTokenType.GITEE.getLabel().equals(p.tokenType)) {
                 d.setVscUsername(p.username);
             }
             Optional.ofNullable(p.tokenType)
-                    .map(VcsTokenType::of)
-                    .map(VcsTokenType::getType)
+                    .map(RepositoryTokenType::of)
+                    .map(RepositoryTokenType::getType)
                     .ifPresent(d::setVcsTokenType);
             BiConsumer<ApplicationVcsDO, String> authValueSetter;
-            if (VcsAuthType.PASSWORD.getType().equals(d.getVcsAuthType())) {
+            if (RepositoryAuthType.PASSWORD.getType().equals(d.getVcsAuthType())) {
                 authValueSetter = ApplicationVcsDO::setVcsPassword;
             } else {
                 authValueSetter = ApplicationVcsDO::setVcsPrivateToken;

@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum VcsStatus {
+public enum RepositoryStatus {
 
     /**
      * 未初始化
@@ -41,11 +41,11 @@ public enum VcsStatus {
      */
     private final Integer status;
 
-    public static VcsStatus of(Integer status) {
+    public static RepositoryStatus of(Integer status) {
         if (status == null) {
             return null;
         }
-        for (VcsStatus value : values()) {
+        for (RepositoryStatus value : values()) {
             if (value.status.equals(status)) {
                 return value;
             }

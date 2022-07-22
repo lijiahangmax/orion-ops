@@ -15,10 +15,10 @@ import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.MessageConst;
-import com.orion.ops.constant.app.VcsAuthType;
-import com.orion.ops.constant.app.VcsStatus;
-import com.orion.ops.constant.app.VcsTokenType;
-import com.orion.ops.constant.app.VcsType;
+import com.orion.ops.constant.app.RepositoryAuthType;
+import com.orion.ops.constant.app.RepositoryStatus;
+import com.orion.ops.constant.app.RepositoryTokenType;
+import com.orion.ops.constant.app.RepositoryType;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.event.EventParamsHolder;
 import com.orion.ops.constant.message.MessageType;
@@ -75,7 +75,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         ApplicationVcsDO insert = new ApplicationVcsDO();
         insert.setVcsName(request.getName());
         insert.setVcsDescription(request.getDescription());
-        insert.setVcsType(VcsType.GIT.getType());
+        insert.setVcsType(RepositoryType.GIT.getType());
         insert.setVscUrl(request.getUrl());
         insert.setVscUsername(request.getUsername());
         insert.setVcsAuthType(request.getAuthType());
@@ -92,7 +92,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             token = ValueMix.encrypt(token);
             insert.setVcsPrivateToken(token);
         }
-        insert.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+        insert.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
         applicationVcsDAO.insert(insert);
         // 设置日志参数
         EventParamsHolder.addParams(insert);
@@ -130,7 +130,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         }
         if (!beforeVcs.getVscUrl().equals(update.getVscUrl())) {
             // 如果修改了url则状态改为未初始化
-            update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             // 删除 event 目录
             File clonePath = new File(Utils.getVcsEventDir(id));
             Files1.delete(clonePath);
@@ -185,11 +185,11 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         // 判断状态
-        if (VcsStatus.INITIALIZING.getStatus().equals(vcs.getVcsStatus())) {
+        if (RepositoryStatus.INITIALIZING.getStatus().equals(vcs.getVcsStatus())) {
             throw Exceptions.runtime(MessageConst.VCS_INITIALIZING);
-        } else if (VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()) && !isReInit) {
+        } else if (RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()) && !isReInit) {
             throw Exceptions.runtime(MessageConst.VCS_INITIALIZED);
-        } else if (!VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()) && isReInit) {
+        } else if (!RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()) && isReInit) {
             throw Exceptions.runtime(MessageConst.VCS_UNINITIALIZED);
         }
         // 获取当前用户
@@ -200,7 +200,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 修改状态
         ApplicationVcsDO update = new ApplicationVcsDO();
         update.setId(id);
-        update.setVcsStatus(VcsStatus.INITIALIZING.getStatus());
+        update.setVcsStatus(RepositoryStatus.INITIALIZING.getStatus());
         applicationVcsDAO.updateById(update);
         // 提交线程异步处理
         log.info("开始初始化应用仓库 id: {}", id);
@@ -230,11 +230,11 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 修改状态
             if (ex == null) {
                 message = MessageType.VCS_INIT_SUCCESS;
-                update.setVcsStatus(VcsStatus.OK.getStatus());
+                update.setVcsStatus(RepositoryStatus.OK.getStatus());
             } else {
                 Files1.delete(clonePath);
                 message = MessageType.VCS_INIT_FAILURE;
-                update.setVcsStatus(VcsStatus.ERROR.getStatus());
+                update.setVcsStatus(RepositoryStatus.ERROR.getStatus());
             }
             applicationVcsDAO.updateById(update);
             // 发送站内信
@@ -315,14 +315,14 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 查询数据
         ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
-        Valid.isTrue(VcsStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
+        Valid.isTrue(RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
         // 获取仓库位置
         File vcsPath = new File(Utils.getVcsEventDir(id));
         if (!vcsPath.isDirectory()) {
             // 修改状态为未初始化
             ApplicationVcsDO entity = new ApplicationVcsDO();
             entity.setId(id);
-            entity.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            entity.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(entity);
             throw Exceptions.argument(MessageConst.VCS_PATH_ABSENT, Exceptions.runtime(vcsPath.getAbsolutePath()));
         }
@@ -382,7 +382,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();
             update.setId(id);
-            update.setVcsStatus(isDir ? VcsStatus.OK.getStatus() : VcsStatus.UNINITIALIZED.getStatus());
+            update.setVcsStatus(isDir ? RepositoryStatus.OK.getStatus() : RepositoryStatus.UNINITIALIZED.getStatus());
             update.setUpdateTime(new Date());
             applicationVcsDAO.updateById(update);
         }
@@ -397,8 +397,8 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     public String[] getVcsUsernamePassword(ApplicationVcsDO vcs) {
         String username = null;
         String password = null;
-        VcsAuthType authType = VcsAuthType.of(vcs.getVcsAuthType());
-        if (VcsAuthType.PASSWORD.equals(authType)) {
+        RepositoryAuthType authType = RepositoryAuthType.of(vcs.getVcsAuthType());
+        if (RepositoryAuthType.PASSWORD.equals(authType)) {
             // 用户名
             String vscUsername = vcs.getVscUsername();
             if (!Strings.isBlank(vscUsername)) {
@@ -407,7 +407,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             }
         } else {
             // token
-            VcsTokenType tokenType = VcsTokenType.of(vcs.getVcsTokenType());
+            RepositoryTokenType tokenType = RepositoryTokenType.of(vcs.getVcsTokenType());
             switch (tokenType) {
                 case GITHUB:
                     username = Const.EMPTY;

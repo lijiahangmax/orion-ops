@@ -4,8 +4,8 @@ import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.constant.app.VcsAuthType;
-import com.orion.ops.constant.app.VcsTokenType;
+import com.orion.ops.constant.app.RepositoryAuthType;
+import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
 import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
@@ -45,9 +45,9 @@ public class ApplicationVcsController {
     @EventLog(EventType.ADD_VCS)
     public Long addAppVcs(@RequestBody ApplicationVcsRequest request) {
         Valid.allNotBlank(request.getName(), request.getUrl());
-        VcsAuthType authType = Valid.notNull(VcsAuthType.of(request.getAuthType()));
-        if (VcsAuthType.TOKEN.equals(authType)) {
-            Valid.notNull(VcsTokenType.of(request.getTokenType()));
+        RepositoryAuthType authType = Valid.notNull(RepositoryAuthType.of(request.getAuthType()));
+        if (RepositoryAuthType.TOKEN.equals(authType)) {
+            Valid.notNull(RepositoryTokenType.of(request.getTokenType()));
             Valid.notBlank(request.getPrivateToken());
         }
         return applicationVcsService.addAppVcs(request);

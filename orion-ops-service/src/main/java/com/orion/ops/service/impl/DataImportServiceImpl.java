@@ -18,7 +18,7 @@ import com.orion.lang.utils.time.Dates;
 import com.orion.office.excel.reader.ExcelBeanReader;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.MessageConst;
-import com.orion.ops.constant.app.VcsStatus;
+import com.orion.ops.constant.app.RepositoryStatus;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.export.ImportType;
 import com.orion.ops.constant.message.MessageType;
@@ -268,13 +268,13 @@ public class DataImportServiceImpl implements DataImportService {
     @Override
     public void importAppVcsData(DataImportDTO importData) {
         this.doImportData(importData, applicationVcsDAO, v -> {
-            v.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            v.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
         }, v -> {
             Long id = v.getId();
             ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
             if (beforeVcs != null && !beforeVcs.getVscUrl().equals(v.getVscUrl())) {
                 // 如果修改了url则状态改为未初始化
-                v.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+                v.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
                 // 删除 event 目录
                 File clonePath = new File(Utils.getVcsEventDir(id));
                 Files1.delete(clonePath);

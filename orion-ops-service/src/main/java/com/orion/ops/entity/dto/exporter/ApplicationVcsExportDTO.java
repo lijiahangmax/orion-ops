@@ -6,8 +6,8 @@ import com.orion.office.excel.annotation.ExportSheet;
 import com.orion.office.excel.annotation.ExportTitle;
 import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.app.VcsAuthType;
-import com.orion.ops.constant.app.VcsTokenType;
+import com.orion.ops.constant.app.RepositoryAuthType;
+import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -66,17 +66,17 @@ public class ApplicationVcsExportDTO {
             dto.setName(p.getVcsName());
             dto.setUrl(p.getVscUrl());
             // 认证方式
-            VcsAuthType authType = VcsAuthType.of(p.getVcsAuthType());
+            RepositoryAuthType authType = RepositoryAuthType.of(p.getVcsAuthType());
             if (authType != null) {
                 dto.setAuthType(authType.getLabel());
             }
             // 令牌类型
-            if (VcsAuthType.TOKEN.equals(authType)) {
+            if (RepositoryAuthType.TOKEN.equals(authType)) {
                 Optional.ofNullable(p.getVcsTokenType())
-                        .map(VcsTokenType::of)
-                        .map(VcsTokenType::getLabel)
+                        .map(RepositoryTokenType::of)
+                        .map(RepositoryTokenType::getLabel)
                         .ifPresent(dto::setTokenType);
-                if (VcsTokenType.GITEE.getLabel().equals(dto.getTokenType())) {
+                if (RepositoryTokenType.GITEE.getLabel().equals(dto.getTokenType())) {
                     dto.setUsername(p.getVscUsername());
                 }
                 dto.setEncryptAuthValue(p.getVcsPrivateToken());

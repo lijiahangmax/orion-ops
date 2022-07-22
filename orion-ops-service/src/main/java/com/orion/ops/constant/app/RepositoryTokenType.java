@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum VcsTokenType {
+public enum RepositoryTokenType {
 
     /**
      * github
@@ -42,11 +42,11 @@ public enum VcsTokenType {
 
     private final String label;
 
-    public static VcsTokenType of(Integer type) {
+    public static RepositoryTokenType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (VcsTokenType value : values()) {
+        for (RepositoryTokenType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
@@ -54,11 +54,11 @@ public enum VcsTokenType {
         return null;
     }
 
-    public static VcsTokenType of(String label) {
+    public static RepositoryTokenType of(String label) {
         if (label == null) {
             return null;
         }
-        for (VcsTokenType value : values()) {
+        for (RepositoryTokenType value : values()) {
             if (value.label.equals(label.toLowerCase())) {
                 return value;
             }

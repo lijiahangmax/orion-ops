@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum VcsAuthType {
+public enum RepositoryAuthType {
 
     /**
      * 密码
@@ -31,11 +31,11 @@ public enum VcsAuthType {
 
     private final String label;
 
-    public static VcsAuthType of(Integer type) {
+    public static RepositoryAuthType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (VcsAuthType value : values()) {
+        for (RepositoryAuthType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }
@@ -43,11 +43,11 @@ public enum VcsAuthType {
         return null;
     }
 
-    public static VcsAuthType of(String label) {
+    public static RepositoryAuthType of(String label) {
         if (label == null) {
             return null;
         }
-        for (VcsAuthType value : values()) {
+        for (RepositoryAuthType value : values()) {
             if (value.label.equals(label)) {
                 return value;
             }

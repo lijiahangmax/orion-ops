@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum VcsType {
+public enum RepositoryType {
 
     /**
      * git
@@ -23,11 +23,11 @@ public enum VcsType {
 
     private final Integer type;
 
-    public static VcsType of(Integer type) {
+    public static RepositoryType of(Integer type) {
         if (type == null) {
             return null;
         }
-        for (VcsType value : values()) {
+        for (RepositoryType value : values()) {
             if (value.type.equals(type)) {
                 return value;
             }

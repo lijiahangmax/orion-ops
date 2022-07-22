@@ -2,7 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.io.Files1;
-import com.orion.ops.constant.app.VcsStatus;
+import com.orion.ops.constant.app.RepositoryStatus;
 import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.utils.Utils;
@@ -45,14 +45,14 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
      */
     private void cleanInitializing() {
         LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .eq(ApplicationVcsDO::getVcsStatus, VcsStatus.INITIALIZING.getStatus());
+                .eq(ApplicationVcsDO::getVcsStatus, RepositoryStatus.INITIALIZING.getStatus());
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
         for (ApplicationVcsDO vcs : vcsList) {
             Long id = vcs.getId();
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();
             update.setId(id);
-            update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             // 删除文件夹
             File clonePath = new File(Utils.getVcsEventDir(id));
@@ -66,7 +66,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
      */
     private void checkFinished() {
         LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .eq(ApplicationVcsDO::getVcsStatus, VcsStatus.OK.getStatus());
+                .eq(ApplicationVcsDO::getVcsStatus, RepositoryStatus.OK.getStatus());
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
         for (ApplicationVcsDO vcs : vcsList) {
             // 检查是否存在
@@ -78,7 +78,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();
             update.setId(id);
-            update.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }

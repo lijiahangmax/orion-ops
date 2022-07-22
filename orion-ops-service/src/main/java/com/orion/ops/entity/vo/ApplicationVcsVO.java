@@ -29,7 +29,7 @@ public class ApplicationVcsVO {
     private String description;
 
     /**
-     * @see com.orion.ops.constant.app.VcsType
+     * @see com.orion.ops.constant.app.RepositoryType
      */
     @ApiModelProperty(value = "类型 1git")
     private Integer type;
@@ -41,19 +41,19 @@ public class ApplicationVcsVO {
     private String username;
 
     /**
-     * @see com.orion.ops.constant.app.VcsStatus
+     * @see com.orion.ops.constant.app.RepositoryStatus
      */
     @ApiModelProperty(value = "状态 10未初始化 20初始化中 30正常 40失败")
     private Integer status;
 
     /**
-     * @see com.orion.ops.constant.app.VcsAuthType
+     * @see com.orion.ops.constant.app.RepositoryAuthType
      */
     @ApiModelProperty(value = "认证类型 10密码 20令牌")
     private Integer authType;
 
     /**
-     * @see com.orion.ops.constant.app.VcsTokenType
+     * @see com.orion.ops.constant.app.RepositoryTokenType
      */
     @ApiModelProperty(value = "令牌类型 10github 20gitee 30gitlab")
     private Integer tokenType;
