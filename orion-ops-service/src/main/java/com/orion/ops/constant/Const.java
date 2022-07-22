@@ -28,7 +28,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String TEMP_PATH = "temp";
 
-    public static final String VCS_PATH = "vcs";
+    public static final String REPOSITORY_PATH = "repo";
 
     public static final String DIST_PATH = "dist";
 
@@ -108,7 +108,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final Integer NOT_CONFIGURED = 2;
 
-    public static final Integer VCS_COMMIT_LIMIT = 30;
+    public static final Integer COMMIT_LIMIT = 30;
 
     public static final Integer BUILD_RELEASE_LIMIT = 20;
 

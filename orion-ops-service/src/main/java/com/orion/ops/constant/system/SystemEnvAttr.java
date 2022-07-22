@@ -45,7 +45,8 @@ public enum SystemEnvAttr {
     /**
      * 应用版本仓库目录
      */
-    VCS_PATH("应用版本仓库目录", false),
+    // fixme
+    REPOSITORY_PATH("应用版本仓库目录", false),
 
     /**
      * 构建产物目录

@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 @Data
 @ApiModel(value = "分支提交信息响应")
-public class ApplicationVcsCommitVO {
+public class ApplicationRepositoryCommitVO {
 
     @ApiModelProperty(value = "id")
     private String id;
@@ -37,8 +37,8 @@ public class ApplicationVcsCommitVO {
     private String timeAgo;
 
     static {
-        TypeStore.STORE.register(LogInfo.class, ApplicationVcsCommitVO.class, p -> {
-            ApplicationVcsCommitVO vo = new ApplicationVcsCommitVO();
+        TypeStore.STORE.register(LogInfo.class, ApplicationRepositoryCommitVO.class, p -> {
+            ApplicationRepositoryCommitVO vo = new ApplicationRepositoryCommitVO();
             vo.setId(p.getId());
             vo.setMessage(p.getMessage());
             vo.setName(p.getName());

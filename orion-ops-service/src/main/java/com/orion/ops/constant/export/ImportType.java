@@ -2,7 +2,7 @@ package com.orion.ops.constant.export;
 
 import com.orion.ops.constant.app.ApplicationFieldConst;
 import com.orion.ops.constant.app.ApplicationProfileFieldConst;
-import com.orion.ops.constant.app.ApplicationVcsFieldConst;
+import com.orion.ops.constant.app.ApplicationRepositoryFieldConst;
 import com.orion.ops.constant.command.CommandTemplateFieldConst;
 import com.orion.ops.constant.machine.MachineFieldConst;
 import com.orion.ops.constant.machine.MachineProxyFieldConst;
@@ -90,11 +90,12 @@ public enum ImportType {
     /**
      * 导入应用仓库
      */
-    VCS(220,
+    // fixme
+    REPOSITORY(220,
             "/templates/import/app-vcs-import-template.xlsx",
             "应用仓库导入模板.xlsx",
-            ApplicationVcsImportDTO.class,
-            ApplicationVcsFieldConst::validData,
+            ApplicationRepositoryImportDTO.class,
+            ApplicationRepositoryFieldConst::validData,
             ApplicationVcsDO.class,
             MessageType.APP_VCS_IMPORT_SUCCESS,
             MessageType.APP_VCS_IMPORT_FAILURE),

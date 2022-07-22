@@ -105,8 +105,8 @@ public class DataImportController {
                 return dataImportService.checkAppProfileImportData((List<ApplicationProfileImportDTO>) rows);
             case APPLICATION:
                 return dataImportService.checkApplicationInfoImportData((List<ApplicationImportDTO>) rows);
-            case VCS:
-                return dataImportService.checkAppVcsImportData((List<ApplicationVcsImportDTO>) rows);
+            case REPOSITORY:
+                return dataImportService.checkAppVcsImportData((List<ApplicationRepositoryImportDTO>) rows);
             case COMMAND_TEMPLATE:
                 return dataImportService.checkCommandTemplateImportData((List<CommandTemplateImportDTO>) rows);
             default:

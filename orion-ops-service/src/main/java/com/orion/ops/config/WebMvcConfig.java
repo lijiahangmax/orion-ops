@@ -163,7 +163,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = VcsException.class)
     public HttpWrapper<?> vcsExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("vcsExceptionHandler url: {}, vcs处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.REPOSITORY_OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {TaskExecuteException.class, ExecuteException.class})

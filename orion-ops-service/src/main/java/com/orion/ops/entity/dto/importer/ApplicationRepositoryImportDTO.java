@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "应用仓库导入")
-public class ApplicationVcsImportDTO extends BaseDataImportDTO {
+public class ApplicationRepositoryImportDTO extends BaseDataImportDTO {
 
     @ApiModelProperty(value = "名称")
     @ImportField(index = 0)
@@ -65,14 +65,14 @@ public class ApplicationVcsImportDTO extends BaseDataImportDTO {
     private String decryptAuthValue;
 
     static {
-        TypeStore.STORE.register(ApplicationVcsImportDTO.class, DataImportCheckRowVO.class, p -> {
+        TypeStore.STORE.register(ApplicationRepositoryImportDTO.class, DataImportCheckRowVO.class, p -> {
             DataImportCheckRowVO vo = new DataImportCheckRowVO();
             vo.setSymbol(p.name);
             vo.setIllegalMessage(p.getIllegalMessage());
             vo.setId(p.getId());
             return vo;
         });
-        TypeStore.STORE.register(ApplicationVcsImportDTO.class, ApplicationVcsDO.class, p -> {
+        TypeStore.STORE.register(ApplicationRepositoryImportDTO.class, ApplicationVcsDO.class, p -> {
             ApplicationVcsDO d = new ApplicationVcsDO();
             d.setId(p.getId());
             d.setVcsName(p.name);

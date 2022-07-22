@@ -55,7 +55,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
             update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             applicationVcsDAO.updateById(update);
             // 删除文件夹
-            File clonePath = new File(Utils.getVcsEventDir(id));
+            File clonePath = new File(Utils.getRepositoryEventDir(id));
             Files1.delete(clonePath);
             log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }
@@ -71,7 +71,7 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
         for (ApplicationVcsDO vcs : vcsList) {
             // 检查是否存在
             Long id = vcs.getId();
-            File clonePath = new File(Utils.getVcsEventDir(id));
+            File clonePath = new File(Utils.getRepositoryEventDir(id));
             if (Files1.isDirectory(clonePath)) {
                 continue;
             }

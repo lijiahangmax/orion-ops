@@ -156,8 +156,8 @@ public class Utils {
      * @param id id
      * @return 路径
      */
-    public static String getVcsEventDir(Long id) {
-        return Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), Const.EVENT_DIR + "/" + id);
+    public static String getRepositoryEventDir(Long id) {
+        return Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), Const.EVENT_DIR + "/" + id);
     }
 
     /**

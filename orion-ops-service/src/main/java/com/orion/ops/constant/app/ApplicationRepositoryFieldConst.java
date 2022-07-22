@@ -2,7 +2,7 @@ package com.orion.ops.constant.app;
 
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
-import com.orion.ops.entity.dto.importer.ApplicationVcsImportDTO;
+import com.orion.ops.entity.dto.importer.ApplicationRepositoryImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
@@ -13,9 +13,9 @@ import com.orion.ops.utils.ValueMix;
  * @version 1.0.0
  * @since 2022/6/2 10:02
  */
-public class ApplicationVcsFieldConst {
+public class ApplicationRepositoryFieldConst {
 
-    private ApplicationVcsFieldConst() {
+    private ApplicationRepositoryFieldConst() {
     }
 
     public static final int NAME_MAX_LEN = 32;
@@ -68,8 +68,8 @@ public class ApplicationVcsFieldConst {
      * @param o o
      */
     public static void validData(Object o) {
-        if (o instanceof ApplicationVcsImportDTO) {
-            validImport((ApplicationVcsImportDTO) o);
+        if (o instanceof ApplicationRepositoryImportDTO) {
+            validImport((ApplicationRepositoryImportDTO) o);
         }
     }
 
@@ -78,7 +78,7 @@ public class ApplicationVcsFieldConst {
      *
      * @param row row
      */
-    public static void validImport(ApplicationVcsImportDTO row) {
+    public static void validImport(ApplicationRepositoryImportDTO row) {
         String name = row.getName();
         String url = row.getUrl();
         String authTypeValue = row.getAuthType();

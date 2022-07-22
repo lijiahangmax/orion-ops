@@ -36,7 +36,7 @@ public class MessageConst {
 
     public static final String PARSE_TEMPLATE_DATA_ERROR = "模板解析失败 请检查模板数据";
 
-    public static final String VCS_OPERATOR_ERROR = "应用版本仓库操作执行失败";
+    public static final String REPOSITORY_OPERATOR_ERROR = "应用版本仓库操作执行失败";
 
     public static final String TASK_ERROR = "任务执行异常";
 

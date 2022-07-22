@@ -7,20 +7,20 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 应用分支提交信息响应
+ * 应用仓库分支提交信息响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/7/28 19:29
  */
 @Data
-@ApiModel(value = "应用分支提交信息响应")
-public class ApplicationVcsInfoVO {
+@ApiModel(value = "应用仓库分支提交信息响应")
+public class ApplicationRepositoryInfoVO {
 
     @ApiModelProperty(value = "分支")
-    private List<ApplicationVcsBranchVO> branches;
+    private List<ApplicationRepositoryBranchVO> branches;
 
     @ApiModelProperty(value = "提交记录")
-    private List<ApplicationVcsCommitVO> commits;
+    private List<ApplicationRepositoryCommitVO> commits;
 
 }

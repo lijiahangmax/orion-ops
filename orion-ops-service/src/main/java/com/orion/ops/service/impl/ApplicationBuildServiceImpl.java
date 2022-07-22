@@ -367,8 +367,8 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
         env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
         if (vcsId != null) {
-            env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_HOME, Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + buildId));
-            env.put(EnvConst.BUILD_PREFIX + EnvConst.VCS_EVENT_HOME, Utils.getVcsEventDir(vcsId));
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPOSITORY_HOME, Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), vcsId + "/" + buildId));
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPOSITORY_EVENT_HOME, Utils.getRepositoryEventDir(vcsId));
         }
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUNDLE_PATH, bundlePathReal);
         return env;

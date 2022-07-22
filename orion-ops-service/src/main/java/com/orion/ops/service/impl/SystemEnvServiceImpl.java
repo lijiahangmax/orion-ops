@@ -110,7 +110,7 @@ public class SystemEnvServiceImpl implements SystemEnvService {
         if (env != null) {
             env.setValue(afterValue);
             if (afterValue != null && !afterValue.equals(beforeValue)) {
-                if (SystemEnvAttr.VCS_PATH.equals(env)) {
+                if (SystemEnvAttr.REPOSITORY_PATH.equals(env)) {
                     // 如果修改的是 vcs 则修改 vcs 状态
                     applicationVcsService.syncVcsStatus();
                 }

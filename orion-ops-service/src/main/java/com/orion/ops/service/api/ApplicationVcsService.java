@@ -4,9 +4,9 @@ import com.orion.ext.vcs.git.Gits;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
-import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
-import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
-import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 
 import java.util.List;
@@ -77,7 +77,7 @@ public interface ApplicationVcsService {
      * @param request request
      * @return 分支信息
      */
-    ApplicationVcsInfoVO getVcsInfo(ApplicationVcsRequest request);
+    ApplicationRepositoryInfoVO getVcsInfo(ApplicationVcsRequest request);
 
     /**
      * 获取分支列表
@@ -85,7 +85,7 @@ public interface ApplicationVcsService {
      * @param id id
      * @return 分支信息
      */
-    List<ApplicationVcsBranchVO> getVcsBranchList(Long id);
+    List<ApplicationRepositoryBranchVO> getVcsBranchList(Long id);
 
     /**
      * 获取提交列表
@@ -94,7 +94,7 @@ public interface ApplicationVcsService {
      * @param branchName 分支名称
      * @return log
      */
-    List<ApplicationVcsCommitVO> getVcsCommitList(Long id, String branchName);
+    List<ApplicationRepositoryCommitVO> getVcsCommitList(Long id, String branchName);
 
     /**
      * 打开事件git

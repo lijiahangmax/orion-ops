@@ -29,9 +29,9 @@ import com.orion.ops.dao.ApplicationVcsDAO;
 import com.orion.ops.entity.domain.ApplicationVcsDO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
-import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
-import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
-import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.service.api.WebSideMessageService;
@@ -132,7 +132,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             // 如果修改了url则状态改为未初始化
             update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             // 删除 event 目录
-            File clonePath = new File(Utils.getVcsEventDir(id));
+            File clonePath = new File(Utils.getRepositoryEventDir(id));
             Files1.delete(clonePath);
         }
         int effect = applicationVcsDAO.updateById(update);
@@ -206,7 +206,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         log.info("开始初始化应用仓库 id: {}", id);
         Threads.start(() -> {
             // 删除
-            File clonePath = new File(Utils.getVcsEventDir(id));
+            File clonePath = new File(Utils.getRepositoryEventDir(id));
             Files1.delete(clonePath);
             // 初始化
             Exception ex = null;
@@ -252,15 +252,15 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public ApplicationVcsInfoVO getVcsInfo(ApplicationVcsRequest request) {
+    public ApplicationRepositoryInfoVO getVcsInfo(ApplicationVcsRequest request) {
         Long id = request.getId();
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
-            ApplicationVcsInfoVO vcsInfo = new ApplicationVcsInfoVO();
-            ApplicationVcsBranchVO defaultBranch;
+            ApplicationRepositoryInfoVO vcsInfo = new ApplicationRepositoryInfoVO();
+            ApplicationRepositoryBranchVO defaultBranch;
             // 获取分支列表
-            List<ApplicationVcsBranchVO> branches = Converts.toList(gits.branchList(), ApplicationVcsBranchVO.class);
+            List<ApplicationRepositoryBranchVO> branches = Converts.toList(gits.branchList(), ApplicationRepositoryBranchVO.class);
             // 获取当前环境上次构建分支
             String lastBranchName = applicationBuildDAO.selectLastBuildBranch(request.getAppId(), request.getProfileId(), id);
             if (lastBranchName != null) {
@@ -275,8 +275,8 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             vcsInfo.setBranches(branches);
             // 获取commit
             try {
-                List<LogInfo> logList = gits.logList(defaultBranch.getName(), Const.VCS_COMMIT_LIMIT);
-                vcsInfo.setCommits(Converts.toList(logList, ApplicationVcsCommitVO.class));
+                List<LogInfo> logList = gits.logList(defaultBranch.getName(), Const.COMMIT_LIMIT);
+                vcsInfo.setCommits(Converts.toList(logList, ApplicationRepositoryCommitVO.class));
             } catch (Exception e) {
                 log.error("获取vcs-commit列表失败: id: {}, branch: {}, e: {}", id, defaultBranch.getName(), e);
                 throw e;
@@ -286,24 +286,24 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public List<ApplicationVcsBranchVO> getVcsBranchList(Long id) {
+    public List<ApplicationRepositoryBranchVO> getVcsBranchList(Long id) {
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
             // 查询分支信息
             List<BranchInfo> branchList = gits.branchList();
-            return Converts.toList(branchList, ApplicationVcsBranchVO.class);
+            return Converts.toList(branchList, ApplicationRepositoryBranchVO.class);
         }
     }
 
     @Override
-    public List<ApplicationVcsCommitVO> getVcsCommitList(Long id, String branchName) {
+    public List<ApplicationRepositoryCommitVO> getVcsCommitList(Long id, String branchName) {
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch(branchName.split("/")[0]);
             // 查询提交信息
-            List<LogInfo> logList = gits.logList(branchName, Const.VCS_COMMIT_LIMIT);
-            return Converts.toList(logList, ApplicationVcsCommitVO.class);
+            List<LogInfo> logList = gits.logList(branchName, Const.COMMIT_LIMIT);
+            return Converts.toList(logList, ApplicationRepositoryCommitVO.class);
         } catch (Exception e) {
             log.error("获取vcs-commit列表失败: id: {}, branch: {}", id, branchName, e);
             throw e;
@@ -317,7 +317,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
         Valid.isTrue(RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
         // 获取仓库位置
-        File vcsPath = new File(Utils.getVcsEventDir(id));
+        File vcsPath = new File(Utils.getRepositoryEventDir(id));
         if (!vcsPath.isDirectory()) {
             // 修改状态为未初始化
             ApplicationVcsDO entity = new ApplicationVcsDO();
@@ -349,7 +349,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
-        File rootPath = new File(Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), id + Const.EMPTY));
+        File rootPath = new File(Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), id + Const.EMPTY));
         if (!Files1.isDirectory(rootPath)) {
             return;
         }
@@ -377,7 +377,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
         List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(new LambdaQueryWrapper<>());
         for (ApplicationVcsDO vcs : vcsList) {
             Long id = vcs.getId();
-            File vcsPath = new File(Utils.getVcsEventDir(id));
+            File vcsPath = new File(Utils.getRepositoryEventDir(id));
             boolean isDir = Files1.isDirectory(vcsPath);
             // 更新状态
             ApplicationVcsDO update = new ApplicationVcsDO();

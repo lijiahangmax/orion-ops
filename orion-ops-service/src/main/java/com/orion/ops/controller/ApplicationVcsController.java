@@ -8,9 +8,9 @@ import com.orion.ops.constant.app.RepositoryAuthType;
 import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.ApplicationVcsRequest;
-import com.orion.ops.entity.vo.ApplicationVcsBranchVO;
-import com.orion.ops.entity.vo.ApplicationVcsCommitVO;
-import com.orion.ops.entity.vo.ApplicationVcsInfoVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
 import com.orion.ops.entity.vo.ApplicationVcsVO;
 import com.orion.ops.service.api.ApplicationVcsService;
 import com.orion.ops.utils.Valid;
@@ -103,21 +103,21 @@ public class ApplicationVcsController {
 
     @ApiOperation(value = "获取分支和提交记录列表")
     @PostMapping("/info")
-    public ApplicationVcsInfoVO getVcsInfo(@RequestBody ApplicationVcsRequest request) {
+    public ApplicationRepositoryInfoVO getVcsInfo(@RequestBody ApplicationVcsRequest request) {
         Valid.notNull(request.getId());
         return applicationVcsService.getVcsInfo(request);
     }
 
     @PostMapping("/branch")
     @ApiOperation(value = "获取分支列表")
-    public List<ApplicationVcsBranchVO> getVcsBranchList(@RequestBody ApplicationVcsRequest request) {
+    public List<ApplicationRepositoryBranchVO> getVcsBranchList(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         return applicationVcsService.getVcsBranchList(id);
     }
 
     @PostMapping("/commit")
     @ApiOperation(value = "获取提交列表")
-    public List<ApplicationVcsCommitVO> getVcsCommitList(@RequestBody ApplicationVcsRequest request) {
+    public List<ApplicationRepositoryCommitVO> getVcsCommitList(@RequestBody ApplicationVcsRequest request) {
         Long id = Valid.notNull(request.getId());
         String branchName = Valid.notBlank(request.getBranchName());
         return applicationVcsService.getVcsCommitList(id, branchName);

@@ -188,18 +188,18 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows) {
+    public DataImportCheckVO checkAppVcsImportData(List<ApplicationRepositoryImportDTO> rows) {
         // 检查数据合法性
-        this.validImportRows(ImportType.VCS, rows);
+        this.validImportRows(ImportType.REPOSITORY, rows);
         // 通过唯一标识查询应用
         List<ApplicationVcsDO> presentVcsList = this.getImportRowsPresentValues(rows,
-                ApplicationVcsImportDTO::getName,
+                ApplicationRepositoryImportDTO::getName,
                 applicationVcsDAO, ApplicationVcsDO::getVcsName);
         // 检查数据是否存在
-        this.checkImportRowsPresent(rows, ApplicationVcsImportDTO::getName,
+        this.checkImportRowsPresent(rows, ApplicationRepositoryImportDTO::getName,
                 presentVcsList, ApplicationVcsDO::getVcsName, ApplicationVcsDO::getId);
         // 设置导入检查数据
-        return this.setImportCheckRows(ImportType.VCS, rows);
+        return this.setImportCheckRows(ImportType.REPOSITORY, rows);
     }
 
     @Override
@@ -276,7 +276,7 @@ public class DataImportServiceImpl implements DataImportService {
                 // 如果修改了url则状态改为未初始化
                 v.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
                 // 删除 event 目录
-                File clonePath = new File(Utils.getVcsEventDir(id));
+                File clonePath = new File(Utils.getRepositoryEventDir(id));
                 Files1.delete(clonePath);
             }
         });

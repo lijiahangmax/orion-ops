@@ -15,7 +15,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(value = "应用分支信息响应")
-public class ApplicationVcsBranchVO {
+public class ApplicationRepositoryBranchVO {
 
     @ApiModelProperty(value = "名称")
     private String name;
@@ -27,8 +27,8 @@ public class ApplicationVcsBranchVO {
     private Integer isDefault;
 
     static {
-        TypeStore.STORE.register(BranchInfo.class, ApplicationVcsBranchVO.class, p -> {
-            ApplicationVcsBranchVO vo = new ApplicationVcsBranchVO();
+        TypeStore.STORE.register(BranchInfo.class, ApplicationRepositoryBranchVO.class, p -> {
+            ApplicationRepositoryBranchVO vo = new ApplicationRepositoryBranchVO();
             vo.setName(p.toString());
             return vo;
         });

@@ -72,7 +72,7 @@ public interface DataImportService {
      * @param rows rows
      * @return 导入信息
      */
-    DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows);
+    DataImportCheckVO checkAppVcsImportData(List<ApplicationRepositoryImportDTO> rows);
 
     /**
      * 检查命令模板导入信息
