@@ -290,13 +290,13 @@ const routes = [
         component: () => import('../views/app/AppEnv')
       },
       {
-        path: '/app/vcs',
-        name: 'appVcs',
+        path: '/app/repo',
+        name: 'appRepository',
         meta: {
           requireAuth: true,
           title: '版本仓库'
         },
-        component: () => import('../views/app/AppVcs')
+        component: () => import('../views/app/AppRepository')
       },
       {
         path: '/app/build/list',

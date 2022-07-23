@@ -122,16 +122,16 @@
         <!-- 应用代码仓库 -->
         <!--        <a-descriptions-item label="应用代码仓库" :span="3">-->
         <!--          <span class="analysis-count">-->
-        <!--            <span class="analysis-field">{{ analysis.vcsVersionCount }}</span>个-->
+        <!--            <span class="analysis-field">{{ analysis.repoVersionCount }}</span>个-->
         <!--          </span>-->
         <!--          <span class="analysis-size">-->
-        <!--            <span class="analysis-field">{{ analysis.vcsVersionFileSize }}</span>-->
+        <!--            <span class="analysis-field">{{ analysis.repoVersionFileSize }}</span>-->
         <!--          </span>-->
-        <!--          <div class="analysis-func" v-if="analysis.vcsVersionCount > 0">-->
+        <!--          <div class="analysis-func" v-if="analysis.repoVersionCount > 0">-->
         <!--            <span class="clear-button"-->
         <!--                  title="清理"-->
-        <!--                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.VCS_FILE.key]"-->
-        <!--                  @click="clear(SYSTEM_CLEAR_TYPE.VCS_FILE)">-->
+        <!--                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.REPO_FILE.key]"-->
+        <!--                  @click="clear(SYSTEM_CLEAR_TYPE.REPO_FILE)">-->
         <!--            清理-->
         <!--           </span>-->
         <!--          </div>-->
@@ -174,15 +174,15 @@ export default {
         swapFileSize: '0 B',
         distVersionCount: 0,
         distFileSize: '0 B',
-        vcsVersionCount: 0,
-        vcsVersionFileSize: '0 B'
+        repoVersionCount: 0,
+        repoVersionFileSize: '0 B'
       },
       visibleClean: {
         tempFile: true,
         logFile: true,
         swapFile: true,
         distFile: true,
-        vcsFile: true
+        repoFile: true
       },
       reAnalysisLoading: false,
       fileCleanThreshold: undefined,

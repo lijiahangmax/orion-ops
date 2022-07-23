@@ -1,8 +1,8 @@
 <template>
-  <div class="app-vcs-container">
+  <div class="app-repo-container">
     <!-- 搜索列 -->
     <div class="table-search-columns">
-      <a-form-model class="app-vcs-search-form" ref="query" :model="query">
+      <a-form-model class="app-repo-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
@@ -27,7 +27,7 @@
           <a-col :span="4">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
-                <a-select-option :value="type.value" v-for="type in VCS_STATUS" :key="type.value">
+                <a-select-option :value="type.value" v-for="type in REPOSITORY_STATUS" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
               </a-select>
@@ -70,35 +70,35 @@
         </template>
         <!-- 资源用户 -->
         <template v-slot:username="record">
-          {{ record.authType === VCS_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
+          {{ record.authType === REPOSITORY_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
         </template>
         <!-- 状态 -->
         <template v-slot:status="record">
-          <a-tag :color="record.status | formatVcsStatus('color')">
-            {{ record.status | formatVcsStatus('label') }}
+          <a-tag :color="record.status | formatRepoStatus('color')">
+            {{ record.status | formatRepoStatus('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
           <!-- 初始化 -->
-          <a v-if="VCS_STATUS.UNINITIALIZED.value === record.status || VCS_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
+          <a v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status || REPOSITORY_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
           <a-popconfirm title="确定要重新初始化吗?"
-                        v-else-if="VCS_STATUS.OK.value === record.status"
+                        v-else-if="REPOSITORY_STATUS.OK.value === record.status"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        :disabled="VCS_STATUS.INITIALIZING.value === record.status"
+                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
                         @confirm="reInit(record)">
             <span class="span-blue pointer">重新初始化</span>
           </a-popconfirm>
-          <a-divider type="vertical" v-if="VCS_STATUS.UNINITIALIZED.value === record.status ||
-                  VCS_STATUS.ERROR.value === record.status ||
-                  VCS_STATUS.OK.value === record.status"/>
+          <a-divider type="vertical" v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status ||
+                  REPOSITORY_STATUS.ERROR.value === record.status ||
+                  REPOSITORY_STATUS.OK.value === record.status"/>
           <!-- 修改 -->
           <a-button class="p0"
                     type="link"
                     style="height: 22px"
-                    :disabled="VCS_STATUS.INITIALIZING.value === record.status"
+                    :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
                     @click="update(record.id)">
             修改
           </a-button>
@@ -108,12 +108,12 @@
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        :disabled="VCS_STATUS.INITIALIZING.value === record.status"
+                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
                         @confirm="remove(record.id)">
             <a-button class="p0"
                       type="link"
                       style="height: 22px"
-                      :disabled="VCS_STATUS.INITIALIZING.value === record.status">
+                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">
               删除
             </a-button>
           </a-popconfirm>
@@ -123,12 +123,12 @@
           <!--                        placement="topRight"-->
           <!--                        ok-text="确定"-->
           <!--                        cancel-text="取消"-->
-          <!--                        :disabled="VCS_STATUS.INITIALIZING.value === record.status"-->
+          <!--                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"-->
           <!--                        @confirm="clean(record.id)">-->
           <!--            <a-button class="p0"-->
           <!--                      type="link"-->
           <!--                      style="height: 22px"-->
-          <!--                      :disabled="VCS_STATUS.INITIALIZING.value === record.status">-->
+          <!--                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">-->
           <!--              清空-->
           <!--            </a-button>-->
           <!--          </a-popconfirm>-->
@@ -136,13 +136,13 @@
       </a-table>
     </div>
     <!-- 事件 -->
-    <div class="app-vcs-event">
+    <div class="app-repo-event">
       <!-- 添加模态框 -->
-      <AddAppVcsModal ref="addModal" @added="getList({})" @updated="getList({})"/>
+      <AddRepositoryModal ref="addModal" @added="getList({})" @updated="getList({})"/>
       <!-- 预览框 -->
       <TextPreview ref="preview"/>
       <!-- 导出模态框 -->
-      <AppVcsExportModal ref="export"/>
+      <RepositoryExportModal ref="export"/>
       <!-- 导入模态框 -->
       <DataImportModal ref="import" :importType="importType"/>
     </div>
@@ -150,10 +150,10 @@
 </template>
 
 <script>
-import { enumValueOf, IMPORT_TYPE, VCS_AUTH_TYPE, VCS_STATUS } from '@/lib/enum'
-import AddAppVcsModal from '@/components/app/AddAppVcsModal'
+import { enumValueOf, IMPORT_TYPE, REPOSITORY_AUTH_TYPE, REPOSITORY_STATUS } from '@/lib/enum'
+import AddRepositoryModal from '@/components/app/AddRepositoryModal'
 import TextPreview from '@/components/preview/TextPreview'
-import AppVcsExportModal from '@/components/export/AppVcsExportModal'
+import RepositoryExportModal from '@/components/export/RepositoryExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
 /**
@@ -213,17 +213,17 @@ const columns = [
 ]
 
 export default {
-  name: 'AppVcs',
+  name: 'AppRepository',
   components: {
     DataImportModal,
-    AppVcsExportModal,
+    RepositoryExportModal,
     TextPreview,
-    AddAppVcsModal
+    AddRepositoryModal
   },
   data: function() {
     return {
-      VCS_AUTH_TYPE,
-      VCS_STATUS,
+      REPOSITORY_AUTH_TYPE,
+      REPOSITORY_STATUS,
       query: {
         name: undefined,
         url: undefined,
@@ -241,14 +241,14 @@ export default {
         }
       },
       loading: false,
-      importType: IMPORT_TYPE.VCS,
+      importType: IMPORT_TYPE.REPOSITORY,
       columns
     }
   },
   methods: {
     getList(page = this.pagination) {
       this.loading = true
-      this.$api.getVcsList({
+      this.$api.getRepositoryList({
         ...this.query,
         page: page.current,
         limit: page.pageSize
@@ -264,7 +264,7 @@ export default {
       })
     },
     remove(id) {
-      this.$api.deleteVcs({
+      this.$api.deleteRepository({
         id
       }).then(() => {
         this.$message.success('删除成功')
@@ -272,23 +272,23 @@ export default {
       })
     },
     clean(id) {
-      this.$api.cleanVcs({
+      this.$api.cleanRepository({
         id
       }).then(() => {
         this.$message.success('清空完毕')
       })
     },
     init(record) {
-      record.status = VCS_STATUS.INITIALIZING.value
-      this.$api.initVcs({
+      record.status = REPOSITORY_STATUS.INITIALIZING.value
+      this.$api.initRepository({
         id: record.id
       }).then(() => {
         this.$message.success('正在初始化')
       })
     },
     reInit(record) {
-      record.status = VCS_STATUS.INITIALIZING.value
-      this.$api.reInitVcs({
+      record.status = REPOSITORY_STATUS.INITIALIZING.value
+      this.$api.reInitRepository({
         id: record.id
       }).then(() => {
         this.$message.success('正在重新初始化')
@@ -312,8 +312,8 @@ export default {
     }
   },
   filters: {
-    formatVcsStatus(status, f) {
-      return enumValueOf(VCS_STATUS, status)[f]
+    formatRepoStatus(status, f) {
+      return enumValueOf(REPOSITORY_STATUS, status)[f]
     }
   },
   mounted() {

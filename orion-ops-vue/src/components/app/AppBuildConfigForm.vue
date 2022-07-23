@@ -89,8 +89,8 @@ export default {
   },
   computed: {
     visibleAddCheckout() {
-      return this.vcsId &&
-        this.vcsId !== null &&
+      return this.repoId &&
+        this.repoId !== null &&
         this.actions.map(s => s.type).filter(t => t === BUILD_ACTION_TYPE.CHECKOUT.value).length < 1
     }
   },
@@ -107,7 +107,7 @@ export default {
       BUILD_ACTION_TYPE,
       loading: false,
       profileId: null,
-      vcsId: null,
+      repoId: null,
       bundlePath: undefined,
       actions: [],
       editorConfig
@@ -116,7 +116,7 @@ export default {
   methods: {
     initData(detail) {
       this.profileId = detail.profileId
-      this.vcsId = detail.vcsId
+      this.repoId = detail.repoId
       this.bundlePath = detail.env && detail.env.bundlePath
       if (detail.buildActions && detail.buildActions.length) {
         this.actions = detail.buildActions.map(s => {

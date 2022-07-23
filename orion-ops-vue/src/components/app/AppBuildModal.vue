@@ -42,7 +42,7 @@
       <div class="build-container" v-else>
         <div class="build-form">
           <!-- 分支 -->
-          <div class="build-form-item" v-if="app && app.vcsId">
+          <div class="build-form-item" v-if="app && app.repoId">
             <span class="build-form-item-label normal-label required-label">分支</span>
             <a-select class="build-form-item-input"
                       v-model="submit.branchName"
@@ -56,7 +56,7 @@
             <a-icon type="reload" class="reload" title="刷新" @click="reloadBranch"/>
           </div>
           <!-- commit -->
-          <div class="build-form-item" v-if="app && app.vcsId">
+          <div class="build-form-item" v-if="app && app.repoId">
             <span class="build-form-item-label normal-label required-label">commit</span>
             <a-select class="build-form-item-input commit-selector"
                       v-model="submit.commitId"
@@ -161,9 +161,9 @@ export default {
         this.$message.warning('未找到该应用')
       }
       this.app = filter[0]
-      if (this.app.vcsId) {
+      if (this.app.repoId) {
         this.appLoading = true
-        await this.loadVcs()
+        await this.loadRepository()
         this.appLoading = false
       }
     },
@@ -192,9 +192,9 @@ export default {
       this.submit.commitId = null
       this.submit.description = null
     },
-    async loadVcs() {
-      await this.$api.getVcsInfo({
-        id: this.app.vcsId,
+    async loadRepository() {
+      await this.$api.getRepositoryInfo({
+        id: this.app.repoId,
         appId: this.appId,
         profileId: this.profileId
       }).then(({ data }) => {
@@ -217,8 +217,8 @@ export default {
     },
     reloadBranch() {
       this.appLoading = true
-      this.$api.getVcsBranchList({
-        id: this.app.vcsId
+      this.$api.getRepositoryBranchList({
+        id: this.app.repoId
       }).then(({ data }) => {
         this.appLoading = false
         this.branchList = data
@@ -237,8 +237,8 @@ export default {
         return
       }
       this.appLoading = true
-      this.$api.getVcsCommitList({
-        id: this.app.vcsId,
+      this.$api.getRepositoryCommitList({
+        id: this.app.repoId,
         branchName: this.submit.branchName
       }).then(({ data }) => {
         this.appLoading = false
@@ -257,7 +257,7 @@ export default {
         this.$message.warning('请选择构建应用')
         return
       }
-      if (this.app.vcsId) {
+      if (this.app.repoId) {
         if (!this.submit.branchName) {
           this.$message.warning('请选择分支')
           return

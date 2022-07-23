@@ -78,7 +78,7 @@
         </template>
         <!-- 版本 -->
         <template v-slot:version="record">
-          <span v-if="record.vcsId">
+          <span v-if="record.repoId">
             <!-- 分支 -->
             <span class="mr4 nowrap" v-if="record.branchName" title="分支">
               <a-icon type="branches"/>{{ record.branchName }}

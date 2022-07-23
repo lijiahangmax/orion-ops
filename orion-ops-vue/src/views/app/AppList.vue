@@ -222,8 +222,8 @@ const columns = [
   },
   {
     title: '仓库名称',
-    key: 'vcsName',
-    dataIndex: 'vcsName',
+    key: 'repoName',
+    dataIndex: 'repoName',
     ellipsis: true
   },
   {

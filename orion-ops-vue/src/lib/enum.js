@@ -605,7 +605,7 @@ export const VIEW_TYPE = {
 /**
  * 仓库状态
  */
-export const VCS_STATUS = {
+export const REPOSITORY_STATUS = {
   UNINITIALIZED: {
     value: 10,
     label: '未初始化',
@@ -631,7 +631,7 @@ export const VCS_STATUS = {
 /**
  * 仓库认证方式
  */
-export const VCS_AUTH_TYPE = {
+export const REPOSITORY_AUTH_TYPE = {
   PASSWORD: {
     value: 10,
     label: '密码认证'
@@ -645,7 +645,7 @@ export const VCS_AUTH_TYPE = {
 /**
  * 仓库令牌类型
  */
-export const VCS_TOKEN_TYPE = {
+export const REPOSITORY_TOKEN_TYPE = {
   GITHUB: {
     value: 10,
     label: 'github',
@@ -1021,7 +1021,7 @@ export const EVENT_CLASSIFY = {
     value: 70,
     label: '应用变量操作'
   },
-  VCS: {
+  REPOSITORY: {
     value: 75,
     label: '应用仓库操作'
   },
@@ -1381,32 +1381,32 @@ export const EVENT_TYPE = {
     label: '同步变量',
     classify: 70
   },
-  ADD_VCS: {
+  ADD_REPOSITORY: {
     value: 3305,
     label: '添加仓库',
     classify: 75
   },
-  INIT_VCS: {
+  INIT_REPOSITORY: {
     value: 3310,
     label: '初始化仓库',
     classify: 75
   },
-  RE_INIT_VCS: {
+  RE_INIT_REPOSITORY: {
     value: 3315,
     label: '重新初始化',
     classify: 75
   },
-  UPDATE_VCS: {
+  UPDATE_REPOSITORY: {
     value: 3320,
     label: '更新仓库',
     classify: 75
   },
-  DELETE_VCS: {
+  DELETE_REPOSITORY: {
     value: 3325,
     label: '删除仓库',
     classify: 75
   },
-  CLEAN_VCS: {
+  CLEAN_REPOSITORY: {
     value: 3330,
     label: '清空仓库',
     classify: 75
@@ -1686,7 +1686,7 @@ export const EVENT_TYPE = {
     label: '导入日志文件',
     classify: 120
   },
-  DATA_IMPORT_APP_PROFILE: {
+  DATA_IMPORT_PROFILE: {
     value: 8320,
     label: '导入应用环境',
     classify: 120
@@ -1696,7 +1696,7 @@ export const EVENT_TYPE = {
     label: '导入应用信息',
     classify: 120
   },
-  DATA_IMPORT_APP_VCS: {
+  DATA_IMPORT_REPOSITORY: {
     value: 8330,
     label: '导入版本仓库',
     classify: 120
@@ -1726,7 +1726,7 @@ export const EVENT_TYPE = {
     label: '日志文件',
     classify: 130
   },
-  DATA_EXPORT_APP_PROFILE: {
+  DATA_EXPORT_PROFILE: {
     value: 8550,
     label: '应用环境',
     classify: 130
@@ -1736,7 +1736,7 @@ export const EVENT_TYPE = {
     label: '应用信息',
     classify: 130
   },
-  DATA_EXPORT_APP_VCS: {
+  DATA_EXPORT_REPOSITORY: {
     value: 8560,
     label: '应用仓库',
     classify: 130
@@ -1777,8 +1777,8 @@ export const SYSTEM_CLEAR_TYPE = {
     value: 40,
     label: '旧版本构建产物'
   },
-  VCS_FILE: {
-    key: 'vcsFile',
+  REPO_FILE: {
+    key: 'repoFile',
     value: 50,
     label: '旧版本应用仓库'
   }
@@ -2027,19 +2027,19 @@ export const MESSAGE_TYPE = {
     notify: 'error',
     redirect: '/batch/exec/list'
   },
-  VCS_INIT_SUCCESS: {
+  REPOSITORY_INIT_SUCCESS: {
     classify: 10,
     value: 1030,
     label: '版本仓库初始化成功',
     notify: 'success',
-    redirect: '/app/vcs'
+    redirect: '/app/repo'
   },
-  VCS_INIT_FAILURE: {
+  REPOSITORY_INIT_FAILURE: {
     classify: 10,
     value: 1040,
     label: '版本仓库初始化失败',
     notify: 'error',
-    redirect: '/app/vcs'
+    redirect: '/app/repo'
   },
   BUILD_SUCCESS: {
     classify: 10,
@@ -2153,14 +2153,14 @@ export const MESSAGE_TYPE = {
     notify: 'error',
     redirect: '/log/list'
   },
-  APP_PROFILE_IMPORT_SUCCESS: {
+  PROFILE_IMPORT_SUCCESS: {
     classify: 20,
     value: 2070,
     label: '应用环境导入成功',
     notify: 'success',
     redirect: '/app/profile'
   },
-  APP_PROFILE_IMPORT_FAILURE: {
+  PROFILE_IMPORT_FAILURE: {
     classify: 20,
     value: 2080,
     label: '应用环境导入失败',
@@ -2181,19 +2181,19 @@ export const MESSAGE_TYPE = {
     notify: 'error',
     redirect: '/app/list'
   },
-  APP_VCS_IMPORT_SUCCESS: {
+  REPOSITORY_IMPORT_SUCCESS: {
     classify: 20,
     value: 2110,
     label: '版本仓库导入成功',
     notify: 'success',
-    redirect: '/app/vcs'
+    redirect: '/app/repo'
   },
-  APP_VCS_IMPORT_FAILURE: {
+  REPOSITORY_IMPORT_FAILURE: {
     classify: 20,
     value: 2120,
     label: '版本仓库导入失败',
     notify: 'error',
-    redirect: '/app/vcs'
+    redirect: '/app/repo'
   },
   COMMAND_TEMPLATE_IMPORT_SUCCESS: {
     classify: 20,
@@ -2483,11 +2483,11 @@ export const IMPORT_TYPE = {
     title: '应用信息 导入',
     api: 'importApplication'
   },
-  VCS: {
+  REPOSITORY: {
     value: 220,
     tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '版本仓库 导入',
-    api: 'importAppVcs'
+    api: 'importRepository'
   },
   COMMAND_TEMPLATE: {
     value: 310,

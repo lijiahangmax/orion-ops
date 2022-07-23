@@ -35,7 +35,7 @@
 import { downloadFile } from '@/lib/utils'
 
 export default {
-  name: 'AppVcsExportModal',
+  name: 'RepositoryExportModal',
   data: function() {
     return {
       visible: false,
@@ -53,7 +53,7 @@ export default {
     },
     exportData() {
       this.loading = true
-      this.$api.exportAppVcs({
+      this.$api.exportRepository({
         exportPassword: this.exportPassword ? 1 : 2,
         protectPassword: this.protectPassword
       }).then((e) => {

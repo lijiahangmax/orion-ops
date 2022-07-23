@@ -1088,8 +1088,8 @@ const $api = {
   /**
    * 添加应用版本仓库
    */
-  addVcs: param => {
-    return $http.$post('/app-vcs/add', param, {
+  addRepository: param => {
+    return $http.$post('/app-repo/add', param, {
       loading: '正在添加...'
     })
   },
@@ -1097,8 +1097,8 @@ const $api = {
   /**
    * 修改应用版本仓库
    */
-  updateVcs: param => {
-    return $http.$post('/app-vcs/update', param, {
+  updateRepository: param => {
+    return $http.$post('/app-repo/update', param, {
       timeout: 600000,
       loading: '正在修改...'
     })
@@ -1107,8 +1107,8 @@ const $api = {
   /**
    * 删除版本仓库
    */
-  deleteVcs: param => {
-    return $http.$post('/app-vcs/delete', param, {
+  deleteRepository: param => {
+    return $http.$post('/app-repo/delete', param, {
       timeout: 600000,
       loading: '正在删除...'
     })
@@ -1117,22 +1117,22 @@ const $api = {
   /**
    * 获取版本仓库列表
    */
-  getVcsList: param => {
-    return $http.$post('/app-vcs/list', param)
+  getRepositoryList: param => {
+    return $http.$post('/app-repo/list', param)
   },
 
   /**
    * 获取版本仓库详情
    */
-  getVcsDetail: param => {
-    return $http.$post('/app-vcs/detail', param)
+  getRepositoryDetail: param => {
+    return $http.$post('/app-repo/detail', param)
   },
 
   /**
    * 初始化版本仓库
    */
-  initVcs: param => {
-    return $http.$post('/app-vcs/init', param, {
+  initRepository: param => {
+    return $http.$post('/app-repo/init', param, {
       timeout: 600000,
       loading: '正在初始化...'
     })
@@ -1141,18 +1141,18 @@ const $api = {
   /**
    * 重新初始化版本仓库
    */
-  reInitVcs: param => {
-    return $http.$post('/app-vcs/re-init', param, {
+  reInitRepository: param => {
+    return $http.$post('/app-repo/re-init', param, {
       timeout: 600000,
       loading: '正在初始化...'
     })
   },
 
   /**
-   * 清空
+   * 清空仓库
    */
-  cleanVcs: param => {
-    return $http.$post('/app-vcs/clean', param, {
+  cleanRepository: param => {
+    return $http.$post('/app-repo/clean', param, {
       timeout: 600000,
       loading: '正在清空...'
     })
@@ -1161,22 +1161,22 @@ const $api = {
   /**
    * 获取版本仓库分支和提交记录信息
    */
-  getVcsInfo: param => {
-    return $http.$post('/app-vcs/info', param)
+  getRepositoryInfo: param => {
+    return $http.$post('/app-repo/info', param)
   },
 
   /**
    * 获取版本仓库分支列表
    */
-  getVcsBranchList: param => {
-    return $http.$post('/app-vcs/branch', param)
+  getRepositoryBranchList: param => {
+    return $http.$post('/app-repo/branch', param)
   },
 
   /**
    * 获取版本仓库提交列表
    */
-  getVcsCommitList: param => {
-    return $http.$post('/app-vcs/commit', param)
+  getRepositoryCommitList: param => {
+    return $http.$post('/app-repo/commit', param)
   },
 
   /**
@@ -2275,8 +2275,8 @@ const $api = {
   /**
    * 导出应用版本仓库
    */
-  exportAppVcs: param => {
-    return $http.$export('/data-export/app-vcs', param)
+  exportRepository: param => {
+    return $http.$export('/data-export/repository', param)
   },
 
   /**
@@ -2354,8 +2354,8 @@ const $api = {
   /**
    * 导入应用版本仓库
    */
-  importAppVcs: param => {
-    return $http.$post('/data-import/import-app-vcs', param)
+  importRepository: param => {
+    return $http.$post('/data-import/import-repository', param)
   },
 
   /**

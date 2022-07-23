@@ -17,7 +17,7 @@
         </a-form-item>
         <a-form-item label="认证方式">
           <a-radio-group v-decorator="decorators.authType">
-            <a-radio :value="type.value" v-for="type in VCS_AUTH_TYPE" :key="type.value">
+            <a-radio :value="type.value" v-for="type in REPOSITORY_AUTH_TYPE" :key="type.value">
               {{ type.label }}
             </a-radio>
           </a-radio-group>
@@ -28,7 +28,7 @@
         <a-form-item label="认证令牌" v-if="!visiblePassword()" style="margin-bottom: 0">
           <a-form-item style="display: inline-block; width: 30%">
             <a-select v-decorator="decorators.tokenType">
-              <a-select-option :value="type.value" v-for="type in VCS_TOKEN_TYPE" :key="type.value">
+              <a-select-option :value="type.value" v-for="type in REPOSITORY_TOKEN_TYPE" :key="type.value">
                 {{ type.label }}
               </a-select-option>
             </a-select>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { enumValueOf, VCS_AUTH_TYPE, VCS_TOKEN_TYPE } from '@/lib/enum'
+import { enumValueOf, REPOSITORY_AUTH_TYPE, REPOSITORY_TOKEN_TYPE } from '@/lib/enum'
 import { pick } from 'lodash'
 
 const layout = {
@@ -80,10 +80,10 @@ function getDecorators() {
       }]
     }],
     authType: ['authType', {
-      initialValue: VCS_AUTH_TYPE.PASSWORD.value
+      initialValue: REPOSITORY_AUTH_TYPE.PASSWORD.value
     }],
     tokenType: ['tokenType', {
-      initialValue: VCS_TOKEN_TYPE.GITHUB.value
+      initialValue: REPOSITORY_TOKEN_TYPE.GITHUB.value
     }],
     privateToken: ['privateToken', {
       rules: [{
@@ -119,11 +119,11 @@ function getDecorators() {
 }
 
 export default {
-  name: 'AddAppVcsModal',
+  name: 'AddRepositoryModal',
   data: function() {
     return {
-      VCS_AUTH_TYPE,
-      VCS_TOKEN_TYPE,
+      REPOSITORY_AUTH_TYPE,
+      REPOSITORY_TOKEN_TYPE,
       id: null,
       visible: false,
       title: null,
@@ -141,7 +141,7 @@ export default {
     },
     update(id) {
       this.title = '修改仓库'
-      this.$api.getVcsDetail({ id })
+      this.$api.getRepositoryDetail({ id })
         .then(({ data }) => {
           this.initRecord(data)
         })
@@ -162,7 +162,7 @@ export default {
         resolve()
       }).then(() => {
         // 加载令牌类型
-        if (this.record.authType === VCS_AUTH_TYPE.TOKEN.value) {
+        if (this.record.authType === REPOSITORY_AUTH_TYPE.TOKEN.value) {
           this.$nextTick(() => {
             this.record.tokenType = tokenType
             this.form.setFieldsValue({ tokenType })
@@ -188,7 +188,7 @@ export default {
     validateUsername(rule, value, callback) {
       if (this.form.getFieldValue('password') && !value) {
         callback(new Error('用户名和密码须同时存在'))
-      } else if (this.form.getFieldValue('tokenType') === VCS_TOKEN_TYPE.GITEE.value && !value) {
+      } else if (this.form.getFieldValue('tokenType') === REPOSITORY_TOKEN_TYPE.GITEE.value && !value) {
         callback(new Error('gitee 令牌认证用户名必填'))
       } else {
         callback()
@@ -202,15 +202,15 @@ export default {
       }
     },
     visibleUsername(authType = this.form.getFieldValue('authType'), tokenType = this.form.getFieldValue('tokenType')) {
-      return authType !== VCS_AUTH_TYPE.TOKEN.value ||
-        (authType === VCS_AUTH_TYPE.TOKEN.value && tokenType === VCS_AUTH_TYPE.TOKEN.value)
+      return authType !== REPOSITORY_AUTH_TYPE.TOKEN.value ||
+        (authType === REPOSITORY_AUTH_TYPE.TOKEN.value && tokenType === REPOSITORY_AUTH_TYPE.TOKEN.value)
     },
     visiblePassword() {
-      return this.form.getFieldValue('authType') === VCS_AUTH_TYPE.PASSWORD.value
+      return this.form.getFieldValue('authType') === REPOSITORY_AUTH_TYPE.PASSWORD.value
     },
     getPrivateTokenPlaceholder() {
-      return enumValueOf(VCS_TOKEN_TYPE, this.form.getFieldValue('tokenType')).description ||
-        VCS_TOKEN_TYPE.GITHUB.description
+      return enumValueOf(REPOSITORY_TOKEN_TYPE, this.form.getFieldValue('tokenType')).description ||
+        REPOSITORY_TOKEN_TYPE.GITHUB.description
     },
     check() {
       this.loading = true
@@ -227,10 +227,10 @@ export default {
       try {
         if (!this.id) {
           // 添加
-          res = await this.$api.addVcs({ ...values })
+          res = await this.$api.addRepository({ ...values })
         } else {
           // 修改
-          res = await this.$api.updateVcs({
+          res = await this.$api.updateRepository({
             ...values,
             id: this.id
           })
