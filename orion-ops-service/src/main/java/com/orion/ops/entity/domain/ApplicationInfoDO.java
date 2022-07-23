@@ -49,8 +49,8 @@ public class ApplicationInfoDO implements Serializable {
     /**
      * 应用版本仓库id
      */
-    @TableField(value = "vcs_id", updateStrategy = FieldStrategy.IGNORED)
-    private Long vcsId;
+    @TableField(value = "repo_id", updateStrategy = FieldStrategy.IGNORED)
+    private Long repoId;
 
     /**
      * 描述

@@ -25,15 +25,15 @@ import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationInfoDAO;
-import com.orion.ops.dao.ApplicationVcsDAO;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.dao.ApplicationRepositoryDAO;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.ops.entity.request.ApplicationVcsRequest;
+import com.orion.ops.entity.request.ApplicationRepositoryRequest;
 import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
-import com.orion.ops.entity.vo.ApplicationVcsVO;
-import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.entity.vo.ApplicationRepositoryVO;
+import com.orion.ops.service.api.ApplicationRepositoryService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -52,11 +52,11 @@ import java.util.*;
  * @since 2021/11/28 21:27
  */
 @Slf4j
-@Service("applicationVcsService")
-public class ApplicationVcsServiceImpl implements ApplicationVcsService {
+@Service("applicationRepositoryService")
+public class ApplicationRepositoryServiceImpl implements ApplicationRepositoryService {
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private ApplicationBuildDAO applicationBuildDAO;
@@ -68,140 +68,140 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     private WebSideMessageService webSideMessageService;
 
     @Override
-    public Long addAppVcs(ApplicationVcsRequest request) {
+    public Long addRepository(ApplicationRepositoryRequest request) {
         // 检查名称是否存在
         this.checkNamePresent(null, request.getName());
         // 插入
-        ApplicationVcsDO insert = new ApplicationVcsDO();
-        insert.setVcsName(request.getName());
-        insert.setVcsDescription(request.getDescription());
-        insert.setVcsType(RepositoryType.GIT.getType());
-        insert.setVscUrl(request.getUrl());
-        insert.setVscUsername(request.getUsername());
-        insert.setVcsAuthType(request.getAuthType());
-        insert.setVcsTokenType(request.getTokenType());
+        ApplicationRepositoryDO insert = new ApplicationRepositoryDO();
+        insert.setRepoName(request.getName());
+        insert.setRepoDescription(request.getDescription());
+        insert.setRepoType(RepositoryType.GIT.getType());
+        insert.setRepoUrl(request.getUrl());
+        insert.setRepoUsername(request.getUsername());
+        insert.setRepoAuthType(request.getAuthType());
+        insert.setRepoTokenType(request.getTokenType());
         // 加密密码
         String password = request.getPassword();
         if (!Strings.isBlank(password)) {
             password = ValueMix.encrypt(password);
-            insert.setVcsPassword(password);
+            insert.setRepoPassword(password);
         }
         // 加密token
         String token = request.getPrivateToken();
         if (!Strings.isBlank(token)) {
             token = ValueMix.encrypt(token);
-            insert.setVcsPrivateToken(token);
+            insert.setRepoPrivateToken(token);
         }
-        insert.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
-        applicationVcsDAO.insert(insert);
+        insert.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+        applicationRepositoryDAO.insert(insert);
         // 设置日志参数
         EventParamsHolder.addParams(insert);
         return insert.getId();
     }
 
     @Override
-    public Integer updateAppVcs(ApplicationVcsRequest request) {
+    public Integer updateRepository(ApplicationRepositoryRequest request) {
         Long id = request.getId();
         // 检查名称是否存在
         this.checkNamePresent(id, request.getName());
         // 查询修改前的数据
-        ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(beforeVcs, MessageConst.UNKNOWN_DATA);
+        ApplicationRepositoryDO beforeRepo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(beforeRepo, MessageConst.UNKNOWN_DATA);
         // 更新
-        ApplicationVcsDO update = new ApplicationVcsDO();
+        ApplicationRepositoryDO update = new ApplicationRepositoryDO();
         update.setId(id);
-        update.setVcsName(request.getName());
-        update.setVcsDescription(request.getDescription());
-        update.setVscUrl(request.getUrl());
-        update.setVscUsername(request.getUsername());
-        update.setVcsAuthType(request.getAuthType());
-        update.setVcsTokenType(request.getTokenType());
+        update.setRepoName(request.getName());
+        update.setRepoDescription(request.getDescription());
+        update.setRepoUrl(request.getUrl());
+        update.setRepoUsername(request.getUsername());
+        update.setRepoAuthType(request.getAuthType());
+        update.setRepoTokenType(request.getTokenType());
         // 加密密码
         String password = request.getPassword();
         if (!Strings.isBlank(password)) {
             password = ValueMix.encrypt(password);
-            update.setVcsPassword(password);
+            update.setRepoPassword(password);
         }
         // 加密token
         String token = request.getPrivateToken();
         if (!Strings.isBlank(token)) {
             token = ValueMix.encrypt(token);
-            update.setVcsPrivateToken(token);
+            update.setRepoPrivateToken(token);
         }
-        if (!beforeVcs.getVscUrl().equals(update.getVscUrl())) {
+        if (!beforeRepo.getRepoUrl().equals(update.getRepoUrl())) {
             // 如果修改了url则状态改为未初始化
-            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+            update.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
             // 删除 event 目录
             File clonePath = new File(Utils.getRepositoryEventDir(id));
             Files1.delete(clonePath);
         }
-        int effect = applicationVcsDAO.updateById(update);
+        int effect = applicationRepositoryDAO.updateById(update);
         // 设置日志参数
         EventParamsHolder.addParams(update);
-        EventParamsHolder.addParam(EventKeys.NAME, beforeVcs.getVcsName());
+        EventParamsHolder.addParam(EventKeys.NAME, beforeRepo.getRepoName());
         return effect;
     }
 
     @Override
-    public Integer deleteAppVcs(Long id) {
-        ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(beforeVcs, MessageConst.UNKNOWN_DATA);
+    public Integer deleteRepository(Long id) {
+        ApplicationRepositoryDO beforeRepo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(beforeRepo, MessageConst.UNKNOWN_DATA);
         // 清空app引用
-        applicationInfoDAO.cleanVcsCount(id);
+        applicationInfoDAO.cleanRepoCount(id);
         // 删除
-        int effect = applicationVcsDAO.deleteById(id);
+        int effect = applicationRepositoryDAO.deleteById(id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, beforeVcs.getVcsName());
+        EventParamsHolder.addParam(EventKeys.NAME, beforeRepo.getRepoName());
         return effect;
     }
 
     @Override
-    public DataGrid<ApplicationVcsVO> listAppVcs(ApplicationVcsRequest request) {
-        LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .like(Objects.nonNull(request.getName()), ApplicationVcsDO::getVcsName, request.getName())
-                .like(Objects.nonNull(request.getDescription()), ApplicationVcsDO::getVcsDescription, request.getDescription())
-                .like(Objects.nonNull(request.getUrl()), ApplicationVcsDO::getVscUrl, request.getUrl())
-                .like(Objects.nonNull(request.getUsername()), ApplicationVcsDO::getVscUsername, request.getUsername())
-                .eq(Objects.nonNull(request.getType()), ApplicationVcsDO::getVcsType, request.getType())
-                .eq(Objects.nonNull(request.getStatus()), ApplicationVcsDO::getVcsStatus, request.getStatus())
-                .orderByAsc(ApplicationVcsDO::getId);
-        return DataQuery.of(applicationVcsDAO)
+    public DataGrid<ApplicationRepositoryVO> listRepository(ApplicationRepositoryRequest request) {
+        LambdaQueryWrapper<ApplicationRepositoryDO> wrapper = new LambdaQueryWrapper<ApplicationRepositoryDO>()
+                .like(Objects.nonNull(request.getName()), ApplicationRepositoryDO::getRepoName, request.getName())
+                .like(Objects.nonNull(request.getDescription()), ApplicationRepositoryDO::getRepoDescription, request.getDescription())
+                .like(Objects.nonNull(request.getUrl()), ApplicationRepositoryDO::getRepoUrl, request.getUrl())
+                .like(Objects.nonNull(request.getUsername()), ApplicationRepositoryDO::getRepoUsername, request.getUsername())
+                .eq(Objects.nonNull(request.getType()), ApplicationRepositoryDO::getRepoType, request.getType())
+                .eq(Objects.nonNull(request.getStatus()), ApplicationRepositoryDO::getRepoStatus, request.getStatus())
+                .orderByAsc(ApplicationRepositoryDO::getId);
+        return DataQuery.of(applicationRepositoryDAO)
                 .page(request)
                 .wrapper(wrapper)
-                .dataGrid(ApplicationVcsVO.class);
+                .dataGrid(ApplicationRepositoryVO.class);
     }
 
     @Override
-    public ApplicationVcsVO getAppVcsDetail(Long id) {
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
-        return Converts.to(vcs, ApplicationVcsVO.class);
+    public ApplicationRepositoryVO getRepositoryDetail(Long id) {
+        ApplicationRepositoryDO repo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(repo, MessageConst.UNKNOWN_DATA);
+        return Converts.to(repo, ApplicationRepositoryVO.class);
     }
 
     @Override
-    public void initEventVcs(Long id, boolean isReInit) {
+    public void initEventRepository(Long id, boolean isReInit) {
         // 查询数据
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
+        ApplicationRepositoryDO repo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(repo, MessageConst.UNKNOWN_DATA);
         // 判断状态
-        if (RepositoryStatus.INITIALIZING.getStatus().equals(vcs.getVcsStatus())) {
-            throw Exceptions.runtime(MessageConst.VCS_INITIALIZING);
-        } else if (RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()) && !isReInit) {
-            throw Exceptions.runtime(MessageConst.VCS_INITIALIZED);
-        } else if (!RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()) && isReInit) {
-            throw Exceptions.runtime(MessageConst.VCS_UNINITIALIZED);
+        if (RepositoryStatus.INITIALIZING.getStatus().equals(repo.getRepoStatus())) {
+            throw Exceptions.runtime(MessageConst.REPO_INITIALIZING);
+        } else if (RepositoryStatus.OK.getStatus().equals(repo.getRepoStatus()) && !isReInit) {
+            throw Exceptions.runtime(MessageConst.REPO_INITIALIZED);
+        } else if (!RepositoryStatus.OK.getStatus().equals(repo.getRepoStatus()) && isReInit) {
+            throw Exceptions.runtime(MessageConst.REPO_UNINITIALIZED);
         }
         // 获取当前用户
         UserDTO user = Currents.getUser();
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
+        EventParamsHolder.addParam(EventKeys.NAME, repo.getRepoName());
         // 修改状态
-        ApplicationVcsDO update = new ApplicationVcsDO();
+        ApplicationRepositoryDO update = new ApplicationRepositoryDO();
         update.setId(id);
-        update.setVcsStatus(RepositoryStatus.INITIALIZING.getStatus());
-        applicationVcsDAO.updateById(update);
+        update.setRepoStatus(RepositoryStatus.INITIALIZING.getStatus());
+        applicationRepositoryDAO.updateById(update);
         // 提交线程异步处理
         log.info("开始初始化应用仓库 id: {}", id);
         Threads.start(() -> {
@@ -213,13 +213,13 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             Gits gits = null;
             try {
                 // clone
-                String[] pair = this.getVcsUsernamePassword(vcs);
+                String[] pair = this.getRepositoryUsernamePassword(repo);
                 String username = pair[0];
                 String password = pair[1];
                 if (username == null) {
-                    gits = Gits.clone(vcs.getVscUrl(), clonePath);
+                    gits = Gits.clone(repo.getRepoUrl(), clonePath);
                 } else {
-                    gits = Gits.clone(vcs.getVscUrl(), clonePath, username, password);
+                    gits = Gits.clone(repo.getRepoUrl(), clonePath, username, password);
                 }
             } catch (Exception e) {
                 ex = e;
@@ -229,35 +229,35 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             MessageType message;
             // 修改状态
             if (ex == null) {
-                message = MessageType.VCS_INIT_SUCCESS;
-                update.setVcsStatus(RepositoryStatus.OK.getStatus());
+                message = MessageType.REPOSITORY_INIT_SUCCESS;
+                update.setRepoStatus(RepositoryStatus.OK.getStatus());
             } else {
                 Files1.delete(clonePath);
-                message = MessageType.VCS_INIT_FAILURE;
-                update.setVcsStatus(RepositoryStatus.ERROR.getStatus());
+                message = MessageType.REPOSITORY_INIT_FAILURE;
+                update.setRepoStatus(RepositoryStatus.ERROR.getStatus());
             }
-            applicationVcsDAO.updateById(update);
+            applicationRepositoryDAO.updateById(update);
             // 发送站内信
             Map<String, Object> params = Maps.newMap();
-            params.put(EventKeys.ID, vcs.getId());
-            params.put(EventKeys.NAME, vcs.getVcsName());
+            params.put(EventKeys.ID, repo.getId());
+            params.put(EventKeys.NAME, repo.getRepoName());
             webSideMessageService.addMessage(message, user.getId(), user.getUsername(), params);
             if (ex == null) {
                 log.info("应用仓库初始化成功 id: {}", id);
             } else {
                 log.error("应用仓库初始化失败 id: {}", id, ex);
-                throw Exceptions.argument(MessageConst.VCS_INIT_ERROR, ex);
+                throw Exceptions.argument(MessageConst.REPO_INIT_ERROR, ex);
             }
         });
     }
 
     @Override
-    public ApplicationRepositoryInfoVO getVcsInfo(ApplicationVcsRequest request) {
+    public ApplicationRepositoryInfoVO getRepositoryInfo(ApplicationRepositoryRequest request) {
         Long id = request.getId();
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
-            ApplicationRepositoryInfoVO vcsInfo = new ApplicationRepositoryInfoVO();
+            ApplicationRepositoryInfoVO repsInfo = new ApplicationRepositoryInfoVO();
             ApplicationRepositoryBranchVO defaultBranch;
             // 获取分支列表
             List<ApplicationRepositoryBranchVO> branches = Converts.toList(gits.branchList(), ApplicationRepositoryBranchVO.class);
@@ -272,21 +272,21 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
                 defaultBranch = branches.get(branches.size() - 1);
             }
             defaultBranch.setIsDefault(Const.IS_DEFAULT);
-            vcsInfo.setBranches(branches);
+            repsInfo.setBranches(branches);
             // 获取commit
             try {
                 List<LogInfo> logList = gits.logList(defaultBranch.getName(), Const.COMMIT_LIMIT);
-                vcsInfo.setCommits(Converts.toList(logList, ApplicationRepositoryCommitVO.class));
+                repsInfo.setCommits(Converts.toList(logList, ApplicationRepositoryCommitVO.class));
             } catch (Exception e) {
-                log.error("获取vcs-commit列表失败: id: {}, branch: {}, e: {}", id, defaultBranch.getName(), e);
+                log.error("获取repo-commit列表失败: id: {}, branch: {}, e: {}", id, defaultBranch.getName(), e);
                 throw e;
             }
-            return vcsInfo;
+            return repsInfo;
         }
     }
 
     @Override
-    public List<ApplicationRepositoryBranchVO> getVcsBranchList(Long id) {
+    public List<ApplicationRepositoryBranchVO> getRepositoryBranchList(Long id) {
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch();
@@ -297,7 +297,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     }
 
     @Override
-    public List<ApplicationRepositoryCommitVO> getVcsCommitList(Long id, String branchName) {
+    public List<ApplicationRepositoryCommitVO> getRepositoryCommitList(Long id, String branchName) {
         // 打开git
         try (Gits gits = this.openEventGit(id)) {
             gits.fetch(branchName.split("/")[0]);
@@ -305,7 +305,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             List<LogInfo> logList = gits.logList(branchName, Const.COMMIT_LIMIT);
             return Converts.toList(logList, ApplicationRepositoryCommitVO.class);
         } catch (Exception e) {
-            log.error("获取vcs-commit列表失败: id: {}, branch: {}", id, branchName, e);
+            log.error("获取repo-commit列表失败: id: {}, branch: {}", id, branchName, e);
             throw e;
         }
     }
@@ -313,23 +313,23 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
     @Override
     public Gits openEventGit(Long id) {
         // 查询数据
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
-        Valid.isTrue(RepositoryStatus.OK.getStatus().equals(vcs.getVcsStatus()), MessageConst.VCS_UNINITIALIZED);
+        ApplicationRepositoryDO repo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(repo, MessageConst.UNKNOWN_DATA);
+        Valid.isTrue(RepositoryStatus.OK.getStatus().equals(repo.getRepoStatus()), MessageConst.REPO_UNINITIALIZED);
         // 获取仓库位置
-        File vcsPath = new File(Utils.getRepositoryEventDir(id));
-        if (!vcsPath.isDirectory()) {
+        File repoPath = new File(Utils.getRepositoryEventDir(id));
+        if (!repoPath.isDirectory()) {
             // 修改状态为未初始化
-            ApplicationVcsDO entity = new ApplicationVcsDO();
+            ApplicationRepositoryDO entity = new ApplicationRepositoryDO();
             entity.setId(id);
-            entity.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
-            applicationVcsDAO.updateById(entity);
-            throw Exceptions.argument(MessageConst.VCS_PATH_ABSENT, Exceptions.runtime(vcsPath.getAbsolutePath()));
+            entity.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+            applicationRepositoryDAO.updateById(entity);
+            throw Exceptions.argument(MessageConst.REPO_PATH_ABSENT, Exceptions.runtime(repoPath.getAbsolutePath()));
         }
         // 打开git
         try {
-            Gits gits = Gits.of(vcsPath);
-            String[] pair = this.getVcsUsernamePassword(vcs);
+            Gits gits = Gits.of(repoPath);
+            String[] pair = this.getRepositoryUsernamePassword(repo);
             String username = pair[0];
             String password = pair[1];
             if (username != null) {
@@ -337,19 +337,19 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
             }
             return gits;
         } catch (Exception e) {
-            throw Exceptions.runtime(MessageConst.VCS_UNABLE_CONNECT, e);
+            throw Exceptions.runtime(MessageConst.REPO_UNABLE_CONNECT, e);
         }
     }
 
     @Override
-    public void cleanBuildVcs(Long id) {
+    public void cleanBuildRepository(Long id) {
         // 查询数据
-        ApplicationVcsDO vcs = applicationVcsDAO.selectById(id);
-        Valid.notNull(vcs, MessageConst.UNKNOWN_DATA);
+        ApplicationRepositoryDO repo = applicationRepositoryDAO.selectById(id);
+        Valid.notNull(repo, MessageConst.UNKNOWN_DATA);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
-        EventParamsHolder.addParam(EventKeys.NAME, vcs.getVcsName());
-        File rootPath = new File(Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), id + Const.EMPTY));
+        EventParamsHolder.addParam(EventKeys.NAME, repo.getRepoName());
+        File rootPath = new File(Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), id + Const.EMPTY));
         if (!Files1.isDirectory(rootPath)) {
             return;
         }
@@ -373,47 +373,47 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void syncVcsStatus() {
-        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(new LambdaQueryWrapper<>());
-        for (ApplicationVcsDO vcs : vcsList) {
-            Long id = vcs.getId();
-            File vcsPath = new File(Utils.getRepositoryEventDir(id));
-            boolean isDir = Files1.isDirectory(vcsPath);
+    public void syncRepositoryStatus() {
+        List<ApplicationRepositoryDO> repoList = applicationRepositoryDAO.selectList(new LambdaQueryWrapper<>());
+        for (ApplicationRepositoryDO repo : repoList) {
+            Long id = repo.getId();
+            File repoPath = new File(Utils.getRepositoryEventDir(id));
+            boolean isDir = Files1.isDirectory(repoPath);
             // 更新状态
-            ApplicationVcsDO update = new ApplicationVcsDO();
+            ApplicationRepositoryDO update = new ApplicationRepositoryDO();
             update.setId(id);
-            update.setVcsStatus(isDir ? RepositoryStatus.OK.getStatus() : RepositoryStatus.UNINITIALIZED.getStatus());
+            update.setRepoStatus(isDir ? RepositoryStatus.OK.getStatus() : RepositoryStatus.UNINITIALIZED.getStatus());
             update.setUpdateTime(new Date());
-            applicationVcsDAO.updateById(update);
+            applicationRepositoryDAO.updateById(update);
         }
     }
 
     @Override
-    public ApplicationVcsDO selectById(Long id) {
-        return applicationVcsDAO.selectById(id);
+    public ApplicationRepositoryDO selectById(Long id) {
+        return applicationRepositoryDAO.selectById(id);
     }
 
     @Override
-    public String[] getVcsUsernamePassword(ApplicationVcsDO vcs) {
+    public String[] getRepositoryUsernamePassword(ApplicationRepositoryDO repository) {
         String username = null;
         String password = null;
-        RepositoryAuthType authType = RepositoryAuthType.of(vcs.getVcsAuthType());
+        RepositoryAuthType authType = RepositoryAuthType.of(repository.getRepoAuthType());
         if (RepositoryAuthType.PASSWORD.equals(authType)) {
             // 用户名
-            String vscUsername = vcs.getVscUsername();
-            if (!Strings.isBlank(vscUsername)) {
-                username = vscUsername;
-                password = ValueMix.decrypt(vcs.getVcsPassword());
+            String repoUsername = repository.getRepoUsername();
+            if (!Strings.isBlank(repoUsername)) {
+                username = repoUsername;
+                password = ValueMix.decrypt(repository.getRepoPassword());
             }
         } else {
             // token
-            RepositoryTokenType tokenType = RepositoryTokenType.of(vcs.getVcsTokenType());
+            RepositoryTokenType tokenType = RepositoryTokenType.of(repository.getRepoTokenType());
             switch (tokenType) {
                 case GITHUB:
                     username = Const.EMPTY;
                     break;
                 case GITEE:
-                    username = vcs.getVscUsername();
+                    username = repository.getRepoUsername();
                     break;
                 case GITLAB:
                     username = Const.OAUTH2;
@@ -421,7 +421,7 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
                 default:
                     break;
             }
-            password = ValueMix.decrypt(vcs.getVcsPrivateToken());
+            password = ValueMix.decrypt(repository.getRepoPrivateToken());
         }
         return new String[]{username, password};
     }
@@ -433,10 +433,10 @@ public class ApplicationVcsServiceImpl implements ApplicationVcsService {
      * @param name name
      */
     private void checkNamePresent(Long id, String name) {
-        LambdaQueryWrapper<ApplicationVcsDO> presentWrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .ne(id != null, ApplicationVcsDO::getId, id)
-                .eq(ApplicationVcsDO::getVcsName, name);
-        boolean present = DataQuery.of(applicationVcsDAO).wrapper(presentWrapper).present();
+        LambdaQueryWrapper<ApplicationRepositoryDO> presentWrapper = new LambdaQueryWrapper<ApplicationRepositoryDO>()
+                .ne(id != null, ApplicationRepositoryDO::getId, id)
+                .eq(ApplicationRepositoryDO::getRepoName, name);
+        boolean present = DataQuery.of(applicationRepositoryDAO).wrapper(presentWrapper).present();
         Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 

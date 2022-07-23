@@ -48,10 +48,10 @@ public class ApplicationBuildVO {
     private Integer seq;
 
     @ApiModelProperty(value = "版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "版本仓库名称")
-    private String vcsName;
+    private String repoName;
 
     @ApiModelProperty(value = "构建分支")
     private String branchName;
@@ -112,7 +112,7 @@ public class ApplicationBuildVO {
             vo.setProfileName(p.getProfileName());
             vo.setProfileTag(p.getProfileTag());
             vo.setSeq(p.getBuildSeq());
-            vo.setVcsId(p.getVcsId());
+            vo.setRepoId(p.getRepoId());
             vo.setBranchName(p.getBranchName());
             vo.setCommitId(p.getCommitId());
             vo.setStatus(p.getBuildStatus());

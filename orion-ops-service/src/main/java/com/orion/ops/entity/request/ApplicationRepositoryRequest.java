@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "应用版本仓库请求")
-public class ApplicationVcsRequest extends PageRequest {
+public class ApplicationRepositoryRequest extends PageRequest {
 
     @ApiModelProperty(value = "id")
     private Long id;

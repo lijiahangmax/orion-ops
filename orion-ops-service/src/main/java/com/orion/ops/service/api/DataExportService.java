@@ -75,7 +75,7 @@ public interface DataExportService {
      * @param response response
      * @throws IOException IOException
      */
-    void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException;
+    void exportAppRepository(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
      * 导出命令模板

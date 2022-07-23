@@ -59,7 +59,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
     private ApplicationProfileDAO applicationProfileDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private ApplicationEnvService applicationEnvService;
@@ -106,7 +106,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         buildTask.setBuildSeq(buildSeq);
         buildTask.setBranchName(request.getBranchName());
         buildTask.setCommitId(request.getCommitId());
-        buildTask.setVcsId(app.getVcsId());
+        buildTask.setRepoId(app.getRepoId());
         buildTask.setBuildStatus(BuildStatus.WAIT.getStatus());
         buildTask.setDescription(request.getDescription());
         buildTask.setCreateUserId(user.getId());
@@ -136,7 +136,7 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
             // 查询系统环境变量
             env.putAll(systemEnvService.getFullSystemEnv());
             // 添加构建环境变量
-            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getVcsId(), bundlePathReal, request));
+            env.putAll(this.getBuildEnv(buildId, buildSeq, app.getRepoId(), bundlePathReal, request));
         }
         // 设置action
         for (ApplicationActionDO action : actions) {
@@ -185,15 +185,15 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
                 .wrapper(wrapper)
                 .dataGrid(ApplicationBuildVO.class);
         // 查询版本信息
-        Map<Long, ApplicationVcsDO> vcsCache = Maps.newMap();
+        Map<Long, ApplicationRepositoryDO> repos = Maps.newMap();
         for (ApplicationBuildVO row : dataGrid) {
-            Long vcsId = row.getVcsId();
-            if (vcsId == null) {
+            Long repoId = row.getRepoId();
+            if (repoId == null) {
                 continue;
             }
-            ApplicationVcsDO vcs = vcsCache.computeIfAbsent(vcsId, i -> applicationVcsDAO.selectById(vcsId));
-            if (vcs != null) {
-                row.setVcsName(vcs.getVcsName());
+            ApplicationRepositoryDO repo = repos.computeIfAbsent(repoId, i -> applicationRepositoryDAO.selectById(repoId));
+            if (repo != null) {
+                row.setRepoName(repo.getRepoName());
             }
         }
         return dataGrid;
@@ -205,9 +205,9 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         Valid.notNull(build, MessageConst.UNKNOWN_DATA);
         ApplicationBuildVO detail = Converts.to(build, ApplicationBuildVO.class);
         // 查询版本信息
-        Optional.ofNullable(build.getVcsId())
-                .map(applicationVcsDAO::selectById)
-                .ifPresent(v -> detail.setVcsName(v.getVcsName()));
+        Optional.ofNullable(build.getRepoId())
+                .map(applicationRepositoryDAO::selectById)
+                .ifPresent(v -> detail.setRepoName(v.getRepoName()));
         // 查询action
         List<ApplicationActionLogVO> actions = applicationActionLogService.getActionLogsByRelId(id, StageType.BUILD);
         detail.setActions(actions);
@@ -353,22 +353,22 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
      *
      * @param buildId        buildId
      * @param buildSeq       buildSeq
-     * @param vcsId          vcsId
+     * @param repoId         repoId
      * @param bundlePathReal bundlePathReal
      * @param request        request
      * @return env
      */
     private MutableLinkedHashMap<String, String> getBuildEnv(Long buildId, Integer buildSeq,
-                                                             Long vcsId, String bundlePathReal, ApplicationBuildRequest request) {
+                                                             Long repoId, String bundlePathReal, ApplicationBuildRequest request) {
         // 设置变量
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_ID, buildId + Strings.EMPTY);
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
         env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
-        if (vcsId != null) {
-            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPOSITORY_HOME, Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), vcsId + "/" + buildId));
-            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPOSITORY_EVENT_HOME, Utils.getRepositoryEventDir(vcsId));
+        if (repoId != null) {
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPO_HOME, Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), repoId + "/" + buildId));
+            env.put(EnvConst.BUILD_PREFIX + EnvConst.REPO_EVENT_HOME, Utils.getRepositoryEventDir(repoId));
         }
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUNDLE_PATH, bundlePathReal);
         return env;

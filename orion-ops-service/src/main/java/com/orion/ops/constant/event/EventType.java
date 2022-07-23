@@ -362,32 +362,32 @@ public enum EventType {
     /**
      * 添加版本仓库
      */
-    ADD_VCS(3305, EventClassify.VCS, "添加版本仓库", "添加版本仓库 <sb>${vcsName}</sb>"),
+    ADD_REPOSITORY(3305, EventClassify.REPOSITORY, "添加版本仓库", "添加版本仓库 <sb>${repoName}</sb>"),
 
     /**
      * 初始化版本仓库
      */
-    INIT_VCS(3310, EventClassify.VCS, "初始化版本仓库", "初始化版本仓库 <sb>${name}</sb>"),
+    INIT_REPOSITORY(3310, EventClassify.REPOSITORY, "初始化版本仓库", "初始化版本仓库 <sb>${name}</sb>"),
 
     /**
      * 重新初始化版本仓库
      */
-    RE_INIT_VCS(3315, EventClassify.VCS, "重新初始化版本仓库", "重新初始化版本仓库 <sb>${name}</sb>"),
+    RE_INIT_REPOSITORY(3315, EventClassify.REPOSITORY, "重新初始化版本仓库", "重新初始化版本仓库 <sb>${name}</sb>"),
 
     /**
      * 更新版本仓库
      */
-    UPDATE_VCS(3320, EventClassify.VCS, "更新版本仓库", "更新版本仓库 <sb>${name}</sb>"),
+    UPDATE_REPOSITORY(3320, EventClassify.REPOSITORY, "更新版本仓库", "更新版本仓库 <sb>${name}</sb>"),
 
     /**
      * 删除版本仓库
      */
-    DELETE_VCS(3325, EventClassify.VCS, "删除版本仓库", "删除版本仓库 <sb>${name}</sb>"),
+    DELETE_REPOSITORY(3325, EventClassify.REPOSITORY, "删除版本仓库", "删除版本仓库 <sb>${name}</sb>"),
 
     /**
      * 清空版本仓库
      */
-    CLEAN_VCS(3330, EventClassify.VCS, "清空版本仓库", "清空版本仓库 <sb>${name}</sb>"),
+    CLEAN_REPOSITORY(3330, EventClassify.REPOSITORY, "清空版本仓库", "清空版本仓库 <sb>${name}</sb>"),
 
     // -------------------- 构建操作 --------------------
 
@@ -683,7 +683,7 @@ public enum EventType {
     /**
      * 导入应用环境
      */
-    DATA_IMPORT_APP_PROFILE(8320, EventClassify.DATA_IMPORT, "导入应用环境", "批量导入应用环境"),
+    DATA_IMPORT_PROFILE(8320, EventClassify.DATA_IMPORT, "导入应用环境", "批量导入应用环境"),
 
     /**
      * 导入应用信息
@@ -693,7 +693,7 @@ public enum EventType {
     /**
      * 导入版本仓库
      */
-    DATA_IMPORT_APP_VCS(8330, EventClassify.DATA_IMPORT, "导入版本仓库", "批量导入应用版本仓库"),
+    DATA_IMPORT_REPOSITORY(8330, EventClassify.DATA_IMPORT, "导入版本仓库", "批量导入应用版本仓库"),
 
     /**
      * 导入日志文件
@@ -725,7 +725,7 @@ public enum EventType {
     /**
      * 导出应用环境
      */
-    DATA_EXPORT_APP_PROFILE(8550, EventClassify.DATA_EXPORT, "导出应用环境", "导出应用环境 <sb>${count}</sb>条"),
+    DATA_EXPORT_PROFILE(8550, EventClassify.DATA_EXPORT, "导出应用环境", "导出应用环境 <sb>${count}</sb>条"),
 
     /**
      * 导出应用信息
@@ -735,7 +735,7 @@ public enum EventType {
     /**
      * 导出应用仓库
      */
-    DATA_EXPORT_APP_VCS(8560, EventClassify.DATA_EXPORT, "导出应用仓库", "导出应用版本仓库信息 <sb>${count}</sb>条"),
+    DATA_EXPORT_REPOSITORY(8560, EventClassify.DATA_EXPORT, "导出应用仓库", "导出应用版本仓库信息 <sb>${count}</sb>条"),
 
     /**
      * 导出命令模板

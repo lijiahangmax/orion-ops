@@ -87,7 +87,7 @@ public enum EventClassify {
     /**
      * 应用仓库操作
      */
-    VCS(75, "应用仓库操作"),
+    REPOSITORY(75, "应用仓库操作"),
 
     /**
      * 应用构建操作

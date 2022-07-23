@@ -45,10 +45,10 @@ public class SystemAnalysisVO {
     private String distFileSize;
 
     @ApiModelProperty(value = "应用仓库版本数")
-    private Integer vcsVersionCount;
+    private Integer repoVersionCount;
 
     @ApiModelProperty(value = "应用仓库大小")
-    private String vcsVersionFileSize;
+    private String repoVersionFileSize;
 
     @ApiModelProperty(value = "文件清理阈值")
     private Integer fileCleanThreshold;
@@ -67,8 +67,8 @@ public class SystemAnalysisVO {
             vo.setSwapFileSize(p.getSwapFileSize());
             vo.setDistVersionCount(p.getDistVersionCount());
             vo.setDistFileSize(p.getDistFileSize());
-            vo.setVcsVersionCount(p.getVcsVersionCount());
-            vo.setVcsVersionFileSize(p.getVcsVersionFileSize());
+            vo.setRepoVersionCount(p.getRepoVersionCount());
+            vo.setRepoVersionFileSize(p.getRepoVersionFileSize());
             return vo;
         });
     }

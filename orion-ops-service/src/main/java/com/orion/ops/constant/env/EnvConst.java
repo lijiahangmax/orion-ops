@@ -62,11 +62,9 @@ public class EnvConst {
 
     public static final String BUILD_SEQ = "build_seq";
 
-    // fixme
-    public static final String REPOSITORY_HOME = "vcs_home";
+    public static final String REPO_HOME = "repo_home";
 
-    // fixme
-    public static final String REPOSITORY_EVENT_HOME = "vcs_event_home";
+    public static final String REPO_EVENT_HOME = "repo_event_home";
 
     public static final String BRANCH = "branch";
 

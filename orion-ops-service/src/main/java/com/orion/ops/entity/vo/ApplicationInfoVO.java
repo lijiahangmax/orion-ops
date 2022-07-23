@@ -32,10 +32,10 @@ public class ApplicationInfoVO {
     private Integer sort;
 
     @ApiModelProperty(value = "应用版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "应用版本仓库名称")
-    private String vcsName;
+    private String repoName;
 
     @ApiModelProperty(value = "描述")
     private String description;
@@ -57,7 +57,7 @@ public class ApplicationInfoVO {
             vo.setName(p.getAppName());
             vo.setTag(p.getAppTag());
             vo.setSort(p.getAppSort());
-            vo.setVcsId(p.getVcsId());
+            vo.setRepoId(p.getRepoId());
             vo.setDescription(p.getDescription());
             return vo;
         });

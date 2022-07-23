@@ -29,12 +29,12 @@ public enum MessageType {
     /**
      * 版本仓库初始化成功
      */
-    VCS_INIT_SUCCESS(1030, "版本仓库初始化成功", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化成功"),
+    REPOSITORY_INIT_SUCCESS(1030, "版本仓库初始化成功", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化成功"),
 
     /**
      * 版本仓库初始化失败
      */
-    VCS_INIT_FAILURE(1040, "版本仓库初始化失败", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化失败"),
+    REPOSITORY_INIT_FAILURE(1040, "版本仓库初始化失败", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化失败"),
 
     /**
      * 构建执行成功
@@ -121,12 +121,12 @@ public enum MessageType {
     /**
      * 应用环境导入成功
      */
-    APP_PROFILE_IMPORT_SUCCESS(2070, "应用环境导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行完成"),
+    PROFILE_IMPORT_SUCCESS(2070, "应用环境导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行完成"),
 
     /**
      * 应用环境导入失败
      */
-    APP_PROFILE_IMPORT_FAILURE(2080, "应用环境导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行失败"),
+    PROFILE_IMPORT_FAILURE(2080, "应用环境导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行失败"),
 
     /**
      * 应用信息导入成功
@@ -141,12 +141,12 @@ public enum MessageType {
     /**
      * 版本仓库导入成功
      */
-    APP_VCS_IMPORT_SUCCESS(2110, "版本仓库导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行完成"),
+    REPOSITORY_IMPORT_SUCCESS(2110, "版本仓库导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行完成"),
 
     /**
      * 版本仓库导入失败
      */
-    APP_VCS_IMPORT_FAILURE(2120, "版本仓库导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行失败"),
+    REPOSITORY_IMPORT_FAILURE(2120, "版本仓库导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行失败"),
 
     /**
      * 命令模板导入成功

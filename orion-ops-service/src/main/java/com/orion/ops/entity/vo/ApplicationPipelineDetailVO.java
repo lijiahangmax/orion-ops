@@ -36,7 +36,7 @@ public class ApplicationPipelineDetailVO {
     private String appTag;
 
     @ApiModelProperty(value = "应用版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     /**
      * @see com.orion.ops.constant.app.StageType

@@ -8,7 +8,7 @@ import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.app.RepositoryAuthType;
 import com.orion.ops.constant.app.RepositoryTokenType;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @ApiModel(value = "应用仓库导出")
 @ExportTitle(title = "应用仓库导出")
 @ExportSheet(name = "应用仓库", titleHeight = 22, headerHeight = 22, freezeHeader = true, filterHeader = true)
-public class ApplicationVcsExportDTO {
+public class ApplicationRepositoryExportDTO {
 
     @ApiModelProperty(value = "名称")
     @ExportField(index = 0, header = "名称", width = 20)
@@ -61,30 +61,30 @@ public class ApplicationVcsExportDTO {
     private String description;
 
     static {
-        TypeStore.STORE.register(ApplicationVcsDO.class, ApplicationVcsExportDTO.class, p -> {
-            ApplicationVcsExportDTO dto = new ApplicationVcsExportDTO();
-            dto.setName(p.getVcsName());
-            dto.setUrl(p.getVscUrl());
+        TypeStore.STORE.register(ApplicationRepositoryDO.class, ApplicationRepositoryExportDTO.class, p -> {
+            ApplicationRepositoryExportDTO dto = new ApplicationRepositoryExportDTO();
+            dto.setName(p.getRepoName());
+            dto.setUrl(p.getRepoUrl());
             // 认证方式
-            RepositoryAuthType authType = RepositoryAuthType.of(p.getVcsAuthType());
+            RepositoryAuthType authType = RepositoryAuthType.of(p.getRepoAuthType());
             if (authType != null) {
                 dto.setAuthType(authType.getLabel());
             }
             // 令牌类型
             if (RepositoryAuthType.TOKEN.equals(authType)) {
-                Optional.ofNullable(p.getVcsTokenType())
+                Optional.ofNullable(p.getRepoTokenType())
                         .map(RepositoryTokenType::of)
                         .map(RepositoryTokenType::getLabel)
                         .ifPresent(dto::setTokenType);
                 if (RepositoryTokenType.GITEE.getLabel().equals(dto.getTokenType())) {
-                    dto.setUsername(p.getVscUsername());
+                    dto.setUsername(p.getRepoUsername());
                 }
-                dto.setEncryptAuthValue(p.getVcsPrivateToken());
+                dto.setEncryptAuthValue(p.getRepoPrivateToken());
             } else {
-                dto.setUsername(p.getVscUsername());
-                dto.setEncryptAuthValue(p.getVcsPassword());
+                dto.setUsername(p.getRepoUsername());
+                dto.setEncryptAuthValue(p.getRepoPassword());
             }
-            dto.setDescription(p.getVcsDescription());
+            dto.setDescription(p.getRepoDescription());
             return dto;
         });
     }

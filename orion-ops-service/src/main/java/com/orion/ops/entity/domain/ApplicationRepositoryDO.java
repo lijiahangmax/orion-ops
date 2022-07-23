@@ -17,8 +17,8 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("application_vcs")
-public class ApplicationVcsDO implements Serializable {
+@TableName("application_repository")
+public class ApplicationRepositoryDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,70 +31,70 @@ public class ApplicationVcsDO implements Serializable {
     /**
      * 名称
      */
-    @TableField("vcs_name")
-    private String vcsName;
+    @TableField("repo_name")
+    private String repoName;
 
     /**
      * 描述
      */
-    @TableField("vcs_description")
-    private String vcsDescription;
+    @TableField("repo_description")
+    private String repoDescription;
 
     /**
      * 类型 1git
      *
      * @see com.orion.ops.constant.app.RepositoryType
      */
-    @TableField("vcs_type")
-    private Integer vcsType;
+    @TableField("repo_type")
+    private Integer repoType;
 
     /**
      * url
      */
-    @TableField("vsc_url")
-    private String vscUrl;
+    @TableField("repo_url")
+    private String repoUrl;
 
     /**
      * 用户名
      */
-    @TableField("vsc_username")
-    private String vscUsername;
+    @TableField("repo_username")
+    private String repoUsername;
 
     /**
      * 密码
      */
-    @TableField("vcs_password")
-    private String vcsPassword;
+    @TableField("repo_password")
+    private String repoPassword;
 
     /**
      * token
      */
-    @TableField("vcs_private_token")
-    private String vcsPrivateToken;
+    @TableField("repo_private_token")
+    private String repoPrivateToken;
 
     /**
      * 状态 10未初始化 20初始化中 30正常 40失败
      *
      * @see com.orion.ops.constant.app.RepositoryStatus
      */
-    @TableField("vcs_status")
-    private Integer vcsStatus;
+    @TableField("repo_status")
+    private Integer repoStatus;
 
     /**
      * 认证类型 10密码 20令牌
      *
      * @see com.orion.ops.constant.app.RepositoryAuthType
      */
-    @TableField("vcs_auth_type")
-    private Integer vcsAuthType;
+    @TableField("repo_auth_type")
+    private Integer repoAuthType;
 
     /**
      * 令牌类型 10github 20gitee 30gitlab
      *
      * @see com.orion.ops.constant.app.RepositoryTokenType
      */
-    @TableField("vcs_token_type")
-    private Integer vcsTokenType;
+    @TableField("repo_token_type")
+    private Integer repoTokenType;
 
     /**
      * 是否删除 1未删除 2已删除

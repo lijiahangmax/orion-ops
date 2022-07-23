@@ -8,7 +8,7 @@
         <result column="app_name" property="appName"/>
         <result column="app_tag" property="appTag"/>
         <result column="app_sort" property="appSort"/>
-        <result column="vcs_id" property="vcsId"/>
+        <result column="repo_id" property="repoId"/>
         <result column="description" property="description"/>
         <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
@@ -17,20 +17,20 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, app_name, app_tag, app_sort, vcs_id, description, deleted, create_time, update_time
+        id, app_name, app_tag, app_sort, repo_id, description, deleted, create_time, update_time
     </sql>
 
-    <select id="selectVcsCount" resultType="java.lang.Integer">
+    <select id="selectRepoCount" resultType="java.lang.Integer">
         SELECT count(1)
         FROM application_info
-        WHERE vcs_id = #{vcsId}
+        WHERE repo_id = #{repoId}
         AND deleted = 1
     </select>
 
-    <update id="cleanVcsCount">
+    <update id="cleanRepoCount">
         UPDATE application_info
-        SET vcs_id = null
-        WHERE vcs_id = #{vcsId}
+        SET repo_id = null
+        WHERE repo_id = #{repoId}
         AND deleted = 1
     </update>
 

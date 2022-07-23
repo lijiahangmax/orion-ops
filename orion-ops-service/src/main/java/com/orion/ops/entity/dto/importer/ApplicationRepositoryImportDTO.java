@@ -6,7 +6,7 @@ import com.orion.office.excel.annotation.ImportField;
 import com.orion.ops.constant.app.RepositoryAuthType;
 import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.constant.app.RepositoryType;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;
 import io.swagger.annotations.ApiModel;
@@ -72,29 +72,29 @@ public class ApplicationRepositoryImportDTO extends BaseDataImportDTO {
             vo.setId(p.getId());
             return vo;
         });
-        TypeStore.STORE.register(ApplicationRepositoryImportDTO.class, ApplicationVcsDO.class, p -> {
-            ApplicationVcsDO d = new ApplicationVcsDO();
+        TypeStore.STORE.register(ApplicationRepositoryImportDTO.class, ApplicationRepositoryDO.class, p -> {
+            ApplicationRepositoryDO d = new ApplicationRepositoryDO();
             d.setId(p.getId());
-            d.setVcsName(p.name);
-            d.setVcsDescription(p.description);
-            d.setVcsType(RepositoryType.GIT.getType());
-            d.setVscUrl(p.url);
+            d.setRepoName(p.name);
+            d.setRepoDescription(p.description);
+            d.setRepoType(RepositoryType.GIT.getType());
+            d.setRepoUrl(p.url);
             Optional.ofNullable(p.authType)
                     .map(RepositoryAuthType::of)
                     .map(RepositoryAuthType::getType)
-                    .ifPresent(d::setVcsAuthType);
-            if (RepositoryAuthType.PASSWORD.getType().equals(d.getVcsAuthType()) || RepositoryTokenType.GITEE.getLabel().equals(p.tokenType)) {
-                d.setVscUsername(p.username);
+                    .ifPresent(d::setRepoAuthType);
+            if (RepositoryAuthType.PASSWORD.getType().equals(d.getRepoAuthType()) || RepositoryTokenType.GITEE.getLabel().equals(p.tokenType)) {
+                d.setRepoUsername(p.username);
             }
             Optional.ofNullable(p.tokenType)
                     .map(RepositoryTokenType::of)
                     .map(RepositoryTokenType::getType)
-                    .ifPresent(d::setVcsTokenType);
-            BiConsumer<ApplicationVcsDO, String> authValueSetter;
-            if (RepositoryAuthType.PASSWORD.getType().equals(d.getVcsAuthType())) {
-                authValueSetter = ApplicationVcsDO::setVcsPassword;
+                    .ifPresent(d::setRepoTokenType);
+            BiConsumer<ApplicationRepositoryDO, String> authValueSetter;
+            if (RepositoryAuthType.PASSWORD.getType().equals(d.getRepoAuthType())) {
+                authValueSetter = ApplicationRepositoryDO::setRepoPassword;
             } else {
-                authValueSetter = ApplicationVcsDO::setVcsPrivateToken;
+                authValueSetter = ApplicationRepositoryDO::setRepoPrivateToken;
             }
             if (!Strings.isBlank(p.decryptAuthValue)) {
                 authValueSetter.accept(d, ValueMix.encrypt(p.decryptAuthValue));

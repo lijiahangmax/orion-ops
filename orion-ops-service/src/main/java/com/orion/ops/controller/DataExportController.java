@@ -65,7 +65,7 @@ public class DataExportController {
 
     @PostMapping("/app-profile")
     @ApiOperation(value = "导出应用环境")
-    @EventLog(EventType.DATA_EXPORT_APP_PROFILE)
+    @EventLog(EventType.DATA_EXPORT_PROFILE)
     public void exportAppProfile(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
         dataExportService.exportAppProfile(request, response);
     }
@@ -77,11 +77,11 @@ public class DataExportController {
         dataExportService.exportApplication(request, response);
     }
 
-    @PostMapping("/app-vcs")
+    @PostMapping("/repository")
     @ApiOperation(value = "导出应用版本仓库")
-    @EventLog(EventType.DATA_EXPORT_APP_VCS)
-    public void exportAppVcs(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
-        dataExportService.exportAppVcs(request, response);
+    @EventLog(EventType.DATA_EXPORT_REPOSITORY)
+    public void exportAppRepository(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
+        dataExportService.exportAppRepository(request, response);
     }
 
     @PostMapping("/command-template")

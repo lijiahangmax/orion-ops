@@ -50,7 +50,7 @@ public class ApplicationPipelineDetailServiceImpl implements ApplicationPipeline
                     .ifPresent(app -> {
                         detail.setAppName(app.getAppName());
                         detail.setAppTag(app.getAppTag());
-                        detail.setVcsId(app.getVcsId());
+                        detail.setRepoId(app.getRepoId());
                     });
         }
         return details;

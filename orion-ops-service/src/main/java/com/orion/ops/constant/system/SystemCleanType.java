@@ -39,7 +39,7 @@ public enum SystemCleanType {
     /**
      * 版本仓库文件
      */
-    VCS_FILE(50, "旧版本应用仓库"),
+    REPO_FILE(50, "旧版本应用仓库"),
 
     ;
 

@@ -85,8 +85,8 @@ public class ApplicationBuildDO implements Serializable {
     /**
      * 应用版本仓库id
      */
-    @TableField("vcs_id")
-    private Long vcsId;
+    @TableField("repo_id")
+    private Long repoId;
 
     /**
      * 构建日志路径

@@ -23,11 +23,11 @@ public class ExportConst {
 
     public static final String MACHINE_TAIL_FILE_EXPORT_NAME = "日志文件导出-{}.xlsx";
 
-    public static final String APP_PROFILE_EXPORT_NAME = "应用环境导出-{}.xlsx";
+    public static final String PROFILE_EXPORT_NAME = "应用环境导出-{}.xlsx";
 
     public static final String APPLICATION_EXPORT_NAME = "应用信息导出-{}.xlsx";
 
-    public static final String APP_VCS_EXPORT_NAME = "应用版本仓库导出-{}.xlsx";
+    public static final String REPOSITORY_EXPORT_NAME = "应用版本仓库导出-{}.xlsx";
 
     public static final String COMMAND_TEMPLATE_EXPORT_NAME = "命令模板导出-{}.xlsx";
 

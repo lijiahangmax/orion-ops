@@ -58,7 +58,7 @@ public class DataExportServiceImpl implements DataExportService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
@@ -170,22 +170,22 @@ public class DataExportServiceImpl implements DataExportService {
         List<ApplicationInfoDO> appList = applicationInfoDAO.selectList(null);
         List<ApplicationExportDTO> exportList = Converts.toList(appList, ApplicationExportDTO.class);
         // 仓库名称
-        List<Long> vcsIdList = appList.stream()
-                .map(ApplicationInfoDO::getVcsId)
+        List<Long> repoIdList = appList.stream()
+                .map(ApplicationInfoDO::getRepoId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (!vcsIdList.isEmpty()) {
-            List<ApplicationVcsDO> vcsNameList = applicationVcsDAO.selectNameByIdList(vcsIdList);
+        if (!repoIdList.isEmpty()) {
+            List<ApplicationRepositoryDO> repoNameList = applicationRepositoryDAO.selectNameByIdList(repoIdList);
             // 设置仓库名称
             for (ApplicationExportDTO export : exportList) {
-                Long vcsId = export.getVcsId();
-                if (vcsId == null) {
+                Long repoId = export.getRepoId();
+                if (repoId == null) {
                     continue;
                 }
-                vcsNameList.stream()
-                        .filter(s -> s.getId().equals(vcsId))
+                repoNameList.stream()
+                        .filter(s -> s.getId().equals(repoId))
                         .findFirst()
-                        .ifPresent(s -> export.setVcsName(s.getVcsName()));
+                        .ifPresent(s -> export.setRepoName(s.getRepoName()));
             }
         }
         // 导出
@@ -196,18 +196,18 @@ public class DataExportServiceImpl implements DataExportService {
     }
 
     @Override
-    public void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException {
+    public void exportAppRepository(DataExportRequest request, HttpServletResponse response) throws IOException {
         // 查询数据
-        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(null);
-        List<ApplicationVcsExportDTO> exportList = Converts.toList(vcsList, ApplicationVcsExportDTO.class);
+        List<ApplicationRepositoryDO> repoList = applicationRepositoryDAO.selectList(null);
+        List<ApplicationRepositoryExportDTO> exportList = Converts.toList(repoList, ApplicationRepositoryExportDTO.class);
         if (!Const.ENABLE.equals(request.getExportPassword())) {
             exportList.forEach(s -> s.setEncryptAuthValue(null));
         }
         // 导出
-        ExcelExport<ApplicationVcsExportDTO> exporter = new ExcelExport<>(ApplicationVcsExportDTO.class).init();
+        ExcelExport<ApplicationRepositoryExportDTO> exporter = new ExcelExport<>(ApplicationRepositoryExportDTO.class).init();
         exporter.addRows(exportList);
         // 写入
-        this.writeWorkbook(request, response, exporter, ExportType.VCS);
+        this.writeWorkbook(request, response, exporter, ExportType.REPOSITORY);
     }
 
     @Override

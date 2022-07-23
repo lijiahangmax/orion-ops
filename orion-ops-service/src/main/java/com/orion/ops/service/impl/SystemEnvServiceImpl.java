@@ -19,7 +19,7 @@ import com.orion.ops.dao.SystemEnvDAO;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.SystemEnvVO;
-import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.service.api.ApplicationRepositoryService;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.utils.DataQuery;
@@ -51,7 +51,7 @@ public class SystemEnvServiceImpl implements SystemEnvService {
     private HistoryValueService historyValueService;
 
     @Resource
-    private ApplicationVcsService applicationVcsService;
+    private ApplicationRepositoryService applicationRepositoryService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,9 +110,9 @@ public class SystemEnvServiceImpl implements SystemEnvService {
         if (env != null) {
             env.setValue(afterValue);
             if (afterValue != null && !afterValue.equals(beforeValue)) {
-                if (SystemEnvAttr.REPOSITORY_PATH.equals(env)) {
-                    // 如果修改的是 vcs 则修改 vcs 状态
-                    applicationVcsService.syncVcsStatus();
+                if (SystemEnvAttr.REPO_PATH.equals(env)) {
+                    // 如果修改的是仓库路径则修改仓库状态
+                    applicationRepositoryService.syncRepositoryStatus();
                 }
             }
         }

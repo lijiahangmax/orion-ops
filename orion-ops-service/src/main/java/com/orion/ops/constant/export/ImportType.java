@@ -72,8 +72,8 @@ public enum ImportType {
             ApplicationProfileImportDTO.class,
             ApplicationProfileFieldConst::validData,
             ApplicationProfileDO.class,
-            MessageType.APP_PROFILE_IMPORT_SUCCESS,
-            MessageType.APP_PROFILE_IMPORT_FAILURE),
+            MessageType.PROFILE_IMPORT_SUCCESS,
+            MessageType.PROFILE_IMPORT_FAILURE),
 
     /**
      * 导入应用
@@ -90,15 +90,14 @@ public enum ImportType {
     /**
      * 导入应用仓库
      */
-    // fixme
     REPOSITORY(220,
-            "/templates/import/app-vcs-import-template.xlsx",
+            "/templates/import/app-repository-import-template.xlsx",
             "应用仓库导入模板.xlsx",
             ApplicationRepositoryImportDTO.class,
             ApplicationRepositoryFieldConst::validData,
-            ApplicationVcsDO.class,
-            MessageType.APP_VCS_IMPORT_SUCCESS,
-            MessageType.APP_VCS_IMPORT_FAILURE),
+            ApplicationRepositoryDO.class,
+            MessageType.REPOSITORY_IMPORT_SUCCESS,
+            MessageType.REPOSITORY_IMPORT_FAILURE),
 
     /**
      * 导入命令模板

@@ -154,7 +154,7 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
                         .filter(s -> s.getId().equals(detail.getAppId()))
                         .findFirst()
                         .ifPresent(app -> {
-                            detail.setVcsId(app.getVcsId());
+                            detail.setRepoId(app.getRepoId());
                             detail.setAppName(app.getAppName());
                             detail.setAppTag(app.getAppTag());
                         });

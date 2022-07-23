@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.lang.utils.convert.TypeStore;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel(value = "应用版本仓库信息响应")
-public class ApplicationVcsVO {
+public class ApplicationRepositoryVO {
 
     @ApiModelProperty(value = "id")
     private Long id;
@@ -65,17 +65,17 @@ public class ApplicationVcsVO {
     private Date updateTime;
 
     static {
-        TypeStore.STORE.register(ApplicationVcsDO.class, ApplicationVcsVO.class, p -> {
-            ApplicationVcsVO vo = new ApplicationVcsVO();
+        TypeStore.STORE.register(ApplicationRepositoryDO.class, ApplicationRepositoryVO.class, p -> {
+            ApplicationRepositoryVO vo = new ApplicationRepositoryVO();
             vo.setId(p.getId());
-            vo.setName(p.getVcsName());
-            vo.setDescription(p.getVcsDescription());
-            vo.setType(p.getVcsType());
-            vo.setUrl(p.getVscUrl());
-            vo.setUsername(p.getVscUsername());
-            vo.setStatus(p.getVcsStatus());
-            vo.setAuthType(p.getVcsAuthType());
-            vo.setTokenType(p.getVcsTokenType());
+            vo.setName(p.getRepoName());
+            vo.setDescription(p.getRepoDescription());
+            vo.setType(p.getRepoType());
+            vo.setUrl(p.getRepoUrl());
+            vo.setUsername(p.getRepoUsername());
+            vo.setStatus(p.getRepoStatus());
+            vo.setAuthType(p.getRepoAuthType());
+            vo.setTokenType(p.getRepoTokenType());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             return vo;

@@ -160,17 +160,17 @@ public class MessageConst {
 
     public static final String FILE_ABSENT_UNABLE_ROLLBACK = "产物丢失无法回滚";
 
-    public static final String VCS_INIT_ERROR = "仓库初始化失败";
+    public static final String REPO_INIT_ERROR = "仓库初始化失败";
 
-    public static final String VCS_PATH_ABSENT = "仓库目录不存在";
+    public static final String REPO_PATH_ABSENT = "仓库目录不存在";
 
-    public static final String VCS_UNABLE_CONNECT = "无法连接到远程仓库";
+    public static final String REPO_UNABLE_CONNECT = "无法连接到远程仓库";
 
-    public static final String VCS_UNINITIALIZED = "仓库未初始化";
+    public static final String REPO_UNINITIALIZED = "仓库未初始化";
 
-    public static final String VCS_INITIALIZED = "远程仓库已初始化";
+    public static final String REPO_INITIALIZED = "远程仓库已初始化";
 
-    public static final String VCS_INITIALIZING = "远程仓库初始化中";
+    public static final String REPO_INITIALIZING = "远程仓库初始化中";
 
     public static final String CHECKOUT_ERROR = "git clone 检出失败";
 
@@ -220,6 +220,6 @@ public class MessageConst {
 
     public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
 
-    public static final String UNKNOWN_APP_VCS = "未查询到应用仓库: {}";
+    public static final String UNKNOWN_APP_REPOSITORY = "未查询到应用仓库: {}";
 
 }

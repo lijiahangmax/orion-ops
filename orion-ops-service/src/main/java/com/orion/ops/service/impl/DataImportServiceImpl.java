@@ -82,7 +82,7 @@ public class DataImportServiceImpl implements DataImportService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
@@ -170,12 +170,12 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.APPLICATION, rows);
         // 设置机器id
-        this.setCheckRowsRelId(rows, ApplicationImportDTO::getVcsName,
-                applicationVcsDAO::selectIdByNameList,
-                ApplicationVcsDO::getVcsName,
-                ApplicationVcsDO::getId,
-                ApplicationImportDTO::setVcsId,
-                MessageConst.UNKNOWN_APP_VCS);
+        this.setCheckRowsRelId(rows, ApplicationImportDTO::getRepositoryName,
+                applicationRepositoryDAO::selectIdByNameList,
+                ApplicationRepositoryDO::getRepoName,
+                ApplicationRepositoryDO::getId,
+                ApplicationImportDTO::setRepositoryId,
+                MessageConst.UNKNOWN_APP_REPOSITORY);
         // 通过唯一标识查询应用
         List<ApplicationInfoDO> presentApps = this.getImportRowsPresentValues(rows,
                 ApplicationImportDTO::getTag,
@@ -188,16 +188,16 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public DataImportCheckVO checkAppVcsImportData(List<ApplicationRepositoryImportDTO> rows) {
+    public DataImportCheckVO checkAppRepositoryImportData(List<ApplicationRepositoryImportDTO> rows) {
         // 检查数据合法性
         this.validImportRows(ImportType.REPOSITORY, rows);
         // 通过唯一标识查询应用
-        List<ApplicationVcsDO> presentVcsList = this.getImportRowsPresentValues(rows,
+        List<ApplicationRepositoryDO> presentList = this.getImportRowsPresentValues(rows,
                 ApplicationRepositoryImportDTO::getName,
-                applicationVcsDAO, ApplicationVcsDO::getVcsName);
+                applicationRepositoryDAO, ApplicationRepositoryDO::getRepoName);
         // 检查数据是否存在
         this.checkImportRowsPresent(rows, ApplicationRepositoryImportDTO::getName,
-                presentVcsList, ApplicationVcsDO::getVcsName, ApplicationVcsDO::getId);
+                presentList, ApplicationRepositoryDO::getRepoName, ApplicationRepositoryDO::getId);
         // 设置导入检查数据
         return this.setImportCheckRows(ImportType.REPOSITORY, rows);
     }
@@ -266,15 +266,15 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public void importAppVcsData(DataImportDTO importData) {
-        this.doImportData(importData, applicationVcsDAO, v -> {
-            v.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+    public void importRepositoryData(DataImportDTO importData) {
+        this.doImportData(importData, applicationRepositoryDAO, v -> {
+            v.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
         }, v -> {
             Long id = v.getId();
-            ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
-            if (beforeVcs != null && !beforeVcs.getVscUrl().equals(v.getVscUrl())) {
+            ApplicationRepositoryDO beforeRepo = applicationRepositoryDAO.selectById(id);
+            if (beforeRepo != null && !beforeRepo.getRepoUrl().equals(v.getRepoUrl())) {
                 // 如果修改了url则状态改为未初始化
-                v.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+                v.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
                 // 删除 event 目录
                 File clonePath = new File(Utils.getRepositoryEventDir(id));
                 Files1.delete(clonePath);

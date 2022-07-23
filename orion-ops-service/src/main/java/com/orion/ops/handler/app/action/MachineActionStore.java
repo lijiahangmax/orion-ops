@@ -58,7 +58,7 @@ public class MachineActionStore {
      *
      * @see CheckoutActionHandler
      */
-    private Long vcsId;
+    private Long repoId;
 
     /**
      * 分支
@@ -75,11 +75,11 @@ public class MachineActionStore {
     private String commitId;
 
     /**
-     * vcs clone 路径
+     * 仓库 clone 路径
      *
      * @see CheckoutActionHandler
      */
-    private String vcsClonePath;
+    private String repoClonePath;
 
     /**
      * 构建产物文件

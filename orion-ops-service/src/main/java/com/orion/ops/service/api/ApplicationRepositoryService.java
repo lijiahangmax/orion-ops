@@ -2,12 +2,12 @@ package com.orion.ops.service.api;
 
 import com.orion.ext.vcs.git.Gits;
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
-import com.orion.ops.entity.request.ApplicationVcsRequest;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
+import com.orion.ops.entity.request.ApplicationRepositoryRequest;
 import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
-import com.orion.ops.entity.vo.ApplicationVcsVO;
+import com.orion.ops.entity.vo.ApplicationRepositoryVO;
 
 import java.util.List;
 
@@ -18,31 +18,31 @@ import java.util.List;
  * @version 1.0.0
  * @since 2021/11/26 23:22
  */
-public interface ApplicationVcsService {
+public interface ApplicationRepositoryService {
 
     /**
-     * 添加appVcs
+     * 添加仓库
      *
      * @param request request
      * @return id
      */
-    Long addAppVcs(ApplicationVcsRequest request);
+    Long addRepository(ApplicationRepositoryRequest request);
 
     /**
-     * 更新appVcs
+     * 更新仓库
      *
      * @param request request
      * @return effect
      */
-    Integer updateAppVcs(ApplicationVcsRequest request);
+    Integer updateRepository(ApplicationRepositoryRequest request);
 
     /**
-     * 通过id删除
+     * 通过 id 删除
      *
      * @param id id
      * @return effect
      */
-    Integer deleteAppVcs(Long id);
+    Integer deleteRepository(Long id);
 
     /**
      * 获取列表
@@ -50,7 +50,7 @@ public interface ApplicationVcsService {
      * @param request request
      * @return rows
      */
-    DataGrid<ApplicationVcsVO> listAppVcs(ApplicationVcsRequest request);
+    DataGrid<ApplicationRepositoryVO> listRepository(ApplicationRepositoryRequest request);
 
     /**
      * 获取详情
@@ -58,18 +58,18 @@ public interface ApplicationVcsService {
      * @param id id
      * @return row
      */
-    ApplicationVcsVO getAppVcsDetail(Long id);
+    ApplicationRepositoryVO getRepositoryDetail(Long id);
 
     /**
      * 初始化 event 仓库
      *
      * @param id       id
      * @param isReInit 是否是重新初始化
-     * @see #getVcsInfo
-     * @see #getVcsBranchList
-     * @see #getVcsCommitList
+     * @see #getRepositoryInfo
+     * @see #getRepositoryBranchList
+     * @see #getRepositoryCommitList
      */
-    void initEventVcs(Long id, boolean isReInit);
+    void initEventRepository(Long id, boolean isReInit);
 
     /**
      * 获取版本信息列表
@@ -77,7 +77,7 @@ public interface ApplicationVcsService {
      * @param request request
      * @return 分支信息
      */
-    ApplicationRepositoryInfoVO getVcsInfo(ApplicationVcsRequest request);
+    ApplicationRepositoryInfoVO getRepositoryInfo(ApplicationRepositoryRequest request);
 
     /**
      * 获取分支列表
@@ -85,7 +85,7 @@ public interface ApplicationVcsService {
      * @param id id
      * @return 分支信息
      */
-    List<ApplicationRepositoryBranchVO> getVcsBranchList(Long id);
+    List<ApplicationRepositoryBranchVO> getRepositoryBranchList(Long id);
 
     /**
      * 获取提交列表
@@ -94,7 +94,7 @@ public interface ApplicationVcsService {
      * @param branchName 分支名称
      * @return log
      */
-    List<ApplicationRepositoryCommitVO> getVcsCommitList(Long id, String branchName);
+    List<ApplicationRepositoryCommitVO> getRepositoryCommitList(Long id, String branchName);
 
     /**
      * 打开事件git
@@ -105,31 +105,31 @@ public interface ApplicationVcsService {
     Gits openEventGit(Long id);
 
     /**
-     * 清空 vcs
+     * 清空仓库
      *
      * @param id id
      */
-    void cleanBuildVcs(Long id);
+    void cleanBuildRepository(Long id);
 
     /**
-     * 同步vcs状态
+     * 同步仓库状态
      */
-    void syncVcsStatus();
+    void syncRepositoryStatus();
 
     /**
-     * 查询
+     * 查询仓库
      *
      * @param id id
-     * @return vcs
+     * @return 仓库
      */
-    ApplicationVcsDO selectById(Long id);
+    ApplicationRepositoryDO selectById(Long id);
 
     /**
      * 获取仓库账号密码
      *
-     * @param vcs vcs
+     * @param repository repository
      * @return [username, password]
      */
-    String[] getVcsUsernamePassword(ApplicationVcsDO vcs);
+    String[] getRepositoryUsernamePassword(ApplicationRepositoryDO repository);
 
 }

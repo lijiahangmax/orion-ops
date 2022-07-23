@@ -31,7 +31,7 @@ public class ApplicationInfoRequest extends PageRequest {
     private String tag;
 
     @ApiModelProperty(value = "版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "描述")
     private String description;

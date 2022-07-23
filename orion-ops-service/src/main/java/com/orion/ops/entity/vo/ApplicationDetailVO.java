@@ -32,10 +32,10 @@ public class ApplicationDetailVO {
     private String description;
 
     @ApiModelProperty(value = "应用版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "应用版本仓库名称")
-    private String vcsName;
+    private String repoName;
 
     @ApiModelProperty(value = "配置环境变量")
     private ApplicationConfigEnvVO env;
@@ -56,7 +56,7 @@ public class ApplicationDetailVO {
             vo.setName(p.getAppName());
             vo.setTag(p.getAppTag());
             vo.setDescription(p.getDescription());
-            vo.setVcsId(p.getVcsId());
+            vo.setRepoId(p.getRepoId());
             return vo;
         });
     }

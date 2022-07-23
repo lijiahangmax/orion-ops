@@ -7,12 +7,12 @@ import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.app.RepositoryAuthType;
 import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.constant.event.EventType;
-import com.orion.ops.entity.request.ApplicationVcsRequest;
+import com.orion.ops.entity.request.ApplicationRepositoryRequest;
 import com.orion.ops.entity.vo.ApplicationRepositoryBranchVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryCommitVO;
 import com.orion.ops.entity.vo.ApplicationRepositoryInfoVO;
-import com.orion.ops.entity.vo.ApplicationVcsVO;
-import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.entity.vo.ApplicationRepositoryVO;
+import com.orion.ops.service.api.ApplicationRepositoryService;
 import com.orion.ops.utils.Valid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,101 +34,101 @@ import java.util.List;
 @Api(tags = "应用版本仓库")
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/app-vcs")
-public class ApplicationVcsController {
+@RequestMapping("/orion/api/app-repo")
+public class ApplicationRepositoryController {
 
     @Resource
-    private ApplicationVcsService applicationVcsService;
+    private ApplicationRepositoryService applicationRepositoryService;
 
     @PostMapping("/add")
     @ApiOperation(value = "添加版本仓库")
-    @EventLog(EventType.ADD_VCS)
-    public Long addAppVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.ADD_REPOSITORY)
+    public Long addRepository(@RequestBody ApplicationRepositoryRequest request) {
         Valid.allNotBlank(request.getName(), request.getUrl());
         RepositoryAuthType authType = Valid.notNull(RepositoryAuthType.of(request.getAuthType()));
         if (RepositoryAuthType.TOKEN.equals(authType)) {
             Valid.notNull(RepositoryTokenType.of(request.getTokenType()));
             Valid.notBlank(request.getPrivateToken());
         }
-        return applicationVcsService.addAppVcs(request);
+        return applicationRepositoryService.addRepository(request);
     }
 
     @ApiOperation(value = "更新版本仓库")
     @PostMapping("/update")
-    @EventLog(EventType.UPDATE_VCS)
-    public Integer updateAppVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.UPDATE_REPOSITORY)
+    public Integer updateRepository(@RequestBody ApplicationRepositoryRequest request) {
         Valid.notNull(request.getId());
         Valid.allNotBlank(request.getName(), request.getUrl());
-        return applicationVcsService.updateAppVcs(request);
+        return applicationRepositoryService.updateRepository(request);
     }
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除版本仓库")
-    @EventLog(EventType.DELETE_VCS)
-    public Integer deleteAppVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.DELETE_REPOSITORY)
+    public Integer deleteRepository(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        return applicationVcsService.deleteAppVcs(id);
+        return applicationRepositoryService.deleteRepository(id);
     }
 
     @PostMapping("/list")
     @ApiOperation(value = "获取版本仓库列表")
-    public DataGrid<ApplicationVcsVO> listAppVcs(@RequestBody ApplicationVcsRequest request) {
-        return applicationVcsService.listAppVcs(request);
+    public DataGrid<ApplicationRepositoryVO> listRepository(@RequestBody ApplicationRepositoryRequest request) {
+        return applicationRepositoryService.listRepository(request);
     }
 
     @PostMapping("/detail")
     @ApiOperation(value = "获取版本仓库详情")
-    public ApplicationVcsVO getAppVcsDetail(@RequestBody ApplicationVcsRequest request) {
+    public ApplicationRepositoryVO getRepositoryDetail(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        return applicationVcsService.getAppVcsDetail(id);
+        return applicationRepositoryService.getRepositoryDetail(id);
     }
 
     @PostMapping("/init")
     @ApiOperation(value = "初始化版本仓库")
-    @EventLog(EventType.INIT_VCS)
-    public HttpWrapper<?> initVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.INIT_REPOSITORY)
+    public HttpWrapper<?> initRepository(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationVcsService.initEventVcs(id, false);
+        applicationRepositoryService.initEventRepository(id, false);
         return HttpWrapper.ok();
     }
 
     @PostMapping("/re-init")
     @ApiOperation(value = "重新初始化版本仓库")
-    @EventLog(EventType.RE_INIT_VCS)
-    public HttpWrapper<?> reInitVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.RE_INIT_REPOSITORY)
+    public HttpWrapper<?> reInitRepository(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationVcsService.initEventVcs(id, true);
+        applicationRepositoryService.initEventRepository(id, true);
         return HttpWrapper.ok();
     }
 
     @ApiOperation(value = "获取分支和提交记录列表")
     @PostMapping("/info")
-    public ApplicationRepositoryInfoVO getVcsInfo(@RequestBody ApplicationVcsRequest request) {
+    public ApplicationRepositoryInfoVO getRepositoryInfo(@RequestBody ApplicationRepositoryRequest request) {
         Valid.notNull(request.getId());
-        return applicationVcsService.getVcsInfo(request);
+        return applicationRepositoryService.getRepositoryInfo(request);
     }
 
     @PostMapping("/branch")
     @ApiOperation(value = "获取分支列表")
-    public List<ApplicationRepositoryBranchVO> getVcsBranchList(@RequestBody ApplicationVcsRequest request) {
+    public List<ApplicationRepositoryBranchVO> getRepositoryBranchList(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        return applicationVcsService.getVcsBranchList(id);
+        return applicationRepositoryService.getRepositoryBranchList(id);
     }
 
     @PostMapping("/commit")
     @ApiOperation(value = "获取提交列表")
-    public List<ApplicationRepositoryCommitVO> getVcsCommitList(@RequestBody ApplicationVcsRequest request) {
+    public List<ApplicationRepositoryCommitVO> getRepositoryCommitList(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
         String branchName = Valid.notBlank(request.getBranchName());
-        return applicationVcsService.getVcsCommitList(id, branchName);
+        return applicationRepositoryService.getRepositoryCommitList(id, branchName);
     }
 
     @PostMapping("/clean")
     @ApiOperation(value = "清空应用构建历史版本")
-    @EventLog(EventType.CLEAN_VCS)
-    public HttpWrapper<?> cleanBuildVcs(@RequestBody ApplicationVcsRequest request) {
+    @EventLog(EventType.CLEAN_REPOSITORY)
+    public HttpWrapper<?> cleanBuildRepository(@RequestBody ApplicationRepositoryRequest request) {
         Long id = Valid.notNull(request.getId());
-        applicationVcsService.cleanBuildVcs(id);
+        applicationRepositoryService.cleanBuildRepository(id);
         return HttpWrapper.ok();
     }
 

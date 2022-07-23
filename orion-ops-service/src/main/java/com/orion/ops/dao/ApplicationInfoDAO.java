@@ -17,20 +17,20 @@ import java.util.List;
 public interface ApplicationInfoDAO extends BaseMapper<ApplicationInfoDO> {
 
     /**
-     * 获取 vcs 数量
+     * 获取仓库数量
      *
-     * @param vcsId vcsId
+     * @param repoId repoId
      * @return count
      */
-    Integer selectVcsCount(@Param("vcsId") Long vcsId);
+    Integer selectRepoCount(@Param("repoId") Long repoId);
 
     /**
-     * 清空 vcs
+     * 清空仓库
      *
-     * @param vcsId vcsId
+     * @param repoId repoId
      * @return effect
      */
-    Integer cleanVcsCount(@Param("vcsId") Long vcsId);
+    Integer cleanRepoCount(@Param("repoId") Long repoId);
 
     /**
      * 查询名称

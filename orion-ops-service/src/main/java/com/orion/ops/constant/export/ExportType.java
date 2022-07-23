@@ -39,7 +39,7 @@ public enum ExportType {
     /**
      * 导出应用环境
      */
-    PROFILE(200, () -> ExportConst.getFileName(ExportConst.APP_PROFILE_EXPORT_NAME)),
+    PROFILE(200, () -> ExportConst.getFileName(ExportConst.PROFILE_EXPORT_NAME)),
 
     /**
      * 导出应用
@@ -49,7 +49,7 @@ public enum ExportType {
     /**
      * 应用仓库
      */
-    VCS(220, () -> ExportConst.getFileName(ExportConst.APP_VCS_EXPORT_NAME)),
+    REPOSITORY(220, () -> ExportConst.getFileName(ExportConst.REPOSITORY_EXPORT_NAME)),
 
     /**
      * 命令模板

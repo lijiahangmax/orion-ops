@@ -3,8 +3,8 @@ package com.orion.ops.runner;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.io.Files1;
 import com.orion.ops.constant.app.RepositoryStatus;
-import com.orion.ops.dao.ApplicationVcsDAO;
-import com.orion.ops.entity.domain.ApplicationVcsDO;
+import com.orion.ops.dao.ApplicationRepositoryDAO;
+import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import com.orion.ops.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -25,10 +25,10 @@ import java.util.List;
 @Component
 @Order(2500)
 @Slf4j
-public class CleanVcsStatusRunner implements CommandLineRunner {
+public class CleanRepositoryStatusRunner implements CommandLineRunner {
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Override
     public void run(String... args) {
@@ -44,16 +44,16 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
      * 清空初始化中的数据
      */
     private void cleanInitializing() {
-        LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .eq(ApplicationVcsDO::getVcsStatus, RepositoryStatus.INITIALIZING.getStatus());
-        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
-        for (ApplicationVcsDO vcs : vcsList) {
-            Long id = vcs.getId();
+        LambdaQueryWrapper<ApplicationRepositoryDO> wrapper = new LambdaQueryWrapper<ApplicationRepositoryDO>()
+                .eq(ApplicationRepositoryDO::getRepoStatus, RepositoryStatus.INITIALIZING.getStatus());
+        List<ApplicationRepositoryDO> repoList = applicationRepositoryDAO.selectList(wrapper);
+        for (ApplicationRepositoryDO repo : repoList) {
+            Long id = repo.getId();
             // 更新状态
-            ApplicationVcsDO update = new ApplicationVcsDO();
+            ApplicationRepositoryDO update = new ApplicationRepositoryDO();
             update.setId(id);
-            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
-            applicationVcsDAO.updateById(update);
+            update.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+            applicationRepositoryDAO.updateById(update);
             // 删除文件夹
             File clonePath = new File(Utils.getRepositoryEventDir(id));
             Files1.delete(clonePath);
@@ -65,21 +65,21 @@ public class CleanVcsStatusRunner implements CommandLineRunner {
      * 检查已初始化的数据
      */
     private void checkFinished() {
-        LambdaQueryWrapper<ApplicationVcsDO> wrapper = new LambdaQueryWrapper<ApplicationVcsDO>()
-                .eq(ApplicationVcsDO::getVcsStatus, RepositoryStatus.OK.getStatus());
-        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(wrapper);
-        for (ApplicationVcsDO vcs : vcsList) {
+        LambdaQueryWrapper<ApplicationRepositoryDO> wrapper = new LambdaQueryWrapper<ApplicationRepositoryDO>()
+                .eq(ApplicationRepositoryDO::getRepoStatus, RepositoryStatus.OK.getStatus());
+        List<ApplicationRepositoryDO> repoList = applicationRepositoryDAO.selectList(wrapper);
+        for (ApplicationRepositoryDO repo : repoList) {
             // 检查是否存在
-            Long id = vcs.getId();
+            Long id = repo.getId();
             File clonePath = new File(Utils.getRepositoryEventDir(id));
             if (Files1.isDirectory(clonePath)) {
                 continue;
             }
             // 更新状态
-            ApplicationVcsDO update = new ApplicationVcsDO();
+            ApplicationRepositoryDO update = new ApplicationRepositoryDO();
             update.setId(id);
-            update.setVcsStatus(RepositoryStatus.UNINITIALIZED.getStatus());
-            applicationVcsDAO.updateById(update);
+            update.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
+            applicationRepositoryDAO.updateById(update);
             log.info("重置版本仓库状态-重置 id: {}, clonePath: {}", id, clonePath);
         }
     }

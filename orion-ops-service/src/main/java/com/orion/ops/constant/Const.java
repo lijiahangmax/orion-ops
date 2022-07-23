@@ -28,7 +28,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String TEMP_PATH = "temp";
 
-    public static final String REPOSITORY_PATH = "repo";
+    public static final String REPO_PATH = "repo";
 
     public static final String DIST_PATH = "dist";
 

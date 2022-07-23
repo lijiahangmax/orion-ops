@@ -106,7 +106,7 @@ public class DataImportController {
             case APPLICATION:
                 return dataImportService.checkApplicationInfoImportData((List<ApplicationImportDTO>) rows);
             case REPOSITORY:
-                return dataImportService.checkAppVcsImportData((List<ApplicationRepositoryImportDTO>) rows);
+                return dataImportService.checkAppRepositoryImportData((List<ApplicationRepositoryImportDTO>) rows);
             case COMMAND_TEMPLATE:
                 return dataImportService.checkCommandTemplateImportData((List<CommandTemplateImportDTO>) rows);
             default:
@@ -146,7 +146,7 @@ public class DataImportController {
 
     @PostMapping("/import-app-profile")
     @ApiOperation(value = "导入应用环境")
-    @EventLog(EventType.DATA_IMPORT_APP_PROFILE)
+    @EventLog(EventType.DATA_IMPORT_PROFILE)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> importAppProfileData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -165,13 +165,13 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/import-app-vcs")
+    @PostMapping("/import-repository")
     @ApiOperation(value = "导入应用版本仓库")
-    @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
-    public HttpWrapper<?> importAppVcsData(@RequestBody DataImportRequest request) {
+    @EventLog(EventType.DATA_IMPORT_REPOSITORY)
+    public HttpWrapper<?> importRepositoryData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importAppVcsData(d));
+        this.asyncImportData(token, d -> dataImportService.importRepositoryData(d));
         return HttpWrapper.ok();
     }
 

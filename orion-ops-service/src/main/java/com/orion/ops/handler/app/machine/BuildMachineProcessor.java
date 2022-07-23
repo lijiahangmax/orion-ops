@@ -104,14 +104,14 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
         actions.forEach(s -> store.getActions().put(s.getId(), s));
         log.info("应用构建任务-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 插入store
-        Long vcsId = record.getVcsId();
+        Long repoId = record.getRepoId();
         store.setRelId(id);
-        store.setVcsId(vcsId);
+        store.setRepoId(repoId);
         store.setBranchName(record.getBranchName());
         store.setCommitId(record.getCommitId());
-        if (vcsId != null) {
-            String vcsClonePath = Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), vcsId + "/" + record.getId());
-            store.setVcsClonePath(vcsClonePath);
+        if (repoId != null) {
+            String repoClonePath = Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), repoId + "/" + record.getId());
+            store.setRepoClonePath(repoClonePath);
         }
         // 创建handler
         this.handlerList = IActionHandler.createHandler(actions, store);
@@ -171,9 +171,9 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
     private void copyBundleFile() {
         // 查询应用产物目录
         String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        if (!bundlePath.startsWith(Const.SLASH) && !Files1.isWindowsPath(bundlePath) && store.getVcsClonePath() != null) {
+        if (!bundlePath.startsWith(Const.SLASH) && !Files1.isWindowsPath(bundlePath) && store.getRepoClonePath() != null) {
             // 基于代码目录的相对路径
-            bundlePath = Files1.getPath(store.getVcsClonePath(), bundlePath);
+            bundlePath = Files1.getPath(store.getRepoClonePath(), bundlePath);
         }
         // 检查产物文件是否存在
         File bundleFile = new File(bundlePath);

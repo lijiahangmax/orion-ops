@@ -31,14 +31,14 @@ public class ApplicationImportDTO extends BaseDataImportDTO {
 
     @ApiModelProperty(value = "应用仓库名称")
     @ImportField(index = 2)
-    private String vcsName;
+    private String repositoryName;
 
     @ApiModelProperty(value = "描述")
     @ImportField(index = 3)
     private String description;
 
     @ApiModelProperty(value = "仓库id", hidden = true)
-    private Long vcsId;
+    private Long repositoryId;
 
     static {
         TypeStore.STORE.register(ApplicationImportDTO.class, DataImportCheckRowVO.class, p -> {
@@ -53,7 +53,7 @@ public class ApplicationImportDTO extends BaseDataImportDTO {
             d.setId(p.getId());
             d.setAppName(p.name);
             d.setAppTag(p.tag);
-            d.setVcsId(p.vcsId);
+            d.setRepoId(p.repositoryId);
             d.setDescription(p.description);
             return d;
         });

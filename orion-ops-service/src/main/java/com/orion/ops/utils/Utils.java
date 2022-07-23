@@ -157,7 +157,7 @@ public class Utils {
      * @return 路径
      */
     public static String getRepositoryEventDir(Long id) {
-        return Files1.getPath(SystemEnvAttr.REPOSITORY_PATH.getValue(), Const.EVENT_DIR + "/" + id);
+        return Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), Const.EVENT_DIR + "/" + id);
     }
 
     /**

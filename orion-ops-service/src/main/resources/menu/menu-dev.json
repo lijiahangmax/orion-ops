@@ -88,7 +88,7 @@
       },
       {
         "name": "版本仓库",
-        "path": "/app/vcs"
+        "path": "/app/repo"
       }
     ]
   },
