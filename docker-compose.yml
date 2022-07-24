@@ -19,10 +19,15 @@ services:
       dockerfile: docker/mysql/Dockerfile
     environment:
       - MYSQL_DATABASE=orion-ops
-      - MYSQL_USER_NAME=lijiahang
+      - MYSQL_USER=lijiahang
       - MYSQL_PASSWORD=lijiahang
       - MYSQL_ROOT_PASSWORD=admin123
-    image: mysql:5.7
+    image: orion-db:5.7
+  orion-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080
   orion-redis:
     image: redis:6.0.16-alpine
     command: redis-server --requirepass lijiahang
