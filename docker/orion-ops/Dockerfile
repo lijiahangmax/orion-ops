@@ -2,6 +2,7 @@ FROM nginx:alpine
 USER root
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && \
     apk update
+RUN echo 'root:orionadmin' | chpasswd
 RUN apk add openjdk8
 RUN rm -rf /etc/nginx/conf.d/*
 WORKDIR /app

@@ -8,6 +8,7 @@ import com.orion.ops.constant.machine.MachineAuthType;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.service.api.MachineEnvService;
+import com.orion.ops.utils.ValueMix;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -26,6 +27,8 @@ import javax.annotation.Resource;
 @Order(1600)
 @Slf4j
 public class HostMachineInitialize implements CommandLineRunner {
+
+    private static final String DEFAULT_PASSWORD = "orionadmin";
 
     @Resource
     private MachineInfoDAO machineInfoDAO;
@@ -56,6 +59,7 @@ public class HostMachineInitialize implements CommandLineRunner {
             insert.setSshPort(22);
             insert.setDescription("宿主机");
             insert.setUsername(Systems.USER_NAME);
+            insert.setPassword(ValueMix.encrypt(DEFAULT_PASSWORD));
             insert.setAuthType(MachineAuthType.PASSWORD.getType());
             insert.setMachineStatus(Const.ENABLE);
             machineInfoDAO.insert(insert);

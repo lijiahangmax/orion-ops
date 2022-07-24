@@ -22,7 +22,7 @@ services:
       - MYSQL_USER=lijiahang
       - MYSQL_PASSWORD=lijiahang
       - MYSQL_ROOT_PASSWORD=admin123
-    image: orion-db:5.7
+    image: orion-db:8.0
   orion-adminer:
     image: adminer
     restart: always
