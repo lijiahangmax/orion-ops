@@ -19,7 +19,7 @@ services:
       dockerfile: docker/mysql/Dockerfile
     environment:
       - MYSQL_DATABASE=orion-ops
-      - MYSQL_USER=lijiahang
+      - MYSQL_USER_NAME=lijiahang
       - MYSQL_PASSWORD=lijiahang
       - MYSQL_ROOT_PASSWORD=admin123
     image: mysql:5.7

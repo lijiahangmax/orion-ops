@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mysql:8.0.28
 COPY orion-ops-service/init-data.sql /tmp
 COPY orion-ops-service/init-schema.sql /tmp
 RUN cat /tmp/init-schema.sql >> /tmp/orion.sql && \
