@@ -40,7 +40,7 @@ mkdir -p /data/public/@{app.profile_id}/@{app.app_id}/node_modules
 
 ```
 source /etc/profile
-cd @{build.vcs_home}
+cd @{build.repo_home}
 # 软连接 node_modules
 ln -s /data/public/@{app.profile_id}/@{app.app_id}/node_modules .
 # 构建

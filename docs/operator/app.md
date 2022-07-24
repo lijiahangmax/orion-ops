@@ -58,8 +58,8 @@
 | :----           | :---                                     | :----                                     |
 | build_id        | 10                                       | 构建id (数据库自增)                         |
 | build_seq       | 1                                        | 当前环境该应用的构建序列                     |
-| vcs_home        | /orion/vcs/2/10                          | 当前应用配置的版本仓库的 `clone` 目录 (如果有) |
-| vcs_event_home  | /orion/vcs/event/2                       | 版本仓库的 (获取分支/commit) 目录 (只有一个)  |
+| repo_home       | /orion/repo/2/10                         | 当前应用配置的版本仓库的 `clone` 目录 (如果有) |
+| repo_event_home | /orion/repo/event/2                      | 版本仓库的 (获取分支/commit) 目录 (只有一个)  |
 | branch          | origin/master                            | 构建所选的 `branch`                        |
 | commit          | 8ab50bada8525f6670c36114ad46baa70efda820 | 构建所选的 `commit`                        |
 | bundle_path     | /root/orion_ops/dist/build/128/dist      | 构建完成后产物存储路径                       |
@@ -171,7 +171,7 @@ java -jar demo.jar --spring.profiles.active=dev  -Xmx128m -Xms64m
 配置应用的版本仓库, 仅支持 `git`, 用于构建时选择构建的 `branch` 以及 `commit`。   
 可以通过 `密码` 或 `令牌` 方式导入仓库。
 
-* 初始化: 初始化版本仓库, 验证密码或者token `vcs_event_home`
-* 重新初始化: 重新初始化版本仓库 `vcs_event_home`
+* 初始化: 初始化版本仓库, 验证密码或者token `repo_event_home`
+* 重新初始化: 重新初始化版本仓库 `repo_event_home`
 
 [comment]: <> (* 清空: 清空应用构建历史版本, 会保留两个版本, 防止清空正在进行中的构建任务)

@@ -31,7 +31,7 @@
    # 修改配置文件
    orion-ops/orion-ops-service/src/main/resources/application-prod.properties
    # 修改全局加密秘钥,为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-servicesrc/main/java/com/orion/ops/utils/ValueMix#SECRET_KEY
+   orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
    # 编译
    mvn -U clean install -DskipTests
    ```   

@@ -15,7 +15,7 @@
 | swap_path  | /root/orion/swap  | 交换分区目录                | 
 | log_path   | /root/orion/log   | 日志存放目录                | 
 | temp_path  | /root/orion/temp  | 临时文件目录                | 
-| vcs_path   | /root/orion/vcs   | 应用版本仓库目录             | 
+| repo_path  | /root/orion/repo  | 应用版本仓库目录             | 
 | dist_path  | /root/orion/dist  | 构建产物目录                | 
 | tail_mode  | tracker           | 文件追踪模式 tracker 或 tail | 
 

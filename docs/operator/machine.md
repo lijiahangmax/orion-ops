@@ -65,4 +65,3 @@ java -jar demo.jar -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/o
 
 查看当前所有已连接的终端会话, 具体到用户和机器, 可强制下线终端
 
-

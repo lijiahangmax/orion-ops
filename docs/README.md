@@ -1,6 +1,6 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务 (CI/CD)、操作流水线等功能, 帮助企业实现一站式轻量化运维治理,
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理,
 致力于企业级应用的智能运维。
 
 <p style="text-align: center">
@@ -46,7 +46,7 @@ demo: http://101.43.254.243/ops/#/
 * 调度任务: 维护 cron 表达式, 定时执行机器命令
 * 环境隔离: 不同应用环境的配置及环境变量是相互隔离的
 * 环境变量: 命令执行时使用占位符自动替换, 支持 properties, json, yml, xml多种格式维护
-* 高兼容性: 自定义 CI/CD 操作, 不论是什么项目都是配置 SSH 执行命令, 灵活操作
+* 高兼容性: 自定义构建发布操作, 不论是什么项目都是配置 SSH 执行命令, 灵活操作
 * 功能强大: 命令批量执行, 任务定时调度, 远程日志查看, 操作日志全记录等
 * 高扩展性: 前后端代码规范统一, 代码健壮质量高, 写法优雅, 易读好拓展
 * 免费开源: 前后端代码完全开源, 方便二次开发
@@ -71,12 +71,17 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 ## 功能预览
 
+> 控制台
+
+![控制台](./assert/img/console.png "控制台")
+
 > 机器列表
 
 ![机器列表](./assert/img/machine_list.png "机器列表")
 
 > 在线终端
 
+![终端banner](./assert/img/web_terminal_banner.png "终端banner")
 ![在线终端](./assert/img/web_terminal.png "在线终端")
 
 > 在线文件管理
@@ -119,10 +124,27 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 ![流水线配置](./assert/img/pipeline_list.png "流水线配置")
 ![流水线任务](./assert/img/pipeline_record_list.png "流水线任务")
 
+> 登陆日志
+
+![登陆日志](./assert/img/login_history.png "登陆日志")
+
+> 安全配置
+
+![安全配置](./assert/img/security_config.png "安全配置")
+
 > 消息
 
-![操作日志](./assert/img/operator_log.png "操作日志")
-![站内信](./assert/img/webside_message.png "站内信")
+![操作日志](./assert/img/event_log.png "操作日志")
+![站内信](./assert/img/about_messsage.png "站内信")
+
+## 添砖加瓦
+
+PR 规则: 只能在 `github` 的 `dev` 分支提交 PR, merge 后我会手动同步 gitee  
+orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。你所做出的每一次贡献都是有意义的, 同时也会永远保留在贡献者名单中  
+欢迎大家添砖加瓦以及文档纠错, 这也是开源项目的意义所在!
+
+[代码结构及开发规范](/about/code-structure)  
+[贡献者名单](/about/contributor)
 
 ## 联系我
 
