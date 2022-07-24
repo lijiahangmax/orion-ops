@@ -4,9 +4,7 @@
 * Mysql 8.0(+)
 * Redis 5.0.5(+)
 * Node 11.12.0(+)
-* Maven
-* Nginx
-* npm / yarn
+* Maven 3.5.4(+)
 
 ⚡ maven 推荐使用阿里云 mirror  
 ⚡ windows 环境二次开发需要安装 OpenSSH Server
@@ -33,7 +31,7 @@
    ```
    # 修改配置文件
    orion-ops/orion-ops-service/src/main/resources/application-dev.properties
-   # 修改全局加密秘钥,为了密码安全考虑 (推荐修改)
+   # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
    orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
    ```
 

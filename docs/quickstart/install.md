@@ -4,9 +4,8 @@
 * Mysql 8.0(+)
 * Redis 5.0.5(+)
 * Node 11.12.0(+)
-* Maven
+* Maven 3.5.4(+)
 * Nginx
-* npm / yarn
 
 ### 构建
 
@@ -30,7 +29,7 @@
    ```
    # 修改配置文件
    orion-ops/orion-ops-service/src/main/resources/application-prod.properties
-   # 修改全局加密秘钥,为了密码安全考虑 (推荐修改)
+   # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
    orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
    # 编译
    mvn -U clean install -DskipTests
@@ -61,6 +60,17 @@
  server {
         listen       80;
         client_max_body_size 4m;
+        # 是否启动gzip压缩
+        gzip  on;
+        # 需要压缩的常见静态资源
+        gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+        # 如果文件大于1k就启动压缩
+        gzip_min_length 1k;
+        # 缓冲区
+        gzip_buffers 4 16k;
+        # 压缩的等级
+        gzip_comp_level 2;
+        #access_log  /var/log/nginx/host.access.log  main;
 
         location / {
             root   html;
@@ -76,9 +86,9 @@
 
 ```
 复制 orion-ops/orion-ops-vue/dist 的所有文件到 nginx映射目录/ops
-复制 orion-ops/orion-ops-service/target/orion-ops-service-1.0.0.jar 到 /data/orion
+复制 orion-ops/orion-ops-service/target/orion-ops-service-1.1.4.jar 到 /data/orion
 # 启动后台服务
-nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --generator-admin &
+nohup java -jar orion-ops-service-1.1.4.jar --spring.profiles.active=prod --generator-admin &
 # 启动 nginx
 service nginx start
 ```
