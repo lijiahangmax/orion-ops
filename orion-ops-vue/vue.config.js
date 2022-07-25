@@ -8,14 +8,11 @@ module.exports = {
   devServer: {
     port: 10010
     // proxy: {
-    //   '/api': {
-    //     target: '',
-    //     // 允许跨域
-    //     changeOrigin: true,
+    //   '/': {
+    //     target: 'http://localhost:9119',
     //     ws: true,
-    //     pathRewrite: {
-    //       '^/api': ''
-    //     }
+    //     secure: false,
+    //     changeOrigin: true
     //   }
     // }
   }
