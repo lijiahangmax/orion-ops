@@ -432,7 +432,7 @@ const $api = {
   sftpPackageDownloadExec: param => {
     return $http.$post('/sftp/package-download/exec', param, {
       timeout: 180000,
-      loading: '正在执行压缩命令, 执行完毕自动下载'
+      loading: '正在执行压缩命令, 执行完成后自动下载'
     })
   },
 
@@ -440,7 +440,7 @@ const $api = {
    * sftp 传输列表
    */
   sftpTransferList: param => {
-    return $http.$get(` / sftp / transfer /${param.sessionToken}/list`)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/list`)
   },
 
   /**

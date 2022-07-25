@@ -51,17 +51,6 @@ public class SftpTransferActionHandler extends AbstractActionHandler {
         executor.connect();
         // 拼接删除日志
         String transferPath = store.getTransferPath();
-        StringBuilder removeLog = new StringBuilder(Const.LF)
-                .append(SPACE)
-                .append(Utils.getStainKeyWords("开始删除文件原始文件", StainCode.GLOSS_RED))
-                .append(Const.LF);
-        removeLog.append(SPACE)
-                .append(Utils.getStainKeyWords("remove:    ", StainCode.GLOSS_RED))
-                .append(Utils.getStainKeyWords(transferPath, StainCode.GLOSS_BLUE))
-                .append(Const.LF);
-        this.appendLog(removeLog.toString());
-        // 删除远程文件
-        executor.rm(transferPath);
         String bundleAbsolutePath = bundleFile.getAbsolutePath();
         // 拼接头文件
         StringBuilder headerLog = new StringBuilder(Const.LF)
