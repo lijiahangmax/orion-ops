@@ -1,6 +1,6 @@
 package com.orion.ops.handler.app.release;
 
-import com.orion.utils.collect.Maps;
+import com.orion.lang.utils.collect.Maps;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +18,7 @@ public class ReleaseSessionHolder {
     /**
      * session
      */
-    private ConcurrentHashMap<Long, IReleaseProcessor> session = Maps.newCurrentHashMap();
+    private final ConcurrentHashMap<Long, IReleaseProcessor> session = Maps.newCurrentHashMap();
 
     /**
      * 添加 session

@@ -14,7 +14,7 @@
     * [执行管理](operator/exec.md)
     * [调度任务](operator/scheduler.md)
     * [应用管理](operator/app.md)
-    * [CI/CD](operator/ci-cd.md)
+    * [构建发布](operator/build-release.md)
     * [用户管理](operator/user.md)
     * [系统管理](operator/system.md)
 

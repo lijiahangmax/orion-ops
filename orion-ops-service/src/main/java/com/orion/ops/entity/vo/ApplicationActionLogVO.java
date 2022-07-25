@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class ApplicationActionLogVO {
     private String actionName;
 
     /**
-     * @see com.orion.ops.consts.app.ActionType
+     * @see com.orion.ops.constant.app.ActionType
      */
     @ApiModelProperty(value = "操作类型")
     private Integer actionType;
@@ -44,7 +44,7 @@ public class ApplicationActionLogVO {
     private String actionCommand;
 
     /**
-     * @see com.orion.ops.consts.app.ActionStatus
+     * @see com.orion.ops.constant.app.ActionStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     private Integer status;

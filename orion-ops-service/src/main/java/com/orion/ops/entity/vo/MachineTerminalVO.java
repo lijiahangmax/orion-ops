@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.MachineTerminalDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,42 +32,35 @@ public class MachineTerminalVO {
     private String terminalType;
 
     /**
-     * @see com.orion.ops.consts.terminal.TerminalConst#BACKGROUND_COLOR
+     * @see com.orion.ops.constant.terminal.TerminalConst#BACKGROUND_COLOR
      */
     @ApiModelProperty(value = "背景色")
     private String backgroundColor;
 
     /**
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_COLOR
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_COLOR
      */
     @ApiModelProperty(value = "字体颜色")
     private String fontColor;
 
     /**
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_SIZE
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_SIZE
      */
     @ApiModelProperty(value = "字体大小")
     private Integer fontSize;
 
     /**
-     * @see com.orion.ops.consts.terminal.TerminalConst#FONT_FAMILY
+     * @see com.orion.ops.constant.terminal.TerminalConst#FONT_FAMILY
      */
     @ApiModelProperty(value = "字体名称")
     private String fontFamily;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否开启url link 1开启 2关闭")
     private Integer enableWebLink;
-
-    /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
-     */
-    @ApiModelProperty(value = "是否开启webGL加速 1开启 2关闭")
-    private Integer enableWebGL;
 
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
@@ -86,7 +79,6 @@ public class MachineTerminalVO {
             vo.setFontSize(p.getFontSize());
             vo.setFontFamily(p.getFontFamily());
             vo.setEnableWebLink(p.getEnableWebLink());
-            vo.setEnableWebGL(p.getEnableWebGL());
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             return vo;

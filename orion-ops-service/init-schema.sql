@@ -71,7 +71,7 @@ CREATE TABLE `application_build`
     `build_seq`        int(11)                                                  NULL DEFAULT NULL COMMENT '构建序列',
     `branch_name`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '构建分支',
     `commit_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '构建提交id',
-    `vcs_id`           bigint(20)                                               NULL DEFAULT NULL COMMENT '应用版本仓库id',
+    `repo_id`          bigint(20)                                               NULL DEFAULT NULL COMMENT '版本仓库id',
     `log_path`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '构建日志路径',
     `bundle_path`      varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '构建产物路径',
     `build_status`     tinyint(4)                                               NULL DEFAULT 10 COMMENT '状态 10未开始 20执行中 30已完成 40执行失败 50已取消',
@@ -124,7 +124,7 @@ CREATE TABLE `application_info`
     `app_name`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用名称',
     `app_tag`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '应用唯一标识',
     `app_sort`    int(11)                                                NULL DEFAULT NULL COMMENT '排序',
-    `vcs_id`      bigint(20)                                             NULL DEFAULT NULL COMMENT '应用版本仓库id',
+    `repo_id`     bigint(20)                                             NULL DEFAULT NULL COMMENT '版本仓库id',
     `description` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
     `deleted`     tinyint(4)                                             NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time` datetime(4)                                            NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
@@ -390,25 +390,25 @@ CREATE TABLE `application_release_machine`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for application_vcs
+-- Table structure for application_repository
 -- ----------------------------
-DROP TABLE IF EXISTS `application_vcs`;
-CREATE TABLE `application_vcs`
+DROP TABLE IF EXISTS `application_repository`;
+CREATE TABLE `application_repository`
 (
-    `id`                bigint(20)                                               NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `vcs_name`          varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '名称',
-    `vcs_description`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '描述',
-    `vcs_type`          tinyint(4)                                               NULL DEFAULT NULL COMMENT '类型 1git',
-    `vsc_url`           varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'url',
-    `vsc_username`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '用户名',
-    `vcs_password`      varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
-    `vcs_private_token` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'token',
-    `vcs_status`        int(11)                                                  NULL DEFAULT NULL COMMENT '状态 10未初始化 20初始化中 30正常 40失败',
-    `vcs_auth_type`     int(11)                                                  NULL DEFAULT 10 COMMENT '认证类型 10密码 20令牌',
-    `vcs_token_type`    int(11)                                                  NULL DEFAULT NULL COMMENT '令牌类型 10github 20gitee 30gitlab',
-    `deleted`           tinyint(4)                                               NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
-    `create_time`       datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
-    `update_time`       datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '更新时间',
+    `id`                 bigint(20)                                               NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `repo_name`          varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '名称',
+    `repo_description`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NULL DEFAULT NULL COMMENT '描述',
+    `repo_type`          tinyint(4)                                               NULL DEFAULT NULL COMMENT '类型 1git',
+    `repo_url`           varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'url',
+    `repo_username`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL COMMENT '用户名',
+    `repo_password`      varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
+    `repo_private_token` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'token',
+    `repo_status`        int(11)                                                  NULL DEFAULT NULL COMMENT '状态 10未初始化 20初始化中 30正常 40失败',
+    `repo_auth_type`     int(11)                                                  NULL DEFAULT 10 COMMENT '认证类型 10密码 20令牌',
+    `repo_token_type`    int(11)                                                  NULL DEFAULT NULL COMMENT '令牌类型 10github 20gitee 30gitlab',
+    `deleted`            tinyint(4)                                               NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time`        datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+    `update_time`        datetime(4)                                              NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
@@ -658,7 +658,6 @@ CREATE TABLE `machine_terminal`
     `font_size`        int(11)                                                 NULL DEFAULT 14 COMMENT '字体大小',
     `font_family`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '字体名称',
     `enable_web_link`  tinyint(4)                                              NULL DEFAULT 2 COMMENT '是否开启url link 1开启 2关闭',
-    `enable_web_gl`    tinyint(4)                                              NULL DEFAULT 2 COMMENT '是否开启webGL加速 1开启 2关闭',
     `deleted`          tinyint(4)                                              NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time`      datetime(4)                                             NULL DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
     `update_time`      datetime(4)                                             NULL DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',

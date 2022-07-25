@@ -1,12 +1,16 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.FileWriters;
+import com.orion.lang.utils.io.Files1;
 import com.orion.office.excel.writer.exporting.ExcelExport;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.export.ExportType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.export.ExportType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.exporter.*;
@@ -14,11 +18,7 @@ import com.orion.ops.entity.request.DataExportRequest;
 import com.orion.ops.service.api.DataExportService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
-import com.orion.servlet.web.Servlets;
-import com.orion.utils.Strings;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.FileWriters;
-import com.orion.utils.io.Files1;
+import com.orion.web.servlet.web.Servlets;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -58,13 +58,10 @@ public class DataExportServiceImpl implements DataExportService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
-
-    @Resource
-    private WebSideMessageDAO webSideMessageDAO;
 
     @Resource
     private UserEventLogDAO userEventLogDAO;
@@ -173,22 +170,22 @@ public class DataExportServiceImpl implements DataExportService {
         List<ApplicationInfoDO> appList = applicationInfoDAO.selectList(null);
         List<ApplicationExportDTO> exportList = Converts.toList(appList, ApplicationExportDTO.class);
         // 仓库名称
-        List<Long> vcsIdList = appList.stream()
-                .map(ApplicationInfoDO::getVcsId)
+        List<Long> repoIdList = appList.stream()
+                .map(ApplicationInfoDO::getRepoId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (!vcsIdList.isEmpty()) {
-            List<ApplicationVcsDO> vcsNameList = applicationVcsDAO.selectNameByIdList(vcsIdList);
+        if (!repoIdList.isEmpty()) {
+            List<ApplicationRepositoryDO> repoNameList = applicationRepositoryDAO.selectNameByIdList(repoIdList);
             // 设置仓库名称
             for (ApplicationExportDTO export : exportList) {
-                Long vcsId = export.getVcsId();
-                if (vcsId == null) {
+                Long repoId = export.getRepoId();
+                if (repoId == null) {
                     continue;
                 }
-                vcsNameList.stream()
-                        .filter(s -> s.getId().equals(vcsId))
+                repoNameList.stream()
+                        .filter(s -> s.getId().equals(repoId))
                         .findFirst()
-                        .ifPresent(s -> export.setVcsName(s.getVcsName()));
+                        .ifPresent(s -> export.setRepoName(s.getRepoName()));
             }
         }
         // 导出
@@ -199,18 +196,18 @@ public class DataExportServiceImpl implements DataExportService {
     }
 
     @Override
-    public void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException {
+    public void exportAppRepository(DataExportRequest request, HttpServletResponse response) throws IOException {
         // 查询数据
-        List<ApplicationVcsDO> vcsList = applicationVcsDAO.selectList(null);
-        List<ApplicationVcsExportDTO> exportList = Converts.toList(vcsList, ApplicationVcsExportDTO.class);
+        List<ApplicationRepositoryDO> repoList = applicationRepositoryDAO.selectList(null);
+        List<ApplicationRepositoryExportDTO> exportList = Converts.toList(repoList, ApplicationRepositoryExportDTO.class);
         if (!Const.ENABLE.equals(request.getExportPassword())) {
             exportList.forEach(s -> s.setEncryptAuthValue(null));
         }
         // 导出
-        ExcelExport<ApplicationVcsExportDTO> exporter = new ExcelExport<>(ApplicationVcsExportDTO.class).init();
+        ExcelExport<ApplicationRepositoryExportDTO> exporter = new ExcelExport<>(ApplicationRepositoryExportDTO.class).init();
         exporter.addRows(exportList);
         // 写入
-        this.writeWorkbook(request, response, exporter, ExportType.VCS);
+        this.writeWorkbook(request, response, exporter, ExportType.REPOSITORY);
     }
 
     @Override
@@ -223,28 +220,6 @@ public class DataExportServiceImpl implements DataExportService {
         exporter.addRows(exportList);
         // 写入
         this.writeWorkbook(request, response, exporter, ExportType.COMMAND_TEMPLATE);
-    }
-
-    @Override
-    public void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException {
-        // 查询数据
-        Integer classify = request.getClassify();
-        Integer status = request.getStatus();
-        LambdaQueryWrapper<WebSideMessageDO> wrapper = new LambdaQueryWrapper<WebSideMessageDO>()
-                .eq(WebSideMessageDO::getToUserId, Currents.getUserId())
-                .eq(Objects.nonNull(classify), WebSideMessageDO::getMessageClassify, classify)
-                .eq(Objects.nonNull(status), WebSideMessageDO::getReadStatus, status)
-                .orderByDesc(WebSideMessageDO::getCreateTime);
-        List<WebSideMessageDO> messageList = webSideMessageDAO.selectList(wrapper);
-        List<WebSideMessageExportDTO> exportList = Converts.toList(messageList, WebSideMessageExportDTO.class);
-        // 导出
-        ExcelExport<WebSideMessageExportDTO> exporter = new ExcelExport<>(WebSideMessageExportDTO.class).init();
-        exporter.addRows(exportList);
-        // 写入
-        this.writeWorkbook(request, response, exporter, ExportType.WEB_SIDE_MESSAGE);
-        // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.CLASSIFY, classify);
-        EventParamsHolder.addParam(EventKeys.STATUS, status);
     }
 
     @Override

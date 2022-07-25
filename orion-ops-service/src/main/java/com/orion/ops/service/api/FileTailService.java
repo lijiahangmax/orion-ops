@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.tail.FileTailType;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.constant.tail.FileTailType;
 import com.orion.ops.entity.request.FileTailRequest;
 import com.orion.ops.entity.vo.FileTailConfigVO;
 import com.orion.ops.entity.vo.FileTailVO;

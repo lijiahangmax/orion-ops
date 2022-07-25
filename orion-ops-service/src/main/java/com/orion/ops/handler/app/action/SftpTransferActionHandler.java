@@ -1,16 +1,16 @@
 package com.orion.ops.handler.app.action;
 
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.io.Streams;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
 
 import java.io.File;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.Map;
  *
  * @author Jiahang Li
  * @version 1.0.0
- * @see com.orion.ops.consts.app.ActionType#RELEASE_TRANSFER
- * @see com.orion.ops.consts.app.TransferMode#SFTP
+ * @see com.orion.ops.constant.app.ActionType#RELEASE_TRANSFER
+ * @see com.orion.ops.constant.app.TransferMode#SFTP
  * @since 2022/4/26 23:57
  */
 public class SftpTransferActionHandler extends AbstractActionHandler {
@@ -51,17 +51,6 @@ public class SftpTransferActionHandler extends AbstractActionHandler {
         executor.connect();
         // 拼接删除日志
         String transferPath = store.getTransferPath();
-        StringBuilder removeLog = new StringBuilder(Const.LF)
-                .append(SPACE)
-                .append(Utils.getStainKeyWords("开始删除文件原始文件", StainCode.GLOSS_RED))
-                .append(Const.LF);
-        removeLog.append(SPACE)
-                .append(Utils.getStainKeyWords("remove:    ", StainCode.GLOSS_RED))
-                .append(Utils.getStainKeyWords(transferPath, StainCode.GLOSS_BLUE))
-                .append(Const.LF);
-        this.appendLog(removeLog.toString());
-        // 删除远程文件
-        executor.rm(transferPath);
         String bundleAbsolutePath = bundleFile.getAbsolutePath();
         // 拼接头文件
         StringBuilder headerLog = new StringBuilder(Const.LF)

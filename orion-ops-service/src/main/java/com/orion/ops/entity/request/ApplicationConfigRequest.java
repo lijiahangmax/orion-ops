@@ -24,7 +24,7 @@ public class ApplicationConfigRequest {
     private Long profileId;
 
     /**
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @ApiModelProperty(value = "阶段类型")
     private Integer stageType;

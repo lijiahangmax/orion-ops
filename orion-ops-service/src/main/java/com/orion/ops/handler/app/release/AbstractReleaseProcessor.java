@@ -1,9 +1,11 @@
 package com.orion.ops.handler.app.release;
 
-import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.app.ReleaseStatus;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.message.MessageType;
+import com.orion.lang.utils.Threads;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.app.ReleaseStatus;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.dao.ApplicationReleaseDAO;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.entity.domain.ApplicationReleaseMachineDO;
@@ -11,8 +13,6 @@ import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 import com.orion.ops.service.api.ApplicationReleaseMachineService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Threads;
-import com.orion.utils.collect.Maps;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,16 +30,16 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
 
-    protected static ApplicationReleaseDAO applicationReleaseDAO = SpringHolder.getBean(ApplicationReleaseDAO.class);
+    protected static final ApplicationReleaseDAO applicationReleaseDAO = SpringHolder.getBean(ApplicationReleaseDAO.class);
 
-    protected static ApplicationReleaseMachineService applicationReleaseMachineService = SpringHolder.getBean(ApplicationReleaseMachineService.class);
+    protected static final ApplicationReleaseMachineService applicationReleaseMachineService = SpringHolder.getBean(ApplicationReleaseMachineService.class);
 
-    protected static ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
+    protected static final ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
 
-    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
+    private static final WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     @Getter
-    private Long releaseId;
+    private final Long releaseId;
 
     protected ApplicationReleaseDO release;
 

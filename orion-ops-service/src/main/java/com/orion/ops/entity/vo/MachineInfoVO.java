@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -53,14 +53,14 @@ public class MachineInfoVO {
     private String username;
 
     /**
-     * @see com.orion.ops.consts.machine.MachineAuthType
+     * @see com.orion.ops.constant.machine.MachineAuthType
      */
     @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
     private Integer authType;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer status;

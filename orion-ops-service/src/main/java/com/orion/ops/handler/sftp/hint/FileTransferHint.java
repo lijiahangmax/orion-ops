@@ -1,6 +1,6 @@
 package com.orion.ops.handler.sftp.hint;
 
-import com.orion.ops.consts.sftp.SftpTransferType;
+import com.orion.ops.constant.sftp.SftpTransferType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import lombok.Data;
 

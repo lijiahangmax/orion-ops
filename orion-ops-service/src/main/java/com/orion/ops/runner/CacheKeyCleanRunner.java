@@ -1,10 +1,10 @@
 package com.orion.ops.runner;
 
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.KeyConst;
 import com.orion.ops.utils.RedisUtils;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -48,7 +48,7 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 // sftp上传请求token
                 Strings.format(KeyConst.SFTP_UPLOAD_ACCESS_TOKEN, "*"),
                 // 首页统计key
-                KeyConst.HOME_STATISTICS_COUNT_KEY,
+                Strings.format(KeyConst.HOME_STATISTICS_COUNT_KEY, "*"),
                 // 调度统计key
                 Strings.format(KeyConst.SCHEDULER_TASK_STATISTICS_KEY, "*"),
                 // 环境缓存key

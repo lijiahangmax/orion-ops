@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,19 +28,19 @@ public class WebSideMessageRequest extends PageRequest {
     private List<Long> idList;
 
     /**
-     * @see com.orion.ops.consts.message.MessageClassify
+     * @see com.orion.ops.constant.message.MessageClassify
      */
     @ApiModelProperty(value = "消息分类")
     private Integer classify;
 
     /**
-     * @see com.orion.ops.consts.message.MessageType
+     * @see com.orion.ops.constant.message.MessageType
      */
     @ApiModelProperty(value = "消息类型")
     private Integer type;
 
     /**
-     * @see com.orion.ops.consts.message.ReadStatus
+     * @see com.orion.ops.constant.message.ReadStatus
      */
     @ApiModelProperty(value = "是否已读 1未读 2已读")
     private Integer status;

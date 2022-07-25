@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,13 +27,13 @@ public class EventLogRequest extends PageRequest {
     private String username;
 
     /**
-     * @see com.orion.ops.consts.event.EventClassify
+     * @see com.orion.ops.constant.event.EventClassify
      */
     @ApiModelProperty(value = "事件分类")
     private Integer classify;
 
     /**
-     * @see com.orion.ops.consts.event.EventType
+     * @see com.orion.ops.constant.event.EventType
      */
     @ApiModelProperty(value = "事件类型")
     private Integer type;
@@ -45,8 +45,8 @@ public class EventLogRequest extends PageRequest {
     private String params;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否执行成功 1成功 2失败")
     private Integer result;
@@ -58,9 +58,15 @@ public class EventLogRequest extends PageRequest {
     private Date rangeEnd;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;
+
+    /**
+     * @see com.orion.ops.constant.Const#ENABLE
+     */
+    @ApiModelProperty(value = "是否解析ip")
+    private Integer parserIp;
 
 }

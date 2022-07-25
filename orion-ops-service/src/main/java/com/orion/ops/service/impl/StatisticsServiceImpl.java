@@ -2,9 +2,14 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.app.*;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.lang.utils.Arrays1;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.app.*;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.*;
@@ -12,11 +17,6 @@ import com.orion.ops.entity.request.HomeStatisticsRequest;
 import com.orion.ops.entity.vo.*;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.Arrays1;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.time.Dates;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -96,7 +96,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private HomeStatisticsCountVO homeCountStatistics(Long profileId) {
         StatisticsCountDTO count;
         // 查询缓存
-        String countCache = redisTemplate.opsForValue().get(KeyConst.HOME_STATISTICS_COUNT_KEY);
+        String key = Strings.format(KeyConst.HOME_STATISTICS_COUNT_KEY, profileId);
+        String countCache = redisTemplate.opsForValue().get(key);
         if (Strings.isBlank(countCache)) {
             count = new StatisticsCountDTO();
             // 查询机器数量
@@ -114,7 +115,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             count.setProfileCount(profileCount);
             count.setAppCount(appCount);
             count.setPipelineCount(pipelineCount);
-            redisTemplate.opsForValue().set(KeyConst.HOME_STATISTICS_COUNT_KEY, JSON.toJSONString(count),
+            redisTemplate.opsForValue().set(key, JSON.toJSONString(count),
                     Integer.parseInt(SystemEnvAttr.STATISTICS_CACHE_EXPIRE.getValue()), TimeUnit.MINUTES);
         } else {
             count = JSON.parseObject(countCache, StatisticsCountDTO.class);

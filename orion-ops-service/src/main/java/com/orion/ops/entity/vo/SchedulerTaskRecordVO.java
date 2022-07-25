@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.SchedulerTaskRecordDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,7 +33,7 @@ public class SchedulerTaskRecordVO {
     private String taskName;
 
     /**
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @ApiModelProperty(value = "任务状态 10待调度 20调度中 30调度成功 40调度失败 50已停止")
     private Integer status;

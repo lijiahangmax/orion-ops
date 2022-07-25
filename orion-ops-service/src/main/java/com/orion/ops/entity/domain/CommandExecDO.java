@@ -43,7 +43,7 @@ public class CommandExecDO implements Serializable {
     /**
      * 执行类型 10批量执行
      *
-     * @see com.orion.ops.consts.command.ExecType
+     * @see com.orion.ops.constant.command.ExecType
      */
     @TableField("exec_type")
     private Integer execType;
@@ -75,7 +75,7 @@ public class CommandExecDO implements Serializable {
     /**
      * 执行状态 10未开始 20执行中 30执行成功 40执行失败 50执行终止
      *
-     * @see com.orion.ops.consts.command.ExecStatus
+     * @see com.orion.ops.constant.command.ExecStatus
      */
     @TableField("exec_status")
     private Integer execStatus;
@@ -119,8 +119,8 @@ public class CommandExecDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

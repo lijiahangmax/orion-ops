@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.consts.app.BuildStatus;
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.ops.constant.app.BuildStatus;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class ApplicationBuildStatisticsRecordVO {
     private Date buildDate;
 
     /**
-     * @see com.orion.ops.consts.app.BuildStatus
+     * @see com.orion.ops.constant.app.BuildStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20执行中 30已完成 40执行失败 50已取消")
     private Integer status;

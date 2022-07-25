@@ -75,7 +75,7 @@ public interface DataExportService {
      * @param response response
      * @throws IOException IOException
      */
-    void exportAppVcs(DataExportRequest request, HttpServletResponse response) throws IOException;
+    void exportAppRepository(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
      * 导出命令模板
@@ -85,15 +85,6 @@ public interface DataExportService {
      * @throws IOException IOException
      */
     void exportCommandTemplate(DataExportRequest request, HttpServletResponse response) throws IOException;
-
-    /**
-     * 导出站内信
-     *
-     * @param request  request
-     * @param response response
-     * @throws IOException IOException
-     */
-    void exportWebSideMessage(DataExportRequest request, HttpServletResponse response) throws IOException;
 
     /**
      * 导出操作日志

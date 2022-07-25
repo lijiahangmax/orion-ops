@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class HistoryValueRequest extends PageRequest {
     private Long valueId;
 
     /**
-     * @see com.orion.ops.consts.history.HistoryValueType
+     * @see com.orion.ops.constant.history.HistoryValueType
      */
     @ApiModelProperty(value = "值类型")
     private Integer valueType;

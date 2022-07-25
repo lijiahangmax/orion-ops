@@ -1,17 +1,17 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnableType;
-import com.orion.ops.consts.history.HistoryOperator;
-import com.orion.ops.consts.history.HistoryValueType;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.tail.FileTailMode;
+import com.orion.lang.utils.io.Files1;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.history.HistoryOperator;
+import com.orion.ops.constant.history.HistoryValueType;
+import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.tail.FileTailMode;
 import com.orion.ops.dao.SystemEnvDAO;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.utils.PathBuilders;
-import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -101,8 +101,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.LOG_PATH);
             case TEMP_PATH:
                 return createOrionOpsPath(Const.TEMP_PATH);
-            case VCS_PATH:
-                return createOrionOpsPath(Const.VCS_PATH);
+            case REPO_PATH:
+                return createOrionOpsPath(Const.REPO_PATH);
             case DIST_PATH:
                 return createOrionOpsPath(Const.DIST_PATH);
             case TAIL_FILE_UPLOAD_PATH:

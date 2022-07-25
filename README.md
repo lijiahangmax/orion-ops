@@ -1,6 +1,6 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务 (CI/CD)、操作流水线等功能, 帮助企业实现一站式轻量化运维治理,
+`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理,
 致力于企业级应用的智能运维。
 
 <p style="text-align: center">
@@ -46,7 +46,7 @@ demo: http://101.43.254.243/ops/#/
 * 调度任务: 维护 cron 表达式, 定时执行机器命令
 * 环境隔离: 不同应用环境的配置及环境变量是相互隔离的
 * 环境变量: 命令执行时使用占位符自动替换, 支持 properties, json, yml, xml多种格式维护
-* 高兼容性: 自定义 CI/CD 操作, 不论是什么项目都是配置 SSH 执行命令, 灵活操作
+* 高兼容性: 自定义构建发布操作, 不论是什么项目都是配置 SSH 执行命令, 灵活操作
 * 功能强大: 命令批量执行, 任务定时调度, 远程日志查看, 操作日志全记录等
 * 高扩展性: 前后端代码规范统一, 代码健壮质量高, 写法优雅, 易读好拓展
 * 免费开源: 前后端代码完全开源, 方便二次开发
@@ -69,26 +69,19 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 * Vue 2.6.11
 * Ant Design 1.7.8
 
-## 系统架构
-
-> 总体架构
-
-![总体架构](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files1661632709499769734.png "总体架构")
-
-> 发布架构 (CI / CD)
-
-![发布架构](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files6312827529386043725.png "发布架构")
-
-<br/>
-
 ## 功能预览
+
+> 控制台
+
+![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/e220f5ba-fbf7-48b1-9b65-26cabc08713d.jpg "控制台")
 
 > 机器列表
 
-![机器列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-05-05/files4260895980395378347.png "机器列表")
+![机器列表](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/f8b84d93-6cbe-4aa0-8e29-104a82ec9fc0.jpg "机器列表")
 
 > 在线终端
 
+![终端banner](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/ac3f8e83-a281-4593-8948-bfee2f77df7b.jpg "终端banner")
 ![在线终端](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4787611964158821533.png "在线终端")
 
 > 在线文件管理
@@ -131,12 +124,27 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 ![流水线配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files694386343461173439.png "流水线配置")
 ![流水线任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6446052342050924823.png "流水线任务")
 
+> 登陆日志
+
+![登陆日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/4a548584-6cee-4b95-9811-5d2a670bfca8.jpg "登陆日志")
+
+> 安全配置
+
+![安全配置](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/f79d16a1-500c-4b4c-bd2e-1bc212d453bf.png "安全配置")
+
 > 消息
 
-![操作日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1778166520525763829.png "操作日志")
-![站内信](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1762448910379225648.png "站内信")
+![操作日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/432c6dd0-0943-4868-9a2a-32147f566d55.jpg "操作日志")
+![站内信](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/cfcbb03c-fafa-4e7c-9e2d-f22f8c56c753.jpg "站内信")
 
-<br/>
+## 添砖加瓦
+
+PR 规则: 只能在 `github` 的 `dev` 分支提交 PR, merge 后我会手动同步 gitee  
+orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。你所做出的每一次贡献都是有意义的, 同时也会永远保留在贡献者名单中  
+欢迎大家添砖加瓦以及文档纠错, 这也是开源项目的意义所在!
+
+[代码结构及开发规范](https://https://lijiahangmax.github.io/orion-ops/#/about/code-structure)  
+[贡献者名单](https://https://lijiahangmax.github.io/orion-ops/#/about/contributor)
 
 ## 联系我
 

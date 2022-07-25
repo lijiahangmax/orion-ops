@@ -1,7 +1,7 @@
 package com.orion.ops.runner;
 
-import com.orion.ops.consts.EnableType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.service.api.SystemEnvService;
 import lombok.extern.slf4j.Slf4j;

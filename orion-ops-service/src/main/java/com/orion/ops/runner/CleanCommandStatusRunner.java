@@ -1,7 +1,7 @@
 package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.command.ExecStatus;
+import com.orion.ops.constant.command.ExecStatus;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import lombok.extern.slf4j.Slf4j;

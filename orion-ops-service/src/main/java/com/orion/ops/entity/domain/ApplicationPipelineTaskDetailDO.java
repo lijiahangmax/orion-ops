@@ -73,7 +73,7 @@ public class ApplicationPipelineTaskDetailDO implements Serializable {
     /**
      * 阶段类型 10构建 20发布
      *
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @TableField("stage_type")
     private Integer stageType;
@@ -89,7 +89,7 @@ public class ApplicationPipelineTaskDetailDO implements Serializable {
     /**
      * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止
      *
-     * @see com.orion.ops.consts.app.PipelineDetailStatus
+     * @see com.orion.ops.constant.app.PipelineDetailStatus
      */
     @TableField("exec_status")
     private Integer execStatus;
@@ -109,8 +109,8 @@ public class ApplicationPipelineTaskDetailDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

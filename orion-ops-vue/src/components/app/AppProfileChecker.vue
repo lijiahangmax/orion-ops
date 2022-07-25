@@ -76,7 +76,7 @@ export default {
     initData() {
       this.loading = true
       this.init = true
-      this.$api.getProfileList()
+      this.$api.fastGetProfileList()
         .then(({ data }) => {
           this.loading = false
           if (data && data.length) {

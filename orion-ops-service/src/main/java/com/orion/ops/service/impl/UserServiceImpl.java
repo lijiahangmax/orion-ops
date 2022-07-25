@@ -2,17 +2,24 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.id.UUIds;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.CnConst;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.id.UUIds;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Objects1;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.codec.Base64s;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.crypto.Signatures;
+import com.orion.lang.utils.io.FileWriters;
+import com.orion.ops.constant.CnConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.UserDTO;
@@ -21,13 +28,6 @@ import com.orion.ops.entity.vo.UserInfoVO;
 import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.*;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Objects1;
-import com.orion.utils.Strings;
-import com.orion.utils.codec.Base64s;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.crypto.Signatures;
-import com.orion.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,13 +79,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoVO userDetail(UserInfoRequest request) {
         Long id = Objects1.def(request.getId(), Currents::getUserId);
-        UserInfoDO user = userInfoDAO.selectById(id);
-        Valid.notNull(user, MessageConst.UNKNOWN_USER);
-        UserInfoVO userVo = Converts.to(user, UserInfoVO.class);
-        if (AvatarPicHolder.isExist(user.getAvatarPic())) {
-            userVo.setAvatar(AvatarPicHolder.getBase64(user.getAvatarPic()));
-        }
-        return userVo;
+        UserInfoDO info = userInfoDAO.selectById(id);
+        Valid.notNull(info, MessageConst.UNKNOWN_USER);
+        UserInfoVO user = Converts.to(info, UserInfoVO.class);
+        user.setAvatar(AvatarPicHolder.getUserAvatar(info.getAvatarPic()));
+        return user;
     }
 
     @Override
@@ -111,17 +109,9 @@ public class UserServiceImpl implements UserService {
         insert.setContactPhone(request.getPhone());
         insert.setContactEmail(request.getEmail());
         userInfoDAO.insert(insert);
-        Long userId = insert.getId();
-        // 生成头像
-        String avatar = AvatarPicHolder.generatorUserAvatar(userId, request.getNickname());
-        UserInfoDO update = new UserInfoDO();
-        update.setId(userId);
-        update.setAvatarPic(avatar);
-        update.setUpdateTime(new Date());
-        userInfoDAO.updateById(update);
         // 设置日志参数
         EventParamsHolder.addParams(insert);
-        return userId;
+        return insert.getId();
     }
 
     @Override
@@ -250,7 +240,7 @@ public class UserServiceImpl implements UserService {
         // 密码
         String salt = UUIds.random19();
         String password = ValueMix.encPassword(Signatures.md5(DEFAULT_USERNAME), salt);
-        // 创建
+        // 创建用户
         UserInfoDO insert = new UserInfoDO();
         insert.setUsername(DEFAULT_USERNAME);
         insert.setNickname(DEFAULT_NICKNAME);

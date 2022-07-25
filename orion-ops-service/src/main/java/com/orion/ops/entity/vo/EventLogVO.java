@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.UserEventLogDO;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -42,8 +42,8 @@ public class EventLogVO {
     private String params;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "是否执行成功 1成功 2失败")
     private Integer result;
@@ -53,6 +53,12 @@ public class EventLogVO {
 
     @ApiModelProperty(value = "操作时间")
     private String createTimeAgo;
+
+    @ApiModelProperty(value = "操作ip")
+    private String ip;
+
+    @ApiModelProperty(value = "操作ip位置")
+    private String ipLocation;
 
     static {
         TypeStore.STORE.register(UserEventLogDO.class, EventLogVO.class, p -> {

@@ -55,11 +55,11 @@ public class SystemSpaceAnalysisDTO {
     /**
      * 应用仓库版本数
      */
-    private Integer vcsVersionCount;
+    private Integer repoVersionCount;
 
     /**
      * 应用仓库大小
      */
-    private String vcsVersionFileSize;
+    private String repoVersionFileSize;
 
 }

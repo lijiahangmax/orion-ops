@@ -67,7 +67,7 @@ public class FileTailListDO implements Serializable {
     /**
      * 宿主机文件追踪类型 tracker/tail
      *
-     * @see com.orion.ops.consts.tail.FileTailMode
+     * @see com.orion.ops.constant.tail.FileTailMode
      */
     @TableField("tail_mode")
     private String tailMode;
@@ -75,8 +75,8 @@ public class FileTailListDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,6 +28,9 @@ public class ApplicationBuildRequest extends PageRequest {
     @ApiModelProperty(value = "应用id")
     private Long appId;
 
+    @ApiModelProperty(value = "应用名称")
+    private String appName;
+
     @ApiModelProperty(value = "环境id")
     private Long profileId;
 
@@ -41,7 +44,7 @@ public class ApplicationBuildRequest extends PageRequest {
     private String commitId;
 
     /**
-     * @see com.orion.ops.consts.app.BuildStatus
+     * @see com.orion.ops.constant.app.BuildStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20执行中 30已完成 40执行失败 50已取消")
     private Integer status;
@@ -50,7 +53,7 @@ public class ApplicationBuildRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;

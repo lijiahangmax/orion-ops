@@ -1,14 +1,14 @@
 package com.orion.ops.task.impl;
 
-import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.SerialType;
+import com.orion.lang.utils.Valid;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.SerialType;
 import com.orion.ops.dao.SchedulerTaskDAO;
 import com.orion.ops.entity.domain.SchedulerTaskDO;
 import com.orion.ops.handler.scheduler.ITaskProcessor;
 import com.orion.ops.service.api.SchedulerTaskRecordService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Valid;
-import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -21,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SchedulerTaskImpl implements Runnable {
 
-    private static SchedulerTaskDAO schedulerTaskDAO = SpringHolder.getBean(SchedulerTaskDAO.class);
+    private static final SchedulerTaskDAO schedulerTaskDAO = SpringHolder.getBean(SchedulerTaskDAO.class);
 
-    private static SchedulerTaskRecordService schedulerTaskRecordService = SpringHolder.getBean(SchedulerTaskRecordService.class);
+    private static final SchedulerTaskRecordService schedulerTaskRecordService = SpringHolder.getBean(SchedulerTaskRecordService.class);
 
-    private Long id;
+    private final Long id;
 
     public SchedulerTaskImpl(Long id) {
         this.id = id;

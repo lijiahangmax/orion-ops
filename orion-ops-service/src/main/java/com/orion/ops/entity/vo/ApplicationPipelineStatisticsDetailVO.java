@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.ApplicationPipelineDetailDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class ApplicationPipelineStatisticsDetailVO {
     private String appName;
 
     /**
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @ApiModelProperty(value = "阶段类型 10构建 20发布")
     private Integer stageType;

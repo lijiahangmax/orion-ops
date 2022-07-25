@@ -1,15 +1,16 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.Wrapper;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.Wrapper;
+import com.orion.lang.utils.Strings;
 import com.orion.net.remote.TerminalType;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
@@ -20,7 +21,6 @@ import com.orion.ops.entity.vo.TerminalAccessVO;
 import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +56,7 @@ public class MachineTerminalController {
         return machineTerminalService.getAccessConfig(machineId);
     }
 
-    @PostMapping("/support/pty")
+    @GetMapping("/support/pty")
     @ApiOperation(value = "获取支持的终端类型")
     public String[] getSupportedPty() {
         return Arrays.stream(TerminalType.values())
@@ -64,7 +64,7 @@ public class MachineTerminalController {
                 .toArray(String[]::new);
     }
 
-    @PostMapping("/get/{machineId}")
+    @GetMapping("/get/{machineId}")
     @ApiOperation(value = "获取终端配置")
     public MachineTerminalVO getSetting(@PathVariable Long machineId) {
         return machineTerminalService.getMachineConfig(machineId);
@@ -81,9 +81,6 @@ public class MachineTerminalController {
         }
         if (request.getEnableWebLink() != null) {
             Valid.in(request.getEnableWebLink(), Const.ENABLE, Const.DISABLE);
-        }
-        if (request.getEnableWebGL() != null) {
-            Valid.in(request.getEnableWebGL(), Const.ENABLE, Const.DISABLE);
         }
         return machineTerminalService.updateSetting(request);
     }

@@ -1,12 +1,12 @@
 package com.orion.ops.entity.dto.importer;
 
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.office.excel.annotation.ImportField;
-import com.orion.ops.consts.machine.ProxyType;
+import com.orion.ops.constant.machine.ProxyType;
 import com.orion.ops.entity.domain.MachineProxyDO;
 import com.orion.ops.entity.vo.DataImportCheckRowVO;
 import com.orion.ops.utils.ValueMix;
-import com.orion.utils.Strings;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

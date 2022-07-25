@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="环境名称" prop="name">
-              <a-input v-model="query.name" allowClear/>
+              <ProfileAutoComplete ref="profileSelector" @change="selectedProfile" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -44,7 +44,7 @@
                :dataSource="rows"
                :pagination="pagination"
                rowKey="id"
-               @change="changePage"
+               @change="getList"
                :scroll="{x: '100%'}"
                :loading="loading"
                size="middle">
@@ -93,6 +93,7 @@ import { enumValueOf, IMPORT_TYPE, PROFILE_AUDIT_STATUS } from '@/lib/enum'
 import AddAppProfileModal from '@/components/app/AddAppProfileModal'
 import AppProfileExportModal from '@/components/export/AppProfileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
+import ProfileAutoComplete from '@/components/app/ProfileAutoComplete'
 
 /**
  * 列
@@ -151,6 +152,7 @@ const columns = [
 export default {
   name: 'AppProfile',
   components: {
+    ProfileAutoComplete,
     DataImportModal,
     AppProfileExportModal,
     AddAppProfileModal
@@ -158,9 +160,10 @@ export default {
   data() {
     return {
       query: {
-        name: null,
-        value: null,
-        description: null
+        id: undefined,
+        name: undefined,
+        value: undefined,
+        description: undefined
       },
       rows: [],
       pagination: {
@@ -185,18 +188,27 @@ export default {
         limit: page.pageSize
       }).then(({ data }) => {
         const pagination = { ...this.pagination }
-        pagination.total = data.length
-        this.rows = data
+        pagination.total = data.total
+        pagination.current = data.page
+        this.rows = data.rows || []
+        this.pagination = pagination
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
       this.$emit('reloadProfile')
     },
-    changePage(page) {
-      const pagination = { ...this.pagination }
-      pagination.current = page.current
-      this.pagination = pagination
+    selectedProfile(id, name) {
+      if (id) {
+        this.query.id = id
+        this.query.name = undefined
+      } else {
+        this.query.id = undefined
+        this.query.name = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     add() {
       this.$refs.addModal.add()
@@ -206,10 +218,10 @@ export default {
     },
     remove(id) {
       this.$api.deleteProfile({ id })
-        .then(() => {
-          this.$message.success('已删除')
-          this.getList({})
-        })
+      .then(() => {
+        this.$message.success('已删除')
+        this.getList({})
+      })
     },
     openExport() {
       this.$refs.export.open()
@@ -219,6 +231,9 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.$refs.profileSelector.reset()
+      this.query.id = undefined
+      this.query.name = undefined
       this.getList({})
     }
   },

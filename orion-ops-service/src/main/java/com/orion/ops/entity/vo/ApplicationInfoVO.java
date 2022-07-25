@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.ApplicationInfoDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,17 +32,17 @@ public class ApplicationInfoVO {
     private Integer sort;
 
     @ApiModelProperty(value = "应用版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "应用版本仓库名称")
-    private String vcsName;
+    private String repoName;
 
     @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#CONFIGURED
-     * @see com.orion.ops.consts.Const#NOT_CONFIGURED
+     * @see com.orion.ops.constant.Const#CONFIGURED
+     * @see com.orion.ops.constant.Const#NOT_CONFIGURED
      */
     @ApiModelProperty(value = "是否已经配置 1已配置 2未配置")
     private Integer isConfig;
@@ -57,7 +57,7 @@ public class ApplicationInfoVO {
             vo.setName(p.getAppName());
             vo.setTag(p.getAppTag());
             vo.setSort(p.getAppSort());
-            vo.setVcsId(p.getVcsId());
+            vo.setRepoId(p.getRepoId());
             vo.setDescription(p.getDescription());
             return vo;
         });

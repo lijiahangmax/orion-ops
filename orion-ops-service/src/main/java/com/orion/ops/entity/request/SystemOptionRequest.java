@@ -16,7 +16,7 @@ import lombok.Data;
 public class SystemOptionRequest {
 
     /**
-     * @see com.orion.ops.consts.system.SystemConfigKey
+     * @see com.orion.ops.constant.system.SystemConfigKey
      */
     @ApiModelProperty(value = "配置项")
     private Integer option;

@@ -1,9 +1,9 @@
 package com.orion.ops.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
-import com.orion.ops.consts.CnConst;
-import com.orion.ops.consts.Const;
-import com.orion.utils.collect.Lists;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.PropertiesConst;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -30,7 +30,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
-@Profile({"dev", "local"})
+@Profile({"dev"})
 public class SwaggerConfig {
 
     @Bean
@@ -54,7 +54,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("orion-ops restful API")
                 .contact(new Contact(Const.ORION_AUTHOR, Const.ORION_GITEE, Const.ORION_EMAIL))
-                .version(CnConst.ORION_OPS_AUTHOR)
+                .version(PropertiesConst.ORION_OPS_VERSION)
                 .description("orion-ops api 管理")
                 .build();
     }
@@ -65,7 +65,7 @@ public class SwaggerConfig {
      * @return security scheme
      */
     private List<SecurityScheme> getSecuritySchemes() {
-        ApiKey loginToken = new ApiKey(Const.LOGIN_TOKEN, Const.LOGIN_TOKEN, "header");
+        ApiKey loginToken = new ApiKey(PropertiesConst.LOGIN_TOKEN_HEADER, PropertiesConst.LOGIN_TOKEN_HEADER, "header");
         return Lists.of(loginToken);
     }
 

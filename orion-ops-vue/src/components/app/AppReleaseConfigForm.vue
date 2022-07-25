@@ -61,20 +61,11 @@
                 <div class="action-transfer-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value">
                   <span class="label action-label normal-label required-label">文件传输方式</span>
                   <!-- 类型选择 -->
-                  <a-select :class="['transfer-input', transferMode === RELEASE_TRANSFER_MODE.SFTP.value ? 'help-input' : '']"
-                            v-model="transferMode">
+                  <a-select class="transfer-input" v-model="transferMode">
                     <a-select-option v-for="type of RELEASE_TRANSFER_MODE" :key="type.value" :value="type.value">
                       {{ type.label }}
                     </a-select-option>
                   </a-select>
-                  <!-- 描述 -->
-                  <a-popover placement="top" v-if="transferMode === RELEASE_TRANSFER_MODE.SFTP.value">
-                    <template slot="content">
-                      文件传输方式选择 SFTP 后, 当执行传输操作时, 会先删除文件传输路径再进行传输操作<br/>
-                      ⚠ 这里一定要注意, 配置不正确会导致数据误删除!!!
-                    </template>
-                    <a-icon class="help-trigger span-red" type="question-circle"/>
-                  </a-popover>
                 </div>
                 <!-- 文件传输路径 -->
                 <div class="action-transfer-wrapper" v-if="action.type === RELEASE_ACTION_TYPE.TRANSFER.value">

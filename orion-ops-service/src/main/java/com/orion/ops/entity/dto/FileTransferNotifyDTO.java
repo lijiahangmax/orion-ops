@@ -15,7 +15,7 @@ public class FileTransferNotifyDTO {
     /**
      * 通知类型
      *
-     * @see com.orion.ops.consts.sftp.SftpNotifyType
+     * @see com.orion.ops.constant.sftp.SftpNotifyType
      */
     private Integer type;
 

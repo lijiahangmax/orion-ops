@@ -605,7 +605,7 @@ export const VIEW_TYPE = {
 /**
  * 仓库状态
  */
-export const VCS_STATUS = {
+export const REPOSITORY_STATUS = {
   UNINITIALIZED: {
     value: 10,
     label: '未初始化',
@@ -631,7 +631,7 @@ export const VCS_STATUS = {
 /**
  * 仓库认证方式
  */
-export const VCS_AUTH_TYPE = {
+export const REPOSITORY_AUTH_TYPE = {
   PASSWORD: {
     value: 10,
     label: '密码认证'
@@ -645,7 +645,7 @@ export const VCS_AUTH_TYPE = {
 /**
  * 仓库令牌类型
  */
-export const VCS_TOKEN_TYPE = {
+export const REPOSITORY_TOKEN_TYPE = {
   GITHUB: {
     value: 10,
     label: 'github',
@@ -967,705 +967,790 @@ export const STAGE_TYPE = {
 export const EVENT_CLASSIFY = {
   AUTHENTICATION: {
     value: 5,
-    label: '认证操作',
-    type: {
-      LOGIN: {
-        value: 1005,
-        label: '登陆'
-      },
-      LOGOUT: {
-        value: 1010,
-        label: '登出'
-      },
-      RESET_PASSWORD: {
-        value: 1015,
-        label: '重置密码'
-      }
-    }
+    label: '认证操作'
   },
   MACHINE: {
     value: 10,
-    label: '机器操作',
-    type: {
-      ADD_MACHINE: {
-        value: 2005,
-        label: '添加机器'
-      },
-      UPDATE_MACHINE: {
-        value: 2010,
-        label: '修改机器'
-      },
-      DELETE_MACHINE: {
-        value: 2015,
-        label: '删除机器'
-      },
-      CHANGE_MACHINE_STATUS: {
-        value: 2020,
-        label: '修改状态'
-      },
-      COPY_MACHINE: {
-        value: 2025,
-        label: '复制机器'
-      }
-    }
+    label: '机器操作'
   },
   MACHINE_ENV: {
     value: 15,
-    label: '机器变量操作',
-    type: {
-      DELETE_MACHINE_ENV: {
-        value: 2105,
-        label: '删除变量'
-      },
-      SYNC_MACHINE_ENV: {
-        value: 2110,
-        label: '同步变量'
-      }
-    }
+    label: '机器变量操作'
   },
   MACHINE_KEY: {
     value: 20,
-    label: '秘钥操作',
-    type: {
-      ADD_MACHINE_KEY: {
-        value: 2205,
-        label: '新增秘钥'
-      },
-      UPDATE_MACHINE_KEY: {
-        value: 2210,
-        label: '修改秘钥'
-      },
-      DELETE_MACHINE_KEY: {
-        value: 2215,
-        label: '删除秘钥'
-      },
-      MOUNT_MACHINE_KEY: {
-        value: 2220,
-        label: '挂载秘钥'
-      },
-      DUMP_MACHINE_KEY: {
-        value: 2225,
-        label: '卸载秘钥'
-      },
-      MOUNT_ALL_MACHINE_KEY: {
-        value: 2230,
-        label: '挂载全部秘钥'
-      },
-      DUMP_ALL_MACHINE_KEY: {
-        value: 2235,
-        label: '卸载全部秘钥'
-      },
-      TEMP_MOUNT_MACHINE_KEY: {
-        value: 2240,
-        label: '临时挂载秘钥'
-      }
-    }
+    label: '秘钥操作'
   },
   MACHINE_PROXY: {
     value: 25,
-    label: '代理操作',
-    type: {
-      ADD_MACHINE_PROXY: {
-        value: 2305,
-        label: '新增代理'
-      },
-      UPDATE_MACHINE_PROXY: {
-        value: 2310,
-        label: '修改代理'
-      },
-      DELETE_MACHINE_PROXY: {
-        value: 2315,
-        label: '删除代理'
-      }
-    }
+    label: '代理操作'
   },
   TERMINAL: {
     value: 30,
-    label: '终端操作',
-    type: {
-      OPEN_TERMINAL: {
-        value: 2400,
-        label: '打开机器终端'
-      },
-      FORCE_OFFLINE_TERMINAL: {
-        value: 2405,
-        label: '强制下线终端'
-      },
-      UPDATE_TERMINAL_CONFIG: {
-        value: 2410,
-        label: '修改终端配置'
-      },
-      DELETE_TERMINAL_LOG: {
-        value: 2415,
-        label: '删除终端日志'
-      }
-    }
+    label: '终端操作'
   },
   SFTP: {
     value: 35,
-    label: '远程文件操作',
-    type: {
-      OPEN_SFTP: {
-        value: 2500,
-        label: '打开机器SFTP'
-      },
-      SFTP_MKDIR: {
-        value: 2505,
-        label: '创建文件夹'
-      },
-      SFTP_TOUCH: {
-        value: 2510,
-        label: '创建文件'
-      },
-      SFTP_TRUNCATE: {
-        value: 2515,
-        label: '截断文件'
-      },
-      SFTP_MOVE: {
-        value: 2520,
-        label: '移动文件'
-      },
-      SFTP_REMOVE: {
-        value: 2525,
-        label: '删除文件'
-      },
-      SFTP_CHMOD: {
-        value: 2530,
-        label: '修改权限'
-      },
-      SFTP_CHOWN: {
-        value: 2535,
-        label: '修改所有者'
-      },
-      SFTP_CHGRP: {
-        value: 2540,
-        label: '修改所有组'
-      },
-      SFTP_UPLOAD: {
-        value: 2545,
-        label: '上传文件'
-      },
-      SFTP_DOWNLOAD: {
-        value: 2550,
-        label: '下载文件'
-      },
-      SFTP_PACKAGE: {
-        value: 2555,
-        label: '打包文件'
-      }
-    }
+    label: '远程文件操作'
   },
   EXEC: {
     value: 40,
-    label: '批量执行操作',
-    type: {
-      EXEC_SUBMIT: {
-        value: 2605,
-        label: '批量执行'
-      },
-      EXEC_DELETE: {
-        value: 2610,
-        label: '删除执行'
-      },
-      EXEC_TERMINATE: {
-        value: 2615,
-        label: '停止执行'
-      }
-    }
+    label: '批量执行操作'
   },
   TAIL: {
     value: 45,
-    label: '日志文件操作',
-    type: {
-      ADD_TAIL_FILE: {
-        value: 2705,
-        label: '添加文件'
-      },
-      UPDATE_TAIL_FILE: {
-        value: 2710,
-        label: '修改文件'
-      },
-      DELETE_TAIL_FILE: {
-        value: 2715,
-        label: '删除文件'
-      },
-      UPLOAD_TAIL_FILE: {
-        value: 2720,
-        label: '上传文件'
-      }
-    }
+    label: '日志文件操作'
   },
   TEMPLATE: {
     value: 50,
-    label: '模板操作',
-    type: {
-      ADD_TEMPLATE: {
-        value: 2805,
-        label: '添加模板'
-      },
-      UPDATE_TEMPLATE: {
-        value: 2810,
-        label: '修改模板'
-      },
-      DELETE_TEMPLATE: {
-        value: 2815,
-        label: '删除模板'
-      }
-    }
+    label: '模板操作'
   },
   USER: {
     value: 55,
-    label: '用户操作',
-    type: {
-      ADD_USER: {
-        value: 1105,
-        label: '添加用户'
-      },
-      UPDATE_USER: {
-        value: 1110,
-        label: '修改信息'
-      },
-      DELETE_USER: {
-        value: 1115,
-        label: '删除用户'
-      },
-      CHANGE_USER_STATUS: {
-        value: 1120,
-        label: '修改状态'
-      },
-      UNLOCK_USER: {
-        value: 1125,
-        label: '解锁用户'
-      }
-    }
+    label: '用户操作'
   },
   APP: {
     value: 60,
-    label: '应用操作',
-    type: {
-      ADD_APP: {
-        value: 3005,
-        label: '添加应用'
-      },
-      UPDATE_APP: {
-        value: 3010,
-        label: '修改应用'
-      },
-      DELETE_APP: {
-        value: 3015,
-        label: '删除应用'
-      },
-      CONFIG_APP: {
-        value: 3020,
-        label: '配置应用'
-      },
-      SYNC_APP: {
-        value: 3025,
-        label: '同步应用'
-      },
-      COPY_APP: {
-        value: 3030,
-        label: '复制应用'
-      }
-    }
+    label: '应用操作'
   },
   PROFILE: {
     value: 65,
-    label: '环境操作',
-    type: {
-      ADD_PROFILE: {
-        value: 3105,
-        label: '添加环境'
-      },
-      UPDATE_PROFILE: {
-        value: 3110,
-        label: '修改环境'
-      },
-      DELETE_PROFILE: {
-        value: 3115,
-        label: '删除环境'
-      }
-    }
+    label: '环境操作'
   },
   APP_ENV: {
     value: 70,
-    label: '应用变量操作',
-    type: {
-      DELETE_APP_ENV: {
-        value: 3205,
-        label: '删除变量'
-      },
-      SYNC_APP_ENV: {
-        value: 3210,
-        label: '同步变量'
-      }
-    }
+    label: '应用变量操作'
   },
-  VCS: {
+  REPOSITORY: {
     value: 75,
-    label: '应用仓库操作',
-    type: {
-      ADD_VCS: {
-        value: 3305,
-        label: '添加仓库'
-      },
-      INIT_VCS: {
-        value: 3310,
-        label: '初始化仓库'
-      },
-      RE_INIT_VCS: {
-        value: 3315,
-        label: '重新初始化'
-      },
-      UPDATE_VCS: {
-        value: 3320,
-        label: '更新仓库'
-      },
-      DELETE_VCS: {
-        value: 3325,
-        label: '删除仓库'
-      },
-      CLEAN_VCS: {
-        value: 3330,
-        label: '清空仓库'
-      }
-    }
+    label: '应用仓库操作'
   },
   BUILD: {
     value: 80,
-    label: '应用构建操作',
-    type: {
-      SUBMIT_BUILD: {
-        value: 4005,
-        label: '提交构建'
-      },
-      BUILD_TERMINATE: {
-        value: 4010,
-        label: '停止构建'
-      },
-      DELETE_BUILD: {
-        value: 4015,
-        label: '删除构建'
-      },
-      SUBMIT_REBUILD: {
-        value: 4020,
-        label: '重新构建'
-      }
-    }
+    label: '应用构建操作'
   },
   RELEASE: {
     value: 85,
-    label: '应用发布操作',
-    type: {
-      SUBMIT_RELEASE: {
-        value: 5005,
-        label: '提交发布'
-      },
-      AUDIT_RELEASE: {
-        value: 5010,
-        label: '发布审核'
-      },
-      RUNNABLE_RELEASE: {
-        value: 5015,
-        label: '执行发布'
-      },
-      ROLLBACK_RELEASE: {
-        value: 5020,
-        label: '回滚发布'
-      },
-      TERMINATE_RELEASE: {
-        value: 5025,
-        label: '停止发布'
-      },
-      DELETE_RELEASE: {
-        value: 5030,
-        label: '删除发布'
-      },
-      COPY_RELEASE: {
-        value: 5035,
-        label: '复制发布'
-      },
-      CANCEL_TIMED_RELEASE: {
-        value: 5040,
-        label: '取消定时发布'
-      },
-      SET_TIMED_RELEASE: {
-        value: 5045,
-        label: '设置定时发布'
-      },
-      TERMINATE_MACHINE_RELEASE: {
-        value: 5050,
-        label: '停止机器操作'
-      },
-      SKIP_MACHINE_RELEASE: {
-        value: 5055,
-        label: '跳过机器操作'
-      }
-    }
+    label: '应用发布操作'
   },
   APP_PIPELINE: {
     value: 88,
-    label: '应用流水线',
-    type: {
-      ADD_PIPELINE: {
-        value: 5505,
-        label: '添加流水线'
-      },
-      UPDATE_PIPELINE: {
-        value: 5510,
-        label: '修改流水线'
-      },
-      DELETE_PIPELINE: {
-        value: 5515,
-        label: '删除流水线'
-      },
-      SUBMIT_PIPELINE_TASK: {
-        value: 5605,
-        label: '提交执行任务'
-      },
-      AUDIT_PIPELINE_TASK: {
-        value: 5610,
-        label: '审核任务'
-      },
-      COPY_PIPELINE_TASK: {
-        value: 5615,
-        label: '复制任务'
-      },
-      EXEC_PIPELINE_TASK: {
-        value: 5620,
-        label: '执行任务'
-      },
-      DELETE_PIPELINE_TASK: {
-        value: 5625,
-        label: '删除任务'
-      },
-      SET_PIPELINE_TIMED_TASK: {
-        value: 5630,
-        label: '设置定时执行'
-      },
-      CANCEL_PIPELINE_TIMED_TASK: {
-        value: 5635,
-        label: '取消定时执行'
-      },
-      TERMINATE_PIPELINE_TASK: {
-        value: 5640,
-        label: '停止执行任务'
-      },
-      TERMINATE_PIPELINE_TASK_DETAIL: {
-        value: 5645,
-        label: '停止执行操作'
-      },
-      SKIP_PIPELINE_TASK_DETAIL: {
-        value: 5650,
-        label: '跳过执行操作'
-      }
-    }
+    label: '应用流水线'
   },
   SYSTEM_ENV: {
     value: 90,
-    label: '系统变量操作',
-    type: {
-      ADD_SYSTEM_ENV: {
-        value: 6005,
-        label: '添加变量'
-      },
-      UPDATE_SYSTEM_ENV: {
-        value: 6010,
-        label: '更新变量'
-      },
-      DELETE_SYSTEM_ENV: {
-        value: 6015,
-        label: '删除变量'
-      },
-      SAVE_SYSTEM_ENV: {
-        value: 6020,
-        label: '保存变量'
-      }
-    }
+    label: '系统变量操作'
   },
   SYSTEM: {
     value: 95,
-    label: '系统操作',
-    type: {
-      CONFIG_IP_LIST: {
-        value: 6105,
-        label: '配置IP过滤器'
-      },
-      RE_ANALYSIS_SYSTEM: {
-        value: 6110,
-        label: '系统统计分析'
-      },
-      CLEAN_SYSTEM_FILE: {
-        value: 6115,
-        label: '清理系统文件'
-      },
-      UPDATE_SYSTEM_CONFIG: {
-        value: 6120,
-        label: '修改系统配置'
-      }
-    }
+    label: '系统操作'
   },
   SCHEDULER: {
     value: 100,
-    label: '调度任务操作',
-    type: {
-      ADD_SCHEDULER_TASK: {
-        value: 7105,
-        label: '添加调度任务'
-      },
-      UPDATE_SCHEDULER_TASK: {
-        value: 7110,
-        label: '修改调度任务'
-      },
-      UPDATE_SCHEDULER_TASK_STATUS: {
-        value: 7115,
-        label: '更新任务状态'
-      },
-      DELETE_SCHEDULER_TASK: {
-        value: 7120,
-        label: '删除调度任务'
-      },
-      MANUAL_TRIGGER_SCHEDULER_TASK: {
-        value: 7125,
-        label: '手动触发任务'
-      },
-      TERMINATE_ALL_SCHEDULER_TASK: {
-        value: 7130,
-        label: '停止任务'
-      },
-      TERMINATE_SCHEDULER_TASK_MACHINE: {
-        value: 7135,
-        label: '停止机器操作'
-      },
-      SKIP_SCHEDULER_TASK_MACHINE: {
-        value: 7140,
-        label: '跳过机器操作'
-      },
-      DELETE_TASK_RECORD: {
-        value: 7145,
-        label: '删除调度明细'
-      }
-    }
+    label: '调度任务操作'
   },
   DATA_CLEAR: {
     value: 110,
-    label: '数据清理',
-    type: {
-      DATA_CLEAR_BATCH_EXEC: {
-        value: 8105,
-        label: '批量执行'
-      },
-      DATA_CLEAR_TERMINAL_LOG: {
-        value: 8110,
-        label: '终端日志'
-      },
-      DATA_CLEAR_SCHEDULER_RECORD: {
-        value: 8115,
-        label: '任务调度'
-      },
-      DATA_CLEAR_APP_BUILD: {
-        value: 8120,
-        label: '应用构建'
-      },
-      DATA_CLEAR_APP_RELEASE: {
-        value: 8125,
-        label: '应用发布'
-      },
-      DATA_CLEAR_APP_PIPELINE: {
-        value: 8130,
-        label: '流水线任务'
-      },
-      DATA_CLEAR_WEB_SIDE_MESSAGE: {
-        value: 8135,
-        label: '站内信'
-      },
-      DATA_CLEAR_EVENT_LOG: {
-        value: 8140,
-        label: '操作日志'
-      }
-    }
+    label: '数据清理'
   },
   DATA_IMPORT: {
     value: 120,
-    label: '数据导入',
-    type: {
-      DATA_IMPORT_MACHINE: {
-        value: 8305,
-        label: '机器信息'
-      },
-      DATA_IMPORT_MACHINE_PROXY: {
-        value: 8310,
-        label: '导入机器代理'
-      },
-      DATA_IMPORT_TAIL_FILE: {
-        value: 8315,
-        label: '导入日志文件'
-      },
-      DATA_IMPORT_APP_PROFILE: {
-        value: 8320,
-        label: '导入应用环境'
-      },
-      DATA_IMPORT_APPLICATION: {
-        value: 8325,
-        label: '导入应用信息'
-      },
-      DATA_IMPORT_APP_VCS: {
-        value: 8330,
-        label: '导入版本仓库'
-      },
-      DATA_IMPORT_COMMAND_TEMPLATE: {
-        value: 8335,
-        label: '导入命令模板'
-      }
-    }
+    label: '数据导入'
   },
   DATA_EXPORT: {
     value: 130,
-    label: '数据导出',
-    type: {
-      DATA_EXPORT_MACHINE: {
-        value: 8505,
-        label: '机器信息'
-      },
-      DATA_EXPORT_MACHINE_PROXY: {
-        value: 8510,
-        label: '机器代理'
-      },
-      DATA_EXPORT_TERMINAL_LOG: {
-        value: 8515,
-        label: '终端日志'
-      },
-      DATA_EXPORT_TAIL_FILE: {
-        value: 8520,
-        label: '日志文件'
-      },
-      DATA_EXPORT_APP_PROFILE: {
-        value: 8550,
-        label: '应用环境'
-      },
-      DATA_EXPORT_APPLICATION: {
-        value: 8555,
-        label: '应用信息'
-      },
-      DATA_EXPORT_APP_VCS: {
-        value: 8560,
-        label: '应用仓库'
-      },
-      DATA_EXPORT_COMMAND_TEMPLATE: {
-        value: 8605,
-        label: '命令模板'
-      },
-      DATA_EXPORT_WEB_SIDE_MESSAGE: {
-        value: 8610,
-        label: '站内信'
-      },
-      DATA_EXPORT_EVENT_LOG: {
-        value: 8615,
-        label: '操作日志'
-      }
-    }
+    label: '数据导出'
   }
+}
 
+/**
+ * 操作日志类型
+ */
+export const EVENT_TYPE = {
+  LOGIN: {
+    value: 1005,
+    label: '登陆',
+    classify: 5
+  },
+  LOGOUT: {
+    value: 1010,
+    label: '登出',
+    classify: 5
+  },
+  RESET_PASSWORD: {
+    value: 1015,
+    label: '重置密码',
+    classify: 5
+  },
+  ADD_MACHINE: {
+    value: 2005,
+    label: '添加机器',
+    classify: 10
+  },
+  UPDATE_MACHINE: {
+    value: 2010,
+    label: '修改机器',
+    classify: 10
+  },
+  DELETE_MACHINE: {
+    value: 2015,
+    label: '删除机器',
+    classify: 10
+  },
+  CHANGE_MACHINE_STATUS: {
+    value: 2020,
+    label: '修改状态',
+    classify: 10
+  },
+  COPY_MACHINE: {
+    value: 2025,
+    label: '复制机器',
+    classify: 10
+  },
+  DELETE_MACHINE_ENV: {
+    value: 2105,
+    label: '删除变量',
+    classify: 15
+  },
+  SYNC_MACHINE_ENV: {
+    value: 2110,
+    label: '同步变量',
+    classify: 15
+  },
+  ADD_MACHINE_KEY: {
+    value: 2205,
+    label: '新增秘钥',
+    classify: 20
+  },
+  UPDATE_MACHINE_KEY: {
+    value: 2210,
+    label: '修改秘钥',
+    classify: 20
+  },
+  DELETE_MACHINE_KEY: {
+    value: 2215,
+    label: '删除秘钥',
+    classify: 20
+  },
+  MOUNT_MACHINE_KEY: {
+    value: 2220,
+    label: '挂载秘钥',
+    classify: 20
+  },
+  DUMP_MACHINE_KEY: {
+    value: 2225,
+    label: '卸载秘钥'
+  },
+  MOUNT_ALL_MACHINE_KEY: {
+    value: 2230,
+    label: '挂载全部秘钥',
+    classify: 20
+  },
+  DUMP_ALL_MACHINE_KEY: {
+    value: 2235,
+    label: '卸载全部秘钥',
+    classify: 20
+  },
+  TEMP_MOUNT_MACHINE_KEY: {
+    value: 2240,
+    label: '临时挂载秘钥',
+    classify: 20
+  },
+  ADD_MACHINE_PROXY: {
+    value: 2305,
+    label: '新增代理',
+    classify: 25
+  },
+  UPDATE_MACHINE_PROXY: {
+    value: 2310,
+    label: '修改代理',
+    classify: 25
+  },
+  DELETE_MACHINE_PROXY: {
+    value: 2315,
+    label: '删除代理',
+    classify: 25
+  },
+  OPEN_TERMINAL: {
+    value: 2400,
+    label: '打开机器终端',
+    classify: 30
+  },
+  FORCE_OFFLINE_TERMINAL: {
+    value: 2405,
+    label: '强制下线终端',
+    classify: 30
+  },
+  UPDATE_TERMINAL_CONFIG: {
+    value: 2410,
+    label: '修改终端配置',
+    classify: 30
+  },
+  DELETE_TERMINAL_LOG: {
+    value: 2415,
+    label: '删除终端日志',
+    classify: 30
+  },
+  OPEN_SFTP: {
+    value: 2500,
+    label: '打开机器SFTP',
+    classify: 35
+  },
+  SFTP_MKDIR: {
+    value: 2505,
+    label: '创建文件夹',
+    classify: 35
+  },
+  SFTP_TOUCH: {
+    value: 2510,
+    label: '创建文件',
+    classify: 35
+  },
+  SFTP_TRUNCATE: {
+    value: 2515,
+    label: '截断文件',
+    classify: 35
+  },
+  SFTP_MOVE: {
+    value: 2520,
+    label: '移动文件',
+    classify: 35
+  },
+  SFTP_REMOVE: {
+    value: 2525,
+    label: '删除文件',
+    classify: 35
+  },
+  SFTP_CHMOD: {
+    value: 2530,
+    label: '修改权限',
+    classify: 35
+  },
+  SFTP_CHOWN: {
+    value: 2535,
+    label: '修改所有者',
+    classify: 35
+  },
+  SFTP_CHGRP: {
+    value: 2540,
+    label: '修改所有组',
+    classify: 35
+  },
+  SFTP_UPLOAD: {
+    value: 2545,
+    label: '上传文件',
+    classify: 35
+  },
+  SFTP_DOWNLOAD: {
+    value: 2550,
+    label: '下载文件',
+    classify: 35
+  },
+  SFTP_PACKAGE: {
+    value: 2555,
+    label: '打包文件',
+    classify: 35
+  },
+  EXEC_SUBMIT: {
+    value: 2605,
+    label: '批量执行',
+    classify: 40
+  },
+  EXEC_DELETE: {
+    value: 2610,
+    label: '删除执行',
+    classify: 40
+  },
+  EXEC_TERMINATE: {
+    value: 2615,
+    label: '停止执行',
+    classify: 40
+  },
+  ADD_TAIL_FILE: {
+    value: 2705,
+    label: '添加文件',
+    classify: 45
+  },
+  UPDATE_TAIL_FILE: {
+    value: 2710,
+    label: '修改文件',
+    classify: 45
+  },
+  DELETE_TAIL_FILE: {
+    value: 2715,
+    label: '删除文件',
+    classify: 45
+  },
+  UPLOAD_TAIL_FILE: {
+    value: 2720,
+    label: '上传文件',
+    classify: 45
+  },
+  ADD_TEMPLATE: {
+    value: 2805,
+    label: '添加模板',
+    classify: 50
+  },
+  UPDATE_TEMPLATE: {
+    value: 2810,
+    label: '修改模板',
+    classify: 50
+  },
+  DELETE_TEMPLATE: {
+    value: 2815,
+    label: '删除模板',
+    classify: 50
+  },
+  ADD_USER: {
+    value: 1105,
+    label: '添加用户',
+    classify: 55
+  },
+  UPDATE_USER: {
+    value: 1110,
+    label: '修改信息',
+    classify: 55
+  },
+  DELETE_USER: {
+    value: 1115,
+    label: '删除用户',
+    classify: 55
+  },
+  CHANGE_USER_STATUS: {
+    value: 1120,
+    label: '修改状态',
+    classify: 55
+  },
+  UNLOCK_USER: {
+    value: 1125,
+    label: '解锁用户',
+    classify: 55
+  },
+  ADD_APP: {
+    value: 3005,
+    label: '添加应用',
+    classify: 60
+  },
+  UPDATE_APP: {
+    value: 3010,
+    label: '修改应用',
+    classify: 60
+  },
+  DELETE_APP: {
+    value: 3015,
+    label: '删除应用',
+    classify: 60
+  },
+  CONFIG_APP: {
+    value: 3020,
+    label: '配置应用',
+    classify: 60
+  },
+  SYNC_APP: {
+    value: 3025,
+    label: '同步应用',
+    classify: 60
+  },
+  COPY_APP: {
+    value: 3030,
+    label: '复制应用',
+    classify: 60
+  },
+  ADD_PROFILE: {
+    value: 3105,
+    label: '添加环境',
+    classify: 65
+  },
+  UPDATE_PROFILE: {
+    value: 3110,
+    label: '修改环境',
+    classify: 65
+  },
+  DELETE_PROFILE: {
+    value: 3115,
+    label: '删除环境',
+    classify: 65
+  },
+  DELETE_APP_ENV: {
+    value: 3205,
+    label: '删除变量',
+    classify: 70
+  },
+  SYNC_APP_ENV: {
+    value: 3210,
+    label: '同步变量',
+    classify: 70
+  },
+  ADD_REPOSITORY: {
+    value: 3305,
+    label: '添加仓库',
+    classify: 75
+  },
+  INIT_REPOSITORY: {
+    value: 3310,
+    label: '初始化仓库',
+    classify: 75
+  },
+  RE_INIT_REPOSITORY: {
+    value: 3315,
+    label: '重新初始化',
+    classify: 75
+  },
+  UPDATE_REPOSITORY: {
+    value: 3320,
+    label: '更新仓库',
+    classify: 75
+  },
+  DELETE_REPOSITORY: {
+    value: 3325,
+    label: '删除仓库',
+    classify: 75
+  },
+  CLEAN_REPOSITORY: {
+    value: 3330,
+    label: '清空仓库',
+    classify: 75
+  },
+  SUBMIT_BUILD: {
+    value: 4005,
+    label: '提交构建',
+    classify: 80
+  },
+  BUILD_TERMINATE: {
+    value: 4010,
+    label: '停止构建',
+    classify: 80
+  },
+  DELETE_BUILD: {
+    value: 4015,
+    label: '删除构建',
+    classify: 80
+  },
+  SUBMIT_REBUILD: {
+    value: 4020,
+    label: '重新构建',
+    classify: 80
+  },
+  SUBMIT_RELEASE: {
+    value: 5005,
+    label: '提交发布',
+    classify: 85
+  },
+  AUDIT_RELEASE: {
+    value: 5010,
+    label: '发布审核',
+    classify: 85
+  },
+  RUNNABLE_RELEASE: {
+    value: 5015,
+    label: '执行发布',
+    classify: 85
+  },
+  ROLLBACK_RELEASE: {
+    value: 5020,
+    label: '回滚发布',
+    classify: 85
+  },
+  TERMINATE_RELEASE: {
+    value: 5025,
+    label: '停止发布',
+    classify: 85
+  },
+  DELETE_RELEASE: {
+    value: 5030,
+    label: '删除发布',
+    classify: 85
+  },
+  COPY_RELEASE: {
+    value: 5035,
+    label: '复制发布',
+    classify: 85
+  },
+  CANCEL_TIMED_RELEASE: {
+    value: 5040,
+    label: '取消定时发布',
+    classify: 85
+  },
+  SET_TIMED_RELEASE: {
+    value: 5045,
+    label: '设置定时发布',
+    classify: 85
+  },
+  TERMINATE_MACHINE_RELEASE: {
+    value: 5050,
+    label: '停止机器操作',
+    classify: 85
+  },
+  SKIP_MACHINE_RELEASE: {
+    value: 5055,
+    label: '跳过机器操作',
+    classify: 85
+  },
+  ADD_PIPELINE: {
+    value: 5505,
+    label: '添加流水线',
+    classify: 88
+  },
+  UPDATE_PIPELINE: {
+    value: 5510,
+    label: '修改流水线',
+    classify: 88
+  },
+  DELETE_PIPELINE: {
+    value: 5515,
+    label: '删除流水线',
+    classify: 88
+  },
+  SUBMIT_PIPELINE_TASK: {
+    value: 5605,
+    label: '提交执行任务',
+    classify: 88
+  },
+  AUDIT_PIPELINE_TASK: {
+    value: 5610,
+    label: '审核任务',
+    classify: 88
+  },
+  COPY_PIPELINE_TASK: {
+    value: 5615,
+    label: '复制任务',
+    classify: 88
+  },
+  EXEC_PIPELINE_TASK: {
+    value: 5620,
+    label: '执行任务',
+    classify: 88
+  },
+  DELETE_PIPELINE_TASK: {
+    value: 5625,
+    label: '删除任务',
+    classify: 88
+  },
+  SET_PIPELINE_TIMED_TASK: {
+    value: 5630,
+    label: '设置定时执行',
+    classify: 88
+  },
+  CANCEL_PIPELINE_TIMED_TASK: {
+    value: 5635,
+    label: '取消定时执行',
+    classify: 88
+  },
+  TERMINATE_PIPELINE_TASK: {
+    value: 5640,
+    label: '停止执行任务',
+    classify: 88
+  },
+  TERMINATE_PIPELINE_TASK_DETAIL: {
+    value: 5645,
+    label: '停止执行操作',
+    classify: 88
+  },
+  SKIP_PIPELINE_TASK_DETAIL: {
+    value: 5650,
+    label: '跳过执行操作',
+    classify: 88
+  },
+  ADD_SYSTEM_ENV: {
+    value: 6005,
+    label: '添加变量',
+    classify: 90
+  },
+  UPDATE_SYSTEM_ENV: {
+    value: 6010,
+    label: '更新变量',
+    classify: 90
+  },
+  DELETE_SYSTEM_ENV: {
+    value: 6015,
+    label: '删除变量',
+    classify: 90
+  },
+  SAVE_SYSTEM_ENV: {
+    value: 6020,
+    label: '保存变量',
+    classify: 90
+  },
+  CONFIG_IP_LIST: {
+    value: 6105,
+    label: '配置IP过滤器',
+    classify: 95
+  },
+  RE_ANALYSIS_SYSTEM: {
+    value: 6110,
+    label: '系统统计分析',
+    classify: 95
+  },
+  CLEAN_SYSTEM_FILE: {
+    value: 6115,
+    label: '清理系统文件',
+    classify: 95
+  },
+  UPDATE_SYSTEM_CONFIG: {
+    value: 6120,
+    label: '修改系统配置',
+    classify: 95
+  },
+  ADD_SCHEDULER_TASK: {
+    value: 7105,
+    label: '添加调度任务',
+    classify: 100
+  },
+  UPDATE_SCHEDULER_TASK: {
+    value: 7110,
+    label: '修改调度任务',
+    classify: 100
+  },
+  UPDATE_SCHEDULER_TASK_STATUS: {
+    value: 7115,
+    label: '更新任务状态',
+    classify: 100
+  },
+  DELETE_SCHEDULER_TASK: {
+    value: 7120,
+    label: '删除调度任务',
+    classify: 100
+  },
+  MANUAL_TRIGGER_SCHEDULER_TASK: {
+    value: 7125,
+    label: '手动触发任务',
+    classify: 100
+  },
+  TERMINATE_ALL_SCHEDULER_TASK: {
+    value: 7130,
+    label: '停止任务',
+    classify: 100
+  },
+  TERMINATE_SCHEDULER_TASK_MACHINE: {
+    value: 7135,
+    label: '停止机器操作',
+    classify: 100
+  },
+  SKIP_SCHEDULER_TASK_MACHINE: {
+    value: 7140,
+    label: '跳过机器操作',
+    classify: 100
+  },
+  DELETE_TASK_RECORD: {
+    value: 7145,
+    label: '删除调度明细',
+    classify: 100
+  },
+  DATA_CLEAR_BATCH_EXEC: {
+    value: 8105,
+    label: '批量执行',
+    classify: 110
+  },
+  DATA_CLEAR_TERMINAL_LOG: {
+    value: 8110,
+    label: '终端日志',
+    classify: 110
+  },
+  DATA_CLEAR_SCHEDULER_RECORD: {
+    value: 8115,
+    label: '任务调度',
+    classify: 110
+  },
+  DATA_CLEAR_APP_BUILD: {
+    value: 8120,
+    label: '应用构建',
+    classify: 110
+  },
+  DATA_CLEAR_APP_RELEASE: {
+    value: 8125,
+    label: '应用发布',
+    classify: 110
+  },
+  DATA_CLEAR_APP_PIPELINE: {
+    value: 8130,
+    label: '流水线任务',
+    classify: 110
+  },
+  DATA_CLEAR_EVENT_LOG: {
+    value: 8140,
+    label: '操作日志',
+    classify: 110
+  },
+  DATA_IMPORT_MACHINE: {
+    value: 8305,
+    label: '机器信息',
+    classify: 120
+  },
+  DATA_IMPORT_MACHINE_PROXY: {
+    value: 8310,
+    label: '导入机器代理',
+    classify: 120
+  },
+  DATA_IMPORT_TAIL_FILE: {
+    value: 8315,
+    label: '导入日志文件',
+    classify: 120
+  },
+  DATA_IMPORT_PROFILE: {
+    value: 8320,
+    label: '导入应用环境',
+    classify: 120
+  },
+  DATA_IMPORT_APPLICATION: {
+    value: 8325,
+    label: '导入应用信息',
+    classify: 120
+  },
+  DATA_IMPORT_REPOSITORY: {
+    value: 8330,
+    label: '导入版本仓库',
+    classify: 120
+  },
+  DATA_IMPORT_COMMAND_TEMPLATE: {
+    value: 8335,
+    label: '导入命令模板',
+    classify: 120
+  },
+  DATA_EXPORT_MACHINE: {
+    value: 8505,
+    label: '机器信息',
+    classify: 130
+  },
+  DATA_EXPORT_MACHINE_PROXY: {
+    value: 8510,
+    label: '机器代理',
+    classify: 130
+  },
+  DATA_EXPORT_TERMINAL_LOG: {
+    value: 8515,
+    label: '终端日志',
+    classify: 130
+  },
+  DATA_EXPORT_TAIL_FILE: {
+    value: 8520,
+    label: '日志文件',
+    classify: 130
+  },
+  DATA_EXPORT_PROFILE: {
+    value: 8550,
+    label: '应用环境',
+    classify: 130
+  },
+  DATA_EXPORT_APPLICATION: {
+    value: 8555,
+    label: '应用信息',
+    classify: 130
+  },
+  DATA_EXPORT_REPOSITORY: {
+    value: 8560,
+    label: '应用仓库',
+    classify: 130
+  },
+  DATA_EXPORT_COMMAND_TEMPLATE: {
+    value: 8605,
+    label: '命令模板',
+    classify: 130
+  },
+  DATA_EXPORT_EVENT_LOG: {
+    value: 8615,
+    label: '操作日志',
+    classify: 130
+  }
 }
 
 /**
@@ -1692,8 +1777,8 @@ export const SYSTEM_CLEAR_TYPE = {
     value: 40,
     label: '旧版本构建产物'
   },
-  VCS_FILE: {
-    key: 'vcsFile',
+  REPO_FILE: {
+    key: 'repoFile',
     value: 50,
     label: '旧版本应用仓库'
   }
@@ -1915,182 +2000,214 @@ export const MESSAGE_CLASSIFY = {
   SYSTEM: {
     value: 10,
     label: '系统消息',
-    type: {
-      EXEC_SUCCESS: {
-        value: 1010,
-        label: '命令执行完成',
-        notify: 'success',
-        redirect: '#/batch/exec/list'
-      },
-      EXEC_FAILURE: {
-        value: 1020,
-        label: '命令执行失败',
-        notify: 'error',
-        redirect: '#/batch/exec/list'
-      },
-      VCS_INIT_SUCCESS: {
-        value: 1030,
-        label: '版本仓库初始化成功',
-        notify: 'success',
-        redirect: '#/app/vcs'
-      },
-      VCS_INIT_FAILURE: {
-        value: 1040,
-        label: '版本仓库初始化失败',
-        notify: 'error',
-        redirect: '#/app/vcs'
-      },
-      BUILD_SUCCESS: {
-        value: 1050,
-        label: '构建执行成功',
-        notify: 'success',
-        redirect: '#/app/build/list'
-      },
-      BUILD_FAILURE: {
-        value: 1060,
-        label: '构建执行失败',
-        notify: 'error',
-        redirect: '#/app/build/list'
-      },
-      RELEASE_AUDIT_RESOLVE: {
-        value: 1070,
-        label: '发布审批通过',
-        notify: 'success',
-        redirect: '#/app/release/list'
-      },
-      RELEASE_AUDIT_REJECT: {
-        value: 1080,
-        label: '发布审批驳回',
-        notify: 'warning',
-        redirect: '#/app/release/list'
-      },
-      RELEASE_SUCCESS: {
-        value: 1090,
-        label: '发布执行成功',
-        notify: 'success',
-        redirect: '#/app/release/list'
-      },
-      RELEASE_FAILURE: {
-        value: 1100,
-        label: '发布执行失败',
-        notify: 'error',
-        redirect: '#/app/release/list'
-      },
-      PIPELINE_AUDIT_RESOLVE: {
-        value: 1110,
-        label: '应用流水线审批通过',
-        notify: 'success',
-        redirect: '#/app/pipeline/record'
-      },
-      PIPELINE_AUDIT_REJECT: {
-        value: 1120,
-        label: '应用流水线审批驳回',
-        notify: 'warning',
-        redirect: '#/app/pipeline/record'
-      },
-      PIPELINE_EXEC_SUCCESS: {
-        value: 1130,
-        label: '流水线执行成功',
-        notify: 'success',
-        redirect: '#/app/pipeline/record'
-      },
-      PIPELINE_EXEC_FAILURE: {
-        value: 1140,
-        label: '流水线执行失败',
-        notify: 'error',
-        redirect: '#/app/pipeline/record'
-      }
-    }
+    icon: 'setting'
   },
   IMPORT: {
     value: 20,
     label: '数据导入',
-    type: {
-      MACHINE_IMPORT_SUCCESS: {
-        value: 2010,
-        label: '机器信息导入成功',
-        notify: 'success',
-        redirect: '#/machine/list'
-      },
-      MACHINE_IMPORT_FAILURE: {
-        value: 2020,
-        label: '机器信息导入失败',
-        notify: 'error',
-        redirect: '#/machine/list'
-      },
-      MACHINE_PROXY_IMPORT_SUCCESS: {
-        value: 2030,
-        label: '机器代理导入成功',
-        notify: 'success',
-        redirect: '#/machine/proxy'
-      },
-      MACHINE_PROXY_IMPORT_FAILURE: {
-        value: 2040,
-        label: '机器代理导入失败',
-        notify: 'error',
-        redirect: '#/machine/proxy'
-      },
-      MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
-        value: 2050,
-        label: '日志文件导入成功',
-        notify: 'success',
-        redirect: '#/log/list'
-      },
-      MACHINE_TAIL_FILE_IMPORT_FAILURE: {
-        value: 2060,
-        label: '日志文件导入失败',
-        notify: 'error',
-        redirect: '#/log/list'
-      },
-      APP_PROFILE_IMPORT_SUCCESS: {
-        value: 2070,
-        label: '应用环境导入成功',
-        notify: 'success',
-        redirect: '#/app/profile'
-      },
-      APP_PROFILE_IMPORT_FAILURE: {
-        value: 2080,
-        label: '应用环境导入失败',
-        notify: 'error',
-        redirect: '#/app/profile'
-      },
-      APPLICATION_IMPORT_SUCCESS: {
-        value: 2090,
-        label: '应用信息导入成功',
-        notify: 'success',
-        redirect: '#/app/list'
-      },
-      APPLICATION_IMPORT_FAILURE: {
-        value: 2100,
-        label: '应用信息导入失败',
-        notify: 'error',
-        redirect: '#/app/list'
-      },
-      APP_VCS_IMPORT_SUCCESS: {
-        value: 2110,
-        label: '版本仓库导入成功',
-        notify: 'success',
-        redirect: '#/app/vcs'
-      },
-      APP_VCS_IMPORT_FAILURE: {
-        value: 2120,
-        label: '版本仓库导入失败',
-        notify: 'error',
-        redirect: '#/app/vcs'
-      },
-      COMMAND_TEMPLATE_IMPORT_SUCCESS: {
-        value: 2130,
-        label: '命令模板导入成功',
-        notify: 'success',
-        redirect: '#/template/list'
-      },
-      COMMAND_TEMPLATE_IMPORT_FAILURE: {
-        value: 2140,
-        label: '命令模板导入失败',
-        notify: 'error',
-        redirect: '#/template/list'
-      }
-    }
+    icon: 'import'
+  }
+}
+
+/**
+ * 消息类型
+ */
+export const MESSAGE_TYPE = {
+  EXEC_SUCCESS: {
+    classify: 10,
+    value: 1010,
+    label: '命令执行完成',
+    notify: 'success',
+    redirect: '/batch/exec/list'
+  },
+  EXEC_FAILURE: {
+    classify: 10,
+    value: 1020,
+    label: '命令执行失败',
+    notify: 'error',
+    redirect: '/batch/exec/list'
+  },
+  REPOSITORY_INIT_SUCCESS: {
+    classify: 10,
+    value: 1030,
+    label: '版本仓库初始化成功',
+    notify: 'success',
+    redirect: '/app/repo'
+  },
+  REPOSITORY_INIT_FAILURE: {
+    classify: 10,
+    value: 1040,
+    label: '版本仓库初始化失败',
+    notify: 'error',
+    redirect: '/app/repo'
+  },
+  BUILD_SUCCESS: {
+    classify: 10,
+    value: 1050,
+    label: '构建执行成功',
+    notify: 'success',
+    redirect: '/app/build/list'
+  },
+  BUILD_FAILURE: {
+    classify: 10,
+    value: 1060,
+    label: '构建执行失败',
+    notify: 'error',
+    redirect: '/app/build/list'
+  },
+  RELEASE_AUDIT_RESOLVE: {
+    classify: 10,
+    value: 1070,
+    label: '发布审批通过',
+    notify: 'success',
+    redirect: '/app/release/list'
+  },
+  RELEASE_AUDIT_REJECT: {
+    classify: 10,
+    value: 1080,
+    label: '发布审批驳回',
+    notify: 'warning',
+    redirect: '/app/release/list'
+  },
+  RELEASE_SUCCESS: {
+    classify: 10,
+    value: 1090,
+    label: '发布执行成功',
+    notify: 'success',
+    redirect: '/app/release/list'
+  },
+  RELEASE_FAILURE: {
+    classify: 10,
+    value: 1100,
+    label: '发布执行失败',
+    notify: 'error',
+    redirect: '/app/release/list'
+  },
+  PIPELINE_AUDIT_RESOLVE: {
+    classify: 10,
+    value: 1110,
+    label: '应用流水线审批通过',
+    notify: 'success',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_AUDIT_REJECT: {
+    classify: 10,
+    value: 1120,
+    label: '应用流水线审批驳回',
+    notify: 'warning',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_EXEC_SUCCESS: {
+    classify: 10,
+    value: 1130,
+    label: '流水线执行成功',
+    notify: 'success',
+    redirect: '/app/pipeline/record'
+  },
+  PIPELINE_EXEC_FAILURE: {
+    classify: 10,
+    value: 1140,
+    label: '流水线执行失败',
+    notify: 'error',
+    redirect: '/app/pipeline/record'
+  },
+  MACHINE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2010,
+    label: '机器信息导入成功',
+    notify: 'success',
+    redirect: '/machine/list'
+  },
+  MACHINE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2020,
+    label: '机器信息导入失败',
+    notify: 'error',
+    redirect: '/machine/list'
+  },
+  MACHINE_PROXY_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2030,
+    label: '机器代理导入成功',
+    notify: 'success',
+    redirect: '/machine/proxy'
+  },
+  MACHINE_PROXY_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2040,
+    label: '机器代理导入失败',
+    notify: 'error',
+    redirect: '/machine/proxy'
+  },
+  MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2050,
+    label: '日志文件导入成功',
+    notify: 'success',
+    redirect: '/log/list'
+  },
+  MACHINE_TAIL_FILE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2060,
+    label: '日志文件导入失败',
+    notify: 'error',
+    redirect: '/log/list'
+  },
+  PROFILE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2070,
+    label: '应用环境导入成功',
+    notify: 'success',
+    redirect: '/app/profile'
+  },
+  PROFILE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2080,
+    label: '应用环境导入失败',
+    notify: 'error',
+    redirect: '/app/profile'
+  },
+  APPLICATION_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2090,
+    label: '应用信息导入成功',
+    notify: 'success',
+    redirect: '/app/list'
+  },
+  APPLICATION_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2100,
+    label: '应用信息导入失败',
+    notify: 'error',
+    redirect: '/app/list'
+  },
+  REPOSITORY_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2110,
+    label: '版本仓库导入成功',
+    notify: 'success',
+    redirect: '/app/repo'
+  },
+  REPOSITORY_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2120,
+    label: '版本仓库导入失败',
+    notify: 'error',
+    redirect: '/app/repo'
+  },
+  COMMAND_TEMPLATE_IMPORT_SUCCESS: {
+    classify: 20,
+    value: 2130,
+    label: '命令模板导入成功',
+    notify: 'success',
+    redirect: '/template/list'
+  },
+  COMMAND_TEMPLATE_IMPORT_FAILURE: {
+    classify: 20,
+    value: 2140,
+    label: '命令模板导入失败',
+    notify: 'error',
+    redirect: '/template/list'
   }
 }
 
@@ -2366,11 +2483,11 @@ export const IMPORT_TYPE = {
     title: '应用信息 导入',
     api: 'importApplication'
   },
-  VCS: {
+  REPOSITORY: {
     value: 220,
     tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '版本仓库 导入',
-    api: 'importAppVcs'
+    api: 'importRepository'
   },
   COMMAND_TEMPLATE: {
     value: 310,

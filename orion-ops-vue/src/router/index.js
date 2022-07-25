@@ -290,13 +290,13 @@ const routes = [
         component: () => import('../views/app/AppEnv')
       },
       {
-        path: '/app/vcs',
-        name: 'appVcs',
+        path: '/app/repo',
+        name: 'appRepository',
         meta: {
           requireAuth: true,
           title: '版本仓库'
         },
-        component: () => import('../views/app/AppVcs')
+        component: () => import('../views/app/AppRepository')
       },
       {
         path: '/app/build/list',
@@ -377,22 +377,8 @@ const routes = [
         component: () => import('../views/user/UserDetail')
       },
       {
-        path: '/user/event/log/:id',
-        name: 'simpleUserEventLog',
-        meta: {
-          requireAuth: true,
-          title: '操作日志',
-          leftProps: [{
-            icon: 'arrow-left',
-            title: '返回',
-            call: 'back'
-          }]
-        },
-        component: () => import('../views/user/SimpleUserEventLogList')
-      },
-      {
-        path: '/user/event/logs',
-        name: 'UserEventLogList',
+        path: '/user/event/logs/:id?',
+        name: 'userEventLogList',
         meta: {
           requireAuth: true,
           title: '操作日志'

@@ -1,14 +1,17 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.convert.Converts;
 import com.orion.net.remote.TerminalType;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.terminal.TerminalConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.terminal.TerminalConst;
 import com.orion.ops.dao.MachineTerminalDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;
@@ -25,9 +28,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.convert.Converts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -89,7 +89,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setFontFamily(config.getFontFamily());
         access.setFontColor(config.getFontColor());
         access.setEnableWebLink(config.getEnableWebLink());
-        access.setEnableWebGL(config.getEnableWebGL());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         redisTemplate.opsForValue().set(cacheKey, machineId + Strings.EMPTY,
@@ -113,7 +112,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
             insert.setFontSize(TerminalConst.FONT_SIZE);
             insert.setFontFamily(TerminalConst.FONT_FAMILY);
             insert.setEnableWebLink(Const.DISABLE);
-            insert.setEnableWebGL(Const.DISABLE);
             machineTerminalDAO.insert(insert);
             config = insert;
         }
@@ -139,7 +137,6 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         update.setBackgroundColor(request.getBackgroundColor());
         update.setUpdateTime(new Date());
         update.setEnableWebLink(request.getEnableWebLink());
-        update.setEnableWebGL(request.getEnableWebGL());
         // 修改
         int effect = machineTerminalDAO.updateById(update);
         // 设置日志参数

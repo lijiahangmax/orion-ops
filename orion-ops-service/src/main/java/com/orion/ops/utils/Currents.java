@@ -1,12 +1,12 @@
 package com.orion.ops.utils;
 
-import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ResultCode;
-import com.orion.ops.consts.user.RoleType;
-import com.orion.ops.consts.user.UserHolder;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.utils.Exceptions;
+import com.orion.ops.constant.PropertiesConst;
+import com.orion.ops.constant.ResultCode;
+import com.orion.ops.constant.user.RoleType;
+import com.orion.ops.constant.user.UserHolder;
 import com.orion.ops.entity.dto.UserDTO;
-import com.orion.utils.Exceptions;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public class Currents {
      * @return token
      */
     public static String getLoginToken(HttpServletRequest request) {
-        return getToken(request, Const.LOGIN_TOKEN);
+        return getToken(request, PropertiesConst.LOGIN_TOKEN_HEADER);
     }
 
     /**

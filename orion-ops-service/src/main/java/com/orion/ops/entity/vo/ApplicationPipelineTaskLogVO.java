@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskLogDO;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,13 +30,13 @@ public class ApplicationPipelineTaskLogVO {
     private Long taskDetailId;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineLogStatus
+     * @see com.orion.ops.constant.app.PipelineLogStatus
      */
     @ApiModelProperty(value = "日志状态 10创建 20执行 30成功 40失败 50停止 60跳过")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.app.StageType
+     * @see com.orion.ops.constant.app.StageType
      */
     @ApiModelProperty(value = "阶段类型 10构建 20发布")
     private Integer type;

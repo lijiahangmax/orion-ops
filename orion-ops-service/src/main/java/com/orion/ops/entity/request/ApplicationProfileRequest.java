@@ -1,5 +1,6 @@
 package com.orion.ops.entity.request;
 
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(value = "应用环境配置请求")
-public class ApplicationProfileRequest {
+public class ApplicationProfileRequest extends PageRequest {
 
     @ApiModelProperty(value = "id")
     private Long id;
@@ -28,8 +29,8 @@ public class ApplicationProfileRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "发布是否需要审核 1需要 2无需")
     private Integer releaseAudit;

@@ -1,10 +1,11 @@
 package com.orion.ops.handler.app.pipeline.stage;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.BuildStatus;
-import com.orion.ops.consts.app.PipelineLogStatus;
-import com.orion.ops.consts.app.StageType;
+import com.orion.lang.utils.Exceptions;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.app.BuildStatus;
+import com.orion.ops.constant.app.PipelineLogStatus;
+import com.orion.ops.constant.app.StageType;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDO;
@@ -16,7 +17,6 @@ import com.orion.ops.handler.app.machine.BuildMachineProcessor;
 import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.ops.service.api.ApplicationBuildService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,11 +31,11 @@ public class BuildStageHandler extends AbstractStageHandler {
 
     private Long buildId;
 
-    private static ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
+    private static final ApplicationBuildService applicationBuildService = SpringHolder.getBean(ApplicationBuildService.class);
 
-    private static ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
+    private static final ApplicationBuildDAO applicationBuildDAO  = SpringHolder.getBean(ApplicationBuildDAO.class);
 
-    private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
+    private static final BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
 
     public BuildStageHandler(ApplicationPipelineTaskDO task, ApplicationPipelineTaskDetailDO detail) {
         super(task, detail);

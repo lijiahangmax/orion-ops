@@ -2,16 +2,23 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.collect.MutableLinkedHashMap;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.*;
-import com.orion.ops.consts.app.*;
-import com.orion.ops.consts.env.EnvConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.message.MessageType;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.lang.define.collect.MutableLinkedHashMap;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.*;
+import com.orion.ops.constant.app.*;
+import com.orion.ops.constant.env.EnvConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.message.MessageType;
+import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.UserDTO;
@@ -28,13 +35,6 @@ import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.Files1;
-import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +118,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         LambdaQueryWrapper<ApplicationReleaseDO> wrapper = new LambdaQueryWrapper<ApplicationReleaseDO>()
                 .like(!Strings.isBlank(request.getTitle()), ApplicationReleaseDO::getReleaseTitle, request.getTitle())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationReleaseDO::getReleaseDescription, request.getDescription())
+                .like(!Strings.isBlank(request.getAppName()), ApplicationReleaseDO::getAppName, request.getAppName())
                 .eq(Objects.nonNull(request.getAppId()), ApplicationReleaseDO::getAppId, request.getAppId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationReleaseDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationReleaseDO::getReleaseStatus, request.getStatus())

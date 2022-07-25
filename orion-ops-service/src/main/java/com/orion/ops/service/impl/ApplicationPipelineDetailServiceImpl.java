@@ -2,13 +2,13 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.orion.lang.utils.convert.Converts;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationPipelineDetailDAO;
 import com.orion.ops.entity.domain.ApplicationInfoDO;
 import com.orion.ops.entity.domain.ApplicationPipelineDetailDO;
 import com.orion.ops.entity.vo.ApplicationPipelineDetailVO;
 import com.orion.ops.service.api.ApplicationPipelineDetailService;
-import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -50,7 +50,7 @@ public class ApplicationPipelineDetailServiceImpl implements ApplicationPipeline
                     .ifPresent(app -> {
                         detail.setAppName(app.getAppName());
                         detail.setAppTag(app.getAppTag());
-                        detail.setVcsId(app.getVcsId());
+                        detail.setRepoId(app.getRepoId());
                     });
         }
         return details;

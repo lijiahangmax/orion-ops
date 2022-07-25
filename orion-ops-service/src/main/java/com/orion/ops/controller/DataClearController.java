@@ -3,10 +3,10 @@ package com.orion.ops.controller;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.clear.DataClearRange;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.clear.DataClearRange;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
@@ -89,14 +89,6 @@ public class DataClearController {
         this.validParams(request);
         Valid.notNull(request.getProfileId());
         return dataClearService.clearAppPipeline(request);
-    }
-
-    @PostMapping("/web-side-message")
-    @ApiOperation(value = "清理站内信")
-    @EventLog(EventType.DATA_CLEAR_WEB_SIDE_MESSAGE)
-    public Integer clearWebSideMessage(@RequestBody DataClearRequest request) {
-        this.validParams(request);
-        return dataClearService.clearWebSideMessage(request);
     }
 
     @PostMapping("/event-log")

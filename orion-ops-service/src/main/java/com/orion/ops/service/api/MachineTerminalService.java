@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.terminal.TerminalConst;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.constant.terminal.TerminalConst;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;

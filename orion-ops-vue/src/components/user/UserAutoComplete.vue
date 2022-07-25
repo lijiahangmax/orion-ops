@@ -6,7 +6,10 @@
                    @search="search"
                    allowClear>
     <template #dataSource>
-      <a-select-option v-for="user in visibleUser" :key="user.id" :value="JSON.stringify(user)">
+      <a-select-option v-for="user in visibleUser"
+                       :key="user.id"
+                       :value="JSON.stringify(user)"
+                       @click="choose">
         {{ user.username }}
       </a-select-option>
     </template>
@@ -33,7 +36,6 @@ export default {
       value: undefined
     }
   },
-  watch: {},
   methods: {
     change(value) {
       let id
@@ -48,6 +50,11 @@ export default {
       }
       this.$emit('change', id, val)
       this.value = val
+    },
+    choose() {
+      this.$nextTick(() => {
+        this.$emit('choose')
+      })
     },
     search(value) {
       if (!value) {
@@ -64,6 +71,7 @@ export default {
     },
     reset() {
       this.value = undefined
+      this.visibleUser = this.userList
     }
   },
   async created() {

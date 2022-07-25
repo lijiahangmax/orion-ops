@@ -220,7 +220,7 @@ export default {
     },
     visibleConfigDot(detail) {
       if (detail.stageType === STAGE_TYPE.BUILD.value) {
-        if (detail.vcsId) {
+        if (detail.repoId) {
           return !detail.branchName
         } else {
           return false
@@ -232,7 +232,7 @@ export default {
     getConfigMessage(detail) {
       if (detail.stageType === STAGE_TYPE.BUILD.value) {
         // 构建
-        if (detail.vcsId) {
+        if (detail.repoId) {
           if (detail.branchName) {
             return `${detail.branchName} ${detail.commitId.substring(0, 7)}`
           } else {
@@ -284,7 +284,7 @@ export default {
         this.submit.timedExecTime = undefined
       }
       for (const detail of this.details) {
-        if (detail.stageType === STAGE_TYPE.BUILD.value && detail.vcsId && !detail.branchName) {
+        if (detail.stageType === STAGE_TYPE.BUILD.value && detail.repoId && !detail.branchName) {
           this.$message.warning(`请选择 ${detail.appName} 构建版本`)
           return
         }

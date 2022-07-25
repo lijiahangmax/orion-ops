@@ -79,7 +79,7 @@ public class MachineInfoDO implements Serializable {
     /**
      * 机器认证方式 1: 账号认证 2: key认证
      *
-     * @see com.orion.ops.consts.machine.MachineAuthType
+     * @see com.orion.ops.constant.machine.MachineAuthType
      */
     @TableField("auth_type")
     private Integer authType;
@@ -87,8 +87,8 @@ public class MachineInfoDO implements Serializable {
     /**
      * 机器状态 1有效 2无效
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("machine_status")
     private Integer machineStatus;
@@ -96,8 +96,8 @@ public class MachineInfoDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

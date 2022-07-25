@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class ApplicationEnvRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.env.EnvViewType
+     * @see com.orion.ops.constant.env.EnvViewType
      */
     @ApiModelProperty(value = "视图类型")
     private Integer viewType;

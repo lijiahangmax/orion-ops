@@ -49,7 +49,10 @@
       <!-- 操作日志 -->
       <div class="event-log-container">
         <a-card title="操作日志" :bordered="false" style="width: 100%; height: 100%;">
-          <EventLogList class="event-log-list-wrapper" :disableSearch="true"/>
+          <EventLogList class="event-log-list-wrapper"
+                        :disableSearch="true"
+                        :disableAction="true"
+                        :disableClick="true"/>
         </a-card>
       </div>
     </div>
@@ -176,8 +179,9 @@ export default {
   components: { EventLogList },
   data() {
     return {
+      profileId: undefined,
       topStatistic,
-      quickRouter: quickRouter,
+      quickRouter,
       count: {
         machineCount: '-',
         profileCount: '-',
@@ -186,20 +190,27 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+    chooseProfile({ id }) {
+      this.profileId = id
+      this.statisticsHome()
+    },
+    statisticsHome() {
+      // 加载统计信息
+      this.$api.getHomeStatistics({
+        profileId: this.profileId
+      }).then(({ data }) => {
+        this.count = data.count
+      })
+    }
+  },
   mounted() {
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
-    let profileId = null
     if (activeProfile) {
-      profileId = JSON.parse(activeProfile).id
+      this.profileId = JSON.parse(activeProfile).id
     }
-    // 加载统计信息
-    this.$api.getHomeStatistics({
-      profileId
-    }).then(({ data }) => {
-      this.count = data.count
-    })
+    this.statisticsHome()
   }
 }
 </script>

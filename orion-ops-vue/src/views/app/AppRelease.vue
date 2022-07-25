@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="应用" prop="appId">
-              <AppSelector ref="appSelector" @change="appId => query.appId = appId"/>
+              <AppAutoComplete ref="appSelector" @change="selectedApp" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -16,7 +16,7 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="请选择" allowClear>
+              <a-select v-model="query.status" placeholder="请选择" @change="getList({})" allowClear>
                 <a-select-option v-for="status of RELEASE_STATUS" :key="status.value" :value="status.value">
                   {{ status.label }}
                 </a-select-option>
@@ -277,6 +277,7 @@ import AppReleaseMachineDetailDrawer from '@/components/app/AppReleaseMachineDet
 import AppReleaseMachineLogAppenderModal from '@/components/log/AppReleaseMachineLogAppenderModal'
 import AppReleaseLogAppenderModal from '@/components/log/AppReleaseLogAppenderModal'
 import AppReleaseClearModal from '@/components/clear/AppReleaseClearModal'
+import AppAutoComplete from '@/components/app/AppAutoComplete'
 
 function statusHolder() {
   return {
@@ -439,6 +440,7 @@ const innerColumns = [
 export default {
   name: 'AppRelease',
   components: {
+    AppAutoComplete,
     AppReleaseClearModal,
     AppReleaseLogAppenderModal,
     AppReleaseTimedModal,
@@ -446,8 +448,7 @@ export default {
     AppReleaseMachineDetailDrawer,
     AppReleaseDetailDrawer,
     AppReleaseAuditModal,
-    AppReleaseModal,
-    AppSelector
+    AppReleaseModal
   },
   data: function() {
     return {
@@ -455,11 +456,12 @@ export default {
       TIMED_TYPE,
       RELEASE_TYPE,
       query: {
-        appId: null,
-        profileId: null,
-        title: null,
+        appId: undefined,
+        appName: undefined,
+        profileId: undefined,
+        title: undefined,
         status: undefined,
-        description: null,
+        description: undefined,
         onlyMyself: false
       },
       rows: [],
@@ -523,6 +525,18 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    selectedApp(id, name) {
+      if (id) {
+        this.query.appId = id
+        this.query.appName = undefined
+      } else {
+        this.query.appId = undefined
+        this.query.appName = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     expandMachine(expand, record) {
       if (!expand || record.machines.length) {
@@ -656,6 +670,7 @@ export default {
       this.$refs.query.resetFields()
       this.$refs.appSelector.reset()
       this.query.appId = undefined
+      this.query.appName = undefined
       this.query.status = undefined
       this.query.onlyMyself = false
       this.getList({})
@@ -680,9 +695,9 @@ export default {
         return
       }
       const machineIdList = pollItems.map(s => s.machines)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getAppReleaseListStatus({
         idList,
         machineIdList

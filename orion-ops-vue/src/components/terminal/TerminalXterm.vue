@@ -66,7 +66,6 @@ export default {
       this.$refs.terminalMain.plugin.fit && this.$refs.terminalMain.plugin.fit.dispose()
       this.$refs.terminalMain.plugin.search && this.$refs.terminalMain.plugin.search.dispose()
       this.$refs.terminalMain.plugin.links && this.$refs.terminalMain.plugin.links.dispose()
-      this.$refs.terminalMain.plugin.webgl && this.$refs.terminalMain.plugin.webgl.dispose()
     },
     reload() {
       this.dispose()
@@ -113,8 +112,7 @@ export default {
         // terminal设置
         const setting = {
           accessToken: data.accessToken,
-          enableWebLink: data.enableWebLink,
-          enableWebGL: data.enableWebGL
+          enableWebLink: data.enableWebLink
         }
         // 初始化terminal
         this.$refs.terminalMain.init(options, setting)

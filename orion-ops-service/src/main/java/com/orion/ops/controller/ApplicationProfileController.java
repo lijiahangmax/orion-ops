@@ -1,11 +1,12 @@
 package com.orion.ops.controller;
 
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
@@ -13,10 +14,7 @@ import com.orion.ops.service.api.ApplicationProfileService;
 import com.orion.ops.utils.Valid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -71,11 +69,11 @@ public class ApplicationProfileController {
 
     @PostMapping("/list")
     @ApiOperation(value = "获取应用环境列表")
-    public List<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
+    public DataGrid<ApplicationProfileVO> listProfiles(@RequestBody ApplicationProfileRequest request) {
         return applicationProfileService.listProfiles(request);
     }
 
-    @PostMapping("/fast-list")
+    @GetMapping("/fast-list")
     @ApiOperation(value = "获取应用环境列表 (缓存)")
     public List<ApplicationProfileFastVO> listProfiles() {
         return applicationProfileService.fastListProfiles();

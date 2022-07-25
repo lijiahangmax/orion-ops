@@ -1,7 +1,7 @@
 package com.orion.ops.service.api;
 
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.message.MessageType;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.entity.request.WebSideMessageRequest;
 import com.orion.ops.entity.vo.WebSideMessagePollVO;
 import com.orion.ops.entity.vo.WebSideMessageVO;
@@ -33,20 +33,27 @@ public interface WebSideMessageService {
     Integer setAllRead();
 
     /**
-     * 轮询站内信
+     * 已读站内信
      *
-     * @param maxId maxId
-     * @return 轮询返回
+     * @param idList idList
+     * @return effect
      */
-    WebSideMessagePollVO pollMessage(Long maxId);
+    Integer readMessage(List<Long> idList);
 
     /**
-     * 站内信列表
+     * 删除全部已读站内信
      *
-     * @param request request
-     * @return rows
+     * @return effect
      */
-    DataGrid<WebSideMessageVO> getMessageList(WebSideMessageRequest request);
+    Integer deleteAllRead();
+
+    /**
+     * 删除站内信
+     *
+     * @param idList idList
+     * @return effect
+     */
+    Integer deleteMessage(List<Long> idList);
 
     /**
      * 站内信详情
@@ -57,12 +64,36 @@ public interface WebSideMessageService {
     WebSideMessageVO getMessageDetail(Long id);
 
     /**
-     * 删除站内信
+     * 站内信列表
      *
-     * @param idList idList
-     * @return effect
+     * @param request request
+     * @return rows
      */
-    Integer deleteMessage(List<Long> idList);
+    DataGrid<WebSideMessageVO> getMessageList(WebSideMessageRequest request);
+
+    /**
+     * 获取最新消息
+     *
+     * @param request request
+     * @return message
+     */
+    WebSideMessagePollVO getNewMessage(WebSideMessageRequest request);
+
+    /**
+     * 获取更多消息
+     *
+     * @param request request
+     * @return message
+     */
+    List<WebSideMessageVO> getMoreMessage(WebSideMessageRequest request);
+
+    /**
+     * 轮询站内信
+     *
+     * @param maxId maxId
+     * @return 轮询返回
+     */
+    WebSideMessagePollVO pollWebSideMessage(Long maxId);
 
     /**
      * 添加站内信 给当前用户

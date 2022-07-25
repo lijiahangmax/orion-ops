@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.consts.download.FileDownloadType;
+import com.orion.ops.constant.download.FileDownloadType;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 
 import javax.servlet.http.HttpServletResponse;

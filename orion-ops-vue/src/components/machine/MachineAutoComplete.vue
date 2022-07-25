@@ -6,7 +6,10 @@
                    @search="search"
                    allowClear>
     <template #dataSource>
-      <a-select-option v-for="machine in visibleMachines" :key="machine.id" :value="JSON.stringify(machine)">
+      <a-select-option v-for="machine in visibleMachines"
+                       :key="machine.id"
+                       :value="JSON.stringify(machine)"
+                       @click="choose">
         {{ machine.name }}
       </a-select-option>
     </template>
@@ -48,6 +51,11 @@ export default {
       this.$emit('change', id, val)
       this.value = val
     },
+    choose() {
+      this.$nextTick(() => {
+        this.$emit('choose')
+      })
+    },
     search(value) {
       if (!value) {
         this.visibleMachines = this.machineList
@@ -57,6 +65,7 @@ export default {
     },
     reset() {
       this.value = undefined
+      this.visibleMachines = this.machineList
     }
   },
   async created() {

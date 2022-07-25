@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,14 +31,14 @@ public class ApplicationInfoRequest extends PageRequest {
     private String tag;
 
     @ApiModelProperty(value = "版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "描述")
     private String description;
 
     /**
-     * @see com.orion.ops.consts.Const#INCREMENT
-     * @see com.orion.ops.consts.Const#DECREMENT
+     * @see com.orion.ops.constant.Const#INCREMENT
+     * @see com.orion.ops.constant.Const#DECREMENT
      */
     @ApiModelProperty(value = "排序调整方向")
     private Integer sortAdjust;
@@ -47,7 +47,7 @@ public class ApplicationInfoRequest extends PageRequest {
     private Long machineId;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "是否查询机器")
     private Integer queryMachine;

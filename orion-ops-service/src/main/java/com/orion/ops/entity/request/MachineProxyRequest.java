@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -39,7 +39,7 @@ public class MachineProxyRequest extends PageRequest {
     private String password;
 
     /**
-     * @see com.orion.ops.consts.machine.ProxyType
+     * @see com.orion.ops.constant.machine.ProxyType
      */
     @ApiModelProperty(value = "代理类型")
     private Integer type;

@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,14 +54,14 @@ public class MachineInfoRequest extends PageRequest {
     private String password;
 
     /**
-     * @see com.orion.ops.consts.machine.MachineAuthType
+     * @see com.orion.ops.constant.machine.MachineAuthType
      */
     @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
     private Integer authType;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer status;

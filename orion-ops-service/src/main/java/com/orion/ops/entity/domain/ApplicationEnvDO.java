@@ -55,8 +55,8 @@ public class ApplicationEnvDO implements Serializable {
     /**
      * 是否为系统变量 1是 2否
      *
-     * @see com.orion.ops.consts.Const#IS_SYSTEM
-     * @see com.orion.ops.consts.Const#NOT_SYSTEM
+     * @see com.orion.ops.constant.Const#IS_SYSTEM
+     * @see com.orion.ops.constant.Const#NOT_SYSTEM
      */
     @TableField("system_env")
     private Integer systemEnv;
@@ -70,8 +70,8 @@ public class ApplicationEnvDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

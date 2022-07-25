@@ -39,3 +39,7 @@ kubectl get pods -n dev | awk '{print $1}' | grep @{file} | xargs -I '{}' kubect
 | file      | /data/info.log | 机器名称   |  
 
 ⚡ 按住 `Ctrl` 点击 `打开` 可以打开一个新页面, 否则将会打开一个模态框。
+
+* 清除ANSI: 可以清除下载的日志文件中的着色码, 如执行日志, 构建日志
+* 上传: 上传本地文件文件, 一般用于查看着色的日志文件
+* 添加: 添加宿主机或远程机器日志文件

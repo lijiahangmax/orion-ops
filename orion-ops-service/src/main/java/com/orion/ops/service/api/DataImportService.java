@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.consts.export.ImportType;
+import com.orion.ops.constant.export.ImportType;
 import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.vo.DataImportCheckVO;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -72,7 +72,7 @@ public interface DataImportService {
      * @param rows rows
      * @return 导入信息
      */
-    DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows);
+    DataImportCheckVO checkAppRepositoryImportData(List<ApplicationRepositoryImportDTO> rows);
 
     /**
      * 检查命令模板导入信息
@@ -122,7 +122,7 @@ public interface DataImportService {
      *
      * @param checkData checkData
      */
-    void importAppVcsData(DataImportDTO checkData);
+    void importRepositoryData(DataImportDTO checkData);
 
     /**
      * 导入命令模板

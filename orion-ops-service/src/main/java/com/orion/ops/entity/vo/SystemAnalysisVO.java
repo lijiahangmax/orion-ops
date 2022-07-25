@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,16 +45,10 @@ public class SystemAnalysisVO {
     private String distFileSize;
 
     @ApiModelProperty(value = "应用仓库版本数")
-    private Integer vcsVersionCount;
+    private Integer repoVersionCount;
 
     @ApiModelProperty(value = "应用仓库大小")
-    private String vcsVersionFileSize;
-
-    @ApiModelProperty(value = "黑名单数量")
-    private Long blackIpListCount;
-
-    @ApiModelProperty(value = "白名单数量")
-    private Long whiteIpListCount;
+    private String repoVersionFileSize;
 
     @ApiModelProperty(value = "文件清理阈值")
     private Integer fileCleanThreshold;
@@ -73,8 +67,8 @@ public class SystemAnalysisVO {
             vo.setSwapFileSize(p.getSwapFileSize());
             vo.setDistVersionCount(p.getDistVersionCount());
             vo.setDistFileSize(p.getDistFileSize());
-            vo.setVcsVersionCount(p.getVcsVersionCount());
-            vo.setVcsVersionFileSize(p.getVcsVersionFileSize());
+            vo.setRepoVersionCount(p.getRepoVersionCount());
+            vo.setRepoVersionFileSize(p.getRepoVersionFileSize());
             return vo;
         });
     }

@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class ApplicationReleaseStatusVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.constant.app.ReleaseStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

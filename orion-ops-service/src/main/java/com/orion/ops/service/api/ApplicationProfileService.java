@@ -1,5 +1,6 @@
 package com.orion.ops.service.api;
 
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.entity.request.ApplicationProfileRequest;
 import com.orion.ops.entity.vo.ApplicationProfileFastVO;
 import com.orion.ops.entity.vo.ApplicationProfileVO;
@@ -45,7 +46,7 @@ public interface ApplicationProfileService {
      * @param request request
      * @return rows
      */
-    List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request);
+    DataGrid<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request);
 
     /**
      * 环境列表 (缓存)

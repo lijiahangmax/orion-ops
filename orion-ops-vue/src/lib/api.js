@@ -1,7 +1,7 @@
 import $http from './http'
 
 /**
- * webSocket
+ * web socket
  */
 const $ws = {
 
@@ -9,21 +9,21 @@ const $ws = {
    * 机器终端
    */
   terminal: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/machine/terminal/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
   },
 
   /**
    * sftp传输列表
    */
   sftpNotify: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/sftp/notify/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
   },
 
   /**
    * 文件tail
    */
   fileTail: param => {
-    return `ws://${$http.BASE_HOST}/orion/keep-alive/tail/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/tail/${param.token}`
   }
 
 }
@@ -37,7 +37,7 @@ const $url = {
    * 执行下载文件请求
    */
   fileDownloadExec: param => {
-    return `${$http.BASE_URL}/orion/api/file-download/${param.token}/exec`
+    return `/orion/api/file-download/${param.token}/exec`
   }
 
 }
@@ -64,8 +64,8 @@ const $api = {
   /**
    * 登出
    */
-  logout: param => {
-    return $http.$post('/auth/logout', param, { auth: false })
+  logout: () => {
+    return $http.$get('/auth/logout', null, { auth: false })
   },
 
   /**
@@ -78,15 +78,15 @@ const $api = {
   /**
    * 检查token是否有效
    */
-  validToken: param => {
-    return $http.$post('/auth/valid', param)
+  validToken: () => {
+    return $http.$get('/auth/valid')
   },
 
   /**
    * 获取菜单
    */
   getMenu: () => {
-    return $http.$post('/common/menu')
+    return $http.$get('/common/menu')
   },
 
   /**
@@ -243,15 +243,15 @@ const $api = {
   /**
    * 获取支持的终端类型
    */
-  getTerminalSupportPyt: param => {
-    return $http.$post('/terminal/support/pty', param)
+  getTerminalSupportPyt: () => {
+    return $http.$get('/terminal/support/pty')
   },
 
   /**
    * 获取机器终端配置
    */
   getTerminalSetting: param => {
-    return $http.$post(`/terminal/get/${param.machineId}`, param)
+    return $http.$get(`/terminal/get/${param.machineId}`)
   },
 
   /**
@@ -409,7 +409,7 @@ const $api = {
   sftpUploadExec: param => {
     return $http.$post('/sftp/upload/exec', param, {
       timeout: 18000000,
-      loading: '正在提交上传请求...',
+      loading: '正在上传文件...',
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -432,7 +432,7 @@ const $api = {
   sftpPackageDownloadExec: param => {
     return $http.$post('/sftp/package-download/exec', param, {
       timeout: 180000,
-      loading: '正在执行压缩命令, 执行完毕自动下载'
+      loading: '正在执行压缩命令, 执行完成后自动下载'
     })
   },
 
@@ -440,49 +440,49 @@ const $api = {
    * sftp 传输列表
    */
   sftpTransferList: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/list`, param)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/list`)
   },
 
   /**
    * sftp 传输暂停
    */
   sftpTransferPause: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/pause`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/pause`)
   },
 
   /**
    * sftp 传输恢复
    */
   sftpTransferResume: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/resume`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/resume`)
   },
 
   /**
    * sftp 传输失败重试
    */
   sftpTransferRetry: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/retry`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/retry`)
   },
 
   /**
    * sftp 重新上传
    */
   sftpTransferReUpload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re-upload`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/re-upload`)
   },
 
   /**
    * sftp 重新下载
    */
   sftpTransferReDownload: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/re-download`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/re-download`)
   },
 
   /**
    * sftp 传输暂停全部
    */
   sftpTransferPauseAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/pause-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/pause-all`, null, {
       timeout: 180000
     })
   },
@@ -491,7 +491,7 @@ const $api = {
    * sftp 传输恢复全部
    */
   sftpTransferResumeAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/resume-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/resume-all`, null, {
       timeout: 180000
     })
   },
@@ -500,7 +500,7 @@ const $api = {
    * sftp 传输失败重试全部
    */
   sftpTransferRetryAll: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/retry-all`, param, {
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/retry-all`, null, {
       timeout: 180000
     })
   },
@@ -509,21 +509,21 @@ const $api = {
    * sftp 传输删除(单个)
    */
   sftpTransferRemove: param => {
-    return $http.$post(`/sftp/transfer/${param.fileToken}/remove`, param)
+    return $http.$get(`/sftp/transfer/${param.fileToken}/remove`)
   },
 
   /**
    * sftp 传输清空(全部)
    */
   sftpTransferClear: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/clear`, param)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/clear`)
   },
 
   /**
    * sftp 传输打包
    */
   sftpTransferPackage: param => {
-    return $http.$post(`/sftp/transfer/${param.sessionToken}/${param.packageType}/package`, param)
+    return $http.$get(`/sftp/transfer/${param.sessionToken}/${param.packageType}/package`)
   },
 
   /**
@@ -639,7 +639,7 @@ const $api = {
    * 挂载所有秘钥
    */
   mountAllMachineKey: () => {
-    return $http.$post('/key/mount-all', {}, {
+    return $http.$get('/key/mount-all', null, {
       skipErrorMessage: true,
       loading: '正在挂载...'
     })
@@ -649,7 +649,7 @@ const $api = {
    * 卸载所有秘钥
    */
   dumpAllMachineKey: () => {
-    return $http.$post('/key/dump-all', {}, {
+    return $http.$get('/key/dump-all', null, {
       skipErrorMessage: true,
       loading: '正在卸载...'
     })
@@ -979,7 +979,7 @@ const $api = {
    * 应用环境列表 (快速)
    */
   fastGetProfileList: param => {
-    return $http.$post('/app-profile/fast-list', param)
+    return $http.$get('/app-profile/fast-list', param)
   },
 
   /**
@@ -1088,8 +1088,8 @@ const $api = {
   /**
    * 添加应用版本仓库
    */
-  addVcs: param => {
-    return $http.$post('/app-vcs/add', param, {
+  addRepository: param => {
+    return $http.$post('/app-repo/add', param, {
       loading: '正在添加...'
     })
   },
@@ -1097,8 +1097,8 @@ const $api = {
   /**
    * 修改应用版本仓库
    */
-  updateVcs: param => {
-    return $http.$post('/app-vcs/update', param, {
+  updateRepository: param => {
+    return $http.$post('/app-repo/update', param, {
       timeout: 600000,
       loading: '正在修改...'
     })
@@ -1107,8 +1107,8 @@ const $api = {
   /**
    * 删除版本仓库
    */
-  deleteVcs: param => {
-    return $http.$post('/app-vcs/delete', param, {
+  deleteRepository: param => {
+    return $http.$post('/app-repo/delete', param, {
       timeout: 600000,
       loading: '正在删除...'
     })
@@ -1117,22 +1117,22 @@ const $api = {
   /**
    * 获取版本仓库列表
    */
-  getVcsList: param => {
-    return $http.$post('/app-vcs/list', param)
+  getRepositoryList: param => {
+    return $http.$post('/app-repo/list', param)
   },
 
   /**
    * 获取版本仓库详情
    */
-  getVcsDetail: param => {
-    return $http.$post('/app-vcs/detail', param)
+  getRepositoryDetail: param => {
+    return $http.$post('/app-repo/detail', param)
   },
 
   /**
    * 初始化版本仓库
    */
-  initVcs: param => {
-    return $http.$post('/app-vcs/init', param, {
+  initRepository: param => {
+    return $http.$post('/app-repo/init', param, {
       timeout: 600000,
       loading: '正在初始化...'
     })
@@ -1141,18 +1141,18 @@ const $api = {
   /**
    * 重新初始化版本仓库
    */
-  reInitVcs: param => {
-    return $http.$post('/app-vcs/re-init', param, {
+  reInitRepository: param => {
+    return $http.$post('/app-repo/re-init', param, {
       timeout: 600000,
       loading: '正在初始化...'
     })
   },
 
   /**
-   * 清空
+   * 清空仓库
    */
-  cleanVcs: param => {
-    return $http.$post('/app-vcs/clean', param, {
+  cleanRepository: param => {
+    return $http.$post('/app-repo/clean', param, {
       timeout: 600000,
       loading: '正在清空...'
     })
@@ -1161,22 +1161,22 @@ const $api = {
   /**
    * 获取版本仓库分支和提交记录信息
    */
-  getVcsInfo: param => {
-    return $http.$post('/app-vcs/info', param)
+  getRepositoryInfo: param => {
+    return $http.$post('/app-repo/info', param)
   },
 
   /**
    * 获取版本仓库分支列表
    */
-  getVcsBranchList: param => {
-    return $http.$post('/app-vcs/branch', param)
+  getRepositoryBranchList: param => {
+    return $http.$post('/app-repo/branch', param)
   },
 
   /**
    * 获取版本仓库提交列表
    */
-  getVcsCommitList: param => {
-    return $http.$post('/app-vcs/commit', param)
+  getRepositoryCommitList: param => {
+    return $http.$post('/app-repo/commit', param)
   },
 
   /**
@@ -1633,10 +1633,10 @@ const $api = {
   },
 
   /**
-   * 获取日志列表
+   * 获取操作日志列表
    */
-  getLogList: param => {
-    return $http.$post('/log/list', param)
+  getEventLogList: param => {
+    return $http.$post('/event-log/list', param)
   },
 
   /**
@@ -1702,8 +1702,8 @@ const $api = {
   /**
    * 获取 ip 配置
    */
-  getIpInfo: param => {
-    return $http.$post('/system/ip-info', param)
+  getIpInfo: () => {
+    return $http.$get('/system/ip-info')
   },
 
   /**
@@ -1718,15 +1718,15 @@ const $api = {
   /**
    * 获取系统分析信息
    */
-  getSystemAnalysis: param => {
-    return $http.$post('/system/get-system-analysis', param)
+  getSystemAnalysis: () => {
+    return $http.$get('/system/get-system-analysis')
   },
 
   /**
    * 重新进行系统统计分析
    */
-  reAnalysisSystem: param => {
-    return $http.$post('/system/re-analysis', param, {
+  reAnalysisSystem: () => {
+    return $http.$get('/system/re-analysis', null, {
       timeout: 600000
     })
   },
@@ -1748,15 +1748,22 @@ const $api = {
   /**
    * 获取系统配置项
    */
-  getSystemOptions: param => {
-    return $http.$post('/system/get-system-options', param)
+  getSystemOptions: () => {
+    return $http.$get('/system/get-system-options')
   },
 
   /**
    * 获取系统线程池指标
    */
-  getSystemThreadMetrics: param => {
-    return $http.$post('/system/get-thread-metrics', param)
+  getSystemThreadMetrics: () => {
+    return $http.$get('/system/get-thread-metrics')
+  },
+
+  /**
+   * 获取系统信息
+   */
+  getSystemAbout: () => {
+    return $http.$get('/system/about')
   },
 
   /**
@@ -1910,17 +1917,8 @@ const $api = {
   /**
    * 获取站内信未读数量
    */
-  getWebSideMessageUnreadCount: param => {
-    return $http.$post('/message/unread-count', param, {
-      skipErrorMessage: true
-    })
-  },
-
-  /**
-   * 轮询获取站内信
-   */
-  pollWebSideMessage: param => {
-    return $http.$post('/message/poll-message', param, {
+  getWebSideMessageUnreadCount: () => {
+    return $http.$get('/message/unread-count', null, {
       skipErrorMessage: true
     })
   },
@@ -1928,15 +1926,29 @@ const $api = {
   /**
    * 设置站内信全部已读
    */
-  setWebSideMessageAllRead: param => {
-    return $http.$post('/message/set-all-read', param)
+  setWebSideMessageAllRead: () => {
+    return $http.$get('/message/set-all-read')
   },
 
   /**
-   * 获取站内信列表
+   * 设置已读站内信
    */
-  getWebSideMessageList: param => {
-    return $http.$post('/message/list', param)
+  setMessageRead: params => {
+    return $http.$post('/message/read', params)
+  },
+
+  /**
+   * 删除全部已读站内信
+   */
+  deleteAllReadMessage: () => {
+    return $http.$get('/message/delete-all-read')
+  },
+
+  /**
+   * 删除站内信
+   */
+  deleteWebSideMessage: param => {
+    return $http.$post('/message/delete', param)
   },
 
   /**
@@ -1947,11 +1959,32 @@ const $api = {
   },
 
   /**
-   * 删除站内信
+   * 获取站内信列表
    */
-  deleteWebSideMessage: param => {
-    return $http.$post('/message/delete', param, {
-      loading: '正在删除...'
+  getWebSideMessageList: param => {
+    return $http.$post('/message/list', param)
+  },
+
+  /**
+   * 获取最新站内信
+   */
+  getNewMessage: param => {
+    return $http.$post('/message/get-new-message', param)
+  },
+
+  /**
+   * 获取更多站内信
+   */
+  getMoreMessage: param => {
+    return $http.$post('/message/get-more-message', param)
+  },
+
+  /**
+   * 轮询获取站内信
+   */
+  pollWebSideMessage: param => {
+    return $http.$post('/message/poll-new-message', param, {
+      skipErrorMessage: true
     })
   },
 
@@ -2189,15 +2222,6 @@ const $api = {
   },
 
   /**
-   * 清理站内信
-   */
-  clearWebSideMessage: param => {
-    return $http.$post('/data-clear/web-side-message', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
    * 清理操作日志
    */
   clearEventLog: param => {
@@ -2251,8 +2275,8 @@ const $api = {
   /**
    * 导出应用版本仓库
    */
-  exportAppVcs: param => {
-    return $http.$export('/data-export/app-vcs', param)
+  exportRepository: param => {
+    return $http.$export('/data-export/repository', param)
   },
 
   /**
@@ -2260,13 +2284,6 @@ const $api = {
    */
   exportCommandTemplate: param => {
     return $http.$export('/data-export/command-template', param)
-  },
-
-  /**
-   * 导出站内信
-   */
-  exportWebSideMessage: param => {
-    return $http.$export('/data-export/web-side-message', param)
   },
 
   /**
@@ -2337,8 +2354,8 @@ const $api = {
   /**
    * 导入应用版本仓库
    */
-  importAppVcs: param => {
-    return $http.$post('/data-import/import-app-vcs', param)
+  importRepository: param => {
+    return $http.$post('/data-import/import-repository', param)
   },
 
   /**

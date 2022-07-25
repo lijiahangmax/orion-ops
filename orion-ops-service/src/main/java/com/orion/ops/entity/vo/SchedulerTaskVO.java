@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.cron.Cron;
+import com.orion.lang.utils.time.cron.CronSupport;
 import com.orion.ops.entity.domain.SchedulerTaskDO;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.cron.Cron;
-import com.orion.utils.time.cron.CronSupport;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,26 +38,26 @@ public class SchedulerTaskVO {
     private String expression;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "启用状态 1启用 2停用")
     private Integer enableStatus;
 
     /**
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @ApiModelProperty(value = "最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止")
     private Integer latelyStatus;
 
     /**
-     * @see com.orion.ops.consts.SerialType
+     * @see com.orion.ops.constant.SerialType
      */
     @ApiModelProperty(value = "调度序列 10串行 20并行")
     private Integer serializeType;
 
     /**
-     * @see com.orion.ops.consts.ExceptionHandlerType
+     * @see com.orion.ops.constant.ExceptionHandlerType
      */
     @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     private Integer exceptionHandler;

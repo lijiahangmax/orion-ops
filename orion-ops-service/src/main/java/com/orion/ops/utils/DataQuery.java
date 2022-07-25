@@ -2,11 +2,11 @@ package com.orion.ops.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.lang.wrapper.PageRequest;
-import com.orion.lang.wrapper.Pager;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.convert.Converts;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.Pager;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.convert.Converts;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  */
 public class DataQuery<T> {
 
-    private BaseMapper<T> dao;
+    private final BaseMapper<T> dao;
 
     private PageRequest page;
 
@@ -33,25 +33,19 @@ public class DataQuery<T> {
         this.dao = dao;
     }
 
-    public DataQuery(BaseMapper<T> dao, PageRequest page, LambdaQueryWrapper<T> wrapper) {
-        this.dao = dao;
-        this.page = page;
-        this.wrapper = wrapper;
-    }
-
     public static <T> DataQuery<T> of(BaseMapper<T> dao) {
         Valid.notNull(dao, "dao is null");
         return new DataQuery<>(dao);
     }
 
     public DataQuery<T> page(PageRequest page) {
-        Valid.notNull(page, "page is null");
-        return new DataQuery<>(dao, page, wrapper);
+        this.page = Valid.notNull(page, "page is null");
+        return this;
     }
 
     public DataQuery<T> wrapper(LambdaQueryWrapper<T> wrapper) {
-        Valid.notNull(wrapper, "wrapper is null");
-        return new DataQuery<>(dao, page, wrapper);
+        this.wrapper = Valid.notNull(wrapper, "wrapper is null");
+        return this;
     }
 
     public Optional<T> get() {

@@ -2,11 +2,13 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.*;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.ops.constant.*;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.domain.UserInfoDO;
 import com.orion.ops.entity.dto.LoginBindDTO;
@@ -16,9 +18,10 @@ import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.interceptor.UserActiveInterceptor;
 import com.orion.ops.service.api.PassportService;
-import com.orion.ops.utils.*;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
+import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.RedisUtils;
+import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.ValueMix;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -80,12 +83,6 @@ public class PassportServiceImpl implements PassportService {
         String ip = request.getIp();
         UserInfoDO updateUser = new UserInfoDO();
         updateUser.setId(userId);
-        // 检查头像
-        if (!AvatarPicHolder.isExist(userInfo.getAvatarPic())) {
-            String url = AvatarPicHolder.generatorUserAvatar(userId, userInfo.getNickname());
-            userInfo.setAvatarPic(url);
-            updateUser.setAvatarPic(url);
-        }
         updateUser.setFailedLoginCount(0);
         updateUser.setUpdateTime(new Date());
         updateUser.setLastLoginTime(new Date());

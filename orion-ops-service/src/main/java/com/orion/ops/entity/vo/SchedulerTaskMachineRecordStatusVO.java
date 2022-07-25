@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class SchedulerTaskMachineRecordStatusVO {
     private Long recordId;
 
     /**
-     * @see com.orion.ops.consts.app.ActionStatus
+     * @see com.orion.ops.constant.app.ActionStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;

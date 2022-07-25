@@ -12,7 +12,7 @@
     <a-spin :spinning="loading">
       <a-form-model v-bind="layout">
         <!-- 分支 -->
-        <a-form-model-item label="分支" v-if="detail.vcsId" required>
+        <a-form-model-item label="分支" v-if="detail.repoId" required>
           <a-select class="build-form-item-input"
                     v-model="submit.branchName"
                     placeholder="分支"
@@ -25,7 +25,7 @@
           <a-icon type="reload" class="reload" title="刷新" @click="reloadBranch"/>
         </a-form-model-item>
         <!-- commit -->
-        <a-form-model-item label="commit" v-if="detail.vcsId" required>
+        <a-form-model-item label="commit" v-if="detail.repoId" required>
           <a-select class="build-form-item-input commit-selector"
                     v-model="submit.commitId"
                     placeholder="提交记录"
@@ -89,15 +89,15 @@ export default {
       this.submit.commitId = detail.commitId
       this.submit.description = detail.description
       this.visible = true
-      this.loadVcs()
+      this.loadRepository()
     },
-    loadVcs() {
-      if (!this.detail.vcsId) {
+    loadRepository() {
+      if (!this.detail.repoId) {
         return
       }
       this.loading = true
-      this.$api.getVcsInfo({
-        id: this.detail.vcsId,
+      this.$api.getRepositoryInfo({
+        id: this.detail.repoId,
         appId: this.detail.appId,
         profileId: this.detail.profileId
       }).then(({ data }) => {
@@ -127,8 +127,8 @@ export default {
     },
     reloadBranch() {
       this.loading = true
-      this.$api.getVcsBranchList({
-        id: this.detail.vcsId
+      this.$api.getRepositoryBranchList({
+        id: this.detail.repoId
       }).then(({ data }) => {
         this.loading = false
         this.branchList = data
@@ -147,8 +147,8 @@ export default {
         return
       }
       this.loading = true
-      this.$api.getVcsCommitList({
-        id: this.detail.vcsId,
+      this.$api.getRepositoryCommitList({
+        id: this.detail.repoId,
         branchName: this.submit.branchName
       }).then(({ data }) => {
         this.loading = false
@@ -163,7 +163,7 @@ export default {
       })
     },
     check() {
-      if (this.detail.vcsId) {
+      if (this.detail.repoId) {
         if (!this.submit.branchName) {
           this.$message.warning('请选择分支')
           return

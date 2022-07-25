@@ -28,7 +28,7 @@ public class UserLoginVO {
     private String nickname;
 
     /**
-     * @see com.orion.ops.consts.user.RoleType
+     * @see com.orion.ops.constant.user.RoleType
      */
     @ApiModelProperty(value = "角色类型")
     private Integer roleType;

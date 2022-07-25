@@ -4,9 +4,11 @@
 * Mysql 8.0(+)
 * Redis 5.0.5(+)
 * Node 11.12.0(+)
-* Maven
+* Maven 3.5.4(+)
 * Nginx
-* npm / yarn
+
+⚡ maven 推荐使用阿里云 mirror   
+⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npm.taobao.org`
 
 ### 构建
 
@@ -28,27 +30,20 @@
 
 3. 构建后端代码
    ```
-   # 修改配置文件
+   # 修改配置文件 (mysql, redis)
    orion-ops/orion-ops-service/src/main/resources/application-prod.properties
-   # 修改全局加密秘钥,为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-servicesrc/main/java/com/orion/ops/utils/ValueMix#SECRET_KEY
+   # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
+   orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
+   # 进入代码目录
+   cd orion-ops/orion-ops-service
    # 编译
    mvn -U clean install -DskipTests
    ```   
-   构建时如果有依赖拉不下来可以选择使用阿里云的 maven 镜像
-   ```setting.xml
-   <mirror>
-       <id>nexus-aliyun</id>
-       <mirrorOf>central</mirrorOf>
-       <name>Nexus aliyun</name>
-       <url>http://maven.aliyun.com/nexus/content/groups/public</url>
-   </mirror>
-   ```
 
 4. 构建前端代码
    ```
-   # 修改配置文件
-   orion-ops/orion-ops-vue/.env.production
+   # 进入代码目录
+   cd orion-ops/orion-ops-vue
    # 下载依赖
    npm i 或 yarn
    # 编译
@@ -58,34 +53,69 @@
 ### 修改 nginx 配置
 
 ```
- server {
-        listen       80;
-        client_max_body_size 4m;
+server {
+    listen       80;
+    server_name  __;
 
-        location / {
-            root   html;
-            index  index.html index.htm;
-            proxy_set_header  X-Real-IP  $remote_addr;
-            proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header Host $http_host;
-        }
- }
+    # 是否启动 gzip 压缩
+    gzip  on;
+    # 需要压缩的常见静态资源
+    gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+    # 如果文件大于 1k 就启动压缩
+    gzip_min_length 1k;
+    # 缓冲区
+    gzip_buffers 4 16k;
+    # 压缩的等级
+    gzip_comp_level 2;
+    # access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        proxy_set_header X-Real-IP  $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /orion/api {
+        proxy_pass    http://localhost:9119/orion/api;
+        proxy_set_header X-Real-IP  $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+     location /orion/keep-alive {
+        proxy_pass    http://localhost:9119/orion/keep-alive;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+}
 ```
 
 ### 部署
 
 ```
-复制 orion-ops/orion-ops-vue/dist 的所有文件到 nginx映射目录/ops
-复制 orion-ops/orion-ops-service/target/orion-ops-service-1.0.0.jar 到 /data/orion
+复制 orion-ops/orion-ops-vue/dist/index.html 到 /usr/share/nginx/html
+复制 orion-ops/orion-ops-vue/dist 到 /usr/share/nginx/html 并且重命名为 ops
+复制 orion-ops/orion-ops-service/target/orion-ops-service-1.1.4.jar 到 /data/orion
 # 启动后台服务
-nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --generator-admin &
+nohup java -jar orion-ops-service-1.1.4.jar --spring.profiles.active=prod --generator-admin &
 # 启动 nginx
 service nginx start
 ```
 
 ### 测试访问
 
-在浏览器中输入 http://localhost/ops 访问  
+在浏览器中输入 http://localhost 访问  
 账号: `orionadmin`  
 密码: `orionadmin`
 

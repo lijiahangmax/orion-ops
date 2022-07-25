@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="流水线" prop="pipeline">
-              <PipelineAutoComplete ref="pipelineSelector" @change="selectedPipeline"/>
+              <PipelineAutoComplete ref="pipelineSelector" @change="selectedPipeline" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -16,8 +16,8 @@
           </a-col>
           <a-col :span="5">
             <a-form-model-item label="状态" prop="status">
-              <a-select v-model="query.status" placeholder="全部" allowClear>
-                <a-select-option :value="status.status" v-for="status in PIPELINE_STATUS" :key="status.value">
+              <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
+                <a-select-option :value="status.value" v-for="status in PIPELINE_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -495,11 +495,15 @@ export default {
       statusHolder: statusHolder.call(this)
     }
   },
+  watch: {
+    'query.profileId'(e) {
+      this.$refs.pipelineSelector.loadData(e)
+    }
+  },
   methods: {
     chooseProfile({ id }) {
       this.query.profileId = id
-      this.$refs.pipelineSelector.loadData(id)
-      this.getList({})
+      this.resetForm()
     },
     getList(page = this.pagination) {
       this.loading = true
@@ -529,6 +533,9 @@ export default {
       } else {
         this.query.pipelineId = undefined
         this.query.pipelineName = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
       }
     },
     expandDetails(expand, record) {
@@ -671,9 +678,9 @@ export default {
         return
       }
       const detailIdList = pollItems.map(s => s.details)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getAppPipelineTaskListStatus({
         idList,
         detailIdList
@@ -726,7 +733,6 @@ export default {
       return
     }
     this.query.profileId = JSON.parse(activeProfile).id
-    this.$refs.pipelineSelector.loadData(this.query.profileId)
     // 设置轮询
     this.pollId = setInterval(this.pollStatus, 5000)
     // 查询列表

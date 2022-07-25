@@ -5,15 +5,24 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.orion.id.UUIds;
+import com.orion.lang.id.UUIds;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Valid;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.FileWriters;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.time.Dates;
 import com.orion.office.excel.reader.ExcelBeanReader;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.VcsStatus;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.export.ImportType;
-import com.orion.ops.consts.message.MessageType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.app.RepositoryStatus;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.export.ImportType;
+import com.orion.ops.constant.message.MessageType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.dto.importer.*;
@@ -23,15 +32,6 @@ import com.orion.ops.service.api.*;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.Valid;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.FileWriters;
-import com.orion.utils.io.Files1;
-import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -82,7 +82,7 @@ public class DataImportServiceImpl implements DataImportService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private CommandTemplateDAO commandTemplateDAO;
@@ -170,12 +170,12 @@ public class DataImportServiceImpl implements DataImportService {
         // 检查数据合法性
         this.validImportRows(ImportType.APPLICATION, rows);
         // 设置机器id
-        this.setCheckRowsRelId(rows, ApplicationImportDTO::getVcsName,
-                applicationVcsDAO::selectIdByNameList,
-                ApplicationVcsDO::getVcsName,
-                ApplicationVcsDO::getId,
-                ApplicationImportDTO::setVcsId,
-                MessageConst.UNKNOWN_APP_VCS);
+        this.setCheckRowsRelId(rows, ApplicationImportDTO::getRepositoryName,
+                applicationRepositoryDAO::selectIdByNameList,
+                ApplicationRepositoryDO::getRepoName,
+                ApplicationRepositoryDO::getId,
+                ApplicationImportDTO::setRepositoryId,
+                MessageConst.UNKNOWN_APP_REPOSITORY);
         // 通过唯一标识查询应用
         List<ApplicationInfoDO> presentApps = this.getImportRowsPresentValues(rows,
                 ApplicationImportDTO::getTag,
@@ -188,18 +188,18 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public DataImportCheckVO checkAppVcsImportData(List<ApplicationVcsImportDTO> rows) {
+    public DataImportCheckVO checkAppRepositoryImportData(List<ApplicationRepositoryImportDTO> rows) {
         // 检查数据合法性
-        this.validImportRows(ImportType.VCS, rows);
+        this.validImportRows(ImportType.REPOSITORY, rows);
         // 通过唯一标识查询应用
-        List<ApplicationVcsDO> presentVcsList = this.getImportRowsPresentValues(rows,
-                ApplicationVcsImportDTO::getName,
-                applicationVcsDAO, ApplicationVcsDO::getVcsName);
+        List<ApplicationRepositoryDO> presentList = this.getImportRowsPresentValues(rows,
+                ApplicationRepositoryImportDTO::getName,
+                applicationRepositoryDAO, ApplicationRepositoryDO::getRepoName);
         // 检查数据是否存在
-        this.checkImportRowsPresent(rows, ApplicationVcsImportDTO::getName,
-                presentVcsList, ApplicationVcsDO::getVcsName, ApplicationVcsDO::getId);
+        this.checkImportRowsPresent(rows, ApplicationRepositoryImportDTO::getName,
+                presentList, ApplicationRepositoryDO::getRepoName, ApplicationRepositoryDO::getId);
         // 设置导入检查数据
-        return this.setImportCheckRows(ImportType.VCS, rows);
+        return this.setImportCheckRows(ImportType.REPOSITORY, rows);
     }
 
     @Override
@@ -266,17 +266,17 @@ public class DataImportServiceImpl implements DataImportService {
     }
 
     @Override
-    public void importAppVcsData(DataImportDTO importData) {
-        this.doImportData(importData, applicationVcsDAO, v -> {
-            v.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+    public void importRepositoryData(DataImportDTO importData) {
+        this.doImportData(importData, applicationRepositoryDAO, v -> {
+            v.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
         }, v -> {
             Long id = v.getId();
-            ApplicationVcsDO beforeVcs = applicationVcsDAO.selectById(id);
-            if (beforeVcs != null && !beforeVcs.getVscUrl().equals(v.getVscUrl())) {
+            ApplicationRepositoryDO beforeRepo = applicationRepositoryDAO.selectById(id);
+            if (beforeRepo != null && !beforeRepo.getRepoUrl().equals(v.getRepoUrl())) {
                 // 如果修改了url则状态改为未初始化
-                v.setVcsStatus(VcsStatus.UNINITIALIZED.getStatus());
+                v.setRepoStatus(RepositoryStatus.UNINITIALIZED.getStatus());
                 // 删除 event 目录
-                File clonePath = new File(Utils.getVcsEventDir(id));
+                File clonePath = new File(Utils.getRepositoryEventDir(id));
                 Files1.delete(clonePath);
             }
         });

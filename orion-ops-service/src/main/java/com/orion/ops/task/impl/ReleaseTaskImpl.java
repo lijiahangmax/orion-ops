@@ -1,8 +1,8 @@
 package com.orion.ops.task.impl;
 
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,7 +17,7 @@ public class ReleaseTaskImpl implements Runnable {
 
     protected static ApplicationReleaseService applicationReleaseService = SpringHolder.getBean(ApplicationReleaseService.class);
 
-    private Long releaseId;
+    private final Long releaseId;
 
     public ReleaseTaskImpl(Long releaseId) {
         this.releaseId = releaseId;

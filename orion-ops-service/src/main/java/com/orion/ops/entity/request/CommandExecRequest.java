@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,13 +48,13 @@ public class CommandExecRequest extends PageRequest {
     private String username;
 
     /**
-     * @see com.orion.ops.consts.command.ExecStatus
+     * @see com.orion.ops.constant.command.ExecStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.command.ExecType
+     * @see com.orion.ops.constant.command.ExecType
      */
     @ApiModelProperty(value = "类型")
     private Integer type;

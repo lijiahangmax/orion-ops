@@ -1,17 +1,17 @@
 package com.orion.ops.config;
 
-import com.orion.exception.*;
-import com.orion.exception.argument.CodeArgumentException;
-import com.orion.exception.argument.HttpWrapperException;
-import com.orion.exception.argument.InvalidArgumentException;
-import com.orion.exception.argument.RpcWrapperException;
-import com.orion.lang.wrapper.HttpWrapper;
-import com.orion.ops.consts.MessageConst;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.exception.*;
+import com.orion.lang.exception.argument.CodeArgumentException;
+import com.orion.lang.exception.argument.HttpWrapperException;
+import com.orion.lang.exception.argument.InvalidArgumentException;
+import com.orion.lang.exception.argument.RpcWrapperException;
+import com.orion.lang.utils.Exceptions;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.interceptor.AuthenticateInterceptor;
 import com.orion.ops.interceptor.IpFilterInterceptor;
 import com.orion.ops.interceptor.RoleInterceptor;
 import com.orion.ops.interceptor.UserActiveInterceptor;
-import com.orion.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.EncryptedDocumentException;
 import org.springframework.context.annotation.Configuration;
@@ -80,12 +80,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowCredentials(true)
-                .allowedOriginPatterns("*")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .maxAge(3600);
+        // registry.addMapping("/**")
+        //         .allowCredentials(true)
+        //         .allowedOriginPatterns("*")
+        //         .allowedMethods("*")
+        //         .allowedHeaders("*")
+        //         .maxAge(3600);
     }
 
     @ExceptionHandler(value = Exception.class)
@@ -163,7 +163,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = VcsException.class)
     public HttpWrapper<?> vcsExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("vcsExceptionHandler url: {}, vcs处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.VCS_OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error().msg(MessageConst.REPOSITORY_OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {TaskExecuteException.class, ExecuteException.class})

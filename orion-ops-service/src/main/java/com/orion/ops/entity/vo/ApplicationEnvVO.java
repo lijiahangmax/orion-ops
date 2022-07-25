@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.app.ApplicationEnvAttr;
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.app.ApplicationEnvAttr;
 import com.orion.ops.entity.domain.ApplicationEnvDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,8 +37,8 @@ public class ApplicationEnvVO {
     private String value;
 
     /**
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_CAN
-     * @see com.orion.ops.consts.Const#FORBID_DELETE_NOT
+     * @see com.orion.ops.constant.Const#FORBID_DELETE_CAN
+     * @see com.orion.ops.constant.Const#FORBID_DELETE_NOT
      */
     @ApiModelProperty(value = "是否禁止删除 1可以删除 2禁止删除")
     private Integer forbidDelete;

@@ -1,19 +1,20 @@
 package com.orion.ops.utils;
 
-import com.orion.utils.Arrays1;
-import com.orion.utils.Strings;
-import com.orion.utils.codec.Base62s;
-import com.orion.utils.crypto.Signatures;
-import com.orion.utils.crypto.enums.PaddingMode;
-import com.orion.utils.crypto.enums.WorkingMode;
-import com.orion.utils.crypto.symmetric.EcbSymmetric;
-import com.orion.utils.crypto.symmetric.SymmetricBuilder;
+import com.orion.lang.utils.Arrays1;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.codec.Base62s;
+import com.orion.lang.utils.crypto.Signatures;
+import com.orion.lang.utils.crypto.enums.PaddingMode;
+import com.orion.lang.utils.crypto.enums.WorkingMode;
+import com.orion.lang.utils.crypto.symmetric.EcbSymmetric;
+import com.orion.lang.utils.crypto.symmetric.SymmetricBuilder;
+import com.orion.ops.constant.PropertiesConst;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * 密码混入器
+ * 数据混入器
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -21,15 +22,10 @@ import java.util.Optional;
  */
 public class ValueMix {
 
-    /**
-     * 秘钥
-     */
-    public static final String SECRET_KEY = "orion_ops";
-
     private static final EcbSymmetric ECB = SymmetricBuilder.aes()
             .workingMode(WorkingMode.ECB)
             .paddingMode(PaddingMode.PKCS5_PADDING)
-            .generatorSecretKey(SECRET_KEY)
+            .generatorSecretKey(PropertiesConst.VALUE_MIX_SECRET_KEY)
             .buildEcb();
 
     private ValueMix() {
@@ -174,7 +170,7 @@ public class ValueMix {
      * @return token
      */
     public static String createLoginToken(Long uid, Long timestamp) {
-        return ValueMix.base62ecbEnc(uid + "_" + timestamp, SECRET_KEY);
+        return ValueMix.base62ecbEnc(uid + "_" + timestamp, PropertiesConst.VALUE_MIX_SECRET_KEY);
     }
 
     /**
@@ -184,7 +180,7 @@ public class ValueMix {
      * @return true合法
      */
     public static boolean validLoginToken(String token) {
-        return ValueMix.base62ecbDec(token, SECRET_KEY) != null;
+        return ValueMix.base62ecbDec(token, PropertiesConst.VALUE_MIX_SECRET_KEY) != null;
     }
 
     /**
@@ -194,7 +190,7 @@ public class ValueMix {
      * @return uid
      */
     public static Long getLoginTokenUserId(String token) {
-        return Optional.ofNullable(ValueMix.base62ecbDec(token, SECRET_KEY))
+        return Optional.ofNullable(ValueMix.base62ecbDec(token, PropertiesConst.VALUE_MIX_SECRET_KEY))
                 .map(s -> s.split("_"))
                 .map(s -> s[0])
                 .filter(Strings::isInteger)
@@ -209,7 +205,7 @@ public class ValueMix {
      * @return [uid, loginTimestamp]
      */
     public static Long[] getLoginTokenInfo(String token) {
-        return Optional.ofNullable(ValueMix.base62ecbDec(token, SECRET_KEY))
+        return Optional.ofNullable(ValueMix.base62ecbDec(token, PropertiesConst.VALUE_MIX_SECRET_KEY))
                 .map(s -> s.split("_"))
                 .filter(s -> Arrays.stream(s).allMatch(Strings::isInteger))
                 .map(s -> Arrays1.mapper(s, Long[]::new, Long::valueOf))

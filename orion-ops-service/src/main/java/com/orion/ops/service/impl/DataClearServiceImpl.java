@@ -3,22 +3,21 @@ package com.orion.ops.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.app.BuildStatus;
-import com.orion.ops.consts.app.PipelineStatus;
-import com.orion.ops.consts.app.ReleaseStatus;
-import com.orion.ops.consts.clear.DataClearRange;
-import com.orion.ops.consts.command.ExecStatus;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.message.ReadStatus;
-import com.orion.ops.consts.scheduler.SchedulerTaskStatus;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.app.BuildStatus;
+import com.orion.ops.constant.app.PipelineStatus;
+import com.orion.ops.constant.app.ReleaseStatus;
+import com.orion.ops.constant.clear.DataClearRange;
+import com.orion.ops.constant.command.ExecStatus;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.scheduler.SchedulerTaskStatus;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.request.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
-import com.orion.utils.time.Dates;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -51,9 +50,6 @@ public class DataClearServiceImpl implements DataClearService {
 
     @Resource
     private ApplicationPipelineTaskDAO applicationPipelineTaskDAO;
-
-    @Resource
-    private WebSideMessageDAO webSideMessageDAO;
 
     @Resource
     private UserEventLogDAO userEventLogDAO;
@@ -168,24 +164,6 @@ public class DataClearServiceImpl implements DataClearService {
                 ApplicationPipelineTaskDO::getPipelineId,
                 request);
         int count = applicationPipelineTaskDAO.delete(wrapper);
-        // 设置日志参数
-        EventParamsHolder.addParams(request);
-        EventParamsHolder.addParam(EventKeys.COUNT, count);
-        return count;
-    }
-
-    @Override
-    public Integer clearWebSideMessage(DataClearRequest request) {
-        LambdaQueryWrapper<WebSideMessageDO> wrapper = new LambdaQueryWrapper<WebSideMessageDO>()
-                .eq(WebSideMessageDO::getToUserId, Currents.getUserId())
-                .eq(Const.ENABLE.equals(request.getOnlyRead()), WebSideMessageDO::getReadStatus, ReadStatus.READ.getStatus());
-        // 设置删除筛选条件
-        this.setDeleteWrapper(webSideMessageDAO, wrapper,
-                WebSideMessageDO::getId,
-                WebSideMessageDO::getCreateTime,
-                WebSideMessageDO::getMessageClassify,
-                request);
-        int count = webSideMessageDAO.delete(wrapper);
         // 设置日志参数
         EventParamsHolder.addParams(request);
         EventParamsHolder.addParam(EventKeys.COUNT, count);

@@ -19,7 +19,7 @@ public class FileDownloadRequest {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.download.FileDownloadType
+     * @see com.orion.ops.constant.download.FileDownloadType
      */
     @ApiModelProperty(value = "下载类型")
     private Integer type;

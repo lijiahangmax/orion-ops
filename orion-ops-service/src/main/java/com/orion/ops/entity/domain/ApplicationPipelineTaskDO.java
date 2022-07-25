@@ -73,7 +73,7 @@ public class ApplicationPipelineTaskDO implements Serializable {
     /**
      * 执行状态 10待审核 20审核驳回 30待执行 35待调度 40执行中 50执行完成 60执行停止 70执行失败
      *
-     * @see com.orion.ops.consts.app.PipelineStatus
+     * @see com.orion.ops.constant.app.PipelineStatus
      */
     @TableField("exec_status")
     private Integer execStatus;
@@ -153,8 +153,8 @@ public class ApplicationPipelineTaskDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

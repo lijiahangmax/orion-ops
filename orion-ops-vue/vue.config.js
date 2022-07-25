@@ -6,18 +6,15 @@ module.exports = {
   // 打包时不生成.map文件
   productionSourceMap: false,
   devServer: {
-    port: 10010
-    // proxy: {
-    //   '/api': {
-    //     target: '',
-    //     // 允许跨域
-    //     changeOrigin: true,
-    //     ws: true,
-    //     pathRewrite: {
-    //       '^/api': ''
-    //     }
-    //   }
-    // }
+    port: 10010,
+    proxy: {
+      '/orion': {
+        target: 'http://localhost:9119',
+        ws: true,
+        secure: false,
+        changeOrigin: true
+      }
+    }
   }
   // configureWebpack: config => {
   //   if (isProduction) {

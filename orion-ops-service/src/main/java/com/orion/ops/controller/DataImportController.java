@@ -1,13 +1,18 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
+import com.orion.lang.utils.io.Streams;
 import com.orion.office.excel.Excels;
-import com.orion.ops.OrionOpsServiceApplication;
+import com.orion.ops.OrionApplication;
 import com.orion.ops.annotation.*;
-import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.export.ImportType;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.export.ImportType;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.entity.dto.importer.*;
 import com.orion.ops.entity.request.DataImportRequest;
@@ -15,11 +20,7 @@ import com.orion.ops.entity.vo.DataImportCheckVO;
 import com.orion.ops.service.api.DataImportService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
-import com.orion.servlet.web.Servlets;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.Threads;
-import com.orion.utils.io.Streams;
+import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,10 +59,16 @@ public class DataImportController {
     @ApiOperation(value = "获取导入模板")
     public void getTemplate(Integer type, HttpServletResponse response) throws IOException {
         ImportType importType = Valid.notNull(ImportType.of(type));
-        Servlets.setDownloadHeader(response, importType.getTemplateName());
+        String templateName = importType.getTemplateName();
+        Servlets.setDownloadHeader(response, templateName);
         // 读取文件
-        InputStream in = OrionOpsServiceApplication.class.getResourceAsStream(importType.getTemplatePath());
-        Streams.transfer(in, response.getOutputStream());
+        InputStream in = OrionApplication.class.getResourceAsStream(importType.getTemplatePath());
+        ServletOutputStream out = response.getOutputStream();
+        if (in == null) {
+            out.write(Strings.bytes(Strings.format(MessageConst.FILE_NOT_FOUND, templateName)));
+            return;
+        }
+        Streams.transfer(in, out);
     }
 
     @PostMapping("/check-data")
@@ -97,8 +105,8 @@ public class DataImportController {
                 return dataImportService.checkAppProfileImportData((List<ApplicationProfileImportDTO>) rows);
             case APPLICATION:
                 return dataImportService.checkApplicationInfoImportData((List<ApplicationImportDTO>) rows);
-            case VCS:
-                return dataImportService.checkAppVcsImportData((List<ApplicationVcsImportDTO>) rows);
+            case REPOSITORY:
+                return dataImportService.checkAppRepositoryImportData((List<ApplicationRepositoryImportDTO>) rows);
             case COMMAND_TEMPLATE:
                 return dataImportService.checkCommandTemplateImportData((List<CommandTemplateImportDTO>) rows);
             default:
@@ -138,7 +146,7 @@ public class DataImportController {
 
     @PostMapping("/import-app-profile")
     @ApiOperation(value = "导入应用环境")
-    @EventLog(EventType.DATA_IMPORT_APP_PROFILE)
+    @EventLog(EventType.DATA_IMPORT_PROFILE)
     @RequireRole(RoleType.ADMINISTRATOR)
     public HttpWrapper<?> importAppProfileData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
@@ -157,13 +165,13 @@ public class DataImportController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/import-app-vcs")
+    @PostMapping("/import-repository")
     @ApiOperation(value = "导入应用版本仓库")
-    @EventLog(EventType.DATA_IMPORT_TAIL_FILE)
-    public HttpWrapper<?> importAppVcsData(@RequestBody DataImportRequest request) {
+    @EventLog(EventType.DATA_IMPORT_REPOSITORY)
+    public HttpWrapper<?> importRepositoryData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importAppVcsData(d));
+        this.asyncImportData(token, d -> dataImportService.importRepositoryData(d));
         return HttpWrapper.ok();
     }
 

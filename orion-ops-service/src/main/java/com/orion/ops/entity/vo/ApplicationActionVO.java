@@ -1,7 +1,7 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.ApplicationActionDO;
-import com.orion.utils.convert.TypeStore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class ApplicationActionVO {
     private String name;
 
     /**
-     * @see com.orion.ops.consts.app.ActionType
+     * @see com.orion.ops.constant.app.ActionType
      */
     @ApiModelProperty(value = "类型")
     private Integer type;

@@ -22,8 +22,8 @@
         <a-descriptions-item label="构建序列" :span="3">
           <span class="span-blue">#{{ detail.seq }}</span>
         </a-descriptions-item>
-        <a-descriptions-item label="版本仓库" :span="3" v-if="detail.vcsName != null">
-          {{ detail.vcsName }}
+        <a-descriptions-item label="构建仓库" :span="3" v-if="detail.repoName != null">
+          {{ detail.repoName }}
         </a-descriptions-item>
         <a-descriptions-item label="构建分支" :span="3" v-if="detail.branchName != null">
           <a-icon type="branches"/>

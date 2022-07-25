@@ -6,7 +6,7 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="名称" prop="name">
-              <a-input v-model="query.name" allowClear/>
+              <AppAutoComplete ref="appSelector" @change="selectedApp" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -187,6 +187,7 @@ import AppBuildModal from '@/components/app/AppBuildModal'
 import AppReleaseModal from '@/components/app/AppReleaseModal'
 import ApplicationExportModal from '@/components/export/ApplicationExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
+import AppAutoComplete from '@/components/app/AppAutoComplete'
 
 /**
  * 列
@@ -221,8 +222,8 @@ const columns = [
   },
   {
     title: '仓库名称',
-    key: 'vcsName',
-    dataIndex: 'vcsName',
+    key: 'repoName',
+    dataIndex: 'repoName',
     ellipsis: true
   },
   {
@@ -325,6 +326,7 @@ const moreMenuHandler = {
 export default {
   name: 'AppList',
   components: {
+    AppAutoComplete,
     DataImportModal,
     ApplicationExportModal,
     AppReleaseModal,
@@ -336,11 +338,12 @@ export default {
     return {
       CONFIG_STATUS,
       query: {
-        profileId: null,
-        name: null,
-        tag: null,
-        username: null,
-        description: null
+        id: undefined,
+        profileId: undefined,
+        name: undefined,
+        tag: undefined,
+        username: undefined,
+        description: undefined
       },
       rows: [],
       pagination: {
@@ -382,6 +385,18 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    selectedApp(id, name) {
+      if (id) {
+        this.query.id = id
+        this.query.name = undefined
+      } else {
+        this.query.id = undefined
+        this.query.name = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     expandMachine(expand, record) {
       if (!expand || record.machines.length) {
@@ -462,6 +477,9 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.$refs.appSelector.reset()
+      this.query.id = undefined
+      this.query.name = undefined
       this.getList({})
     }
   },

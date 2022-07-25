@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,7 +32,7 @@ public class ApplicationPipelineTaskDetailStatusVO {
     private Long relId;
 
     /**
-     * @see com.orion.ops.consts.app.PipelineDetailStatus
+     * @see com.orion.ops.constant.app.PipelineDetailStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已终止")
     private Integer status;

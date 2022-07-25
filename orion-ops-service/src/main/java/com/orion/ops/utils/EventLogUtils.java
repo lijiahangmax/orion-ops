@@ -1,6 +1,6 @@
 package com.orion.ops.utils;
 
-import com.orion.ops.consts.event.EventKeys;
+import com.orion.ops.constant.event.EventKeys;
 
 import java.util.Map;
 

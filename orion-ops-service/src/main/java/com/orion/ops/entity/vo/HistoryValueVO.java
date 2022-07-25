@@ -1,8 +1,8 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.HistoryValueSnapshotDO;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class HistoryValueVO {
     private Long id;
 
     /**
-     * @see com.orion.ops.consts.history.HistoryOperator
+     * @see com.orion.ops.constant.history.HistoryOperator
      */
     @ApiModelProperty(value = "操作类型 1新增 2修改 3删除")
     private Integer type;

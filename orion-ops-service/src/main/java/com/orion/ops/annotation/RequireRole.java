@@ -1,6 +1,6 @@
 package com.orion.ops.annotation;
 
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.user.RoleType;
 
 import java.lang.annotation.*;
 

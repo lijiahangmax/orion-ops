@@ -34,7 +34,7 @@ public class UserDTO implements Serializable {
     /**
      * 角色类型
      *
-     * @see com.orion.ops.consts.user.RoleType
+     * @see com.orion.ops.constant.user.RoleType
      */
     private Integer roleType;
 
@@ -46,8 +46,8 @@ public class UserDTO implements Serializable {
     /**
      * 用户状态 1启用 2禁用
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     private Integer userStatus;
 

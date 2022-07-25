@@ -31,8 +31,8 @@
           </a-tab-pane>
         </a-tabs>
         <!-- 无终端承载页 -->
-        <div v-else>
-          <TerminalBanner/>
+        <div v-show="!machineTabs.length">
+          <TerminalBanner ref="banner" @open="addTerminal"/>
         </div>
       </a-layout-content>
     </a-layout>
@@ -65,6 +65,9 @@ export default {
     activeKey(k) {
       if (k === null) {
         document.title = '终端'
+        setTimeout(() => {
+          this.$refs.banner.focus()
+        }, 50)
         return
       }
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key === k)
@@ -146,6 +149,7 @@ export default {
     if (this.selectedMachine.length) {
       this.addTerminal(this.selectedMachine[0])
     }
+    this.$refs.banner.renderMachines(this.$refs.machineList.list)
   }
 }
 </script>

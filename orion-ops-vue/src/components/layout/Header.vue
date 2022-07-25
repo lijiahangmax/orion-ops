@@ -22,10 +22,9 @@
                            class="header-block-container"
                            ref="profileSelect"
                            v-show="profileSelectorVisible"
-                           @chooseProfile="(profile) => $emit('chooseProfile', profile)"/>
+                           @chooseProfile="chooseProfile"/>
       <!-- 站内信 -->
-      <WebSideMessageDropdown id="web-side-message-dropdown"
-                              class="header-block-container"/>
+      <WebSideMessageDrawer id="web-side-message-drawer" class="header-block-container"/>
       <!-- 用户下拉 -->
       <HeaderUser id="header-user" class="header-block-container"/>
     </div>
@@ -36,12 +35,12 @@
 
 import HeaderProfileSelect from './HeaderProfileSelect'
 import HeaderUser from './HeaderUser'
-import WebSideMessageDropdown from '@/components/layout/WebSideMessageDropdown'
+import WebSideMessageDrawer from '@/components/layout/WebSideMessageDrawer'
 
 export default {
   name: 'Header',
   components: {
-    WebSideMessageDropdown,
+    WebSideMessageDrawer,
     HeaderProfileSelect,
     HeaderUser
   },
@@ -67,6 +66,9 @@ export default {
     checkVisible(e = this.$route) {
       this.profileSelectorVisible = e.meta.visibleProfile === true
       this.leftProps = e.meta.leftProps || []
+    },
+    chooseProfile(profile) {
+      this.$emit('chooseProfile', profile)
     },
     reloadProfile() {
       this.$refs.profileSelect.loadProfile()
@@ -124,7 +126,7 @@ export default {
       }
     }
 
-    #web-side-message-dropdown {
+    #web-side-message-drawer {
       padding: 0 16px;
       height: 48px;
       display: flex;

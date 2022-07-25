@@ -1,18 +1,27 @@
 package com.orion.ops.handler.app.machine;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.able.Executable;
+import com.orion.lang.able.Executable;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.io.Streams;
+import com.orion.lang.utils.io.compress.CompressTypeEnum;
+import com.orion.lang.utils.io.compress.FileCompressor;
+import com.orion.lang.utils.time.Dates;
 import com.orion.net.remote.channel.SessionStore;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.app.ActionType;
-import com.orion.ops.consts.app.ApplicationEnvAttr;
-import com.orion.ops.consts.app.BuildStatus;
-import com.orion.ops.consts.app.StageType;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.message.MessageType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.app.ActionType;
+import com.orion.ops.constant.app.ApplicationEnvAttr;
+import com.orion.ops.constant.app.BuildStatus;
+import com.orion.ops.constant.app.StageType;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.message.MessageType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.entity.domain.ApplicationActionLogDO;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
@@ -25,15 +34,6 @@ import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.Threads;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
-import com.orion.utils.io.compress.CompressTypeEnum;
-import com.orion.utils.io.compress.FileCompressor;
-import com.orion.utils.time.Dates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -104,14 +104,14 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
         actions.forEach(s -> store.getActions().put(s.getId(), s));
         log.info("应用构建任务-获取数据-action buildId: {}, actions: {}", id, JSON.toJSONString(actions));
         // 插入store
-        Long vcsId = record.getVcsId();
+        Long repoId = record.getRepoId();
         store.setRelId(id);
-        store.setVcsId(vcsId);
+        store.setRepoId(repoId);
         store.setBranchName(record.getBranchName());
         store.setCommitId(record.getCommitId());
-        if (vcsId != null) {
-            String vcsClonePath = Files1.getPath(SystemEnvAttr.VCS_PATH.getValue(), vcsId + "/" + record.getId());
-            store.setVcsClonePath(vcsClonePath);
+        if (repoId != null) {
+            String repoClonePath = Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), repoId + "/" + record.getId());
+            store.setRepoClonePath(repoClonePath);
         }
         // 创建handler
         this.handlerList = IActionHandler.createHandler(actions, store);
@@ -171,9 +171,9 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
     private void copyBundleFile() {
         // 查询应用产物目录
         String bundlePath = applicationEnvService.getAppEnvValue(record.getAppId(), record.getProfileId(), ApplicationEnvAttr.BUNDLE_PATH.getKey());
-        if (!bundlePath.startsWith(Const.SLASH) && !Files1.isWindowsPath(bundlePath) && store.getVcsClonePath() != null) {
+        if (!bundlePath.startsWith(Const.SLASH) && !Files1.isWindowsPath(bundlePath) && store.getRepoClonePath() != null) {
             // 基于代码目录的相对路径
-            bundlePath = Files1.getPath(store.getVcsClonePath(), bundlePath);
+            bundlePath = Files1.getPath(store.getRepoClonePath(), bundlePath);
         }
         // 检查产物文件是否存在
         File bundleFile = new File(bundlePath);

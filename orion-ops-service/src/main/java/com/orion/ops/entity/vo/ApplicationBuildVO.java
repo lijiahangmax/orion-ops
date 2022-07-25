@@ -1,9 +1,9 @@
 package com.orion.ops.entity.vo;
 
+import com.orion.lang.utils.convert.TypeStore;
+import com.orion.lang.utils.time.Dates;
 import com.orion.ops.entity.domain.ApplicationBuildDO;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.convert.TypeStore;
-import com.orion.utils.time.Dates;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,10 +48,10 @@ public class ApplicationBuildVO {
     private Integer seq;
 
     @ApiModelProperty(value = "版本仓库id")
-    private Long vcsId;
+    private Long repoId;
 
     @ApiModelProperty(value = "版本仓库名称")
-    private String vcsName;
+    private String repoName;
 
     @ApiModelProperty(value = "构建分支")
     private String branchName;
@@ -60,7 +60,7 @@ public class ApplicationBuildVO {
     private String commitId;
 
     /**
-     * @see com.orion.ops.consts.app.BuildStatus
+     * @see com.orion.ops.constant.app.BuildStatus
      */
     @ApiModelProperty(value = "状态 10未开始 20执行中 30已完成 40执行失败 50已取消")
     private Integer status;
@@ -112,7 +112,7 @@ public class ApplicationBuildVO {
             vo.setProfileName(p.getProfileName());
             vo.setProfileTag(p.getProfileTag());
             vo.setSeq(p.getBuildSeq());
-            vo.setVcsId(p.getVcsId());
+            vo.setRepoId(p.getRepoId());
             vo.setBranchName(p.getBranchName());
             vo.setCommitId(p.getCommitId());
             vo.setStatus(p.getBuildStatus());

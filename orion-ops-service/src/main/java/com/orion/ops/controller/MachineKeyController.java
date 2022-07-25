@@ -1,23 +1,20 @@
 package com.orion.ops.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Exceptions;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.MachineKeyRequest;
 import com.orion.ops.entity.vo.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -120,7 +117,7 @@ public class MachineKeyController {
         }
     }
 
-    @PostMapping("/mount-all")
+    @GetMapping("/mount-all")
     @ApiOperation(value = "挂载所有机器秘钥")
     @EventLog(EventType.MOUNT_ALL_MACHINE_KEY)
     public void mountAllKey() {
@@ -132,7 +129,7 @@ public class MachineKeyController {
         }
     }
 
-    @PostMapping("/dump-all")
+    @GetMapping("/dump-all")
     @ApiOperation(value = "卸载所有机器秘钥")
     @EventLog(EventType.DUMP_ALL_MACHINE_KEY)
     public void dumpAllKey() {

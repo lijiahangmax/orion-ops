@@ -1,30 +1,30 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.collect.MutableLinkedHashMap;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.env.EnvConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.history.HistoryOperator;
-import com.orion.ops.consts.history.HistoryValueType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.lang.define.collect.MutableLinkedHashMap;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.env.EnvConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.history.HistoryOperator;
+import com.orion.ops.constant.history.HistoryValueType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.SystemEnvDAO;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.request.SystemEnvRequest;
 import com.orion.ops.entity.vo.SystemEnvVO;
-import com.orion.ops.service.api.ApplicationVcsService;
+import com.orion.ops.service.api.ApplicationRepositoryService;
 import com.orion.ops.service.api.HistoryValueService;
 import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +51,7 @@ public class SystemEnvServiceImpl implements SystemEnvService {
     private HistoryValueService historyValueService;
 
     @Resource
-    private ApplicationVcsService applicationVcsService;
+    private ApplicationRepositoryService applicationRepositoryService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,9 +110,9 @@ public class SystemEnvServiceImpl implements SystemEnvService {
         if (env != null) {
             env.setValue(afterValue);
             if (afterValue != null && !afterValue.equals(beforeValue)) {
-                if (SystemEnvAttr.VCS_PATH.equals(env)) {
-                    // 如果修改的是 vcs 则修改 vcs 状态
-                    applicationVcsService.syncVcsStatus();
+                if (SystemEnvAttr.REPO_PATH.equals(env)) {
+                    // 如果修改的是仓库路径则修改仓库状态
+                    applicationRepositoryService.syncRepositoryStatus();
                 }
             }
         }

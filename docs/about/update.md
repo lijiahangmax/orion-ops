@@ -1,5 +1,47 @@
 ⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
 
+## 1.1.4
+
+> 应用发布配置
+
+出于安全考虑以及防止误操作 **移除**了应用发布配置中传输方式选择 `SFTP` 时自动删除原文件的特性, 请检查应用配置!
+
+> nginx 配置
+
+出于安全考虑, 修改了后端跨域配置, 升级时需要修改 nginx 配置 [如何修改](/quickstart/install.md?id=修改-nginx-配置)
+
+> sql 脚本
+
+```sql
+ALTER TABLE `machine_terminal` 
+DROP COLUMN `enable_web_gl`;
+
+RENAME TABLE `application_vcs` TO `application_repository`;
+
+ALTER TABLE `application_repository` 
+CHANGE COLUMN `vcs_name` `repo_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称' AFTER `id`,
+CHANGE COLUMN `vcs_description` `repo_description` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述' AFTER `repo_name`,
+CHANGE COLUMN `vcs_type` `repo_type` tinyint(4) NULL DEFAULT NULL COMMENT '类型 1git' AFTER `repo_description`,
+CHANGE COLUMN `vsc_url` `repo_url` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'url' AFTER `repo_type`,
+CHANGE COLUMN `vsc_username` `repo_username` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名' AFTER `repo_url`,
+CHANGE COLUMN `vcs_password` `repo_password` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码' AFTER `repo_username`,
+CHANGE COLUMN `vcs_private_token` `repo_private_token` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'token' AFTER `repo_password`,
+CHANGE COLUMN `vcs_status` `repo_status` int(11) NULL DEFAULT NULL COMMENT '状态 10未初始化 20初始化中 30正常 40失败' AFTER `repo_private_token`,
+CHANGE COLUMN `vcs_auth_type` `repo_auth_type` int(11) NULL DEFAULT 10 COMMENT '认证类型 10密码 20令牌' AFTER `repo_status`,
+CHANGE COLUMN `vcs_token_type` `repo_token_type` int(11) NULL DEFAULT NULL COMMENT '令牌类型 10github 20gitee 30gitlab' AFTER `repo_auth_type`,
+COMMENT = '应用版本仓库';
+
+ALTER TABLE `application_build` 
+CHANGE COLUMN `vcs_id` `repo_id` bigint(20) NULL DEFAULT NULL COMMENT '版本仓库id' AFTER `commit_id`;
+
+ALTER TABLE `application_info` 
+CHANGE COLUMN `vcs_id` `repo_id` bigint(20) NULL DEFAULT NULL COMMENT '版本仓库id' AFTER `app_sort`;
+
+UPDATE system_env SET attr_key = 'repo_path' WHERE attr_key = 'vcs_path';
+
+UPDATE application_action a SET action_command = REPLACE (a.action_command, 'vcs', 'repo');
+```
+
 ## 1.1.3
 
 > sql 脚本

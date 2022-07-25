@@ -1,12 +1,12 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.machine.MachineAuthType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.machine.MachineAuthType;
 import com.orion.ops.entity.request.MachineInfoRequest;
 import com.orion.ops.entity.vo.MachineInfoVO;
 import com.orion.ops.service.api.MachineInfoService;

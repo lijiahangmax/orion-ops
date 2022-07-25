@@ -50,6 +50,8 @@
             <!-- 工具栏 -->
             <div class="sftp-file-exec-buttons">
               <a-button-group>
+                <a-button :disabled="!path || path === '/'"
+                          @click="toParentPath" title="上一级" icon="enter"/>
                 <!-- 删除 -->
                 <a-button :disabled="!sessionToken || selectedRowKeys.length === 0"
                           @click="batchRemove" title="删除" icon="delete"/>
@@ -88,10 +90,13 @@
                   <template #content>
                     <SftpUpload ref="upload"
                                 @changeVisible="changeUploadVisible"
+                                @uploading="changeUploading"
                                 :currentPath="path"
                                 :sessionToken="sessionToken"/>
                   </template>
-                  <a-button :disabled="!sessionToken" title="上传" icon="cloud-upload"/>
+                  <a-button :disabled="!sessionToken"
+                            :title="uploading ? '上传中' : '上传'"
+                            :icon="uploading ? 'loading' : 'cloud-upload'"/>
                 </a-popover>
                 <!-- 传输列表 -->
                 <a-popover trigger="click" placement="bottomRight" overlayClassName="sftp-transfer-list-popover">
@@ -275,7 +280,7 @@
 
 <script>
 import { Empty } from 'ant-design-vue'
-import { getPathAnalysis } from '@/lib/utils'
+import { getPathAnalysis, getParentPath } from '@/lib/utils'
 import { enumValueOf, FILE_TYPE } from '@/lib/enum'
 import { formatDate } from '@/lib/filters'
 import SftpFolderTree from './SftpFolderTree'
@@ -402,6 +407,7 @@ export default {
       loading: false,
       nameSearchInput: null,
       uploadVisible: false,
+      uploading: false,
       emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
       curr: null,
       downloadTrigger: null,
@@ -591,6 +597,9 @@ export default {
       this.downloadTrigger && this.downloadTrigger.click()
       this.downloadTrigger = null
     },
+    toParentPath() {
+      this.listFiles(getParentPath(this.path))
+    },
     remove(record) {
       this.$confirm({
         title: '确认删除',
@@ -651,6 +660,9 @@ export default {
     },
     changeUploadVisible(visible) {
       this.uploadVisible = visible
+    },
+    changeUploading(visible) {
+      this.uploading = visible
     },
     openTouch() {
       this.$refs.touchModal.openTouch({

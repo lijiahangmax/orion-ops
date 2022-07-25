@@ -1,0 +1,34 @@
+version: '3.3'
+services:
+  orion-ops:
+    build: 
+      context: .
+      dockerfile: docker/orion-ops/Dockerfile
+    image: orion-ops:1.1.4
+    ports:
+      - "3090:80"
+    environment:
+      - MYSQL_HOST=orion-db
+      - REDIS_HOST=orion-redis
+    depends_on:
+      - orion-db
+      - orion-redis
+  orion-db:
+    build: 
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    environment:
+      - MYSQL_DATABASE=orion-ops
+      - MYSQL_USER=lijiahang
+      - MYSQL_PASSWORD=lijiahang
+      - MYSQL_ROOT_PASSWORD=admin123
+    image: orion-db:8.0
+  orion-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080
+  orion-redis:
+    image: redis:6.0.16-alpine
+    command: redis-server --requirepass lijiahang
+

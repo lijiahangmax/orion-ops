@@ -2,23 +2,28 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.id.ObjectIds;
-import com.orion.id.UUIds;
-import com.orion.lang.io.IgnoreOutputStream;
+import com.orion.lang.define.io.IgnoreOutputStream;
+import com.orion.lang.id.ObjectIds;
+import com.orion.lang.id.UUIds;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.Files1;
 import com.orion.net.base.file.sftp.SftpFile;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.sftp.SftpPackageType;
-import com.orion.ops.consts.sftp.SftpTransferStatus;
-import com.orion.ops.consts.sftp.SftpTransferType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.sftp.SftpPackageType;
+import com.orion.ops.constant.sftp.SftpTransferStatus;
+import com.orion.ops.constant.sftp.SftpTransferType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
@@ -41,11 +46,6 @@ import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.Files1;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -329,7 +329,7 @@ public class SftpServiceImpl implements SftpService {
         // 定义文件转换器
         Function<SftpFile, FileTransferLogDO> convert = file -> {
             // 本地保存路径
-            String fileToken = ObjectIds.next();
+            String fileToken = ObjectIds.nextId();
             // 设置传输信息
             FileTransferLogDO download = new FileTransferLogDO();
             download.setUserId(userId);
@@ -385,7 +385,7 @@ public class SftpServiceImpl implements SftpService {
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 执行压缩命令
-        String fileToken = ObjectIds.next();
+        String fileToken = ObjectIds.nextId();
         String zipPath = PathBuilders.getSftpPackageTempPath(machine.getUsername(), fileToken, paths);
         String command = Utils.getSftpPackageCommand(zipPath, paths);
         try (SessionStore session = machineInfoService.openSessionStore(machine);
@@ -707,7 +707,7 @@ public class SftpServiceImpl implements SftpService {
         Valid.notEmpty(logList, MessageConst.TRANSFER_ITEM_EMPTY);
         // 文件名称
         String fileName = Files1.getFileName(logList.get(0).getRemoteFile()) + "等" + logList.size() + "个文件.zip";
-        String fileToken = ObjectIds.next();
+        String fileToken = ObjectIds.nextId();
         // 文件大小
         long fileSize = logList.stream().mapToLong(FileTransferLogDO::getFileSize).sum();
         // 插入传输记录

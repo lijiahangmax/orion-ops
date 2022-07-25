@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class MachineKeyRequest extends PageRequest {
     private String description;
 
     /**
-     * @see com.orion.ops.consts.machine.MountKeyStatus
+     * @see com.orion.ops.constant.machine.MountKeyStatus
      */
     @ApiModelProperty(value = "挂载状态 1未找到 2已挂载 3未挂载")
     private Integer mountStatus;

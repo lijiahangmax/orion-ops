@@ -1,19 +1,16 @@
 package com.orion.ops.utils;
 
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.utils.Arrays1;
-import com.orion.utils.Strings;
-import com.orion.utils.awt.ImageIcons;
-import com.orion.utils.awt.Images;
-import com.orion.utils.codec.Base64s;
-import com.orion.utils.io.FileReaders;
-import com.orion.utils.io.Files1;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.codec.Base64s;
+import com.orion.lang.utils.io.FileReaders;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.io.Streams;
+import com.orion.ops.OrionApplication;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 头像处理器
@@ -25,15 +22,10 @@ import java.io.IOException;
 @Slf4j
 public class AvatarPicHolder {
 
+    private static final String DEFAULT_AVATAR = "/static/avatar/default.png";
+
     private AvatarPicHolder() {
     }
-
-    /**
-     * 头像生成器
-     */
-    private static final ImageIcons ICONS_GEN = new ImageIcons();
-
-    private static final String AVATAR_PIC_SUFFIX = Const.SUFFIX_PNG;
 
     /**
      * 获取头像路径
@@ -60,45 +52,6 @@ public class AvatarPicHolder {
     }
 
     /**
-     * 生成用户头像
-     *
-     * @param uid      uid
-     * @param nickname name
-     * @return 路径
-     */
-    public static String generatorUserAvatar(Long uid, String nickname) {
-        if (Strings.isBlank(nickname)) {
-            nickname = "O";
-        }
-        String url = getPicPath(uid, AVATAR_PIC_SUFFIX);
-        char name = Arrays1.last(nickname.toCharArray(), 'O');
-        BufferedImage img = ICONS_GEN.execute(name);
-        String path = Files1.getPath(SystemEnvAttr.PIC_PATH.getValue(), url);
-        File file = new File(path);
-        Files1.touch(file);
-        try {
-            Images.write(img, file);
-        } catch (IOException e) {
-            log.error("生成用户头像失败 uid: {}, name: {}, path: {}, e: {}", uid, name, path, e);
-        }
-        return url;
-    }
-
-    /**
-     * 获取头像base64
-     *
-     * @param url url
-     * @return base64
-     */
-    public static String getBase64(String url) {
-        String path = Files1.getPath(SystemEnvAttr.PIC_PATH.getValue(), url);
-        if (!Files1.isFile(path)) {
-            return null;
-        }
-        return Base64s.img64Encode(FileReaders.readAllBytes(path), Files1.getSuffix(path));
-    }
-
-    /**
      * 删除图片
      *
      * @param url url
@@ -109,6 +62,27 @@ public class AvatarPicHolder {
     }
 
     /**
+     * 获取头像
+     *
+     * @param path path
+     * @return avatar base64
+     */
+    public static String getUserAvatar(String path) {
+        if (isExist(path)) {
+            return getBase64(path);
+        } else {
+            try (InputStream in = OrionApplication.class.getResourceAsStream(DEFAULT_AVATAR)) {
+                if (in == null) {
+                    return null;
+                }
+                return Base64s.img64Encode(Streams.toByteArray(in), Const.SUFFIX_PNG);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    /**
      * 判断是否存在
      *
      * @param path path
@@ -116,6 +90,20 @@ public class AvatarPicHolder {
      */
     public static boolean isExist(String path) {
         return Strings.isNotBlank(path) && Files1.isFile(Files1.getPath(SystemEnvAttr.PIC_PATH.getValue(), path));
+    }
+
+    /**
+     * 获取头像 base64
+     *
+     * @param url url
+     * @return base64
+     */
+    public static String getBase64(String url) {
+        String path = Files1.getPath(SystemEnvAttr.PIC_PATH.getValue(), url);
+        if (!Files1.isFile(path)) {
+            return null;
+        }
+        return Base64s.img64Encode(FileReaders.readAllBytes(path), Files1.getSuffix(path));
     }
 
 }

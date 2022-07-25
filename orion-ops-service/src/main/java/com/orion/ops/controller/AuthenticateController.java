@@ -1,10 +1,12 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.HttpWrapper;
+import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.utils.Objects1;
+import com.orion.lang.utils.convert.Converts;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.UserLoginRequest;
 import com.orion.ops.entity.request.UserResetRequest;
 import com.orion.ops.entity.vo.UserInfoVO;
@@ -12,15 +14,10 @@ import com.orion.ops.entity.vo.UserLoginVO;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.Valid;
-import com.orion.servlet.web.Servlets;
-import com.orion.utils.Objects1;
-import com.orion.utils.convert.Converts;
+import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +53,7 @@ public class AuthenticateController {
     }
 
     @IgnoreAuth
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     @ApiOperation(value = "登出")
     @EventLog(EventType.LOGOUT)
     public HttpWrapper<?> logout() {
@@ -75,7 +72,7 @@ public class AuthenticateController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/valid")
+    @GetMapping("/valid")
     @ApiOperation(value = "检查用户信息")
     public UserInfoVO validToken() {
         return Converts.to(Currents.getUser(), UserInfoVO.class);

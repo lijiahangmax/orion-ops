@@ -1,7 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.vo.FileTailVO;
-import com.orion.utils.convert.TypeStore;
 import lombok.Data;
 
 /**
@@ -32,24 +32,24 @@ public class FileTailDTO {
     /**
      * tail 模式
      *
-     * @see com.orion.ops.consts.system.SystemEnvAttr#TAIL_MODE
-     * @see com.orion.ops.consts.tail.FileTailMode
+     * @see com.orion.ops.constant.system.SystemEnvAttr#TAIL_MODE
+     * @see com.orion.ops.constant.tail.FileTailMode
      */
     private String mode;
 
     /**
      * tail 尾行偏移量
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_OFFSET
-     * @see com.orion.ops.consts.Const#TAIL_OFFSET_LINE
+     * @see com.orion.ops.constant.machine.MachineEnvAttr#TAIL_OFFSET
+     * @see com.orion.ops.constant.Const#TAIL_OFFSET_LINE
      */
     private Integer offset;
 
     /**
      * tail 编码集
      *
-     * @see com.orion.ops.consts.machine.MachineEnvAttr#TAIL_CHARSET
-     * @see com.orion.ops.consts.Const#UTF_8
+     * @see com.orion.ops.constant.machine.MachineEnvAttr#TAIL_CHARSET
+     * @see com.orion.ops.constant.Const#UTF_8
      */
     private String charset;
 

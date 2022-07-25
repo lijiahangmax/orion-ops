@@ -1,11 +1,13 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationPipelineDAO;
 import com.orion.ops.dao.ApplicationPipelineDetailDAO;
@@ -19,8 +21,6 @@ import com.orion.ops.service.api.ApplicationPipelineDetailService;
 import com.orion.ops.service.api.ApplicationPipelineService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
-import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,6 +119,7 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
     @Override
     public DataGrid<ApplicationPipelineVO> listPipeline(ApplicationPipelineRequest request) {
         LambdaQueryWrapper<ApplicationPipelineDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationPipelineDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationPipelineDO::getProfileId, request.getProfileId())
                 .like(Strings.isNotBlank(request.getName()), ApplicationPipelineDO::getPipelineName, request.getName())
                 .like(Strings.isNotBlank(request.getDescription()), ApplicationPipelineDO::getDescription, request.getDescription());
@@ -153,7 +154,7 @@ public class ApplicationPipelineServiceImpl implements ApplicationPipelineServic
                         .filter(s -> s.getId().equals(detail.getAppId()))
                         .findFirst()
                         .ifPresent(app -> {
-                            detail.setVcsId(app.getVcsId());
+                            detail.setRepoId(app.getRepoId());
                             detail.setAppName(app.getAppName());
                             detail.setAppTag(app.getAppTag());
                         });

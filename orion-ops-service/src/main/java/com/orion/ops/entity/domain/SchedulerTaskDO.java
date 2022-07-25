@@ -55,8 +55,8 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 启用状态 1启用 2停用
      *
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @TableField("enable_status")
     private Integer enableStatus;
@@ -64,7 +64,7 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 最近状态 10待调度 20调度中 30调度成功 40调度失败 50已停止
      *
-     * @see com.orion.ops.consts.scheduler.SchedulerTaskStatus
+     * @see com.orion.ops.constant.scheduler.SchedulerTaskStatus
      */
     @TableField("lately_status")
     private Integer latelyStatus;
@@ -72,7 +72,7 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 调度序列 10串行 20并行
      *
-     * @see com.orion.ops.consts.SerialType
+     * @see com.orion.ops.constant.SerialType
      */
     @TableField("serialize_type")
     private Integer serializeType;
@@ -80,7 +80,7 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 异常处理 10跳过所有 20跳过错误
      *
-     * @see com.orion.ops.consts.ExceptionHandlerType
+     * @see com.orion.ops.constant.ExceptionHandlerType
      */
     @TableField("exception_handler")
     private Integer exceptionHandler;
@@ -94,8 +94,8 @@ public class SchedulerTaskDO implements Serializable {
     /**
      * 是否删除 1未删除 2已删除
      *
-     * @see com.orion.ops.consts.Const#NOT_DELETED
-     * @see com.orion.ops.consts.Const#IS_DELETED
+     * @see com.orion.ops.constant.Const#NOT_DELETED
+     * @see com.orion.ops.constant.Const#IS_DELETED
      */
     @TableLogic
     private Integer deleted;

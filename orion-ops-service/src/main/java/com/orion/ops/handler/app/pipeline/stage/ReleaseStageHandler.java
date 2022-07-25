@@ -1,12 +1,15 @@
 package com.orion.ops.handler.app.pipeline.stage;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.ops.consts.CnConst;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.app.PipelineLogStatus;
-import com.orion.ops.consts.app.ReleaseStatus;
-import com.orion.ops.consts.app.StageType;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.ops.constant.CnConst;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.app.PipelineLogStatus;
+import com.orion.ops.constant.app.ReleaseStatus;
+import com.orion.ops.constant.app.StageType;
 import com.orion.ops.dao.ApplicationBuildDAO;
 import com.orion.ops.dao.ApplicationReleaseDAO;
 import com.orion.ops.entity.domain.*;
@@ -17,9 +20,6 @@ import com.orion.ops.handler.app.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.ApplicationMachineService;
 import com.orion.ops.service.api.ApplicationReleaseService;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -36,15 +36,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReleaseStageHandler extends AbstractStageHandler {
 
-    private static ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
+    private static final ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
 
-    private static ApplicationReleaseDAO applicationReleaseDAO = SpringHolder.getBean(ApplicationReleaseDAO.class);
+    private static final ApplicationReleaseDAO applicationReleaseDAO = SpringHolder.getBean(ApplicationReleaseDAO.class);
 
-    private static ApplicationReleaseService applicationReleaseService = SpringHolder.getBean(ApplicationReleaseService.class);
+    private static final ApplicationReleaseService applicationReleaseService = SpringHolder.getBean(ApplicationReleaseService.class);
 
-    private static ApplicationMachineService applicationMachineService = SpringHolder.getBean(ApplicationMachineService.class);
+    private static final ApplicationMachineService applicationMachineService = SpringHolder.getBean(ApplicationMachineService.class);
 
-    private static ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
+    private static final ReleaseSessionHolder releaseSessionHolder = SpringHolder.getBean(ReleaseSessionHolder.class);
 
     private Long releaseId;
 

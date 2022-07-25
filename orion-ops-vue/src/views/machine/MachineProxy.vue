@@ -26,7 +26,7 @@
           </a-col>
           <a-col :span="4">
             <a-form-model-item label="代理类型" prop="type">
-              <a-select v-model="query.type" placeholder="全部" allowClear>
+              <a-select v-model="query.type" placeholder="全部" @change="getList({})" allowClear>
                 <a-select-option :value="type.value" v-for="type in MACHINE_PROXY_TYPE" :key="type.value">
                   {{ type.label }}
                 </a-select-option>
@@ -177,10 +177,10 @@ export default {
     return {
       MACHINE_PROXY_TYPE,
       query: {
-        host: null,
-        port: null,
-        username: null,
-        description: null,
+        host: undefined,
+        port: undefined,
+        username: undefined,
+        description: undefined,
         type: undefined
       },
       rows: [],

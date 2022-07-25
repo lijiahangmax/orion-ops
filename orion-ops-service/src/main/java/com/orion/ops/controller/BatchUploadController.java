@@ -1,10 +1,12 @@
 package com.orion.ops.controller;
 
-import com.orion.id.ObjectIds;
+import com.orion.lang.id.ObjectIds;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.io.Files1;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.entity.dto.SftpUploadInfoDTO;
 import com.orion.ops.entity.request.BatchUploadRequest;
 import com.orion.ops.entity.request.sftp.FileUploadRequest;
@@ -14,8 +16,6 @@ import com.orion.ops.service.api.BatchUploadService;
 import com.orion.ops.service.api.SftpService;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.io.Files1;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -80,7 +80,7 @@ public class BatchUploadController {
         for (Long machineId : machineIdList) {
             for (MultipartFile file : files) {
                 // 传输文件到本地
-                String fileToken = ObjectIds.next();
+                String fileToken = ObjectIds.nextId();
                 String localPath = PathBuilders.getSftpUploadFilePath(fileToken);
                 Path localAbsolutePath = Paths.get(SystemEnvAttr.SWAP_PATH.getValue(), localPath);
                 Files1.touch(localAbsolutePath);

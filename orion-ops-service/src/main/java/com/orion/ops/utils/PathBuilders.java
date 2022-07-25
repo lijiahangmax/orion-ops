@@ -1,10 +1,10 @@
 package com.orion.ops.utils;
 
-import com.orion.id.ObjectIds;
-import com.orion.ops.consts.Const;
-import com.orion.utils.Systems;
-import com.orion.utils.io.Files1;
-import com.orion.utils.time.Dates;
+import com.orion.lang.id.ObjectIds;
+import com.orion.lang.utils.Systems;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.Const;
 
 import java.util.List;
 
@@ -230,7 +230,7 @@ public class PathBuilders {
      * @return path
      */
     public static String getSecretKeyPath() {
-        return "/" + ObjectIds.next() + Const.SECRET_KEY_SUFFIX;
+        return "/" + ObjectIds.nextId() + Const.SECRET_KEY_SUFFIX;
     }
 
     /**
@@ -253,6 +253,7 @@ public class PathBuilders {
      */
     public static String getSftpPackageTempPath(String username, String fileToken, List<String> paths) {
         return PathBuilders.getHomePath(username)
+                + "/" + Const.ORION_OPS
                 + "/" + Const.TEMP_PACKAGE_PATH
                 + "/" + fileToken
                 + "/" + Files1.getFileName(paths.get(0))

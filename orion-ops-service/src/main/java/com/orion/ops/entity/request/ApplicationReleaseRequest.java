@@ -1,6 +1,6 @@
 package com.orion.ops.entity.request;
 
-import com.orion.lang.wrapper.PageRequest;
+import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,6 +33,9 @@ public class ApplicationReleaseRequest extends PageRequest {
     @ApiModelProperty(value = "应用id")
     private Long appId;
 
+    @ApiModelProperty(value = "应用名称")
+    private String appName;
+
     @ApiModelProperty(value = "环境id")
     private Long profileId;
 
@@ -43,13 +46,13 @@ public class ApplicationReleaseRequest extends PageRequest {
     private List<Long> machineIdList;
 
     /**
-     * @see com.orion.ops.consts.app.ReleaseStatus
+     * @see com.orion.ops.constant.app.ReleaseStatus
      */
     @ApiModelProperty(value = "状态")
     private Integer status;
 
     /**
-     * @see com.orion.ops.consts.app.TimedType
+     * @see com.orion.ops.constant.app.TimedType
      */
     @ApiModelProperty(value = "是否是定时发布 10普通发布 20定时发布")
     private Integer timedRelease;
@@ -58,7 +61,7 @@ public class ApplicationReleaseRequest extends PageRequest {
     private Date timedReleaseTime;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
+     * @see com.orion.ops.constant.Const#ENABLE
      */
     @ApiModelProperty(value = "只看自己")
     private Integer onlyMyself;

@@ -1,17 +1,20 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.orion.location.region.LocationRegions;
-import com.orion.location.region.core.Region;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
+import com.orion.lang.utils.Valid;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.channel.SessionHolder;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.EnableType;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.system.SystemCleanType;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.ops.consts.system.ThreadPoolMetricsType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.system.SystemCleanType;
+import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.system.ThreadPoolMetricsType;
 import com.orion.ops.entity.domain.SystemEnvDO;
 import com.orion.ops.entity.dto.SystemSpaceAnalysisDTO;
 import com.orion.ops.entity.request.ConfigIpListRequest;
@@ -25,11 +28,6 @@ import com.orion.ops.service.api.SystemEnvService;
 import com.orion.ops.service.api.SystemService;
 import com.orion.ops.utils.FileCleaner;
 import com.orion.ops.utils.Utils;
-import com.orion.utils.Strings;
-import com.orion.utils.Threads;
-import com.orion.utils.Valid;
-import com.orion.utils.convert.Converts;
-import com.orion.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +49,7 @@ import java.util.stream.Collectors;
 @Service("systemService")
 public class SystemServiceImpl implements SystemService {
 
-    private SystemSpaceAnalysisDTO systemSpace;
+    private final SystemSpaceAnalysisDTO systemSpace;
 
     @Resource
     private SystemEnvService systemEnvService;
@@ -76,17 +74,8 @@ public class SystemServiceImpl implements SystemService {
         ipConfig.setEnableWhiteIpList(EnableType.of(SystemEnvAttr.ENABLE_WHITE_IP_LIST.getValue()).getValue());
         // ip
         ipConfig.setCurrentIp(ip);
-        Region region = LocationRegions.getRegion(ip);
-        if (region != null) {
-            StringBuilder location = new StringBuilder()
-                    .append(region.getProvince())
-                    .append(Const.DASHED)
-                    .append(region.getCity())
-                    .append(Const.DASHED)
-                    .append(region.getCountry());
-            location.append(" (").append(region.getNet()).append(')');
-            ipConfig.setIpLocation(location.toString());
-        }
+        // ip 位置
+        ipConfig.setIpLocation(Utils.getIpLocation(ip));
         return ipConfig;
     }
 
@@ -176,19 +165,19 @@ public class SystemServiceImpl implements SystemService {
         buildFiles.clear();
 
         // 文件太多会导致 oom
-        // // vcs产物
-        // File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
-        // List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
-        // int vcsVersionCount = 0;
-        // long vcsDirFilesBytes = 0L;
-        // for (File vcsDir : vcsPaths) {
-        //     vcsVersionCount += Files1.listDirs(vcsDir).size();
-        //     List<File> vcsDirFiles = Files1.listFiles(vcsDir, true);
-        //     vcsDirFilesBytes += vcsDirFiles.stream().mapToLong(File::length).sum();
+        // // 应用仓库
+        // File repoPath = new File(SystemEnvAttr.REPO_PATH.getValue());
+        // List<File> repoPaths = Files1.listFilesFilter(repoPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+        // int repoVersionCount = 0;
+        // long repoDirFilesBytes = 0L;
+        // for (File repoDir : repoPaths) {
+        //     repoVersionCount += Files1.listDirs(repoDir).size();
+        //     List<File> repoDirFiles = Files1.listFiles(repoDir, true);
+        //     repoDirFilesBytes += repoDirFiles.stream().mapToLong(File::length).sum();
         // }
-        // systemSpace.setVcsVersionCount(vcsVersionCount);
-        // systemSpace.setVcsVersionFileSize(Files1.getSize(vcsDirFilesBytes));
-        // vcsPaths.clear();
+        // systemSpace.setRepoVersionCount(repoVersionCount);
+        // systemSpace.setRepoVersionFileSize(Files1.getSize(repoDirFilesBytes));
+        // repoPaths.clear();
         log.info("分析占用磁盘空间完成 {}", JSON.toJSONString(systemSpace));
     }
 
@@ -197,26 +186,6 @@ public class SystemServiceImpl implements SystemService {
         SystemAnalysisVO vo = Converts.to(systemSpace, SystemAnalysisVO.class);
         // 挂载秘钥数
         vo.setMountKeyCount(SessionHolder.getLoadKeys().size());
-        // IP黑名单
-        String blackIpList = systemEnvService.getEnvValue(SystemEnvAttr.BLACK_IP_LIST.getKey());
-        if (Strings.isBlank(blackIpList)) {
-            vo.setBlackIpListCount(0L);
-        } else {
-            long validBlackIpCount = Arrays.stream(blackIpList.split(Const.LF))
-                    .filter(Strings::isNotBlank)
-                    .count();
-            vo.setBlackIpListCount(validBlackIpCount);
-        }
-        // IP白名单
-        String whiteIpList = systemEnvService.getEnvValue(SystemEnvAttr.WHITE_IP_LIST.getKey());
-        if (Strings.isBlank(whiteIpList)) {
-            vo.setWhiteIpListCount(0L);
-        } else {
-            long validWhiteIpCount = Arrays.stream(whiteIpList.split(Const.LF))
-                    .filter(Strings::isNotBlank)
-                    .count();
-            vo.setWhiteIpListCount(validWhiteIpCount);
-        }
         // 文件清理
         vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
         vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());

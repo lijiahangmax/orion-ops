@@ -16,7 +16,7 @@ import lombok.Data;
 public class ThreadPoolMetricsVO {
 
     /**
-     * @see com.orion.ops.consts.system.ThreadPoolMetricsType
+     * @see com.orion.ops.constant.system.ThreadPoolMetricsType
      */
     @ApiModelProperty(value = "type")
     private Integer type;

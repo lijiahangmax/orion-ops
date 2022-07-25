@@ -2,9 +2,9 @@ package com.orion.ops.controller;
 
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.user.RoleType;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.DataExportRequest;
 import com.orion.ops.service.api.DataExportService;
 import com.orion.ops.utils.Currents;
@@ -65,7 +65,7 @@ public class DataExportController {
 
     @PostMapping("/app-profile")
     @ApiOperation(value = "导出应用环境")
-    @EventLog(EventType.DATA_EXPORT_APP_PROFILE)
+    @EventLog(EventType.DATA_EXPORT_PROFILE)
     public void exportAppProfile(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
         dataExportService.exportAppProfile(request, response);
     }
@@ -77,11 +77,11 @@ public class DataExportController {
         dataExportService.exportApplication(request, response);
     }
 
-    @PostMapping("/app-vcs")
+    @PostMapping("/repository")
     @ApiOperation(value = "导出应用版本仓库")
-    @EventLog(EventType.DATA_EXPORT_APP_VCS)
-    public void exportAppVcs(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
-        dataExportService.exportAppVcs(request, response);
+    @EventLog(EventType.DATA_EXPORT_REPOSITORY)
+    public void exportAppRepository(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
+        dataExportService.exportAppRepository(request, response);
     }
 
     @PostMapping("/command-template")
@@ -89,13 +89,6 @@ public class DataExportController {
     @EventLog(EventType.DATA_EXPORT_COMMAND_TEMPLATE)
     public void exportCommandTemplate(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
         dataExportService.exportCommandTemplate(request, response);
-    }
-
-    @PostMapping("/web-side-message")
-    @ApiOperation(value = "导出站内信")
-    @EventLog(EventType.DATA_EXPORT_WEB_SIDE_MESSAGE)
-    public void exportWebSideMessage(@RequestBody DataExportRequest request, HttpServletResponse response) throws IOException {
-        dataExportService.exportWebSideMessage(request, response);
     }
 
     @PostMapping("/event-log")

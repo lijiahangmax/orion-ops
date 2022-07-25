@@ -32,7 +32,7 @@ target/demo-1.0.0-SNAPSHOT.jar
 ```
 source /etc/profile
 echo '开始构建'
-cd @{build.vcs_home}
+cd @{build.repo_home}
 mvn -U clean install -DskipTests
 echo '构建完成'
 ```

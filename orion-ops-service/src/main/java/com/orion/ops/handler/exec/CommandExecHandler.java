@@ -1,18 +1,25 @@
 package com.orion.ops.handler.exec;
 
-import com.orion.constant.Letters;
-import com.orion.exception.DisabledException;
+import com.orion.lang.constant.Letters;
+import com.orion.lang.exception.DisabledException;
+import com.orion.lang.utils.Exceptions;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.io.Streams;
+import com.orion.lang.utils.time.Dates;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.SchedulerPools;
-import com.orion.ops.consts.StainCode;
-import com.orion.ops.consts.command.ExecStatus;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.message.MessageType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.command.ExecStatus;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.message.MessageType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.CommandExecDAO;
 import com.orion.ops.entity.domain.CommandExecDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
@@ -21,13 +28,6 @@ import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.Utils;
 import com.orion.spring.SpringHolder;
-import com.orion.utils.Exceptions;
-import com.orion.utils.Strings;
-import com.orion.utils.Threads;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.io.Files1;
-import com.orion.utils.io.Streams;
-import com.orion.utils.time.Dates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,17 +46,17 @@ import java.util.Map;
 @Slf4j
 public class CommandExecHandler implements IExecHandler {
 
-    private static CommandExecDAO commandExecDAO = SpringHolder.getBean(CommandExecDAO.class);
+    private static final CommandExecDAO commandExecDAO = SpringHolder.getBean(CommandExecDAO.class);
 
-    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
+    private static final MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    private static ExecSessionHolder execSessionHolder = SpringHolder.getBean(ExecSessionHolder.class);
+    private static final ExecSessionHolder execSessionHolder = SpringHolder.getBean(ExecSessionHolder.class);
 
-    private static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+    private static final TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
 
-    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
+    private static final WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
-    private Long execId;
+    private final Long execId;
 
     private CommandExecDO record;
 

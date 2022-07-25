@@ -2,17 +2,21 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.wrapper.DataGrid;
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.ExceptionHandlerType;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.SerialType;
-import com.orion.ops.consts.app.*;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.ExceptionHandlerType;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.SerialType;
+import com.orion.ops.constant.app.*;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationInfoDAO;
 import com.orion.ops.dao.ApplicationProfileDAO;
-import com.orion.ops.dao.ApplicationVcsDAO;
+import com.orion.ops.dao.ApplicationRepositoryDAO;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.request.ApplicationConfigRequest;
 import com.orion.ops.entity.request.ApplicationInfoRequest;
@@ -21,10 +25,6 @@ import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Utils;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.collect.Maps;
-import com.orion.utils.convert.Converts;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +46,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     private ApplicationInfoDAO applicationInfoDAO;
 
     @Resource
-    private ApplicationVcsDAO applicationVcsDAO;
+    private ApplicationRepositoryDAO applicationRepositoryDAO;
 
     @Resource
     private ApplicationMachineService applicationMachineService;
@@ -78,7 +78,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationInfoDO insert = new ApplicationInfoDO();
         insert.setAppName(name);
         insert.setAppTag(tag);
-        insert.setVcsId(request.getVcsId());
+        insert.setRepoId(request.getRepoId());
         insert.setDescription(request.getDescription());
         insert.setAppSort(this.getNextSort());
         applicationInfoDAO.insert(insert);
@@ -103,7 +103,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         update.setId(id);
         update.setAppName(name);
         update.setAppTag(tag);
-        update.setVcsId(request.getVcsId());
+        update.setRepoId(request.getRepoId());
         update.setDescription(request.getDescription());
         update.setUpdateTime(new Date());
         int effect = applicationInfoDAO.updateById(update);
@@ -142,7 +142,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         // 交换
         ApplicationInfoDO updateSwap = new ApplicationInfoDO();
         updateSwap.setId(swapApp.getId());
-        updateSwap.setVcsId(swapApp.getVcsId());
+        updateSwap.setRepoId(swapApp.getRepoId());
         updateSwap.setAppSort(beforeSort);
         applicationInfoDAO.updateById(updateSwap);
         // 更新
@@ -156,7 +156,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         }
         ApplicationInfoDO updateTarget = new ApplicationInfoDO();
         updateTarget.setId(id);
-        updateTarget.setVcsId(app.getVcsId());
+        updateTarget.setRepoId(app.getRepoId());
         updateTarget.setAppSort(afterSort);
         return applicationInfoDAO.updateById(updateTarget);
     }
@@ -186,6 +186,7 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
     @Override
     public DataGrid<ApplicationInfoVO> listApp(ApplicationInfoRequest request) {
         LambdaQueryWrapper<ApplicationInfoDO> wrapper = new LambdaQueryWrapper<ApplicationInfoDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationInfoDO::getId, request.getId())
                 .like(!Strings.isBlank(request.getName()), ApplicationInfoDO::getAppName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationInfoDO::getAppTag, request.getTag())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationInfoDO::getDescription, request.getDescription())
@@ -197,13 +198,13 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
                 .wrapper(wrapper)
                 .dataGrid(ApplicationInfoVO.class);
         // 设置版本仓库id
-        List<Long> vcsIdList = appList.stream().map(ApplicationInfoVO::getVcsId)
+        List<Long> repoIdList = appList.stream().map(ApplicationInfoVO::getRepoId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        if (!vcsIdList.isEmpty()) {
-            applicationVcsDAO.selectNameByIdList(vcsIdList).forEach(v -> {
-                appList.stream().filter(s -> v.getId().equals(s.getVcsId()))
-                        .forEach(s -> s.setVcsName(v.getVcsName()));
+        if (!repoIdList.isEmpty()) {
+            applicationRepositoryDAO.selectNameByIdList(repoIdList).forEach(v -> {
+                appList.stream().filter(s -> v.getId().equals(s.getRepoId()))
+                        .forEach(s -> s.setRepoName(v.getRepoName()));
             });
         }
         Long profileId = request.getProfileId();
@@ -266,11 +267,11 @@ public class ApplicationInfoServiceImpl implements ApplicationInfoService {
         ApplicationInfoDO app = applicationInfoDAO.selectById(appId);
         Valid.notNull(app, MessageConst.APP_ABSENT);
         ApplicationDetailVO detail = Converts.to(app, ApplicationDetailVO.class);
-        // 查询vcs
-        Optional.ofNullable(app.getVcsId())
-                .map(applicationVcsDAO::selectById)
-                .map(ApplicationVcsDO::getVcsName)
-                .ifPresent(detail::setVcsName);
+        // 查询仓库
+        Optional.ofNullable(app.getRepoId())
+                .map(applicationRepositoryDAO::selectById)
+                .map(ApplicationRepositoryDO::getRepoName)
+                .ifPresent(detail::setRepoName);
         // 没传环境id直接返回
         if (profileId == null) {
             return detail;

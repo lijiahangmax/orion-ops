@@ -1,10 +1,10 @@
 package com.orion.ops.utils;
 
-import com.orion.ops.consts.Const;
-import com.orion.ops.consts.system.SystemCleanType;
-import com.orion.ops.consts.system.SystemEnvAttr;
-import com.orion.utils.io.Files1;
-import com.orion.utils.time.Dates;
+import com.orion.lang.utils.io.Files1;
+import com.orion.lang.utils.time.Dates;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.system.SystemCleanType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -40,11 +40,11 @@ public class FileCleaner {
         releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.SWAP_PATH.getValue()));
         // 构建产物
         releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.DIST_PATH.getValue()));
-        // // vcs产物 文件太多会 oom
-        // File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
-        // List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
-        // for (File vcs : vcsPaths) {
-        //     releasedBytes += deletePathFiles(thresholdTime, vcs);
+        // 应用仓库 文件太多会 oom
+        // File repoPath = new File(SystemEnvAttr.REPO_PATH.getValue());
+        // List<File> repoPaths = Files1.listFilesFilter(repoPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+        // for (File repo : repoPaths) {
+        //     releasedBytes += deletePathFiles(thresholdTime, repo);
         // }
         log.info("自动清理文件-释放 {}", Files1.getSize(releasedBytes));
     }
@@ -76,12 +76,12 @@ public class FileCleaner {
                 // 构建产物
                 releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.DIST_PATH.getValue()));
                 break;
-            case VCS_FILE:
-                // vcs产物
-                File vcsPath = new File(SystemEnvAttr.VCS_PATH.getValue());
-                List<File> vcsPaths = Files1.listFilesFilter(vcsPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
-                for (File vcs : vcsPaths) {
-                    releasedBytes += deletePathFiles(thresholdTime, vcs);
+            case REPO_FILE:
+                // 应用仓库
+                File repoPath = new File(SystemEnvAttr.REPO_PATH.getValue());
+                List<File> repoPaths = Files1.listFilesFilter(repoPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+                for (File repo : repoPaths) {
+                    releasedBytes += deletePathFiles(thresholdTime, repo);
                 }
                 break;
             default:

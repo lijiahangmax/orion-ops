@@ -1,7 +1,7 @@
 package com.orion.ops.handler.exec;
 
-import com.orion.able.Executable;
-import com.orion.able.SafeCloseable;
+import com.orion.lang.able.Executable;
+import com.orion.lang.able.SafeCloseable;
 
 /**
  * 命令执行器

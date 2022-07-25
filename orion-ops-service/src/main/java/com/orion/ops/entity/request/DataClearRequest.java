@@ -24,7 +24,7 @@ public class DataClearRequest {
     private Integer reserveTotal;
 
     /**
-     * @see com.orion.ops.consts.clear.DataClearRange
+     * @see com.orion.ops.constant.clear.DataClearRange
      */
     @ApiModelProperty(value = "清理区间")
     private Integer range;
@@ -39,29 +39,29 @@ public class DataClearRequest {
     private Long profileId;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "只清理我创建的")
     private Integer iCreated;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "只清理我审核的")
     private Integer iAudited;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "只清理我执行的")
     private Integer iExecute;
 
     /**
-     * @see com.orion.ops.consts.Const#ENABLE
-     * @see com.orion.ops.consts.Const#DISABLE
+     * @see com.orion.ops.constant.Const#ENABLE
+     * @see com.orion.ops.constant.Const#DISABLE
      */
     @ApiModelProperty(value = "只清理未读的")
     private Integer onlyRead;

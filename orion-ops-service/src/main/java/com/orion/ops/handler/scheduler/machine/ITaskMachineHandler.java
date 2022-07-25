@@ -1,7 +1,7 @@
 package com.orion.ops.handler.scheduler.machine;
 
-import com.orion.able.SafeCloseable;
-import com.orion.ops.consts.scheduler.SchedulerTaskMachineStatus;
+import com.orion.lang.able.SafeCloseable;
+import com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus;
 
 /**
  * 机器处理器

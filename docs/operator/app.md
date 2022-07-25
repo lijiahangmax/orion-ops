@@ -58,8 +58,8 @@
 | :----           | :---                                     | :----                                     |
 | build_id        | 10                                       | 构建id (数据库自增)                         |
 | build_seq       | 1                                        | 当前环境该应用的构建序列                     |
-| vcs_home        | /orion/vcs/2/10                          | 当前应用配置的版本仓库的 `clone` 目录 (如果有) |
-| vcs_event_home  | /orion/vcs/event/2                       | 版本仓库的 (获取分支/commit) 目录 (只有一个)  |
+| repo_home       | /orion/repo/2/10                         | 当前应用配置的版本仓库的 `clone` 目录 (如果有) |
+| repo_event_home | /orion/repo/event/2                      | 版本仓库的 (获取分支/commit) 目录 (只有一个)  |
 | branch          | origin/master                            | 构建所选的 `branch`                        |
 | commit          | 8ab50bada8525f6670c36114ad46baa70efda820 | 构建所选的 `commit`                        |
 | bundle_path     | /root/orion_ops/dist/build/128/dist      | 构建完成后产物存储路径                       |
@@ -71,7 +71,7 @@
 
 设计思路: 发布的应用可能是以集群的形式发布的, 可能会有多台机器同时发布一个应用, 基于选择的构建版本, 进行发布操作。
 
-`文件传输方式` 可选择使用 `sftp` / `scp` 来分发产物文件。      
+`文件传输方式` 可选择使用 `SFTP` / `SCP` 来分发产物文件。      
 `文件传输路径` 是将选择的构建版本生成的产物分发到发布机器后绝对路径。
 
 如果构建产物是一个文件 `build.jar`  
@@ -81,7 +81,7 @@
 当 文件传输类型 选择 `文件/文件夹` 文件传输路径 可以配置为 `/data/projects/dist`     
 当 文件传输类型 选择 `zip` 文件传输路径 可以配置为 `/data/projects/dist.zip` 然后在进行解压。
 
-当 `产物传输方式` 选择 `scp` 时可配置 `scp 传输命令`  
+当 `产物传输方式` 选择 `SCP` 时可配置 `scp 传输命令`  
 默认命令为 `scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"`, 使用 `@{xxx}` 替换变量。
 
 | key             | 示例                                          | 描述                                 |
@@ -91,9 +91,8 @@
 | target_username | root                                         | 目标机器用户                           |
 | target_host     | 192.168.5.65                                 | 目标机器主机                           |  
 
-⚡ **这里一定要注意**: 文件传输方式选择 `SFTP` 后, 当执行传输操作时, 会先**删除**文件传输路径再进行传输操作  
-**配置不正确会导致数据误删除!!!**  
-这里更推荐使用 `scp` 的方式来传输产物文件, 速度更快, 以命令的形式配置, 更加灵活。
+⚡ **注意**: 传输时需要确保传输目录文件不存在后再进行传输操作, 否则可能会导致数据无法传输, 通常在传输之前需要配置删除旧版本包命令!    
+这里更推荐使用 `SCP` 的方式来传输产物文件, 速度更快, 以命令的形式配置, 更加灵活。
 
 ```
 当然这里也可以写死, 以上述例子命令执行时会替换为
@@ -171,7 +170,7 @@ java -jar demo.jar --spring.profiles.active=dev  -Xmx128m -Xms64m
 配置应用的版本仓库, 仅支持 `git`, 用于构建时选择构建的 `branch` 以及 `commit`。   
 可以通过 `密码` 或 `令牌` 方式导入仓库。
 
-* 初始化: 初始化版本仓库, 验证密码或者token `vcs_event_home`
-* 重新初始化: 重新初始化版本仓库 `vcs_event_home`
+* 初始化: 初始化版本仓库, 验证密码或者token `repo_event_home`
+* 重新初始化: 重新初始化版本仓库 `repo_event_home`
 
 [comment]: <> (* 清空: 清空应用构建历史版本, 会保留两个版本, 防止清空正在进行中的构建任务)

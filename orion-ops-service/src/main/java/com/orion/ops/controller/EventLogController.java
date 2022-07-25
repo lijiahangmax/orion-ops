@@ -1,6 +1,6 @@
 package com.orion.ops.controller;
 
-import com.orion.lang.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.EventLogRequest;
 import com.orion.ops.entity.vo.EventLogVO;
@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 @Api(tags = "操作日志")
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/log")
+@RequestMapping("/orion/api/event-log")
 public class EventLogController {
 
     @Resource

@@ -6,12 +6,12 @@
         <a-row>
           <a-col :span="5">
             <a-form-model-item label="主机" prop="host">
-              <MachineAutoComplete ref="machineSelector" @change="selectedMachine"/>
+              <MachineAutoComplete ref="machineSelector" @change="selectedMachine" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col v-if="$isAdmin()" :span="5">
             <a-form-model-item label="用户" prop="user">
-              <UserAutoComplete ref="userSelector" @change="selectedUser"/>
+              <UserAutoComplete ref="userSelector" @change="selectedUser" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="5">
@@ -237,6 +237,9 @@ export default {
         this.query.machineId = undefined
         this.query.machineName = name
       }
+      if (id === undefined && name === undefined) {
+        this.getList({})
+      }
     },
     selectedUser(id, name) {
       if (id) {
@@ -245,6 +248,9 @@ export default {
       } else {
         this.query.userId = undefined
         this.query.username = name
+      }
+      if (id === undefined && name === undefined) {
+        this.getList({})
       }
     },
     deleteLog(idList) {

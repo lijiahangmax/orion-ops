@@ -2,10 +2,14 @@ package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.MessageConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
+import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Lists;
+import com.orion.lang.utils.convert.Converts;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
 import com.orion.ops.dao.ApplicationProfileDAO;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
 import com.orion.ops.entity.dto.ApplicationProfileDTO;
@@ -15,18 +19,12 @@ import com.orion.ops.entity.vo.ApplicationProfileVO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Lists;
-import com.orion.utils.convert.Converts;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -136,13 +134,16 @@ public class ApplicationProfileServiceImpl implements ApplicationProfileService 
     }
 
     @Override
-    public List<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
+    public DataGrid<ApplicationProfileVO> listProfiles(ApplicationProfileRequest request) {
         LambdaQueryWrapper<ApplicationProfileDO> wrapper = new LambdaQueryWrapper<ApplicationProfileDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationProfileDO::getId, request.getId())
                 .like(!Strings.isBlank(request.getName()), ApplicationProfileDO::getProfileName, request.getName())
                 .like(!Strings.isBlank(request.getTag()), ApplicationProfileDO::getProfileTag, request.getTag())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationProfileDO::getDescription, request.getDescription());
-        List<ApplicationProfileDO> profileList = applicationProfileDAO.selectList(wrapper);
-        return Converts.toList(profileList, ApplicationProfileVO.class);
+        return DataQuery.of(applicationProfileDAO)
+                .wrapper(wrapper)
+                .page(request)
+                .dataGrid(ApplicationProfileVO.class);
     }
 
     @Override

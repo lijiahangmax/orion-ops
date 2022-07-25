@@ -1,18 +1,18 @@
 package com.orion.ops.interceptor;
 
-import com.orion.ops.aspect.LogAspect;
-import com.orion.ops.consts.EnableType;
-import com.orion.ops.consts.KeyConst;
-import com.orion.ops.consts.event.EventKeys;
-import com.orion.ops.consts.event.EventParamsHolder;
-import com.orion.ops.consts.event.EventType;
-import com.orion.ops.consts.system.SystemEnvAttr;
+import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.event.EventType;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.UserInfoDAO;
 import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.service.api.UserEventLogService;
 import com.orion.ops.utils.Currents;
-import com.orion.utils.Strings;
-import com.orion.utils.collect.Maps;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -37,7 +37,7 @@ public class UserActiveInterceptor implements HandlerInterceptor {
      * key: 用户id
      * value: 活跃时间戳
      */
-    private Map<Long, Long> activeUsers = Maps.newCurrentHashMap();
+    private final Map<Long, Long> activeUsers = Maps.newCurrentHashMap();
 
     @Resource
     private UserInfoDAO userInfoDAO;
@@ -86,13 +86,11 @@ public class UserActiveInterceptor implements HandlerInterceptor {
      */
     private void refreshActive(UserDTO user) {
         Long userId = user.getId();
-        String username = user.getUsername();
         // 刷新登陆时间
         userInfoDAO.updateLastLoginTime(userId);
         // 记录日志
-        EventParamsHolder.addParam(EventKeys.INNER_USER_ID, userId);
-        EventParamsHolder.addParam(EventKeys.INNER_USER_NAME, username);
-        EventParamsHolder.addParam(EventKeys.INNER_REQUEST_SEQ, LogAspect.SEQ_HOLDER.get());
+        EventParamsHolder.addParam(EventKeys.REFRESH_LOGIN, Const.ENABLE);
+        EventParamsHolder.setDefaultEventParams();
         userEventLogService.recordLog(EventType.LOGIN, true);
         // 如果开启自动续签 刷新登陆token 绑定token
         if (EnableType.of(SystemEnvAttr.LOGIN_TOKEN_AUTO_RENEW.getValue()).getValue()) {

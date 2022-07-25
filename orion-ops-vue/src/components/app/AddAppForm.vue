@@ -8,12 +8,12 @@
         <a-input v-decorator="decorators.tag" allowClear/>
       </a-form-item>
       <a-form-item label="版本仓库">
-        <a-select placeholder="请选择" v-decorator="decorators.vcsId" style="width: calc(100% - 45px)" allowClear>
-          <a-select-option v-for="vcs in vcsList" :key="vcs.id" :value="vcs.id">
-            <span>{{ vcs.name }}</span>
+        <a-select placeholder="请选择" v-decorator="decorators.repoId" style="width: calc(100% - 45px)" allowClear>
+          <a-select-option v-for="repo in repoList" :key="repo.id" :value="repo.id">
+            <span>{{ repo.name }}</span>
           </a-select-option>
         </a-select>
-        <a class="reload-vcs" title="刷新" @click="getVcsList">
+        <a class="reload-repo" title="刷新" @click="getRepositoryList">
           <a-icon type="reload"/>
         </a>
       </a-form-item>
@@ -26,7 +26,7 @@
 
 <script>
 import { pick } from 'lodash'
-import { VCS_STATUS } from '@/lib/enum'
+import { REPOSITORY_STATUS } from '@/lib/enum'
 
 function getDecorators() {
   return {
@@ -48,7 +48,7 @@ function getDecorators() {
         message: '唯一标识长度不能大于32位'
       }]
     }],
-    vcsId: ['vcsId'],
+    repoId: ['repoId'],
     description: ['description', {
       rules: [{
         max: 64,
@@ -76,7 +76,7 @@ export default {
       id: null,
       loading: false,
       record: null,
-      vcsList: [],
+      repoList: [],
       decorators: getDecorators.call(this),
       form: this.$form.createForm(this)
     }
@@ -94,21 +94,21 @@ export default {
     initRecord(row) {
       this.form.resetFields()
       this.id = row.id
-      if (!row.vcsId) {
-        row.vcsId = undefined
+      if (!row.repoId) {
+        row.repoId = undefined
       }
-      this.record = pick(Object.assign({}, row), 'name', 'tag', 'vcsId', 'description')
+      this.record = pick(Object.assign({}, row), 'name', 'tag', 'repoId', 'description')
       this.$nextTick(() => {
         this.form.setFieldsValue(this.record)
       })
     },
-    async getVcsList() {
-      this.$api.getVcsList({
+    async getRepositoryList() {
+      this.$api.getRepositoryList({
         limit: 10000,
-        status: VCS_STATUS.OK.value
+        status: REPOSITORY_STATUS.OK.value
       }).then(({ data }) => {
         if (data && data.rows && data.rows.length) {
-          this.vcsList = data.rows.map(s => {
+          this.repoList = data.rows.map(s => {
             return {
               id: s.id,
               name: s.name
@@ -163,13 +163,13 @@ export default {
     }
   },
   async mounted() {
-    await this.getVcsList()
+    await this.getRepositoryList()
   }
 }
 </script>
 
 <style scoped>
-.reload-vcs {
+.reload-repo {
   margin-left: 16px;
   font-size: 16px;
 }

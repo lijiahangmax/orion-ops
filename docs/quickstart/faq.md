@@ -68,7 +68,9 @@ server {
 
 > ##### 9. orion-ops 是否支持 Windows 部署?
 
-支持, 前提是 Windows 安装了 OpenSSH Server  
+可以支持, 前提是 Windows 安装了 OpenSSH Server  
+但是不建议, 因为 Windows 的 ssh 命令兼容性不好, 一切需要执行ssh命令的地方都不友好  
+如: 批量执行, 应用构建发布, 调度任务兼容性非常不友好
 <br/>
 
 > ##### 10. orion-ops 是否支持 svn 作为版本仓库?
@@ -111,6 +113,7 @@ server {
 
 > ##### 17. docker 运行 orion-ops-service 失败提示 `sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)`
 
+`1.1.4` 版本之前可能会出现此问题, 之后换成了配置文件中的默认头像      
 原因是用户创建时会生成默认的头像, 依赖于 `awt` 绘制   
 启动时需要添加 `RUN apk add --update ttf-dejavu fontconfig`  
 <br/>
@@ -118,4 +121,10 @@ server {
 > ##### 18. 应用发布中选择 SCP 作为传输方式, 为什么还需要手动输入密码?
 
 需要配置宿主机与目标机器的 ssh 免密登陆, 配置好后就无需输入密码了  
+<br/>
+
+> ##### 19. 下载的日志中为什么会有这么多乱码 如: \x1b[0m?
+
+这是 ANSI 码, 用于日志展示中的着色  
+系统提供了批量清除的功能, 在 `执行管理` > `日志面板` > `清除ANSI`
 <br/>

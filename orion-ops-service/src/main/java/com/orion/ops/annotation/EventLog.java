@@ -1,6 +1,6 @@
 package com.orion.ops.annotation;
 
-import com.orion.ops.consts.event.EventType;
+import com.orion.ops.constant.event.EventType;
 
 import java.lang.annotation.*;
 

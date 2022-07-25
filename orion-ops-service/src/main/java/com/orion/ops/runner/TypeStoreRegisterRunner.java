@@ -1,9 +1,10 @@
 package com.orion.ops.runner;
 
-import com.orion.ops.OrionOpsServiceApplication;
-import com.orion.support.Attempt;
-import com.orion.utils.reflect.PackageScanner;
+import com.orion.lang.support.Attempt;
+import com.orion.lang.utils.reflect.PackageScanner;
+import com.orion.ops.OrionApplication;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,18 +21,21 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TypeStoreRegisterRunner implements CommandLineRunner {
 
+    @Value("#{'${type.store.scan.packages}'.split(',')}")
+    private String[] scanPackages;
+
     @Override
     public void run(String... args) throws Exception {
-        log.info("注册vo转换器-开始");
-        new PackageScanner("com.orion.ops.entity.vo.*", "com.orion.ops.entity.dto.*")
-                .with(OrionOpsServiceApplication.class)
+        log.info("注册对象转换器-开始");
+        new PackageScanner(scanPackages)
+                .with(OrionApplication.class)
                 .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {
                     log.info("register type store class: {}", s);
                     Class.forName(s.getName());
                 }));
-        log.info("注册vo转换器-结束");
+        log.info("注册对象转换器-结束");
     }
 
 }
