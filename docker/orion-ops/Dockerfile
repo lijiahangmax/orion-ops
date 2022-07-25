@@ -4,6 +4,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
     apk update
 RUN apk add openjdk8
 RUN apk add openssh-server
+RUN apk add openssh-sftp-server
 RUN rm -rf /etc/nginx/conf.d/*
 RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config && \
     ssh-keygen -t dsa -P '' -f /etc/ssh/ssh_host_dsa_key && \
