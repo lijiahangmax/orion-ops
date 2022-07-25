@@ -1,7 +1,7 @@
 import $http from './http'
 
 /**
- * webSocket
+ * web socket
  */
 const $ws = {
 
@@ -9,21 +9,21 @@ const $ws = {
    * 机器终端
    */
   terminal: param => {
-    return `ws://${$http.BASE_HOST || window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
   },
 
   /**
    * sftp传输列表
    */
   sftpNotify: param => {
-    return `ws://${$http.BASE_HOST || window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
   },
 
   /**
    * 文件tail
    */
   fileTail: param => {
-    return `ws://${$http.BASE_HOST || window.location.host}/orion/keep-alive/tail/${param.token}`
+    return `ws://${window.location.host}/orion/keep-alive/tail/${param.token}`
   }
 
 }
@@ -37,7 +37,7 @@ const $url = {
    * 执行下载文件请求
    */
   fileDownloadExec: param => {
-    return `${$http.BASE_URL}/orion/api/file-download/${param.token}/exec`
+    return `/orion/api/file-download/${param.token}/exec`
   }
 
 }
