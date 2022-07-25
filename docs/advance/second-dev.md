@@ -6,7 +6,8 @@
 * Node 11.12.0(+)
 * Maven 3.5.4(+)
 
-⚡ maven 推荐使用阿里云 mirror  
+⚡ maven 推荐使用阿里云 mirror   
+⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npm.taobao.org`  
 ⚡ windows 环境二次开发需要安装 OpenSSH Server
 
 ### 配置
@@ -37,8 +38,8 @@
 
 4. 修改前端配置
    ```
-   # 修改配置文件
-   orion-ops/orion-ops-vue/.env.development
+   # 进入代码目录
+   cd orion-ops/orion-ops-vue
    # 下载依赖
    npm i 或 yarn
    # 运行
@@ -47,7 +48,7 @@
 
 5. 运行  
    后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-data.sql` 则可以忽略)    
-   启动参数 idea 中设置  `应用设置` > `Environment` > `Program arguments`
+   启动参数 idea 中设置 `应用设置` > `Environment` > `Program arguments`
 
 ### 测试访问
 
@@ -58,7 +59,7 @@
 ### swagger
 
 地址: http://127.0.0.1:9119/doc.html#/home  
-这个只有在 `dev` `local` 环境才可以访问
+文档只有在 `dev` 环境才可以访问
 
 ### 配置系统
 
