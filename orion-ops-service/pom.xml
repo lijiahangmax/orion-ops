@@ -190,7 +190,7 @@
             <!--                <groupId>org.springframework.boot</groupId>-->
             <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
             <!--                <configuration>-->
-            <!--                    <mainClass>com.orion.ops.OrionOpsServiceApplication</mainClass>-->
+            <!--                    <mainClass>com.orion.ops.OrionApplication</mainClass>-->
             <!--                    <layout>ZIP</layout>-->
             <!--                    &lt;!&ndash; 注释后和依赖包一起打包 取消注释则不打包依赖 &ndash;&gt;-->
             <!--                    <includes>-->
