@@ -73,7 +73,7 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 > 控制台
 
-![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/e220f5ba-fbf7-48b1-9b65-26cabc08713d.jpg "控制台")
+![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/25/47e5dd54-8688-4123-8a9a-bfea924fc752.png "控制台")
 
 > 机器列表
 
@@ -143,8 +143,8 @@ PR 规则: 只能在 `github` 的 `dev` 分支提交 PR, merge 后我会手动�
 orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。你所做出的每一次贡献都是有意义的, 同时也会永远保留在贡献者名单中  
 欢迎大家添砖加瓦以及文档纠错, 这也是开源项目的意义所在!
 
-[代码结构及开发规范](https://https://lijiahangmax.github.io/orion-ops/#/about/code-structure)  
-[贡献者名单](https://https://lijiahangmax.github.io/orion-ops/#/about/contributor)
+[代码结构及开发规范](https://lijiahangmax.github.io/orion-ops/#/about/code-structure)  
+[贡献者名单](https://lijiahangmax.github.io/orion-ops/#/about/contributor)
 
 ## 联系我
 
