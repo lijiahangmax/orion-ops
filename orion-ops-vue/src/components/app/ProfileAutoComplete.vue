@@ -72,7 +72,6 @@ export default {
     const { data } = await this.$api.getProfileList({
       limit: 10000
     })
-    console.log(data)
     if (data && data.rows && data.rows.length) {
       for (const row of data.rows) {
         this.profileList.push({
@@ -80,7 +79,6 @@ export default {
           name: row.name
         })
       }
-      console.log(this.profileList)
       this.visibleProfile = this.profileList
     }
   }

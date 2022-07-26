@@ -27,7 +27,8 @@
                            wrapperHeight="calc(100vh - 40px)"
                            terminalHeight="calc(100vh - 80px)"
                            :machineId="machineTab.machineId"
-                           :visibleHeader="true"/>
+                           :visibleHeader="true"
+                           :isModal="false"/>
           </a-tab-pane>
         </a-tabs>
         <!-- 无终端承载页 -->

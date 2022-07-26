@@ -39,7 +39,8 @@
                        wrapperHeight="100%"
                        terminalHeight="100%"
                        :machineId="machineId"
-                       :visibleHeader="false"/>
+                       :visibleHeader="false"
+                       :isModal="true"/>
       </div>
     </a-modal>
     <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
@@ -92,12 +93,11 @@ export default {
     },
     maximize() {
       this.visible = true
+      // fit
       setTimeout(() => {
-        // fit 两次可能会超出modal不然有问题
-        this.$refs.terminal.fitTerminal()
         this.$refs.terminal.fitTerminal()
         this.$refs.terminal.focus()
-      }, 450)
+      }, 250)
     },
     openSetting() {
       this.$refs.settingModal.openSetting()
