@@ -55,40 +55,49 @@ import 'xterm/css/xterm.css'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
 
 /**
- * 初始化terminal
+ * 初始化 terminal
  */
 function initTerminal() {
-  // 打开terminal
-  this.term = new Terminal(this.options)
-  this.term.open(this.$refs.terminal)
-  // 需要先设置一下 不然modal会闪一下
-  this.term.resize(1, 1)
-  // 注册terminal事件
-  this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
-  this.term.onData(event => terminalEventHandler.onData.call(this, event))
-  terminalEventHandler.registerCustomerKey.call(this)
+  const init = () => {
+    // 打开terminal
+    this.term = new Terminal(this.options)
+    this.term.open(this.$refs.terminal)
+    // 需要先设置一下 不然modal会闪一下
+    this.term.resize(1, 1)
+    // 注册terminal事件
+    this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
+    this.term.onData(event => terminalEventHandler.onData.call(this, event))
+    terminalEventHandler.registerCustomerKey.call(this)
 
-  // 注册自适应组件
-  this.plugin.fit = new FitAddon()
-  this.term.loadAddon(this.plugin.fit)
-  // 如果不是modal 这里fit没问题
-  // this.plugin.fit.fit()
-  // 注册搜索组件
-  this.plugin.search = new SearchAddon()
-  this.term.loadAddon(this.plugin.search)
-  // 注册 url link组件
-  if (this.setting.enableWebLink === 1) {
-    this.plugin.links = new WebLinksAddon()
-    this.term.loadAddon(this.plugin.links)
-  }
-
-  setTimeout(() => {
-    // fit 这里就是调用两次 不然modal的字体有毛病
-    this.fitTerminal()
-    this.fitTerminal()
+    // 注册自适应组件
+    this.plugin.fit = new FitAddon()
+    this.term.loadAddon(this.plugin.fit)
+    // 如果不是modal 这里fit没问题
+    // this.plugin.fit.fit()
+    // 注册搜索组件
+    this.plugin.search = new SearchAddon()
+    this.term.loadAddon(this.plugin.search)
+    // 注册 url link组件
+    if (this.setting.enableWebLink === 1) {
+      this.plugin.links = new WebLinksAddon()
+      this.term.loadAddon(this.plugin.links)
+    }
+    // 调整大小 因为 modal 必须调整两次 cols 会多1
+    setTimeout(() => {
+      this.fitTerminal()
+      this.fitTerminal()
+    }, 40)
     // 建立连接
-    this.initSocket()
-  }, 50)
+    setTimeout(() => {
+      this.initSocket()
+    }, 80)
+  }
+  if (this.isModal) {
+    // modal 有个加载过程
+    setTimeout(init, 220)
+  } else {
+    init()
+  }
 }
 
 /**
@@ -297,7 +306,8 @@ export default {
   },
   props: {
     machineId: Number,
-    terminalHeight: String
+    terminalHeight: String,
+    isModal: Boolean
   },
   data: function() {
     return {
@@ -362,12 +372,10 @@ export default {
       }
     },
     fitTerminal() {
-      setTimeout(() => {
-        const dimensions = fitDimensions(this.term, this.$refs.terminal)
-        if (dimensions?.cols && dimensions?.rows) {
-          this.term.resize(dimensions.cols, dimensions.rows)
-        }
-      }, 40)
+      const dimensions = fitDimensions(this.term, this.$refs.terminal)
+      if (dimensions?.cols && dimensions?.rows) {
+        this.term.resize(dimensions.cols, dimensions.rows)
+      }
     },
     clickTerminal() {
       this.visibleRightMenu = false

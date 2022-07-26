@@ -8,14 +8,18 @@
                     @reload='reload'
                     @disconnect='disconnect'
                     @openSftp="openSftp"/>
-    <!-- terminal主体 -->
+    <!-- terminal 主体 -->
     <TerminalMain ref="terminalMain"
                   :machineId="machineId"
                   :terminalHeight="terminalHeight"
+                  :isModal="isModal"
                   @initFinish="initFinish"
                   @terminalStatusChange="terminalStatusChange"/>
-    <!-- sftp侧栏 -->
-    <MachineSftpDrawer ref="machineSftpDrawer" :machineId="machineId" :machineName="machine.machineName"/>
+    <!-- sftp 侧栏 -->
+    <MachineSftpDrawer v-if="!isModal"
+                       ref="machineSftpDrawer"
+                       :machineId="machineId"
+                       :machineName="machine.machineName"/>
   </div>
 </template>
 
@@ -36,7 +40,8 @@ export default {
     machineId: Number,
     wrapperHeight: String,
     terminalHeight: String,
-    visibleHeader: Boolean
+    visibleHeader: Boolean,
+    isModal: Boolean
   },
   data: function() {
     return {
