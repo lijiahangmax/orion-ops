@@ -89,9 +89,10 @@ public class TerminalOperateHandler implements IOperateHandler {
         executor.connect();
         executor.scheduler(SchedulerPools.TERMINAL_SCHEDULER);
         executor.streamHandler(this::streamHandler);
-        executor.exec();
         // 连接成功后初始化日志信息
         this.initLog();
+        // 开始监听输出
+        executor.exec();
     }
 
     /**
