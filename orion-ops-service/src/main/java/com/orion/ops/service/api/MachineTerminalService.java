@@ -52,7 +52,7 @@ public interface MachineTerminalService {
      * @param entity entity
      * @return id
      */
-    Long addAccessLog(MachineTerminalLogDO entity);
+    Long addTerminalLog(MachineTerminalLogDO entity);
 
     /**
      * 更新日志

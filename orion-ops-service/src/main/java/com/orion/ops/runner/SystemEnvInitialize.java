@@ -97,6 +97,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.PIC_PATH);
             case SWAP_PATH:
                 return createOrionOpsPath(Const.SWAP_PATH);
+            case SCREEN_PATH:
+                return createOrionOpsPath(Const.SCREEN_PATH);
             case LOG_PATH:
                 return createOrionOpsPath(Const.LOG_PATH);
             case TEMP_PATH:

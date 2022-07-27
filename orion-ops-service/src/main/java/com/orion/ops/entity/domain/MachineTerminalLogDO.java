@@ -94,10 +94,11 @@ public class MachineTerminalLogDO implements Serializable {
     private Integer closeCode;
 
     /**
-     * 日志文件路径
+     * 录屏文件路径
      */
+    // TODO
     @TableField("operate_log_file")
-    private String operateLogFile;
+    private String screenPath;
 
     /**
      * 创建时间

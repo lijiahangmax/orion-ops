@@ -146,7 +146,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
     }
 
     @Override
-    public Long addAccessLog(MachineTerminalLogDO entity) {
+    public Long addTerminalLog(MachineTerminalLogDO entity) {
         machineTerminalLogDAO.insert(entity);
         return entity.getId();
     }

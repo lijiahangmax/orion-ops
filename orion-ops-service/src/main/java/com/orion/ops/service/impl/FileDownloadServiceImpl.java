@@ -241,9 +241,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 .eq(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
                 .eq(MachineTerminalLogDO::getId, id);
         return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
-                .map(MachineTerminalLogDO::getOperateLogFile)
+                .map(MachineTerminalLogDO::getScreenPath)
                 .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
+                .map(s -> Files1.getPath(SystemEnvAttr.SCREEN_PATH.getValue(), s))
                 .orElse(null);
     }
 
