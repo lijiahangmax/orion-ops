@@ -281,6 +281,15 @@ const $api = {
   },
 
   /**
+   * 获取终端录屏 base64
+   */
+  getTerminalScreen: param => {
+    return $http.$post('/terminal/log/screen', param, {
+      loading: '数据加载中...'
+    })
+  },
+
+  /**
    * 终端会话列表
    */
   terminalSessionList: param => {

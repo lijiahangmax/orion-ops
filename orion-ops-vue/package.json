@@ -13,6 +13,7 @@
   "dependencies": {
     "@antv/g2": "^4.1.48",
     "ant-design-vue": "^1.7.8",
+    "asciinema-player": "^3.0.1",
     "axios": "^0.23.0",
     "core-js": "^3.6.5",
     "js-md5": "^0.7.3",
