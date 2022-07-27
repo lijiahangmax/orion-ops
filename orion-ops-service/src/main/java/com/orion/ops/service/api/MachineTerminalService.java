@@ -88,12 +88,20 @@ public interface MachineTerminalService {
     Integer deleteTerminalByMachineId(Long machineId);
 
     /**
+     * 获取下载 terminal 录屏路径
+     *
+     * @param id id
+     * @return path
+     */
+    String getTerminalScreenFilePath(Long id);
+
+    /**
      * 获取 token 中的 userId
      *
      * @param token token
      * @return userId
      */
-    static Long getTokenUserId(String token) {
+    static Long getTerminalAccessTokenUserId(String token) {
         return Optional.ofNullable(ValueMix.base62ecbDec(token, TerminalConst.TERMINAL))
                 .map(s -> s.split("_"))
                 .map(s -> s[0])

@@ -5,12 +5,14 @@ import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.TerminalType;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.constant.terminal.TerminalConst;
 import com.orion.ops.dao.MachineTerminalDAO;
 import com.orion.ops.dao.MachineTerminalLogDAO;
@@ -36,6 +38,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -197,6 +200,18 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
                 .eq(MachineTerminalLogDO::getMachineId, machineId);
         return machineTerminalLogDAO.delete(wrapper);
+    }
+
+    @Override
+    public String getTerminalScreenFilePath(Long id) {
+        LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
+                .eq(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
+                .eq(MachineTerminalLogDO::getId, id);
+        return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
+                .map(MachineTerminalLogDO::getScreenPath)
+                .filter(Strings::isNotBlank)
+                .map(s -> Files1.getPath(SystemEnvAttr.SCREEN_PATH.getValue(), s))
+                .orElse(null);
     }
 
 }

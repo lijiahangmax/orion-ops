@@ -306,7 +306,8 @@ public class Utils {
      * @param str str
      * @return unicode
      */
-    @Removed("orion-kit 1.0.4")
+    @Removed("kit 1.0.4")
+    // TODO
     public static String convertControlUnicode(String str) {
         char[] chars = str.toCharArray();
         StringBuilder sb = new StringBuilder();
