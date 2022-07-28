@@ -40,6 +40,10 @@
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <a-upload accept=".cast" :fileList="[]" :beforeUpload="selectScreenFile">
+          <a-button type="primary" icon="caret-right" class="mr8">回放</a-button>
+        </a-upload>
+        <a-divider type="vertical"/>
         <a-icon v-if="$isAdmin()" type="delete" class="tools-icon" title="清空" @click="openClear"/>
         <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
@@ -78,9 +82,12 @@
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
+          <!-- 回放 -->
+          <span class="span-blue pointer" @click="openTerminalScreen(record)">回放</span>
+          <a-divider type="vertical"/>
           <!-- 下载 -->
           <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
+          <a v-else @click="loadDownloadUrl(record)">获取</a>
           <a-divider type="vertical"/>
           <!-- 删除 -->
           <a-popconfirm title="确认删除当前终端日志?"
@@ -99,19 +106,22 @@
       <TerminalLogClearModal ref="clear" @clear="getList({})"/>
       <!-- 数据导出模态框 -->
       <MachineTerminalLogExportModal ref="export"/>
+      <!-- 终端录屏模态框 -->
+      <TerminalScreen ref="screen"/>
     </div>
   </div>
 </template>
 
 <script>
 
-import { defineArrayKey } from '@/lib/utils'
+import { defineArrayKey, readFileBase64 } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
-import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
 import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
+import TerminalScreen from '@/components/terminal/TerminalScreen'
+import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 
 /**
  * 列
@@ -161,7 +171,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
-    width: 165,
+    width: 150,
+    align: 'center',
     fixed: 'right',
     scopedSlots: { customRender: 'action' }
   }
@@ -170,6 +181,7 @@ const columns = [
 export default {
   name: 'MachineTerminalLogs',
   components: {
+    TerminalScreen,
     MachineTerminalLogExportModal,
     TerminalLogClearModal,
     MachineAutoComplete,
@@ -277,10 +289,19 @@ export default {
       this.query.username = undefined
       this.getList({})
     },
+    selectScreenFile(e) {
+      readFileBase64(e).then(r => {
+        this.$refs.screen.openFile(r)
+      })
+      return false
+    },
+    openTerminalScreen(record) {
+      this.$refs.screen.open(record)
+    },
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
+          type: FILE_DOWNLOAD_TYPE.TERMINAL_SCREEN.value,
           id: record.id
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })

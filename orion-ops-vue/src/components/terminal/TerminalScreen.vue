@@ -8,16 +8,16 @@
            :destroyOnClose="true"
            :dialogStyle="{top: '16px', padding: 0}"
            :bodyStyle="{padding: '0', background: '#121314'}"
-           width="min-content"
-           @cancel="close">
+           width="min-content">
     <!-- 头 -->
     <template #title>
       <div class="terminal-screen-header">
         <div class="terminal-screen-header-left">
+          终端回放
           <span v-if="record">
-            终端回放 | {{ record.machineName }}
+            | {{ record.machineName }}
             <a-tooltip title="点击复制">
-            (<span class="pointer" @click="$copy(record.machineHost, true)">{{ record.machineHost }}</span>)
+              (<span class="pointer" @click="$copy(record.machineHost, true)">{{ record.machineHost }}</span>)
             </a-tooltip>
             | {{ record.username }}
           </span>
@@ -66,7 +66,7 @@ const videoConfig = {
   autoPlay: true,
   preload: true,
   idleTimeLimit: 2,
-  poster: 'npt:1',
+  poster: 'npt:0',
   fit: 'height'
 }
 
@@ -89,13 +89,13 @@ export default {
         this.file = 'data:text/plain;base64,' + data
         this.visible = true
         this.record = record
-        this.$nextTick(() => {
-          this.player = Player.create(this.file, this.$refs.video, {
-            ...videoConfig,
-            speed: this.speed
-          })
-        })
+        this.$nextTick(() => this.initPlayer())
       })
+    },
+    openFile(file) {
+      this.file = file
+      this.visible = true
+      this.$nextTick(() => this.initPlayer())
     },
     changeSpeed(v) {
       if (v === this.speed) {
@@ -106,27 +106,30 @@ export default {
       this.$refs.clear.style.width = this.$refs.video.offsetWidth + 'px'
       const curr = this.player.getCurrentTime()
       this.player && this.player.dispose()
+      this.initPlayer()
+      setTimeout(() => {
+        this.player.seek(curr)
+      })
+    },
+    initPlayer() {
       this.player = Player.create(this.file, this.$refs.video, {
         ...videoConfig,
         speed: this.speed
       })
-      setTimeout(() => {
-        this.player.seek(curr).then(() => {
-        })
-      })
     },
     close() {
       this.visible = false
+      setTimeout(() => {
+        this.record = null
+        this.player && this.player.dispose()
+        this.player = null
+        this.file = null
+        this.speed = 1
+      }, 200)
     }
   },
   filters: {
     formatDate
-  },
-  beforeDestroy() {
-    this.record = null
-    this.player && this.player.dispose()
-    this.player = null
-    this.speed = 1
   }
 }
 </script>

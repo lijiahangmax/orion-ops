@@ -199,7 +199,7 @@ export default {
     async loadDownloadUrl(record) {
       try {
         const downloadUrl = await this.$api.getFileDownloadToken({
-          type: FILE_DOWNLOAD_TYPE.TERMINAL_LOG.value,
+          type: FILE_DOWNLOAD_TYPE.TERMINAL_SCREEN.value,
           id: record.logId
         })
         record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
