@@ -170,6 +170,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         try {
             while (session.isOpen() && (read = in.read(bs)) != -1) {
                 // 响应
+                // TODO 都换成这个
                 WebSockets.sendText(session, WsProtocol.OK.msg(bs, 0, read));
                 // 记录录屏
                 String row = Strings.format(SCREEN_BODY_TEMPLATE,

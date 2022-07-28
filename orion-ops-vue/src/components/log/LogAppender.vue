@@ -136,6 +136,10 @@ export default {
   components: { TerminalSearch },
   props: {
     config: Object,
+    isModal: {
+      type: Boolean,
+      default: false
+    },
     appendStyle: {
       type: Object,
       default: () => {
@@ -220,46 +224,56 @@ export default {
       })
     },
     initLogTailView(data) {
-      // 打开日志模块
-      this.term = new Terminal(this.termConfig)
-      this.term.open(this.$refs.logTerminal)
-      // 需要先设置一下 不然modal会闪一下
-      this.term.resize(80, 5)
-      // 注册自适应组件
-      this.plugin.fit = new FitAddon(this.termConfig)
-      this.term.loadAddon(this.plugin.fit)
-      // 注册搜索组件
-      this.plugin.search = new SearchAddon()
-      this.term.loadAddon(this.plugin.search)
-      // 注册 url link组件
-      this.plugin.links = new WebLinksAddon()
-      this.term.loadAddon(this.plugin.links)
-      // 注册自适应监听器
-      window.addEventListener('resize', this.fitTerminal)
-      // 注册快捷键
-      this.term.attachCustomKeyEventHandler((ev) => {
-        // 注册全选键 ctrl + a
-        if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
-          setTimeout(() => {
-            this.term.selectAll()
-          }, 10)
-        }
-        // 注册复制键 ctrl + c
-        if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
-          this.copySelection(false)
-        }
-        // 注册搜索键 ctrl + shift + f
-        if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-          this.$refs.search.open()
-        }
-      })
-      setTimeout(() => {
-        // fit 这里就是调用两次 不然modal的字体有毛病
-        this.fitTerminal()
-        this.fitTerminal()
+      const init = () => {
+        // 打开日志模块
+        this.term = new Terminal(this.termConfig)
+        this.term.open(this.$refs.logTerminal)
+        // 需要先设置一下 不然modal会闪一下
+        this.term.resize(1, 1)
+        // 注册自适应组件
+        this.plugin.fit = new FitAddon(this.termConfig)
+        this.term.loadAddon(this.plugin.fit)
+        // 注册搜索组件
+        this.plugin.search = new SearchAddon()
+        this.term.loadAddon(this.plugin.search)
+        // 注册 url link组件
+        this.plugin.links = new WebLinksAddon()
+        this.term.loadAddon(this.plugin.links)
+        // 注册自适应监听器
+        window.addEventListener('resize', this.fitTerminal)
+        // 注册快捷键
+        this.term.attachCustomKeyEventHandler((ev) => {
+          // 注册全选键 ctrl + a
+          if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+            setTimeout(() => {
+              this.term.selectAll()
+            }, 10)
+          }
+          // 注册复制键 ctrl + c
+          if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
+            this.copySelection(false)
+          }
+          // 注册搜索键 ctrl + shift + f
+          if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+            this.$refs.search.open()
+          }
+        })
+        // 调整大小 因为 modal 必须调整两次 cols 会多1
+        setTimeout(() => {
+          this.fitTerminal()
+          this.fitTerminal()
+        }, 40)
         // 建立连接
-        this.initSocket(data)
-      }, 50)
+        setTimeout(() => {
+          this.initSocket(data)
+        }, 80)
+      }
+      if (this.isModal) {
+        // modal 有个加载过程
+        setTimeout(init, 220)
+      } else {
+        init()
+      }
     },
     initSocket(data) {
       // 打开websocket
@@ -288,9 +302,7 @@ export default {
       }
     },
     fitTerminal() {
-      setTimeout(() => {
-        this.plugin.fit && this.plugin.fit.fit()
-      }, 40)
+      this.plugin.fit && this.plugin.fit.fit()
     },
     clickTerminal() {
       this.visibleRightMenu = false

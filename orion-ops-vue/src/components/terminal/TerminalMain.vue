@@ -154,10 +154,17 @@ const rightMenuHandler = {
     this.term.focus()
   },
   copy() {
-    this.doCopy()
+    // 复制
+    copyToClipboard(this.term.getSelection())
+    this.term.clearSelection()
+    this.term.focus()
   },
   paste() {
-    this.doPaste()
+    // 粘贴
+    getClipboardText().then(clipText => {
+      this.sendKey(clipText)
+      this.term.focus()
+    })
   },
   clear() {
     this.term.clear()
@@ -266,19 +273,6 @@ export default {
         this.sendKey(command)
       }
     },
-    doCopy() {
-      // 复制
-      copyToClipboard(this.term.getSelection())
-      this.term.clearSelection()
-      this.term.focus()
-    },
-    doPaste() {
-      // 粘贴
-      getClipboardText().then(clipText => {
-        this.sendKey(clipText)
-        this.term.focus()
-      })
-    },
     connect() {
       // xx|cols|rows|loginToken
       const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
@@ -312,18 +306,6 @@ export default {
     registerCustomerKey() {
       // 注册自定义按键
       this.term.attachCustomKeyEventHandler((ev) => {
-        // 注册复制键 ctrl + insert
-        // if (ev.keyCode === 45 && ev.ctrlKey && ev.type === 'keydown') {
-        //   this.doCopy()
-        // }
-        // 注册粘贴键 shift + insert
-        // if (ev.keyCode === 45 && ev.shiftKey && ev.type === 'keydown') {
-        //   this.doPaste()
-        // }
-        // 注册粘贴键 ctrl + shift + v
-        // if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-        //   this.doPaste()
-        // }
         // 注册全选键 ctrl + a
         if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
           setTimeout(() => {

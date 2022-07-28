@@ -13,6 +13,7 @@
     <div style="padding: 8px;">
       <LogAppender ref="appender"
                    size="default"
+                   :isModal="true"
                    :appendStyle="{height: 'calc(100vh - 92px)'}"
                    :relId="id"
                    :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
