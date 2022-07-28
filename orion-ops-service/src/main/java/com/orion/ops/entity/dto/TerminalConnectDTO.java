@@ -15,29 +15,29 @@ import lombok.EqualsAndHashCode;
 public class TerminalConnectDTO extends TerminalSizeDTO {
 
     /**
-     * 登陆token
+     * 登陆 token
      */
     private String loginToken;
 
     /**
      * 解析body
      * <p>
-     * .e.g cols|rows|width|height|loginToken
+     * .e.g cols|rows|loginToken
      *
      * @param body body
      * @return connect
      */
     public static TerminalConnectDTO parse(String body) {
         String[] conf = body.split("\\|");
-        if (conf.length != 5) {
+        if (conf.length != 3) {
             return null;
         }
-        // 解析size
+        // 解析 size
         TerminalConnectDTO connect = parseSize(conf, TerminalConnectDTO::new);
         if (connect == null) {
             return null;
         }
-        connect.setLoginToken(conf[4]);
+        connect.setLoginToken(conf[2]);
         return connect;
     }
 

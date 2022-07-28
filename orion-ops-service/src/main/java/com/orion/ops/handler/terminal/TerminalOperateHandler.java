@@ -22,6 +22,7 @@ import com.orion.ops.handler.terminal.screen.TerminalScreenHeader;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
+import com.orion.ops.utils.WebSockets;
 import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -102,7 +103,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         // 初始化 shell 执行器
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(hint.getTerminalType());
-        executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
+        executor.size(hint.getCols(), hint.getRows());
     }
 
     /**
@@ -169,7 +170,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         try {
             while (session.isOpen() && (read = in.read(bs)) != -1) {
                 // 响应
-                session.sendMessage(new TextMessage(WsProtocol.OK.msg(bs, 0, read)));
+                WebSockets.sendText(session, WsProtocol.OK.msg(bs, 0, read));
                 // 记录录屏
                 String row = Strings.format(SCREEN_BODY_TEMPLATE,
                         ((double) (System.currentTimeMillis() - connectedTime)) / Dates.SECOND_STAMP,
@@ -228,50 +229,26 @@ public class TerminalOperateHandler implements IOperateHandler {
             return;
         }
         switch (operate) {
+            case KEY:
+                executor.write(Strings.bytes(body));
+                return;
             case PING:
                 this.lastPing = System.currentTimeMillis();
                 session.sendMessage(new TextMessage(WsProtocol.PONG.get()));
+                return;
+            case RESIZE:
+                this.resize(body);
+                return;
+            case COMMAND:
+                executor.write(Strings.bytes(body));
+                executor.write(new byte[]{Letters.LF});
                 return;
             case DISCONNECT:
                 this.sendClose(WsCloseCode.DISCONNECT);
                 log.info("terminal 用户主动断连 {}", token);
                 return;
-            case RESIZE:
-                this.resize(body);
-                return;
             default:
-                this.handleWriter(operate, body);
         }
-    }
-
-    /**
-     * 处理输入操作操作
-     *
-     * @param operate 操作
-     * @param body    body
-     */
-    private void handleWriter(TerminalOperate operate, String body) {
-        if (body == null) {
-            return;
-        }
-        byte[] bs;
-        switch (operate) {
-            case KEY:
-                bs = Strings.bytes(body);
-                break;
-            case COMMAND:
-                bs = Strings.bytes(body + Const.LF);
-                break;
-            case INTERRUPT:
-                bs = new byte[]{3, 10};
-                break;
-            case HANGUP:
-                bs = new byte[]{24, 10};
-                break;
-            default:
-                return;
-        }
-        executor.write(bs);
     }
 
     /**
@@ -281,17 +258,15 @@ public class TerminalOperateHandler implements IOperateHandler {
         // 检查参数
         TerminalSizeDTO window = TerminalSizeDTO.parse(body);
         if (window == null) {
-            session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
+            session.sendMessage(new TextMessage(WsProtocol.ERROR.get()));
             return;
         }
         hint.setCols(window.getCols());
         hint.setRows(window.getRows());
-        hint.setWidth(window.getWidth());
-        hint.setHeight(window.getHeight());
         if (!executor.isConnected()) {
             executor.connect();
         }
-        executor.size(window.getCols(), window.getRows(), window.getWidth(), window.getHeight());
+        executor.size(window.getCols(), window.getRows());
         executor.resize();
     }
 

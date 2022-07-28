@@ -2,6 +2,7 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.convert.Converts;
@@ -29,7 +30,6 @@ import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.Valid;
-import com.orion.ops.utils.ValueMix;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -74,7 +74,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         }
         // 设置accessToken
         Long userId = Currents.getUserId();
-        String token = ValueMix.base62ecbEnc(userId + "_" + System.currentTimeMillis(), TerminalConst.TERMINAL);
+        String token = UUIds.random32();
         // 获取终端配置
         MachineTerminalVO config = this.getMachineConfig(machineId);
         // 设置数据
@@ -94,7 +94,7 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
         access.setEnableWebLink(config.getEnableWebLink());
         // 设置缓存
         String cacheKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
-        redisTemplate.opsForValue().set(cacheKey, machineId + Strings.EMPTY,
+        redisTemplate.opsForValue().set(cacheKey, userId + "_" + machineId,
                 KeyConst.TERMINAL_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
         log.info("用户获取terminal uid: {} machineId: {} token: {}", userId, machineId, token);
         // 设置日志参数

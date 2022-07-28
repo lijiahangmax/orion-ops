@@ -19,39 +19,24 @@ import java.io.IOException;
 public enum WsProtocol {
 
     /**
-     * 握手
+     * 正常返回
      */
-    ACK("010"),
+    OK("0"),
 
     /**
      * 连接成功
      */
-    CONNECTED("015"),
+    CONNECTED("1"),
 
     /**
      * pong
      */
-    PONG("020"),
-
-    /**
-     * 正常返回
-     */
-    OK("100"),
+    PONG("2"),
 
     /**
      * 未知操作
      */
-    UNKNOWN_OPERATE("200"),
-
-    /**
-     * 参数缺失
-     */
-    MISS_ARGUMENT("210"),
-
-    /**
-     * 不合法的请求体
-     */
-    ILLEGAL_BODY("220"),
+    ERROR("3"),
 
     ;
 

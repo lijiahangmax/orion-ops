@@ -2,7 +2,6 @@ package com.orion.ops.utils;
 
 import com.orion.ext.location.region.LocationRegions;
 import com.orion.ext.location.region.core.Region;
-import com.orion.lang.annotation.Removed;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -306,7 +305,6 @@ public class Utils {
      * @param str str
      * @return unicode
      */
-    @Removed("kit 1.0.4")
     // TODO
     public static String convertControlUnicode(String str) {
         char[] chars = str.toCharArray();
@@ -327,6 +325,6 @@ public class Utils {
         return sb.toString();
     }
 
-    // TODO 计算 清理 下载 获取 上传 录屏文件
+    // TODO 计算 清理
 
 }

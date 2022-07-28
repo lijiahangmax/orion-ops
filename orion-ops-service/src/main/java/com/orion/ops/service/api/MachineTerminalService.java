@@ -1,17 +1,14 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.ops.constant.terminal.TerminalConst;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
 import com.orion.ops.entity.vo.MachineTerminalLogVO;
 import com.orion.ops.entity.vo.MachineTerminalVO;
 import com.orion.ops.entity.vo.TerminalAccessVO;
-import com.orion.ops.utils.ValueMix;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 终端服务
@@ -94,19 +91,5 @@ public interface MachineTerminalService {
      * @return path
      */
     String getTerminalScreenFilePath(Long id);
-
-    /**
-     * 获取 token 中的 userId
-     *
-     * @param token token
-     * @return userId
-     */
-    static Long getTerminalAccessTokenUserId(String token) {
-        return Optional.ofNullable(ValueMix.base62ecbDec(token, TerminalConst.TERMINAL))
-                .map(s -> s.split("_"))
-                .map(s -> s[0])
-                .map(Long::valueOf)
-                .orElse(null);
-    }
 
 }

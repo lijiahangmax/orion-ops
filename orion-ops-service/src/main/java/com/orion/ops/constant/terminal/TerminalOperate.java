@@ -15,51 +15,41 @@ import lombok.Getter;
 public enum TerminalOperate {
 
     /**
-     * 建立连接
+     * 键入
      */
-    CONNECT("05", true),
+    KEY("0", true),
+
+    /**
+     * 连接
+     */
+    CONNECT("1", true),
 
     /**
      * ping
      */
-    PING("10", false),
+    PING("2", false),
 
     /**
      * 更改大小
      */
-    RESIZE("15", true),
-
-    /**
-     * 键入key
-     */
-    KEY("20", true),
+    RESIZE("3", true),
 
     /**
      * 键入命令
      */
-    COMMAND("25", true),
-
-    /**
-     * 中断 ctrl+c
-     */
-    INTERRUPT("30", false),
-
-    /**
-     * 挂起 ctrl+x
-     */
-    HANGUP("35", false),
+    COMMAND("4", true),
 
     /**
      * 关闭连接
      */
-    DISCONNECT("40", false),
+    DISCONNECT("5", false),
 
     ;
 
     /**
      * 前缀长度
      */
-    public static final int PREFIX_SIZE = 2;
+    public static final int PREFIX_SIZE = 1;
 
     private final String operate;
 

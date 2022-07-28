@@ -32,9 +32,7 @@ import java.util.stream.Collectors;
 public class TerminalSessionManager {
 
     /**
-     * 已连接的 session
-     * key: token
-     * value: handler
+     * 已连接的 session sessionId:handler
      */
     private final Map<String, IOperateHandler> sessionHolder = Maps.newCurrentHashMap();
 
