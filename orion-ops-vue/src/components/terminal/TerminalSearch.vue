@@ -16,22 +16,22 @@
       <div class="search-options">
         <a-row>
           <a-col :span="12">
-            <a-checkbox v-model="search.regex">
+            <a-checkbox class="usn" v-model="search.regex">
               正则匹配
             </a-checkbox>
           </a-col>
           <a-col :span="12">
-            <a-checkbox v-model="search.words">
+            <a-checkbox class="usn" v-model="search.words">
               单词全匹配
             </a-checkbox>
           </a-col>
           <a-col :span="12">
-            <a-checkbox v-model="search.matchCase">
+            <a-checkbox class="usn" v-model="search.matchCase">
               区分大小写
             </a-checkbox>
           </a-col>
           <a-col :span="12">
-            <a-checkbox v-model="search.incremental">
+            <a-checkbox class="usn" v-model="search.incremental">
               增量查找
             </a-checkbox>
           </a-col>

@@ -107,12 +107,6 @@
             {{ record.host }}
           </span>
         </template>
-        <!-- 端口 -->
-        <template v-slot:sshPort="record">
-          <span class="span-blue pointer" title="复制ssh" @click="copySshCommand(record)">
-            {{ record.sshPort }}
-          </span>
-        </template>
         <!-- 状态 -->
         <template v-slot:status="record">
           <a-badge v-if="record.status"
@@ -232,7 +226,6 @@
 </template>
 
 <script>
-import { getSshCommand } from '@/lib/utils'
 import { enumValueOf, ENABLE_STATUS, IMPORT_TYPE } from '@/lib/enum'
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
 import AddMachineModal from '@/components/machine/AddMachineModal'
@@ -262,13 +255,6 @@ const columns = [
     width: 180,
     sorter: (a, b) => a.host.localeCompare(b.host),
     scopedSlots: { customRender: 'host' }
-  },
-  {
-    title: '端口',
-    key: 'sshPort',
-    width: 80,
-    sorter: (a, b) => a.sshPort - b.sshPort,
-    scopedSlots: { customRender: 'sshPort' }
   },
   {
     title: '状态',
@@ -464,9 +450,6 @@ export default {
     },
     openDetail(id) {
       this.$refs.detailModal.open(id)
-    },
-    copySshCommand(record) {
-      this.$copy(getSshCommand(record.username, record.host, record.sshPort), true)
     },
     menuHandler({ key }, record) {
       moreMenuHandler[key].call(this, record)

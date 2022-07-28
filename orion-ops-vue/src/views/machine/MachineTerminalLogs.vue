@@ -4,12 +4,12 @@
     <div class="table-search-columns">
       <a-form-model class="machine-log-search-form" ref="query" :model="query">
         <a-row>
-          <a-col :span="5">
+          <a-col :span="6">
             <a-form-model-item label="主机" prop="host">
               <MachineAutoComplete ref="machineSelector" @change="selectedMachine" @choose="getList({})"/>
             </a-form-model-item>
           </a-col>
-          <a-col v-if="$isAdmin()" :span="5">
+          <a-col v-if="$isAdmin()" :span="6">
             <a-form-model-item label="用户" prop="user">
               <UserAutoComplete ref="userSelector" @change="selectedUser" @choose="getList({})"/>
             </a-form-model-item>

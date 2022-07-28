@@ -45,11 +45,6 @@ export const TERMINAL_STATUS = {
     label: '未连接',
     color: '#FFD43B'
   },
-  UNAUTHORIZED: {
-    value: 10,
-    label: '未认证',
-    color: '#82C91E'
-  },
   CONNECTED: {
     value: 20,
     label: '已连接',
