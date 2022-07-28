@@ -22,11 +22,11 @@ public enum FileDownloadType {
     SECRET_KEY(10),
 
     /**
-     * terminal 日志
+     * terminal 录屏
      *
      * @see com.orion.ops.constant.system.SystemEnvAttr#LOG_PATH
      */
-    TERMINAL_LOG(20),
+    TERMINAL_SCREEN(20),
 
     /**
      * 命令 执行日志

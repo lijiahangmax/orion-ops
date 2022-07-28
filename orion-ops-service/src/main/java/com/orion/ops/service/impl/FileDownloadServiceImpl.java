@@ -1,7 +1,6 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
@@ -12,14 +11,11 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.ResultCode;
 import com.orion.ops.constant.download.FileDownloadType;
-import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTailListDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
-import com.orion.ops.dao.MachineTerminalLogDAO;
 import com.orion.ops.entity.domain.FileTailListDO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
-import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.FileDownloadDTO;
 import com.orion.ops.handler.sftp.direct.DirectDownloader;
 import com.orion.ops.service.api.*;
@@ -48,10 +44,10 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     private MachineSecretKeyDAO machineSecretKeyDAO;
 
     @Resource
-    private MachineTerminalLogDAO machineTerminalLogDAO;
+    private CommandExecService commandExecService;
 
     @Resource
-    private CommandExecService commandExecService;
+    private MachineTerminalService machineTerminalService;
 
     @Resource
     private FileTailListDAO fileTailListDAO;
@@ -86,9 +82,9 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 path = this.getDownloadSecretKeyFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
-            case TERMINAL_LOG:
-                // terminal 日志
-                path = this.getDownloadTerminalLogFilePath(id);
+            case TERMINAL_SCREEN:
+                // terminal 录屏
+                path = machineTerminalService.getTerminalScreenFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
             case EXEC_LOG:
@@ -226,24 +222,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 .map(MachineSecretKeyDO::getSecretKeyPath)
                 .map(MachineKeyService::getKeyPath)
                 .filter(Strings::isNotBlank)
-                .orElse(null);
-    }
-
-    /**
-     * 获取下载 terminal日志路径
-     *
-     * @param id id
-     * @return path
-     * @see FileDownloadType#TERMINAL_LOG
-     */
-    private String getDownloadTerminalLogFilePath(Long id) {
-        LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
-                .eq(!Currents.isAdministrator(), MachineTerminalLogDO::getUserId, Currents.getUserId())
-                .eq(MachineTerminalLogDO::getId, id);
-        return Optional.ofNullable(machineTerminalLogDAO.selectOne(wrapper))
-                .map(MachineTerminalLogDO::getOperateLogFile)
-                .filter(Strings::isNotBlank)
-                .map(s -> Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), s))
                 .orElse(null);
     }
 

@@ -2,6 +2,7 @@ package com.orion.ops.utils;
 
 import com.orion.ext.location.region.LocationRegions;
 import com.orion.ext.location.region.core.Region;
+import com.orion.lang.annotation.Removed;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -206,7 +207,7 @@ public class Utils {
      * 清除 ANSI 高亮颜色行
      *
      * @param s s
-     * @return 清除 ANSI 属性
+     * @return 清除 ANSI 颜色属性
      * @see com.orion.ops.constant.StainCode
      */
     public static String cleanStainAnsiCode(String s) {
@@ -298,5 +299,34 @@ public class Utils {
         }
         return CnConst.UNKNOWN;
     }
+
+    /**
+     * 转换控制字符 unicode
+     *
+     * @param str str
+     * @return unicode
+     */
+    @Removed("kit 1.0.4")
+    // TODO
+    public static String convertControlUnicode(String str) {
+        char[] chars = str.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : chars) {
+            if (c < 32 || c == 34 || c == 92 || c == 127) {
+                sb.append("\\u00");
+                int code = (c & 0xFF);
+                String tmp = Integer.toHexString(code);
+                if (tmp.length() == 1) {
+                    sb.append("0");
+                }
+                sb.append(tmp);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    // TODO 计算 清理 下载 获取 上传 录屏文件
 
 }

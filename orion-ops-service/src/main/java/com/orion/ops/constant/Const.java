@@ -22,6 +22,8 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String PIC_PATH = "pic";
 
+    public static final String SCREEN_PATH = "screen";
+
     public static final String SWAP_PATH = "swap";
 
     public static final String LOG_PATH = "logs";
@@ -34,7 +36,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String TAIL_FILE_PATH = "tail";
 
-    public static final String TERMINAL_LOG_DIR = "/terminal";
+    public static final String TERMINAL_DIR = "/terminal";
 
     public static final String BUILD_DIR = "/build";
 
@@ -76,11 +78,11 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String EVENT = "event";
 
+    public static final String CAST_SUFFIX = "cast";
+
     public static final Integer FORBID_DELETE_CAN = 1;
 
     public static final Integer FORBID_DELETE_NOT = 2;
-
-    public static final String LOGIN_TOKEN = "O-Login-Token";
 
     public static final int EXEC_COMMAND_OMIT = 80;
 
@@ -126,6 +128,8 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final int DEFAULT_LOGIN_TOKEN_EXPIRE_HOUR = 24 * 2;
 
+    public static final int SFTP_UPLOAD_THRESHOLD = 512;
+
     public static final String GITHUB = "github";
 
     public static final String GITEE = "gitee";
@@ -138,7 +142,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String SOCKET5 = "socket5";
 
-    public static final int SFTP_UPLOAD_THRESHOLD = 512;
+    public static final String DEFAULT_SHELL = "/bin/bash";
 
     public static final String LF_2 = "\n\n";
 

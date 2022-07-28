@@ -73,7 +73,7 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 > 控制台
 
-![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/25/47e5dd54-8688-4123-8a9a-bfea924fc752.png "控制台")
+![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/25/1d5d1740-dff1-4e17-93dc-b2b329e3bbe4.png "控制台")
 
 > 机器列表
 

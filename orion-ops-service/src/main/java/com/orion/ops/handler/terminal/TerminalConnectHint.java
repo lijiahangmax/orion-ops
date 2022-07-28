@@ -80,7 +80,6 @@ public class TerminalConnectHint {
     private Long logId;
 
     public TerminalConnectHint() {
-        this.connectedTime = new Date();
     }
 
 }

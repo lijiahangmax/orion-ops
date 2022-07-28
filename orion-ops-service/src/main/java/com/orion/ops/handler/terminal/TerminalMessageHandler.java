@@ -203,7 +203,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             return;
         }
         // 获取token信息
-        Long tokenUserId = MachineTerminalService.getTokenUserId(token);
+        Long tokenUserId = MachineTerminalService.getTerminalAccessTokenUserId(token);
         String tokenKey = Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, token);
         Long machineId = Optional.ofNullable(redisTemplate.opsForValue().get(tokenKey))
                 .map(Long::valueOf)

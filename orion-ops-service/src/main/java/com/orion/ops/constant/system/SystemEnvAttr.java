@@ -33,6 +33,11 @@ public enum SystemEnvAttr {
     SWAP_PATH("交换分区目录", false),
 
     /**
+     * 录屏存放目录
+     */
+    SCREEN_PATH("录屏存放目录", false),
+
+    /**
      * 日志存放目录
      */
     LOG_PATH("日志存放目录", false),

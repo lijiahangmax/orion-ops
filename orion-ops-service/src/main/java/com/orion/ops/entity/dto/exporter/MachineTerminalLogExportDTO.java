@@ -58,9 +58,9 @@ public class MachineTerminalLogExportDTO {
     @ExportField(index = 7, header = "close code", width = 11, wrapText = true)
     private Integer closeCode;
 
-    @ApiModelProperty(value = "日志文件路径")
-    @ExportField(index = 8, header = "日志文件路径", width = 35, wrapText = true)
-    private String logPath;
+    @ApiModelProperty(value = "录屏文件路径")
+    @ExportField(index = 8, header = "录屏文件路径", width = 35, wrapText = true)
+    private String screenPath;
 
     static {
         TypeStore.STORE.register(MachineTerminalLogDO.class, MachineTerminalLogExportDTO.class, p -> {
@@ -73,7 +73,7 @@ public class MachineTerminalLogExportDTO {
             dto.setConnectedTime(p.getConnectedTime());
             dto.setDisconnectedTime(p.getDisconnectedTime());
             dto.setCloseCode(p.getCloseCode());
-            dto.setLogPath(p.getOperateLogFile());
+            dto.setScreenPath(p.getScreenPath());
             return dto;
         });
     }

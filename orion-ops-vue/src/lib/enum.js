@@ -498,9 +498,9 @@ export const FILE_DOWNLOAD_TYPE = {
     value: 10
   },
   /**
-   * 终端日志
+   * 终端录屏
    */
-  TERMINAL_LOG: {
+  TERMINAL_SCREEN: {
     value: 20
   },
   /**

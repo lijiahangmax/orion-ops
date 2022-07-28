@@ -21,16 +21,18 @@ public class PathBuilders {
     }
 
     /**
-     * 获取 terminal 日志路径
+     * 获取 terminal 录屏路径
      *
-     * @param userId userId
+     * @param userId    userId
+     * @param machineId machineId
      * @return path
      */
-    public static String getTerminalLogPath(Long userId) {
-        return Const.TERMINAL_LOG_DIR
-                + "/" + Dates.current(Dates.YMD_HMS2)
-                + "_" + userId
-                + "." + Const.SUFFIX_LOG;
+    public static String getTerminalScreenPath(Long userId, Long machineId) {
+        return Const.TERMINAL_DIR
+                + "/" + userId
+                + "_" + machineId
+                + "_" + Dates.current(Dates.YMD_HMS2)
+                + "." + Const.CAST_SUFFIX;
     }
 
     /**

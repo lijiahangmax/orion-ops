@@ -3,7 +3,6 @@ package com.orion.ops.constant.ws;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Valid;
-import com.orion.lang.utils.io.Streams;
 import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayOutputStream;
@@ -73,16 +72,17 @@ public enum WsProtocol {
     }
 
     public byte[] msg(byte[] body) {
+        return this.msg(body, 0, body.length);
+    }
+
+    public byte[] msg(byte[] body, int offset, int len) {
         Valid.notNull(body);
-        ByteArrayOutputStream o = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
             o.write(Strings.bytes(code + SYMBOL));
-            o.write(body);
+            o.write(body, offset, len);
             return o.toByteArray();
         } catch (IOException e) {
             throw Exceptions.ioRuntime(e);
-        } finally {
-            Streams.close(o);
         }
     }
 
