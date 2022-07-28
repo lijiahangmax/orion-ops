@@ -160,7 +160,6 @@ const terminalEventHandler = {
 const clientHandler = {
   onopen() {
     console.log('open')
-    this.status = TERMINAL_STATUS.UNAUTHORIZED.value
     this.$emit('initFinish', true)
     // 建立连接
     terminalOperator.connect.call(this)
@@ -203,11 +202,9 @@ const clientHandler = {
 const terminalOperator = {
   connect() {
     console.log('connect')
-    // xx|cols|rows|width|height|loginToken
-    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
-    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
+    // xx|cols|rows|loginToken
     const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
-    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
+    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${loginToken}`
     this.client.send(body)
   },
   resize(cols, rows) {
@@ -216,10 +213,8 @@ const terminalOperator = {
       return
     }
     console.log('resize', cols, rows)
-    // xx|cols|rows|width|height
-    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
-    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
-    const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
+    // xx|cols|rows
+    const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}`
     this.client.send(body)
   },
   key(e) {
@@ -279,19 +274,15 @@ function parseProtocol(msg) {
   if (!this.term) {
     return
   }
-  const code = msg.substring(0, 3)
+  const code = msg.substring(0, 1)
   const len = msg.length
   switch (code) {
-    case WS_PROTOCOL.ACK.value:
-      this.status = TERMINAL_STATUS.UNAUTHORIZED.value
-      this.term.focus()
-      break
     case WS_PROTOCOL.CONNECTED.value:
       this.status = TERMINAL_STATUS.CONNECTED.value
       this.term.focus()
       break
     case WS_PROTOCOL.OK.value:
-      this.term.write(msg.substring(4, len))
+      this.term.write(msg.substring(2, len))
       break
     default:
       console.log(enumValueOf(WS_PROTOCOL, code).label)

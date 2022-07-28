@@ -15,58 +15,29 @@ export function enumValueOf(e, value) {
  * 终端操作
  */
 export const TERMINAL_OPERATOR = {
-  /**
-   * 建立连接
-   */
-  CONNECT: {
-    value: '05'
-  },
-  /**
-   * ping
-   */
-  PING: {
-    value: '10'
-  },
-  /**
-   * 更改大小
-   */
-  RESIZE: {
-    value: '15'
-  },
-  /**
-   * 键入key
-   */
   KEY: {
-    value: '20'
+    value: '0'
   },
-  /**
-   * 键入命令
-   */
+  CONNECT: {
+    value: '1'
+  },
+  PING: {
+    value: '2'
+  },
+  RESIZE: {
+    value: '3'
+  },
   COMMAND: {
-    value: '25'
+    value: '4'
   },
-  /**
-   * 中断 ctrl+c
-   */
-  INTERRUPT: {
-    value: '30'
-  },
-  /**
-   *  挂起 ctrl+x
-   */
-  HANGUP: {
-    value: '35'
-  },
-  /**
-   * 关闭连接
-   */
   DISCONNECT: {
-    value: '40'
+    value: '5'
   }
 }
 
 /**
  * 终端状态
+ * TODO
  */
 export const TERMINAL_STATUS = {
   NOT_CONNECT: {
@@ -100,33 +71,21 @@ export const TERMINAL_STATUS = {
  * WS protocol
  */
 export const WS_PROTOCOL = {
-  ACK: {
-    value: '010',
-    label: 'ack'
+  OK: {
+    value: '0',
+    label: 'ok'
   },
   CONNECTED: {
-    value: '015',
+    value: '1',
     label: 'connected'
   },
   PONG: {
-    value: '020',
+    value: '2',
     label: 'pong'
   },
-  OK: {
-    value: '100',
-    label: 'ok'
-  },
-  UNKNOWN_OPERATE: {
-    value: '200',
-    label: 'unknown_operate'
-  },
-  MISS_ARGUMENT: {
-    value: '210',
-    label: 'miss_argument'
-  },
-  ILLEGAL_BODY: {
-    value: '220',
-    label: 'illegal_body'
+  ERROR: {
+    value: '3',
+    label: 'error'
   }
 }
 
