@@ -13,18 +13,27 @@
     <template #title>
       <div class="terminal-watcher-header">
         <div class="terminal-watcher-header-left">
-          终端监视
-          <span v-if="record">
-            | {{ record.machineName }}
-            <a-tooltip title="点击复制">
-              (<span class="pointer" @click="$copy(record.machineHost, true)">{{ record.machineHost }}</span>)
-            </a-tooltip>
-            | {{ record.username }}
-          </span>
+          <!-- 信息 -->
+          <span class="terminal-info">
+           终端监视
+           <span v-if="record">
+             | {{ record.machineName }}
+             <a-tooltip title="点击复制">
+               (<span class="pointer" @click="$copy(record.machineHost, true)">{{ record.machineHost }}</span>)
+             </a-tooltip>
+             | {{ record.username }}
+           </span>
+         </span>
+          <!-- 发送同步  -->
+          <a-tooltip title="发送 ctrl + l 刷新">
+            <a-icon v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
+                    class="header-icon sync-icon" type="sync"
+                    @click="sendNop"/>
+          </a-tooltip>
         </div>
         <div class="terminal-watcher-header-right">
           <!-- 关闭 -->
-          <a-icon class="close-icon" type="close" title="关闭" @click="close"/>
+          <a-icon class="header-icon" type="close" title="关闭" @click="close"/>
         </div>
       </div>
     </template>
@@ -39,7 +48,7 @@
 import { Terminal } from 'xterm'
 import { formatDate } from '@/lib/filters'
 import 'xterm/css/xterm.css'
-import { TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
+import { TERMINAL_STATUS, TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
 
 /**
  * 客户端操作处理器
@@ -60,10 +69,13 @@ const clientHandler = {
     const len = msg.length
     switch (code) {
       case WS_PROTOCOL.CONNECTED.value:
-        this.$message.success('已连接, 等待客户端操作')
+        this.status = TERMINAL_STATUS.CONNECTED.value
+        this.$message.success('已连接')
+        this.term.onData(event => this.sendKey(event))
         this.term.focus()
         break
       case WS_PROTOCOL.OK.value:
+        this.received = true
         this.term.write(msg.substring(2, len))
         break
       default:
@@ -71,10 +83,12 @@ const clientHandler = {
     }
   },
   onerror() {
+    this.status = TERMINAL_STATUS.ERROR.value
     this.$message.error('当前会话无法连接', 2)
     this.term.write('\r\n\x1b[91mcurrent session cannot be connected\x1b[0m')
   },
   onclose(e) {
+    this.status = TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
   }
 }
@@ -84,10 +98,13 @@ export default {
   data() {
     return {
       visible: false,
+      status: TERMINAL_STATUS.NOT_CONNECT.value,
+      TERMINAL_STATUS,
       record: null,
       term: null,
       client: null,
-      width: 'max-content'
+      width: 'max-content',
+      received: false
     }
   },
   methods: {
@@ -131,13 +148,30 @@ export default {
         clientHandler.onmessage.call(this, event)
       }
     },
+    sendKey(e) {
+      if (this.status !== TERMINAL_STATUS.CONNECTED.value || this.record.readonly === 1) {
+        return
+      }
+      const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
+      this.client.send(body)
+    },
+    sendNop() {
+      if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
+        return
+      }
+      this.received = true
+      this.client.send(TERMINAL_OPERATOR.NOP.value)
+    },
     close() {
       this.visible = false
+      this.client && this.client.readyState === 1 && this.client.close()
       setTimeout(() => {
         this.record = null
+        this.status = TERMINAL_STATUS.NOT_CONNECT.value
         this.term && this.term.dispose()
         this.term = null
         this.width = 'max-content'
+        this.received = false
       }, 200)
     }
   },
@@ -154,7 +188,7 @@ export default {
   justify-content: space-between;
   font-size: 14px;
 
-  .terminal-watcher-header-right {
+  .terminal-watcher-header-left, .terminal-watcher-header-right {
     display: flex;
     align-items: center;
   }
@@ -163,14 +197,21 @@ export default {
     width: 68px;
     margin: 0 8px 0 4px;
   }
+}
 
-  .close-icon {
-    transition: .2s;
-  }
+.sync-icon {
+  color: #9254de;
+  margin-left: 16px;
+}
 
-  .close-icon:hover {
-    color: #1890FF;
-  }
+.header-icon {
+  cursor: pointer;
+  font-size: 16px;
+  transition: .2s;
+}
+
+.header-icon:hover {
+  color: #1890FF;
 }
 
 .terminal-watcher-video {
@@ -182,7 +223,7 @@ export default {
   border-radius: 2px 2px 0 0;
 }
 
-/deep/ .asciinema-player {
+.terminal-watcher-wrapper {
   border-radius: 0 0 2px 2px;
 }
 </style>

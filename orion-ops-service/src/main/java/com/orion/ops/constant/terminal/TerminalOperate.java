@@ -40,9 +40,9 @@ public enum TerminalOperate {
     COMMAND("4", true),
 
     /**
-     * ctrl + e
+     * ctrl + l
      */
-    NOP("5", false),
+    CLEAR("5", false),
 
     /**
      * 关闭连接

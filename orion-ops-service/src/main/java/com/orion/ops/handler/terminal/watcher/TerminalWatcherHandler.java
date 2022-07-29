@@ -65,7 +65,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
                 this.auth(session, body);
                 return;
             }
-            if (operate != TerminalOperate.KEY || operate != TerminalOperate.NOP) {
+            if (operate != TerminalOperate.KEY && operate != TerminalOperate.CLEAR) {
                 return;
             }
             // 检查连接
@@ -74,7 +74,8 @@ public class TerminalWatcherHandler implements WebSocketHandler {
                 return;
             }
             // 检查是否只读
-            if (Const.ENABLE.equals(session.getAttributes().get(WebSockets.READONLY))) {
+            final boolean readonly = Const.ENABLE.equals(session.getAttributes().get(WebSockets.READONLY));
+            if (operate == TerminalOperate.KEY && readonly) {
                 return;
             }
             // 获取连接
@@ -101,7 +102,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         log.info("terminal-watcher 关闭连接 token: {}, code: {}, reason: {}", session.getId(), status.getCode(), status.getReason());
-        // 这时候主可能已经关了
+        // 这时候主连接可能已经关了
         IOperateHandler handler = terminalSessionManager.getSession((String) session.getAttributes().get(WebSockets.TOKEN));
         if (handler == null) {
             return;
