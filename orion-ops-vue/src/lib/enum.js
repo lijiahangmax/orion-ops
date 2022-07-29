@@ -30,7 +30,7 @@ export const TERMINAL_OPERATOR = {
   COMMAND: {
     value: '4'
   },
-  NOP: {
+  CLEAR: {
     value: '5'
   },
   DISCONNECT: {

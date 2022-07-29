@@ -32,6 +32,8 @@
           </a-tooltip>
         </div>
         <div class="terminal-watcher-header-right">
+          <!-- 状态 -->
+          <a-badge class="terminal-status-badge" :count="statusLabel" :numberStyle="statusStyle"/>
           <!-- 关闭 -->
           <a-icon class="header-icon" type="close" title="关闭" @click="close"/>
         </div>
@@ -39,7 +41,36 @@
     </template>
     <!-- 终端 -->
     <div class="terminal-watcher-wrapper">
-      <div class="terminal" ref="terminal"/>
+      <!-- 右键菜单 -->
+      <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
+        <div class="terminal" ref="terminal" @click="clickTerminal"/>
+        <!-- 下拉菜单 -->
+        <template #overlay>
+          <a-menu @click="clickRightMenuItem">
+            <a-menu-item key="selectAll">
+              <span class="right-menu-item"><a-icon type="profile"/>全选</span>
+            </a-menu-item>
+            <a-menu-item key="copy">
+              <span class="right-menu-item"><a-icon type="copy"/>复制</span>
+            </a-menu-item>
+            <a-menu-item key="paste" v-if="record && record.readonly !== 1">
+              <span class="right-menu-item"><a-icon type="snippets"/>粘贴</span>
+            </a-menu-item>
+            <a-menu-item key="clear">
+              <span class="right-menu-item"><a-icon type="stop"/>清空</span>
+            </a-menu-item>
+            <a-menu-item key="openSearch">
+              <span class="right-menu-item"><a-icon type="search"/>搜索</span>
+            </a-menu-item>
+            <a-menu-item key="toTop">
+              <span class="right-menu-item"><a-icon type="vertical-align-top"/>去顶部</span>
+            </a-menu-item>
+            <a-menu-item key="toBottom">
+              <span class="right-menu-item"><a-icon type="vertical-align-bottom"/>去底部</span>
+            </a-menu-item>
+          </a-menu>
+        </template>
+      </a-dropdown>
     </div>
   </a-modal>
 </template>
@@ -48,7 +79,8 @@
 import { Terminal } from 'xterm'
 import { formatDate } from '@/lib/filters'
 import 'xterm/css/xterm.css'
-import { TERMINAL_STATUS, TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
+import { enumValueOf, TERMINAL_STATUS, TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
+import { copyToClipboard, getClipboardText } from '@/lib/utils'
 
 /**
  * 客户端操作处理器
@@ -93,6 +125,45 @@ const clientHandler = {
   }
 }
 
+/**
+ * 右键菜单操作
+ */
+const rightMenuHandler = {
+  selectAll() {
+    this.term.selectAll()
+    this.term.focus()
+  },
+  copy() {
+    // 复制
+    copyToClipboard(this.term.getSelection())
+    this.term.clearSelection()
+    this.term.focus()
+  },
+  paste() {
+    // 粘贴
+    getClipboardText().then(clipText => {
+      this.sendKey(clipText)
+      this.term.focus()
+    })
+  },
+  clear() {
+    this.term.clear()
+    this.term.clearSelection()
+    this.term.focus()
+  },
+  toTop() {
+    this.term.scrollToTop()
+    this.term.focus()
+  },
+  toBottom() {
+    this.term.scrollToBottom()
+    this.term.focus()
+  },
+  openSearch() {
+    this.$refs.search.open()
+  }
+}
+
 export default {
   name: 'TerminalWatcherModal',
   data() {
@@ -104,7 +175,18 @@ export default {
       term: null,
       client: null,
       width: 'max-content',
+      visibleRightMenu: false,
       received: false
+    }
+  },
+  computed: {
+    statusLabel: function() {
+      return enumValueOf(TERMINAL_STATUS, this.status).label
+    },
+    statusStyle: function() {
+      return {
+        backgroundColor: enumValueOf(TERMINAL_STATUS, this.status).color
+      }
     }
   },
   methods: {
@@ -149,7 +231,12 @@ export default {
       }
     },
     sendKey(e) {
-      if (this.status !== TERMINAL_STATUS.CONNECTED.value || this.record.readonly === 1) {
+      if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
+        return
+      }
+      if (this.record.readonly === 1) {
+        this.$message.destroy()
+        this.$message.warn('当前为只读模式')
         return
       }
       const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
@@ -160,7 +247,14 @@ export default {
         return
       }
       this.received = true
-      this.client.send(TERMINAL_OPERATOR.NOP.value)
+      this.client.send(TERMINAL_OPERATOR.CLEAR.value)
+    },
+    clickTerminal() {
+      this.visibleRightMenu = false
+    },
+    clickRightMenuItem({ key }) {
+      this.visibleRightMenu = false
+      rightMenuHandler[key].call(this)
     },
     close() {
       this.visible = false
@@ -199,14 +293,18 @@ export default {
   }
 }
 
+.terminal-status-badge {
+  margin-right: 8px;
+}
+
 .sync-icon {
-  color: #9254de;
-  margin-left: 16px;
+  color: #9254DE;
+  margin-left: 8px;
 }
 
 .header-icon {
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   transition: .2s;
 }
 
@@ -219,11 +317,8 @@ export default {
 }
 
 /deep/ .ant-modal-header {
-  padding: 8px 16px;
+  padding: 8px 10px 8px 16px;
   border-radius: 2px 2px 0 0;
 }
 
-.terminal-watcher-wrapper {
-  border-radius: 0 0 2px 2px;
-}
 </style>

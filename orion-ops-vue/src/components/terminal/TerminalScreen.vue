@@ -153,6 +153,7 @@ export default {
 
   .close-icon {
     transition: .2s;
+    font-size: 18px;
   }
 
   .close-icon:hover {
@@ -162,7 +163,6 @@ export default {
 
 .terminal-clear {
   height: 1px;
-
 }
 
 .terminal-screen-video {
@@ -170,11 +170,7 @@ export default {
 }
 
 /deep/ .ant-modal-header {
-  padding: 8px 16px;
+  padding: 8px 10px 8px 16px;
   border-radius: 2px 2px 0 0;
-}
-
-/deep/ .asciinema-player {
-  border-radius: 0 0 2px 2px;
 }
 </style>

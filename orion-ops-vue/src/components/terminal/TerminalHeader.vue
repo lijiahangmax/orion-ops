@@ -34,7 +34,7 @@
             <p v-if="machine.status === TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
-          <a-badge :count="statusLabel" :number-style="statusStyle"/>
+          <a-badge :count="statusLabel" :numberStyle="statusStyle"/>
         </a-popconfirm>
         <!-- 提示 -->
         <a-popover placement="bottom">
