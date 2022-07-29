@@ -307,11 +307,11 @@ export default {
       // 注册自定义按键
       this.term.attachCustomKeyEventHandler((ev) => {
         // 注册全选键 ctrl + a
-        if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
-          setTimeout(() => {
-            this.term.selectAll()
-          }, 10)
-        }
+        // if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+        //   setTimeout(() => {
+        //     this.term.selectAll()
+        //   }, 10)
+        // }
         // 注册搜索键 ctrl + shift + f
         if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
           this.$refs.search.open()

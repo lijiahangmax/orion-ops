@@ -40,9 +40,14 @@ public enum TerminalOperate {
     COMMAND("4", true),
 
     /**
+     * ctrl + e
+     */
+    NOP("5", false),
+
+    /**
      * 关闭连接
      */
-    DISCONNECT("5", false),
+    DISCONNECT("6", false),
 
     ;
 

@@ -65,7 +65,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
                 this.auth(session, body);
                 return;
             }
-            if (operate != TerminalOperate.KEY) {
+            if (operate != TerminalOperate.KEY || operate != TerminalOperate.NOP) {
                 return;
             }
             // 检查连接

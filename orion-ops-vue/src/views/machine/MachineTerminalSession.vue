@@ -45,22 +45,25 @@
         </template>
         <!-- 操作 -->
         <template v-slot:action="record">
-          <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(record)">获取操作日志</a>
+          <a-tooltip title="只读监视, ctrl 点击为读写监视">
+            <span class="span-blue pointer" @click="openTerminalWatcher($event, record)">监视</span>
+          </a-tooltip>
           <a-divider type="vertical"/>
           <a @click="forceOffline(record.token)">下线</a>
         </template>
       </a-table>
     </div>
+    <!-- 事件 -->
+    <TerminalWatcherModal ref="watcher"/>
   </div>
 </template>
 
 <script>
 import { defineArrayKey } from '@/lib/utils'
 import { formatDate } from '@/lib/filters'
-import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
+import TerminalWatcherModal from '@/components/terminal/TerminalWatcherModal'
 
 /**
  * 列
@@ -110,7 +113,7 @@ const columns = [
     title: '操作',
     key: 'action',
     fixed: 'right',
-    width: 170,
+    width: 130,
     align: 'center',
     scopedSlots: { customRender: 'action' }
   }
@@ -119,6 +122,7 @@ const columns = [
 export default {
   name: 'MachineTerminalSession',
   components: {
+    TerminalWatcherModal,
     MachineAutoComplete,
     UserAutoComplete
   },
@@ -196,27 +200,25 @@ export default {
       this.query.username = undefined
       this.getList({})
     },
-    async loadDownloadUrl(record) {
-      try {
-        const downloadUrl = await this.$api.getFileDownloadToken({
-          type: FILE_DOWNLOAD_TYPE.TERMINAL_SCREEN.value,
-          id: record.logId
-        })
-        record.downloadUrl = this.$api.fileDownloadExec({ token: downloadUrl.data })
-      } catch (e) {
-        // ignore
-      }
-    },
-    clearDownloadUrl(record) {
-      setTimeout(() => {
-        record.downloadUrl = null
-      })
-    },
     forceOffline(token) {
       this.$api.terminalOffline({ token })
       .then(() => {
         this.getList()
         this.$message.success('操作成功')
+      })
+    },
+    openTerminalWatcher(e, record) {
+      const readonly = e.ctrlKey ? 2 : 1
+      this.$api.getTerminalWatcherToken({
+        token: record.token,
+        readonly
+      }).then(({ data }) => {
+        this.$refs.watcher.open({
+          ...data,
+          machineName: record.machineName,
+          machineHost: record.machineHost,
+          username: record.userName
+        })
       })
     }
   },

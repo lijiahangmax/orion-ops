@@ -251,6 +251,8 @@ public class TerminalOperateHandler implements IOperateHandler {
             case COMMAND:
                 executor.write(Strings.bytes(body));
                 executor.write(new byte[]{Letters.LF});
+            case NOP:
+                executor.write(new byte[]{5, 10});
                 return;
             case DISCONNECT:
                 WebSockets.close(session, WsCloseCode.DISCONNECT);

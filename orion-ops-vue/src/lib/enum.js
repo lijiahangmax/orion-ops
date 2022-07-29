@@ -30,8 +30,11 @@ export const TERMINAL_OPERATOR = {
   COMMAND: {
     value: '4'
   },
-  DISCONNECT: {
+  NOP: {
     value: '5'
+  },
+  DISCONNECT: {
+    value: '6'
   }
 }
 
@@ -67,20 +70,16 @@ export const TERMINAL_STATUS = {
  */
 export const WS_PROTOCOL = {
   OK: {
-    value: '0',
-    label: 'ok'
+    value: '0'
   },
   CONNECTED: {
-    value: '1',
-    label: 'connected'
+    value: '1'
   },
   PONG: {
-    value: '2',
-    label: 'pong'
+    value: '2'
   },
   ERROR: {
-    value: '3',
-    label: 'error'
+    value: '3'
   }
 }
 
