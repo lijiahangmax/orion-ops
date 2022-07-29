@@ -101,9 +101,9 @@ public enum WsCloseCode {
     DISCONNECT(4320, WsCloseReason.CLOSED_CONNECTION),
 
     /**
-     * 流结束回调
+     * 结束
      */
-    EOF_CALLBACK(4330, WsCloseReason.CLOSED_CONNECTION),
+    EOF(4330, WsCloseReason.CLOSED_CONNECTION),
 
     /**
      * 读取失败

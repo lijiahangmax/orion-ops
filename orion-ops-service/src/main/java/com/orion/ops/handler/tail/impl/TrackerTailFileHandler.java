@@ -87,7 +87,7 @@ public class TrackerTailFileHandler implements ITailHandler, DataHandler {
     private void callback() {
         log.info("tail TRACKER 监听文件结束 token: {}", token);
         if (session.isOpen()) {
-            session.close(WsCloseCode.EOF_CALLBACK.status());
+            session.close(WsCloseCode.EOF.status());
         }
     }
 

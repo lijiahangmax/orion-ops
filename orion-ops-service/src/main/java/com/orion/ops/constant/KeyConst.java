@@ -20,7 +20,7 @@ public class KeyConst {
     public static final String LOGIN_TOKEN_KEY = "auth:info:{}";
 
     /**
-     * 登陆token绑定 token
+     * 登陆 token 绑定 token
      * <p>
      * auth:login:{id}:{timestamp}
      */
@@ -34,21 +34,21 @@ public class KeyConst {
     public static final String TERMINAL_ACCESS_TOKEN = "terminal:access:{}";
 
     /**
-     * 5min
+     * 3min
      */
-    public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 5;
+    public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 3;
 
     /**
-     * terminal 绑定 token
+     * terminal 监视 token
      * <p>
-     * terminal:bind:{token}
+     * terminal:watcher:{token}
      */
-    public static final String TERMINAL_BIND_TOKEN = "terminal:bind:{}";
+    public static final String TERMINAL_WATCHER_TOKEN = "terminal:watcher:{}";
 
     /**
-     * 6 h
+     * 3min
      */
-    public static final int TERMINAL_BIND_EXPIRE = 60 * 60 * 6;
+    public static final int TERMINAL_WATCHER_TOKEN_EXPIRE = 60 * 3;
 
     /**
      * 文件 tail 访问 token

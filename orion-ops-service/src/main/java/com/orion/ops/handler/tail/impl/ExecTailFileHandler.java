@@ -106,7 +106,7 @@ public class ExecTailFileHandler implements ITailHandler {
     private void callback(IRemoteExecutor executor) {
         log.info("tail EXEC_TAIL 监听文件结束 token: {}", token);
         if (session.isOpen()) {
-            session.close(WsCloseCode.EOF_CALLBACK.status());
+            session.close(WsCloseCode.EOF.status());
         }
     }
 

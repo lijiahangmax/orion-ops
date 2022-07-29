@@ -15,10 +15,19 @@
           <span class="about-value">{{ about.author }} ({{ about.authorCn }})</span>
         </a-descriptions-item>
         <a-descriptions-item label="github 地址" :span="3">
-          <a target="_blank" class="about-value" href="https://github.com/lijiahangmax/orion-ops">https://github.com/lijiahangmax/orion-ops</a>
+          <a target="_blank" class="about-value" href="https://github.com/lijiahangmax/orion-ops">
+            https://github.com/lijiahangmax/orion-ops
+          </a>
         </a-descriptions-item>
         <a-descriptions-item label="gitee 地址" :span="3">
-          <a target="_blank" class="about-value" href="https://gitee.com/lijiahangmax/orion-ops">https://github.com/lijiahangmax/orion-ops</a>
+          <a target="_blank" class="about-value" href="https://gitee.com/lijiahangmax/orion-ops">
+            https://gitee.com/lijiahangmax/orion-ops
+          </a>
+        </a-descriptions-item>
+        <a-descriptions-item label="问题反馈" :span="3">
+          <a target="_blank" class="about-value" href="https://github.com/lijiahangmax/orion-ops/issues">
+            https://github.com/lijiahangmax/orion-ops/issues
+          </a>
         </a-descriptions-item>
       </a-descriptions>
     </div>

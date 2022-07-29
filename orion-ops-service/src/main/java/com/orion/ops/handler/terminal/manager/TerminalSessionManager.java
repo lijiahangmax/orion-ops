@@ -1,24 +1,35 @@
 package com.orion.ops.handler.terminal.manager;
 
+import com.alibaba.fastjson.JSON;
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.id.UUIds;
+import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Valid;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.collect.Maps;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.time.DateRanges;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.event.EventParamsHolder;
+import com.orion.ops.entity.dto.TerminalWatcherDTO;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.vo.MachineTerminalManagerVO;
+import com.orion.ops.entity.vo.TerminalWatcherVO;
 import com.orion.ops.handler.terminal.IOperateHandler;
 import com.orion.ops.handler.terminal.TerminalConnectHint;
+import com.orion.ops.utils.Currents;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -31,10 +42,11 @@ import java.util.stream.Collectors;
 @Component
 public class TerminalSessionManager {
 
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+
     /**
-     * 已连接的 session
-     * key: token
-     * value: handler
+     * 会话 sessionId:handler
      */
     private final Map<String, IOperateHandler> sessionHolder = Maps.newCurrentHashMap();
 
@@ -96,11 +108,9 @@ public class TerminalSessionManager {
      *
      * @param token token
      */
-    public HttpWrapper<?> forceOffline(String token) {
+    public void forceOffline(String token) {
         IOperateHandler handler = sessionHolder.get(token);
-        if (handler == null) {
-            return HttpWrapper.error("未查询到连接信息");
-        }
+        Valid.notNull(handler, MessageConst.SESSION_PRESENT);
         try {
             // 下线
             handler.forcedOffline();
@@ -109,10 +119,39 @@ public class TerminalSessionManager {
             EventParamsHolder.addParam(EventKeys.TOKEN, token);
             EventParamsHolder.addParam(EventKeys.USERNAME, hint.getUsername());
             EventParamsHolder.addParam(EventKeys.NAME, hint.getMachineName());
-            return HttpWrapper.ok();
         } catch (Exception e) {
-            return HttpWrapper.error("下线失败");
+            throw Exceptions.app(MessageConst.OPERATOR_ERROR, e);
         }
+    }
+
+    /**
+     * 获取终端监视 token
+     *
+     * @param token    token
+     * @param readonly readonly
+     * @return watcher
+     */
+    public TerminalWatcherVO getWatcherToken(String token, Integer readonly) {
+        IOperateHandler handler = sessionHolder.get(token);
+        Valid.notNull(handler, MessageConst.SESSION_PRESENT);
+        // 设置缓存
+        String watcherToken = UUIds.random32();
+        TerminalWatcherDTO cache = TerminalWatcherDTO.builder()
+                .userId(Currents.getUserId())
+                .token(token)
+                .readonly(readonly)
+                .build();
+        String key = Strings.format(KeyConst.TERMINAL_WATCHER_TOKEN,watcherToken);
+        redisTemplate.opsForValue().set(key, JSON.toJSONString(cache),
+                KeyConst.TERMINAL_WATCHER_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        // 设置返回
+        TerminalConnectHint hint = handler.getHint();
+        return TerminalWatcherVO.builder()
+                .token(watcherToken)
+                .readonly(readonly)
+                .cols(hint.getCols())
+                .rows(hint.getRows())
+                .build();
     }
 
     public Map<String, IOperateHandler> getSessionHolder() {

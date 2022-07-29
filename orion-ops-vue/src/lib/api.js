@@ -13,6 +13,13 @@ const $ws = {
   },
 
   /**
+   * 机器终端监视
+   */
+  terminalWatcher: param => {
+    return `ws://${window.location.host}/orion/keep-alive/watcher/terminal/${param.token}`
+  },
+
+  /**
    * sftp传输列表
    */
   sftpNotify: param => {
@@ -302,6 +309,15 @@ const $api = {
   terminalOffline: param => {
     return $http.$post('/terminal/manager/offline', param, {
       loading: '正在操作...'
+    })
+  },
+
+  /**
+   * 获取终端监视token
+   */
+  getTerminalWatcherToken: param => {
+    return $http.$post('/terminal/manager/watcher', param, {
+      loading: '正在建立连接...'
     })
   },
 

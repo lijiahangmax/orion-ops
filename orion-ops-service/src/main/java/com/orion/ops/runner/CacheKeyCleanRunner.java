@@ -35,8 +35,8 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
         List<String> scanKeys = Lists.of(
                 // terminal访问token
                 Strings.format(KeyConst.TERMINAL_ACCESS_TOKEN, "*"),
-                // terminal绑定token
-                Strings.format(KeyConst.TERMINAL_BIND_TOKEN, "*"),
+                // terminal监视token
+                Strings.format(KeyConst.TERMINAL_WATCHER_TOKEN, "*"),
                 // 文件tail访问token
                 Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, "*"),
                 // 文件tail绑定token

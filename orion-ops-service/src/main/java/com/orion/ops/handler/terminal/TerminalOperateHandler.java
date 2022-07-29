@@ -19,14 +19,16 @@ import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.TerminalSizeDTO;
 import com.orion.ops.handler.terminal.screen.TerminalScreenEnv;
 import com.orion.ops.handler.terminal.screen.TerminalScreenHeader;
+import com.orion.ops.handler.terminal.watcher.ITerminalWatcherProcessor;
+import com.orion.ops.handler.terminal.watcher.TerminalWatcherProcessor;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.ops.utils.Utils;
+import com.orion.ops.utils.WebSockets;
 import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.BufferedInputStream;
@@ -55,6 +57,9 @@ public class TerminalOperateHandler implements IOperateHandler {
     @Getter
     private final TerminalConnectHint hint;
 
+    @Getter
+    private final ITerminalWatcherProcessor watcher;
+
     private final WebSocketSession session;
 
     private final SessionStore sessionStore;
@@ -78,6 +83,7 @@ public class TerminalOperateHandler implements IOperateHandler {
     public TerminalOperateHandler(String token, TerminalConnectHint hint, WebSocketSession session, SessionStore sessionStore) {
         this.token = token;
         this.hint = hint;
+        this.watcher = new TerminalWatcherProcessor();
         this.session = session;
         this.sessionStore = sessionStore;
         this.lastPing = System.currentTimeMillis();
@@ -93,6 +99,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         this.initLog();
         // 开始监听输出
         executor.exec();
+        watcher.watch();
     }
 
     /**
@@ -102,7 +109,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         // 初始化 shell 执行器
         this.executor = sessionStore.getShellExecutor();
         executor.terminalType(hint.getTerminalType());
-        executor.size(hint.getCols(), hint.getRows(), hint.getWidth(), hint.getHeight());
+        executor.size(hint.getCols(), hint.getRows());
     }
 
     /**
@@ -169,7 +176,10 @@ public class TerminalOperateHandler implements IOperateHandler {
         try {
             while (session.isOpen() && (read = in.read(bs)) != -1) {
                 // 响应
-                session.sendMessage(new TextMessage(WsProtocol.OK.msg(bs, 0, read)));
+                byte[] msg = WsProtocol.OK.msg(bs, 0, read);
+                WebSockets.sendText(session, msg);
+                // 响应监视
+                watcher.sendMessage(msg);
                 // 记录录屏
                 String row = Strings.format(SCREEN_BODY_TEMPLATE,
                         ((double) (System.currentTimeMillis() - connectedTime)) / Dates.SECOND_STAMP,
@@ -180,13 +190,13 @@ public class TerminalOperateHandler implements IOperateHandler {
             }
         } catch (IOException ex) {
             log.error("terminal 读取流失败", ex);
-            this.sendClose(WsCloseCode.READ_EXCEPTION);
+            WebSockets.close(session, WsCloseCode.READ_EXCEPTION);
         }
         // eof
         if (close) {
             return;
         }
-        this.sendClose(WsCloseCode.EOF_CALLBACK);
+        WebSockets.close(session, WsCloseCode.EOF);
         log.info("terminal eof回调 {}", token);
     }
 
@@ -207,13 +217,13 @@ public class TerminalOperateHandler implements IOperateHandler {
 
     @Override
     public void forcedOffline() {
-        this.sendClose(WsCloseCode.FORCED_OFFLINE);
+        WebSockets.close(session, WsCloseCode.FORCED_OFFLINE);
         log.info("terminal 管理员强制断连 {}", token);
     }
 
     @Override
     public void heartDown() {
-        this.sendClose(WsCloseCode.HEART_DOWN);
+        WebSockets.close(session, WsCloseCode.HEART_DOWN);
         log.info("terminal 心跳结束断连 {}", token);
     }
 
@@ -223,91 +233,58 @@ public class TerminalOperateHandler implements IOperateHandler {
     }
 
     @Override
-    public void handleMessage(TerminalOperate operate, String body) throws Exception {
+    public void handleMessage(TerminalOperate operate, String body) {
         if (close) {
             return;
         }
         switch (operate) {
+            case KEY:
+                executor.write(Strings.bytes(body));
+                return;
             case PING:
                 this.lastPing = System.currentTimeMillis();
-                session.sendMessage(new TextMessage(WsProtocol.PONG.get()));
-                return;
-            case DISCONNECT:
-                this.sendClose(WsCloseCode.DISCONNECT);
-                log.info("terminal 用户主动断连 {}", token);
+                WebSockets.sendText(session, WsProtocol.PONG.get());
                 return;
             case RESIZE:
                 this.resize(body);
                 return;
+            case COMMAND:
+                executor.write(Strings.bytes(body));
+                executor.write(new byte[]{Letters.LF});
+            case CLEAR:
+                executor.write(new byte[]{12});
+                return;
+            case DISCONNECT:
+                WebSockets.close(session, WsCloseCode.DISCONNECT);
+                log.info("terminal 用户主动断连 {}", token);
+                return;
             default:
-                this.handleWriter(operate, body);
         }
     }
 
-    /**
-     * 处理输入操作操作
-     *
-     * @param operate 操作
-     * @param body    body
-     */
-    private void handleWriter(TerminalOperate operate, String body) {
-        if (body == null) {
-            return;
-        }
-        byte[] bs;
-        switch (operate) {
-            case KEY:
-                bs = Strings.bytes(body);
-                break;
-            case COMMAND:
-                bs = Strings.bytes(body + Const.LF);
-                break;
-            case INTERRUPT:
-                bs = new byte[]{3, 10};
-                break;
-            case HANGUP:
-                bs = new byte[]{24, 10};
-                break;
-            default:
-                return;
-        }
-        executor.write(bs);
+    @Override
+    public void close() {
+        this.disconnect();
+        Streams.close(watcher);
     }
 
     /**
      * 重置大小
      */
-    private void resize(String body) throws IOException {
+    private void resize(String body) {
         // 检查参数
         TerminalSizeDTO window = TerminalSizeDTO.parse(body);
         if (window == null) {
-            session.sendMessage(new TextMessage(WsProtocol.MISS_ARGUMENT.get()));
+            WebSockets.sendText(session, WsProtocol.ERROR.get());
             return;
         }
         hint.setCols(window.getCols());
         hint.setRows(window.getRows());
-        hint.setWidth(window.getWidth());
-        hint.setHeight(window.getHeight());
         if (!executor.isConnected()) {
             executor.connect();
         }
-        executor.size(window.getCols(), window.getRows(), window.getWidth(), window.getHeight());
+        executor.size(window.getCols(), window.getRows());
         executor.resize();
-    }
-
-    /**
-     * 发送关闭连接命令
-     *
-     * @param code close
-     */
-    private void sendClose(WsCloseCode code) {
-        if (session.isOpen()) {
-            try {
-                session.close(code.status());
-            } catch (IOException e) {
-                log.error("terminal 发送断开连接命令 失败 token: {}, code: {}, e: {}", token, code.getCode(), e);
-            }
-        }
     }
 
 }

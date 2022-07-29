@@ -6,8 +6,12 @@
         <!-- ssh信息 -->
         <div class="terminal-ssh">
           <span class="usn" v-if="machine.username">
-            <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
-            <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.port }}</span>
+            <a-tooltip title="复制ssh">
+              <span @click="copySshCommand">{{ machine.username }}@</span>
+            </a-tooltip>
+            <a-tooltip title="复制ip">
+              <span @click="copyHost">{{ machine.host }}:{{ machine.port }}</span>
+            </a-tooltip>
           </span>
         </div>
         <!-- 命令输入框 -->
@@ -30,7 +34,7 @@
             <p v-if="machine.status === TERMINAL_STATUS.CONNECTED.value">确认断开?</p>
             <p v-else>确认重新连接?</p>
           </template>
-          <a-badge :count="statusLabel" :number-style="statusStyle"/>
+          <a-badge :count="statusLabel" :numberStyle="statusStyle"/>
         </a-popconfirm>
         <!-- 提示 -->
         <a-popover placement="bottom">
@@ -101,8 +105,8 @@ export default {
       return {
         backgroundColor: enumValueOf(TERMINAL_STATUS, this.machine.status).color,
         cursor: 'pointer',
-        boxShadow: '0 0 0 1px #D9D9D9 inset',
-        'margin-right': '15px'
+        'user-select': 'none',
+        'margin-right': '16px'
       }
     }
   },

@@ -25,16 +25,6 @@ public class TerminalConnectHint {
     private Integer cols;
 
     /**
-     * 宽px
-     */
-    private Integer width;
-
-    /**
-     * 高px
-     */
-    private Integer height;
-
-    /**
      * 终端类型
      */
     private String terminalType;

@@ -45,11 +45,10 @@
 <script>
 import { debounce } from 'lodash'
 import { Terminal } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { copyToClipboard, fitDimensions, getClipboardText } from '@/lib/utils'
-import { enumValueOf, TERMINAL_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
+import { TERMINAL_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
 
 import 'xterm/css/xterm.css'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
@@ -65,15 +64,12 @@ function initTerminal() {
     // 需要先设置一下 不然modal会闪一下
     this.term.resize(1, 1)
     // 注册terminal事件
-    this.term.onResize(event => terminalEventHandler.onResize.call(this, event.cols, event.rows))
-    this.term.onData(event => terminalEventHandler.onData.call(this, event))
-    terminalEventHandler.registerCustomerKey.call(this)
-
-    // 注册自适应组件
-    this.plugin.fit = new FitAddon()
-    this.term.loadAddon(this.plugin.fit)
-    // 如果不是modal 这里fit没问题
-    // this.plugin.fit.fit()
+    this.term.onResize(event => this.sendResize(event.cols, event.rows))
+    this.term.onData(event => this.sendKey(event))
+    // 注册自定义快捷键
+    this.registerCustomerKey()
+    // 注册窗口大小监听器
+    window.addEventListener('resize', this.debouncedWindowResize)
     // 注册搜索组件
     this.plugin.search = new SearchAddon()
     this.term.loadAddon(this.plugin.search)
@@ -101,90 +97,42 @@ function initTerminal() {
 }
 
 /**
- * 终端操作处理器
- */
-const terminalEventHandler = {
-  onResize(cols, rows) {
-    // 调整大小
-    terminalOperator.resize.call(this, cols, rows)
-  },
-  onData(event) {
-    // 输入
-    terminalOperator.key.call(this, event)
-  },
-  registerCustomerKey() {
-    // 注册自定义按键
-    this.term.attachCustomKeyEventHandler((ev) => {
-      // 注册复制键 ctrl + insert
-      // if (ev.keyCode === 45 && ev.ctrlKey && ev.type === 'keydown') {
-      //   terminalEventHandler.copy.call(this)
-      // }
-      // 注册粘贴键 shift + insert
-      // if (ev.keyCode === 45 && ev.shiftKey && ev.type === 'keydown') {
-      //   terminalEventHandler.paste.call(this)
-      // }
-      // 注册粘贴键 ctrl + shift + v
-      // if (ev.keyCode === 86 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-      //   terminalEventHandler.paste.call(this)
-      // }
-      // 注册全选键 ctrl + a
-      if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
-        setTimeout(() => {
-          this.term.selectAll()
-        }, 10)
-      }
-      // 注册搜索键 ctrl + shift + f
-      if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-        this.$refs.search.open()
-      }
-    })
-  },
-  copy() {
-    // 复制
-    copyToClipboard(this.term.getSelection())
-    this.term.clearSelection()
-    this.term.focus()
-  },
-  paste() {
-    // 粘贴
-    getClipboardText().then(clipText => {
-      terminalOperator.key.call(this, clipText)
-      this.term.focus()
-    })
-  }
-}
-
-/**
  * 客户端操作处理器
  */
 const clientHandler = {
   onopen() {
-    console.log('open')
-    this.status = TERMINAL_STATUS.UNAUTHORIZED.value
     this.$emit('initFinish', true)
     // 建立连接
-    terminalOperator.connect.call(this)
-    // 注册窗口大小监听器
-    window.addEventListener('resize', this.debouncedWindowResize)
-    // 注册心跳
-    const _this = this
-    this.pingThread = setInterval(() => {
-      terminalOperator.ping.call(_this)
-    }, 30000)
+    this.connect()
   },
-  onmessage(e) {
+  onmessage({ data: msg }) {
     // 解析协议
-    parseProtocol.call(this, e.data)
+    if (!this.term) {
+      return
+    }
+    const code = msg.substring(0, 1)
+    const len = msg.length
+    switch (code) {
+      case WS_PROTOCOL.CONNECTED.value:
+        this.status = TERMINAL_STATUS.CONNECTED.value
+        this.term.focus()
+        // 注册心跳
+        this.pingThread = setInterval(() => this.sendPing(), 30000)
+        break
+      case WS_PROTOCOL.OK.value:
+        this.term.write(msg.substring(2, len))
+        break
+      default:
+        break
+    }
   },
   onerror() {
-    console.log('error')
     this.status = TERMINAL_STATUS.ERROR.value
     this.$emit('initFinish', false)
     this.$message.error('无法连接至服务器', 2)
     this.term.write('\r\n\x1b[91mfailed to establish connection\x1b[0m')
   },
   onclose(e) {
-    console.log('close')
     this.status = TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
     // 关闭窗口大小监听器
@@ -198,49 +146,6 @@ const clientHandler = {
 }
 
 /**
- * 终端操作
- */
-const terminalOperator = {
-  connect() {
-    console.log('connect')
-    // xx|cols|rows|width|height|loginToken
-    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
-    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
-    const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
-    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${width}|${height}|${loginToken}`
-    this.client.send(body)
-  },
-  resize(cols, rows) {
-    // 防抖
-    if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
-      return
-    }
-    console.log('resize', cols, rows)
-    // xx|cols|rows|width|height
-    const width = parseInt(document.getElementsByClassName('terminal')[0].offsetWidth)
-    const height = parseInt(document.getElementsByClassName('terminal')[0].offsetHeight)
-    const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}|${width}|${height}`
-    this.client.send(body)
-  },
-  key(e) {
-    if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
-      return
-    }
-    const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
-    this.client.send(body)
-  },
-  disconnect() {
-    console.log('disconnect')
-    this.pingThread && clearInterval(this.pingThread)
-    this.client && this.client.readyState === 1 && this.client.send(TERMINAL_OPERATOR.DISCONNECT.value)
-  },
-  ping() {
-    console.log('ping')
-    this.client.send(TERMINAL_OPERATOR.PING.value)
-  }
-}
-
-/**
  * 右键菜单操作
  */
 const rightMenuHandler = {
@@ -249,10 +154,17 @@ const rightMenuHandler = {
     this.term.focus()
   },
   copy() {
-    terminalEventHandler.copy.call(this)
+    // 复制
+    copyToClipboard(this.term.getSelection())
+    this.term.clearSelection()
+    this.term.focus()
   },
   paste() {
-    terminalEventHandler.paste.call(this)
+    // 粘贴
+    getClipboardText().then(clipText => {
+      this.sendKey(clipText)
+      this.term.focus()
+    })
   },
   clear() {
     this.term.clear()
@@ -272,33 +184,6 @@ const rightMenuHandler = {
   }
 }
 
-/**
- * 解析协议
- */
-function parseProtocol(msg) {
-  if (!this.term) {
-    return
-  }
-  const code = msg.substring(0, 3)
-  const len = msg.length
-  switch (code) {
-    case WS_PROTOCOL.ACK.value:
-      this.status = TERMINAL_STATUS.UNAUTHORIZED.value
-      this.term.focus()
-      break
-    case WS_PROTOCOL.CONNECTED.value:
-      this.status = TERMINAL_STATUS.CONNECTED.value
-      this.term.focus()
-      break
-    case WS_PROTOCOL.OK.value:
-      this.term.write(msg.substring(4, len))
-      break
-    default:
-      console.log(enumValueOf(WS_PROTOCOL, code).label)
-      break
-  }
-}
-
 export default {
   name: 'TerminalMain',
   components: {
@@ -314,7 +199,6 @@ export default {
       term: null,
       client: null,
       plugin: {
-        fit: null,
         search: null,
         links: null
       },
@@ -386,11 +270,53 @@ export default {
     },
     writerCommand(command) {
       if (command) {
-        terminalOperator.key.call(this, command)
+        this.sendKey(command)
       }
     },
+    connect() {
+      // xx|cols|rows|loginToken
+      const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
+      const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${loginToken}`
+      this.client.send(body)
+    },
+    sendResize(cols, rows) {
+      // 防抖
+      if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
+        return
+      }
+      console.log('resize', cols, rows)
+      // xx|cols|rows
+      const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}`
+      this.client.send(body)
+    },
+    sendKey(e) {
+      if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
+        return
+      }
+      const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
+      this.client.send(body)
+    },
+    sendPing() {
+      this.client.send(TERMINAL_OPERATOR.PING.value)
+    },
     disconnect() {
-      terminalOperator.disconnect.call(this)
+      this.pingThread && clearInterval(this.pingThread)
+      this.client && this.client.readyState === 1 && this.client.send(TERMINAL_OPERATOR.DISCONNECT.value)
+    },
+    registerCustomerKey() {
+      // 注册自定义按键
+      this.term.attachCustomKeyEventHandler((ev) => {
+        // 注册全选键 ctrl + a
+        // if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+        //   setTimeout(() => {
+        //     this.term.selectAll()
+        //   }, 10)
+        // }
+        // 注册搜索键 ctrl + shift + f
+        if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+          this.$refs.search.open()
+        }
+      })
     },
     focus() {
       this.term.focus()

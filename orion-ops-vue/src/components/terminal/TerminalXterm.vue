@@ -68,7 +68,6 @@ export default {
     },
     dispose() {
       this.$refs.terminalMain.term && this.$refs.terminalMain.term.dispose()
-      this.$refs.terminalMain.plugin.fit && this.$refs.terminalMain.plugin.fit.dispose()
       this.$refs.terminalMain.plugin.search && this.$refs.terminalMain.plugin.search.dispose()
       this.$refs.terminalMain.plugin.links && this.$refs.terminalMain.plugin.links.dispose()
     },

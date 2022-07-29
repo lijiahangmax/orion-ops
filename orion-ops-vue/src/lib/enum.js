@@ -15,69 +15,38 @@ export function enumValueOf(e, value) {
  * 终端操作
  */
 export const TERMINAL_OPERATOR = {
-  /**
-   * 建立连接
-   */
-  CONNECT: {
-    value: '05'
-  },
-  /**
-   * ping
-   */
-  PING: {
-    value: '10'
-  },
-  /**
-   * 更改大小
-   */
-  RESIZE: {
-    value: '15'
-  },
-  /**
-   * 键入key
-   */
   KEY: {
-    value: '20'
+    value: '0'
   },
-  /**
-   * 键入命令
-   */
+  CONNECT: {
+    value: '1'
+  },
+  PING: {
+    value: '2'
+  },
+  RESIZE: {
+    value: '3'
+  },
   COMMAND: {
-    value: '25'
+    value: '4'
   },
-  /**
-   * 中断 ctrl+c
-   */
-  INTERRUPT: {
-    value: '30'
+  CLEAR: {
+    value: '5'
   },
-  /**
-   *  挂起 ctrl+x
-   */
-  HANGUP: {
-    value: '35'
-  },
-  /**
-   * 关闭连接
-   */
   DISCONNECT: {
-    value: '40'
+    value: '6'
   }
 }
 
 /**
  * 终端状态
+ * TODO
  */
 export const TERMINAL_STATUS = {
   NOT_CONNECT: {
     value: 0,
     label: '未连接',
     color: '#FFD43B'
-  },
-  UNAUTHORIZED: {
-    value: 10,
-    label: '未认证',
-    color: '#82C91E'
   },
   CONNECTED: {
     value: 20,
@@ -100,33 +69,17 @@ export const TERMINAL_STATUS = {
  * WS protocol
  */
 export const WS_PROTOCOL = {
-  ACK: {
-    value: '010',
-    label: 'ack'
+  OK: {
+    value: '0'
   },
   CONNECTED: {
-    value: '015',
-    label: 'connected'
+    value: '1'
   },
   PONG: {
-    value: '020',
-    label: 'pong'
+    value: '2'
   },
-  OK: {
-    value: '100',
-    label: 'ok'
-  },
-  UNKNOWN_OPERATE: {
-    value: '200',
-    label: 'unknown_operate'
-  },
-  MISS_ARGUMENT: {
-    value: '210',
-    label: 'miss_argument'
-  },
-  ILLEGAL_BODY: {
-    value: '220',
-    label: 'illegal_body'
+  ERROR: {
+    value: '3'
   }
 }
 
