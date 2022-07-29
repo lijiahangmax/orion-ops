@@ -27,7 +27,6 @@ import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.BufferedInputStream;
@@ -225,7 +224,7 @@ public class TerminalOperateHandler implements IOperateHandler {
     }
 
     @Override
-    public void handleMessage(TerminalOperate operate, String body) throws Exception {
+    public void handleMessage(TerminalOperate operate, String body) {
         if (close) {
             return;
         }
@@ -235,7 +234,7 @@ public class TerminalOperateHandler implements IOperateHandler {
                 return;
             case PING:
                 this.lastPing = System.currentTimeMillis();
-                session.sendMessage(new TextMessage(WsProtocol.PONG.get()));
+                WebSockets.sendText(session, WsProtocol.PONG.get());
                 return;
             case RESIZE:
                 this.resize(body);
@@ -255,11 +254,11 @@ public class TerminalOperateHandler implements IOperateHandler {
     /**
      * 重置大小
      */
-    private void resize(String body) throws IOException {
+    private void resize(String body) {
         // 检查参数
         TerminalSizeDTO window = TerminalSizeDTO.parse(body);
         if (window == null) {
-            session.sendMessage(new TextMessage(WsProtocol.ERROR.get()));
+            WebSockets.sendText(session, WsProtocol.ERROR.get());
             return;
         }
         hint.setCols(window.getCols());

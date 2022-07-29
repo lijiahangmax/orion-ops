@@ -61,7 +61,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             // 解析请求
             Tuple tuple = parsePayload(payload);
             if (tuple == null) {
-                session.sendMessage(new TextMessage(WsProtocol.ERROR.get()));
+                WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
             }
             TerminalOperate operate = tuple.get(0);
@@ -167,7 +167,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         // 检查参数
         TerminalConnectDTO connectInfo = TerminalConnectDTO.parse(body);
         if (connectInfo == null) {
-            session.sendMessage(new TextMessage(WsProtocol.ERROR.get()));
+            WebSockets.sendText(session, WsProtocol.ERROR.get());
             return;
         }
         Long userId = (Long) session.getAttributes().get(WebSockets.UID);
@@ -193,7 +193,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         try {
             // 打开session
             sessionStore = machineInfoService.openSessionStore(machine);
-            session.sendMessage(new TextMessage(WsProtocol.CONNECTED.get()));
+            WebSockets.sendText(session, WsProtocol.CONNECTED.get());
         } catch (Exception e) {
             WebSockets.openSessionStoreThrowClose(session, e);
             log.error("terminal 建立连接失败-连接远程服务器失败 uid: {}, machineId: {}", userId, machineId, e);
