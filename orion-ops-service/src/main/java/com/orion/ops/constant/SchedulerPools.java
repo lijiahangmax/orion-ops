@@ -31,6 +31,19 @@ public class SchedulerPools {
             .build();
 
     /**
+     * TODO 指标
+     * terminal watcher 调度线程池
+     */
+    public static final ThreadPoolExecutor TERMINAL_WATCHER_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("terminal-watcher-thread-")
+            .setCorePoolSize(0)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeout(true)
+            .build();
+
+    /**
      * 命令执行 调度线程池
      */
     public static final ThreadPoolExecutor EXEC_SCHEDULER = ExecutorBuilder.create()
@@ -191,6 +204,7 @@ public class SchedulerPools {
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(TERMINAL_WATCHER_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(EXEC_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(TAIL_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(SFTP_TRANSFER_RATE_SCHEDULER, Const.MS_S_3);

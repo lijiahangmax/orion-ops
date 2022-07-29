@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * webSocket 处理器
+ * terminal message 处理器
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -59,7 +59,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
         String payload = ((TextMessage) message).getPayload();
         try {
             // 解析请求
-            Tuple tuple = parsePayload(payload);
+            Tuple tuple = WebSockets.parsePayload(payload);
             if (tuple == null) {
                 WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
@@ -78,22 +78,20 @@ public class TerminalMessageHandler implements WebSocketHandler {
             }
             // 检查连接
             if (session.getAttributes().get(WebSockets.CONNECTED) == null) {
-                session.close(WsCloseCode.VALID.status());
+                WebSockets.close(session, WsCloseCode.VALID);
                 return;
             }
             // 获取连接
             IOperateHandler handler = terminalSessionManager.getSession(token);
             if (handler == null) {
-                session.close(WsCloseCode.UNKNOWN_CONNECT.status());
+                WebSockets.close(session, WsCloseCode.UNKNOWN_CONNECT);
                 return;
             }
             // 操作
             handler.handleMessage(operate, body);
         } catch (Exception e) {
             log.error("terminal 处理操作异常 token: {}, payload: {}", token, payload, e);
-            if (session.isOpen()) {
-                session.close(WsCloseCode.RUNTIME_EXCEPTION.status());
-            }
+            WebSockets.close(session, WsCloseCode.RUNTIME_EXCEPTION);
         }
     }
 
@@ -112,8 +110,8 @@ public class TerminalMessageHandler implements WebSocketHandler {
         if (handler == null) {
             return;
         }
-        handler.disconnect();
-        // log
+        handler.close();
+        // 修改日志
         MachineTerminalLogDO updateLog = new MachineTerminalLogDO();
         updateLog.setCloseCode(code);
         updateLog.setDisconnectedTime(new Date());
@@ -124,35 +122,6 @@ public class TerminalMessageHandler implements WebSocketHandler {
     @Override
     public boolean supportsPartialMessages() {
         return false;
-    }
-
-    /**
-     * 解析请求
-     * <p>
-     * .e.g xx
-     * .e.g xx|body
-     *
-     * @param payload payload
-     * @return operator, body
-     */
-    private static Tuple parsePayload(String payload) {
-        // 检查长度
-        if (payload.length() < TerminalOperate.PREFIX_SIZE) {
-            return null;
-        }
-        // 解析操作
-        TerminalOperate operate = TerminalOperate.of(payload.substring(0, TerminalOperate.PREFIX_SIZE));
-        if (operate == null) {
-            return null;
-        }
-        if (!operate.isHasBody()) {
-            return Tuple.of(operate, null);
-        }
-        // 检查是否有body
-        if (payload.length() < TerminalOperate.PREFIX_SIZE + 1) {
-            return null;
-        }
-        return Tuple.of(operate, payload.substring(TerminalOperate.PREFIX_SIZE + 1));
     }
 
     /**
@@ -177,14 +146,14 @@ public class TerminalMessageHandler implements WebSocketHandler {
         UserDTO userDTO = passportService.getUserByToken(connectInfo.getLoginToken(), null);
         if (userDTO == null || !userId.equals(userDTO.getId())) {
             log.info("terminal 建立连接拒绝-用户认证失败 token: {}", token);
-            session.close(WsCloseCode.IDENTITY_MISMATCH.status());
+            WebSockets.close(session, WsCloseCode.IDENTITY_MISMATCH);
             return;
         }
         // 获取机器信息
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         if (machine == null) {
             log.info("terminal 建立连接拒绝-未查询到机器信息 token: {}, machineId: {}", token, machineId);
-            session.close(WsCloseCode.INVALID_MACHINE.status());
+            WebSockets.close(session, WsCloseCode.INVALID_MACHINE);
             return;
         }
         session.getAttributes().put(WebSockets.CONNECTED, 1);
@@ -219,7 +188,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             terminalHandler.connect();
             log.info("terminal 建立连接成功-打开shell成功 token: {}", token);
         } catch (Exception e) {
-            session.close(WsCloseCode.OPEN_SHELL_EXCEPTION.status());
+            WebSockets.close(session, WsCloseCode.OPEN_SHELL_EXCEPTION);
             log.error("terminal 建立连接失败-打开shell失败 machineId: {}, uid: {}", machineId, userId, e);
             return;
         }

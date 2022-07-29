@@ -2,7 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.define.wrapper.Wrapper;
+import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.io.FileReaders;
@@ -18,10 +18,7 @@ import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.entity.request.MachineTerminalLogRequest;
 import com.orion.ops.entity.request.MachineTerminalManagerRequest;
 import com.orion.ops.entity.request.MachineTerminalRequest;
-import com.orion.ops.entity.vo.MachineTerminalLogVO;
-import com.orion.ops.entity.vo.MachineTerminalManagerVO;
-import com.orion.ops.entity.vo.MachineTerminalVO;
-import com.orion.ops.entity.vo.TerminalAccessVO;
+import com.orion.ops.entity.vo.*;
 import com.orion.ops.handler.terminal.manager.TerminalSessionManager;
 import com.orion.ops.service.api.MachineTerminalService;
 import com.orion.ops.utils.Valid;
@@ -58,7 +55,7 @@ public class MachineTerminalController {
     @PostMapping("/access")
     @ApiOperation(value = "获取终端accessToken")
     @EventLog(EventType.OPEN_TERMINAL)
-    public TerminalAccessVO getTerminalAccess(@RequestBody MachineTerminalRequest request) {
+    public TerminalAccessVO getTerminalAccessToken(@RequestBody MachineTerminalRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return machineTerminalService.getAccessConfig(machineId);
     }
@@ -108,19 +105,17 @@ public class MachineTerminalController {
 
     @PostMapping("/log/screen")
     @ApiOperation(value = "获取终端录屏文件 base64")
-    public HttpWrapper<String> getLogScreen(@RequestBody MachineTerminalLogRequest request) {
+    public String getLogScreen(@RequestBody MachineTerminalLogRequest request) {
         Long id = Valid.notNull(request.getId());
         String path = machineTerminalService.getTerminalScreenFilePath(id);
         if (path == null) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
+            throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.FILE_MISSING));
         }
         Path file = Paths.get(path);
         if (!Files.exists(file)) {
-            return HttpWrapper.of(ResultCode.FILE_MISSING);
+            throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.FILE_MISSING));
         }
-        String base64 = Base64s.encodeToString(FileReaders.readAllBytesFast(path));
-        // FIXME
-        return HttpWrapper.ok(Wrapper.HTTP_OK_MESSAGE, base64);
+        return Base64s.encodeToString(FileReaders.readAllBytesFast(path));
     }
 
     @PostMapping("/manager/session")
@@ -134,9 +129,18 @@ public class MachineTerminalController {
     @ApiOperation(value = "强制下线终端会话")
     @RequireRole(RoleType.ADMINISTRATOR)
     @EventLog(EventType.FORCE_OFFLINE_TERMINAL)
-    public Wrapper<?> forceOffline(@RequestBody MachineTerminalManagerRequest request) {
+    public void forceOffline(@RequestBody MachineTerminalManagerRequest request) {
         String token = Valid.notBlank(request.getToken());
-        return terminalSessionManager.forceOffline(token);
+        terminalSessionManager.forceOffline(token);
+    }
+
+    @PostMapping("/manager/watcher")
+    @ApiOperation(value = "获取终端监视token")
+    @RequireRole(RoleType.ADMINISTRATOR)
+    public TerminalWatcherVO getTerminalWatcherToken(@RequestBody MachineTerminalManagerRequest request) {
+        String token = Valid.notBlank(request.getToken());
+        Integer readonly = Valid.notNull(request.getReadonly());
+        return terminalSessionManager.getWatcherToken(token, readonly);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.orion.ops.utils;
 
+import com.orion.lang.define.wrapper.Tuple;
 import com.orion.lang.exception.AuthenticationException;
 import com.orion.lang.exception.ConnectionRuntimeException;
 import com.orion.lang.exception.DisabledException;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Urls;
+import com.orion.ops.constant.terminal.TerminalOperate;
 import com.orion.ops.constant.ws.WsCloseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
@@ -24,22 +26,48 @@ import java.util.Objects;
 @Slf4j
 public class WebSockets {
 
-    /**
-     * 机器id
-     */
     public static final String MID = "mid";
 
-    /**
-     * 用户id
-     */
     public static final String UID = "uid";
 
-    /**
-     * 是否已连接
-     */
+    public static final String TOKEN = "token";
+
+    public static final String READONLY = "readonly";
+
     public static final String CONNECTED = "connected";
 
+    public static final String AUTHED = "authed";
+
     private WebSockets() {
+    }
+
+    /**
+     * 解析请求
+     * <p>
+     * .e.g xx
+     * .e.g xx|body
+     *
+     * @param payload payload
+     * @return operator, body
+     */
+    public static Tuple parsePayload(String payload) {
+        // 检查长度
+        if (payload.length() < TerminalOperate.PREFIX_SIZE) {
+            return null;
+        }
+        // 解析操作
+        TerminalOperate operate = TerminalOperate.of(payload.substring(0, TerminalOperate.PREFIX_SIZE));
+        if (operate == null) {
+            return null;
+        }
+        if (!operate.isHasBody()) {
+            return Tuple.of(operate, null);
+        }
+        // 检查是否有body
+        if (payload.length() < TerminalOperate.PREFIX_SIZE + 1) {
+            return null;
+        }
+        return Tuple.of(operate, payload.substring(TerminalOperate.PREFIX_SIZE + 1));
     }
 
     /**
@@ -49,6 +77,9 @@ public class WebSockets {
      * @param message message
      */
     public static void sendText(WebSocketSession session, byte[] message) {
+        if (!session.isOpen()) {
+            return;
+        }
         try {
             // 响应
             session.sendMessage(new TextMessage(message));
@@ -57,6 +88,23 @@ public class WebSockets {
             log.error("terminal 读取流发生并发 {}", Exceptions.getDigest(e));
         } catch (IOException e) {
             throw Exceptions.ioRuntime(e);
+        }
+    }
+
+    /**
+     * 关闭会话
+     *
+     * @param session session
+     * @param code    code
+     */
+    public static void close(WebSocketSession session, WsCloseCode code) {
+        if (!session.isOpen()) {
+            return;
+        }
+        try {
+            session.close(code.status());
+        } catch (Exception e) {
+            log.error("websocket close failure", e);
         }
     }
 

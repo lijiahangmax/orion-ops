@@ -34,9 +34,21 @@ public class KeyConst {
     public static final String TERMINAL_ACCESS_TOKEN = "terminal:access:{}";
 
     /**
-     * 5min
+     * 3min
      */
-    public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 5;
+    public static final int TERMINAL_ACCESS_TOKEN_EXPIRE = 60 * 3;
+
+    /**
+     * terminal 监视 token
+     * <p>
+     * terminal:watcher:{token}
+     */
+    public static final String TERMINAL_WATCHER_TOKEN = "terminal:watcher:{}";
+
+    /**
+     * 3min
+     */
+    public static final int TERMINAL_WATCHER_TOKEN_EXPIRE = 60 * 3;
 
     /**
      * 文件 tail 访问 token

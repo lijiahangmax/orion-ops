@@ -25,7 +25,7 @@ public class DingPusher {
 
 
     public static void main(String[] args) {
-        new DingPusher().messagePush("https://oapi.dingtalk.com/robot/send?access_token=");
+        new DingPusher().messagePush("https://oapi.dingtalk.com/robot/send?access_token=2a0f6604f5f743ac78841993a2e0a2561b54b0d8ce69e72a74a07fcae832613c");
     }
 
 

@@ -1,8 +1,10 @@
 package com.orion.ops.entity.vo;
 
 import io.swagger.annotations.ApiModel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 系统版本响应
@@ -13,6 +15,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel(value = "系统信息响应")
 public class SystemAboutVO {
 

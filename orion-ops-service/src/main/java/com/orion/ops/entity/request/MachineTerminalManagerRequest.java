@@ -47,4 +47,10 @@ public class MachineTerminalManagerRequest extends PageRequest {
     @ApiModelProperty(value = "机器唯一标识")
     private String machineTag;
 
+    /**
+     * @see com.orion.ops.constant.Const#ENABLE
+     */
+    @ApiModelProperty(value = "是否只读")
+    private Integer readonly;
+
 }
