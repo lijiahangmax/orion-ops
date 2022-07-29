@@ -41,11 +41,13 @@
       <div class="search-buttons">
         <a-button class="terminal-search-button search-button-prev"
                   type="primary"
+                  size="small"
                   @click="searchKeywords(false)">
           上一个
         </a-button>
         <a-button class="terminal-search-button search-button-next"
                   type="primary"
+                  size="small"
                   @click="searchKeywords(true)">
           下一个
         </a-button>
@@ -117,10 +119,10 @@ export default {
   top: 94px;
   right: 20px;
   z-index: 200;
-  width: 290px;
+  width: 270px;
 
   .search-input {
-    width: 260px;
+    width: 240px;
   }
 
   .search-options {
