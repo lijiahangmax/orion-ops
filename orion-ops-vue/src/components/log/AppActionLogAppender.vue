@@ -29,10 +29,7 @@ export default {
   name: 'AppActionLogAppender',
   components: { LogAppender },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 56px)'
-    }
+    appenderHeight: String
   },
   data() {
     return {
@@ -68,7 +65,7 @@ export default {
       // 关闭tail
       this.$nextTick(() => {
         this.$refs.appender.clear()
-        this.$refs.appender.close()
+        this.$refs.appender.dispose()
       })
       this.id = null
       this.detail = {}
@@ -95,14 +92,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.app-action-log {
-  padding: 8px;
-
-  .action-log-tools {
-    display: flex;
-    align-items: baseline;
-  }
+.action-log-tools {
+  display: flex;
+  align-items: baseline;
 }
-
 </style>

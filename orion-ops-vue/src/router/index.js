@@ -201,12 +201,12 @@ const routes = [
       },
       {
         path: '/batch/exec/add',
-        name: 'BatchExecAdd',
+        name: 'BatchExecTask',
         meta: {
           requireAuth: true,
           title: '批量执行'
         },
-        component: () => import('../views/exec/AddBatchExecTask')
+        component: () => import('../views/exec/BatchExecTask')
       },
       {
         path: '/batch/upload',

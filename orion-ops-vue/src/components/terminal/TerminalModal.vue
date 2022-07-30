@@ -8,7 +8,7 @@
              :maskClosable="false"
              :forceRender="true"
              :dialogStyle="{top: '32px', padding: 0}"
-             :bodyStyle="{padding: '0'}"
+             :bodyStyle="{padding: 0}"
              @cancel="close"
              width="75%">
       <!-- 标题 -->

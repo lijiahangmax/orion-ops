@@ -8,7 +8,7 @@
            :forceRender="true"
            :destroyOnClose="true"
            :dialogStyle="{top: '32px', padding: 0}"
-           :bodyStyle="{padding: '0', background: '#121314'}"
+           :bodyStyle="{padding: 0, background: '#121314'}"
            width="65%">
     <!-- 头 -->
     <template #title>

@@ -37,7 +37,7 @@
             <template #left-tools>
               <div class="appender-left-tools">
                 <!-- used -->
-                <span class="mx8" title="用时"
+                <span class="mr8" title="用时"
                       v-if="machine.keepTime && SCHEDULER_TASK_MACHINE_STATUS.WAIT.value !== machine.status
                           && SCHEDULER_TASK_MACHINE_STATUS.RUNNABLE.value !== machine.status">
                     {{ `${machine.keepTime} (${machine.used}ms)` }}
@@ -103,10 +103,7 @@ export default {
     LogAppender
   },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 96px)'
-    },
+    appenderHeight: String,
     height: String
   },
   data() {
@@ -165,7 +162,7 @@ export default {
       for (const machine of this.record.machines) {
         const appender = this.$refs[`appender-${machine.id}`][0]
         appender.clear()
-        appender.close()
+        appender.dispose()
       }
       // 关闭轮询
       if (this.pollId) {
@@ -178,7 +175,9 @@ export default {
       this.openedFiles = []
     },
     chooseMachineLog(id) {
-      this.$refs[`appender-${id}`][0].fitTerminal()
+      setTimeout(() => {
+        this.$nextTick(() => this.$refs[`appender-${id}`][0].fitTerminal())
+      }, 100)
     },
     terminateMachine(machineRecordId) {
       this.$api.terminateMachineSchedulerTaskRecord({
@@ -289,7 +288,6 @@ export default {
     width: calc(100% - 287px);
     margin: 16px 16px 16px 0;
     background: #FFF;
-    padding: 8px 16px 16px 16px;
     border-radius: 4px;
 
     .appender-left-tools {

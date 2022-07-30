@@ -8,7 +8,7 @@
            :forceRender="true"
            :destroyOnClose="true"
            :dialogStyle="{top: '32px', padding: 0}"
-           :bodyStyle="{padding: '0'}"
+           :bodyStyle="{padding: 0}"
            :width="width">
     <!-- 头信息 -->
     <template #title>

@@ -4,13 +4,13 @@
            :title="null"
            :footer="null"
            :dialogStyle="{top: '16px', padding: 0}"
-           :bodyStyle="{padding: '4px'}"
+           :bodyStyle="{padding: 0}"
            :destroyOnClose="true"
            :forceRender="true"
            @cancel="close"
-           width="98%">
+           width="96%">
     <!-- 日志面板 -->
-    <AppReleaseMachineLogAppender ref="logger" appenderHeight="calc(100vh - 148px)"/>
+    <AppReleaseMachineLogAppender ref="logger" appenderHeight="calc(100vh - 122px)"/>
   </a-modal>
 </template>
 
@@ -29,12 +29,12 @@ export default {
   methods: {
     open(id) {
       this.visible = true
-      setTimeout(() => {
+      this.$nextTick(() => {
         this.$refs.logger.open(id)
-      }, 100)
+      })
     },
     close() {
-      this.visible = true
+      this.visible = false
       this.$nextTick(() => {
         this.$refs.logger.close()
       })

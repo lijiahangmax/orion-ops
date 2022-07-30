@@ -83,10 +83,7 @@ export default {
   name: 'AppBuildLogAppender',
   components: { LogAppender },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 112px)'
-    }
+    appenderHeight: String
   },
   computed: {
     stepStatus() {
@@ -137,7 +134,7 @@ export default {
       // 关闭tail
       this.$nextTick(() => {
         this.$refs.appender.clear()
-        this.$refs.appender.close()
+        this.$refs.appender.dispose()
       })
       this.id = null
       this.current = 0
@@ -229,17 +226,13 @@ export default {
 <style lang="less" scoped>
 
 .app-build-steps {
-  height: 56px;
-  padding: 12px 12px 4px 12px;
+  height: 46px;
+  padding: 8px 12px 0 12px;
 }
 
-.app-build-log {
-  padding: 8px;
-
-  .build-log-tools {
-    display: flex;
-    align-items: center;
-  }
+.build-log-tools {
+  display: flex;
+  align-items: center;
 }
 
 </style>

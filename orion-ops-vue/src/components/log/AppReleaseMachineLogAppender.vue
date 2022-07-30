@@ -73,10 +73,7 @@ export default {
   name: 'AppReleaseMachineLogAppender',
   components: { LogAppender },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 112px)'
-    }
+    appenderHeight: String
   },
   data() {
     return {
@@ -117,7 +114,7 @@ export default {
       // 关闭tail
       this.$nextTick(() => {
         this.$refs.appender.clear()
-        this.$refs.appender.close()
+        this.$refs.appender.dispose()
       })
       this.id = null
       this.current = 0
@@ -197,17 +194,12 @@ export default {
 <style lang="less" scoped>
 
 .app-release-steps {
-  height: 56px;
-  padding: 12px 12px 4px 12px;
+  height: 46px;
+  padding: 8px 12px 0 12px;
 }
 
-.machine-release-log {
-  padding: 8px;
-
-  .machine-log-tools {
-    display: flex;
-    align-items: center;
-  }
+.machine-log-tools {
+  display: flex;
+  align-items: center;
 }
-
 </style>

@@ -1,6 +1,6 @@
 <template>
   <!-- 日志面板 -->
-  <ExecLoggerAppender ref="logger"/>
+  <ExecLoggerAppender ref="logger" appenderHeight="calc(100vh - 41px)"/>
 </template>
 
 <script>

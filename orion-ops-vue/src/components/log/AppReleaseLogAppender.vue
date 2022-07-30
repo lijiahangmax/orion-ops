@@ -104,10 +104,7 @@ export default {
   name: 'AppReleaseLogAppender',
   components: { LogAppender },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 156px)'
-    },
+    appenderHeight: String,
     height: String
   },
   computed: {},
@@ -173,7 +170,7 @@ export default {
       for (const machine of this.record.machines) {
         const appender = this.$refs[`appender-${machine.id}`][0]
         appender.clear()
-        appender.close()
+        appender.dispose()
       }
       // 关闭轮询
       if (this.pollId) {
@@ -187,7 +184,9 @@ export default {
       this.current = {}
     },
     chooseMachineLog(id) {
-      this.$refs[`appender-${id}`][0].fitTerminal()
+      setTimeout(() => {
+        this.$nextTick(() => this.$refs[`appender-${id}`][0].fitTerminal())
+      }, 100)
     },
     terminateMachine(releaseMachineId) {
       this.$api.terminateAppReleaseMachine({
@@ -324,12 +323,11 @@ export default {
     width: calc(100% - 287px);
     margin: 16px 16px 16px 0;
     background: #FFF;
-    padding: 8px 16px 16px 16px;
     border-radius: 4px;
 
     .machine-steps {
-      height: 56px;
-      padding: 8px 0 12px 0;
+      height: 46px;
+      padding: 8px 12px 0 12px;
     }
   }
 

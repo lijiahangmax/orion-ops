@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SchedulerTaskLogAppender ref="logView" height="100vh"/>
+    <SchedulerTaskLogAppender ref="logView" height="100vh" appenderHeight="calc(100vh - 72px)"/>
   </div>
 </template>
 
