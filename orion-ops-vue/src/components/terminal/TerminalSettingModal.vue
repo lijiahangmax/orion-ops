@@ -168,7 +168,7 @@ export default {
           backgroundColor: values.backgroundColor,
           enableWebLink: values.enableWebLink ? 1 : 2
         })
-        this.$message.success('配置修改成功, 重新连接后后生效')
+        this.$message.success('配置修改成功, 重新连接后生效')
         this.close()
       } catch (e) {
         this.$message.error('配置修改失败')

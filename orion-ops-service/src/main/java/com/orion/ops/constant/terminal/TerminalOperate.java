@@ -44,11 +44,6 @@ public enum TerminalOperate {
      */
     CLEAR("5", false),
 
-    /**
-     * 关闭连接
-     */
-    DISCONNECT("6", false),
-
     ;
 
     /**

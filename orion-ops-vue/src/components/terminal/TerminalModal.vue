@@ -48,7 +48,7 @@
       </template>
       <!-- 终端 -->
       <div class="terminal-wrapper">
-        <TerminalBody ref="terminal" :machineId="machineId" @changeStatus="onchangeStatus"/>
+        <TerminalBody ref="terminal" @changeStatus="onchangeStatus"/>
       </div>
     </a-modal>
     <!-- 设置模态框 -->

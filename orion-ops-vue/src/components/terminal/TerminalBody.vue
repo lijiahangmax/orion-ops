@@ -1,5 +1,5 @@
 <template>
-  <div class="terminal-body" :style="{background: options.theme.background}">
+  <div class="terminal-body" :style="{height, background: options.theme.background}">
     <!-- 右键菜单 -->
     <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
       <!-- 终端 -->
@@ -149,9 +149,10 @@ export default {
     TerminalSearch
   },
   props: {
-    machineId: Number,
-    terminalHeight: String,
-    isModal: Boolean
+    height: {
+      type: String,
+      default: '100%'
+    }
   },
   data: function() {
     return {
@@ -224,7 +225,7 @@ export default {
       }
     },
     fitTerminal() {
-      const dimensions = this.plugin.fit.proposeDimensions()
+      const dimensions = this.plugin.fit && this.plugin.fit.proposeDimensions()
       if (!dimensions) {
         return
       }
@@ -319,7 +320,6 @@ export default {
 .terminal-body {
   background: #212529;
   width: 100%;
-  height: 100%;
 
   .terminal {
     width: 100%;

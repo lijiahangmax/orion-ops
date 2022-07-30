@@ -1,6 +1,6 @@
 <template>
   <div class="terminal-header-container">
-    <div class="terminal-header-main" :style="{background}">
+    <div class="terminal-header-main">
       <!-- 左侧菜单 -->
       <div class="terminal-header-fixed-left">
         <!-- ssh信息 -->
@@ -19,7 +19,7 @@
           <a-input-search placeholder="command"
                           :disabled="machine.status !== TERMINAL_STATUS.CONNECTED.value"
                           v-model="commandInput"
-                          @search="inputCommand">
+                          @search="sendCommand">
             <template #enterButton>
               <a-icon type="forward"/>
             </template>
@@ -62,31 +62,21 @@
         <a-button id="sftp-trigger" :disabled="machine.status !== TERMINAL_STATUS.CONNECTED.value" type="primary" @click="openSftp">文件管理器</a-button>
       </div>
     </div>
-    <!-- 事件 -->
-    <div class="terminal-header-event-container">
-      <!-- 设置模态框 -->
-      <div id="terminal-settings-modal">
-        <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
-      </div>
-    </div>
+    <!-- 设置模态框 -->
+    <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
   </div>
 </template>
 
 <script>
 import { exitFullScreen, fullScreen, getSshCommand } from '@/lib/utils'
 import { enumValueOf, TERMINAL_STATUS } from '@/lib/enum'
-
 import TerminalSettingModal from './TerminalSettingModal'
 
 export default {
   name: 'TerminalHeader',
   props: {
     machineId: Number,
-    machine: Object,
-    background: {
-      type: String,
-      default: '#E9ECEF'
-    }
+    machine: Object
   },
   components: {
     TerminalSettingModal
@@ -119,13 +109,13 @@ export default {
     copyHost() {
       this.$copy(this.machine.host, true)
     },
-    inputCommand() {
-      this.$emit('inputCommand', this.commandInput)
+    sendCommand() {
+      this.$emit('sendCommand', this.commandInput)
       this.commandInput = ''
     },
     confirmStatus() {
       if (this.machine.status === TERMINAL_STATUS.CONNECTED.value) {
-        this.$emit('disconnect')
+        this.$emit('dispose')
       } else {
         this.$emit('reload')
       }
@@ -149,12 +139,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .terminal-header-main {
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #E9ECEF;
 
   .terminal-header-fixed-left {
     display: flex;
@@ -165,7 +155,9 @@ export default {
       max-width: 160px;
       margin: 0 16px 0 8px;
       cursor: pointer;
-      color: #364FC7;
+      color: rgba(0, 0, 0, .85);
+      font-weight: 500;
+      font-size: 15px;
     }
 
     .terminal-command-input-wrapper {
@@ -192,7 +184,5 @@ export default {
       color: #1C7ED6;
     }
   }
-
 }
-
 </style>
