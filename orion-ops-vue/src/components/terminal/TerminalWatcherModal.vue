@@ -6,10 +6,10 @@
            :maskClosable="false"
            :forceRender="true"
            :destroyOnClose="true"
-           :dialogStyle="{top: '16px', padding: 0}"
+           :dialogStyle="{top: '32px', padding: 0}"
            :bodyStyle="{padding: '0'}"
            :width="width">
-    <!-- 头 -->
+    <!-- 头信息 -->
     <template #title>
       <div class="terminal-watcher-header">
         <div class="terminal-watcher-header-left">
@@ -25,10 +25,10 @@
            </span>
          </span>
           <!-- 发送同步  -->
-          <a-tooltip title="发送 ctrl + l 刷新">
+          <a-tooltip title="发送 Ctrl + L 刷新">
             <a-icon v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
                     class="header-icon sync-icon" type="sync"
-                    @click="sendNop"/>
+                    @click="sendClear"/>
           </a-tooltip>
         </div>
         <div class="terminal-watcher-header-right">
@@ -72,15 +72,19 @@
         </template>
       </a-dropdown>
     </div>
+    <!-- 搜索框 -->
+    <TerminalSearch ref="search" :searchPlugin="search" @close="focus"/>
   </a-modal>
 </template>
 
 <script>
 import { Terminal } from 'xterm'
+import { SearchAddon } from 'xterm-addon-search'
 import { formatDate } from '@/lib/filters'
 import 'xterm/css/xterm.css'
 import { enumValueOf, TERMINAL_STATUS, TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
 import { copyToClipboard, getClipboardText } from '@/lib/utils'
+import TerminalSearch from '@/components/terminal/TerminalSearch'
 
 /**
  * 客户端操作处理器
@@ -122,6 +126,7 @@ const clientHandler = {
   onclose(e) {
     this.status = TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
+    this.term.setOption('cursorBlink', false)
   }
 }
 
@@ -166,6 +171,7 @@ const rightMenuHandler = {
 
 export default {
   name: 'TerminalWatcherModal',
+  components: { TerminalSearch },
   data() {
     return {
       visible: false,
@@ -176,6 +182,7 @@ export default {
       client: null,
       width: 'max-content',
       visibleRightMenu: false,
+      search: null,
       received: false
     }
   },
@@ -210,6 +217,16 @@ export default {
         })
         this.term.open(this.$refs.terminal)
         this.width = (this.$refs.terminal.scrollWidth + 5) + 'px'
+        // 注册搜索组件
+        this.search = new SearchAddon()
+        this.term.loadAddon(this.search)
+        // 注册自定义按键
+        this.term.attachCustomKeyEventHandler((ev) => {
+          // 注册搜索键 ctrl + shift + f
+          if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+            this.$refs.search.open()
+          }
+        })
         // 建立连接
         this.initSocket()
       })
@@ -242,7 +259,7 @@ export default {
       const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
       this.client.send(body)
     },
-    sendNop() {
+    sendClear() {
       if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
         return
       }
@@ -258,15 +275,20 @@ export default {
     },
     close() {
       this.visible = false
+      this.$refs.search.closeSearch()
       this.client && this.client.readyState === 1 && this.client.close()
       setTimeout(() => {
         this.record = null
         this.status = TERMINAL_STATUS.NOT_CONNECT.value
         this.term && this.term.dispose()
+        this.search && this.search.dispose()
         this.term = null
         this.width = 'max-content'
         this.received = false
       }, 200)
+    },
+    focus() {
+      this.term.focus()
     }
   },
   filters: {

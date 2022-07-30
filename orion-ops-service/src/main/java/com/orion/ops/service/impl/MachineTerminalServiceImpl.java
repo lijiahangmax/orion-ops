@@ -104,7 +104,9 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
 
     @Override
     public MachineTerminalVO getMachineConfig(Long machineId) {
-        MachineTerminalDO config = machineTerminalDAO.selectOne(new LambdaQueryWrapper<MachineTerminalDO>().eq(MachineTerminalDO::getMachineId, machineId));
+        LambdaQueryWrapper<MachineTerminalDO> wrapper = new LambdaQueryWrapper<MachineTerminalDO>()
+                .eq(MachineTerminalDO::getMachineId, machineId);
+        MachineTerminalDO config = machineTerminalDAO.selectOne(wrapper);
         if (config == null) {
             // 初始化
             MachineTerminalDO insert = new MachineTerminalDO();

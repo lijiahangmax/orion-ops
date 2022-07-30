@@ -351,48 +351,6 @@ export function clearStainKeywords(message) {
 }
 
 /**
- * 自适应终端大小
- */
-export function fitDimensions(term, parent) {
-  if (!term) {
-    return {}
-  }
-  if (!term.element || !term.element.parentElement) {
-    return {}
-  }
-  const core = term._core
-  if (core._renderService.dimensions.actualCellWidth === 0 || core._renderService.dimensions.actualCellHeight === 0) {
-    return {}
-  }
-
-  // const parentElementStyle = window.getComputedStyle(term.element.parentElement)
-  const parentElementStyle = window.getComputedStyle(parent)
-  const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'))
-  const parentElementWidthProp = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')))
-  const parentElementWidth = Math.max(0, parentElementWidthProp || parent.width || parent.offsetWidth || 0)
-  if (!parentElementWidth) {
-    return {}
-  }
-  const elementStyle = window.getComputedStyle(term.element)
-  const elementPadding = {
-    top: parseInt(elementStyle.getPropertyValue('padding-top')),
-    bottom: parseInt(elementStyle.getPropertyValue('padding-bottom')),
-    right: parseInt(elementStyle.getPropertyValue('padding-right')),
-    left: parseInt(elementStyle.getPropertyValue('padding-left'))
-  }
-  const elementPaddingVer = elementPadding.top + elementPadding.bottom
-  const elementPaddingHor = elementPadding.right + elementPadding.left
-  const availableHeight = parentElementHeight - elementPaddingVer
-  const availableWidth = parentElementWidth - elementPaddingHor - core.viewport.scrollBarWidth
-
-  const geometry = {
-    cols: Math.max(2, Math.floor(availableWidth / core._renderService.dimensions.actualCellWidth)),
-    rows: Math.max(1, Math.floor(availableHeight / core._renderService.dimensions.actualCellHeight))
-  }
-  return geometry
-}
-
-/**
  * 获取唯一的 UUID
  */
 export function getUUID() {

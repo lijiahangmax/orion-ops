@@ -68,7 +68,9 @@ export default {
             id: i.id,
             tag: i.tag,
             name: i.name,
-            host: i.host
+            host: i.host,
+            port: i.sshPort,
+            username: i.username
           }
         })
         this.filterList = [...this.list]

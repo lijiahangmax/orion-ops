@@ -186,42 +186,39 @@
         </template>
       </a-table>
     </div>
-    <!-- 事件 -->
-    <div class="machine-event">
-      <!-- 添加模态框 -->
-      <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
-      <!-- 详情模态框 -->
-      <MachineDetailModal ref="detailModal"/>
-      <!-- 导出模态框 -->
-      <MachineExportModal ref="export"/>
-      <!-- 导入模态框 -->
-      <DataImportModal ref="import" :importType="importType"/>
-      <!-- 终端模态框 -->
-      <div v-if="openTerminalArr.length">
-        <TerminalModal v-for="openTerminal of openTerminalArr"
-                       :key="openTerminal.symbol"
-                       :ref='`terminalModal${openTerminal.symbol}`'
-                       @close="closedTerminal"
-                       @minimize="minimizeTerminal"/>
-      </div>
-      <!-- 终端最小化 -->
-      <div class="terminal-minimize-container">
-        <a-card v-for="minimizeTerminal of minimizeTerminalArr"
-                :key="minimizeTerminal.symbol"
-                :title="`${minimizeTerminal.name} (${minimizeTerminal.host})`"
-                class="terminal-minimize-item pointer"
-                size="small"
-                @click="maximizeTerminal(minimizeTerminal.symbol)">
-          <!-- 关闭按钮 -->
-          <template #extra>
-            <a-icon class="ml4 pointer"
-                    type="close"
-                    title="关闭"
-                    @click.stop="closeMinimizeTerminal(minimizeTerminal.symbol)"/>
-          </template>
-        </a-card>
-      </div>
+    <!-- 终端模态框 -->
+    <div v-if="openTerminalArr.length">
+      <TerminalModal v-for="openTerminal of openTerminalArr"
+                     :key="openTerminal.terminalId"
+                     :ref='`terminalModal${openTerminal.terminalId}`'
+                     @close="closedTerminal"
+                     @minimize="minimizeTerminal"/>
     </div>
+    <!-- 终端最小化 -->
+    <div class="terminal-minimize-container">
+      <a-card v-for="minimizeTerminal of minimizeTerminalArr"
+              :key="minimizeTerminal.terminalId"
+              :title="`${minimizeTerminal.name} (${minimizeTerminal.host})`"
+              class="terminal-minimize-item pointer"
+              size="small"
+              @click="maximizeTerminal(minimizeTerminal.terminalId)">
+        <!-- 关闭按钮 -->
+        <template #extra>
+          <a-icon class="ml4 pointer"
+                  type="close"
+                  title="关闭"
+                  @click.stop="closeMinimizeTerminal(minimizeTerminal.terminalId)"/>
+        </template>
+      </a-card>
+    </div>
+    <!-- 添加模态框 -->
+    <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
+    <!-- 详情模态框 -->
+    <MachineDetailModal ref="detailModal"/>
+    <!-- 导出模态框 -->
+    <MachineExportModal ref="export"/>
+    <!-- 导入模态框 -->
+    <DataImportModal ref="import" :importType="importType"/>
   </div>
 </template>
 
@@ -502,7 +499,7 @@ export default {
         const now = Date.now()
         this.openTerminalArr.push({
           name: record.name,
-          symbol: now
+          terminalId: now
         })
         this.$nextTick(() => {
           this.$refs[`terminalModal${now}`][0].open(record, now)
@@ -513,9 +510,9 @@ export default {
         return true
       }
     },
-    closedTerminal(symbol) {
+    closedTerminal(terminalId) {
       for (let i = 0; i < this.openTerminalArr.length; i++) {
-        if (this.openTerminalArr[i].symbol === symbol) {
+        if (this.openTerminalArr[i].terminalId === terminalId) {
           this.openTerminalArr.splice(i, 1)
         }
       }
@@ -523,19 +520,19 @@ export default {
     minimizeTerminal(m) {
       this.minimizeTerminalArr.push(m)
     },
-    maximizeTerminal(symbol) {
-      const refs = this.$refs[`terminalModal${symbol}`]
+    maximizeTerminal(terminalId) {
+      const refs = this.$refs[`terminalModal${terminalId}`]
       for (let i = 0; i < this.minimizeTerminalArr.length; i++) {
-        if (this.minimizeTerminalArr[i].symbol === symbol) {
+        if (this.minimizeTerminalArr[i].terminalId === terminalId) {
           this.minimizeTerminalArr.splice(i, 1)
         }
       }
       refs && refs[0] && refs[0].maximize()
     },
-    closeMinimizeTerminal(symbol) {
-      const refs = this.$refs[`terminalModal${symbol}`]
+    closeMinimizeTerminal(terminalId) {
+      const refs = this.$refs[`terminalModal${terminalId}`]
       for (let i = 0; i < this.minimizeTerminalArr.length; i++) {
-        if (this.minimizeTerminalArr[i].symbol === symbol) {
+        if (this.minimizeTerminalArr[i].terminalId === terminalId) {
           this.minimizeTerminalArr.splice(i, 1)
         }
       }
@@ -559,8 +556,8 @@ export default {
   },
   beforeDestroy() {
     // 关闭所有最小化的终端
-    for (const { symbol } of this.minimizeTerminalArr) {
-      const refs = this.$refs[`terminalModal${symbol}`]
+    for (const { terminalId } of this.minimizeTerminalArr) {
+      const refs = this.$refs[`terminalModal${terminalId}`]
       refs && refs[0] && refs[0].close()
     }
   }

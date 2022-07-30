@@ -107,7 +107,7 @@
       <!-- 数据导出模态框 -->
       <MachineTerminalLogExportModal ref="export"/>
       <!-- 终端录屏模态框 -->
-      <TerminalScreen ref="screen"/>
+      <TerminalScreenModal ref="screen"/>
     </div>
   </div>
 </template>
@@ -120,7 +120,7 @@ import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
 import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
-import TerminalScreen from '@/components/terminal/TerminalScreen'
+import TerminalScreenModal from '@/components/terminal/TerminalScreenModal'
 import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 
 /**
@@ -181,7 +181,7 @@ const columns = [
 export default {
   name: 'MachineTerminalLogs',
   components: {
-    TerminalScreen,
+    TerminalScreenModal,
     MachineTerminalLogExportModal,
     TerminalLogClearModal,
     MachineAutoComplete,

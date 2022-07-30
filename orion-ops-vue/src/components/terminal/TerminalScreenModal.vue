@@ -6,9 +6,9 @@
            :maskClosable="false"
            :forceRender="true"
            :destroyOnClose="true"
-           :dialogStyle="{top: '16px', padding: 0}"
+           :dialogStyle="{top: '32px', padding: 0}"
            :bodyStyle="{padding: '0', background: '#121314'}"
-           width="min-content">
+           width="75%">
     <!-- 头 -->
     <template #title>
       <div class="terminal-screen-header">
@@ -16,7 +16,7 @@
           终端回放
           <span v-if="record">
             | {{ record.machineName }}
-            <a-tooltip title="点击复制">
+            <a-tooltip placement="right" title="点击复制">
               (<span class="pointer" @click="$copy(record.machineHost, true)">{{ record.machineHost }}</span>)
             </a-tooltip>
             | {{ record.username }}
@@ -50,8 +50,7 @@
       </div>
     </template>
     <!-- 播放器 -->
-    <div class="terminal-screen-wrapper">
-      <div class="terminal-clear" ref="clear"/>
+    <div class="terminal-screen-wrapper" ref="wrapper">
       <div class="terminal-screen-video" ref="video"/>
     </div>
   </a-modal>
@@ -67,18 +66,19 @@ const videoConfig = {
   preload: true,
   idleTimeLimit: 2,
   poster: 'npt:0',
-  fit: 'height'
+  fit: 'width'
 }
 
 export default {
-  name: 'TerminalScreen',
+  name: 'TerminalScreenModal',
   data() {
     return {
       visible: false,
       record: null,
       player: null,
       speed: 1,
-      file: null
+      file: null,
+      height: null
     }
   },
   methods: {
@@ -102,8 +102,6 @@ export default {
         return
       }
       this.speed = v
-      // 防止闪烁
-      this.$refs.clear.style.width = this.$refs.video.offsetWidth + 'px'
       const curr = this.player.getCurrentTime()
       this.player && this.player.dispose()
       this.initPlayer()
@@ -116,9 +114,18 @@ export default {
         ...videoConfig,
         speed: this.speed
       })
+      // 高度防闪烁
+      setTimeout(() => {
+        if (this.height !== null) {
+          return
+        }
+        this.height = this.$refs.video.offsetHeight
+        this.$refs.wrapper.style.height = this.height + 'px'
+      }, 50)
     },
     close() {
       this.visible = false
+      this.height = null
       setTimeout(() => {
         this.record = null
         this.player && this.player.dispose()
@@ -161,12 +168,8 @@ export default {
   }
 }
 
-.terminal-clear {
-  height: 1px;
-}
-
-.terminal-screen-video {
-  height: calc(100vh - 81px)
+.terminal-screen-wrapper {
+  overflow: hidden;
 }
 
 /deep/ .ant-modal-header {

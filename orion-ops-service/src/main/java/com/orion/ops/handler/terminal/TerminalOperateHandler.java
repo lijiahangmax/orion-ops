@@ -254,10 +254,6 @@ public class TerminalOperateHandler implements IOperateHandler {
             case CLEAR:
                 executor.write(new byte[]{12});
                 return;
-            case DISCONNECT:
-                WebSockets.close(session, WsCloseCode.DISCONNECT);
-                log.info("terminal 用户主动断连 {}", token);
-                return;
             default:
         }
     }

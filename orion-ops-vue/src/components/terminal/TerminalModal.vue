@@ -7,25 +7,39 @@
              :keyboard="false"
              :maskClosable="false"
              :forceRender="true"
-             :dialogStyle="{top: '16px', padding: 0}"
-             :bodyStyle="{padding: '4px'}"
+             :dialogStyle="{top: '32px', padding: 0}"
+             :bodyStyle="{padding: '0'}"
              @cancel="close"
-             width="80%">
+             width="75%">
       <!-- 标题 -->
       <template #title>
-        <div class="terminal-wrapper-title-wrapper">
+        <div class="terminal-title-wrapper">
           <!-- 左侧 -->
           <div class="title-left-fixed">
             <!-- ssh信息 -->
             <div class="terminal-ssh">
               <span v-if="machine.username">
-                <span title="复制ssh" @click="copySshCommand">{{ machine.username }}@</span>
-                <span title="复制ip" @click="copyHost">{{ machine.host }}:{{ machine.sshPort }}</span>
+                <a-tooltip placement="right" title="复制ssh命令">
+                  <span class="pointer" @click="copySshCommand">{{ machine.username }}@</span>
+                </a-tooltip>
+                <a-tooltip placement="right" title="复制ip">
+                  <span class="pointer" @click="$copy(machine.host, true)">{{ machine.host }}:{{ machine.sshPort }} ({{ machine.name }})</span>
+                </a-tooltip>
               </span>
             </div>
           </div>
           <!-- 右侧 -->
           <div class="title-right-fixed">
+            <!-- 状态 -->
+            <a-popconfirm v-if="status === TERMINAL_STATUS.DISCONNECTED.value"
+                          placement="bottom"
+                          title="确认重新连接?"
+                          ok-text="确认"
+                          cancel-text="取消"
+                          @confirm="reOpen">
+              <a-badge :count="statusLabel" :numberStyle="statusStyle"/>
+            </a-popconfirm>
+            <a-badge v-else :count="statusLabel" :numberStyle="statusStyle"/>
             <a-icon class="title-right-item setting-trigger" type="setting" title="设置" @click="openSetting"/>
             <a-icon class="title-right-item min-size-trigger" type="shrink" title="最小化" @click="minimize"/>
             <a-icon class="title-right-item" type="close" title="关闭" @click="close"/>
@@ -34,59 +48,102 @@
       </template>
       <!-- 终端 -->
       <div class="terminal-wrapper">
-        <TerminalXterm v-if="machineId"
-                       ref="terminal"
-                       wrapperHeight="100%"
-                       terminalHeight="100%"
-                       :machineId="machineId"
-                       :visibleHeader="false"
-                       :isModal="true"/>
+        <TerminalBody ref="terminal" @changeStatus="onchangeStatus"/>
       </div>
     </a-modal>
+    <!-- 设置模态框 -->
     <TerminalSettingModal ref="settingModal" :machineId="machineId"/>
   </div>
 </template>
 
 <script>
 import { getSshCommand } from '@/lib/utils'
-import TerminalXterm from '@/components/terminal/TerminalXterm'
+import { enumValueOf, TERMINAL_STATUS } from '@/lib/enum'
+import TerminalBody from '@/components/terminal/TerminalBody'
 import TerminalSettingModal from '@/components/terminal/TerminalSettingModal'
 
 export default {
   name: 'TerminalModal',
   components: {
     TerminalSettingModal,
-    TerminalXterm
+    TerminalBody
   },
   data() {
     return {
       visible: false,
       machineId: null,
-      symbol: null,
-      machine: {}
+      terminalId: null,
+      TERMINAL_STATUS,
+      machine: {},
+      status: TERMINAL_STATUS.NOT_CONNECT.value
+    }
+  },
+  computed: {
+    statusLabel: function() {
+      return enumValueOf(TERMINAL_STATUS, this.status).label
+    },
+    statusStyle: function() {
+      return {
+        backgroundColor: enumValueOf(TERMINAL_STATUS, this.status).color,
+        cursor: this.status === TERMINAL_STATUS.DISCONNECTED.value ? 'pointer' : 'default',
+        'user-select': 'none',
+        'margin-right': '16px'
+      }
     }
   },
   methods: {
-    open(machine, symbol) {
-      this.symbol = symbol
+    open(machine, terminalId) {
       this.machine = machine
-      this.visible = true
-      this.$nextTick(() => {
-        this.machineId = machine.id
-        this.$emit('open', this.symbol)
+      this.machineId = machine.id
+      this.terminalId = terminalId
+      const loading = this.$message.loading('建立连接中...')
+      // 获取访问数据
+      this.$api.accessTerminal({
+        machineId: machine.id
+      }).then(({ data }) => {
+        // 初始化
+        this.visible = true
+        loading()
+        this.$nextTick(() => {
+          this.$refs.terminal.init(data)
+        })
+        this.$emit('open', this.terminalId)
+      }).catch(e => {
+        loading()
+        this.$message.error(e.msg || '初始化失败')
+      })
+    },
+    reOpen() {
+      this.status = TERMINAL_STATUS.NOT_CONNECT.value
+      const loading = this.$message.loading('正在重新连接...')
+      // 获取访问数据
+      this.$api.accessTerminal({
+        machineId: this.machine.id
+      }).then(({ data }) => {
+        loading()
+        this.$nextTick(() => {
+          this.$refs.terminal.dispose()
+          this.$refs.terminal.init(data)
+        })
+      }).catch(e => {
+        loading()
+        this.$message.error(e.msg || '连接失败')
       })
     },
     close() {
       this.visible = false
       this.$refs.terminal.dispose()
-      this.$refs.terminal.disconnect()
       this.machineId = null
-      this.$emit('close', this.symbol)
+      this.status = TERMINAL_STATUS.NOT_CONNECT.value
+      this.$emit('close', this.terminalId)
+    },
+    onchangeStatus(status) {
+      this.status = status
     },
     minimize() {
       this.visible = false
       this.$emit('minimize', {
-        symbol: this.symbol,
+        terminalId: this.terminalId,
         name: this.machine.name,
         host: this.machine.host
       })
@@ -105,9 +162,6 @@ export default {
     copySshCommand() {
       const command = getSshCommand(this.machine.username, this.machine.host, this.machine.sshPort)
       this.$copy(command, true)
-    },
-    copyHost() {
-      this.$copy(this.machine.host, true)
     }
   }
 }
@@ -115,24 +169,15 @@ export default {
 
 <style lang="less" scoped>
 
-/deep/ .ant-modal-header {
-  padding: 12px 16px 12px 8px;
-}
-
-.terminal-wrapper-title-wrapper {
+.terminal-title-wrapper {
   display: flex;
   justify-content: space-between;
-  font-weight: 400;
-
-  .terminal-ssh {
-    font-size: 15px;
-    cursor: pointer;
-    color: #364FC7;
-  }
+  font-size: 14px;
 
   .title-right-fixed {
-    font-size: 20px;
-    color: rgba(0, 0, 0, .45);
+    display: flex;
+    align-items: center;
+    font-size: 18px;
     text-align: end;
 
     .min-size-trigger, .setting-trigger {
@@ -145,13 +190,18 @@ export default {
     }
 
     .title-right-item:hover {
-      color: #000000;
+      color: #1890FF;
     }
   }
 }
 
 .terminal-wrapper {
-  height: calc(100vh - 86px);
+  height: calc(100vh - 102px);
+}
+
+/deep/ .ant-modal-header {
+  padding: 8px 10px 8px 8px;
+  border-radius: 2px 2px 0 0;
 }
 
 </style>

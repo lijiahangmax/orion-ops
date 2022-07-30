@@ -23,12 +23,7 @@
               <span class="usn">{{ machineTab.name }}</span>
             </template>
             <!-- 终端 -->
-            <TerminalXterm :ref="'terminal' + machineTab.key"
-                           wrapperHeight="calc(100vh - 40px)"
-                           terminalHeight="calc(100vh - 80px)"
-                           :machineId="machineTab.machineId"
-                           :visibleHeader="true"
-                           :isModal="false"/>
+            <TerminalView :ref="'terminal' + machineTab.key" terminalHeight="calc(100vh - 80px)"/>
           </a-tab-pane>
         </a-tabs>
         <!-- 无终端承载页 -->
@@ -43,14 +38,14 @@
 <script>
 import { ENABLE_STATUS } from '@/lib/enum'
 import MachineListMenu from '@/components/machine/MachineListMenu'
-import TerminalXterm from '@/components/terminal/TerminalXterm'
+import TerminalView from '@/components/terminal/TerminalView'
 import TerminalBanner from '@/components/terminal/TerminalBanner'
 
 export default {
   name: 'MachineTerminal',
   components: {
     MachineListMenu,
-    TerminalXterm,
+    TerminalView,
     TerminalBanner
   },
   data() {
@@ -90,12 +85,19 @@ export default {
     addTerminal(id) {
       const filterMachines = this.$refs.machineList.list.filter(m => m.id === id)
       if (filterMachines.length) {
+        // 添加
         this.activeKey = this.newTabIndex++
-        this.machineTabs.push({
+        const row = {
           key: this.activeKey,
-          name: filterMachines[0].name,
-          host: filterMachines[0].host,
-          machineId: id
+          ...filterMachines[0]
+        }
+        this.machineTabs.push(row)
+        // 初始化
+        this.$nextTick(() => {
+          const $ref = this.$refs['terminal' + this.activeKey]
+          if ($ref && $ref.length) {
+            $ref[0].init(row)
+          }
         })
       }
     },
@@ -107,11 +109,12 @@ export default {
           lastIndex = i - 1
         }
       })
+      // 断连
       const $ref = this.$refs['terminal' + targetKey]
       if ($ref && $ref.length) {
-        $ref[0].disconnect()
         $ref[0].dispose()
       }
+      // 移除
       const machineTabs = this.machineTabs.filter(machineTab => machineTab.key !== targetKey)
       if (machineTabs.length && activeKey === targetKey) {
         if (lastIndex >= 0) {

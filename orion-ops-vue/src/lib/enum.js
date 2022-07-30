@@ -32,15 +32,11 @@ export const TERMINAL_OPERATOR = {
   },
   CLEAR: {
     value: '5'
-  },
-  DISCONNECT: {
-    value: '6'
   }
 }
 
 /**
  * 终端状态
- * TODO
  */
 export const TERMINAL_STATUS = {
   NOT_CONNECT: {
