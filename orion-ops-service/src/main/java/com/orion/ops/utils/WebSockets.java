@@ -38,6 +38,8 @@ public class WebSockets {
 
     public static final String AUTHED = "authed";
 
+    public static final String CONFIG = "config";
+
     private WebSockets() {
     }
 

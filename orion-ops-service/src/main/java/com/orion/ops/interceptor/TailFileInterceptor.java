@@ -1,8 +1,10 @@
 package com.orion.ops.interceptor;
 
-import com.orion.lang.utils.Booleans;
+import com.alibaba.fastjson.JSON;
 import com.orion.lang.utils.Strings;
 import com.orion.ops.constant.KeyConst;
+import com.orion.ops.entity.dto.FileTailDTO;
+import com.orion.ops.utils.WebSockets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.ServerHttpRequest;
@@ -34,10 +36,14 @@ public class TailFileInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         String token = getToken(request);
         String tokenKey = Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, token);
-        boolean access = Booleans.isTrue(redisTemplate.hasKey(tokenKey));
-        if (access) {
-            String bindKey = Strings.format(KeyConst.FILE_TAIL_BIND_TOKEN, token);
-            access = !Booleans.isTrue(redisTemplate.hasKey(bindKey));
+        String tokenValue = redisTemplate.opsForValue().get(tokenKey);
+        boolean access = false;
+        if (!Strings.isBlank(tokenValue)) {
+            // 设置信息
+            access = true;
+            attributes.put(WebSockets.CONFIG, JSON.parseObject(token, FileTailDTO.class));
+            // 删除 token
+            redisTemplate.delete(tokenKey);
         }
         log.info("tail 尝试建立ws连接开始 token: {}, 结果: {}", token, access);
         return access;

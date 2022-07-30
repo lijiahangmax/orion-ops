@@ -39,8 +39,6 @@ public class CacheKeyCleanRunner implements CommandLineRunner {
                 Strings.format(KeyConst.TERMINAL_WATCHER_TOKEN, "*"),
                 // 文件tail访问token
                 Strings.format(KeyConst.FILE_TAIL_ACCESS_TOKEN, "*"),
-                // 文件tail绑定token
-                Strings.format(KeyConst.FILE_TAIL_BIND_TOKEN, "*"),
                 // 文件下载token
                 Strings.format(KeyConst.FILE_DOWNLOAD_TOKEN, "*"),
                 // sftp会话token

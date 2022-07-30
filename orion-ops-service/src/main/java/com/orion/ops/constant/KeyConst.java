@@ -63,18 +63,6 @@ public class KeyConst {
     public static final int FILE_TAIL_ACCESS_EXPIRE = 60 * 5;
 
     /**
-     * 文件 tail 绑定 token
-     * <p>
-     * file:tail:bind:{id}
-     */
-    public static final String FILE_TAIL_BIND_TOKEN = "file:tail:bind:{}";
-
-    /**
-     * 6 h
-     */
-    public static final int FILE_TAIL_BIND_EXPIRE = 60 * 60 * 6;
-
-    /**
      * 文件下载 token
      * <p>
      * file:download:{token}
