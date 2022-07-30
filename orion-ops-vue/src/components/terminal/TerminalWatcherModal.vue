@@ -6,7 +6,7 @@
            :maskClosable="false"
            :forceRender="true"
            :destroyOnClose="true"
-           :dialogStyle="{top: '16px', padding: 0}"
+           :dialogStyle="{top: '32px', padding: 0}"
            :bodyStyle="{padding: '0'}"
            :width="width">
     <!-- 头信息 -->
@@ -126,6 +126,7 @@ const clientHandler = {
   onclose(e) {
     this.status = TERMINAL_STATUS.DISCONNECTED.value
     this.term.write('\r\n\x1b[91m' + e.reason + '\x1b[0m')
+    this.term.setOption('cursorBlink', false)
   }
 }
 

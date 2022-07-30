@@ -41,6 +41,7 @@
           <template #content>
             <div style="font-size: 15px; line-height: 26px">
               <span>ctrl + insert (复制)</span><br>
+              <span>ctrl + shift + c (复制)</span><br>
               <span>shift + insert (粘贴)</span><br>
               <span>ctrl + shift + v (粘贴)</span><br>
               <span>ctrl + shift + f (搜索)</span><br>

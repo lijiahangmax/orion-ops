@@ -168,7 +168,7 @@ const routes = [
         meta: {
           requireAuth: true,
           requireAdmin: true,
-          title: '终端控制'
+          title: '终端会话'
         },
         component: () => import('../views/machine/MachineTerminalSession')
       },

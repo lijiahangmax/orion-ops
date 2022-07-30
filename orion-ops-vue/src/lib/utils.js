@@ -365,8 +365,12 @@ export function fitDimensions(term, parent) {
     return {}
   }
 
-  // const parentElementStyle = window.getComputedStyle(term.element.parentElement)
-  const parentElementStyle = window.getComputedStyle(parent)
+  let parentElementStyle
+  if (parent instanceof Element) {
+    parentElementStyle = window.getComputedStyle(parent)
+  } else {
+    parentElementStyle = window.getComputedStyle(term.element.parentElement)
+  }
   const parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'))
   const parentElementWidthProp = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')))
   const parentElementWidth = Math.max(0, parentElementWidthProp || parent.width || parent.offsetWidth || 0)
