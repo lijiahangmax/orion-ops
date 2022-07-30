@@ -5,7 +5,7 @@
       <div class="terminal-header-fixed-left">
         <!-- ssh信息 -->
         <div class="terminal-ssh">
-          <span class="usn" v-if="machine.username">
+          <span v-if="machine.username">
             <a-tooltip title="复制ssh">
               <span @click="copySshCommand">{{ machine.username }}@</span>
             </a-tooltip>
