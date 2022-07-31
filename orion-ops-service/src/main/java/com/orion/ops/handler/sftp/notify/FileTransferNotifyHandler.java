@@ -9,6 +9,7 @@ import com.orion.ops.entity.dto.UserDTO;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.service.api.SftpService;
+import com.orion.ops.utils.WebSockets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -39,12 +40,6 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
     @Resource
     private SftpService sftpService;
 
-    private static final String USER_ID_KEY = "userId";
-
-    private static final String MACHINE_ID_LIST_KEY = "machineIdList";
-
-    private static final String AUTH_KEY = "auth";
-
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String id = session.getId();
@@ -60,8 +55,8 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
             if (machineId != null) {
                 machineIdList.add(machineId);
             }
-            session.getAttributes().put(USER_ID_KEY, userId);
-            session.getAttributes().put(MACHINE_ID_LIST_KEY, machineIdList);
+            session.getAttributes().put(WebSockets.UID, userId);
+            session.getAttributes().put(WebSockets.MID, machineIdList);
             log.info("sftp-Notify 建立连接成功 id: {}, token: {}, userId: {}, machineId: {}, machineIdList: {}", id, token, userId, machineId, machineIdList);
         } catch (Exception e) {
             log.error("sftp-Notify 建立连接失败-未查询到token信息 id: {}, token: {}", id, token, e);
@@ -74,8 +69,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String id = session.getId();
         Map<String, Object> attributes = session.getAttributes();
-        Object auth = attributes.get(AUTH_KEY);
-        if (auth != null) {
+        if (attributes.get(WebSockets.AUTHED) != null) {
             return;
         }
         if (!(message instanceof TextMessage)) {
@@ -97,16 +91,16 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
         }
         // 检查认证用户是否匹配
         Long userId = user.getId();
-        Long tokenUserId = (Long) attributes.get(USER_ID_KEY);
+        Long tokenUserId = (Long) attributes.get(WebSockets.UID);
         final boolean valid = userId.equals(tokenUserId);
         if (!valid) {
             log.info("sftp-Notify 认证失败-用户不匹配 id: {}, userId: {}, tokenUserId: {}", id, userId, tokenUserId);
             session.close(WsCloseCode.VALID.status());
             return;
         }
-        attributes.put(AUTH_KEY, Const.ENABLE);
+        attributes.put(WebSockets.AUTHED, Const.ENABLE);
         // 注册会话
-        List<Long> machineIdList = (List<Long>) attributes.get(MACHINE_ID_LIST_KEY);
+        List<Long> machineIdList = (List<Long>) attributes.get(WebSockets.MID);
         Lists.forEach(machineIdList, i -> {
             log.info("sftp-Notify 认证成功 id: {}, userId: {}, machineId: {}", id, userId, i);
             transferProcessorManager.registerSessionNotify(id, session, userId, i);
@@ -115,8 +109,7 @@ public class FileTransferNotifyHandler implements WebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
-        log.error("sftp-Notify 操作异常拦截 id: {}, e: {}", session.getId(), exception);
-        exception.printStackTrace();
+        log.error("sftp-Notify 操作异常拦截 id: {}", session.getId());
     }
 
     @Override

@@ -26,9 +26,9 @@
            </span>
          </span>
           <!-- 发送同步  -->
-          <a-tooltip title="发送 Ctrl + L 刷新">
-            <a-icon v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
-                    class="header-icon sync-icon" type="sync"
+          <a-tooltip v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
+                     title="发送 Ctrl + L 刷新">
+            <a-icon class="header-icon sync-icon" type="sync"
                     @click="sendClear"/>
           </a-tooltip>
         </div>
