@@ -18,7 +18,7 @@
     <div class="app-build-log">
       <logAppender ref="appender"
                    size="default"
-                   :appendStyle="{height: appenderHeight}"
+                   :height="appenderHeight"
                    :relId="id"
                    :tailType="FILE_TAIL_TYPE.APP_BUILD_LOG.value"
                    :downloadType="FILE_DOWNLOAD_TYPE.APP_BUILD_LOG.value">

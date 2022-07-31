@@ -46,7 +46,7 @@
           <div class="machine-logger-appender">
             <LogAppender :ref="`appender-${machine.id}`"
                          size="default"
-                         :appendStyle="{height: appenderHeight}"
+                         :height="appenderHeight"
                          :relId="machine.id"
                          :tailType="FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
                          :downloadType="FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">

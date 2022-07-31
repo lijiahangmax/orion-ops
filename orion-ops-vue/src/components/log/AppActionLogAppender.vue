@@ -4,7 +4,7 @@
     <div class="app-action-log">
       <logAppender ref="appender"
                    size="default"
-                   :appendStyle="{height: appenderHeight}"
+                   :height="appenderHeight"
                    :relId="id"
                    :tailType="FILE_TAIL_TYPE.APP_ACTION_LOG.value"
                    :downloadType="FILE_DOWNLOAD_TYPE.APP_ACTION_LOG.value">

@@ -1,5 +1,5 @@
 <template>
-  <AppReleaseMachineLogAppender ref="appender" appenderHeight="calc(100vh - 87px)"/>
+  <AppReleaseMachineLogAppender ref="appender" appenderHeight="calc(100vh - 86px)"/>
 </template>
 
 <script>

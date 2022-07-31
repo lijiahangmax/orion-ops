@@ -18,7 +18,7 @@
     <div class="machine-release-log">
       <logAppender ref="appender"
                    size="default"
-                   :appendStyle="{height: appenderHeight}"
+                   :height="appenderHeight"
                    :relId="id"
                    :tailType="FILE_TAIL_TYPE.APP_RELEASE_LOG.value"
                    :downloadType="FILE_DOWNLOAD_TYPE.APP_RELEASE_MACHINE_LOG.value">

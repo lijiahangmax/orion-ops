@@ -64,7 +64,7 @@
         </div>
       </div>
       <!-- 日志容器 -->
-      <div class="log-container" ref="logContainer" :style="appendStyle">
+      <div class="log-container" :style="{height}" ref="logContainer">
         <!-- 右键菜单 -->
         <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
           <!-- 日志终端 -->
@@ -133,18 +133,7 @@ export default {
   components: { TerminalSearch },
   props: {
     config: Object,
-    isModal: {
-      type: Boolean,
-      default: false
-    },
-    appendStyle: {
-      type: Object,
-      default: () => {
-        return {
-          height: '100%'
-        }
-      }
-    },
+    height: String,
     size: {
       type: String,
       default: 'small'
@@ -215,49 +204,49 @@ export default {
         relId: this.relId
       }).then(({ data }) => {
         this.token = data
-        this.$nextTick(() => {
-          this.initLogTailView(data)
-        })
+        this.initLogTailView(data)
       })
     },
     initLogTailView(data) {
-      // 打开日志模块
-      this.term = new Terminal(this.termConfig)
-      this.term.open(this.$refs.logTerminal)
-      // 隐藏光标
-      this.term.write('\x1b[?25l')
-      // 注册自适应组件
-      this.plugin.fit = new FitAddon(this.termConfig)
-      this.term.loadAddon(this.plugin.fit)
-      // 注册搜索组件
-      this.plugin.search = new SearchAddon()
-      this.term.loadAddon(this.plugin.search)
-      // 注册 url link组件
-      this.plugin.links = new WebLinksAddon()
-      this.term.loadAddon(this.plugin.links)
-      // 注册自适应监听器
-      window.addEventListener('resize', this.fitTerminal)
-      // 注册快捷键
-      this.term.attachCustomKeyEventHandler((ev) => {
-        // 注册全选键 ctrl + a
-        if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
-          setTimeout(() => {
-            this.term.selectAll()
-          }, 10)
-        }
-        // 注册复制键 ctrl + c
-        if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
-          this.copySelection(false)
-        }
-        // 注册搜索键 ctrl + shift + f
-        if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
-          this.$refs.search.open()
-        }
+      this.$nextTick(() => {
+        // 打开日志模块
+        this.term = new Terminal({ ...this.termConfig })
+        this.term.open(this.$refs.logTerminal)
+        // 注册自适应组件
+        this.plugin.fit = new FitAddon()
+        this.term.loadAddon(this.plugin.fit)
+        // 注册搜索组件
+        this.plugin.search = new SearchAddon()
+        this.term.loadAddon(this.plugin.search)
+        // 注册 url link组件
+        this.plugin.links = new WebLinksAddon()
+        this.term.loadAddon(this.plugin.links)
+        // 注册自适应监听器
+        window.addEventListener('resize', this.fitTerminal)
+        // 注册快捷键
+        this.term.attachCustomKeyEventHandler((ev) => {
+          // 注册全选键 ctrl + a
+          if (ev.keyCode === 65 && ev.ctrlKey && ev.type === 'keydown') {
+            setTimeout(() => {
+              this.term.selectAll()
+            }, 10)
+          }
+          // 注册复制键 ctrl + c
+          if (ev.keyCode === 67 && ev.ctrlKey && ev.type === 'keydown') {
+            this.copySelection(false)
+          }
+          // 注册搜索键 ctrl + shift + f
+          if (ev.keyCode === 70 && ev.ctrlKey && ev.shiftKey && ev.type === 'keydown') {
+            this.$refs.search.open()
+          }
+        })
+        // 隐藏光标
+        this.term.write('\x1b[?25l')
+        // 调整大小
+        this.fitTerminal()
+        // 建立连接
+        this.initSocket(data)
       })
-      // 调整大小
-      this.fitTerminal()
-      // 建立连接
-      this.initSocket(data)
     },
     initSocket(data) {
       // 打开websocket
@@ -312,6 +301,9 @@ export default {
     },
     dispose() {
       this.term && this.term.dispose()
+      this.plugin.fit && this.plugin.fit.dispose()
+      this.plugin.search && this.plugin.search.dispose()
+      this.plugin.links && this.plugin.links.dispose()
       this.client && this.client.readyState === 1 && this.client.close()
       window.removeEventListener('resize', this.fitTerminal)
     },
@@ -347,6 +339,7 @@ export default {
 <style lang="less" scoped>
 .logger-view-container {
   height: 100%;
+  overflow: hidden;
 }
 
 .log-tools {
