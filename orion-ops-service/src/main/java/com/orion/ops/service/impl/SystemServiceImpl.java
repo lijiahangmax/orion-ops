@@ -147,7 +147,7 @@ public class SystemServiceImpl implements SystemService {
         systemSpace.setLogFileSize(Files1.getSize(logFilesBytes));
         logFiles.clear();
 
-        // 交换文件
+        // 交换区文件
         File swapPath = new File(SystemEnvAttr.SWAP_PATH.getValue());
         List<File> swapFiles = Files1.listFiles(swapPath, true);
         long swapFilesBytes = swapFiles.stream().mapToLong(File::length).sum();
@@ -178,6 +178,14 @@ public class SystemServiceImpl implements SystemService {
         // systemSpace.setRepoVersionCount(repoVersionCount);
         // systemSpace.setRepoVersionFileSize(Files1.getSize(repoDirFilesBytes));
         // repoPaths.clear();
+
+        // 录屏文件
+        File screenPath = new File(SystemEnvAttr.SCREEN_PATH.getValue());
+        List<File> screenFiles = Files1.listFiles(screenPath, true);
+        long screenFilesBytes = screenFiles.stream().mapToLong(File::length).sum();
+        systemSpace.setScreenFileCount(screenFiles.size());
+        systemSpace.setScreenFileSize(Files1.getSize(screenFilesBytes));
+        screenFiles.clear();
         log.info("分析占用磁盘空间完成 {}", JSON.toJSONString(systemSpace));
     }
 

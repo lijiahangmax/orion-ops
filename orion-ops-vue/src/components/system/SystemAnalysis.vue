@@ -120,22 +120,39 @@
           </div>
         </a-descriptions-item>
         <!-- 应用代码仓库 -->
-        <!--        <a-descriptions-item label="应用代码仓库" :span="3">-->
-        <!--          <span class="analysis-count">-->
-        <!--            <span class="analysis-field">{{ analysis.repoVersionCount }}</span>个-->
-        <!--          </span>-->
-        <!--          <span class="analysis-size">-->
-        <!--            <span class="analysis-field">{{ analysis.repoVersionFileSize }}</span>-->
-        <!--          </span>-->
-        <!--          <div class="analysis-func" v-if="analysis.repoVersionCount > 0">-->
-        <!--            <span class="clear-button"-->
-        <!--                  title="清理"-->
-        <!--                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.REPO_FILE.key]"-->
-        <!--                  @click="clear(SYSTEM_CLEAR_TYPE.REPO_FILE)">-->
-        <!--            清理-->
-        <!--           </span>-->
-        <!--          </div>-->
-        <!--        </a-descriptions-item>-->
+        <a-descriptions-item v-if="false" label="应用代码仓库" :span="3">
+          <span class="analysis-count">
+            <span class="analysis-field">{{ analysis.repoVersionCount }}</span>个
+          </span>
+          <span class="analysis-size">
+            <span class="analysis-field">{{ analysis.repoVersionFileSize }}</span>
+          </span>
+          <div class="analysis-func" v-if="analysis.repoVersionCount > 0">
+            <span class="clear-button"
+                  title="清理"
+                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.REPO_FILE.key]"
+                  @click="clear(SYSTEM_CLEAR_TYPE.REPO_FILE)">
+            清理
+           </span>
+          </div>
+        </a-descriptions-item>
+        <!-- 录屏文件 -->
+        <a-descriptions-item label="录屏文件" :span="3">
+          <span class="analysis-count">
+            <span class="analysis-field">{{ analysis.screenFileCount }}</span>个
+          </span>
+          <span class="analysis-size">
+            <span class="analysis-field">{{ analysis.screenFileSize }}</span>
+          </span>
+          <div class="analysis-func" v-if="analysis.screenFileCount > 0">
+            <span class="clear-button"
+                  title="清理"
+                  v-if="visibleClean[SYSTEM_CLEAR_TYPE.SCREEN_FILE.key]"
+                  @click="clear(SYSTEM_CLEAR_TYPE.SCREEN_FILE)">
+              清理
+            </span>
+          </div>
+        </a-descriptions-item>
       </a-descriptions>
     </div>
     <!-- 操作 -->
@@ -175,14 +192,17 @@ export default {
         distVersionCount: 0,
         distFileSize: '0 B',
         repoVersionCount: 0,
-        repoVersionFileSize: '0 B'
+        repoVersionFileSize: '0 B',
+        screenFileCount: 0,
+        screenFileSize: '0 B'
       },
       visibleClean: {
         tempFile: true,
         logFile: true,
         swapFile: true,
         distFile: true,
-        repoFile: true
+        repoFile: true,
+        screenFile: true
       },
       reAnalysisLoading: false,
       fileCleanThreshold: undefined,
@@ -293,7 +313,7 @@ export default {
     margin-top: 18px;
   }
 
-  /deep/ .ant-descriptions-title {
+  ::v-deep .ant-descriptions-title {
     margin: 0 0 24px 16px;
     color: rgba(0, 0, 0, .85);
     font-weight: 500;
@@ -301,12 +321,12 @@ export default {
     line-height: 28px;
   }
 
-  /deep/ .ant-descriptions-item-label {
+  ::v-deep .ant-descriptions-item-label {
     width: 128px;
     text-align: right;
   }
 
-  /deep/ .ant-descriptions-item-content {
+  ::v-deep .ant-descriptions-item-content {
     padding-left: 8px;
   }
 

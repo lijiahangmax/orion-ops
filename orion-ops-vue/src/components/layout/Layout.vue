@@ -103,11 +103,6 @@ export default {
     padding-right: 0;
     box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
     height: 48px;
-
-    /deep/ .ant-layout-header {
-      height: 48px;
-      line-height: 48px;
-    }
   }
 }
 

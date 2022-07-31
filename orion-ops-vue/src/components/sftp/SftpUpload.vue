@@ -194,7 +194,6 @@ export default {
       margin-bottom: 9px;
     }
   }
-
 }
 
 .upload-file-list {
@@ -208,7 +207,7 @@ export default {
   margin: 0;
 }
 
-.upload-drag /deep/ .ant-upload span {
+::v-deep .upload-drag .ant-upload span {
   padding: 0;
 }
 

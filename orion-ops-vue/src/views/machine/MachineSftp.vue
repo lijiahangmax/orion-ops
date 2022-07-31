@@ -119,7 +119,7 @@ export default {
   }
 }
 
-/deep/ .sftp-folder-left-fixed {
+::v-deep .sftp-folder-left-fixed {
   height: calc(100vh - 122px);
   max-height: calc(100vh - 122px);
 }

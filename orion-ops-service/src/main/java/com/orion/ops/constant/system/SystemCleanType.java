@@ -41,6 +41,11 @@ public enum SystemCleanType {
      */
     REPO_FILE(50, "旧版本应用仓库"),
 
+    /**
+     * 录屏文件
+     */
+    SCREEN_FILE(60, "录屏文件"),
+
     ;
 
     private final Integer type;

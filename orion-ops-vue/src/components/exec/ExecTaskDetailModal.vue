@@ -98,12 +98,12 @@ export default {
 </script>
 
 <style scoped>
-#exec-task-descriptions /deep/ table th {
+::v-deep #exec-task-descriptions table th {
   padding: 14px;
   width: 95px;
 }
 
-#exec-task-descriptions /deep/ table td {
+::v-deep #exec-task-descriptions table td {
   padding: 14px 8px;
 }
 

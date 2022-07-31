@@ -3,6 +3,7 @@
            :width="550"
            :maskStyle="{opacity: 0.8, animation: 'none'}"
            :dialogStyle="{top: '64px', padding: 0}"
+           :bodyStyle="{padding: '8px'}"
            :maskClosable="false"
            :destroyOnClose="true">
     <!-- 标题 -->
@@ -316,10 +317,6 @@ export default {
 
 <style lang="less" scoped>
 
-/deep/ .ant-modal-body {
-  padding: 8px;
-}
-
 .app-list {
   margin: 0 4px 0 8px;
   height: 355px;
@@ -410,7 +407,7 @@ export default {
   }
 }
 
-.build-selector /deep/ .ant-select-selection-selected-value {
+::v-deep .build-selector .ant-select-selection-selected-value {
   width: 100%;
 }
 

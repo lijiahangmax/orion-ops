@@ -523,9 +523,9 @@ export default {
         return
       }
       const machineRecordIdList = pollItems.map(s => s.machines)
-      .filter(s => s && s.length)
-      .flat()
-      .map(s => s.id)
+        .filter(s => s && s.length)
+        .flat()
+        .map(s => s.id)
       this.$api.getSchedulerTaskRecordStatus({
         idList,
         machineRecordIdList
@@ -624,7 +624,7 @@ export default {
   }
 }
 
-/deep/ .ant-table-expand-icon-th, /deep/ .ant-table-row-expand-icon-cell {
+::v-deep .ant-table-expand-icon-th, .ant-table-row-expand-icon-cell {
   width: 45px;
   min-width: 45px;
 }

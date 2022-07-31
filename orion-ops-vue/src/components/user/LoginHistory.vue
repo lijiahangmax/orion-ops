@@ -117,11 +117,11 @@ export default {
   }
 }
 
-/deep/ .ant-timeline {
+::v-deep .ant-timeline {
   margin: 36px 0 0 18px;
 }
 
-/deep/ .ant-timeline-item-content {
+::v-deep .ant-timeline-item-content {
   top: -20px;
   margin: 0 0 0 44px;
 }

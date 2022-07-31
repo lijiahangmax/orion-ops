@@ -233,7 +233,7 @@ export default {
   }
 }
 
-.commit-selector /deep/ .ant-select-selection-selected-value {
+::v-deep .commit-selector .ant-select-selection-selected-value {
   width: 100%;
 }
 </style>

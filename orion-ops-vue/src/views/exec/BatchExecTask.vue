@@ -403,7 +403,7 @@ export default {
         }
       }
 
-      /deep/ .ant-menu-item {
+      ::v-deep .ant-menu-item {
         padding: 0 8px 0 12px !important;
       }
 

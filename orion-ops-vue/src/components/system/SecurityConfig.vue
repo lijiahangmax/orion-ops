@@ -185,7 +185,7 @@ export default {
   width: 590px;
   margin: 24px;
 
-  /deep/ .ant-form-item {
+  ::v-deep .ant-form-item {
     margin: 0 0 18px 0;
   }
 

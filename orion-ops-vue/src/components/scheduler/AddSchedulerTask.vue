@@ -4,6 +4,7 @@
            :width="700"
            :dialogStyle="{top: '32px'}"
            :okButtonProps="{props: {disabled: loading}}"
+           :bodyStyle="{padding: '24px 0 0 0'}"
            :maskClosable="false"
            :destroyOnClose="true"
            @ok="check"
@@ -300,7 +301,7 @@ export default {
 .expression-item {
   margin-bottom: 12px;
 
-  /deep/ .ant-form-explain {
+  ::v-deep .ant-form-explain {
     display: none;
     font-size: 0;
   }
@@ -320,15 +321,10 @@ export default {
     display: block;
     font-size: 13px;
   }
-
 }
 
 .no-extra-form-item {
   margin-bottom: 12px;
-}
-
-/deep/ .ant-modal-body {
-  padding: 24px 24px 4px 24px;
 }
 
 </style>

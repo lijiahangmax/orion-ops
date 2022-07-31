@@ -577,7 +577,7 @@ public enum EventType {
     /**
      * 修改系统配置
      */
-    UPDATE_SYSTEM_OPTION(6120, EventClassify.SYSTEM, "修改系统配置", "修改系统配置项 <sb>${label}</sb> 原始值:<sb>${before}</sb> 修改为:<sb>${after}</sb>"),
+    UPDATE_SYSTEM_OPTION(6120, EventClassify.SYSTEM, "修改系统配置", "修改系统配置项 <sb>${label}</sb> 原始值:<sb>${before}</sb> 新值:<sb>${after}</sb>"),
 
     // -------------------- 调度操作 --------------------
 

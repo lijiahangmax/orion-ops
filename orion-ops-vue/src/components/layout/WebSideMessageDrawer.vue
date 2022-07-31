@@ -340,7 +340,7 @@ export default {
   color: #181E33;
 }
 
-.unread-message-dot /deep/ .ant-badge-dot {
+::v-deep .unread-message-dot .ant-badge-dot {
   margin: -2px;
 }
 

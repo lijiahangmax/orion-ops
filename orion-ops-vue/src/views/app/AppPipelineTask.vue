@@ -678,9 +678,9 @@ export default {
         return
       }
       const detailIdList = pollItems.map(s => s.details)
-      .filter(s => s && s.length)
-      .flat()
-      .map(s => s.id)
+        .filter(s => s && s.length)
+        .flat()
+        .map(s => s.id)
       this.$api.getAppPipelineTaskListStatus({
         idList,
         detailIdList
@@ -760,7 +760,7 @@ export default {
   }
 }
 
-/deep/ .ant-table-expand-icon-th, /deep/ .ant-table-row-expand-icon-cell {
+::v-deep .ant-table-expand-icon-th, .ant-table-row-expand-icon-cell {
   width: 45px;
   min-width: 45px;
 }

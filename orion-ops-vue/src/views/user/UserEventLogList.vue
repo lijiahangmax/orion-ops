@@ -384,8 +384,4 @@ export default {
   }
 }
 
-/deep/ .ant-list-item-action {
-  margin-left: 8px;
-}
-
 </style>

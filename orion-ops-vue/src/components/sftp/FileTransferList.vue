@@ -393,15 +393,15 @@ export default {
     background: #DEE2E6;
   }
 
-  /deep/ .package-popover-confirm .ant-popover-message {
+  ::v-deep .package-popover-confirm .ant-popover-message {
     padding: 0 !important;
   }
 
-  /deep/ .package-popover-confirm .ant-popover-buttons {
+  ::v-deep .package-popover-confirm .ant-popover-buttons {
     display: none !important;
   }
 
-  /deep/ .package-popover-confirm .ant-popover-message-title {
+  ::v-deep .package-popover-confirm .ant-popover-message-title {
     padding-right: 8px;
     margin-bottom: 4px;
   }

@@ -544,7 +544,7 @@ export default {
 .exec-status-container {
   margin-right: 8px;
 
-  /deep/ .ant-row.ant-form-item {
+  ::v-deep .ant-row.ant-form-item {
     display: flex;
     margin: 0;
   }

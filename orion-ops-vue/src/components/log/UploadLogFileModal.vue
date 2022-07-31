@@ -96,7 +96,7 @@ export default {
   margin: 0;
 }
 
-.upload-drag /deep/ .ant-upload span {
+::v-deep .upload-drag .ant-upload span {
   padding: 8px;
 }
 </style>

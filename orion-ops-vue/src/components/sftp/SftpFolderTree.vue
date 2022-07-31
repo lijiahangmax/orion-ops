@@ -207,7 +207,7 @@ export default {
   padding: 6px 18px;
 }
 
-/deep/ .ant-tree-node-content-wrapper {
+::v-deep .ant-tree-node-content-wrapper {
   padding: 0 !important;
 }
 

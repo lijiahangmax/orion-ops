@@ -106,12 +106,12 @@ export default {
 </script>
 
 <style scoped>
-#machine-descriptions /deep/ table th {
+::v-deep #machine-descriptions table th {
   padding: 14px;
   width: 95px;
 }
 
-#machine-descriptions /deep/ table td {
+::v-deep #machine-descriptions table td {
   padding: 14px 8px;
 }
 

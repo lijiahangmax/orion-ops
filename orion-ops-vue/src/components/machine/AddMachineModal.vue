@@ -305,7 +305,7 @@ export default {
   margin-top: 15px;
 }
 
-.proxy-selector /deep/ .ant-select-selection-selected-value {
+::v-deep .proxy-selector .ant-select-selection-selected-value {
   width: 100%;
 }
 

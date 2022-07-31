@@ -189,11 +189,11 @@ export default {
           margin: 0 16px;
         }
 
-        .statistic-metrics-item.green /deep/ .ant-statistic-content {
+        ::v-deep .statistic-metrics-item.green .ant-statistic-content {
           color: #58C612;
         }
 
-        .statistic-metrics-item.red /deep/ .ant-statistic-content {
+        ::v-deep .statistic-metrics-item.red .ant-statistic-content {
           color: #DD2C00;
         }
 
@@ -201,7 +201,7 @@ export default {
           height: auto;
         }
 
-        /deep/ .ant-statistic-content {
+        ::v-deep .ant-statistic-content {
           text-align: center;
         }
       }
