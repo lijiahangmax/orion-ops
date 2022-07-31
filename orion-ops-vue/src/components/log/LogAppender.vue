@@ -64,7 +64,7 @@
         </div>
       </div>
       <!-- 日志容器 -->
-      <div class="log-container" ref="logContainer" :style="appendStyle">
+      <div class="log-container" :style="{height}" ref="logContainer">
         <!-- 右键菜单 -->
         <a-dropdown v-model="visibleRightMenu" :trigger="['contextmenu']">
           <!-- 日志终端 -->
@@ -92,11 +92,8 @@
         </a-dropdown>
       </div>
     </div>
-    <!-- 事件 -->
-    <div class="logger-view-event-container">
-      <!-- 搜索框 -->
-      <TerminalSearch ref="search" :searchPlugin="plugin.search"/>
-    </div>
+    <!-- 搜索框 -->
+    <TerminalSearch ref="search" :searchPlugin="plugin.search"/>
   </div>
 </template>
 
@@ -136,18 +133,7 @@ export default {
   components: { TerminalSearch },
   props: {
     config: Object,
-    isModal: {
-      type: Boolean,
-      default: false
-    },
-    appendStyle: {
-      type: Object,
-      default: () => {
-        return {
-          height: '100%'
-        }
-      }
-    },
+    height: String,
     size: {
       type: String,
       default: 'small'
@@ -191,7 +177,7 @@ export default {
         rightClickSelectsWord: true,
         disableStdin: true,
         cursorStyle: 'bar',
-        cursorBlink: true,
+        cursorBlink: false,
         fastScrollModifier: 'shift',
         fontSize: 13,
         rendererType: 'canvas',
@@ -213,25 +199,21 @@ export default {
   },
   methods: {
     openTail() {
-      this.$nextTick(() => {
-        this.$api.getTailToken({
-          type: this.tailType,
-          relId: this.relId
-        }).then(({ data }) => {
-          this.token = data
-          this.initLogTailView(data)
-        })
+      this.$api.getTailToken({
+        type: this.tailType,
+        relId: this.relId
+      }).then(({ data }) => {
+        this.token = data
+        this.initLogTailView(data)
       })
     },
     initLogTailView(data) {
-      const init = () => {
+      this.$nextTick(() => {
         // 打开日志模块
-        this.term = new Terminal(this.termConfig)
+        this.term = new Terminal({ ...this.termConfig })
         this.term.open(this.$refs.logTerminal)
-        // 需要先设置一下 不然modal会闪一下
-        this.term.resize(1, 1)
         // 注册自适应组件
-        this.plugin.fit = new FitAddon(this.termConfig)
+        this.plugin.fit = new FitAddon()
         this.term.loadAddon(this.plugin.fit)
         // 注册搜索组件
         this.plugin.search = new SearchAddon()
@@ -258,22 +240,13 @@ export default {
             this.$refs.search.open()
           }
         })
-        // 调整大小 因为 modal 必须调整两次 cols 会多1
-        setTimeout(() => {
-          this.fitTerminal()
-          this.fitTerminal()
-        }, 40)
+        // 隐藏光标
+        this.term.write('\x1b[?25l')
+        // 调整大小
+        this.fitTerminal()
         // 建立连接
-        setTimeout(() => {
-          this.initSocket(data)
-        }, 80)
-      }
-      if (this.isModal) {
-        // modal 有个加载过程
-        setTimeout(init, 220)
-      } else {
-        init()
-      }
+        this.initSocket(data)
+      })
     },
     initSocket(data) {
       // 打开websocket
@@ -286,7 +259,6 @@ export default {
         this.status = LOG_TAIL_STATUS.ERROR.value
       }
       this.client.onclose = (e) => {
-        console.log('closed', e.code, e.reason)
         this.status = LOG_TAIL_STATUS.CLOSE.value
         if (e.code > 4000 && e.code < 5000) {
           // 自定义错误信息
@@ -302,7 +274,13 @@ export default {
       }
     },
     fitTerminal() {
-      this.plugin.fit && this.plugin.fit.fit()
+      const dimensions = this.plugin.fit && this.plugin.fit.proposeDimensions()
+      if (!dimensions) {
+        return
+      }
+      if (dimensions?.cols && dimensions?.rows) {
+        this.term.resize(dimensions.cols, dimensions.rows)
+      }
     },
     clickTerminal() {
       this.visibleRightMenu = false
@@ -319,7 +297,15 @@ export default {
       this.term && this.term.clear()
     },
     close() {
-      this.client && this.client.close()
+      this.client && this.client.readyState === 1 && this.client.close()
+    },
+    dispose() {
+      this.term && this.term.dispose()
+      this.plugin.fit && this.plugin.fit.dispose()
+      this.plugin.search && this.plugin.search.dispose()
+      this.plugin.links && this.plugin.links.dispose()
+      this.client && this.client.readyState === 1 && this.client.close()
+      window.removeEventListener('resize', this.fitTerminal)
     },
     clickRightMenu({ key }) {
       this.visibleRightMenu = false
@@ -346,12 +332,6 @@ export default {
     formatLogStatus(status, f) {
       return enumValueOf(LOG_TAIL_STATUS, status)[f]
     }
-  },
-  beforeDestroy() {
-    this.clear()
-    this.close()
-    this.term && this.term.dispose()
-    window.removeEventListener('resize', this.fitTerminal)
   }
 }
 </script>
@@ -359,6 +339,7 @@ export default {
 <style lang="less" scoped>
 .logger-view-container {
   height: 100%;
+  overflow: hidden;
 }
 
 .log-tools {
@@ -366,7 +347,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   align-content: center;
-  padding-bottom: 8px;
+  padding: 4px 8px;
 
   .log-tools-fixed-left {
     min-width: 20%;
@@ -395,7 +376,6 @@ export default {
 }
 
 .log-container {
-  border-radius: 4px;
   width: 100%;
   background: #212529;
   padding: 4px 0 0 4px;

@@ -1,5 +1,5 @@
 <template>
-  <SchedulerTaskMachineLogAppender ref="logView"/>
+  <SchedulerTaskMachineLogAppender ref="logView" appenderHeight="calc(100vh - 40px)"/>
 </template>
 
 <script>

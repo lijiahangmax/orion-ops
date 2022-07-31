@@ -1,5 +1,5 @@
 <template>
-  <AppBuildLogAppender ref="logView"/>
+  <AppBuildLogAppender ref="logView" appenderHeight="calc(100vh - 87px)"/>
 </template>
 
 <script>

@@ -2,7 +2,7 @@
   <div class="exec-logger-appender">
     <LogAppender ref="appender"
                  size="default"
-                 :appendStyle="{height: appenderHeight}"
+                 :height="appenderHeight"
                  :relId="execId"
                  :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
                  :downloadType="FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
@@ -66,10 +66,7 @@ export default {
     LogAppender
   },
   props: {
-    appenderHeight: {
-      type: String,
-      default: 'calc(100vh - 56px)'
-    }
+    appenderHeight: String
   },
   data() {
     return {
@@ -95,7 +92,7 @@ export default {
         this.pollId = null
       }
       // 打开日志
-      this.$refs.appender.openTail()
+      this.$nextTick(() => this.$refs.appender.openTail())
       // 获取状态
       await this.getStatus()
       // 检查轮询状态
@@ -108,7 +105,7 @@ export default {
     close() {
       // 关闭tail
       this.$refs.appender.clear()
-      this.$refs.appender.close()
+      this.$refs.appender.dispose()
       // 关闭轮询
       if (this.pollId) {
         clearInterval(this.pollId)
@@ -177,14 +174,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-.exec-logger-appender {
-  padding: 8px;
-
-  .appender-left-tools {
-    display: flex;
-    align-items: center;
-  }
+.appender-left-tools {
+  display: flex;
+  align-items: center;
 }
-
 </style>

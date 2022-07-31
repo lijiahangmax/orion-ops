@@ -58,7 +58,7 @@ public class TransferProcessorManager {
      * key: token
      * value: progress
      */
-    private final Map<String, String> TRANSFER_PROGRESS = Maps.newMap();
+    private final Map<String, String> TRANSFER_PROGRESS = Maps.newCurrentHashMap();
 
     /**
      * 添加processor

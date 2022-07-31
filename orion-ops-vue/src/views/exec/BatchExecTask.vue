@@ -81,7 +81,7 @@
              v-show="execMachine.execId === selectedMachineKeys[0]"
              :key="execMachine.execId">
           <LogAppender :ref="'appender' + execMachine.execId"
-                       :appendStyle="{height: 'calc(100vh - 148px)'}"
+                       height="calc(100vh - 125px)"
                        size="default"
                        :relId="execMachine.execId"
                        :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
@@ -116,12 +116,12 @@
                   <a-button icon="close">停止</a-button>
                 </a-popconfirm>
                 <!-- used -->
-                <span class="mx8 nowrap" title="用时"
+                <span class="mr8 nowrap" title="用时"
                       v-if="execMachine.keepTime && BATCH_EXEC_STATUS.COMPLETE.value === execMachine.status">
                   {{ `${execMachine.keepTime} (${execMachine.used}ms)` }}
                 </span>
                 <!-- exitCode -->
-                <span class="mx8" title="退出码"
+                <span class="mr8" title="退出码"
                       v-if="execMachine.exitCode !== null"
                       :style="{color: execMachine.exitCode === 0 ? '#4263EB' : '#E03131'}">
                   {{ execMachine.exitCode }}
@@ -151,7 +151,7 @@ import TemplateSelector from '@/components/template/TemplateSelector'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {
-  name: 'AddBatchExecTask.vue',
+  name: 'BatchExecTask',
   components: {
     LogAppender,
     TemplateSelector,
@@ -235,12 +235,11 @@ export default {
         this.pollId = setInterval(this.pollExecStatus, 2000)
       }).then(() => {
         // 打开日志
-        this.$forceUpdate()
-        this.$nextTick(() => {
+        setTimeout(() => {
           this.execMachines.forEach(m => {
             this.$refs['appender' + m.execId][0].openTail()
           })
-        })
+        }, 300)
         this.runnable = true
         this.visibleCommand = false
       }).catch(() => {
@@ -249,7 +248,9 @@ export default {
       })
     },
     chooseExecMachine(k) {
-      this.$refs['appender' + k][0].fitTerminal()
+      setTimeout(() => {
+        this.$nextTick(() => this.$refs['appender' + k][0].fitTerminal())
+      }, 300)
     },
     pollExecStatus() {
       const idList = this.execMachines.filter(s =>
@@ -280,7 +281,7 @@ export default {
       }
       // 关闭日志
       this.execMachines.forEach(m => {
-        this.$refs['appender' + m.execId][0].close()
+        this.$refs['appender' + m.execId][0].dispose()
       })
       this.runnable = false
       this.visibleCommand = true
@@ -317,6 +318,10 @@ export default {
     }
   },
   beforeDestroy() {
+    this.execMachines.forEach(m => {
+      const refs = this.$refs['appender' + m.execId]
+      refs && refs[0] && refs[0].dispose()
+    })
     this.pollId !== null && clearInterval(this.pollId)
     this.pollId = null
   }
@@ -417,16 +422,13 @@ export default {
   }
 
   .exec-logger-container {
+    width: calc(100% - 252px);
     background: #FFFFFF;
     border-radius: 4px;
     flex: 1;
 
-    .logger-appender-container {
-      padding: 8px 16px 16px 16px;
-
-      .appender-left-tools {
-        display: flex;
-      }
+    .appender-left-tools {
+      display: flex;
     }
 
     .logger-empty-container {

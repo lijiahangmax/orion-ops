@@ -236,7 +236,7 @@ export default {
     onConnected() {
       this.status = TERMINAL_STATUS.CONNECTED.value
       // 注册心跳
-      this.pingThread = setInterval(() => this.sendPing(), 30000)
+      this.pingThread = setInterval(() => this.sendPing(), 15000)
       // 注册 terminal 事件
       this.term.onResize(event => this.sendResize(event.cols, event.rows))
       this.term.onData(event => this.sendKey(event))

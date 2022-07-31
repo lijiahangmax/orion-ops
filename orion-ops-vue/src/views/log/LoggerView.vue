@@ -36,7 +36,6 @@
                   @edit="removeTab"
                   :animated="false">
             <a-tab-pane v-for="selectedTailFile of selectedTailFiles"
-                        size="default"
                         :key="selectedTailFile.id"
                         :forceRender="true">
               <!-- tab -->
@@ -47,7 +46,7 @@
               <div class="file-log-view">
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
-                             :appendStyle="{height: 'calc(100vh - 100px)'}"
+                             height="calc(100vh - 80px)"
                              :relId="selectedTailFile.id"
                              :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
                              :downloadType="FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
@@ -220,7 +219,7 @@ export default {
       })
       const $ref = this.$refs['appender' + targetTab]
       if ($ref && $ref.length) {
-        $ref[0].close()
+        $ref[0].dispose()
       }
       const selectedTailFiles = this.selectedTailFiles.filter(tailFile => tailFile.id !== targetTab)
       if (selectedTailFiles.length && activeTab === targetTab) {
@@ -291,11 +290,6 @@ export default {
 #log-view-content-fixed-right {
   overflow: auto;
   background-color: #FFF;
-  padding: 4px 8px 8px 8px;
-
-  .file-log-view {
-    padding-top: 8px;
-  }
 }
 
 #log-view-list-fixed-left {

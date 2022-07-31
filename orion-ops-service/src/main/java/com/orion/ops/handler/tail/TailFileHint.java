@@ -13,11 +13,6 @@ import lombok.Data;
 public class TailFileHint {
 
     /**
-     * sessionId
-     */
-    private String sessionId;
-
-    /**
      * token
      */
     private String token;

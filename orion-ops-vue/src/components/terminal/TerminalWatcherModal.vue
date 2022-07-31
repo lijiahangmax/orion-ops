@@ -1,5 +1,6 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :footer="null"
            :closable="false"
            :keyboard="false"
@@ -7,7 +8,7 @@
            :forceRender="true"
            :destroyOnClose="true"
            :dialogStyle="{top: '32px', padding: 0}"
-           :bodyStyle="{padding: '0'}"
+           :bodyStyle="{padding: 0}"
            :width="width">
     <!-- 头信息 -->
     <template #title>
@@ -25,15 +26,17 @@
            </span>
          </span>
           <!-- 发送同步  -->
-          <a-tooltip title="发送 Ctrl + L 刷新">
-            <a-icon v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
-                    class="header-icon sync-icon" type="sync"
+          <a-tooltip v-if="!received && TERMINAL_STATUS.CONNECTED.value === status"
+                     title="发送 Ctrl + L 刷新">
+            <a-icon class="header-icon sync-icon" type="sync"
                     @click="sendClear"/>
           </a-tooltip>
         </div>
         <div class="terminal-watcher-header-right">
           <!-- 状态 -->
           <a-badge class="terminal-status-badge" :count="statusLabel" :numberStyle="statusStyle"/>
+          <!-- 拖拽 -->
+          <a-icon class="header-icon ant-modal-draggable mr8 ml4" title="拖拽" type="border-right"/>
           <!-- 关闭 -->
           <a-icon class="header-icon" type="close" title="关闭" @click="close"/>
         </div>
@@ -206,7 +209,7 @@ export default {
           rows: record.rows,
           fontSize: record.cols > 120 ? 13 : 14,
           cursorStyle: 'bar',
-          cursorBlink: true,
+          cursorBlink: record.readonly !== 1,
           fastScrollModifier: 'shift',
           rendererType: 'canvas',
           fontFamily: 'courier-new, courier, monospace',
@@ -265,6 +268,7 @@ export default {
       }
       this.received = true
       this.client.send(TERMINAL_OPERATOR.CLEAR.value)
+      this.term.focus()
     },
     clickTerminal() {
       this.visibleRightMenu = false

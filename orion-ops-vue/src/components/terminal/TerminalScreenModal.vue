@@ -1,5 +1,6 @@
 <template>
   <a-modal v-model="visible"
+           v-drag-modal
            :footer="null"
            :closable="false"
            :keyboard="false"
@@ -7,8 +8,8 @@
            :forceRender="true"
            :destroyOnClose="true"
            :dialogStyle="{top: '32px', padding: 0}"
-           :bodyStyle="{padding: '0', background: '#121314'}"
-           width="75%">
+           :bodyStyle="{padding: 0, background: '#121314'}"
+           width="65%">
     <!-- 头 -->
     <template #title>
       <div class="terminal-screen-header">
@@ -23,8 +24,12 @@
           </span>
         </div>
         <div class="terminal-screen-header-right">
+          <!-- 拖拽 -->
+          <div class="ant-modal-draggable ant-modal-draggable-icon" title="拖拽">
+            <a-icon type="border-right"/>
+          </div>
           <!-- 倍速 -->
-          <div class="speed-wrapper">
+          <div class="speed-wrapper flex">
             <span class="normal-label">倍速</span>
             <a-select class="speed-select" :defaultValue="1" size="small" @change="changeSpeed">
               <a-select-option :value="0.75">
@@ -147,6 +152,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 14px;
+  user-select: none;
 
   .terminal-screen-header-right {
     display: flex;

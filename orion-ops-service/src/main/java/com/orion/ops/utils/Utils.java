@@ -305,7 +305,6 @@ public class Utils {
      * @param str str
      * @return unicode
      */
-    // TODO
     public static String convertControlUnicode(String str) {
         char[] chars = str.toCharArray();
         StringBuilder sb = new StringBuilder();
@@ -324,7 +323,5 @@ public class Utils {
         }
         return sb.toString();
     }
-
-    // TODO 计算 清理
 
 }

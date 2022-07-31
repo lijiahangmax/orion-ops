@@ -62,7 +62,7 @@ Vue.directive('drag-modal', (el, bindings, vnode) => {
     // 防止未定义 destroyOnClose 关闭弹窗时dom未被销毁, 指令被重复调用
     if (!visible) return
     const modal = el.getElementsByClassName('ant-modal')[0]
-    const header = el.getElementsByClassName('ant-modal-header')[0] || el.getElementsByClassName('ant-modal-content')[0]
+    const draggable = el.getElementsByClassName('ant-modal-draggable')[0]
 
     let left = 0
     let top = 0
@@ -74,16 +74,18 @@ Vue.directive('drag-modal', (el, bindings, vnode) => {
     // top 初始值为 offsetTop
     top = top || modal.offsetTop
     // 点击title部分拖动
-    header.onmousedown = e => {
+    draggable.onmousedown = e => {
       const startX = e.clientX
       const startY = e.clientY
-      header.left = header.offsetLeft
-      header.top = header.offsetTop
+      // draggable.left = draggable.offsetLeft
+      // draggable.top = draggable.offsetTop
       el.onmousemove = event => {
         const endX = event.clientX
         const endY = event.clientY
-        modal.left = header.left + (endX - startX) + left
-        modal.top = header.top + (endY - startY) + top
+        // modal.left = draggable.left + (endX - startX) + left
+        // modal.top = draggable.top + (endY - startY) + top
+        modal.left = (endX - startX) + left
+        modal.top = (endY - startY) + top
         modal.style.left = modal.left + 'px'
         modal.style.top = modal.top + 'px'
       }
@@ -92,9 +94,9 @@ Vue.directive('drag-modal', (el, bindings, vnode) => {
         top = modal.top
         el.onmousemove = null
         el.onmouseup = null
-        header.releaseCapture && header.releaseCapture()
+        draggable.releaseCapture && draggable.releaseCapture()
       }
-      header.setCapture && header.setCapture()
+      draggable.setCapture && draggable.setCapture()
     }
   })
 })
