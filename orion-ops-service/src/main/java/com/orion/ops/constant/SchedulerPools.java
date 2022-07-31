@@ -31,7 +31,6 @@ public class SchedulerPools {
             .build();
 
     /**
-     * TODO 指标
      * terminal watcher 调度线程池
      */
     public static final ThreadPoolExecutor TERMINAL_WATCHER_SCHEDULER = ExecutorBuilder.create()

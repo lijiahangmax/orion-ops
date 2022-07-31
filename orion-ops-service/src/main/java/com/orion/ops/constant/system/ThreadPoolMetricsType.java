@@ -23,6 +23,11 @@ public enum ThreadPoolMetricsType {
     TERMINAL(10, SchedulerPools.TERMINAL_SCHEDULER),
 
     /**
+     * terminal watcher
+     */
+    TERMINAL_WATCHER(15, SchedulerPools.TERMINAL_WATCHER_SCHEDULER),
+
+    /**
      * 命令执行
      */
     EXEC(20, SchedulerPools.EXEC_SCHEDULER),

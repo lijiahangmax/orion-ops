@@ -1878,6 +1878,10 @@ export const THREAD_POOL_METRICS_TYPE = {
     value: 10,
     label: '远程终端线程池'
   },
+  TERMINAL_WATCHER: {
+    value: 15,
+    label: '终端监视线程池'
+  },
   EXEC: {
     value: 20,
     label: '批量执行线程池'
