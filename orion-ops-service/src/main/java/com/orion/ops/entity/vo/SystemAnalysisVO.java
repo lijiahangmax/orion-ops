@@ -50,6 +50,12 @@ public class SystemAnalysisVO {
     @ApiModelProperty(value = "应用仓库大小")
     private String repoVersionFileSize;
 
+    @ApiModelProperty(value = "录屏文件数")
+    private Integer screenFileCount;
+
+    @ApiModelProperty(value = "录屏文件大小")
+    private String screenFileSize;
+
     @ApiModelProperty(value = "文件清理阈值")
     private Integer fileCleanThreshold;
 
@@ -69,6 +75,8 @@ public class SystemAnalysisVO {
             vo.setDistFileSize(p.getDistFileSize());
             vo.setRepoVersionCount(p.getRepoVersionCount());
             vo.setRepoVersionFileSize(p.getRepoVersionFileSize());
+            vo.setScreenFileCount(p.getScreenFileCount());
+            vo.setScreenFileSize(p.getScreenFileSize());
             return vo;
         });
     }

@@ -62,4 +62,14 @@ public class SystemSpaceAnalysisDTO {
      */
     private String repoVersionFileSize;
 
+    /**
+     * 录屏文件数
+     */
+    private Integer screenFileCount;
+
+    /**
+     * 录屏文件大小
+     */
+    private String screenFileSize;
+
 }

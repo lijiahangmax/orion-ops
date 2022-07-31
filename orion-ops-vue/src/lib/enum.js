@@ -1730,6 +1730,11 @@ export const SYSTEM_CLEAR_TYPE = {
     key: 'repoFile',
     value: 50,
     label: '旧版本应用仓库'
+  },
+  SCREEN_FILE: {
+    key: 'screenFile',
+    value: 60,
+    label: '录屏文件'
   }
 }
 

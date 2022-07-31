@@ -84,6 +84,10 @@ public class FileCleaner {
                     releasedBytes += deletePathFiles(thresholdTime, repo);
                 }
                 break;
+            case SCREEN_FILE:
+                // 录屏文件
+                releasedBytes += deletePathFiles(thresholdTime, new File(SystemEnvAttr.SCREEN_PATH.getValue()));
+                break;
             default:
         }
         log.info("手动清理文件-释放 {}", Files1.getSize(releasedBytes));

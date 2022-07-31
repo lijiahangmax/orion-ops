@@ -1,8 +1,8 @@
 <template>
   <div class="user-detail-container">
     <a-tabs default-active-key="1" tab-position="left">
-      <!-- 系统分析 -->
-      <a-tab-pane key="1" tab="系统分析">
+      <!-- 统计分析 -->
+      <a-tab-pane key="1" tab="统计分析">
         <SystemAnalysis/>
       </a-tab-pane>
       <!-- 安全设置 -->
