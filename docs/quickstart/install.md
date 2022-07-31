@@ -55,7 +55,7 @@
 ```
 server {
     listen       80;
-    server_name  __;
+    server_name  localhost;
 
     # 是否启动 gzip 压缩
     gzip  on;

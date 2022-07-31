@@ -40,7 +40,7 @@ demo: http://101.43.254.243/ops/#/
 ## 特性
 
 * 易用方便: 极简配置, 开箱即用, 无 Agent 接入
-* 在线终端: 支持在线 Web 终端, 记录操作日志, 管理员可强制下线, 相当于轻量跳板机
+* 在线终端: 支持在线 Web 终端, 记录操作日志, 管理员可强制下线, 录屏回放, 终端监视等
 * 文件管理: 支持远程机器文件批量上传、批量下载、暂停断点续传、实时传输速率、实时进度、打包传输等功能
 * 批量操作: 支持远程机器批量执行命令 以及 批量执行上传文件
 * 调度任务: 维护 cron 表达式, 定时执行机器命令
@@ -81,8 +81,11 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 > 在线终端
 
+![终端模态框](./assert/img/web_terminal_modal.png "终端模态框")
 ![终端banner](./assert/img/web_terminal_banner.png "终端banner")
 ![在线终端](./assert/img/web_terminal.png "在线终端")
+![录屏回放](./assert/img/web_terminal_screen.png "录屏回放")
+![终端监视](./assert/img/web_terminal_watcher.png "终端监视")
 
 > 在线文件管理
 
@@ -150,7 +153,7 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 <img src="./assert/img/concat_wx.jpg" alt="微信" width="268px"/>  
 
-📧 还不快骚扰一下~
+📧 添加备注: ops 还不快骚扰一下~
 
 ## 支持一下
 

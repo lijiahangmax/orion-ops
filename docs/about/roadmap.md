@@ -76,14 +76,9 @@
 
 ## 未开始 ⏳
 
-* terminal 代码重构
-* log-appender 代码重构
 * 命令过滤功能
 * 机器分组功能
 * 环境资源配置功能
-* terminal 接入只读/读写快照
-* terminal 优化协议
-* terminal 支持hook命令
 * 批量安装监控 agent
 * webhook 触发构建发布流水线
 * pipeline 相同仓库只用一次checkout

@@ -57,11 +57,11 @@ java -jar demo.jar -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/o
 
 ### 终端日志
 
-查看用户连接 Terminal 后执行的键盘输入日志
+查看用户连接 Terminal 的日志以及进行终端录屏回放
 
 ### 终端控制
 
 `管理员菜单`
 
-查看当前所有已连接的终端会话, 具体到用户和机器, 可强制下线终端
+查看当前所有已连接的终端会话, 具体到用户和机器, 可强制下线终端, 以及只读、读写接入终端监视
 

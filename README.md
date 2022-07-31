@@ -40,7 +40,7 @@ demo: http://101.43.254.243/ops/#/
 ## 特性
 
 * 易用方便: 极简配置, 开箱即用, 无 Agent 接入
-* 在线终端: 支持在线 Web 终端, 记录操作日志, 管理员可强制下线, 相当于轻量跳板机
+* 在线终端: 支持在线 Web 终端, 记录操作日志, 管理员可强制下线, 录屏回放, 终端监视等
 * 文件管理: 支持远程机器文件批量上传、批量下载、暂停断点续传、实时传输速率、实时进度、打包传输等功能
 * 批量操作: 支持远程机器批量执行命令 以及 批量执行上传文件
 * 调度任务: 维护 cron 表达式, 定时执行机器命令
@@ -81,8 +81,11 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 > 在线终端
 
-![终端banner](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/ac3f8e83-a281-4593-8948-bfee2f77df7b.jpg "终端banner")
-![在线终端](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4787611964158821533.png "在线终端")
+![终端模态框](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/72d02782-cbf1-4eea-8c23-637f1193f289.png "终端模态框")
+![终端banner](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/b0353c63-3d25-4945-95a4-b1f2735743a5.png "终端banner")
+![在线终端](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/c3402b21-4d97-430d-b6cf-444389be6ee6.png "在线终端")
+![录屏回放](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/5c460a5c-d934-47df-9e70-dcee87e0c801.png "录屏回放")
+![终端监视](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/58257d2e-37ed-4244-b21f-183fe02c1f91.png "终端监视")
 
 > 在线文件管理
 
@@ -95,7 +98,7 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 > 日志文件
 
-![日志文件](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files8456725984172369436.png "日志文件")
+![日志文件](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/9b1beae3-a480-47bb-8c79-668ad52ec965.png "日志文件")
 
 > 调度任务
 
@@ -150,7 +153,7 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 <img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="联系微信" width="268px"/>   
 
-📧 还不快骚扰一下~  
+📧 添加备注: ops 还不快骚扰一下~  
 <br/>
 
 ## 支持一下
