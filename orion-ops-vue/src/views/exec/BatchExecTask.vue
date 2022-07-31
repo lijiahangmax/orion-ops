@@ -81,7 +81,7 @@
              v-show="execMachine.execId === selectedMachineKeys[0]"
              :key="execMachine.execId">
           <LogAppender :ref="'appender' + execMachine.execId"
-                       :appendStyle="{height: 'calc(100vh - 125px)'}"
+                       height="calc(100vh - 125px)"
                        size="default"
                        :relId="execMachine.execId"
                        :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
@@ -235,12 +235,11 @@ export default {
         this.pollId = setInterval(this.pollExecStatus, 2000)
       }).then(() => {
         // 打开日志
-        this.$forceUpdate()
-        this.$nextTick(() => {
+        setTimeout(() => {
           this.execMachines.forEach(m => {
             this.$refs['appender' + m.execId][0].openTail()
           })
-        })
+        }, 300)
         this.runnable = true
         this.visibleCommand = false
       }).catch(() => {
@@ -251,7 +250,7 @@ export default {
     chooseExecMachine(k) {
       setTimeout(() => {
         this.$nextTick(() => this.$refs['appender' + k][0].fitTerminal())
-      }, 100)
+      }, 300)
     },
     pollExecStatus() {
       const idList = this.execMachines.filter(s =>
@@ -423,6 +422,7 @@ export default {
   }
 
   .exec-logger-container {
+    width: calc(100% - 252px);
     background: #FFFFFF;
     border-radius: 4px;
     flex: 1;

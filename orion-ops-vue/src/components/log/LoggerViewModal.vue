@@ -12,8 +12,7 @@
     <!-- 日志面板 -->
     <LogAppender ref="appender"
                  size="default"
-                 :isModal="true"
-                 :appendStyle="{height: 'calc(100vh - 106px)'}"
+                 height="calc(100vh - 106px)"
                  :relId="id"
                  :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
                  :downloadType="FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"
@@ -98,7 +97,9 @@ export default {
       }).then(({ data }) => {
         this.file = data
       }).then(() => {
-        this.$nextTick(() => this.$refs.appender.openTail())
+        setTimeout(() => {
+          this.$refs.appender.openTail()
+        }, 300)
       })
     },
     close() {

@@ -2,7 +2,7 @@
   <div class="exec-logger-appender">
     <LogAppender ref="appender"
                  size="default"
-                 :appendStyle="{height: appenderHeight}"
+                 :height="appenderHeight"
                  :relId="execId"
                  :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
                  :downloadType="FILE_DOWNLOAD_TYPE.EXEC_LOG.value">
