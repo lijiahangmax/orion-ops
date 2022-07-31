@@ -29,7 +29,7 @@
              :key="machine.id">
           <LogAppender :ref="`appender-${machine.id}`"
                        size="default"
-                       :appendStyle="{height: appenderHeight}"
+                       :height="appenderHeight"
                        :relId="machine.id"
                        :tailType="FILE_TAIL_TYPE.SCHEDULER_TASK_MACHINE_LOG.value"
                        :downloadType="FILE_DOWNLOAD_TYPE.SCHEDULER_TASK_MACHINE_LOG.value">

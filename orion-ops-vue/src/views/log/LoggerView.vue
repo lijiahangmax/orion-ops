@@ -46,7 +46,7 @@
               <div class="file-log-view">
                 <LogAppender :ref="'appender' + selectedTailFile.id"
                              size="default"
-                             :appendStyle="{height: 'calc(100vh - 80px)'}"
+                             height="calc(100vh - 80px)"
                              :relId="selectedTailFile.id"
                              :tailType="FILE_TAIL_TYPE.TAIL_LIST.value"
                              :downloadType="FILE_DOWNLOAD_TYPE.TAIL_LIST_FILE.value"

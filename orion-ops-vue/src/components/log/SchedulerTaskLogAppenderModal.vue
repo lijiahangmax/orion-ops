@@ -30,9 +30,9 @@ export default {
   methods: {
     open(id) {
       this.visible = true
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.logger.open(id)
-      })
+      }, 300)
     },
     close() {
       this.visible = false
