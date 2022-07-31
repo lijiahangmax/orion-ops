@@ -580,11 +580,6 @@ export default {
   flex-wrap: wrap-reverse;
   justify-content: flex-end;
 
-  /deep/ .ant-card-head {
-    padding: 0 8px;
-    font-weight: 400;
-  }
-
   .terminal-minimize-item {
     width: 200px;
     box-shadow: 0 3px 4px #DEE2E6;

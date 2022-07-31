@@ -219,7 +219,7 @@ export default {
   }
 }
 
-.build-selector /deep/ .ant-select-selection-selected-value {
+::v-deep .build-selector .ant-select-selection-selected-value {
   width: 100%;
 }
 

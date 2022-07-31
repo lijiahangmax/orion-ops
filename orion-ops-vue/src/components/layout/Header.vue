@@ -120,7 +120,7 @@ export default {
       font-size: 16px;
       line-height: 18px;
 
-      /deep/ i {
+      ::v-deep i {
         padding-left: 4px;
         margin-top: 4px;
       }

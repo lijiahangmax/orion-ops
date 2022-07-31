@@ -269,7 +269,7 @@ export default {
     background: #FFFFFF;
     border-radius: 4px;
 
-    /deep/ .ant-menu-item {
+    ::v-deep .ant-menu-item {
       padding: 0 0 0 12px !important;
     }
 

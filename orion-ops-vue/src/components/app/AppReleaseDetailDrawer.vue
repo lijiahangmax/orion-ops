@@ -241,11 +241,11 @@ export default {
 <style lang="less" scoped>
 .machine-list-container {
 
-  /deep/ .ant-list-header {
+  ::v-deep .ant-list-header {
     padding: 8px;
   }
 
-  /deep/ .ant-list-item {
+  ::v-deep .ant-list-item {
     padding-right: 8px;
     padding-left: 8px;
   }

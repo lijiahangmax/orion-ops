@@ -34,7 +34,7 @@ nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --disa
 > ##### 5. 可以将宿主机 IP 修改为其他远程机器吗?
 
 CI 功能底层暂时不支持, 如果不使用 CI 功能则可以修改    
-⚡ 不推荐这么做, 设计的初衷是宿主机就是部署机器, 用来做数据存储以及数据交换  
+⚡ 不推荐这么做, 设计的初衷是宿主机就是部署 orion-ops 机器, 用来做数据存储以及数据交换  
 <br/>
 
 > ##### 6. orion-ops 可以实现异地构建吗?

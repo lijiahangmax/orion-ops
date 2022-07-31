@@ -178,7 +178,7 @@ export default {
   overflow: hidden;
 }
 
-/deep/ .ant-modal-header {
+::v-deep .ant-modal-header {
   padding: 8px 10px 8px 16px;
   border-radius: 2px 2px 0 0;
 }

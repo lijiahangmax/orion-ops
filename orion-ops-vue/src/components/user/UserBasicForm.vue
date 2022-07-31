@@ -179,12 +179,12 @@ export default {
       width: 360px;
       padding: 16px 16px 0 0;
 
-      /deep/ .ant-form-item {
+      ::v-deep .ant-form-item {
         margin: 6px 0;
         display: flex;
       }
 
-      /deep/ .ant-form-item-control-wrapper {
+      ::v-deep .ant-form-item-control-wrapper {
         flex: 0.9;
       }
     }

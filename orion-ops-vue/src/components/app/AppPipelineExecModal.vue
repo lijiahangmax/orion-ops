@@ -3,6 +3,7 @@
            :width="550"
            :maskStyle="{opacity: 0.8, animation: 'none'}"
            :dialogStyle="{top: '64px', padding: 0}"
+           :bodyStyle="{padding: '8px'}"
            :maskClosable="false"
            :destroyOnClose="true">
     <!-- 页头 -->
@@ -330,10 +331,6 @@ export default {
 
 <style lang="less" scoped>
 
-/deep/ .ant-modal-body {
-  padding: 8px;
-}
-
 .pipeline-container {
   padding: 16px 16px 0 16px;
 }
@@ -407,13 +404,12 @@ export default {
     }
   }
 
-  .pipeline-set-badge /deep/ .ant-badge-dot {
+  ::v-deep .pipeline-set-badge .ant-badge-dot {
     margin: -2px;
   }
-
 }
 
-/deep/ .ant-timeline-item-last {
+::v-deep .ant-timeline-item-last {
   padding-bottom: 0;
 }
 </style>

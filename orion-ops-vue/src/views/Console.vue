@@ -261,7 +261,7 @@ export default {
     width: calc(100% - 484px);
     margin-left: 8px;
 
-    /deep/ .ant-card-body {
+    ::v-deep .ant-card-body {
       padding: 8px 8px 12px 24px;
     }
   }

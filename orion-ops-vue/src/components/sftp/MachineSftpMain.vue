@@ -725,11 +725,11 @@ export default {
     }
   }
 
-  /deep/ .download-popover-confirm .ant-popover-message {
+  ::v-deep .download-popover-confirm .ant-popover-message {
     padding: 0 !important;
   }
 
-  /deep/ .download-popover-confirm .ant-popover-buttons {
+  ::v-deep .download-popover-confirm .ant-popover-buttons {
     display: none !important;
   }
 

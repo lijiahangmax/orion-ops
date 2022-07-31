@@ -115,7 +115,7 @@ export default {
     padding: 16px 16px 8px 16px;
     width: 580px;
 
-    /deep/ .ant-row.ant-form-item {
+    ::v-deep .ant-row.ant-form-item {
       margin-bottom: 18px;
     }
   }

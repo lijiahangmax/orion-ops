@@ -313,7 +313,7 @@ export default {
     margin-top: 18px;
   }
 
-  /deep/ .ant-descriptions-title {
+  ::v-deep .ant-descriptions-title {
     margin: 0 0 24px 16px;
     color: rgba(0, 0, 0, .85);
     font-weight: 500;
@@ -321,12 +321,12 @@ export default {
     line-height: 28px;
   }
 
-  /deep/ .ant-descriptions-item-label {
+  ::v-deep .ant-descriptions-item-label {
     width: 128px;
     text-align: right;
   }
 
-  /deep/ .ant-descriptions-item-content {
+  ::v-deep .ant-descriptions-item-content {
     padding-left: 8px;
   }
 

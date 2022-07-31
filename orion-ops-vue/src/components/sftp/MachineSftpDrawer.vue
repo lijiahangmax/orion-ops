@@ -84,7 +84,7 @@ export default {
   }
 }
 
-/deep/ .ant-drawer-content-wrapper {
+::v-deep .ant-drawer-content-wrapper {
   height: 100%;
   transition: all 0.2s ease 0s;
 }

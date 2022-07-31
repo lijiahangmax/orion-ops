@@ -497,8 +497,7 @@ export default {
   }
 }
 
-.editor-spin /deep/ .ant-spin-container {
+::v-deep .editor-spin .ant-spin-container {
   height: 100%;
 }
-
 </style>

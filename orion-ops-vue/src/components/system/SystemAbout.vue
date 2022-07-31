@@ -66,7 +66,7 @@ export default {
   margin: 18px 0 0 0;
 }
 
-/deep/ .ant-descriptions-item-label {
+::v-deep .ant-descriptions-item-label {
   margin-left: 16px;
   width: 124px;
   text-align: end;
