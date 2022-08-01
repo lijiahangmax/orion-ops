@@ -1,5 +1,6 @@
 package com.orion.ops.utils;
 
+import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Arrays1;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -95,6 +96,21 @@ public class Valid extends com.orion.lang.utils.Valid {
         String uploadThreshold = SystemEnvAttr.SFTP_UPLOAD_THRESHOLD.getValue();
         if (size / Const.BUFFER_KB_1 / Const.BUFFER_KB_1 > Long.parseLong(uploadThreshold)) {
             throw Exceptions.argument(Strings.format(MessageConst.UPLOAD_TOO_LARGE, uploadThreshold, Files1.getSize(size)));
+        }
+    }
+
+    /**
+     * 检查 api 调用是否成功
+     *
+     * @param wrapper wrapper
+     * @param <T>     T
+     * @return value
+     */
+    public static <T> T api(HttpWrapper<T> wrapper) {
+        if (wrapper.isOk()) {
+            return wrapper.getData();
+        } else {
+            throw Exceptions.httpRequest(null, String.valueOf(wrapper.getData()));
         }
     }
 

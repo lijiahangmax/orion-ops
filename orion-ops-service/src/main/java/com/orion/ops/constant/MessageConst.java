@@ -30,6 +30,8 @@ public class MessageConst {
 
     public static final String OPERATOR_ERROR = "操作失败";
 
+    public static final String HTTP_API = "api 调用异常";
+
     public static final String NETWORK_FLUCTUATION = "当前环境网路波动";
 
     public static final String OPEN_TEMPLATE_ERROR = "模板解析失败 请检查模板和密码";

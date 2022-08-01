@@ -113,6 +113,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
     }
 
+    @ExceptionHandler(value = {HttpRequestException.class})
+    public HttpWrapper<?> httpApiRequestExceptionHandler(HttpServletRequest request, Exception ex) {
+        log.error("httpApiRequestExceptionHandler url: {}, http-api请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
+        return HttpWrapper.error().msg(MessageConst.HTTP_API);
+    }
+
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class, DisabledException.class})
     public HttpWrapper<?> invalidArgumentExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("invalidArgumentExceptionHandler url: {}, 参数异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);

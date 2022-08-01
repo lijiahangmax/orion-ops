@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 机器秘钥service
+ * 机器秘钥服务
  *
  * @author Jiahang Li
  * @version 1.0.0
