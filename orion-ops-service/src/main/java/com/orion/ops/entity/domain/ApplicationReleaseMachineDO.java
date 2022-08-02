@@ -1,6 +1,8 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,100 +10,75 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 发布任务机器表
- * </p>
  *
  * @author Jiahang Li
  * @since 2021-12-20
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "发布任务机器表")
 @TableName("application_release_machine")
 public class ApplicationReleaseMachineDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 发布任务id
-     */
+    @ApiModelProperty(value = "发布任务id")
     @TableField("release_id")
     private Long releaseId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     @TableField("machine_id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     @TableField("machine_name")
     private String machineName;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     @TableField("machine_tag")
     private String machineTag;
 
-    /**
-     * 机器主机
-     */
+    @ApiModelProperty(value = "机器主机")
     @TableField("machine_host")
     private String machineHost;
 
     /**
-     * 状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消
-     *
      * @see com.orion.ops.constant.app.ActionStatus
      */
+    @ApiModelProperty(value = "状态 10未开始 20进行中 30已完成 40执行失败 50已跳过 60已取消")
     @TableField("run_status")
     private Integer runStatus;
 
-    /**
-     * 日志路径
-     */
+    @ApiModelProperty(value = "日志路径")
     @TableField("log_path")
     private String logPath;
 
-    /**
-     * 开始时间
-     */
+    @ApiModelProperty(value = "开始时间")
     @TableField("start_time")
     private Date startTime;
 
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "结束时间")
     @TableField("end_time")
     private Date endTime;
 
     /**
-     * 是否删除 1未删除 2已删除
-     *
      * @see com.orion.ops.constant.Const#NOT_DELETED
      * @see com.orion.ops.constant.Const#IS_DELETED
      */
+    @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
     private Integer deleted;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     @TableField("create_time")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     @TableField("update_time")
     private Date updateTime;
 

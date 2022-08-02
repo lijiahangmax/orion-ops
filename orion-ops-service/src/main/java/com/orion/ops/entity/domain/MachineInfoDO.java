@@ -1,6 +1,8 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,109 +10,83 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 机器信息表
- * </p>
  *
  * @author Jiahang Li
  * @since 2021-04-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "机器信息表")
 @TableName("machine_info")
 public class MachineInfoDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 代理id
-     */
+    @ApiModelProperty(value = "代理id")
     @TableField(value = "proxy_id", updateStrategy = FieldStrategy.IGNORED)
     private Long proxyId;
 
-    /**
-     * 主机ip
-     */
+    @ApiModelProperty(value = "主机ip")
     @TableField("machine_host")
     private String machineHost;
 
-    /**
-     * ssh端口
-     */
+    @ApiModelProperty(value = "ssh端口")
     @TableField("ssh_port")
     private Integer sshPort;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     @TableField("machine_name")
     private String machineName;
 
-    /**
-     * 机器唯一标识
-     */
+    @ApiModelProperty(value = "机器唯一标识")
     @TableField("machine_tag")
     private String machineTag;
 
-    /**
-     * 机器描述
-     */
+    @ApiModelProperty(value = "机器描述")
     @TableField("description")
     private String description;
 
-    /**
-     * 机器账号
-     */
+    @ApiModelProperty(value = "机器账号")
     @TableField("username")
     private String username;
 
-    /**
-     * 机器密码
-     */
+    @ApiModelProperty(value = "机器密码")
     @TableField("password")
     private String password;
 
     /**
-     * 机器认证方式 1: 账号认证 2: key认证
-     *
      * @see com.orion.ops.constant.machine.MachineAuthType
      */
+    @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
     @TableField("auth_type")
     private Integer authType;
 
     /**
-     * 机器状态 1有效 2无效
-     *
      * @see com.orion.ops.constant.Const#ENABLE
      * @see com.orion.ops.constant.Const#DISABLE
      */
+    @ApiModelProperty(value = "机器状态 1有效 2无效")
     @TableField("machine_status")
     private Integer machineStatus;
 
     /**
-     * 是否删除 1未删除 2已删除
-     *
      * @see com.orion.ops.constant.Const#NOT_DELETED
      * @see com.orion.ops.constant.Const#IS_DELETED
      */
+    @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
     private Integer deleted;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     @TableField("create_time")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     @TableField("update_time")
     private Date updateTime;
 

@@ -1,6 +1,8 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,83 +10,64 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 应用环境变量
- * </p>
  *
  * @author Jiahang Li
  * @since 2021-07-02
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "应用环境变量")
 @TableName("application_env")
 public class ApplicationEnvDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 应用id
-     */
+    @ApiModelProperty(value = "应用id")
     @TableField("app_id")
     private Long appId;
 
-    /**
-     * 环境id
-     */
+    @ApiModelProperty(value = "环境id")
     @TableField("profile_id")
     private Long profileId;
 
-    /**
-     * key
-     */
+    @ApiModelProperty(value = "key")
     @TableField("attr_key")
     private String attrKey;
 
-    /**
-     * value
-     */
+    @ApiModelProperty(value = "value")
     @TableField("attr_value")
     private String attrValue;
 
     /**
-     * 是否为系统变量 1是 2否
-     *
      * @see com.orion.ops.constant.Const#IS_SYSTEM
      * @see com.orion.ops.constant.Const#NOT_SYSTEM
      */
+    @ApiModelProperty(value = "是否为系统变量 1是 2否")
     @TableField("system_env")
     private Integer systemEnv;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     @TableField("description")
     private String description;
 
     /**
-     * 是否删除 1未删除 2已删除
-     *
      * @see com.orion.ops.constant.Const#NOT_DELETED
      * @see com.orion.ops.constant.Const#IS_DELETED
      */
+    @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
     private Integer deleted;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     @TableField("create_time")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     @TableField("update_time")
     private Date updateTime;
 

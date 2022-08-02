@@ -10,16 +10,16 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 机器环境变量
+ * 机器监控配置表
  *
  * @author Jiahang Li
- * @since 2021-04-01
+ * @since 2022-08-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "机器环境变量")
-@TableName("machine_env")
-public class MachineEnvDO implements Serializable {
+@ApiModel(value = "机器监控配置表")
+@TableName("machine_monitor")
+public class MachineMonitorDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,17 +31,24 @@ public class MachineEnvDO implements Serializable {
     @TableField("machine_id")
     private Long machineId;
 
-    @ApiModelProperty(value = "key")
-    @TableField("attr_key")
-    private String attrKey;
+    /**
+     * @see com.orion.ops.constant.monitor.InstallStatus
+     */
+    @ApiModelProperty(value = "插件安装状态 1未安装 2安装中 3已安装")
+    @TableField("install_status")
+    private Integer installStatus;
 
-    @ApiModelProperty(value = "value")
-    @TableField("attr_value")
-    private String attrValue;
+    @ApiModelProperty(value = "请求 api url")
+    @TableField("monitor_url")
+    private String monitorUrl;
 
-    @ApiModelProperty(value = "描述")
-    @TableField("description")
-    private String description;
+    @ApiModelProperty(value = "请求 api accessToken")
+    @TableField("access_token")
+    private String accessToken;
+
+    @ApiModelProperty(value = "插件版本")
+    @TableField("agent_version")
+    private String agentVersion;
 
     /**
      * @see com.orion.ops.constant.Const#NOT_DELETED

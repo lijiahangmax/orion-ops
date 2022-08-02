@@ -1,6 +1,8 @@
 package com.orion.ops.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,84 +10,66 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 应用发布执行块
- * </p>
  *
  * @author Jiahang Li
  * @since 2021-07-07
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "应用发布执行块")
 @TableName("application_action")
 public class ApplicationActionDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * appId
-     */
+    @ApiModelProperty(value = "appId")
     @TableField("app_id")
     private Long appId;
 
-    /**
-     * profileId
-     */
+    @ApiModelProperty(value = "profileId")
     @TableField("profile_id")
     private Long profileId;
 
-    /**
-     * 名称
-     */
+    @ApiModelProperty(value = "名称")
     @TableField("action_name")
     private String actionName;
 
     /**
-     * 类型
-     *
      * @see com.orion.ops.constant.app.ActionType
      */
+    @ApiModelProperty(value = "类型")
     @TableField("action_type")
     private Integer actionType;
 
     /**
-     * 阶段类型
-     *
      * @see com.orion.ops.constant.app.StageType
      */
+    @ApiModelProperty(value = "阶段类型")
     @TableField("stage_type")
     private Integer stageType;
 
-    /**
-     * 执行命令
-     */
+    @ApiModelProperty(value = "执行命令")
     @TableField("action_command")
     private String actionCommand;
 
     /**
-     * 是否删除 1未删除 2已删除
-     *
      * @see com.orion.ops.constant.Const#NOT_DELETED
      * @see com.orion.ops.constant.Const#IS_DELETED
      */
+    @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
     private Integer deleted;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     @TableField("create_time")
     private Date createTime;
 
-    /**
-     * 修改时间
-     */
+    @ApiModelProperty(value = "修改时间")
     @TableField("update_time")
     private Date updateTime;
 
