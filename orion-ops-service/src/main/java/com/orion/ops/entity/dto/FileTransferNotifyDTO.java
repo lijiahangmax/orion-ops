@@ -27,28 +27,4 @@ public class FileTransferNotifyDTO {
     @ApiModelProperty(value = "body")
     private Object body;
 
-    public static FileTransferNotifyProgress progress(String rate, String current, String progress) {
-        FileTransferNotifyProgress notifyProgress = new FileTransferNotifyProgress();
-        notifyProgress.setRate(rate);
-        notifyProgress.setCurrent(current);
-        notifyProgress.setProgress(progress);
-        return notifyProgress;
-    }
-
-    @Data
-    @ApiModel(value = "文件传输进度")
-    // TODO
-    public static class FileTransferNotifyProgress {
-
-        @ApiModelProperty(value = "速度")
-        private String rate;
-
-        @ApiModelProperty(value = "当前位置")
-        private String current;
-
-        @ApiModelProperty(value = "进度")
-        private String progress;
-
-    }
-
 }

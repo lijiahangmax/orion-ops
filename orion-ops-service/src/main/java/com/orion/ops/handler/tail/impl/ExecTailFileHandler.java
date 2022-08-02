@@ -35,17 +35,17 @@ public class ExecTailFileHandler implements ITailHandler {
     protected static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
     @Getter
-    private String token;
+    private final String token;
 
     /**
      * session
      */
-    private WebSocketSession session;
+    private final WebSocketSession session;
 
     /**
      * hint
      */
-    private TailFileHint hint;
+    private final TailFileHint hint;
 
     private SessionStore sessionStore;
 

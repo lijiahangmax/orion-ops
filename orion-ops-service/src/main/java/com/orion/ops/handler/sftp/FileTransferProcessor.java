@@ -11,7 +11,7 @@ import com.orion.ops.constant.SchedulerPools;
 import com.orion.ops.constant.sftp.SftpTransferStatus;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
-import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.entity.dto.FileTransferNotifyProgressDTO;
 import com.orion.ops.service.api.MachineEnvService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.spring.SpringHolder;
@@ -213,7 +213,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      * @param progress 进度
      */
     protected void notifyProgress(String rate, String current, String progress) {
-        FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(rate, current, progress);
+        FileTransferNotifyProgressDTO notifyProgress = new FileTransferNotifyProgressDTO(rate, current, progress);
         transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
     }
 

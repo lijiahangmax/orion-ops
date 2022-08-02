@@ -17,7 +17,7 @@ import com.orion.ops.constant.sftp.SftpTransferType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
-import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.entity.dto.FileTransferNotifyProgressDTO;
 import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.spring.SpringHolder;
@@ -43,15 +43,17 @@ public class PackageFileProcessor implements IFileTransferProcessor {
 
     protected static TransferProcessorManager transferProcessorManager = SpringHolder.getBean(TransferProcessorManager.class);
 
+    private static final String FINISH_PROGRESS = "100";
+
     /**
      * 打包文件
      */
-    private FileTransferLogDO packageFile;
+    private final FileTransferLogDO packageFile;
 
     /**
      * 文件列表
      */
-    private List<FileTransferLogDO> fileList;
+    private final List<FileTransferLogDO> fileList;
 
     /**
      * 文件名映射
@@ -61,12 +63,12 @@ public class PackageFileProcessor implements IFileTransferProcessor {
     /**
      * 当前大小
      */
-    private volatile AtomicLong currentSize;
+    private final AtomicLong currentSize;
 
     /**
      * 文件总大小
      */
-    private long totalSize;
+    private final long totalSize;
 
     /**
      * 文件压缩器
@@ -78,11 +80,11 @@ public class PackageFileProcessor implements IFileTransferProcessor {
      */
     private String compressPath;
 
-    private Long userId;
+    private final Long userId;
 
-    private Long machineId;
+    private final Long machineId;
 
-    private String fileToken;
+    private final String fileToken;
 
     private volatile boolean userCancel;
 
@@ -230,7 +232,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         log.info("sftp传输压缩-更新状态 fileToken: {}, status: {}, effect: {}", fileToken, status, effect);
         if (SftpTransferStatus.FINISH.equals(status)) {
             // 通知进度
-            FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(totalSize), "100");
+            FileTransferNotifyProgressDTO notifyProgress = new FileTransferNotifyProgressDTO(Strings.EMPTY, Files1.getSize(totalSize), FINISH_PROGRESS);
             transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
         }
         // 通知状态
@@ -261,7 +263,7 @@ public class PackageFileProcessor implements IFileTransferProcessor {
         update.setNowProgress(progress);
         fileTransferLogDAO.updateById(update);
         // 通知进度
-        FileTransferNotifyDTO.FileTransferNotifyProgress notifyProgress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(curr), progressRate);
+        FileTransferNotifyProgressDTO notifyProgress = new FileTransferNotifyProgressDTO(Strings.EMPTY, Files1.getSize(curr), progressRate);
         transferProcessorManager.notifySessionProgressEvent(userId, machineId, fileToken, notifyProgress);
     }
 

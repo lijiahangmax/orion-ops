@@ -35,7 +35,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractMachineProcessor implements IMachineProcessor {
 
-    private static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+    private static final TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
 
     protected Long id;
 

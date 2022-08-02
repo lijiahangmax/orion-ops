@@ -27,21 +27,21 @@ import java.util.Map;
 @Slf4j
 public abstract class AbstractTaskProcessor implements ITaskProcessor {
 
-    protected static SchedulerTaskDAO schedulerTaskDAO = SpringHolder.getBean(SchedulerTaskDAO.class);
+    protected static final SchedulerTaskDAO schedulerTaskDAO = SpringHolder.getBean(SchedulerTaskDAO.class);
 
-    protected static SchedulerTaskRecordDAO schedulerTaskRecordDAO = SpringHolder.getBean(SchedulerTaskRecordDAO.class);
+    protected static final SchedulerTaskRecordDAO schedulerTaskRecordDAO = SpringHolder.getBean(SchedulerTaskRecordDAO.class);
 
-    protected static SchedulerTaskMachineRecordService schedulerTaskMachineRecordService = SpringHolder.getBean(SchedulerTaskMachineRecordService.class);
+    protected static final SchedulerTaskMachineRecordService schedulerTaskMachineRecordService = SpringHolder.getBean(SchedulerTaskMachineRecordService.class);
 
-    protected static TaskSessionHolder taskSessionHolder = SpringHolder.getBean(TaskSessionHolder.class);
+    protected static final TaskSessionHolder taskSessionHolder = SpringHolder.getBean(TaskSessionHolder.class);
 
-    protected Long recordId;
+    protected final Long recordId;
 
     protected SchedulerTaskDO task;
 
     protected SchedulerTaskRecordDO record;
 
-    protected Map<Long, ITaskMachineHandler> handlers;
+    protected final Map<Long, ITaskMachineHandler> handlers;
 
     protected volatile boolean terminated;
 

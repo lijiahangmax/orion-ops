@@ -39,11 +39,13 @@ import java.util.Date;
 @Slf4j
 public class TaskMachineHandler implements ITaskMachineHandler {
 
-    private static SchedulerTaskMachineRecordDAO schedulerTaskMachineRecordDAO = SpringHolder.getBean(SchedulerTaskMachineRecordDAO.class);
+    private static final SchedulerTaskMachineRecordDAO schedulerTaskMachineRecordDAO = SpringHolder.getBean(SchedulerTaskMachineRecordDAO.class);
 
-    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
+    private static final MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    private static TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+    private static final TailSessionHolder tailSessionHolder = SpringHolder.getBean(TailSessionHolder.class);
+
+    private final Long machineRecordId;
 
     private String logPath;
 
@@ -52,8 +54,6 @@ public class TaskMachineHandler implements ITaskMachineHandler {
     private SessionStore sessionStore;
 
     private CommandExecutor executor;
-
-    private Long machineRecordId;
 
     private SchedulerTaskMachineRecordDO machineRecord;
 

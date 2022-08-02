@@ -34,20 +34,20 @@ import java.util.Map;
 @Slf4j
 public class PipelineProcessor implements IPipelineProcessor {
 
-    private static ApplicationPipelineTaskDAO applicationPipelineTaskDAO = SpringHolder.getBean(ApplicationPipelineTaskDAO.class);
+    private static final ApplicationPipelineTaskDAO applicationPipelineTaskDAO = SpringHolder.getBean(ApplicationPipelineTaskDAO.class);
 
-    private static ApplicationPipelineTaskDetailService applicationPipelineTaskDetailService = SpringHolder.getBean(ApplicationPipelineTaskDetailService.class);
+    private static final ApplicationPipelineTaskDetailService applicationPipelineTaskDetailService = SpringHolder.getBean(ApplicationPipelineTaskDetailService.class);
 
-    private static PipelineSessionHolder pipelineSessionHolder = SpringHolder.getBean(PipelineSessionHolder.class);
+    private static final PipelineSessionHolder pipelineSessionHolder = SpringHolder.getBean(PipelineSessionHolder.class);
 
-    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
+    private static final WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
     @Getter
-    private Long taskId;
+    private final Long taskId;
 
     private ApplicationPipelineTaskDO task;
 
-    private Map<Long, IStageHandler> stageHandlers;
+    private final Map<Long, IStageHandler> stageHandlers;
 
     private volatile IStageHandler currentHandler;
 

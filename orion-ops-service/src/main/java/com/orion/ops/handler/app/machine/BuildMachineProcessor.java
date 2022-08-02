@@ -52,21 +52,21 @@ import java.util.Map;
 @Slf4j
 public class BuildMachineProcessor extends AbstractMachineProcessor implements Executable {
 
-    private static ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
+    private static final ApplicationBuildDAO applicationBuildDAO = SpringHolder.getBean(ApplicationBuildDAO.class);
 
-    private static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
+    private static final MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    private static ApplicationActionLogService applicationActionLogService = SpringHolder.getBean(ApplicationActionLogService.class);
+    private static final ApplicationActionLogService applicationActionLogService = SpringHolder.getBean(ApplicationActionLogService.class);
 
-    private static ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
+    private static final ApplicationEnvService applicationEnvService = SpringHolder.getBean(ApplicationEnvService.class);
 
-    private static BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
+    private static final BuildSessionHolder buildSessionHolder = SpringHolder.getBean(BuildSessionHolder.class);
 
-    private static WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
+    private static final WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
+
+    private final MachineActionStore store;
 
     private ApplicationBuildDO record;
-
-    private MachineActionStore store;
 
     public BuildMachineProcessor(Long id) {
         super(id);

@@ -42,11 +42,11 @@ public class ReleaseMachineProcessor extends AbstractMachineProcessor {
 
     protected static MachineInfoService machineInfoService = SpringHolder.getBean(MachineInfoService.class);
 
-    private ApplicationReleaseDO release;
+    private final ApplicationReleaseDO release;
 
-    private ApplicationReleaseMachineDO releaseMachine;
+    private final ApplicationReleaseMachineDO releaseMachine;
 
-    private MachineActionStore store;
+    private final MachineActionStore store;
 
     @Getter
     private volatile ActionStatus status;

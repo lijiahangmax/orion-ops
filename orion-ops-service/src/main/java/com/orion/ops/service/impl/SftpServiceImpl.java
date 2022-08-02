@@ -27,10 +27,7 @@ import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.FileTransferLogDAO;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
-import com.orion.ops.entity.dto.FileTransferNotifyDTO;
-import com.orion.ops.entity.dto.SftpSessionTokenDTO;
-import com.orion.ops.entity.dto.SftpUploadInfoDTO;
-import com.orion.ops.entity.dto.UserDTO;
+import com.orion.ops.entity.dto.*;
 import com.orion.ops.entity.request.sftp.*;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileDetailVO;
@@ -537,7 +534,7 @@ public class SftpServiceImpl implements SftpService {
         update.setCurrentSize(0L);
         fileTransferLogDAO.updateById(update);
         // 通知进度
-        FileTransferNotifyDTO.FileTransferNotifyProgress progress = FileTransferNotifyDTO.progress(Strings.EMPTY, Files1.getSize(transferLog.getFileSize()), "0");
+        FileTransferNotifyProgressDTO progress = new FileTransferNotifyProgressDTO(Strings.EMPTY, Files1.getSize(transferLog.getFileSize()), "0");
         transferProcessorManager.notifySessionProgressEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), progress);
         // 通知状态
         transferProcessorManager.notifySessionStatusEvent(transferLog.getUserId(), machineId, transferLog.getFileToken(), SftpTransferStatus.WAIT.getStatus());

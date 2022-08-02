@@ -31,11 +31,11 @@ import java.util.Optional;
 @Slf4j
 public abstract class AbstractStageHandler implements IStageHandler {
 
-    protected static ApplicationPipelineTaskDetailDAO applicationPipelineTaskDetailDAO = SpringHolder.getBean(ApplicationPipelineTaskDetailDAO.class);
+    protected static final ApplicationPipelineTaskDetailDAO applicationPipelineTaskDetailDAO = SpringHolder.getBean(ApplicationPipelineTaskDetailDAO.class);
 
-    protected static ApplicationPipelineTaskLogDAO applicationPipelineTaskLogDAO = SpringHolder.getBean(ApplicationPipelineTaskLogDAO.class);
+    protected static final ApplicationPipelineTaskLogDAO applicationPipelineTaskLogDAO = SpringHolder.getBean(ApplicationPipelineTaskLogDAO.class);
 
-    protected static UserInfoDAO userInfoDAO = SpringHolder.getBean(UserInfoDAO.class);
+    protected static final UserInfoDAO userInfoDAO = SpringHolder.getBean(UserInfoDAO.class);
 
     protected Long detailId;
 

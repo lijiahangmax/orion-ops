@@ -10,6 +10,7 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.sftp.SftpNotifyType;
 import com.orion.ops.entity.domain.FileTransferLogDO;
 import com.orion.ops.entity.dto.FileTransferNotifyDTO;
+import com.orion.ops.entity.dto.FileTransferNotifyProgressDTO;
 import com.orion.ops.entity.vo.FileTransferLogVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -141,7 +142,7 @@ public class TransferProcessorManager {
      * @param fileToken fileToken
      * @param progress  progress
      */
-    public void notifySessionProgressEvent(Long userId, Long machineId, String fileToken, FileTransferNotifyDTO.FileTransferNotifyProgress progress) {
+    public void notifySessionProgressEvent(Long userId, Long machineId, String fileToken, FileTransferNotifyProgressDTO progress) {
         // 设置进度
         TRANSFER_PROGRESS.put(fileToken, progress.getProgress());
         // 通知
