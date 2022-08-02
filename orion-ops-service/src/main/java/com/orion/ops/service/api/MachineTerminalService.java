@@ -79,10 +79,10 @@ public interface MachineTerminalService {
     /**
      * 通过机器id删除终端配置
      *
-     * @param machineId 机器id
+     * @param machineIdList 机器id
      * @return effect
      */
-    Integer deleteTerminalByMachineId(Long machineId);
+    Integer deleteTerminalByMachineIdList(List<Long> machineIdList);
 
     /**
      * 获取下载 terminal 录屏路径

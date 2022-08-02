@@ -65,10 +65,10 @@ public interface ApplicationMachineService {
     /**
      * 通过机器 id 删除应用机器
      *
-     * @param machineId machineId
+     * @param machineIdList machineIdList
      * @return effect
      */
-    Integer deleteAppMachineByMachineId(Long machineId);
+    Integer deleteAppMachineByMachineIdList(List<Long> machineIdList);
 
     /**
      * 通过 appId profileId 删除应用机器

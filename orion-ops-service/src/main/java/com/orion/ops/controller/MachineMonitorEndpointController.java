@@ -30,41 +30,47 @@ public class MachineMonitorEndpointController {
     @Resource
     private MachineMonitorEndpointService machineMonitorEndpointService;
 
-    @ApiOperation(value = "设置agent机器id")
+    @GetMapping("/ping")
+    @ApiOperation(value = "ping")
+    public Integer sendPing(@RequestParam("machineId") Long machineId) {
+        return machineMonitorEndpointService.ping(machineId);
+    }
+
     @GetMapping("/set-machine-id")
+    @ApiOperation(value = "设置agent机器id")
     public HttpWrapper<?> setMachineId(@RequestParam("machineId") Long machineId) {
         machineMonitorEndpointService.setMachineId(machineId);
         return HttpWrapper.ok();
     }
 
-    @ApiOperation(value = "开始收集数据")
     @GetMapping("/start")
+    @ApiOperation(value = "开始收集数据")
     public HttpWrapper<?> startCollect(@RequestParam("machineId") Long machineId) {
         machineMonitorEndpointService.startCollect(machineId);
         return HttpWrapper.ok();
     }
 
-    @ApiOperation(value = "停止收集数据")
     @GetMapping("/stop")
+    @ApiOperation(value = "停止收集数据")
     public HttpWrapper<?> stopCollect(@RequestParam("machineId") Long machineId) {
         machineMonitorEndpointService.stopCollect(machineId);
         return HttpWrapper.ok();
     }
 
-    @ApiOperation(value = "获取机器基本指标")
     @GetMapping("/metrics")
+    @ApiOperation(value = "获取机器基本指标")
     public JSONObject getBaseMetrics(@RequestParam("machineId") Long machineId) {
         return machineMonitorEndpointService.getBaseMetrics(machineId);
     }
 
-    @ApiOperation(value = "获取系统负载")
     @GetMapping("/load")
+    @ApiOperation(value = "获取系统负载")
     public JSONObject getSystemLoad(@RequestParam("machineId") Long machineId) {
         return machineMonitorEndpointService.getSystemLoad(machineId);
     }
 
-    @ApiOperation(value = "获取top进程")
     @GetMapping("/top")
+    @ApiOperation(value = "获取top进程")
     public JSONArray getTopProcesses(@RequestParam("machineId") Long machineId, String name) {
         return machineMonitorEndpointService.getTopProcesses(machineId, name);
     }

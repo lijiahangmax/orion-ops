@@ -83,6 +83,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private SchedulerTaskMachineService schedulerTaskMachineService;
 
     @Resource
+    private MachineMonitorService machineMonitorService;
+
+    @Resource
     private HistoryValueService historyValueService;
 
     @Override
@@ -137,21 +140,20 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer deleteMachine(List<Long> idList) {
-        int effect = 0;
-        for (Long id : idList) {
-            // 删除机器
-            effect += machineInfoDAO.deleteById(id);
-            // 删除环境变量
-            effect += machineEnvService.deleteEnvByMachineId(id);
-            // 删除终端配置
-            effect += machineTerminalService.deleteTerminalByMachineId(id);
-            // 删除应用机器
-            effect += applicationMachineService.deleteAppMachineByMachineId(id);
-            // 删除日志文件
-            effect += fileTailService.deleteByMachineId(id);
-            // 删除调度任务
-            effect += schedulerTaskMachineService.deleteByMachineId(id);
-        }
+        // 删除机器
+        int effect = machineInfoDAO.deleteBatchIds(idList);
+        // 删除环境变量
+        effect += machineEnvService.deleteEnvByMachineIdList(idList);
+        // 删除终端配置
+        effect += machineTerminalService.deleteTerminalByMachineIdList(idList);
+        // 删除应用机器
+        effect += applicationMachineService.deleteAppMachineByMachineIdList(idList);
+        // 删除日志文件
+        effect += fileTailService.deleteByMachineIdList(idList);
+        // 删除调度任务
+        effect += schedulerTaskMachineService.deleteByMachineIdList(idList);
+        // 删除机器监控
+        effect += machineMonitorService.deleteByMachineIdList(idList);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());

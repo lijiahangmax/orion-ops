@@ -198,9 +198,9 @@ public class MachineTerminalServiceImpl implements MachineTerminalService {
     }
 
     @Override
-    public Integer deleteTerminalByMachineId(Long machineId) {
+    public Integer deleteTerminalByMachineIdList(List<Long> machineIdList) {
         LambdaQueryWrapper<MachineTerminalLogDO> wrapper = new LambdaQueryWrapper<MachineTerminalLogDO>()
-                .eq(MachineTerminalLogDO::getMachineId, machineId);
+                .in(MachineTerminalLogDO::getMachineId, machineIdList);
         return machineTerminalLogDAO.delete(wrapper);
     }
 

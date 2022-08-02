@@ -126,10 +126,10 @@ public interface MachineEnvService {
     /**
      * 删除机器环境变量
      *
-     * @param machineId 机器id
+     * @param machineIdList 机器id
      * @return effect
      */
-    Integer deleteEnvByMachineId(Long machineId);
+    Integer deleteEnvByMachineIdList(List<Long> machineIdList);
 
     /**
      * 获取 sftp 编码格式

@@ -38,9 +38,9 @@ public class SchedulerTaskMachineServiceImpl implements SchedulerTaskMachineServ
     }
 
     @Override
-    public Integer deleteByMachineId(Long machineId) {
+    public Integer deleteByMachineIdList(List<Long> machineIdList) {
         LambdaQueryWrapper<SchedulerTaskMachineDO> wrapper = new LambdaQueryWrapper<SchedulerTaskMachineDO>()
-                .eq(SchedulerTaskMachineDO::getMachineId, machineId);
+                .in(SchedulerTaskMachineDO::getMachineId, machineIdList);
         return schedulerTaskMachineDAO.delete(wrapper);
     }
 

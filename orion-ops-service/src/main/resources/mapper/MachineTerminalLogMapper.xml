@@ -15,14 +15,14 @@
         <result column="connected_time" property="connectedTime"/>
         <result column="disconnected_time" property="disconnectedTime"/>
         <result column="close_code" property="closeCode"/>
-        <result column="operate_log_file" property="operateLogFile"/>
+        <result column="screen_path" property="screenPath"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, username, machine_id, machine_name, machine_host, machine_tag, access_token, connected_time, disconnected_time, close_code, operate_log_file, create_time, update_time
+        id, user_id, username, machine_id, machine_name, machine_host, machine_tag, access_token, connected_time, disconnected_time, close_code, screen_path, create_time, update_time
     </sql>
 
 </mapper>

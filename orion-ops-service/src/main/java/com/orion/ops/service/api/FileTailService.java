@@ -60,10 +60,10 @@ public interface FileTailService {
     /**
      * 删除 tail 文件
      *
-     * @param machineId machineId
+     * @param machineIdList machineIdList
      * @return effect
      */
-    Integer deleteByMachineId(Long machineId);
+    Integer deleteByMachineIdList(List<Long> machineIdList);
 
     /**
      * tail 列表

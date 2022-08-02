@@ -225,9 +225,9 @@ public class FileTailServiceImpl implements FileTailService {
     }
 
     @Override
-    public Integer deleteByMachineId(Long machineId) {
+    public Integer deleteByMachineIdList(List<Long> machineIdList) {
         LambdaQueryWrapper<FileTailListDO> wrapper = new LambdaQueryWrapper<FileTailListDO>()
-                .eq(FileTailListDO::getMachineId, machineId);
+                .in(FileTailListDO::getMachineId, machineIdList);
         return fileTailListDAO.delete(wrapper);
     }
 

@@ -52,7 +52,7 @@ public class CodeGenerator {
                 // web名称
                 .setControllerName("%sController")
                 // 生成 swagger2 注解
-                .setSwagger2(false)
+                .setSwagger2(true)
                 // 开启 Kotlin 模式
                 .setKotlin(false)
                 // 是否生成ResultMap
@@ -112,7 +112,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("application_pipeline_task_log");
+                .setInclude("machine_monitor");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()

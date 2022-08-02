@@ -33,9 +33,9 @@ public interface SchedulerTaskMachineService {
     /**
      * 通过 机器id 删除
      *
-     * @param machineId machineId
+     * @param machineIdList machineIdList
      * @return effect
      */
-    Integer deleteByMachineId(Long machineId);
+    Integer deleteByMachineIdList(List<Long> machineIdList);
 
 }

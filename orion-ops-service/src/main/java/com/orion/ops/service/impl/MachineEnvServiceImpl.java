@@ -326,9 +326,9 @@ public class MachineEnvServiceImpl implements MachineEnvService {
     }
 
     @Override
-    public Integer deleteEnvByMachineId(Long machineId) {
+    public Integer deleteEnvByMachineIdList(List<Long> machineIdList) {
         LambdaQueryWrapper<MachineEnvDO> wrapper = new LambdaQueryWrapper<MachineEnvDO>()
-                .eq(MachineEnvDO::getMachineId, machineId);
+                .in(MachineEnvDO::getMachineId, machineIdList);
         return machineEnvDAO.delete(wrapper);
     }
 

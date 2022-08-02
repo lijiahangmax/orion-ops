@@ -73,9 +73,8 @@ public class MachineTerminalLogDO implements Serializable {
     @TableField("close_code")
     private Integer closeCode;
 
-    // TODO
     @ApiModelProperty(value = "录屏文件路径")
-    @TableField("operate_log_file")
+    @TableField("screen_path")
     private String screenPath;
 
     @ApiModelProperty(value = "创建时间")
