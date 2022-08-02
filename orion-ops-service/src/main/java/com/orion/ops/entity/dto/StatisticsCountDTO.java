@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,26 +12,19 @@ import lombok.Data;
  * @since 2022/1/20 14:24
  */
 @Data
+@ApiModel(value = "首页统计数量缓存")
 public class StatisticsCountDTO {
 
-    /**
-     * 机器数量
-     */
+    @ApiModelProperty(value = "机器数量")
     private Integer machineCount;
 
-    /**
-     * 环境数量
-     */
+    @ApiModelProperty(value = "环境数量")
     private Integer profileCount;
 
-    /**
-     * 应用数量
-     */
+    @ApiModelProperty(value = "应用数量")
     private Integer appCount;
 
-    /**
-     * 流水线数量
-     */
+    @ApiModelProperty(value = "流水线数量")
     private Integer pipelineCount;
 
 }

@@ -2,60 +2,52 @@ package com.orion.ops.entity.dto;
 
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.vo.FileTailVO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 文件tail 对象
+ * 文件 tail 对象
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/6/10 18:53
  */
 @Data
+@ApiModel(value = "文件 tail 对象")
 public class FileTailDTO {
 
-    /**
-     * 文件绝对路径
-     */
+    @ApiModelProperty(value = "文件绝对路径")
     private String filePath;
 
-    /**
-     * 下载用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
     /**
-     * tail 模式
-     *
      * @see com.orion.ops.constant.system.SystemEnvAttr#TAIL_MODE
      * @see com.orion.ops.constant.tail.FileTailMode
      */
+    @ApiModelProperty(value = "tail 模式")
     private String mode;
 
     /**
-     * tail 尾行偏移量
-     *
      * @see com.orion.ops.constant.machine.MachineEnvAttr#TAIL_OFFSET
      * @see com.orion.ops.constant.Const#TAIL_OFFSET_LINE
      */
+    @ApiModelProperty(value = "尾行偏移量")
     private Integer offset;
 
     /**
-     * tail 编码集
-     *
      * @see com.orion.ops.constant.machine.MachineEnvAttr#TAIL_CHARSET
      * @see com.orion.ops.constant.Const#UTF_8
      */
+    @ApiModelProperty(value = "编码集")
     private String charset;
 
-    /**
-     * tail 命令
-     */
+    @ApiModelProperty(value = "命令")
     private String command;
 
     static {

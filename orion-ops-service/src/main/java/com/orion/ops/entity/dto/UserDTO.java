@@ -1,12 +1,14 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
 /**
- * user
+ * 用户信息
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -14,46 +16,35 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "用户信息")
 public class UserDTO implements Serializable {
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long id;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty(value = "用户名")
     private String username;
 
-    /**
-     * 昵称
-     */
+    @ApiModelProperty(value = "昵称")
     private String nickname;
 
     /**
-     * 角色类型
-     *
      * @see com.orion.ops.constant.user.RoleType
      */
+    @ApiModelProperty(value = "角色类型")
     private Integer roleType;
 
-    /**
-     * 登录时间戳
-     */
+    @ApiModelProperty(value = "登录时间戳")
     private Long timestamp;
 
     /**
-     * 用户状态 1启用 2禁用
-     *
      * @see com.orion.ops.constant.Const#ENABLE
      * @see com.orion.ops.constant.Const#DISABLE
      */
+    @ApiModelProperty(value = "用户状态 1启用 2禁用")
     private Integer userStatus;
 
-    /**
-     * 当前用户绑定时间戳 无需设置
-     */
+    @ApiModelProperty(value = "当前用户绑定时间戳 无需设置")
     private Long currentBindTimestamp;
 
 }

@@ -3,38 +3,33 @@ package com.orion.ops.entity.dto;
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.request.BatchUploadRequest;
 import com.orion.ops.entity.request.sftp.FileUploadRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * sftp 上传对象
+ * sftp 文件上传对象
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/13 17:04
  */
 @Data
+@ApiModel(value = "sftp 文件上传对象")
 public class SftpUploadInfoDTO {
 
-    /**
-     * 远程路径
-     */
+    @ApiModelProperty(value = "远程路径")
     private String remotePath;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private List<Long> machineIdList;
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
     static {

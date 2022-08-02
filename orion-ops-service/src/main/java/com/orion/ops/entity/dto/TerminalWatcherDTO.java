@@ -1,12 +1,14 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 终端接入监视
+ * 终端监视信息
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -16,23 +18,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(value = "终端监视信息")
 public class TerminalWatcherDTO {
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 会话token
-     */
+    @ApiModelProperty(value = "会话token")
     private String token;
 
     /**
-     * 是否只读
-     *
      * @see com.orion.ops.constant.Const#ENABLE
      */
+    @ApiModelProperty(value = "是否只读")
     private Integer readonly;
 
 }

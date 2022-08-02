@@ -1,42 +1,35 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 应用发布统计 DTO
+ * 应用发布统计
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/3/30 17:19
  */
 @Data
+@ApiModel(value = "应用发布统计")
 public class ApplicationReleaseStatisticsDTO {
 
-    /**
-     * 发布次数
-     */
+    @ApiModelProperty(value = "发布次数")
     private Integer releaseCount;
 
-    /**
-     * 成功次数
-     */
+    @ApiModelProperty(value = "成功次数")
     private Integer successCount;
 
-    /**
-     * 失败次数
-     */
+    @ApiModelProperty(value = "失败次数")
     private Integer failureCount;
 
-    /**
-     * 日期
-     */
+    @ApiModelProperty(value = "日期")
     private Date date;
 
-    /**
-     * 平均发布时长ms (成功)
-     */
+    @ApiModelProperty(value = "平均发布时长ms (成功)")
     private Long avgUsed;
 
 }

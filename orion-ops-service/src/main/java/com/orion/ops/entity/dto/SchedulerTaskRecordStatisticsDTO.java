@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,41 +14,28 @@ import java.util.Date;
  * @since 2022/3/22 15:08
  */
 @Data
+@ApiModel(value = "调度任务机器执行统计")
 public class SchedulerTaskRecordStatisticsDTO {
 
-    /**
-     * 调度次数
-     */
+    @ApiModelProperty(value = "调度次数")
     private Integer scheduledCount;
 
-    /**
-     * 成功次数
-     */
+    @ApiModelProperty(value = "成功次数")
     private Integer successCount;
 
-    /**
-     * 失败次数
-     */
+    @ApiModelProperty(value = "失败次数")
     private Integer failureCount;
 
-    /**
-     * 日期
-     */
+    @ApiModelProperty(value = "日期")
     private Date date;
 
-    /**
-     * 机器平均执行时长ms (成功)
-     */
+    @ApiModelProperty(value = "机器平均执行时长ms (成功)")
     private Long avgUsed;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器名称
-     */
+    @ApiModelProperty(value = "机器名称")
     private String machineName;
 
 }

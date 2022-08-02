@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,66 +12,43 @@ import lombok.Data;
  * @since 2022/2/17 14:21
  */
 @Data
+@ApiModel(value = "系统磁盘占用分析")
 public class SystemSpaceAnalysisDTO {
 
-    /**
-     * 临时文件数量
-     */
+    @ApiModelProperty(value = "临时文件数量")
     private Integer tempFileCount;
 
-    /**
-     * 临时文件大小
-     */
+    @ApiModelProperty(value = "临时文件大小")
     private String tempFileSize;
 
-    /**
-     * 日志文件数量
-     */
+    @ApiModelProperty(value = "日志文件数量")
     private Integer logFileCount;
 
-    /**
-     * 日志文件大小
-     */
+    @ApiModelProperty(value = "日志文件大小")
     private String logFileSize;
 
-    /**
-     * 交换文件数量
-     */
+    @ApiModelProperty(value = "交换文件数量")
     private Integer swapFileCount;
 
-    /**
-     * 交换文件大小
-     */
+    @ApiModelProperty(value = "交换文件大小")
     private String swapFileSize;
 
-    /**
-     * 构建产物版本数
-     */
+    @ApiModelProperty(value = "构建产物版本数")
     private Integer distVersionCount;
 
-    /**
-     * 构建产物大小
-     */
+    @ApiModelProperty(value = "构建产物大小")
     private String distFileSize;
 
-    /**
-     * 应用仓库版本数
-     */
+    @ApiModelProperty(value = "应用仓库版本数")
     private Integer repoVersionCount;
 
-    /**
-     * 应用仓库大小
-     */
+    @ApiModelProperty(value = "应用仓库大小")
     private String repoVersionFileSize;
 
-    /**
-     * 录屏文件数
-     */
+    @ApiModelProperty(value = "录屏文件数")
     private Integer screenFileCount;
 
-    /**
-     * 录屏文件大小
-     */
+    @ApiModelProperty(value = "录屏文件大小")
     private String screenFileSize;
 
 }

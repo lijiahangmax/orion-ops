@@ -2,6 +2,8 @@ package com.orion.ops.entity.dto;
 
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.ApplicationProfileDO;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -11,21 +13,16 @@ import lombok.Data;
  * @since 2021-07-02
  */
 @Data
+@ApiModel(value = "应用环境缓存")
 public class ApplicationProfileDTO {
 
-    /**
-     * id
-     */
+    @ApiModelProperty(value = "id")
     private Long id;
 
-    /**
-     * 环境名称
-     */
+    @ApiModelProperty(value = "环境名称")
     private String profileName;
 
-    /**
-     * 环境唯一标识
-     */
+    @ApiModelProperty(value = "环境唯一标识")
     private String profileTag;
 
     static {

@@ -1,10 +1,12 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * terminal 连接参数
+ * 终端连接参数
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,21 +14,19 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "终端连接参数")
 public class TerminalConnectDTO extends TerminalSizeDTO {
 
-    /**
-     * 登陆 token
-     */
+    @ApiModelProperty(value = "登陆 token")
     private String loginToken;
 
     /**
-     * 解析body
-     * <p>
      * .e.g cols|rows|loginToken
      *
      * @param body body
      * @return connect
      */
+    @ApiModelProperty(value = "解析body")
     public static TerminalConnectDTO parse(String body) {
         String[] conf = body.split("\\|");
         if (conf.length != 3) {

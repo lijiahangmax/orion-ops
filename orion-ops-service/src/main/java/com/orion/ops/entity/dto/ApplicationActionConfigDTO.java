@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,21 +12,16 @@ import lombok.Data;
  * @since 2021/12/29 23:41
  */
 @Data
+@ApiModel(value = "检查应用是否已配置")
 public class ApplicationActionConfigDTO {
 
-    /**
-     * appId
-     */
+    @ApiModelProperty(value = "appId")
     private Long appId;
 
-    /**
-     * 构建阶段数量
-     */
+    @ApiModelProperty(value = "构建阶段数量")
     private Integer buildStageCount;
 
-    /**
-     * 发布阶段数量
-     */
+    @ApiModelProperty(value = "发布阶段数量")
     private Integer releaseStageCount;
 
 }

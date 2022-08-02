@@ -2,6 +2,8 @@ package com.orion.ops.entity.dto;
 
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.request.ApplicationPipelineTaskDetailRequest;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -14,36 +16,25 @@ import java.util.List;
  * @since 2022/4/8 10:00
  */
 @Data
+@ApiModel(value = "应用操作流水线配置")
 public class ApplicationPipelineStageConfigDTO {
 
-    /**
-     * 分支名称
-     */
+    @ApiModelProperty(value = "分支名称")
     private String branchName;
 
-    /**
-     * 提交id
-     */
+    @ApiModelProperty(value = "提交id")
     private String commitId;
 
-    /**
-     * 构建id
-     */
+    @ApiModelProperty(value = "构建id")
     private Long buildId;
 
-    /**
-     * 发布标题
-     */
+    @ApiModelProperty(value = "发布标题")
     private String title;
 
-    /**
-     * 描述
-     */
+    @ApiModelProperty(value = "描述")
     private String description;
 
-    /**
-     * 发布机器id
-     */
+    @ApiModelProperty(value = "发布机器id")
     private List<Long> machineIdList;
 
     static {

@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,21 +14,16 @@ import java.util.List;
  * @since 2022/5/16 9:41
  */
 @Data
+@ApiModel(value = "sftp 会话信息")
 public class SftpSessionTokenDTO {
 
-    /**
-     * 用户id
-     */
+    @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
-    /**
-     * 机器id (批量上传用)
-     */
+    @ApiModelProperty(value = "机器id (批量上传用)")
     private List<Long> machineIdList;
 
 }

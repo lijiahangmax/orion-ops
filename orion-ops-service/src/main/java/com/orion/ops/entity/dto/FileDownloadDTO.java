@@ -1,5 +1,7 @@
 package com.orion.ops.entity.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -10,33 +12,25 @@ import lombok.Data;
  * @since 2021/6/8 17:54
  */
 @Data
+@ApiModel(value = "文件下载缓存对象")
 public class FileDownloadDTO {
 
-    /**
-     * 文件绝对路径
-     */
+    @ApiModelProperty(value = "文件绝对路径")
     private String filePath;
 
-    /**
-     * 文件名称
-     */
+    @ApiModelProperty(value = "文件名称")
     private String fileName;
 
-    /**
-     * 下载用户id
-     */
+    @ApiModelProperty(value = "下载用户id")
     private Long userId;
 
     /**
-     * type
-     *
      * @see com.orion.ops.constant.download.FileDownloadType
      */
+    @ApiModelProperty(value = "下载类型")
     private Integer type;
 
-    /**
-     * 机器id
-     */
+    @ApiModelProperty(value = "机器id")
     private Long machineId;
 
 }
