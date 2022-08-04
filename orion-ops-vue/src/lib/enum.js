@@ -2454,3 +2454,24 @@ export const IMPORT_TYPE = {
     api: 'importCommandTemplate'
   }
 }
+
+/**
+ * 安装状态
+ */
+export const INSTALL_STATUS = {
+  NOT_INSTALL: {
+    value: 1,
+    label: '未安装',
+    color: ''
+  },
+  INSTALLING: {
+    value: 2,
+    label: '安装中',
+    color: 'green'
+  },
+  INSTALLED: {
+    value: 3,
+    label: '已安装',
+    color: 'blue'
+  }
+}

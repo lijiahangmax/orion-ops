@@ -140,6 +140,15 @@ const routes = [
         component: () => import('../views/machine/MachineList')
       },
       {
+        path: '/machine/monitor/list',
+        name: 'machineList',
+        meta: {
+          requireAuth: true,
+          title: '机器监控'
+        },
+        component: () => import('../views/machine/MachineMonitorList')
+      },
+      {
         path: '/machine/env/:id?',
         name: 'machineEnv',
         meta: {

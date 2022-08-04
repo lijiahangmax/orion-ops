@@ -2395,6 +2395,13 @@ const $api = {
    */
   cancelImportData: param => {
     return $http.$post('/data-import/cancel-import', param)
+  },
+
+  /**
+   * 获取机器监控列表
+   */
+  getMachineMonitorList: param => {
+    return $http.$post('/monitor/list', param)
   }
 
 }
