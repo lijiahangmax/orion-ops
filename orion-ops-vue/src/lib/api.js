@@ -2402,6 +2402,29 @@ const $api = {
    */
   getMachineMonitorList: param => {
     return $http.$post('/monitor/list', param)
+  },
+
+  /**
+   * 获取机器监控配置
+   */
+  getMachineMonitorConfig: param => {
+    return $http.$get('/monitor/get-config', param)
+  },
+
+  /**
+   * 设置机器监控配置
+   */
+  setMachineMonitorConfig: param => {
+    return $http.$post('/monitor/set-config', param)
+  },
+
+  /**
+   * 测试连接监控
+   */
+  testPingMachineMonitor: param => {
+    return $http.$post('/monitor/test', param, {
+      skipErrorMessage: true
+    })
   }
 
 }

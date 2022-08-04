@@ -12,7 +12,7 @@
           <a-col :span="6">
             <a-form-model-item label="状态" prop="status">
               <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
-                <a-select-option :value="status.value" v-for="status in INSTALL_STATUS" :key="status.value">
+                <a-select-option :value="status.value" v-for="status in MONITOR_STATUS" :key="status.value">
                   {{ status.label }}
                 </a-select-option>
               </a-select>
@@ -63,6 +63,7 @@
           <span v-if="record.currentVersion" class="span-blue">
             V{{ record.currentVersion }}
           </span>
+          <span v-else>-</span>
           <!-- 升级 -->
           <a-tooltip v-if="record.currentVersion && record.latestVersion && record.currentVersion !== record.latestVersion">
             <template #title>
@@ -79,19 +80,31 @@
           <a-button class="p0"
                     type="link"
                     style="height: 22px"
-                    :disabled="INSTALL_STATUS.INSTALLED.value !== record.status"
-                    @click="toMonitor(record.machineId)">
-            监控
+                    :disabled="MONITOR_STATUS.STARTED.value !== record.status">
+            <a :href="`#/machine/monitor/metrics/${record.machineId}`">监控</a>
           </a-button>
           <a-divider type="vertical"/>
           <!-- 安装 -->
-          <a-button class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="INSTALL_STATUS.NOT_INSTALL.value !== record.status"
-                    @click="installMonitor(record.machineId)">
+          <span v-if="MONITOR_STATUS.NOT_INSTALL.value === record.status"
+                class="span-blue pointer"
+                @click="installMonitor(record.machineId)">
             安装
+          </span>
+          <!-- 启动 -->
+          <a-button v-if="MONITOR_STATUS.INSTALLING.value === record.status ||
+                    MONITOR_STATUS.NOT_START.value === record.status"
+                    type="link"
+                    style="height: 22px; padding: 0 3px"
+                    :disabled="MONITOR_STATUS.INSTALLING.value === record.status"
+                    @click="installMonitor(record.machineId)">
+            启动
           </a-button>
+          <!-- 同步 -->
+          <span v-if="MONITOR_STATUS.STARTED.value === record.status"
+                class="span-blue pointer"
+                @click="syncMonitor(record.machineId)">
+            同步
+          </span>
           <a-divider type="vertical"/>
           <a @click="openAgentSetting(record.machineId)">插件配置</a>
           <a-divider type="vertical"/>
@@ -101,13 +114,16 @@
         </template>
       </a-table>
     </div>
+    <!-- 配置模态框 -->
+    <MachineMonitorConfigModal ref="configModal"/>
   </div>
 </template>
 
 <script>
 import { formatDate } from '@/lib/filters'
-import { enumValueOf, INSTALL_STATUS } from '@/lib/enum'
+import { enumValueOf, MONITOR_STATUS } from '@/lib/enum'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
+import MachineMonitorConfigModal from '@/components/machine/MachineMonitorConfigModal'
 
 /**
  * 列
@@ -156,11 +172,12 @@ const columns = [
 export default {
   name: 'MachineMonitorList',
   components: {
+    MachineMonitorConfigModal,
     MachineAutoComplete
   },
   data: function() {
     return {
-      INSTALL_STATUS,
+      MONITOR_STATUS,
       query: {
         machineId: undefined,
         machineName: undefined,
@@ -209,17 +226,20 @@ export default {
         this.getList({})
       }
     },
-    upgradeVersion(machineId) {
-      this.$message.success(machineId)
-    },
     toMonitor(machineId) {
       this.$message.success(machineId)
     },
     installMonitor(machineId) {
       this.$message.success(machineId)
     },
-    openAgentSetting(machineId) {
+    upgradeVersion(machineId) {
       this.$message.success(machineId)
+    },
+    syncMonitor(machineId) {
+      this.$message.success(machineId)
+    },
+    openAgentSetting(machineId) {
+      this.$refs.configModal.open(machineId)
     },
     openAlarmSetting(machineId) {
       this.$message.success(machineId)
@@ -240,7 +260,7 @@ export default {
   filters: {
     formatDate,
     formatStatus(status, f) {
-      return enumValueOf(INSTALL_STATUS, status)[f]
+      return enumValueOf(MONITOR_STATUS, status)[f]
     }
   },
   mounted() {

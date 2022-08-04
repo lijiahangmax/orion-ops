@@ -2456,9 +2456,9 @@ export const IMPORT_TYPE = {
 }
 
 /**
- * 安装状态
+ * 监控状态
  */
-export const INSTALL_STATUS = {
+export const MONITOR_STATUS = {
   NOT_INSTALL: {
     value: 1,
     label: '未安装',
@@ -2469,9 +2469,14 @@ export const INSTALL_STATUS = {
     label: '安装中',
     color: 'green'
   },
-  INSTALLED: {
+  NOT_START: {
     value: 3,
-    label: '已安装',
+    label: '未运行',
+    color: ''
+  },
+  STARTED: {
+    value: 4,
+    label: '运行中',
     color: 'blue'
   }
 }
