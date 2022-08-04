@@ -32,11 +32,11 @@ public class MachineMonitorDO implements Serializable {
     private Long machineId;
 
     /**
-     * @see com.orion.ops.constant.monitor.InstallStatus
+     * @see com.orion.ops.constant.monitor.MonitorStatus
      */
-    @ApiModelProperty(value = "插件安装状态 1未安装 2安装中 3已安装")
-    @TableField("install_status")
-    private Integer installStatus;
+    @ApiModelProperty(value = "插件状态 1未安装 2安装中 3未运行 4运行中")
+    @TableField("monitor_status")
+    private Integer monitorStatus;
 
     @ApiModelProperty(value = "请求 api url")
     @TableField("monitor_url")

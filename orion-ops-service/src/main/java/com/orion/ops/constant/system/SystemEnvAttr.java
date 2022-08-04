@@ -58,6 +58,11 @@ public enum SystemEnvAttr {
     DIST_PATH("构建产物目录", false),
 
     /**
+     * 机器监控插件绝对路径
+     */
+    MONITOR_AGENT_PATH("机器监控插件绝对路径", false),
+
+    /**
      * 日志文件上传目录
      */
     TAIL_FILE_UPLOAD_PATH("日志文件上传目录", false),

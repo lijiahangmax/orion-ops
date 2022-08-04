@@ -1,6 +1,7 @@
 package com.orion.ops.entity.request;
 
 import com.orion.lang.define.wrapper.PageRequest;
+import com.orion.ops.constant.monitor.MonitorStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,9 +29,15 @@ public class MachineMonitorRequest extends PageRequest {
     private String machineName;
 
     /**
-     * @see com.orion.ops.constant.monitor.InstallStatus
+     * @see MonitorStatus
      */
     @ApiModelProperty(value = "安装状态")
     private Integer status;
+
+    @ApiModelProperty(value = "请求url")
+    private String url;
+
+    @ApiModelProperty(value = "accessToken")
+    private String accessToken;
 
 }

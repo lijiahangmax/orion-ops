@@ -31,10 +31,10 @@ public class MachineMonitorDTO implements Serializable {
     private String machineHost;
 
     /**
-     * @see com.orion.ops.constant.monitor.InstallStatus
+     * @see com.orion.ops.constant.monitor.MonitorStatus
      */
-    @ApiModelProperty(value = "插件安装状态 1未安装 2安装中 3已安装")
-    private Integer installStatus;
+    @ApiModelProperty(value = "监控状态 1未安装 2安装中 3未运行 4运行中")
+    private Integer monitorStatus;
 
     @ApiModelProperty(value = "请求 api url")
     private String monitorUrl;

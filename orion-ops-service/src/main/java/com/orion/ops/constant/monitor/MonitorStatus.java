@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 安装状态
+ * 监控状态
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum InstallStatus {
+public enum MonitorStatus {
 
     /**
      * 未安装
@@ -25,19 +25,24 @@ public enum InstallStatus {
     INSTALLING(2),
 
     /**
-     * 已安装
+     * 未运行
      */
-    INSTALLED(3),
+    NOT_START(3),
+
+    /**
+     * 运行中
+     */
+    STARTED(4),
 
     ;
 
     private final Integer status;
 
-    public static InstallStatus of(Integer status) {
+    public static MonitorStatus of(Integer status) {
         if (status == null) {
             return null;
         }
-        for (InstallStatus value : values()) {
+        for (MonitorStatus value : values()) {
             if (value.status.equals(status)) {
                 return value;
             }

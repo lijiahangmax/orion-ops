@@ -128,6 +128,8 @@ public class MessageConst {
 
     public static final String PROFILE_ABSENT = "环境不存在";
 
+    public static final String CONFIG_ABSENT = "配置不存在";
+
     public static final String APP_PROFILE_NOT_CONFIGURED = "应用环境还未配置";
 
     public static final String CHECKOUT_ACTION_PRESENT = "检出操作只能有一个";
