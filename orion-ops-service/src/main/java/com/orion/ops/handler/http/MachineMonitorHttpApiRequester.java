@@ -1,5 +1,6 @@
 package com.orion.ops.handler.http;
 
+import com.orion.ops.constant.monitor.MonitorConst;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MachineMonitorHttpApiRequester implements HttpApiRequester<MachineMonitorHttpApi> {
 
-    private static final String ACCESS_TOKEN_HEADER = "accessToken";
-
     private static final String TAG = "machine-monitor";
 
     private String url;
@@ -30,7 +29,7 @@ public class MachineMonitorHttpApiRequester implements HttpApiRequester<MachineM
     public HttpApiRequest getRequest() {
         HttpApiRequest request = new HttpApiRequest(url, api);
         request.tag(TAG);
-        request.header(ACCESS_TOKEN_HEADER, accessToken);
+        request.header(MonitorConst.DEFAULT_ACCESS_HEADER, accessToken);
         return request;
     }
 

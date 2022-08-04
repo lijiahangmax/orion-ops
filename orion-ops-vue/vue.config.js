@@ -9,6 +9,7 @@ module.exports = {
     port: 10010,
     proxy: {
       '/orion': {
+        // target: 'http://101.43.254.243:9119',
         target: 'http://localhost:9119',
         ws: true,
         secure: false,

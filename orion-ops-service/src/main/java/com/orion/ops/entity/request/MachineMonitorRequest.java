@@ -31,6 +31,6 @@ public class MachineMonitorRequest extends PageRequest {
      * @see com.orion.ops.constant.monitor.InstallStatus
      */
     @ApiModelProperty(value = "安装状态")
-    private Integer installStatus;
+    private Integer status;
 
 }

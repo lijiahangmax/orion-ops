@@ -24,6 +24,14 @@ public interface MachineMonitorService {
     DataGrid<MachineMonitorVO> getMonitorList(MachineMonitorRequest request);
 
     /**
+     * 获取监控配置
+     *
+     * @param machineId machineId
+     * @return 配置信息
+     */
+    MachineMonitorVO getMonitorConfig(Long machineId);
+
+    /**
      * 通过机器 id 删除
      *
      * @param machineIdList machineIdList

@@ -1,6 +1,7 @@
 package com.orion.ops.entity.vo;
 
 import com.orion.lang.utils.convert.TypeStore;
+import com.orion.ops.constant.monitor.MonitorConst;
 import com.orion.ops.entity.dto.MachineMonitorDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,7 +34,7 @@ public class MachineMonitorVO {
      * @see com.orion.ops.constant.monitor.InstallStatus
      */
     @ApiModelProperty(value = "插件安装状态 1未安装 2安装中 3已安装")
-    private Integer installStatus;
+    private Integer status;
 
     @ApiModelProperty("机器监控 url")
     private String monitorUrl;
@@ -41,8 +42,11 @@ public class MachineMonitorVO {
     @ApiModelProperty("请求 accessToken")
     private String accessToken;
 
-    @ApiModelProperty("插件版本")
-    private String version;
+    @ApiModelProperty("当前插件版本")
+    private String currentVersion;
+
+    @ApiModelProperty("最新插件版本")
+    private String latestVersion;
 
     static {
         TypeStore.STORE.register(MachineMonitorDTO.class, MachineMonitorVO.class, p -> {
@@ -51,10 +55,11 @@ public class MachineMonitorVO {
             vo.setMachineId(p.getMachineId());
             vo.setMachineName(p.getMachineName());
             vo.setMachineHost(p.getMachineHost());
-            vo.setInstallStatus(p.getInstallStatus());
+            vo.setStatus(p.getInstallStatus());
             vo.setMonitorUrl(p.getMonitorUrl());
             vo.setAccessToken(p.getAccessToken());
-            vo.setVersion(p.getAgentVersion());
+            vo.setCurrentVersion(p.getAgentVersion());
+            vo.setLatestVersion(MonitorConst.LATEST_VERSION);
             return vo;
         });
     }

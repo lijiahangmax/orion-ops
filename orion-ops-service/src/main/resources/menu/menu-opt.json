@@ -13,6 +13,10 @@
         "path": "/machine/list"
       },
       {
+        "name": "机器监控",
+        "path": "/machine/monitor/list"
+      },
+      {
         "name": "环境变量",
         "path": "/machine/env"
       },

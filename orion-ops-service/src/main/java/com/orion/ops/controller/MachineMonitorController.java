@@ -7,10 +7,7 @@ import com.orion.ops.entity.vo.MachineMonitorVO;
 import com.orion.ops.service.api.MachineMonitorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -35,5 +32,12 @@ public class MachineMonitorController {
     public DataGrid<MachineMonitorVO> getMonitorList(@RequestBody MachineMonitorRequest request) {
         return machineMonitorService.getMonitorList(request);
     }
+
+    @GetMapping("/detail")
+    @ApiOperation(value = "查询监控配置")
+    public MachineMonitorVO getMonitorDetail(@RequestParam Long machineId) {
+        return machineMonitorService.getMonitorConfig(machineId);
+    }
+
 
 }
