@@ -1,17 +1,17 @@
 <template>
   <div>
-    监控图表 {{ machineId }}
+    报警配置 {{ machineId }}
   </div>
 </template>
 
 <script>
 export default {
-  name: 'MachineMonitorChart',
+  name: 'MachineMonitorAlarmConfig',
   props: {
     machineId: Number
   },
   created() {
-    console.log('chart')
+    console.log('config')
   }
 }
 </script>

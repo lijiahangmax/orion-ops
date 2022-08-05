@@ -2425,6 +2425,27 @@ const $api = {
     return $http.$post('/monitor/test', param, {
       skipErrorMessage: true
     })
+  },
+
+  /**
+   * 查询机器监控指标
+   */
+  getMachineMonitorMetrics: param => {
+    return $http.$get('/monitor-endpoint/metrics', param)
+  },
+
+  /**
+   * 查询机器 负载
+   */
+  getMachineMonitorLoad: param => {
+    return $http.$get('/monitor-endpoint/load', param)
+  },
+
+  /**
+   * 查询机器 top 进程
+   */
+  getMachineMonitorTop: param => {
+    return $http.$get('/monitor-endpoint/top', param)
   }
 
 }

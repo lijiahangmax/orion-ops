@@ -108,9 +108,9 @@
           <a-divider type="vertical"/>
           <a @click="openAgentSetting(record.machineId)">插件配置</a>
           <a-divider type="vertical"/>
-          <a @click="openAlarmSetting(record.machineId)">报警配置</a>
+          <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=3`">报警配置</a>
           <a-divider type="vertical"/>
-          <a @click="openAlarmHistory(record.machineId)">报警历史</a>
+          <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=4`">报警历史</a>
         </template>
       </a-table>
     </div>
@@ -240,12 +240,6 @@ export default {
     },
     openAgentSetting(machineId) {
       this.$refs.configModal.open(machineId)
-    },
-    openAlarmSetting(machineId) {
-      this.$message.success(machineId)
-    },
-    openAlarmHistory(machineId) {
-      this.$message.success(machineId)
     },
     resetForm() {
       this.$refs.query.resetFields()

@@ -9,7 +9,7 @@
           <template v-if="user.avatar">
             <a-avatar class="pointer" :src="user.avatar" :size="96" title="更换头像"/>
           </template>
-          <template v-else>
+          <template v-else-if="user.nickname">
             <a-avatar class="pointer" :size="96" title="更换头像" :style="{backgroundColor: '#7265E6',
              verticalAlign: 'middle', 'font-size': '48px'}">
               {{ user.nickname.substring(user.nickname.length - 1) }}

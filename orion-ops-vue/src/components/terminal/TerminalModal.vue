@@ -42,7 +42,7 @@
             <a-badge v-else :count="statusLabel" :numberStyle="statusStyle"/>
             <a-icon class="title-right-item ant-modal-draggable draggable-trigger" type="border-right" title="拖拽"/>
             <a-icon class="title-right-item setting-trigger" type="setting" title="设置" @click="openSetting"/>
-            <a-icon class="title-right-item min-size-trigger" type="shrink" title="最小化" @click="minimize"/>
+            <a-icon v-if="visibleMinimize" class="title-right-item min-size-trigger" type="shrink" title="最小化" @click="minimize"/>
             <a-icon class="title-right-item" type="close" title="关闭" @click="close"/>
           </div>
         </div>
@@ -68,6 +68,9 @@ export default {
   components: {
     TerminalSettingModal,
     TerminalBody
+  },
+  props: {
+    visibleMinimize: Boolean
   },
   data() {
     return {

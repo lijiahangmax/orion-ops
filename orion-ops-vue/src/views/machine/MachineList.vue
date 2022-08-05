@@ -191,6 +191,7 @@
       <TerminalModal v-for="openTerminal of openTerminalArr"
                      :key="openTerminal.terminalId"
                      :ref='`terminalModal${openTerminal.terminalId}`'
+                     :visibleMinimize="true"
                      @close="closedTerminal"
                      @minimize="minimizeTerminal"/>
     </div>

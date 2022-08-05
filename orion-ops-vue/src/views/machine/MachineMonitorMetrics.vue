@@ -1,52 +1,76 @@
 <template>
   <div class="machine-monitor-container">
-    <a-tabs defaultActiveKey="1" tabPosition="top" size="small" :animated="false">
+    <a-tabs v-model="active" tabPosition="top" size="small" :animated="false">
       <!-- 概要 -->
-      <a-tab-pane key="1" tab="概要">
-        <MachineMonitorSummary :machineId="machineId"/>
+      <a-tab-pane v-if="monitorStarted" :key="1" tab="概要">
+        <MachineMonitorSummary :machineId="machineId" :config="config"/>
       </a-tab-pane>
       <!-- 监控 -->
-      <a-tab-pane key="2" tab="监控">
+      <a-tab-pane v-if="monitorStarted" :key="2" tab="监控">
         <MachineMonitorChart :machineId="machineId"/>
       </a-tab-pane>
       <!-- 报警配置 -->
-      <a-tab-pane key="3" tab="报警配置">
-        <MachineMonitorAlarm :machineId="machineId"/>
+      <a-tab-pane :key="3" tab="报警配置">
+        <MachineMonitorAlarmConfig :machineId="machineId"/>
       </a-tab-pane>
+      <!-- 报警配置 -->
+      <a-tab-pane :key="4" tab="报警历史">
+        <MachineMonitorAlarmHistory :machineId="machineId"/>
+      </a-tab-pane>
+      <!-- 拓展 -->
       <template #tabBarExtraContent>
-        <a href="">Terminal</a>
+        <!-- 机器名称 -->
+        <a-tooltip v-if="config" title="点击复制 IP">
+          <span class="pointer machine-name-wrapper" @click="$copy(config.machineHost)">
+            {{ config.machineName }} ({{ config.machineHost }})
+          </span>
+        </a-tooltip>
+        <a-divider v-if="config" type="vertical"/>
+        <!-- terminal -->
+        <a-tooltip title="ctrl 点击新页面打开终端">
+          <a target="_blank" class="terminal-wrapper"
+             :href="`#/machine/terminal/${machineId}`"
+             @click="openTerminal($event)">
+            Terminal
+          </a>
+        </a-tooltip>
       </template>
     </a-tabs>
+    <!-- 终端模态框 -->
+    <TerminalModal ref="terminal" :visibleMinimize="false"/>
   </div>
 </template>
 
 <script>
-import MachineMonitorSummary from '@/components/machine/MachineMonitorSummary'
+import { MONITOR_STATUS } from '@/lib/enum'
+import TerminalModal from '@/components/terminal/TerminalModal'
 
 export default {
   name: 'MachineMonitorMetrics',
   components: {
-    MachineMonitorSummary,
+    TerminalModal,
+    MachineMonitorSummary: () => import('@/components/machine/MachineMonitorSummary'),
     MachineMonitorChart: () => import('@/components/machine/MachineMonitorChart'),
-    MachineMonitorAlarm: () => import('@/components/machine/MachineMonitorAlarm')
+    MachineMonitorAlarmConfig: () => import('@/components/machine/MachineMonitorAlarmConfig'),
+    MachineMonitorAlarmHistory: () => import('@/components/machine/MachineMonitorAlarmHistory')
   },
   data() {
     return {
-      machineId: null
+      active: null,
+      machineId: null,
+      monitorStarted: false,
+      config: null
     }
   },
   methods: {
-    openTerminal(e, record) {
+    openTerminal(e) {
       if (!e.ctrlKey) {
         e.preventDefault()
         // 打开模态框
-        const now = Date.now()
-        this.openTerminalArr.push({
-          name: record.name,
-          terminalId: now
-        })
-        this.$nextTick(() => {
-          this.$refs[`terminalModal${now}`][0].open(record, now)
+        this.$api.getMachineDetail({
+          id: this.machineId
+        }).then(({ data }) => {
+          this.$refs.terminal.open(data, this.machineId)
         })
         return false
       } else {
@@ -55,8 +79,20 @@ export default {
       }
     }
   },
+  created() {
+    this.machineId = ~~this.$route.params.machineId
+    this.active = ~~(this.$route.query.tab || 1)
+  },
   mounted() {
-    this.machineId = this.$route.params.machineId
+    this.$api.getMachineMonitorConfig({
+      machineId: this.machineId
+    }).then(({ data }) => {
+      this.config = data
+      this.monitorStarted = MONITOR_STATUS.STARTED.value === data.status
+      if (!this.monitorStarted && (this.active === 1 || this.active === 2)) {
+        this.$message.warning('监控插件未运行')
+      }
+    })
   }
 }
 </script>
@@ -64,8 +100,21 @@ export default {
 <style lang="less" scoped>
 
 .machine-monitor-container {
-  background: #FFF;
-  padding: 8px 16px;
-  border-radius: 4px;
+  position: relative;
+  top: -18px;
+  left: -18px;
+  width: calc(100% + 36px);
 }
+
+.machine-name-wrapper {
+  font-weight: 500;
+  color: rgb(0, 0, 0, .9);
+}
+
+::v-deep .ant-tabs-bar {
+  margin: 0;
+  background: #FFF;
+  padding: 4px 12px 4px 8px;
+}
+
 </style>
