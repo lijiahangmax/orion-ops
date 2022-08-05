@@ -31,6 +31,21 @@
         id, machine_id, monitor_status, monitor_url, access_token, agent_version, deleted, create_time, update_time
     </sql>
 
+    <!-- 通用筛选条件 -->
+    <sql id="Where_Cause">
+        WHERE deleted = 1
+        AND machine_status = 1
+        <if test="query.machineName != null and query.machineName != ''">
+            AND machine_name LIKE concat('%', #{query.machineName}, '%')
+        </if>
+        <if test="query.machineId != null">
+            AND machine_id = #{query.machineId}
+        </if>
+        <if test="query.monitorStatus != null">
+            AND monitor_status = #{query.monitorStatus}
+        </if>
+    </sql>
+
     <sql id="Join_Column_List">
         SELECT m.id                        id,
                IFNULL(m.monitor_status, 1) monitor_status,
@@ -40,6 +55,7 @@
                i.id                        machine_id,
                i.machine_name              machine_name,
                i.machine_host              machine_host,
+               i.machine_status            machine_status,
                i.deleted                   deleted
         FROM machine_monitor m
                  RIGHT JOIN machine_info i ON i.id = m.machine_id
@@ -50,16 +66,7 @@
         FROM (
         <include refid="Join_Column_List"/>
         ) t
-        WHERE deleted = 1
-        <if test="query.machineName != null and query.machineName != ''">
-            AND machine_name LIKE concat('%', #{query.machineName}, '%')
-        </if>
-        <if test="query.machineId != null">
-            AND machine_id = #{query.machineId}
-        </if>
-        <if test="query.monitorStatus != null">
-            AND monitor_status = #{query.monitorStatus}
-        </if>
+        <include refid="Where_Cause"/>
         ${last}
     </select>
 
@@ -68,16 +75,7 @@
         FROM (
         <include refid="Join_Column_List"/>
         ) t
-        WHERE deleted = 1
-        <if test="query.machineName != null and query.machineName != ''">
-            AND machine_name LIKE concat('%', #{query.machineName}, '%')
-        </if>
-        <if test="query.machineId != null">
-            AND machine_id = #{query.machineId}
-        </if>
-        <if test="query.monitorStatus != null">
-            AND monitor_status = #{query.monitorStatus}
-        </if>
+        <include refid="Where_Cause"/>
     </select>
 
 </mapper>

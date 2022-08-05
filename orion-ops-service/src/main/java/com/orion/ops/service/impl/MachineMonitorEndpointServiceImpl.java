@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.constant.Const;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.ParamConst;
+import com.orion.ops.entity.domain.MachineMonitorDO;
 import com.orion.ops.handler.http.HttpApiRequest;
 import com.orion.ops.handler.http.HttpApiRequester;
 import com.orion.ops.handler.http.MachineMonitorHttpApi;
 import com.orion.ops.handler.http.MachineMonitorHttpApiRequester;
 import com.orion.ops.service.api.MachineMonitorEndpointService;
+import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.Valid;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,9 @@ import javax.annotation.Resource;
 public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpointService {
 
     @Resource
+    private MachineMonitorService machineMonitorService;
+
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
@@ -37,32 +43,11 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
     }
 
     @Override
-    public void setMachineId(Long machineId) {
-        HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.ENDPOINT_SET_MACHINE_ID)
-                .getRequest();
-        request.queryParam(ParamConst.MACHINE_ID, machineId.toString());
-        Valid.validHttpOk(request.await());
-    }
-
-    @Override
-    public void startCollect(Long machineId) {
-        HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.ENDPOINT_START)
-                .getRequest();
-        Valid.validHttpOk(request.await());
-    }
-
-    @Override
-    public void stopCollect(Long machineId) {
-        HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.ENDPOINT_STOP)
-                .getRequest();
-        Valid.validHttpOk(request.await());
-    }
-
-    @Override
     public JSONObject getBaseMetrics(Long machineId) {
         HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.METRICS_BASE)
                 .getRequest();
         request.queryParam(ParamConst.LIMIT, Const.N_10.toString());
+        request.queryParam(ParamConst.MACHINE_ID, machineId.toString());
         HttpWrapper<JSONObject> wrapper = request.getHttpWrapper(JSONObject.class);
         return Valid.api(wrapper);
     }
@@ -92,10 +77,12 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
      * @return request
      */
     private HttpApiRequester<?> getRequester(Long machineId, MachineMonitorHttpApi api) {
+        MachineMonitorDO monitor = machineMonitorService.selectByMachineId(machineId);
+        Valid.notNull(monitor, MessageConst.CONFIG_ABSENT);
         return MachineMonitorHttpApiRequester.builder()
-                .url("http://101.43.254.243:9220")
+                .url(monitor.getMonitorUrl())
+                .accessToken(monitor.getAccessToken())
                 .api(api)
-                .accessToken("agent_access")
                 .build();
     }
 

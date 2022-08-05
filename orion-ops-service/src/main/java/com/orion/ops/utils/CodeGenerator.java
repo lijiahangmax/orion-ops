@@ -71,11 +71,11 @@ public class CodeGenerator {
                 // 配置驱动
                 .setDriverName("com.mysql.cj.jdbc.Driver")
                 // 配置路径
-                .setUrl("jdbc:mysql://116.62.194.246:3306/orion-ops?characterEncoding=utf8")
+                .setUrl("jdbc:mysql://127.0.0.1:3306/orion-ops?characterEncoding=utf8")
                 // 配置账号
                 .setUsername("root")
                 // 配置密码
-                .setPassword("Data@123456")
+                .setPassword("admin123")
                 // 转换器
                 .setTypeConvert(new MySqlTypeConvert() {
                     @Override

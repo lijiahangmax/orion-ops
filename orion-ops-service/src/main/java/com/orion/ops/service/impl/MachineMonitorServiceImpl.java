@@ -8,8 +8,8 @@ import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.ops.constant.MessageConst;
-import com.orion.ops.constant.monitor.MonitorStatus;
 import com.orion.ops.constant.monitor.MonitorConst;
+import com.orion.ops.constant.monitor.MonitorStatus;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineMonitorDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;
@@ -73,22 +73,24 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
 
     @Override
     public MachineMonitorVO getMonitorConfig(Long machineId) {
-        // 查询
-        MachineMonitorDO monitor = this.selectByMachineId(machineId);
-        if (monitor != null) {
-            return Converts.to(monitor, MachineMonitorVO.class);
-        }
         // 查询机器
         MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-        // 不存在则插入
-        MachineMonitorDO insert = new MachineMonitorDO();
-        insert.setMachineId(machineId);
-        insert.setMonitorStatus(MonitorStatus.NOT_INSTALL.getStatus());
-        insert.setMonitorUrl(Strings.format(MonitorConst.DEFAULT_URL_FORMAT, machine.getMachineHost()));
-        insert.setAccessToken(MonitorConst.DEFAULT_ACCESS_TOKEN);
-        machineMonitorDAO.insert(insert);
-        return Converts.to(insert, MachineMonitorVO.class);
+        // 查询
+        MachineMonitorDO monitor = this.selectByMachineId(machineId);
+        if (monitor == null) {
+            // 不存在则插入
+            monitor = new MachineMonitorDO();
+            monitor.setMachineId(machineId);
+            monitor.setMonitorStatus(MonitorStatus.NOT_INSTALL.getStatus());
+            monitor.setMonitorUrl(Strings.format(MonitorConst.DEFAULT_URL_FORMAT, machine.getMachineHost()));
+            monitor.setAccessToken(MonitorConst.DEFAULT_ACCESS_TOKEN);
+            machineMonitorDAO.insert(monitor);
+        }
+        MachineMonitorVO vo = Converts.to(monitor, MachineMonitorVO.class);
+        vo.setMachineName(machine.getMachineName());
+        vo.setMachineHost(machine.getMachineHost());
+        return vo;
     }
 
     @Override

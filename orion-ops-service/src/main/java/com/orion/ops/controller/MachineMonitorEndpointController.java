@@ -36,27 +36,6 @@ public class MachineMonitorEndpointController {
         return machineMonitorEndpointService.ping(machineId);
     }
 
-    @GetMapping("/set-machine-id")
-    @ApiOperation(value = "设置agent机器id")
-    public HttpWrapper<?> setMachineId(@RequestParam("machineId") Long machineId) {
-        machineMonitorEndpointService.setMachineId(machineId);
-        return HttpWrapper.ok();
-    }
-
-    @GetMapping("/start")
-    @ApiOperation(value = "开始收集数据")
-    public HttpWrapper<?> startCollect(@RequestParam("machineId") Long machineId) {
-        machineMonitorEndpointService.startCollect(machineId);
-        return HttpWrapper.ok();
-    }
-
-    @GetMapping("/stop")
-    @ApiOperation(value = "停止收集数据")
-    public HttpWrapper<?> stopCollect(@RequestParam("machineId") Long machineId) {
-        machineMonitorEndpointService.stopCollect(machineId);
-        return HttpWrapper.ok();
-    }
-
     @GetMapping("/metrics")
     @ApiOperation(value = "获取机器基本指标")
     public JSONObject getBaseMetrics(@RequestParam("machineId") Long machineId) {

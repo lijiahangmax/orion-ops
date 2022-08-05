@@ -21,27 +21,6 @@ public interface MachineMonitorEndpointService {
     Integer ping(Long machineId);
 
     /**
-     * 设置机器 id
-     *
-     * @param machineId machineId
-     */
-    void setMachineId(Long machineId);
-
-    /**
-     * 开始收集数据
-     *
-     * @param machineId machineId
-     */
-    void startCollect(Long machineId);
-
-    /**
-     * 停止收集数据
-     *
-     * @param machineId machineId
-     */
-    void stopCollect(Long machineId);
-
-    /**
      * 获取基本指标信息
      *
      * @param machineId machineId
