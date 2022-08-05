@@ -1,7 +1,17 @@
 <template>
   <a-dropdown>
     <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-      <a-avatar :src="user.avatar" :size="36"/>
+      <template v-if="user.avatar">
+        <a-avatar :src="user.avatar" :size="36"/>
+      </template>
+      <template v-else-if="user.nickname">
+        <a-avatar :size="36" :style="{backgroundColor: '#7265E6', verticalAlign: 'middle'}">
+          {{ user.nickname.substring(user.nickname.length - 1) }}
+        </a-avatar>
+      </template>
+      <template v-else>
+        <div style="width: 36px; height: 36px"/>
+      </template>
     </a>
     <template #overlay>
       <a-menu @click="chooseMenu">
@@ -73,10 +83,10 @@ export default {
   },
   mounted() {
     this.$api.getUserDetail()
-      .then(({ data }) => {
-        this.user.nickname = data.nickname
-        this.user.avatar = data.avatar
-      })
+    .then(({ data }) => {
+      this.user.nickname = data.nickname
+      this.user.avatar = data.avatar
+    })
   }
 }
 </script>

@@ -4,13 +4,9 @@ import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.io.FileReaders;
 import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.ops.OrionApplication;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.InputStream;
 
 /**
  * 头像处理器
@@ -21,8 +17,6 @@ import java.io.InputStream;
  */
 @Slf4j
 public class AvatarPicHolder {
-
-    private static final String DEFAULT_AVATAR = "/static/avatar/default.png";
 
     private AvatarPicHolder() {
     }
@@ -71,14 +65,7 @@ public class AvatarPicHolder {
         if (isExist(path)) {
             return getBase64(path);
         } else {
-            try (InputStream in = OrionApplication.class.getResourceAsStream(DEFAULT_AVATAR)) {
-                if (in == null) {
-                    return null;
-                }
-                return Base64s.img64Encode(Streams.toByteArray(in), Const.SUFFIX_PNG);
-            } catch (Exception e) {
-                return null;
-            }
+            return null;
         }
     }
 

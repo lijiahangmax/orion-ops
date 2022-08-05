@@ -1,7 +1,7 @@
 <template>
   <div class="web-side-message-container">
     <!-- 触发器 -->
-    <a @click="onOpen">
+    <a class="icon-wrapper" @click="onOpen">
       <!-- 红点 -->
       <a-badge class="unread-message-dot" :dot="unreadCount > 0">
         <a-icon class="web-side-message-trigger" type="notification"/>
@@ -338,6 +338,11 @@ export default {
 .web-side-message-trigger {
   font-size: 19px;
   color: #181E33;
+}
+
+.icon-wrapper {
+  display: inline-block;
+  margin-top: 3px;
 }
 
 ::v-deep .unread-message-dot .ant-badge-dot {
