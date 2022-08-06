@@ -49,19 +49,19 @@
                :loading="loading"
                size="middle">
         <!-- tag -->
-        <template v-slot:tag="record">
+        <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
         </template>
         <!-- 审核 -->
-        <template v-slot:releaseAudit="record">
+        <template #releaseAudit="record">
           <a-tag v-if="record.releaseAudit" :color="record.releaseAudit | formatReleaseAudit('color')">
             {{ record.releaseAudit | formatReleaseAudit('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>

@@ -35,14 +35,14 @@
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
-        <template v-slot:value="record">
+        <template #value="record">
           <span :title="record.value">
             <a-icon class="span-blue pointer" type="copy" title="复制" @click="$copy(record.value)"/>
             {{ record.value }}
           </span>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 选择 -->
           <a @click="selected(record.value)">选择</a>
         </template>

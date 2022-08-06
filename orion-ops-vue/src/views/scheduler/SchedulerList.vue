@@ -65,7 +65,7 @@
                  :loading="loading"
                  size="middle">
           <!-- 最近状态 -->
-          <template v-slot:latelyStatus="record">
+          <template #latelyStatus="record">
             <template v-if="record.enableStatus === 1">
               <a-tag :color="record.latelyStatus | formatTaskStatus('color')">
                 {{ record.latelyStatus | formatTaskStatus('label') }}
@@ -76,23 +76,23 @@
             </template>
           </template>
           <!-- 上次调度时间 -->
-          <template v-slot:latelyScheduleTime="record">
+          <template #latelyScheduleTime="record">
             <template v-if="record.latelyScheduleTime">
               {{ record.latelyScheduleTime | formatDate }}
             </template>
           </template>
           <!-- 下次调度时间 -->
-          <template v-slot:nextTime="record">
+          <template #nextTime="record">
             <template v-if="record.nextTime && record.nextTime.length">
               {{ record.nextTime[0] | formatDate }}
             </template>
           </template>
           <!-- 更新时间 -->
-          <template v-slot:updateTime="record">
+          <template #updateTime="record">
             {{ record.updateTime | formatDate }}
           </template>
           <!-- 操作 -->
-          <template v-slot:action="record">
+          <template #action="record">
             <!-- 修改 -->
             <a @click="update(record.id)">修改</a>
             <a-divider type="vertical"/>

@@ -91,30 +91,30 @@
                :loading="loading"
                size="middle">
         <!-- 名称 -->
-        <template v-slot:name="record">
+        <template #name="record">
           {{ record.name }}
           <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
         </template>
         <!-- tag -->
-        <template v-slot:tag="record">
+        <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
         </template>
         <!-- 主机 -->
-        <template v-slot:host="record">
+        <template #host="record">
           <span class="span-blue pointer" title="复制主机" @click="$copy(record.host, true)">
             {{ record.host }}
           </span>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-badge v-if="record.status"
                    :status="record.status | formatEnableStatus('status')"
                    :text="record.status | formatEnableStatus('label')"/>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 启用 -->
           <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
                         ok-text="确定"

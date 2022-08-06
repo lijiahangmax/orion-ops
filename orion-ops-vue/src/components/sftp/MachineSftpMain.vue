@@ -122,7 +122,7 @@
                    :customRow="customClick"
                    size="small">
             <!-- 名称 -->
-            <template v-slot:name="record">
+            <template #name="record">
               <span class="file-name-cols">
                 <!-- 图标 -->
                 <a-icon :type="record.attr.charAt(0) | formatFileType('icon')"
@@ -138,11 +138,11 @@
               </span>
             </template>
             <!-- 名称筛选图标 -->
-            <template v-slot:nameFilterIcon="filtered">
+            <template #nameFilterIcon="filtered">
               <a-icon type="search" :style="{ color: filtered ? '#108EE9' : undefined }"/>
             </template>
             <!-- 名称筛选输入框 -->
-            <template v-slot:nameFilterDropdown="{setSelectedKeys, selectedKeys, confirm, clearFilters}">
+            <template #nameFilterDropdown="{setSelectedKeys, selectedKeys, confirm, clearFilters}">
               <div style="padding: 8px">
                 <a-input v-ant-ref="c => (nameSearchInput = c)"
                          placeholder="名称"
@@ -162,11 +162,11 @@
               </div>
             </template>
             <!-- 修改时间 -->
-            <template v-slot:modifyTime="record">
+            <template #modifyTime="record">
               {{ record.modifyTime | formatDate }}
             </template>
             <!-- 操作 -->
-            <template v-slot:action="record">
+            <template #action="record">
               <!-- 复制路径 -->
               <a @click="$copy(record.path, '已复制文件路径')" title="复制路径">
                 <a-icon type="copy"/>

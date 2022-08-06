@@ -73,20 +73,20 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <template v-slot:host="record">
+        <template #host="record">
           <span>{{ record.host }}</span>
           <a class="copy-icon-right" title="复制" @click="$copy(record.host)">
             <a-icon type="copy"/>
           </a>
         </template>
         <!-- 类型 -->
-        <template v-slot:type="record">
+        <template #type="record">
           <a-tag :color="record.type | formatProxyType('color')">
             {{ record.type | formatProxyType('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>

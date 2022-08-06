@@ -17,7 +17,7 @@
                :loading="loading"
                size="middle">
         <!-- beforeValue -->
-        <template v-slot:beforeValue="record">
+        <template #beforeValue="record">
           <div class="auto-ellipsis">
             <a class="copy-icon-left" v-if="record.beforeValue" @click="$copy(record.beforeValue)">
               <a-icon type="copy"/>
@@ -28,7 +28,7 @@
           </div>
         </template>
         <!-- afterValue -->
-        <template v-slot:afterValue="record">
+        <template #afterValue="record">
           <div class="auto-ellipsis">
             <a class="copy-icon-left" @click="$copy(record.afterValue)">
               <a-icon type="copy"/>
@@ -39,17 +39,17 @@
           </div>
         </template>
         <!-- 类型 -->
-        <template v-slot:type="record">
+        <template #type="record">
           <a-tag class="m0" :color="record.type | formatType('color')">
             {{ record.type | formatType('label') }}
           </a-tag>
         </template>
         <!-- 修改时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }} ({{ record.createTimeAgo }})
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <a @click="rollback(record)">回滚</a>
         </template>
       </a-table>

@@ -74,7 +74,7 @@
                :expandedRowKeys.sync="expandedRowKeys"
                size="middle">
         <!-- 展开的机器列表 -->
-        <template v-slot:expandedRowRender="record">
+        <template #expandedRowRender="record">
           <a-table
             v-if="record.machines"
             :rowKey="(record, index) => index"
@@ -84,13 +84,13 @@
             :pagination="false"
             size="middle">
             <!-- 状态 -->
-            <template v-slot:status="machine">
+            <template #status="machine">
               <a-tag class="m0" :color="machine.status | formatActionStatus('color')">
                 {{ machine.status | formatActionStatus('label') }}
               </a-tag>
             </template>
             <!-- 操作 -->
-            <template v-slot:action="machine">
+            <template #action="machine">
               <!-- 日志 -->
               <a-button class="p0"
                         type="link"
@@ -129,11 +129,11 @@
           </a-table>
         </template>
         <!-- 构建序列 -->
-        <template v-slot:seq="record">
+        <template #seq="record">
           <span class="span-blue">#{{ record.buildSeq }}</span>
         </template>
         <!-- 发布标题 -->
-        <template v-slot:releaseTitle="record">
+        <template #releaseTitle="record">
           <div class="timed-wrapper">
             <!-- 回滚图标 -->
             <a-tooltip v-if="record.type === RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
@@ -153,17 +153,17 @@
           </div>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag class="m0" :color="record.status | formatReleaseStatus('color')">
             {{ record.status | formatReleaseStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 审核 -->
           <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)" title="审核">审核</a>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>

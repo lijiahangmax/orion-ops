@@ -40,11 +40,11 @@
                :loading="loading"
                size="middle">
         <!-- 连接时间 -->
-        <template v-slot:connectedTime="record">
+        <template #connectedTime="record">
           {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <a-tooltip title="只读监视, ctrl 点击为读写监视">
             <span class="span-blue pointer" @click="openTerminalWatcher($event, record)">监视</span>
           </a-tooltip>

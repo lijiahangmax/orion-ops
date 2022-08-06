@@ -59,17 +59,17 @@
                :loading="loading"
                size="middle">
         <!-- 模板内容 -->
-        <template v-slot:value="record">
+        <template #value="record">
           <span class="pointer" title="预览" @click="preview(record.value)">
             {{ record.value }}
           </span>
         </template>
         <!-- 修改时间 -->
-        <template v-slot:updateTime="record">
+        <template #updateTime="record">
           {{ record.updateTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>

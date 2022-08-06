@@ -41,7 +41,7 @@
       <!-- 发布操作 -->
       <a-divider>发布操作</a-divider>
       <a-list :dataSource="detail.actions">
-        <template v-slot:renderItem="item">
+        <template #renderItem="item">
           <a-list-item>
             <a-descriptions size="middle">
               <a-descriptions-item label="操作名称" :span="3">

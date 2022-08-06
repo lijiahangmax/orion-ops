@@ -44,7 +44,7 @@
                :loading="loading"
                size="middle">
         <!-- version -->
-        <template v-slot:machineHost="record">
+        <template #machineHost="record">
           <a-tooltip title="点击复制">
             <span class="span-blue pointer" @click="$copy(record.machineHost)">
             {{ record.machineHost }}
@@ -52,13 +52,13 @@
           </a-tooltip>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag :color="record.status | formatStatus('color')">
             {{ record.status | formatStatus('label') }}
           </a-tag>
         </template>
         <!-- version -->
-        <template v-slot:version="record">
+        <template #version="record">
           <!-- 当前版本 -->
           <span v-if="record.currentVersion" class="span-blue">
             V{{ record.currentVersion }}
@@ -75,7 +75,7 @@
           </a-tooltip>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 监控 -->
           <a-button class="p0"
                     type="link"

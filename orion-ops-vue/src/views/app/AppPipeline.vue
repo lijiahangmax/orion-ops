@@ -52,7 +52,7 @@
                :loading="loading"
                size="middle">
         <!-- 流水线操作 -->
-        <template v-slot:detail="record">
+        <template #detail="record">
           <div class="pipeline-stage-wrapper">
             <span v-for="(detail, index) of record.details" :key="detail.id">
               {{ detail.stageType | formatStageType('label') }}
@@ -62,11 +62,11 @@
           </div>
         </template>
         <!-- 修改时间 -->
-        <template v-slot:updateTime="record">
+        <template #updateTime="record">
           {{ record.updateTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 执行 -->
           <span class="span-blue pointer" @click="execPipeline(record.id)">执行</span>
           <a-divider type="vertical"/>

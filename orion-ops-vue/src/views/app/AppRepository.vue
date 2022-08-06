@@ -63,23 +63,23 @@
                :loading="loading"
                size="middle">
         <!-- url -->
-        <template v-slot:url="record">
+        <template #url="record">
           <span class="span-blue pointer" title="预览" @click="$refs.preview.preview(record.url)">
             {{ record.url }}
           </span>
         </template>
         <!-- 资源用户 -->
-        <template v-slot:username="record">
+        <template #username="record">
           {{ record.authType === REPOSITORY_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag :color="record.status | formatRepoStatus('color')">
             {{ record.status | formatRepoStatus('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 初始化 -->
           <a v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status || REPOSITORY_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
           <a-popconfirm title="确定要重新初始化吗?"
