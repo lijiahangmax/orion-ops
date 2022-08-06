@@ -2446,6 +2446,41 @@ const $api = {
    */
   getMachineMonitorTop: param => {
     return $http.$get('/monitor-endpoint/top', param)
+  },
+
+  /**
+   * 查询机器磁盘名称
+   */
+  getMachineDiskName: param => {
+    return $http.$get('/monitor-endpoint/disk-name', param)
+  },
+
+  /**
+   * 查询机器cpu图表
+   */
+  getMachineMonitorCpuChart: param => {
+    return $http.$post('/monitor-endpoint/chart-cpu', param)
+  },
+
+  /**
+   * 查询机器内存图表
+   */
+  getMachineMonitorMemoryChart: param => {
+    return $http.$post('/monitor-endpoint/chart-memory', param)
+  },
+
+  /**
+   * 查询机器网络图表
+   */
+  getMachineMonitorNetChart: param => {
+    return $http.$post('/monitor-endpoint/chart-net', param)
+  },
+
+  /**
+   * 查询机器磁盘图表
+   */
+  getMachineMonitorDiskChart: param => {
+    return $http.$post('/monitor-endpoint/chart-disk', param)
   }
 
 }

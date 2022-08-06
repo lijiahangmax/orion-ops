@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible"
-           :width="450"
+           :width="width"
            :footer="null"
            :destroyOnClose="true"
            @close="close">
@@ -18,6 +18,12 @@
 <script>
 export default {
   name: 'TextPreview',
+  props: {
+    width: {
+      type: Number,
+      default: 450
+    }
+  },
   data() {
     return {
       visible: false,

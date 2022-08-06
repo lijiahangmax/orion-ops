@@ -3,11 +3,11 @@
     <a-tabs v-model="active" tabPosition="top" size="small" :animated="false">
       <!-- 概要 -->
       <a-tab-pane v-if="monitorStarted" :key="1" tab="概要">
-        <MachineMonitorSummary :machineId="machineId" :config="config"/>
+        <MachineMonitorSummary ref="summary" :machineId="machineId" :config="config"/>
       </a-tab-pane>
       <!-- 监控 -->
       <a-tab-pane v-if="monitorStarted" :key="2" tab="监控">
-        <MachineMonitorChart :machineId="machineId"/>
+        <MachineMonitorChart ref="chart" :machineId="machineId"/>
       </a-tab-pane>
       <!-- 报警配置 -->
       <a-tab-pane :key="3" tab="报警配置">
@@ -19,21 +19,37 @@
       </a-tab-pane>
       <!-- 拓展 -->
       <template #tabBarExtraContent>
+        <!-- 刷新 -->
+        <a-button class="mr16"
+                  v-if="config"
+                  v-show="active === 1 || active === 2"
+                  size="small"
+                  @click="refresh">
+          刷新
+        </a-button>
+        <!-- 自动刷新 -->
+        <span class="auto-refresh-wrapper" v-if="config" v-show="active === 1 || active === 2">
+          <span class="normal-label refresh-label">自动刷新</span>
+          <a-tooltip title="90秒自动刷新监控数据">
+            <a-switch v-model="autoRefresh" size="small" @change="changeAutoRefresh"/>
+          </a-tooltip>
+          <a-divider type="vertical"/>
+        </span>
         <!-- 机器名称 -->
         <a-tooltip v-if="config" title="点击复制 IP">
-          <span class="pointer machine-name-wrapper" @click="$copy(config.machineHost)">
+            <span class="pointer machine-name-wrapper" @click="$copy(config.machineHost)">
             {{ config.machineName }} ({{ config.machineHost }})
           </span>
         </a-tooltip>
         <a-divider v-if="config" type="vertical"/>
         <!-- terminal -->
-        <a-tooltip title="ctrl 点击新页面打开终端">
-          <a target="_blank" class="terminal-wrapper"
-             :href="`#/machine/terminal/${machineId}`"
-             @click="openTerminal($event)">
+        <a target="_blank" class="terminal-wrapper"
+           :href="`#/machine/terminal/${machineId}`"
+           @click="openTerminal($event)">
+          <a-tooltip title="ctrl 点击新页面打开终端" placement="left">
             Terminal
-          </a>
-        </a-tooltip>
+          </a-tooltip>
+        </a>
       </template>
     </a-tabs>
     <!-- 终端模态框 -->
@@ -59,10 +75,30 @@ export default {
       active: null,
       machineId: null,
       monitorStarted: false,
-      config: null
+      config: null,
+      autoRefresh: true,
+      pollId: null
     }
   },
   methods: {
+    refresh() {
+      let ref
+      if (this.active === 1) {
+        ref = this.$refs.summary
+      } else if (this.active === 2) {
+        ref = this.$refs.chart
+      }
+      ref && ref.doRefresh && ref.doRefresh()
+    },
+    doRefresh() {
+      if (!this.autoRefresh) {
+        return
+      }
+      this.refresh()
+    },
+    changeAutoRefresh(e) {
+      this.autoRefresh = e
+    },
     openTerminal(e) {
       if (!e.ctrlKey) {
         e.preventDefault()
@@ -92,7 +128,12 @@ export default {
       if (!this.monitorStarted && (this.active === 1 || this.active === 2)) {
         this.$message.warning('监控插件未运行')
       }
+      this.pollId = setInterval(this.doRefresh, 90000)
     })
+  },
+  beforeDestroy() {
+    this.pollId && clearInterval(this.pollId)
+    this.pollId = null
   }
 }
 </script>
@@ -108,7 +149,13 @@ export default {
 
 .machine-name-wrapper {
   font-weight: 500;
-  color: rgb(0, 0, 0, .9);
+  color: rgba(0, 0, 0, .9);
+}
+
+.refresh-label {
+  display: inline-block;
+  margin-right: 8px;
+  color: rgba(0, 0, 0, 0.9);
 }
 
 ::v-deep .ant-tabs-bar {
