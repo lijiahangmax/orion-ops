@@ -26,31 +26,6 @@ public enum MachineMonitorHttpApi implements HttpApiDefined {
     ENDPOINT_VERSION("/orion/machine-monitor-agent/api/endpoint/version", HttpMethod.GET),
 
     /**
-     * 端点 获取机器id
-     */
-    ENDPOINT_GET_MACHINE_ID("/orion/machine-monitor-agent/api/endpoint/get-machine-id", HttpMethod.GET),
-
-    /**
-     * 端点 设置机器id
-     */
-    ENDPOINT_SET_MACHINE_ID("/orion/machine-monitor-agent/api/endpoint/set-machine-id", HttpMethod.GET),
-
-    /**
-     * 端点 获取监控启动状态
-     */
-    ENDPOINT_STATUS("/orion/machine-monitor-agent/api/endpoint/status", HttpMethod.GET),
-
-    /**
-     * 端点 开启监控
-     */
-    ENDPOINT_START("/orion/machine-monitor-agent/api/endpoint/start", HttpMethod.GET),
-
-    /**
-     * 端点 停止监控
-     */
-    ENDPOINT_STOP("/orion/machine-monitor-agent/api/endpoint/stop", HttpMethod.GET),
-
-    /**
      * 指标 获取机器基本指标
      */
     METRICS_BASE("/orion/machine-monitor-agent/api/metrics/base", HttpMethod.GET),
@@ -73,22 +48,22 @@ public enum MachineMonitorHttpApi implements HttpApiDefined {
     /**
      * 监控 获取cpu数据
      */
-    MONITOR_CPU("/orion/machine-monitor-agent/api/metrics/cpu", HttpMethod.POST),
+    MONITOR_CPU("/orion/machine-monitor-agent/api/monitor-statistic/cpu", HttpMethod.POST),
 
     /**
      * 监控 获取内存数据
      */
-    MONITOR_MEMORY("/orion/machine-monitor-agent/api/metrics/memory", HttpMethod.POST),
+    MONITOR_MEMORY("/orion/machine-monitor-agent/api/monitor-statistic/memory", HttpMethod.POST),
 
     /**
      * 监控 获取网络数据
      */
-    MONITOR_NET("/orion/machine-monitor-agent/api/metrics/net", HttpMethod.POST),
+    MONITOR_NET("/orion/machine-monitor-agent/api/monitor-statistic/net", HttpMethod.POST),
 
     /**
      * 监控 获取磁盘数据
      */
-    MONITOR_DISK("/orion/machine-monitor-agent/api/metrics/disk", HttpMethod.POST),
+    MONITOR_DISK("/orion/machine-monitor-agent/api/monitor-statistic/disk", HttpMethod.POST),
 
     ;
 

@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.orion.ops.entity.request.MachineMonitorEndpointRequest;
 
 /**
  * 机器监控端点服务
@@ -45,4 +46,43 @@ public interface MachineMonitorEndpointService {
      */
     JSONArray getTopProcesses(Long machineId, String name);
 
+    /**
+     * 查询磁盘名称
+     *
+     * @param machineId machineId
+     * @return 名称
+     */
+    JSONArray getDiskName(Long machineId);
+
+    /**
+     * 获取cpu图标
+     *
+     * @param request request
+     * @return 图表
+     */
+    JSONObject getCpuChart(MachineMonitorEndpointRequest request);
+
+    /**
+     * 获取内存图标
+     *
+     * @param request request
+     * @return 图表
+     */
+    JSONObject getMemoryChart(MachineMonitorEndpointRequest request);
+
+    /**
+     * 获取网络图标
+     *
+     * @param request request
+     * @return 图表
+     */
+    JSONObject getNetChart(MachineMonitorEndpointRequest request);
+
+    /**
+     * 获取磁盘图标
+     *
+     * @param request request
+     * @return 图表
+     */
+    JSONObject getDiskChart(MachineMonitorEndpointRequest request);
 }

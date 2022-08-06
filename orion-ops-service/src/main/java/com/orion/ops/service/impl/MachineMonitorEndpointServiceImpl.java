@@ -7,6 +7,7 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.ParamConst;
 import com.orion.ops.entity.domain.MachineMonitorDO;
+import com.orion.ops.entity.request.MachineMonitorEndpointRequest;
 import com.orion.ops.handler.http.HttpApiRequest;
 import com.orion.ops.handler.http.HttpApiRequester;
 import com.orion.ops.handler.http.MachineMonitorHttpApi;
@@ -67,6 +68,42 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
                 .queryParam(ParamConst.NAME, name);
         HttpWrapper<JSONArray> wrapper = request.getHttpWrapper(JSONArray.class);
         return Valid.api(wrapper);
+    }
+
+    @Override
+    public JSONArray getDiskName(Long machineId) {
+        HttpWrapper<JSONArray> res = this.getRequester(machineId, MachineMonitorHttpApi.METRICS_DISK_NAME)
+                .getRequest()
+                .getHttpWrapper(JSONArray.class);
+        return Valid.api(res);
+    }
+
+    @Override
+    public JSONObject getCpuChart(MachineMonitorEndpointRequest request) {
+        return getStatisticsChart(request, MachineMonitorHttpApi.MONITOR_CPU);
+    }
+
+    @Override
+    public JSONObject getMemoryChart(MachineMonitorEndpointRequest request) {
+        return getStatisticsChart(request, MachineMonitorHttpApi.MONITOR_MEMORY);
+    }
+
+    @Override
+    public JSONObject getNetChart(MachineMonitorEndpointRequest request) {
+        return getStatisticsChart(request, MachineMonitorHttpApi.MONITOR_NET);
+    }
+
+    @Override
+    public JSONObject getDiskChart(MachineMonitorEndpointRequest request) {
+        return getStatisticsChart(request, MachineMonitorHttpApi.MONITOR_DISK);
+    }
+
+    private JSONObject getStatisticsChart(MachineMonitorEndpointRequest request, MachineMonitorHttpApi api) {
+        HttpWrapper<JSONObject> res = this.getRequester(request.getMachineId(), api)
+                .getRequest()
+                .jsonBody(request)
+                .getHttpWrapper(JSONObject.class);
+        return Valid.api(res);
     }
 
     /**
