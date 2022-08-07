@@ -152,7 +152,7 @@
           <a-card :loading="summaryLoading" :bodyStyle="{padding: '18px'}">
             <h3 class="card-title">磁盘信息</h3>
             <div class="disk-info-container">
-              <div class="disk-info-box" v-for="(disk, index) of summaryData.disks" :key="index">
+              <div class="disk-info-box" v-for="(disk, index) of disks" :key="index">
                 <div class="disk-info-wrapper">
                   <!-- 磁盘信息 -->
                   <div class="disk-text-wrapper">
@@ -173,7 +173,7 @@
                   </div>
                 </div>
                 <!-- 分割线 -->
-                <a-divider v-if="index !== summaryData.disks.length - 1" style="margin: 20px 0"/>
+                <a-divider v-if="index !== disks.length - 1" style="margin: 20px 0"/>
               </div>
             </div>
           </a-card>
@@ -226,7 +226,8 @@
 
 <script>
 import { Chart } from '@antv/g2'
-import { dateFormat } from '@/lib/utils'
+import { formatSecond } from '@/lib/utils'
+import { timestampRender } from '@/lib/chart'
 import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [
@@ -273,10 +274,6 @@ const columns = [
   }
 ]
 
-function formatSecond(s, p = 'HH:mm') {
-  return dateFormat(new Date(~~s * 1000), p)
-}
-
 export default {
   name: 'MachineMonitorSummary',
   components: { TextPreview },
@@ -296,6 +293,7 @@ export default {
       processLoading: false,
       summaryData: {},
       load: {},
+      disks: [],
       processes: [],
       charts: {
         cpu: {
@@ -329,12 +327,12 @@ export default {
         this.reloadSystemLoad()
       }
       // 加载 process
-      this.reloadProcess(false)
+      this.reloadProcess(false, false)
       // 加载 chart
       this.loadChart(false)
     },
-    reloadProcess(clear) {
-      this.processLoading = true
+    reloadProcess(clear, loading = true) {
+      this.processLoading = loading
       if (clear) {
         this.searchProcessName = undefined
       }
@@ -380,54 +378,16 @@ export default {
         const chartData = data.usage.metrics
         this.charts.cpu.max = data.usage.max
         this.charts.cpu.curr = chartData[chartData.length - 1].value
-        const render = () => {
-          let chart = this.charts.cpu.chart
-          const needInit = !chart
-          if (needInit) {
-            chart = this.charts.cpu.chart = new Chart({
-              container: 'cpu-chart',
-              autoFit: true,
-              height: 120
-            })
-            chart.animate(false)
-            chart.scale({
-              time: {
-                tickCount: 6
-              },
-              value: {
-                nice: true
-              }
-            })
-            chart.axis('time', {
-              label: {
-                formatter: text => {
-                  return formatSecond(text)
-                }
-              }
-            })
-            chart.axis('value', {
-              label: {
-                formatter: text => {
-                  return parseFloat(text).toFixed(2)
-                }
-              }
-            })
-            chart.tooltip({
-              title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm'),
-              customItems: (items) => {
-                items[0].name = 'CPU使用率'
-                items[0].value = items[0].value + '%'
-                return items
-              }
-            })
-            chart.line().position('time*value')
-            chart.data(chartData)
-            chart.render()
-          } else {
-            chart.changeData(chartData)
-          }
-        }
-        this.$nextTick(render)
+        this.$nextTick(() => {
+          timestampRender('cpu-chart', this.charts.cpu, 'chart', text => {
+            return formatSecond(text)
+          }, text => {
+            return parseFloat(text).toFixed(1)
+          }, item => {
+            item.name = 'CPU使用率'
+            item.value = item.value + '%'
+          }, chartData)
+        })
       }).catch(() => {
         this.chartLoading = false
       })
@@ -440,102 +400,30 @@ export default {
         const sizeData = data.size.metrics
         this.charts.memory.currUsage = usageData[usageData.length - 1].value
         this.charts.memory.currSize = sizeData[sizeData.length - 1].value
-        const renderUsage = () => {
-          let chart = this.charts.memory.usageChart
-          const needInit = !chart
-          if (needInit) {
-            chart = this.charts.memory.usageChart = new Chart({
-              container: 'memory-usage-chart',
-              autoFit: true,
-              height: 120
-            })
-            chart.animate(false)
-            chart.scale({
-              time: {
-                tickCount: 6
-              },
-              value: {
-                nice: true
-              }
-            })
-            chart.axis('time', {
-              label: {
-                formatter: text => {
-                  return formatSecond(text)
-                }
-              }
-            })
-            chart.axis('value', {
-              label: {
-                formatter: text => {
-                  return parseFloat(text).toFixed(2)
-                }
-              }
-            })
-            chart.tooltip({
-              title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm'),
-              customItems: (items) => {
-                items[0].name = '内存使用率'
-                items[0].value = items[0].value + '%'
-                return items
-              }
-            })
-            chart.line().position('time*value')
-            chart.data(usageData)
-            chart.render()
-          } else {
-            chart.changeData(usageData)
-          }
-        }
-        const renderSize = () => {
-          let chart = this.charts.memory.sizeData
-          const needInit = !chart
-          if (needInit) {
-            chart = this.charts.memory.sizeData = new Chart({
-              container: 'memory-size-chart',
-              autoFit: true,
-              height: 120
-            })
-            chart.animate(false)
-            chart.scale({
-              time: {
-                tickCount: 6
-              },
-              value: {
-                nice: true
-              }
-            })
-            chart.axis('time', {
-              label: {
-                formatter: text => {
-                  return formatSecond(text)
-                }
-              }
-            })
-            chart.axis('value', {
-              label: {
-                formatter: text => {
-                  return parseInt(text)
-                }
-              }
-            })
-            chart.tooltip({
-              title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm'),
-              customItems: (items) => {
-                items[0].name = '内存使用量'
-                items[0].value = items[0].value + ' MB'
-                return items
-              }
-            })
-            chart.line().position('time*value')
-            chart.data(sizeData)
-            chart.render()
-          } else {
-            chart.changeData(sizeData)
-          }
-        }
-        this.$nextTick(renderUsage)
-        this.$nextTick(renderSize)
+        this.$nextTick(() => {
+          // 渲染使用率
+          this.$nextTick(() => {
+            timestampRender('memory-usage-chart', this.charts.memory, 'usageChart', text => {
+              return formatSecond(text)
+            }, text => {
+              return parseFloat(text).toFixed(2)
+            }, item => {
+              item.name = '内存使用率'
+              item.value = item.value + '%'
+            }, usageData)
+          })
+          // 渲染使用量
+          this.$nextTick(() => {
+            timestampRender('memory-size-chart', this.charts.memory, 'sizeChart', text => {
+              return formatSecond(text)
+            }, text => {
+              return parseInt(text)
+            }, item => {
+              item.name = '内存使用量'
+              item.value = item.value + ' MB'
+            }, sizeData)
+          })
+        })
       }).catch(() => {
         this.chartLoading = false
       })
@@ -581,7 +469,7 @@ export default {
             chart.axis('value', {
               label: {
                 formatter: text => {
-                  return parseFloat(text).toFixed(3)
+                  return parseFloat(text).toFixed(2)
                 }
               }
             })
@@ -620,6 +508,7 @@ export default {
       this.summaryLoading = false
       this.summaryData = data
       this.load = data.load
+      this.disks = data.disks
       this.processes = data.processes
     }).catch(() => {
       this.summaryLoading = false
