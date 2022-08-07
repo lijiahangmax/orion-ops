@@ -99,6 +99,13 @@ export function dateFormat(date, pattern = 'yyyy-MM-dd HH:mm:ss') {
 }
 
 /**
+ * 格式化秒
+ */
+export function formatSecond(s, p = 'HH:mm') {
+  return dateFormat(new Date(~~s * 1000), p)
+}
+
+/**
  * 10进制权限 转 字符串权限
  */
 export function permission10toString(permission) {
