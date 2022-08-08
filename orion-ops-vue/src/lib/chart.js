@@ -40,7 +40,7 @@ export function timestampRender(id, chatObject, chartField, timeFormatter, value
       chart.axis('value', false)
     }
     chart.tooltip({
-      title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm'),
+      title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm:ss'),
       customItems: (items) => {
         tooltipFormatter(items[0])
         return items

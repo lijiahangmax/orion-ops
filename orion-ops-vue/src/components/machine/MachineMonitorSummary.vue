@@ -474,7 +474,7 @@ export default {
               }
             })
             chart.tooltip({
-              title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm'),
+              title: (title, datum) => formatSecond(datum.time, 'yyyy-MM-dd HH:mm:ss'),
               customItems: (items) => {
                 items[0].value = items[0].value + ' Mbps'
                 return items

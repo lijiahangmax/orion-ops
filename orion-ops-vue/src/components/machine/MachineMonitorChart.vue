@@ -5,18 +5,22 @@
       <div class="machine-monitor-header">
         <!-- 时间区间 -->
         <div class="monitor-range-wrapper">
-          <a-radio-group v-model="rangeType" @change="changeRangeType">
-            <a-radio-button class="radius-0" value="a">
-              实时
+          <a-radio-group :value="rangeType">
+            <a-radio-button class="radius-0"
+                            v-for="range of MONITOR_DATA_RANGE"
+                            :key="range.value"
+                            :value="range.value"
+                            @click="changeRangeType(range.value)">
+              {{ range.label }}
             </a-radio-button>
-            <a-radio-button value="b">
-              近24小时
-            </a-radio-button>
-            <a-radio-button value="c">
-              近7天
-            </a-radio-button>
-            <a-radio-button class="radius-0" value="d">
+            <a-radio-button class="radius-0" :value="0" @click="openRangePicker">
               选择日期
+              <a-range-picker class="none"
+                              v-model="dateRange"
+                              :open="datePickerVisible"
+                              :showTime="true"
+                              :align="{offset: [230, 182]}"
+                              @ok="selectedRange"/>
             </a-radio-button>
           </a-radio-group>
         </div>
@@ -26,26 +30,8 @@
             时间粒度
           </span>
           <a-select v-model="granularityType" class="granularity-selector" @change="changeGranularityType">
-            <a-select-option value="jack">
-              三十秒
-            </a-select-option>
-            <a-select-option value="jack">
-              一分钟
-            </a-select-option>
-            <a-select-option value="lucy">
-              五分钟
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              一小时
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              一小时
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              一天
-            </a-select-option>
-            <a-select-option value="Yiminghe">
-              一周
+            <a-select-option v-for="granularity of granularityList" :key="granularity.value" :value="granularity.value">
+              {{ granularity.label }}
             </a-select-option>
           </a-select>
         </div>
@@ -119,7 +105,7 @@
               </div>
               <!-- 监控表格 -->
               <a-spin class="metrics-chart-wrapper" :spinning="charts.memory.loading">
-                <div id="memory-usage-chart" class="metrics-chart"/>
+                <div id="mem-usage-chart" class="metrics-chart"/>
               </a-spin>
               <!-- 监控信息 -->
               <div class="chart-info">
@@ -160,7 +146,7 @@
               </div>
               <!-- 监控表格 -->
               <a-spin class="metrics-chart-wrapper" :spinning="charts.memory.loading">
-                <div id="memory-size-chart" class="metrics-chart"/>
+                <div id="mem-size-chart" class="metrics-chart"/>
               </a-spin>
               <!-- 监控信息 -->
               <div class="chart-info">
@@ -289,7 +275,7 @@
             <div class="chart-box">
               <!-- 监控类别 -->
               <div class="chart-desc-label">
-                发送包数个/秒
+                发送包数个/s
               </div>
               <!-- 监控表格 -->
               <a-spin class="metrics-chart-wrapper" :spinning="charts.net.loading">
@@ -302,7 +288,7 @@
                     Max:
                   </span>
                   <span class="monitor-info-value">
-                    {{ charts.net.sentPacket.max }} 个/秒
+                    {{ charts.net.sentPacket.max }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -310,7 +296,7 @@
                     Min:
                   </span>
                   <span class="monitor-info-value">
-                     {{ charts.net.sentPacket.min }} 个/秒
+                     {{ charts.net.sentPacket.min }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -318,7 +304,7 @@
                     Avg:
                   </span>
                   <span class="monitor-info-value">
-                   {{ charts.net.sentPacket.avg }} 个/秒
+                   {{ charts.net.sentPacket.avg }} 个/s
                   </span>
                 </div>
                 <div class="monitor-action-wrapper">
@@ -330,7 +316,7 @@
             <div class="chart-box">
               <!-- 监控类别 -->
               <div class="chart-desc-label">
-                接收包数个/秒
+                接收包数个/s
               </div>
               <!-- 监控表格 -->
               <a-spin class="metrics-chart-wrapper" :spinning="charts.net.loading">
@@ -343,7 +329,7 @@
                     Max:
                   </span>
                   <span class="monitor-info-value">
-                    {{ charts.net.recvPacket.max }} 个/秒
+                    {{ charts.net.recvPacket.max }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -351,7 +337,7 @@
                     Min:
                   </span>
                   <span class="monitor-info-value">
-                     {{ charts.net.recvPacket.min }} 个/秒
+                     {{ charts.net.recvPacket.min }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -359,7 +345,7 @@
                     Avg:
                   </span>
                   <span class="monitor-info-value">
-                   {{ charts.net.recvPacket.avg }} 个/秒
+                   {{ charts.net.recvPacket.avg }} 个/s
                   </span>
                 </div>
                 <div class="monitor-action-wrapper">
@@ -483,7 +469,7 @@
                     Max:
                   </span>
                   <span class="monitor-info-value">
-                    {{ charts.disk.readCount.max }} 个/秒
+                    {{ charts.disk.readCount.max }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -491,7 +477,7 @@
                     Min:
                   </span>
                   <span class="monitor-info-value">
-                     {{ charts.disk.readCount.min }} 个/秒
+                     {{ charts.disk.readCount.min }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -499,7 +485,7 @@
                     Avg:
                   </span>
                   <span class="monitor-info-value">
-                   {{ charts.disk.readCount.avg }} 个/秒
+                   {{ charts.disk.readCount.avg }} 个/s
                   </span>
                 </div>
                 <div class="monitor-action-wrapper">
@@ -524,7 +510,7 @@
                     Max:
                   </span>
                   <span class="monitor-info-value">
-                    {{ charts.disk.writeCount.max }} 个/秒
+                    {{ charts.disk.writeCount.max }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -532,7 +518,7 @@
                     Min:
                   </span>
                   <span class="monitor-info-value">
-                     {{ charts.disk.writeCount.min }} 个/秒
+                     {{ charts.disk.writeCount.min }} 个/s
                   </span>
                 </div>
                 <div class="monitor-info-wrapper">
@@ -540,7 +526,7 @@
                     Avg:
                   </span>
                   <span class="monitor-info-value">
-                   {{ charts.disk.writeCount.avg }} 个/秒
+                   {{ charts.disk.writeCount.avg }} 个/s
                   </span>
                 </div>
                 <div class="monitor-action-wrapper">
@@ -599,6 +585,7 @@
 
 <script>
 import { timestampRender } from '@/lib/chart'
+import { MONITOR_DATA_RANGE, MONITOR_DATA_GRANULARITY, enumValueOf } from '@/lib/enum'
 
 function initCharts() {
   return {
@@ -696,19 +683,66 @@ export default {
   },
   data() {
     return {
-      rangeType: null,
-      granularityType: null,
+      rangeType: MONITOR_DATA_RANGE.HOUR.value,
+      granularityType: MONITOR_DATA_GRANULARITY.MINUTE_1.value,
       charts: initCharts(),
+      granularityList: [],
       diskNames: [],
-      diskSeq: null
+      diskSeq: null,
+      datePickerVisible: false,
+      dateRange: undefined,
+      MONITOR_DATA_RANGE,
+      MONITOR_DATA_GRANULARITY
     }
   },
   methods: {
     changeRangeType(e) {
-      this.rangeType = e.target.value
+      this.rangeType = e
+      this.datePickerVisible = false
+      this.dateRange = undefined
+      this.resetGranularityList()
+      this.renderChart(true)
     },
     changeGranularityType(e) {
-      this.granularityType = e.target.value
+      this.granularityType = e
+      this.renderChart(true)
+    },
+    openRangePicker() {
+      this.datePickerVisible = true
+    },
+    selectedRange() {
+      const effect = this.dateRange[1].format('X') - this.dateRange[0].format('X')
+      if (effect === 0) {
+        this.$message.warning('请选择时间')
+        return
+      }
+      this.rangeType = 0
+      this.datePickerVisible = false
+      this.resetGranularityList()
+      this.renderChart(true)
+    },
+    resetGranularityList() {
+      let r
+      if (this.rangeType === 0) {
+        r = [this.dateRange[0].format('X'), this.dateRange[1].format('X')]
+      } else {
+        r = enumValueOf(MONITOR_DATA_RANGE, this.rangeType).rangeGetter()
+      }
+      const list = []
+      for (const g in MONITOR_DATA_GRANULARITY) {
+        const curr = MONITOR_DATA_GRANULARITY[g]
+        if (curr.check(r[0], r[1])) {
+          list.push({
+            value: curr.value,
+            label: curr.label,
+            default: curr.default
+          })
+        }
+      }
+      this.granularityList = list
+      this.granularityType = list.filter(g => {
+        return g.default
+      })[0].value
     },
     doRefresh() {
       this.renderChart(false)
@@ -718,16 +752,22 @@ export default {
         machineId: this.machineId
       })
       this.diskNames = data
-      this.diskSeq = data[0].seq
+      this.diskSeq = data[data.length - 1].seq
     },
     getParams() {
       const params = {
         machineId: this.machineId,
-        granularity: 20,
+        granularity: this.granularityType,
         seq: this.diskSeq
       }
-      params.endRange = ~~(Date.now() / 1000)
-      params.startRange = params.endRange - 3600
+      let range
+      if (this.rangeType === 0) {
+        range = [this.dateRange[0].format('X'), this.dateRange[1].format('X')]
+      } else {
+        range = enumValueOf(MONITOR_DATA_RANGE, this.rangeType).rangeGetter()
+      }
+      params.startRange = range[0]
+      params.endRange = range[1]
       return params
     },
     renderChart(loading) {
@@ -772,14 +812,14 @@ export default {
         this.charts.memory.size.avg = data.size.avg
         this.$nextTick(() => {
           // 渲染内存使用率
-          timestampRender('memory-usage-chart', this.charts.memory.usage, 'chart', false, text => {
+          timestampRender('mem-usage-chart', this.charts.memory.usage, 'chart', false, text => {
             return parseFloat(text).toFixed(2)
           }, item => {
             item.name = '内存使用率'
             item.value = item.value + '%'
           }, data.usage.metrics)
           // 渲染内存使用量
-          timestampRender('memory-size-chart', this.charts.memory.size, 'chart', false, text => {
+          timestampRender('mem-size-chart', this.charts.memory.size, 'chart', false, text => {
             return text
           }, item => {
             item.name = '内存使用量'
@@ -826,18 +866,18 @@ export default {
             return text
           }, item => {
             item.name = '发送包数'
-            item.value = item.value + ' 个/秒'
+            item.value = item.value + ' 个/s'
           }, data.sentPacket.metrics)
           // 渲染接收包数
           timestampRender('net-recv-packet-chart', this.charts.net.recvPacket, 'chart', false, text => {
             return text
           }, item => {
             item.name = '接收包数'
-            item.value = item.value + ' 个/秒'
+            item.value = item.value + ' 个/s'
           }, data.recvPacket.metrics)
         })
       }).catch(() => {
-        this.charts.memory.loading = false
+        this.charts.net.loading = false
       })
     },
     renderDiskChart(loading, params) {
@@ -906,6 +946,7 @@ export default {
     }
   },
   async created() {
+    this.resetGranularityList()
     // 加载硬盘
     await this.loadDisk()
     // 渲染表格

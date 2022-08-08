@@ -2480,3 +2480,117 @@ export const MONITOR_STATUS = {
     color: 'blue'
   }
 }
+
+/**
+ * 监控数据区间
+ */
+export const MONITOR_DATA_RANGE = {
+  HOUR: {
+    value: 1,
+    label: '实时',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60)
+      return [start, end]
+    }
+  },
+  DAY: {
+    value: 2,
+    label: '近24时',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60 * 24)
+      return [start, end]
+    }
+  },
+  WEEK: {
+    value: 3,
+    label: '近7天',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60 * 24 * 7)
+      return [start, end]
+    }
+  }
+}
+
+/**
+ * 监控数据粒度
+ */
+export const MONITOR_DATA_GRANULARITY = {
+  SECOND_30: {
+    value: 12,
+    label: '30秒',
+    check: (start, end) => {
+      return end - start <= 60 * 60
+    }
+  },
+  MINUTE_1: {
+    value: 20,
+    label: '1分',
+    min: 0,
+    max: 60 * 60 * 24,
+    default: true,
+    check: (start, end) => {
+      return end - start <= 60 * 60
+    }
+  },
+  MINUTE_5: {
+    value: 22,
+    label: '5分',
+    default: true,
+    check: (start, end) => {
+      return end - start <= 60 * 60 * 24
+    }
+  },
+  MINUTE_10: {
+    value: 24,
+    label: '10分',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 < e && e <= 60 * 60 * 24
+    }
+  },
+  MINUTE_30: {
+    value: 26,
+    label: '30分',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 < e && e <= 60 * 60 * 24
+    }
+  },
+  HOUR_1: {
+    value: 30,
+    label: '1时',
+    default: true,
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 <= e && e <= 60 * 60 * 24 * 7
+    }
+  },
+  HOUR_6: {
+    value: 32,
+    label: '6时',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 < e && e <= 60 * 60 * 24 * 7 * 2
+    }
+  },
+  HOUR_12: {
+    value: 34,
+    label: '12时',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 < e && e <= 60 * 60 * 24 * 7 * 2
+    }
+  },
+  DAY: {
+    value: 40,
+    label: '1天',
+    default: true,
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 * 7 <= e
+    }
+  }
+}
