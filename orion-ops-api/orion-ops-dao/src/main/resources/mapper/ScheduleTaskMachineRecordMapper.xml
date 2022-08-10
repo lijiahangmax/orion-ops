@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.SchedulerTaskMachineRecordDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.SchedulerTaskMachineRecordDO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="record_id" property="recordId"/>
+        <result column="task_machine_id" property="taskMachineId"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+        <result column="machine_host" property="machineHost"/>
+        <result column="machine_tag" property="machineTag"/>
+        <result column="exec_command" property="execCommand"/>
+        <result column="exec_status" property="execStatus"/>
+        <result column="exit_code" property="exitCode"/>
+        <result column="deleted" property="deleted"/>
+        <result column="log_path" property="logPath"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, task_id, record_id, task_machine_id, machine_id, machine_name, machine_host, machine_tag, exec_command,
+        exec_status, exit_code, deleted, log_path, start_time, end_time, create_time, update_time
+    </sql>
+
+    <!-- 状态结果列 -->
+    <sql id="Status_Column_List">
+        id, record_id, exec_status, exit_code, start_time, end_time
+    </sql>
+
+    <select id="selectStatusByRecordId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE record_id = #{recordId}
+    </select>
+
+    <select id="selectStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectStatusByRecordIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Status_Column_List"/>
+        FROM scheduler_task_machine_record
+        WHERE record_id IN
+        <foreach collection="recordIdList" item="recordId" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </select>
+
+    <update id="deleteByRecordIdList">
+        UPDATE scheduler_task_machine_record
+        SET deleted = 2
+        WHERE record_id IN
+        <foreach collection="recordIdList" item="recordId" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </update>
+
+</mapper>

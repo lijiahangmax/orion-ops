@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationActionLogDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationActionLogDO">
+        <id column="id" property="id"/>
+        <result column="stage_type" property="stageType"/>
+        <result column="rel_id" property="relId"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="action_id" property="actionId"/>
+        <result column="action_name" property="actionName"/>
+        <result column="action_type" property="actionType"/>
+        <result column="action_command" property="actionCommand"/>
+        <result column="log_path" property="logPath"/>
+        <result column="run_status" property="runStatus"/>
+        <result column="exit_code" property="exitCode"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, stage_type, rel_id, machine_id, action_id, action_name, action_type, action_command, log_path, run_status,
+        exit_code, start_time, end_time, deleted, create_time, update_time
+    </sql>
+
+    <!-- 状态列 -->
+    <sql id="Base_Status_Columns">
+        SELECT id, rel_id, run_status, start_time, end_time, exit_code
+        FROM application_action_log
+    </sql>
+
+    <select id="selectStatusInfoById" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE id = #{id}
+        AND deleted = 1
+    </select>
+
+    <select id="selectStatusInfoByIdList" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        AND deleted = 1
+    </select>
+
+    <select id="selectStatusInfoByRelId" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE stage_type = #{stageType}
+        AND rel_id = #{relId}
+        AND deleted = 1
+    </select>
+
+    <select id="selectStatusInfoByRelIdList" resultMap="BaseResultMap">
+        <include refid="Base_Status_Columns"/>
+        WHERE stage_type = #{stageType}
+        AND rel_id IN
+        <foreach collection="relIdList" item="relId" separator="," open="(" close=")">
+            #{relId}
+        </foreach>
+        AND deleted = 1
+    </select>
+
+</mapper>

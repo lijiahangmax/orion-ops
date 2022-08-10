@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.MachineMonitorDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineMonitorDO">
+        <id column="id" property="id"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="monitor_status" property="monitorStatus"/>
+        <result column="monitor_url" property="monitorUrl"/>
+        <result column="access_token" property="accessToken"/>
+        <result column="agent_version" property="agentVersion"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="JoinResultMap" type="com.orion.ops.entity.dto.MachineMonitorDTO">
+        <id column="id" property="id"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+        <result column="machine_host" property="machineHost"/>
+        <result column="monitor_status" property="monitorStatus"/>
+        <result column="monitor_url" property="monitorUrl"/>
+        <result column="access_token" property="accessToken"/>
+        <result column="agent_version" property="agentVersion"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, machine_id, monitor_status, monitor_url, access_token, agent_version, deleted, create_time, update_time
+    </sql>
+
+    <!-- 通用筛选条件 -->
+    <sql id="Where_Cause">
+        WHERE deleted = 1
+        AND machine_status = 1
+        <if test="query.machineName != null and query.machineName != ''">
+            AND machine_name LIKE concat('%', #{query.machineName}, '%')
+        </if>
+        <if test="query.machineId != null">
+            AND machine_id = #{query.machineId}
+        </if>
+        <if test="query.monitorStatus != null">
+            AND monitor_status = #{query.monitorStatus}
+        </if>
+    </sql>
+
+    <sql id="Join_Column_List">
+        SELECT m.id                        id,
+               IFNULL(m.monitor_status, 1) monitor_status,
+               m.monitor_url               monitor_url,
+               m.access_token              access_token,
+               m.agent_version             agent_version,
+               i.id                        machine_id,
+               i.machine_name              machine_name,
+               i.machine_host              machine_host,
+               i.machine_status            machine_status,
+               i.deleted                   deleted
+        FROM machine_monitor m
+                 RIGHT JOIN machine_info i ON i.id = m.machine_id
+    </sql>
+
+    <select id="selectMonitorList" resultMap="JoinResultMap">
+        SELECT *
+        FROM (
+        <include refid="Join_Column_List"/>
+        ) t
+        <include refid="Where_Cause"/>
+        ${last}
+    </select>
+
+    <select id="selectMonitorCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM (
+        <include refid="Join_Column_List"/>
+        ) t
+        <include refid="Where_Cause"/>
+    </select>
+
+</mapper>

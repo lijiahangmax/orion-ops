@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.MachineTerminalDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineTerminalDO">
+        <id column="id" property="id"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="terminal_type" property="terminalType"/>
+        <result column="background_color" property="backgroundColor"/>
+        <result column="font_color" property="fontColor"/>
+        <result column="font_size" property="fontSize"/>
+        <result column="font_family" property="fontFamily"/>
+        <result column="enable_web_link" property="enableWebLink"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, machine_id, terminal_type, background_color, font_color, font_size, font_family,
+        enable_web_link, deleted, create_time, update_time
+    </sql>
+
+</mapper>

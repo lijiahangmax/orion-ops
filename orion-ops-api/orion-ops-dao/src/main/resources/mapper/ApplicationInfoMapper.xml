@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationInfoDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationInfoDO">
+        <id column="id" property="id"/>
+        <result column="app_name" property="appName"/>
+        <result column="app_tag" property="appTag"/>
+        <result column="app_sort" property="appSort"/>
+        <result column="repo_id" property="repoId"/>
+        <result column="description" property="description"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_name, app_tag, app_sort, repo_id, description, deleted, create_time, update_time
+    </sql>
+
+    <select id="selectRepoCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM application_info
+        WHERE repo_id = #{repoId}
+        AND deleted = 1
+    </select>
+
+    <update id="cleanRepoCount">
+        UPDATE application_info
+        SET repo_id = null
+        WHERE repo_id = #{repoId}
+        AND deleted = 1
+    </update>
+
+    <select id="selectNameById" resultType="java.lang.String">
+        SELECT app_name
+        FROM application_info
+        WHERE id = #{id}
+        AND deleted = 1
+    </select>
+
+    <select id="selectNameByIdList" resultMap="BaseResultMap">
+        SELECT id, app_name
+        FROM application_info
+        WHERE deleted = 1
+        AND id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

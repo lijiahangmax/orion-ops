@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.ApplicationReleaseMachineDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationReleaseMachineDO">
+        <id column="id" property="id"/>
+        <result column="release_id" property="releaseId"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+        <result column="machine_tag" property="machineTag"/>
+        <result column="machine_host" property="machineHost"/>
+        <result column="run_status" property="runStatus"/>
+        <result column="log_path" property="logPath"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, release_id, machine_id, machine_name, machine_tag, machine_host, run_status, log_path, start_time, end_time, deleted, create_time, update_time
+    </sql>
+
+    <sql id="Base_Status_Columns">
+        id, release_id, run_status, start_time, end_time
+    </sql>
+
+    <select id="selectStatusByReleaseId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE release_id = #{releaseId}
+    </select>
+
+    <select id="selectStatusByReleaseIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE release_id IN
+        <foreach collection="releaseIdList" item="releaseId" separator="," open="(" close=")">
+            #{releaseId}
+        </foreach>
+        AND deleted = 1
+    </select>
+
+    <select id="selectStatusById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE id = #{id}
+        AND deleted = 1
+    </select>
+
+    <select id="selectStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_Columns"/>
+        FROM application_release_machine
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        AND deleted = 1
+    </select>
+
+</mapper>

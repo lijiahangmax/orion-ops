@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.SchedulerTaskRecordDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.SchedulerTaskRecordDO">
+        <id column="id" property="id"/>
+        <result column="task_id" property="taskId"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_status" property="taskStatus"/>
+        <result column="deleted" property="deleted"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 统计查询映射结果 -->
+    <resultMap id="StatisticsResultMap" type="com.orion.ops.entity.dto.SchedulerTaskRecordStatisticsDTO">
+        <result column="scheduled_count" property="scheduledCount"/>
+        <result column="success_count" property="successCount"/>
+        <result column="failure_count" property="failureCount"/>
+        <result column="date" property="date"/>
+        <result column="avg_used" property="avgUsed"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="machine_name" property="machineName"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, task_id, task_name, task_status, deleted, start_time, end_time, create_time, update_time
+    </sql>
+
+    <!-- 状态查询结果列 -->
+    <sql id="Base_Status_List">
+        id, task_status, start_time, end_time
+    </sql>
+
+    <select id="selectTaskStatusByIdList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Status_List"/>
+        FROM scheduler_task_record
+        WHERE id IN
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getTaskRecordStatistics" resultMap="StatisticsResultMap">
+        SELECT
+            COUNT(1) scheduled_count,
+            COUNT(task_status = 30 OR NULL) success_count,
+            COUNT(task_status = 40 OR NULL) failure_count,
+            IFNULL(
+                FLOOR(
+                    AVG(
+                        IF(
+                            task_status = 30
+                            AND end_time IS NOT NULL
+                            AND start_time IS NOT NULL,
+                            UNIX_TIMESTAMP(end_time) * 1000 - UNIX_TIMESTAMP(start_time) * 1000,
+                            NULL
+                        )
+                    )
+                ), 0
+            ) avg_used
+        FROM scheduler_task_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+        AND create_time >= #{rangeStartDate}
+    </select>
+
+    <select id="getTaskMachineRecordStatistics" resultMap="StatisticsResultMap">
+        SELECT
+            machine_name,
+            machine_id,
+            COUNT(1) scheduled_count,
+            COUNT(exec_status = 30 OR NULL) success_count,
+            COUNT(exec_status = 40 OR NULL) failure_count,
+            FLOOR(
+                AVG(
+                    IF(
+                        exec_status = 30
+                        AND end_time IS NOT NULL
+                        AND start_time IS NOT NULL,
+                        UNIX_TIMESTAMP( end_time ) * 1000 - UNIX_TIMESTAMP( start_time ) * 1000,
+                        NULL
+                    )
+                )
+            ) avg_used
+        FROM scheduler_task_machine_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+        GROUP BY machine_id
+        ORDER BY id DESC
+    </select>
+
+    <select id="getTaskRecordDateStatistics" resultMap="StatisticsResultMap">
+        SELECT
+            COUNT(1) scheduled_count,
+            COUNT(task_status = 30 OR NULL) success_count,
+            COUNT(task_status = 40 OR NULL) failure_count,
+            DATE_FORMAT(create_time, '%Y-%m-%d') date
+        FROM scheduler_task_record
+        WHERE deleted = 1
+        AND task_id = #{taskId}
+        AND create_time >= #{rangeStartDate}
+        GROUP BY date
+    </select>
+
+</mapper>

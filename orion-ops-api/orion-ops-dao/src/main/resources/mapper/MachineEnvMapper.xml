@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.orion.ops.dao.MachineEnvDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineEnvDO">
+        <id column="id" property="id"/>
+        <result column="machine_id" property="machineId"/>
+        <result column="attr_key" property="attrKey"/>
+        <result column="attr_value" property="attrValue"/>
+        <result column="description" property="description"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, machine_id, attr_key, attr_value, description, deleted, create_time, update_time
+    </sql>
+
+    <select id="selectOneRel" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM machine_env
+        WHERE machine_id = #{machineId}
+        AND attr_key = #{key}
+    </select>
+
+    <update id="setDeleted">
+        UPDATE machine_env
+        SET deleted = #{deleted}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
