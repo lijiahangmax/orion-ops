@@ -1,4 +1,4 @@
-package com.orion.ops.entity.request;
+package com.orion.ops.entity.request.history;
 
 import com.orion.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;

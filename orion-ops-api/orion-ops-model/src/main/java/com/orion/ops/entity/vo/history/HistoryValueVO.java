@@ -1,4 +1,4 @@
-package com.orion.ops.entity.vo;
+package com.orion.ops.entity.vo.history;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
