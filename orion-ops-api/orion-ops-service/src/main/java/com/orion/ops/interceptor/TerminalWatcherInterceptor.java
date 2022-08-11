@@ -1,0 +1,59 @@
+package com.orion.ops.interceptor;
+
+import com.alibaba.fastjson.JSON;
+import com.orion.lang.utils.Strings;
+import com.orion.ops.constant.KeyConst;
+import com.orion.ops.entity.dto.terminal.TerminalWatcherDTO;
+import com.orion.ops.utils.WebSockets;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import javax.annotation.Resource;
+import java.util.Map;
+
+import static com.orion.ops.utils.WebSockets.getToken;
+
+/**
+ * terminal 监视拦截器
+ *
+ * @author Jiahang Li
+ * @version 1.0.0
+ * @since 2022/7/29 10:48
+ */
+@Component
+@Slf4j
+public class TerminalWatcherInterceptor implements HandshakeInterceptor {
+
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Override
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        // 获取 token
+        String token = getToken(request);
+        String tokenKey = Strings.format(KeyConst.TERMINAL_WATCHER_TOKEN, token);
+        String tokenValue = redisTemplate.opsForValue().get(tokenKey);
+        boolean access = false;
+        if (!Strings.isBlank(tokenValue)) {
+            access = true;
+            TerminalWatcherDTO watcher = JSON.parseObject(tokenValue, TerminalWatcherDTO.class);
+            attributes.put(WebSockets.UID, watcher.getUserId());
+            attributes.put(WebSockets.TOKEN, watcher.getToken());
+            attributes.put(WebSockets.READONLY, watcher.getReadonly());
+            // 删除 token
+            redisTemplate.delete(tokenKey);
+        }
+        log.info("terminal尝试监视ws连接开始 token: {}, 结果: {}", token, access);
+        return access;
+    }
+
+    @Override
+    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+    }
+
+}
