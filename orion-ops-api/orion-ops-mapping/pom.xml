@@ -13,13 +13,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <dependencies>
-        <!-- common -->
-        <dependency>
-            <groupId>com.orion.ops</groupId>
-            <artifactId>orion-ops-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- dao -->
         <dependency>
             <groupId>com.orion.ops</groupId>

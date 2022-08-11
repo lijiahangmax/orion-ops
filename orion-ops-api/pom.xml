@@ -24,7 +24,6 @@
         <module>orion-ops-runner</module>
         <module>orion-ops-service</module>
         <module>orion-ops-web</module>
-        <module>orion-ops-task</module>
         <module>orion-ops-export</module>
     </modules>
 
@@ -105,7 +104,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <optional>true</optional>
             </dependency>
 
             <!-- tests -->
