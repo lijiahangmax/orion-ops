@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.1</version>
+        <relativePath/>
+    </parent>
+
+    <name>orion-ops-api</name>
+    <groupId>com.orion.ops</groupId>
+    <artifactId>orion-ops-api</artifactId>
+    <version>1.2.0</version>
+    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <url>https://github.com/lijiahangmax/orion-ops</url>
+
+    <modules>
+        <module>orion-ops-model</module>
+        <module>orion-ops-common</module>
+        <module>orion-ops-mapping</module>
+        <module>orion-ops-dao</module>
+        <module>orion-ops-runner</module>
+        <module>orion-ops-service</module>
+        <module>orion-ops-web</module>
+        <module>orion-ops-export</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <lombok.version>1.18.20</lombok.version>
+        <spring.boot.version>2.5.1</spring.boot.version>
+        <mybatis.plus.version>3.4.0</mybatis.plus.version>
+        <mysql.connector.version>8.0.25</mysql.connector.version>
+        <jedis.version>3.6.0</jedis.version>
+        <velocity.version>2.3</velocity.version>
+        <druid.version>1.1.20</druid.version>
+        <swagger.version>2.9.2</swagger.version>
+        <knife4j.version>2.0.5</knife4j.version>
+        <orion.all.version>1.0.3</orion.all.version>
+        <dingding.service.version>2.0.0</dingding.service.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- web -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <!-- web socket -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <!-- mybatis plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis.plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis.plus.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- devtools -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>runtime</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <!-- mysql -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- tests -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- redis -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.lettuce</groupId>
+                        <artifactId>lettuce-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <!-- swagger -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <!-- knife4j -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-micro-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-ui</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- dingding -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>alibaba-dingtalk-service-sdk</artifactId>
+                <version>${dingding.service.version}</version>
+            </dependency>
+
+            <!-- orion -->
+            <dependency>
+                <groupId>io.github.lijiahangmax</groupId>
+                <artifactId>orion-all</artifactId>
+                <version>${orion.all.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>orion-log</artifactId>
+                        <groupId>io.github.lijiahangmax</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -4,7 +4,7 @@ services:
     build: 
       context: .
       dockerfile: docker/orion-ops/Dockerfile
-    image: orion-ops:1.1.5
+    image: orion-ops:1.2.0
     ports:
       - "3090:80"
     environment:
