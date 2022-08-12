@@ -1,6 +1,6 @@
 package com.orion.ops.entity.importer;
 
-import com.orion.ops.entity.ImportType;
+import com.orion.ops.constant.ImportType;
 import com.orion.ops.entity.vo.data.DataImportCheckVO;
 import lombok.Data;
 

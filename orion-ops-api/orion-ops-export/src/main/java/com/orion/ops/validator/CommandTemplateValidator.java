@@ -1,20 +1,22 @@
-package com.orion.ops.entity.validate;
+package com.orion.ops.validator;
 
 import com.orion.lang.utils.Strings;
 import com.orion.ops.entity.importer.CommandTemplateImportDTO;
 import com.orion.ops.utils.Valid;
 
 /**
- * 命令模板字段常量
+ * 命令模板 数据验证器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/6/1 10:42
  */
-public class CommandTemplateFieldConst {
+public class CommandTemplateValidator implements DataValidator {
 
-    private CommandTemplateFieldConst() {
+    private CommandTemplateValidator() {
     }
+
+    public static final CommandTemplateValidator INSTANCE = new CommandTemplateValidator();
 
     public static final int NAME_MAX_LEN = 32;
 
@@ -32,12 +34,8 @@ public class CommandTemplateFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-    /**
-     * 验证数据合法性
-     *
-     * @param o o
-     */
-    public static void validData(Object o) {
+    @Override
+    public void validData(Object o) {
         if (o instanceof CommandTemplateImportDTO) {
             validImport((CommandTemplateImportDTO) o);
         }
@@ -48,7 +46,7 @@ public class CommandTemplateFieldConst {
      *
      * @param row row
      */
-    public static void validImport(CommandTemplateImportDTO row) {
+    private void validImport(CommandTemplateImportDTO row) {
         String name = row.getName();
         String template = row.getTemplate();
         String description = row.getDescription();

@@ -1,6 +1,6 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.ImportType;
+import com.orion.ops.constant.ImportType;
 import com.orion.ops.entity.importer.*;
 import com.orion.ops.entity.vo.data.DataImportCheckVO;
 import org.apache.poi.ss.usermodel.Workbook;

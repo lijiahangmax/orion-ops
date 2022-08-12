@@ -1,14 +1,13 @@
-package com.orion.ops.entity;
+package com.orion.ops.constant;
 
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.importer.*;
-import com.orion.ops.entity.validate.*;
+import com.orion.ops.validator.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 
 /**
  * 导入类型
@@ -28,7 +27,7 @@ public enum ImportType {
             "/templates/import/machine-import-template.xlsx",
             "机器导入模板.xlsx",
             MachineInfoImportDTO.class,
-            MachineFieldConst::validData,
+            MachineValidator.INSTANCE,
             MachineInfoDO.class,
             MessageType.MACHINE_IMPORT_SUCCESS,
             MessageType.MACHINE_IMPORT_FAILURE),
@@ -40,7 +39,7 @@ public enum ImportType {
             "/templates/import/machine-proxy-import-template.xlsx",
             "机器代理导入模板.xlsx",
             MachineProxyImportDTO.class,
-            MachineProxyFieldConst::validData,
+            MachineProxyValidator.INSTANCE,
             MachineProxyDO.class,
             MessageType.MACHINE_PROXY_IMPORT_SUCCESS,
             MessageType.MACHINE_PROXY_IMPORT_FAILURE),
@@ -52,7 +51,7 @@ public enum ImportType {
             "/templates/import/tail-file-import-template.xlsx",
             "日志文件导入模板.xlsx",
             MachineTailFileImportDTO.class,
-            FileTailFieldConst::validData,
+            FileTailValidator.INSTANCE,
             FileTailListDO.class,
             MessageType.MACHINE_TAIL_FILE_IMPORT_SUCCESS,
             MessageType.MACHINE_TAIL_FILE_IMPORT_FAILURE),
@@ -64,7 +63,7 @@ public enum ImportType {
             "/templates/import/app-profile-import-template.xlsx",
             "应用环境导入模板.xlsx",
             ApplicationProfileImportDTO.class,
-            ApplicationProfileFieldConst::validData,
+            ApplicationProfileValidator.INSTANCE,
             ApplicationProfileDO.class,
             MessageType.PROFILE_IMPORT_SUCCESS,
             MessageType.PROFILE_IMPORT_FAILURE),
@@ -76,7 +75,7 @@ public enum ImportType {
             "/templates/import/application-import-template.xlsx",
             "应用导入模板.xlsx",
             ApplicationImportDTO.class,
-            ApplicationFieldConst::validData,
+            ApplicationValidator.INSTANCE,
             ApplicationInfoDO.class,
             MessageType.APPLICATION_IMPORT_SUCCESS,
             MessageType.APPLICATION_IMPORT_FAILURE),
@@ -88,7 +87,7 @@ public enum ImportType {
             "/templates/import/app-repository-import-template.xlsx",
             "应用仓库导入模板.xlsx",
             ApplicationRepositoryImportDTO.class,
-            ApplicationRepositoryFieldConst::validData,
+            ApplicationRepositoryValidator.INSTANCE,
             ApplicationRepositoryDO.class,
             MessageType.REPOSITORY_IMPORT_SUCCESS,
             MessageType.REPOSITORY_IMPORT_FAILURE),
@@ -100,7 +99,7 @@ public enum ImportType {
             "/templates/import/command-template-import-template.xlsx",
             "命令模板导入模板.xlsx",
             CommandTemplateImportDTO.class,
-            CommandTemplateFieldConst::validData,
+            CommandTemplateValidator.INSTANCE,
             CommandTemplateDO.class,
             MessageType.COMMAND_TEMPLATE_IMPORT_SUCCESS,
             MessageType.COMMAND_TEMPLATE_IMPORT_FAILURE),
@@ -130,7 +129,7 @@ public enum ImportType {
     /**
      * 数据验证器
      */
-    private final Consumer<Object> valid;
+    private final DataValidator validator;
 
     private final Class<? extends Serializable> convertClass;
 

@@ -16,6 +16,7 @@ import com.orion.lang.utils.io.FileWriters;
 import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.time.Dates;
 import com.orion.office.excel.reader.ExcelBeanReader;
+import com.orion.ops.constant.ImportType;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.app.RepositoryStatus;
@@ -23,7 +24,6 @@ import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
-import com.orion.ops.entity.ImportType;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.importer.*;
 import com.orion.ops.entity.vo.data.DataImportCheckRowVO;
@@ -321,7 +321,7 @@ public class DataImportServiceImpl implements DataImportService {
     private void validImportRows(ImportType importType, List<? extends BaseDataImportDTO> rows) {
         for (BaseDataImportDTO row : rows) {
             try {
-                importType.getValid().accept(row);
+                importType.getValidator().validData(row);
             } catch (Exception e) {
                 row.setIllegalMessage(e.getMessage());
             }

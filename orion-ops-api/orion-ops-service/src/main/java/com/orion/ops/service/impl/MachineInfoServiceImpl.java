@@ -351,12 +351,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 }
                 if (ProxyType.HTTP.equals(proxyType)) {
                     session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
-                } else if (ProxyType.SOCKET4.equals(proxyType)) {
+                } else if (ProxyType.SOCKS4.equals(proxyType)) {
                     session.socket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
-                } else if (ProxyType.SOCKET5.equals(proxyType)) {
+                } else if (ProxyType.SOCKS5.equals(proxyType)) {
                     session.socket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
-                session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
             }
             session.connect(timeout);
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());

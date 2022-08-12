@@ -1,4 +1,4 @@
-package com.orion.ops.entity.validate;
+package com.orion.ops.validator;
 
 import com.orion.lang.utils.Strings;
 import com.orion.ops.constant.machine.MachineAuthType;
@@ -7,16 +7,18 @@ import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
 /**
- * 机器表字段常量
+ * 机器表 数据验证器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/27 13:49
  */
-public class MachineFieldConst {
+public class MachineValidator implements DataValidator {
 
-    private MachineFieldConst() {
+    private MachineValidator() {
     }
+
+    public static final MachineValidator INSTANCE = new MachineValidator();
 
     public static final int NAME_MAX_LEN = 32;
 
@@ -66,12 +68,8 @@ public class MachineFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-    /**
-     * 验证数据合法性
-     *
-     * @param o o
-     */
-    public static void validData(Object o) {
+    @Override
+    public void validData(Object o) {
         if (o instanceof MachineInfoImportDTO) {
             validImport((MachineInfoImportDTO) o);
         }
@@ -82,7 +80,7 @@ public class MachineFieldConst {
      *
      * @param row row
      */
-    public static void validImport(MachineInfoImportDTO row) {
+    private void validImport(MachineInfoImportDTO row) {
         String name = row.getName();
         String tag = row.getTag();
         String host = row.getHost();

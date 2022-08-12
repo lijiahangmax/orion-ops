@@ -21,14 +21,14 @@ public enum ProxyType {
     HTTP(1, Const.PROTOCOL_HTTP),
 
     /**
-     * SOCKET4 代理
+     * SOCKS4 代理
      */
-    SOCKET4(2, Const.SOCKET4),
+    SOCKS4(2, Const.SOCKET4),
 
     /**
-     * SOCKET5 代理
+     * SOCKS5 代理
      */
-    SOCKET5(3, Const.SOCKET5),
+    SOCKS5(3, Const.SOCKET5),
 
     ;
 

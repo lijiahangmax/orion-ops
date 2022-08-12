@@ -1,4 +1,4 @@
-package com.orion.ops.entity.validate;
+package com.orion.ops.validator;
 
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
@@ -9,16 +9,18 @@ import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
 /**
- * 应用版本仓库表字段常量
+ * 应用版本仓库表 数据验证器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/6/2 10:02
  */
-public class ApplicationRepositoryFieldConst {
+public class ApplicationRepositoryValidator implements DataValidator {
 
-    private ApplicationRepositoryFieldConst() {
+    private ApplicationRepositoryValidator() {
     }
+
+    public static final ApplicationRepositoryValidator INSTANCE = new ApplicationRepositoryValidator();
 
     public static final int NAME_MAX_LEN = 32;
 
@@ -64,12 +66,8 @@ public class ApplicationRepositoryFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-    /**
-     * 验证数据合法性
-     *
-     * @param o o
-     */
-    public static void validData(Object o) {
+    @Override
+    public void validData(Object o) {
         if (o instanceof ApplicationRepositoryImportDTO) {
             validImport((ApplicationRepositoryImportDTO) o);
         }
@@ -80,7 +78,7 @@ public class ApplicationRepositoryFieldConst {
      *
      * @param row row
      */
-    public static void validImport(ApplicationRepositoryImportDTO row) {
+    private void validImport(ApplicationRepositoryImportDTO row) {
         String name = row.getName();
         String url = row.getUrl();
         String authTypeValue = row.getAuthType();

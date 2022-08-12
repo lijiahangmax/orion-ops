@@ -1,4 +1,4 @@
-package com.orion.ops.entity.validate;
+package com.orion.ops.validator;
 
 import com.orion.lang.utils.Strings;
 import com.orion.ops.constant.machine.ProxyType;
@@ -7,16 +7,18 @@ import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
 /**
- * 机器代理表字段常量
+ * 机器代理表 数据验证器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/31 10:12
  */
-public class MachineProxyFieldConst {
+public class MachineProxyValidator implements DataValidator {
 
-    private MachineProxyFieldConst() {
+    private MachineProxyValidator() {
     }
+
+    public static final MachineProxyValidator INSTANCE = new MachineProxyValidator();
 
     public static final int HOST_MAX_LEN = 128;
 
@@ -36,7 +38,7 @@ public class MachineProxyFieldConst {
 
     public static final String PROXY_TYPE_EMPTY_MESSAGE = "代理类型不能为空";
 
-    public static final String PROXY_TYPE_MESSAGE = "代理类型只能为 " + ProxyType.HTTP.getLabel() + ", " + ProxyType.SOCKET4.getLabel() + ", " + ProxyType.SOCKET5.getLabel();
+    public static final String PROXY_TYPE_MESSAGE = "代理类型只能为 " + ProxyType.HTTP.getLabel() + ", " + ProxyType.SOCKS4.getLabel() + ", " + ProxyType.SOCKS5.getLabel();
 
     public static final String USER_NAME_LEN_MESSAGE = "用户名长度不能大于 " + USER_NAME_MAX_LEN + "位";
 
@@ -52,12 +54,8 @@ public class MachineProxyFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-    /**
-     * 验证数据合法性
-     *
-     * @param o o
-     */
-    public static void validData(Object o) {
+    @Override
+    public void validData(Object o) {
         if (o instanceof MachineProxyImportDTO) {
             validImport((MachineProxyImportDTO) o);
         }
@@ -68,7 +66,7 @@ public class MachineProxyFieldConst {
      *
      * @param row row
      */
-    public static void validImport(MachineProxyImportDTO row) {
+    private void validImport(MachineProxyImportDTO row) {
         String host = row.getHost();
         Integer port = row.getPort();
         String proxyType = row.getProxyType();

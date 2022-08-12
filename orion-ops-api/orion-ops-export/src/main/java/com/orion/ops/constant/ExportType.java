@@ -1,4 +1,4 @@
-package com.orion.ops.export;
+package com.orion.ops.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,8 @@ import java.util.function.Supplier;
  * @version 1.0.0
  * @since 2022/5/27 17:17
  */
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public enum ExportType {
 
     /**

@@ -1,20 +1,22 @@
-package com.orion.ops.entity.validate;
+package com.orion.ops.validator;
 
 import com.orion.lang.utils.Charsets;
 import com.orion.ops.entity.importer.MachineTailFileImportDTO;
 import com.orion.ops.utils.Valid;
 
 /**
- * 文件tail字段常量
+ * 文件tail 数据验证器
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2022/5/31 16:39
  */
-public class FileTailFieldConst {
+public class FileTailValidator implements DataValidator {
 
-    private FileTailFieldConst() {
+    private FileTailValidator() {
     }
+
+    public static final FileTailValidator INSTANCE = new FileTailValidator();
 
     public static final int NAME_MAX_LEN = 64;
 
@@ -46,7 +48,7 @@ public class FileTailFieldConst {
 
     public static final String CHARSET_EMPTY_MESSAGE = "文件编码不能为空";
 
-    public static final String CHARSET_UNSUPPORT = "文件编码不合法";
+    public static final String CHARSET_UNSUPPORTED = "文件编码不合法";
 
     public static final String CHARSET_LEN_MESSAGE = "文件编码不能大于 " + CHARSET_MAX_LEN + "位";
 
@@ -56,12 +58,8 @@ public class FileTailFieldConst {
 
     public static final String DESCRIPTION_LEN_MESSAGE = "描述长度不能大于 " + DESCRIPTION_MAX_LEN + "位";
 
-    /**
-     * 验证数据合法性
-     *
-     * @param o o
-     */
-    public static void validData(Object o) {
+    @Override
+    public void validData(Object o) {
         if (o instanceof MachineTailFileImportDTO) {
             validImport((MachineTailFileImportDTO) o);
         }
@@ -72,7 +70,7 @@ public class FileTailFieldConst {
      *
      * @param row row
      */
-    public static void validImport(MachineTailFileImportDTO row) {
+    private void validImport(MachineTailFileImportDTO row) {
         String machineTag = row.getMachineTag();
         String name = row.getName();
         String path = row.getPath();
@@ -86,7 +84,7 @@ public class FileTailFieldConst {
         Valid.validLengthLte(path, PATH_MAX_LEN, PATH_LEN_MESSAGE);
         Valid.notBlank(charset, CHARSET_EMPTY_MESSAGE);
         Valid.validLengthLte(charset, CHARSET_MAX_LEN, CHARSET_LEN_MESSAGE);
-        Valid.isTrue(Charsets.isSupported(charset), CHARSET_UNSUPPORT);
+        Valid.isTrue(Charsets.isSupported(charset), CHARSET_UNSUPPORTED);
         Valid.notNull(offset, OFFSET_EMPTY_MESSAGE);
         Valid.inRange(offset, OFFSET_MIN_RANGE, OFFSET_MAX_RANGE, OFFSET_LEN_MESSAGE);
         Valid.notBlank(command, COMMAND_EMPTY_MESSAGE);
