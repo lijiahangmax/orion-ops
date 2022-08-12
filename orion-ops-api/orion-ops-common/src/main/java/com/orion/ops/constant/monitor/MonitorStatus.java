@@ -15,24 +15,19 @@ import lombok.Getter;
 public enum MonitorStatus {
 
     /**
-     * 未安装
+     * 未启动
      */
-    NOT_INSTALL(1),
+    NOT_START(1),
 
     /**
-     * 安装中
+     * 启动中
      */
-    INSTALLING(2),
-
-    /**
-     * 未运行
-     */
-    NOT_START(3),
+    STARTING(2),
 
     /**
      * 运行中
      */
-    STARTED(4),
+    RUNNING(3),
 
     ;
 

@@ -59,6 +59,14 @@ public interface MachineMonitorService {
     HttpWrapper<Integer> testPingMonitor(String url, String accessToken);
 
     /**
+     * 安装监控插件
+     *
+     * @param machineId machineId
+     * @return status
+     */
+    Integer installMonitorAgent(Long machineId);
+
+    /**
      * 通过机器 id 删除
      *
      * @param machineIdList machineIdList

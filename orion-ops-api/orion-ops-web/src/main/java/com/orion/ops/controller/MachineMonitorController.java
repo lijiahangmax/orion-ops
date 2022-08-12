@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 @RequestMapping("/orion/api/monitor")
 public class MachineMonitorController {
 
-    // TODO check runner clean runner 操作日志 安装 升级 同步 启动 批量检查状态
+    // TODO check runner clean runner 操作日志 批量安装 批量升级
 
     @Resource
     private MachineMonitorService machineMonitorService;
@@ -60,5 +60,11 @@ public class MachineMonitorController {
         return machineMonitorService.testPingMonitor(url, accessToken);
     }
 
+    @PostMapping("/install")
+    @ApiOperation(value = "安装监控插件")
+    public Integer installMonitorAgent(@RequestBody MachineMonitorRequest request) {
+        Long machineId = Valid.notNull(request.getMachineId());
+        return machineMonitorService.installMonitorAgent(machineId);
+    }
 
 }

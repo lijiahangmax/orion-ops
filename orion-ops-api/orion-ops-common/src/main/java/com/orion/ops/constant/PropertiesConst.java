@@ -30,6 +30,11 @@ public class PropertiesConst {
      */
     public static String VALUE_MIX_SECRET_KEY;
 
+    /**
+     * 机器监控插件最新版本
+     */
+    public static String MACHINE_MONITOR_LATEST_VERSION;
+
     @Value("${app.version}")
     public void setVersion(String version) {
         PropertiesConst.ORION_OPS_VERSION = version;
@@ -43,6 +48,11 @@ public class PropertiesConst {
     @Value("${value.mix.secret.key}")
     public void setValueMixSecretKey(String valueMixSecretKey) {
         PropertiesConst.VALUE_MIX_SECRET_KEY = valueMixSecretKey;
+    }
+
+    @Value("${machine.monitor.latest.version}")
+    public void setMachineMonitorLatestVersion(String agentVersion) {
+        PropertiesConst.MACHINE_MONITOR_LATEST_VERSION = agentVersion;
     }
 
 }

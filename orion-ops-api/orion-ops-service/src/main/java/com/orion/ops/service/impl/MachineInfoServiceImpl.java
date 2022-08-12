@@ -454,7 +454,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .ne(id != null, MachineInfoDO::getId, id)
                 .eq(MachineInfoDO::getMachineName, name);
         boolean present = DataQuery.of(machineInfoDAO).wrapper(presentWrapper).present();
-        com.orion.ops.utils.Valid.isTrue(!present, MessageConst.NAME_PRESENT);
+        Valid.isTrue(!present, MessageConst.NAME_PRESENT);
     }
 
 

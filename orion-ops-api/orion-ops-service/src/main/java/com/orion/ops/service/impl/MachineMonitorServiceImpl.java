@@ -5,11 +5,15 @@ import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.define.wrapper.Pager;
 import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.convert.Converts;
+import com.orion.lang.utils.io.Files1;
 import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.SchedulerPools;
 import com.orion.ops.constant.monitor.MonitorConst;
 import com.orion.ops.constant.monitor.MonitorStatus;
+import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineMonitorDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;
@@ -20,6 +24,7 @@ import com.orion.ops.entity.request.machine.MachineMonitorRequest;
 import com.orion.ops.entity.vo.machine.MachineMonitorVO;
 import com.orion.ops.handler.http.MachineMonitorHttpApi;
 import com.orion.ops.handler.http.MachineMonitorHttpApiRequester;
+import com.orion.ops.handler.monitor.MonitorAgentInstallTask;
 import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
@@ -82,7 +87,7 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
             // 不存在则插入
             monitor = new MachineMonitorDO();
             monitor.setMachineId(machineId);
-            monitor.setMonitorStatus(MonitorStatus.NOT_INSTALL.getStatus());
+            monitor.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
             monitor.setMonitorUrl(Strings.format(MonitorConst.DEFAULT_URL_FORMAT, machine.getMachineHost()));
             monitor.setAccessToken(MonitorConst.DEFAULT_ACCESS_TOKEN);
             machineMonitorDAO.insert(monitor);
@@ -115,6 +120,33 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
                 .api(MachineMonitorHttpApi.ENDPOINT_PING)
                 .build()
                 .request(Integer.class);
+    }
+
+    @Override
+    public Integer installMonitorAgent(Long machineId) {
+        // 查询
+        MachineMonitorVO config = this.getMonitorConfig(machineId);
+        Valid.eq(config.getStatus(), MonitorStatus.NOT_START.getStatus(), MessageConst.AGENT_NOT_IS_NOT_START);
+        // 修改状态
+        MachineMonitorDO update = new MachineMonitorDO();
+        update.setId(config.getId());
+        try {
+            // 尝试 ping
+            this.testPingMonitor(config.getUrl(), config.getAccessToken());
+            // 可以 ping 通状态改为已启动
+            update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
+            machineMonitorDAO.updateById(update);
+        } catch (Exception e) {
+            // ping 不通检查文件是否存在
+            String path = SystemEnvAttr.MONITOR_AGENT_PATH.getValue();
+            Valid.isTrue(Files1.isFile(path), Strings.format(MessageConst.AGENT_FILE_NON_EXIST, path));
+            // 状态改为启动中
+            update.setMonitorStatus(MonitorStatus.STARTING.getStatus());
+            machineMonitorDAO.updateById(update);
+            // 创建安装任务
+            Threads.start(new MonitorAgentInstallTask(machineId), SchedulerPools.AGENT_INSTALL_SCHEDULER);
+        }
+        return update.getMonitorStatus();
     }
 
     @Override

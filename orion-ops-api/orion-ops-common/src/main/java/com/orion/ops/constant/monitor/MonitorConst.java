@@ -1,5 +1,7 @@
 package com.orion.ops.constant.monitor;
 
+import com.orion.ops.constant.Const;
+import com.orion.ops.constant.PropertiesConst;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -38,24 +40,41 @@ public class MonitorConst {
      */
     public static String DEFAULT_ACCESS_TOKEN;
 
+    /**
+     * 文件名称前缀
+     */
+    public static final String FILE_NAME_PREFIX = "machine-monitor-agent";
+
+    /**
+     * 文件名称
+     */
+    public static final String FILE_NAME = FILE_NAME_PREFIX
+            + "_" + PropertiesConst.MACHINE_MONITOR_LATEST_VERSION
+            + "." + Const.SUFFIX_JAR;
+
+    /**
+     * 启动脚本名称
+     */
+    public static final String START_SCRIPT_NAME = "agent-start.sh";
+
     @Value("${machine.monitor.latest.version}")
     public void setLatestVersion(String latestVersion) {
-        LATEST_VERSION = latestVersion;
+        MonitorConst.LATEST_VERSION = latestVersion;
     }
 
     @Value("${machine.monitor.default.url}")
     public void setDefaultUrlFormat(String defaultUrlFormat) {
-        DEFAULT_URL_FORMAT = defaultUrlFormat;
+        MonitorConst.DEFAULT_URL_FORMAT = defaultUrlFormat;
     }
 
     @Value("${machine.monitor.default.access.header}")
     public void setDefaultAccessHeader(String defaultAccessHeader) {
-        DEFAULT_ACCESS_HEADER = defaultAccessHeader;
+        MonitorConst.DEFAULT_ACCESS_HEADER = defaultAccessHeader;
     }
 
     @Value("${machine.monitor.default.access.token}")
     public void setDefaultAccessToken(String defaultAccessToken) {
-        DEFAULT_ACCESS_TOKEN = defaultAccessToken;
+        MonitorConst.DEFAULT_ACCESS_TOKEN = defaultAccessToken;
     }
 
 }

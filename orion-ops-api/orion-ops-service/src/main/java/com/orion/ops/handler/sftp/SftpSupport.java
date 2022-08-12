@@ -47,7 +47,6 @@ public class SftpSupport {
      * @param processor processor
      */
     public static void usingFsCopy(FileTransferProcessor processor) {
-        // upload
         String remoteFile = processor.record.getRemoteFile();
         String localFile = processor.record.getLocalFile();
         String localAbsolutePath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), localFile);
@@ -55,12 +54,15 @@ public class SftpSupport {
                 processor.fileToken, processor.machineId, localAbsolutePath, remoteFile);
         // 复制
         File sourceFile;
+        File targetFile;
         if (processor instanceof UploadFileProcessor) {
             sourceFile = new File(localAbsolutePath);
+            targetFile = new File(remoteFile);
         } else {
             sourceFile = new File(remoteFile);
+            targetFile = new File(localAbsolutePath);
         }
-        Files1.copy(sourceFile, new File(remoteFile));
+        Files1.copy(sourceFile, targetFile);
         // 通知进度
         long fileSize = sourceFile.length();
         processor.notifyProgress(Files1.getSize(fileSize), Files1.getSize(fileSize), "100");

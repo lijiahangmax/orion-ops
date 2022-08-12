@@ -256,12 +256,23 @@ public class PathBuilders {
     public static String getSftpPackageTempPath(String username, String fileToken, List<String> paths) {
         return PathBuilders.getHomePath(username)
                 + "/" + Const.ORION_OPS
-                + "/" + Const.TEMP_PACKAGE_PATH
+                + "/" + Const.PACKAGE
                 + "/" + fileToken
                 + "/" + Files1.getFileName(paths.get(0))
                 + " more files"
-                + "." + Const.SUFFIX_ZIP
-                + "";
+                + "." + Const.SUFFIX_ZIP;
+    }
+
+    /**
+     * 获取插件目录
+     *
+     * @param username username
+     * @return path
+     */
+    public static String getPluginPath(String username) {
+        return PathBuilders.getHomePath(username)
+                + "/" + Const.ORION_OPS
+                + "/" + Const.PLUGINS;
     }
 
 }

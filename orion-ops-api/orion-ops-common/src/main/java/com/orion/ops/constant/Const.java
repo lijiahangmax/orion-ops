@@ -80,6 +80,10 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String EVENT = "event";
 
+    public static final String PACKAGE = "package";
+
+    public static final String PLUGINS = "plugins";
+
     public static final String CAST_SUFFIX = "cast";
 
     public static final Integer FORBID_DELETE_CAN = 1;
@@ -99,8 +103,6 @@ public class Const extends com.orion.lang.constant.Const {
     public static final String SWAP_FILE_SUFFIX = ".swp";
 
     public static final String SECRET_KEY_SUFFIX = "_id_rsa";
-
-    public static final String TEMP_PACKAGE_PATH = "package";
 
     public static final Integer IS_DEFAULT = 1;
 

@@ -15,7 +15,6 @@ import com.orion.ops.handler.http.MachineMonitorHttpApiRequester;
 import com.orion.ops.service.api.MachineMonitorEndpointService;
 import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.Valid;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,9 +31,6 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
 
     @Resource
     private MachineMonitorService machineMonitorService;
-
-    @Resource
-    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public Integer ping(Long machineId) {

@@ -200,6 +200,18 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeout(true)
             .build();
 
+    /**
+     * 插件安装 线程池
+     */
+    public static final ThreadPoolExecutor AGENT_INSTALL_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("agent-install-thread-")
+            .setCorePoolSize(2)
+            .setMaxPoolSize(4)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new LinkedBlockingQueue<>())
+            .setAllowCoreThreadTimeout(true)
+            .build();
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
@@ -217,6 +229,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(SCHEDULER_TASK_MACHINE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(PIPELINE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(ASYNC_IMPORT_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(AGENT_INSTALL_SCHEDULER, Const.MS_S_3);
         });
     }
 
