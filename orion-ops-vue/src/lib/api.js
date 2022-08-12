@@ -2428,6 +2428,24 @@ const $api = {
   },
 
   /**
+   * 安装机器监控插件
+   */
+  installMachineMonitorAgent: param => {
+    return $http.$post('/monitor/install', param, {
+      loading: '正在安装/启动...'
+    })
+  },
+
+  /**
+   * 升级机器监控插件
+   */
+  upgradeMachineMonitorAgent: param => {
+    return $http.$post('/monitor/upgrade', param, {
+      loading: '正在升级...'
+    })
+  },
+
+  /**
    * 查询机器监控指标
    */
   getMachineMonitorMetrics: param => {

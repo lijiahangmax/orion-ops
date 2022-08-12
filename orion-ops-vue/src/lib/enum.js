@@ -191,14 +191,14 @@ export const MACHINE_PROXY_TYPE = {
     label: 'http',
     color: '#228BE6'
   },
-  SOCKET4: {
+  SOCKS4: {
     value: 2,
-    label: 'socket4',
+    label: 'socks4',
     color: '#1098AD'
   },
-  SOCKET5: {
+  SOCKS5: {
     value: 3,
-    label: 'socket5',
+    label: 'socks5',
     color: '#0CA678'
   }
 }
@@ -2459,25 +2459,20 @@ export const IMPORT_TYPE = {
  * 监控状态
  */
 export const MONITOR_STATUS = {
-  NOT_INSTALL: {
-    value: 1,
-    label: '未安装',
-    color: ''
-  },
-  INSTALLING: {
-    value: 2,
-    label: '安装中',
-    color: 'green'
-  },
   NOT_START: {
-    value: 3,
-    label: '未运行',
-    color: ''
+    value: 1,
+    label: '未启动',
+    status: 'default'
   },
-  STARTED: {
-    value: 4,
+  STARTING: {
+    value: 2,
+    label: '启动中',
+    status: 'success'
+  },
+  RUNNING: {
+    value: 3,
     label: '运行中',
-    color: 'blue'
+    status: 'processing'
   }
 }
 

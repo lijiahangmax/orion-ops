@@ -53,9 +53,8 @@
         </template>
         <!-- 状态 -->
         <template #status="record">
-          <a-tag :color="record.status | formatStatus('color')">
-            {{ record.status | formatStatus('label') }}
-          </a-tag>
+          <a-badge :status="record.status | formatStatus('status')"
+                   :text="record.status | formatStatus('label')"/>
         </template>
         <!-- version -->
         <template #version="record">
@@ -69,42 +68,29 @@
             <template #title>
               最新版本: V{{ record.latestVersion }} 点击进行升级
             </template>
-            <a-tag class="ml4 pointer usn" @click="upgradeVersion(record.machineId)">
+            <a-tag class="ml4 pointer usn" @click="upgradeVersion(record)">
               升级
             </a-tag>
           </a-tooltip>
         </template>
         <!-- 操作 -->
         <template #action="record">
-          <!-- 监控 -->
+          <!-- 安装 -->
           <a-button class="p0"
+                    v-if="MONITOR_STATUS.NOT_START.value === record.status"
                     type="link"
                     style="height: 22px"
-                    :disabled="MONITOR_STATUS.STARTED.value !== record.status">
+                    @click="installMonitor(record)">
+            安装
+          </a-button>
+          <!-- 监控 -->
+          <a-button class="p0"
+                    v-else
+                    type="link"
+                    style="height: 22px"
+                    :disabled="MONITOR_STATUS.RUNNING.value !== record.status">
             <a :href="`#/machine/monitor/metrics/${record.machineId}`">监控</a>
           </a-button>
-          <a-divider type="vertical"/>
-          <!-- 安装 -->
-          <span v-if="MONITOR_STATUS.NOT_INSTALL.value === record.status"
-                class="span-blue pointer"
-                @click="installMonitor(record.machineId)">
-            安装
-          </span>
-          <!-- 启动 -->
-          <a-button v-if="MONITOR_STATUS.INSTALLING.value === record.status ||
-                    MONITOR_STATUS.NOT_START.value === record.status"
-                    type="link"
-                    style="height: 22px; padding: 0 3px"
-                    :disabled="MONITOR_STATUS.INSTALLING.value === record.status"
-                    @click="installMonitor(record.machineId)">
-            启动
-          </a-button>
-          <!-- 同步 -->
-          <span v-if="MONITOR_STATUS.STARTED.value === record.status"
-                class="span-blue pointer"
-                @click="syncMonitor(record.machineId)">
-            同步
-          </span>
           <a-divider type="vertical"/>
           <a @click="openAgentSetting(record.machineId)">插件配置</a>
           <a-divider type="vertical"/>
@@ -226,17 +212,21 @@ export default {
         this.getList({})
       }
     },
-    toMonitor(machineId) {
-      this.$message.success(machineId)
+    installMonitor(record) {
+      record.status = MONITOR_STATUS.STARTING.value
+      this.$api.installMachineMonitorAgent({
+        machineId: record.machineId
+      }).then(({ data }) => {
+        record.status = data
+      })
     },
-    installMonitor(machineId) {
-      this.$message.success(machineId)
-    },
-    upgradeVersion(machineId) {
-      this.$message.success(machineId)
-    },
-    syncMonitor(machineId) {
-      this.$message.success(machineId)
+    upgradeVersion(record) {
+      record.status = MONITOR_STATUS.STARTING.value
+      this.$api.upgradeMachineMonitorAgent({
+        machineId: record.machineId
+      }).then(({ data }) => {
+        record.status = data
+      })
     },
     openAgentSetting(machineId) {
       this.$refs.configModal.open(machineId)
@@ -244,7 +234,6 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
-      this.$refs.userSelector && this.$refs.userSelector.reset()
       this.query.machineId = undefined
       this.query.machineName = undefined
       this.query.status = undefined

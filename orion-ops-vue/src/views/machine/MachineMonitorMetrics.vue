@@ -124,7 +124,7 @@ export default {
       machineId: this.machineId
     }).then(({ data }) => {
       this.config = data
-      this.monitorStarted = MONITOR_STATUS.STARTED.value === data.status
+      this.monitorStarted = MONITOR_STATUS.RUNNING.value === data.status
       if (!this.monitorStarted && (this.active === 1 || this.active === 2)) {
         this.$message.warning('监控插件未运行')
       }
