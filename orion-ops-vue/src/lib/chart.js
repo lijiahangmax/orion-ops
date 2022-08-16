@@ -10,7 +10,8 @@ export function timestampRender(id, chatObject, chartField, timeFormatter, value
   if (needInit) {
     chart = chatObject[chartField] = new Chart({
       container: id,
-      autoFit: true
+      autoFit: true,
+      padding: [4, 8, 4, 8]
     })
     chart.animate(false)
     chart.scale({
@@ -51,5 +52,6 @@ export function timestampRender(id, chatObject, chartField, timeFormatter, value
     chart.render()
   } else {
     chart.changeData(renderData)
+    chart.render()
   }
 }
