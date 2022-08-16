@@ -360,7 +360,7 @@
         <div class="chart-container">
           <!-- label -->
           <div class="chart-monitor-label">
-            <span>网络带宽监控</span>
+            <span>硬盘使用监控</span>
             <a-select class="disk-selector" v-model="diskSeq" placeholder="选择硬盘" @change="reloadDiskChart">
               <a-select-option v-for="disk of diskNames" :key="disk.seq" :value="disk.seq">
                 <a-tooltip :title="disk.name" placement="topLeft">
