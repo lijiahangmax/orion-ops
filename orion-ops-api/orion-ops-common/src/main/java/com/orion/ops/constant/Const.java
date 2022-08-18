@@ -34,7 +34,7 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String DIST_PATH = "dist";
 
-    public static final String MONITOR_AGENT_PATH = "/lib/monitor-agent.jar";
+    public static final String MACHINE_MONITOR_AGENT_PATH = "/lib/machine-monitor-agent.jar";
 
     public static final String TAIL_FILE_PATH = "tail";
 
@@ -65,6 +65,10 @@ public class Const extends com.orion.lang.constant.Const {
     public static final String IMPORT_DIR = "/import";
 
     public static final String EXPORT_DIR = "/export";
+
+    public static final String LIB_DIR = "/lib";
+
+    public static final String INSTALL_DIR = "/install";
 
     public static final String BUILD = "build";
 

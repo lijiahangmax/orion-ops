@@ -40,6 +40,13 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
     }
 
     @Override
+    public String getVersion(Long machineId) {
+        HttpWrapper<String> wrapper = this.getRequester(machineId, MachineMonitorHttpApi.ENDPOINT_VERSION)
+                .request(String.class);
+        return Valid.api(wrapper);
+    }
+
+    @Override
     public JSONObject getBaseMetrics(Long machineId) {
         HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.METRICS_BASE)
                 .getRequest();

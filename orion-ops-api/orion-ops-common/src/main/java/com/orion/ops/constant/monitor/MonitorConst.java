@@ -2,6 +2,7 @@ package com.orion.ops.constant.monitor;
 
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.PropertiesConst;
+import com.orion.ops.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -41,21 +42,36 @@ public class MonitorConst {
     public static String DEFAULT_ACCESS_TOKEN;
 
     /**
-     * 文件名称前缀
+     * agent 文件名称前缀
      */
-    public static final String FILE_NAME_PREFIX = "machine-monitor-agent";
+    public static final String AGENT_FILE_NAME_PREFIX = "machine-monitor-agent";
 
     /**
-     * 文件名称
+     * agent 文件名称
      */
-    public static final String FILE_NAME = FILE_NAME_PREFIX
+    public static final String AGENT_FILE_NAME = AGENT_FILE_NAME_PREFIX
             + "_" + PropertiesConst.MACHINE_MONITOR_LATEST_VERSION
             + "." + Const.SUFFIX_JAR;
 
     /**
-     * 启动脚本名称
+     * 启动脚本资源路径
      */
-    public static final String START_SCRIPT_NAME = "agent-start.sh";
+    public static final String START_SCRIPT_PATH = "/templates/script/start-monitor-agent.sh";
+
+    /**
+     * 启动脚本资源内容
+     */
+    public static final String START_SCRIPT_VALUE = ResourceLoader.get(START_SCRIPT_PATH, MonitorConst.class);
+
+    /**
+     * 启动脚本文件名称
+     */
+    public static final String START_SCRIPT_FILE_NAME = "start-machine-monitor-agent.sh";
+
+    /**
+     * agent 日志文件名称
+     */
+    public static final String AGENT_LOG_FILE_NAME = "machine-monitor-agent.out";
 
     @Value("${machine.monitor.latest.version}")
     public void setLatestVersion(String latestVersion) {

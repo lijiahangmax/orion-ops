@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 @RequestMapping("/orion/api/monitor")
 public class MachineMonitorController {
 
-    // TODO check runner clean runner 操作日志 批量安装 批量升级
+    // TODO check runner clean runner 操作日志 批量安装 批量升级 批量检查
 
     @Resource
     private MachineMonitorService machineMonitorService;

@@ -22,6 +22,14 @@ public interface MachineMonitorEndpointService {
     Integer ping(Long machineId);
 
     /**
+     * 获取版本号
+     *
+     * @param machineId machineId
+     * @return version
+     */
+    String getVersion(Long machineId);
+
+    /**
      * 获取基本指标信息
      *
      * @param machineId machineId

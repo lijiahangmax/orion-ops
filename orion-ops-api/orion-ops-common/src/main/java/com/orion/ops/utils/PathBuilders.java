@@ -275,4 +275,19 @@ public class PathBuilders {
                 + "/" + Const.PLUGINS;
     }
 
+    /**
+     * 获取安装日志路径
+     *
+     * @param machineId machineId
+     * @param app       app
+     * @return path
+     */
+    public static String getInstallLogPath(Long machineId, String app) {
+        return Const.INSTALL_DIR
+                + "/" + app
+                + "/" + machineId
+                + "-" + Dates.current(Dates.YMD_HMS2)
+                + "." + Const.SUFFIX_LOG;
+    }
+
 }

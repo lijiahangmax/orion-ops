@@ -50,13 +50,13 @@ public interface MachineMonitorService {
     Integer updateMonitorConfig(MachineMonitorRequest request);
 
     /**
-     * 测试连接监控插件
+     * 更新监控配置
      *
-     * @param url         url
-     * @param accessToken accessToken
-     * @return wrapper
+     * @param machineId machineId
+     * @param update    update
+     * @return effect
      */
-    HttpWrapper<Integer> testPingMonitor(String url, String accessToken);
+    Integer updateMonitorConfigByMachineId(Long machineId, MachineMonitorDO update);
 
     /**
      * 安装监控插件
@@ -73,5 +73,21 @@ public interface MachineMonitorService {
      * @return effect
      */
     Integer deleteByMachineIdList(List<Long> machineIdList);
+
+    /**
+     * 测试连接监控插件
+     *
+     * @param url         url
+     * @param accessToken accessToken
+     * @return wrapper
+     */
+    HttpWrapper<Integer> testPingMonitor(String url, String accessToken);
+
+    /**
+     * 设置版本及状态
+     *
+     * @param id id
+     */
+    void setVersionAndStatus(Long id);
 
 }

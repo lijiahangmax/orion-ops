@@ -86,6 +86,16 @@ public enum MessageType {
      */
     PIPELINE_EXEC_FAILURE(1140, "应用流水线执行失败", MessageClassify.SYSTEM, "应用流水线 <sb>${name}</sb> <sb>${title}</sb> 执行失败"),
 
+    /**
+     * 机器监控插件安装成功
+     */
+    MACHINE_AGENT_INSTALL_SUCCESS(1150, "机器监控插件安装成功", MessageClassify.SYSTEM, "<sb>${name}</sb> 监控插件安装成功"),
+
+    /**
+     * 机器监控插件安装失败
+     */
+    MACHINE_AGENT_INSTALL_FAILURE(1160, "机器监控插件安装失败", MessageClassify.SYSTEM, "<sb>${name}</sb> 监控插件安装失败, 请手动安装或检查插件配置"),
+
     // -------------------- 导入通知 --------------------
 
     /**
