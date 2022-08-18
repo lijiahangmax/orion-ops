@@ -68,7 +68,7 @@
             <template #title>
               最新版本: V{{ record.latestVersion }} 点击进行升级
             </template>
-            <a-tag class="ml4 pointer usn" @click="upgradeVersion(record)">
+            <a-tag class="ml4 pointer usn" @click="installMonitor(record)">
               升级
             </a-tag>
           </a-tooltip>
@@ -101,7 +101,7 @@
       </a-table>
     </div>
     <!-- 配置模态框 -->
-    <MachineMonitorConfigModal ref="configModal"/>
+    <MachineMonitorConfigModal ref="configModal" @updated="getList({})"/>
   </div>
 </template>
 
@@ -218,14 +218,11 @@ export default {
         machineId: record.machineId
       }).then(({ data }) => {
         record.status = data
-      })
-    },
-    upgradeVersion(record) {
-      record.status = MONITOR_STATUS.STARTING.value
-      this.$api.upgradeMachineMonitorAgent({
-        machineId: record.machineId
-      }).then(({ data }) => {
-        record.status = data
+        if (MONITOR_STATUS.STARTING.value === data) {
+          this.$message.success('插件正在安装/启动...')
+        } else if (MONITOR_STATUS.RUNNING.value === data) {
+          this.$message.success('机器监控插件已启动')
+        }
       })
     },
     openAgentSetting(machineId) {

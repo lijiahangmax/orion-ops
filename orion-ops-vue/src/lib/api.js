@@ -2437,15 +2437,6 @@ const $api = {
   },
 
   /**
-   * 升级机器监控插件
-   */
-  upgradeMachineMonitorAgent: param => {
-    return $http.$post('/monitor/upgrade', param, {
-      loading: '正在升级...'
-    })
-  },
-
-  /**
    * 查询机器监控指标
    */
   getMachineMonitorMetrics: param => {

@@ -2069,6 +2069,20 @@ export const MESSAGE_TYPE = {
     notify: 'error',
     redirect: '/app/pipeline/record'
   },
+  MACHINE_AGENT_INSTALL_SUCCESS: {
+    classify: 10,
+    value: 1150,
+    label: '机器监控插件安装成功',
+    notify: 'success',
+    redirect: '/machine/monitor/list'
+  },
+  MACHINE_AGENT_INSTALL_FAILURE: {
+    classify: 10,
+    value: 1160,
+    label: '机器监控插件安装失败',
+    notify: 'error',
+    redirect: '/machine/monitor/list'
+  },
   MACHINE_IMPORT_SUCCESS: {
     classify: 20,
     value: 2010,
