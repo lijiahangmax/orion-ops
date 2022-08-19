@@ -226,7 +226,7 @@ public class MessageConst {
 
     public static final String UNKNOWN_APP_REPOSITORY = "未查询到应用仓库: {}";
 
-    public static final String AGENT_NOT_IS_NOT_START = "插件状态不是未启动状态";
+    public static final String AGENT_STATUS_IS_STARTING = "插件正在启动中";
 
     public static final String AGENT_FILE_NON_EXIST = "插件包不存在 请确认文件路径: {}";
 

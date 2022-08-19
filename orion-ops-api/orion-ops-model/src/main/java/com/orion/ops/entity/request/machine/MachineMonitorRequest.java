@@ -40,4 +40,7 @@ public class MachineMonitorRequest extends PageRequest {
     @ApiModelProperty(value = "accessToken")
     private String accessToken;
 
+    @ApiModelProperty(value = "是否为升级")
+    private Boolean upgrade;
+
 }

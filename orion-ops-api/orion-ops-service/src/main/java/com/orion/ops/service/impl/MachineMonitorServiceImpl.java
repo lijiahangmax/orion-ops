@@ -2,7 +2,6 @@ package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.define.wrapper.Pager;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Threads;
@@ -100,7 +99,7 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
     }
 
     @Override
-    public Integer updateMonitorConfig(MachineMonitorRequest request) {
+    public MachineMonitorVO updateMonitorConfig(MachineMonitorRequest request) {
         // 查询
         Long id = request.getId();
         String url = request.getUrl();
@@ -112,7 +111,7 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         update.setId(id);
         update.setMonitorUrl(url);
         update.setAccessToken(accessToken);
-        // ping
+        // 同步状态
         if (monitor.getMonitorStatus().equals(MonitorStatus.NOT_START.getStatus()) ||
                 monitor.getMonitorStatus().equals(MonitorStatus.RUNNING.getStatus())) {
             // 获取版本
@@ -125,7 +124,12 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
                 update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
             }
         }
-        return machineMonitorDAO.updateById(update);
+        machineMonitorDAO.updateById(update);
+        // 返回
+        MachineMonitorVO returnValue = new MachineMonitorVO();
+        returnValue.setStatus(update.getMonitorStatus());
+        returnValue.setCurrentVersion(update.getAgentVersion());
+        return returnValue;
     }
 
     @Override
@@ -136,34 +140,6 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
     }
 
     @Override
-    public Integer installMonitorAgent(Long machineId) {
-        // 查询
-        MachineMonitorVO config = this.getMonitorConfig(machineId);
-        Valid.eq(config.getStatus(), MonitorStatus.NOT_START.getStatus(), MessageConst.AGENT_NOT_IS_NOT_START);
-        // 修改状态
-        MachineMonitorDO update = new MachineMonitorDO();
-        update.setId(config.getId());
-        try {
-            // 尝试 ping
-            HttpWrapper<Integer> pingWrapper = this.testPingMonitor(config.getUrl(), config.getAccessToken());
-            Valid.isTrue(pingWrapper.isOk());
-            // 可以 ping 通状态改为已启动
-            update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
-            machineMonitorDAO.updateById(update);
-        } catch (Exception e) {
-            // ping 不通检查文件是否存在
-            String path = SystemEnvAttr.MACHINE_MONITOR_AGENT_PATH.getValue();
-            Valid.isTrue(Files1.isFile(path), Strings.format(MessageConst.AGENT_FILE_NON_EXIST, path));
-            // 状态改为启动中
-            update.setMonitorStatus(MonitorStatus.STARTING.getStatus());
-            machineMonitorDAO.updateById(update);
-            // 创建安装任务
-            Threads.start(new MonitorAgentInstallTask(machineId, Currents.getUser()), SchedulerPools.AGENT_INSTALL_SCHEDULER);
-        }
-        return update.getMonitorStatus();
-    }
-
-    @Override
     public Integer deleteByMachineIdList(List<Long> machineIdList) {
         LambdaQueryWrapper<MachineMonitorDO> wrapper = new LambdaQueryWrapper<MachineMonitorDO>()
                 .in(MachineMonitorDO::getMachineId, machineIdList);
@@ -171,43 +147,73 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
     }
 
     @Override
-    public HttpWrapper<Integer> testPingMonitor(String url, String accessToken) {
-        return MachineMonitorHttpApiRequester.builder()
-                .url(url)
-                .accessToken(accessToken)
-                .api(MachineMonitorHttpApi.ENDPOINT_PING)
-                .build()
-                .request(Integer.class);
+    public MachineMonitorVO installMonitorAgent(Long machineId, Boolean upgrade) {
+        // 查询
+        MachineMonitorVO config = this.getMonitorConfig(machineId);
+        Valid.neq(config.getStatus(), MonitorStatus.STARTING.getStatus(), MessageConst.AGENT_STATUS_IS_STARTING);
+        boolean reinstall = upgrade;
+        // 修改状态
+        MachineMonitorDO update = new MachineMonitorDO();
+        update.setId(config.getId());
+        if (!upgrade) {
+            // 安装
+            String version = this.getMonitorVersion(config.getUrl(), config.getAccessToken());
+            if (version == null) {
+                // 未获取到版本则重新安装
+                reinstall = true;
+            } else {
+                // 状态改为运行中
+                update.setAgentVersion(version);
+                update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
+            }
+        }
+        if (reinstall) {
+            // 重新安装
+            String path = SystemEnvAttr.MACHINE_MONITOR_AGENT_PATH.getValue();
+            Valid.isTrue(Files1.isFile(path), Strings.format(MessageConst.AGENT_FILE_NON_EXIST, path));
+            // 状态改为启动中
+            update.setMonitorStatus(MonitorStatus.STARTING.getStatus());
+            // 创建安装任务
+            Threads.start(new MonitorAgentInstallTask(machineId, Currents.getUser()), SchedulerPools.AGENT_INSTALL_SCHEDULER);
+        }
+        // 更新状态
+        machineMonitorDAO.updateById(update);
+        // 返回
+        MachineMonitorVO returnValue = new MachineMonitorVO();
+        returnValue.setStatus(update.getMonitorStatus());
+        returnValue.setCurrentVersion(update.getAgentVersion());
+        return returnValue;
     }
 
     @Override
-    public void setVersionAndStatus(Long id) {
-        MachineMonitorDO monitor = machineMonitorDAO.selectById(id);
-        if (monitor.getMonitorStatus().equals(MonitorStatus.STARTING.getStatus())) {
-            return;
+    public MachineMonitorVO checkMonitorStatus(Long machineId) {
+        MachineMonitorVO monitor = this.getMonitorConfig(machineId);
+        if (monitor.getStatus().equals(MonitorStatus.STARTING.getStatus())) {
+            return new MachineMonitorVO();
         }
         MachineMonitorDO update = new MachineMonitorDO();
-        update.setId(id);
+        update.setId(monitor.getId());
         // 获取版本
-        String monitorVersion = this.getMonitorVersion(monitor.getMonitorUrl(), monitor.getAccessToken());
+        String monitorVersion = this.getMonitorVersion(monitor.getUrl(), monitor.getAccessToken());
         if (monitorVersion == null) {
             // 未启动
             update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
         } else {
+            // 启动中
             update.setAgentVersion(monitorVersion);
             update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
         }
+        // 更新状态
         machineMonitorDAO.updateById(update);
+        // 返回
+        MachineMonitorVO returnValue = new MachineMonitorVO();
+        returnValue.setStatus(update.getMonitorStatus());
+        returnValue.setCurrentVersion(update.getAgentVersion());
+        return returnValue;
     }
 
-    /**
-     * 获取版本
-     *
-     * @param url         url
-     * @param accessToken accessToken
-     * @return version
-     */
-    private String getMonitorVersion(String url, String accessToken) {
+    @Override
+    public String getMonitorVersion(String url, String accessToken) {
         try {
             return MachineMonitorHttpApiRequester.builder()
                     .url(url)

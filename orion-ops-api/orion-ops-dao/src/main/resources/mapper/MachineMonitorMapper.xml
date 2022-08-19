@@ -67,7 +67,9 @@
         <include refid="Join_Column_List"/>
         ) t
         <include refid="Where_Cause"/>
-        ${last}
+        <if test="last != null">
+            ${last}
+        </if>
     </select>
 
     <select id="selectMonitorCount" resultType="java.lang.Integer">

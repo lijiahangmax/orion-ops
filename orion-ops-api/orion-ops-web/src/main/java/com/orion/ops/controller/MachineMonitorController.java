@@ -1,7 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.lang.utils.Booleans;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.entity.request.machine.MachineMonitorRequest;
 import com.orion.ops.entity.vo.machine.MachineMonitorVO;
@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 @RequestMapping("/orion/api/monitor")
 public class MachineMonitorController {
 
-    // TODO check runner clean runner 操作日志 批量安装 批量升级 批量检查
+    // TODO 操作日志
 
     @Resource
     private MachineMonitorService machineMonitorService;
@@ -45,7 +45,7 @@ public class MachineMonitorController {
 
     @PostMapping("/set-config")
     @ApiOperation(value = "设置监控配置")
-    public Integer setMonitorConfig(@RequestBody MachineMonitorRequest request) {
+    public MachineMonitorVO setMonitorConfig(@RequestBody MachineMonitorRequest request) {
         Valid.notNull(request.getId());
         Valid.notBlank(request.getUrl());
         Valid.notBlank(request.getAccessToken());
@@ -54,17 +54,24 @@ public class MachineMonitorController {
 
     @PostMapping("/test")
     @ApiOperation(value = "测试连接监控")
-    public HttpWrapper<Integer> testConnect(@RequestBody MachineMonitorRequest request) {
+    public String testConnect(@RequestBody MachineMonitorRequest request) {
         String url = Valid.notBlank(request.getUrl());
         String accessToken = Valid.notBlank(request.getAccessToken());
-        return machineMonitorService.testPingMonitor(url, accessToken);
+        return machineMonitorService.getMonitorVersion(url, accessToken);
     }
 
     @PostMapping("/install")
     @ApiOperation(value = "安装监控插件")
-    public Integer installMonitorAgent(@RequestBody MachineMonitorRequest request) {
+    public MachineMonitorVO installMonitorAgent(@RequestBody MachineMonitorRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
-        return machineMonitorService.installMonitorAgent(machineId);
+        return machineMonitorService.installMonitorAgent(machineId, Booleans.isTrue(request.getUpgrade()));
+    }
+
+    @PostMapping("/check")
+    @ApiOperation(value = "检查监控插件状态")
+    public MachineMonitorVO checkMonitorStatus(@RequestBody MachineMonitorRequest request) {
+        Long machineId = Valid.notNull(request.getMachineId());
+        return machineMonitorService.checkMonitorStatus(machineId);
     }
 
 }

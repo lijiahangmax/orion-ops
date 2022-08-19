@@ -1,7 +1,6 @@
 package com.orion.ops.service.api;
 
 import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.entity.domain.MachineMonitorDO;
 import com.orion.ops.entity.request.machine.MachineMonitorRequest;
 import com.orion.ops.entity.vo.machine.MachineMonitorVO;
@@ -45,9 +44,9 @@ public interface MachineMonitorService {
      * 更新监控配置
      *
      * @param request request
-     * @return effect
+     * @return status
      */
-    Integer updateMonitorConfig(MachineMonitorRequest request);
+    MachineMonitorVO updateMonitorConfig(MachineMonitorRequest request);
 
     /**
      * 更新监控配置
@@ -59,14 +58,6 @@ public interface MachineMonitorService {
     Integer updateMonitorConfigByMachineId(Long machineId, MachineMonitorDO update);
 
     /**
-     * 安装监控插件
-     *
-     * @param machineId machineId
-     * @return status
-     */
-    Integer installMonitorAgent(Long machineId);
-
-    /**
      * 通过机器 id 删除
      *
      * @param machineIdList machineIdList
@@ -75,19 +66,29 @@ public interface MachineMonitorService {
     Integer deleteByMachineIdList(List<Long> machineIdList);
 
     /**
-     * 测试连接监控插件
+     * 安装监控插件
+     *
+     * @param machineId machineId
+     * @param upgrade   upgrade
+     * @return status
+     */
+    MachineMonitorVO installMonitorAgent(Long machineId, Boolean upgrade);
+
+    /**
+     * 检测监控插件状态
+     *
+     * @param machineId machineId
+     * @return status
+     */
+    MachineMonitorVO checkMonitorStatus(Long machineId);
+
+    /**
+     * 获取版本
      *
      * @param url         url
      * @param accessToken accessToken
-     * @return wrapper
+     * @return version
      */
-    HttpWrapper<Integer> testPingMonitor(String url, String accessToken);
-
-    /**
-     * 设置版本及状态
-     *
-     * @param id id
-     */
-    void setVersionAndStatus(Long id);
+    String getMonitorVersion(String url, String accessToken);
 
 }
