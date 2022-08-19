@@ -63,22 +63,25 @@ export default {
       loading: false,
       id: null,
       record: null,
+      formData: null,
       layout,
       decorators: getDecorators.call(this),
       form: this.$form.createForm(this)
     }
   },
   methods: {
-    open(machineId) {
+    open(record) {
       this.id = null
-      this.$api.getMachineMonitorConfig({ machineId })
-      .then(({ data }) => {
+      this.record = record
+      this.$api.getMachineMonitorConfig({
+        machineId: record.machineId
+      }).then(({ data }) => {
         this.form.resetFields()
         this.visible = true
         this.id = data.id
-        this.record = pick(Object.assign({}, data), 'url', 'accessToken')
+        this.formData = pick(Object.assign({}, data), 'url', 'accessToken')
         this.$nextTick(() => {
-          this.form.setFieldsValue(this.record)
+          this.form.setFieldsValue(this.formData)
         })
       })
     },
@@ -98,8 +101,12 @@ export default {
     },
     async ping(values) {
       try {
-        await this.$api.testPingMachineMonitor(values)
-        this.$message.success('成功连接')
+        const { data } = await this.$api.testPingMachineMonitor(values)
+        if (data) {
+          this.$message.success(`插件版本 V${data}`)
+        } else {
+          this.$message.error('无法连接')
+        }
       } catch (e) {
         this.$message.error('无法连接')
       }
@@ -107,12 +114,13 @@ export default {
     },
     async submit(values) {
       try {
-        await this.$api.setMachineMonitorConfig({
+        const { data } = await this.$api.setMachineMonitorConfig({
           ...values,
           id: this.id
         })
         this.$message.success('保存成功')
-        this.$emit('updated')
+        this.record.status = data.status || this.record.status
+        this.record.currentVersion = data.currentVersion || this.record.currentVersion
         this.close()
       } catch (e) {
         // ignore

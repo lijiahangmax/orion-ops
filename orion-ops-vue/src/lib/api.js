@@ -2431,9 +2431,14 @@ const $api = {
    * 安装机器监控插件
    */
   installMachineMonitorAgent: param => {
-    return $http.$post('/monitor/install', param, {
-      loading: '正在安装/启动...'
-    })
+    return $http.$post('/monitor/install', param)
+  },
+
+  /**
+   * 检测机器监控插件状态
+   */
+  checkMachineMonitorAgentStatus: param => {
+    return $http.$post('/monitor/check', param)
   },
 
   /**

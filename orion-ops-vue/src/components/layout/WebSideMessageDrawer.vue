@@ -1,7 +1,7 @@
 <template>
-  <div class="web-side-message-container">
+  <div class="web-side-message-container pointer" @click="onOpen" title="消息">
     <!-- 触发器 -->
-    <a class="icon-wrapper" @click="onOpen">
+    <a class="icon-wrapper">
       <!-- 红点 -->
       <a-badge class="unread-message-dot" :dot="unreadCount > 0">
         <a-icon class="web-side-message-trigger" type="notification"/>
