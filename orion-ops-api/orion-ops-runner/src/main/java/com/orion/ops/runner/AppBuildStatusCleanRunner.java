@@ -27,7 +27,7 @@ import java.util.Date;
 @Component
 @Order(2300)
 @Slf4j
-public class CleanBuildStatusRunner implements CommandLineRunner {
+public class AppBuildStatusCleanRunner implements CommandLineRunner {
 
     @Resource
     private ApplicationBuildDAO applicationBuildDAO;

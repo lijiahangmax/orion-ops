@@ -25,7 +25,7 @@ import java.util.List;
 @Component
 @Order(3100)
 @Slf4j
-public class RestoreReleaseTimedTask implements CommandLineRunner {
+public class AppReleaseTimedTaskRestoreRunner implements CommandLineRunner {
 
     @Resource
     private ApplicationReleaseDAO applicationReleaseDAO;

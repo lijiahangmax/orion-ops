@@ -29,7 +29,7 @@ import java.util.List;
 @Component
 @Order(2400)
 @Slf4j
-public class CleanReleaseStatusRunner implements CommandLineRunner {
+public class ReleaseStatusCleanRunner implements CommandLineRunner {
 
     @Resource
     private ApplicationReleaseDAO applicationReleaseDAO;

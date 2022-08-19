@@ -25,7 +25,7 @@ import java.util.List;
 @Component
 @Order(2500)
 @Slf4j
-public class CleanRepositoryStatusRunner implements CommandLineRunner {
+public class AppRepositoryStatusCleanRunner implements CommandLineRunner {
 
     @Resource
     private ApplicationRepositoryDAO applicationRepositoryDAO;

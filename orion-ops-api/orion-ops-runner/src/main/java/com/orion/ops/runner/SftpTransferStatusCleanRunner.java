@@ -23,7 +23,7 @@ import java.util.Date;
 @Component
 @Order(2100)
 @Slf4j
-public class CleanTransferStatusRunner implements CommandLineRunner {
+public class SftpTransferStatusCleanRunner implements CommandLineRunner {
 
     @Resource
     private FileTransferLogDAO fileTransferLogDAO;

@@ -30,7 +30,7 @@ import java.util.List;
 @Component
 @Order(1500)
 @Slf4j
-public class SystemEnvInitialize implements CommandLineRunner {
+public class SystemEnvInitializeRunner implements CommandLineRunner {
 
     @Resource
     private SystemEnvDAO systemEnvDAO;
@@ -107,8 +107,8 @@ public class SystemEnvInitialize implements CommandLineRunner {
                 return createOrionOpsPath(Const.REPO_PATH);
             case DIST_PATH:
                 return createOrionOpsPath(Const.DIST_PATH);
-            case MONITOR_AGENT_PATH:
-                return createOrionOpsPath(Const.MONITOR_AGENT_PATH);
+            case MACHINE_MONITOR_AGENT_PATH:
+                return createOrionOpsPath(Const.MACHINE_MONITOR_AGENT_PATH);
             case TAIL_FILE_UPLOAD_PATH:
                 return createOrionOpsPath(Const.TAIL_FILE_PATH);
             case TAIL_MODE:

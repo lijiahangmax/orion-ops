@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Component
 @Order(3400)
 @Slf4j
-public class PipelineTaskRunner implements CommandLineRunner {
+public class AppPipelineTaskRunner implements CommandLineRunner {
 
     @Resource
     private ApplicationPipelineTaskDAO applicationPipelineTaskDAO;

@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 @Component
 @Order(1600)
 @Slf4j
-public class HostMachineInitialize implements CommandLineRunner {
+public class HostMachineInitializeRunner implements CommandLineRunner {
 
     private static final String DEFAULT_PASSWORD = "orionadmin";
 

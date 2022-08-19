@@ -22,7 +22,7 @@ import java.util.Date;
 @Component
 @Order(2200)
 @Slf4j
-public class CleanCommandStatusRunner implements CommandLineRunner {
+public class CommandExecStatusCleanRunner implements CommandLineRunner {
 
     @Resource
     private CommandExecDAO commandExecDAO;
