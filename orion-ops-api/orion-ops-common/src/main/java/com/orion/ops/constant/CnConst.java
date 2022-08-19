@@ -52,6 +52,8 @@ public class CnConst {
 
     public static final String INTRANET_IP = "内网IP";
 
-    public static final String ZERO = "0";
+    public static final String INSTALL = "安装";
+
+    public static final String UPGRADE = "升级";
 
 }

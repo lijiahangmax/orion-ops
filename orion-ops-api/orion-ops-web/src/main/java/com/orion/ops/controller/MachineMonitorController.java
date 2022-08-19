@@ -2,7 +2,9 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Booleans;
+import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.constant.event.EventType;
 import com.orion.ops.entity.request.machine.MachineMonitorRequest;
 import com.orion.ops.entity.vo.machine.MachineMonitorVO;
 import com.orion.ops.service.api.MachineMonitorService;
@@ -26,8 +28,6 @@ import javax.annotation.Resource;
 @RequestMapping("/orion/api/monitor")
 public class MachineMonitorController {
 
-    // TODO 操作日志
-
     @Resource
     private MachineMonitorService machineMonitorService;
 
@@ -45,6 +45,7 @@ public class MachineMonitorController {
 
     @PostMapping("/set-config")
     @ApiOperation(value = "设置监控配置")
+    @EventLog(EventType.UPDATE_MACHINE_MONITOR_CONFIG)
     public MachineMonitorVO setMonitorConfig(@RequestBody MachineMonitorRequest request) {
         Valid.notNull(request.getId());
         Valid.notBlank(request.getUrl());
@@ -62,6 +63,7 @@ public class MachineMonitorController {
 
     @PostMapping("/install")
     @ApiOperation(value = "安装监控插件")
+    @EventLog(EventType.INSTALL_UPGRADE_MACHINE_MONITOR)
     public MachineMonitorVO installMonitorAgent(@RequestBody MachineMonitorRequest request) {
         Long machineId = Valid.notNull(request.getMachineId());
         return machineMonitorService.installMonitorAgent(machineId, Booleans.isTrue(request.getUpgrade()));

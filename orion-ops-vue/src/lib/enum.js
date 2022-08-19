@@ -934,6 +934,10 @@ export const EVENT_CLASSIFY = {
     value: 25,
     label: '代理操作'
   },
+  MACHINE_MONITOR: {
+    value: 27,
+    label: '机器监控'
+  },
   TERMINAL: {
     value: 30,
     label: '终端操作'
@@ -1119,6 +1123,16 @@ export const EVENT_TYPE = {
     value: 2315,
     label: '删除代理',
     classify: 25
+  },
+  UPDATE_MACHINE_MONITOR_CONFIG: {
+    value: 2350,
+    label: '修改配置',
+    classify: 27
+  },
+  INSTALL_UPGRADE_MACHINE_MONITOR: {
+    value: 2355,
+    label: '安装/升级插件',
+    classify: 27
   },
   OPEN_TERMINAL: {
     value: 2400,

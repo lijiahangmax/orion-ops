@@ -156,6 +156,18 @@ public enum EventType {
      */
     DELETE_MACHINE_PROXY(2315, EventClassify.MACHINE_PROXY, "删除代理", "删除代理 <sb>${count}</sb>个"),
 
+    // -------------------- 机器监控 --------------------
+
+    /**
+     * 修改机器监控配置
+     */
+    UPDATE_MACHINE_MONITOR_CONFIG(2350, EventClassify.MACHINE_MONITOR, "修改配置", "修改 <sb>${name}</sb> 机器监控插件配置"),
+
+    /**
+     * 安装或升级机器监控插件
+     */
+    INSTALL_UPGRADE_MACHINE_MONITOR(2355, EventClassify.MACHINE_MONITOR, "安装/升级插件", "${operator} <sb>${name}</sb> 机器监控插件"),
+
     // -------------------- 终端操作 --------------------
 
     /**

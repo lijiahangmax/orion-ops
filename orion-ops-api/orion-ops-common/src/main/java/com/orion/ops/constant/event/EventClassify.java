@@ -40,6 +40,11 @@ public enum EventClassify {
     MACHINE_PROXY(25, "代理操作"),
 
     /**
+     * 机器监控
+     */
+    MACHINE_MONITOR(27, "机器监控"),
+
+    /**
      * 终端操作
      */
     TERMINAL(30, "终端操作"),

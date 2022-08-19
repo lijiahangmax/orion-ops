@@ -72,7 +72,7 @@ public interface MachineMonitorService {
      * @param upgrade   upgrade
      * @return status
      */
-    MachineMonitorVO installMonitorAgent(Long machineId, Boolean upgrade);
+    MachineMonitorVO installMonitorAgent(Long machineId, boolean upgrade);
 
     /**
      * 检测监控插件状态

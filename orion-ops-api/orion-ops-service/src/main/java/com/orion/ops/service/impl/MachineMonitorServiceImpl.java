@@ -8,8 +8,10 @@ import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.Files1;
+import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.SchedulerPools;
+import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.monitor.MonitorConst;
 import com.orion.ops.constant.monitor.MonitorStatus;
 import com.orion.ops.constant.system.SystemEnvAttr;
@@ -26,6 +28,7 @@ import com.orion.ops.handler.http.MachineMonitorHttpApiRequester;
 import com.orion.ops.handler.monitor.MonitorAgentInstallTask;
 import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
 
@@ -100,12 +103,15 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
 
     @Override
     public MachineMonitorVO updateMonitorConfig(MachineMonitorRequest request) {
-        // 查询
+        // 查询配置
         Long id = request.getId();
         String url = request.getUrl();
         String accessToken = request.getAccessToken();
         MachineMonitorDO monitor = machineMonitorDAO.selectById(id);
         Valid.notNull(monitor, MessageConst.CONFIG_ABSENT);
+        // 查询机器
+        MachineInfoDO machine = machineInfoDAO.selectById(monitor.getMachineId());
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 更新
         MachineMonitorDO update = new MachineMonitorDO();
         update.setId(id);
@@ -129,6 +135,9 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         MachineMonitorVO returnValue = new MachineMonitorVO();
         returnValue.setStatus(update.getMonitorStatus());
         returnValue.setCurrentVersion(update.getAgentVersion());
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.NAME, machine.getMachineName());
+        EventParamsHolder.addParams(update);
         return returnValue;
     }
 
@@ -147,8 +156,8 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
     }
 
     @Override
-    public MachineMonitorVO installMonitorAgent(Long machineId, Boolean upgrade) {
-        // 查询
+    public MachineMonitorVO installMonitorAgent(Long machineId, boolean upgrade) {
+        // 查询配置
         MachineMonitorVO config = this.getMonitorConfig(machineId);
         Valid.neq(config.getStatus(), MonitorStatus.STARTING.getStatus(), MessageConst.AGENT_STATUS_IS_STARTING);
         boolean reinstall = upgrade;
@@ -182,6 +191,9 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         MachineMonitorVO returnValue = new MachineMonitorVO();
         returnValue.setStatus(update.getMonitorStatus());
         returnValue.setCurrentVersion(update.getAgentVersion());
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.OPERATOR, upgrade ? CnConst.UPGRADE : CnConst.INSTALL);
+        EventParamsHolder.addParam(EventKeys.NAME, config.getMachineName());
         return returnValue;
     }
 
