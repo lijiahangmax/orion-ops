@@ -308,6 +308,23 @@ public enum EventType {
      */
     DELETE_TEMPLATE(2815, EventClassify.TEMPLATE, "删除模板", "删除模板 <sb>${count}</sb>个"),
 
+    // -------------------- 模板操作 --------------------
+
+    /**
+     * 添加 webhook 配置
+     */
+    ADD_WEBHOOK(2905, EventClassify.WEBHOOK, "添加配置", "添加 webhook <sb>${webhookName}</sb>"),
+
+    /**
+     * 修改 webhook 配置
+     */
+    UPDATE_WEBHOOK(2910, EventClassify.WEBHOOK, "修改配置", "修改 webhook <sb>${name}</sb>"),
+
+    /**
+     * 删除 webhook 配置
+     */
+    DELETE_WEBHOOK(2915, EventClassify.WEBHOOK, "删除配置", "删除 webhook <sb>${name}</sb>个"),
+
     // -------------------- 应用操作 --------------------
 
     /**

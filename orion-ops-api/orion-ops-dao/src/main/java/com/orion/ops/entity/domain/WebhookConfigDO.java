@@ -21,6 +21,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @TableName("webhook_config")
 @ApiModel(value = "WebhookConfigDO对象", description = "webhook 配置")
+@SuppressWarnings("ALL")
 public class WebhookConfigDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,6 +38,9 @@ public class WebhookConfigDO implements Serializable {
     @TableField("webhook_url")
     private String webhookUrl;
 
+    /**
+     * @see com.orion.ops.constant.webhook.WebhookType
+     */
     @ApiModelProperty(value = "类型 10: 钉钉机器人")
     @TableField("webhook_type")
     private Integer webhookType;

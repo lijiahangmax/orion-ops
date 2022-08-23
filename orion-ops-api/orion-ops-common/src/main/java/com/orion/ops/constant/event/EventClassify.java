@@ -70,6 +70,11 @@ public enum EventClassify {
     TEMPLATE(50, "模板操作"),
 
     /**
+     * webhook 操作
+     */
+    WEBHOOK(52, "webhook操作"),
+
+    /**
      * 用户操作
      */
     USER(55, "用户操作"),

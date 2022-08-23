@@ -137,13 +137,23 @@
     ]
   },
   {
-    "name": "系统管理",
-    "icon": "control",
+    "name": "信息管理",
+    "icon": "container",
     "children": [
       {
         "name": "模板配置",
         "path": "/template/list"
       },
+      {
+        "name": "webhook配置",
+        "path": "/webhook/list"
+      }
+    ]
+  },
+  {
+    "name": "系统管理",
+    "icon": "control",
+    "children": [
       {
         "name": "系统变量",
         "path": "/system/env"
