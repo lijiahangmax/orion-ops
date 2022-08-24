@@ -161,7 +161,7 @@
         "path": "/template/list"
       },
       {
-        "name": "webhook配置",
+        "name": "webhook 配置",
         "path": "/webhook/list"
       }
     ]

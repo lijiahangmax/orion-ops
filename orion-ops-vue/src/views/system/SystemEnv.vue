@@ -151,7 +151,7 @@ import { formatDate } from '@/lib/filters'
 import { HISTORY_VALUE_TYPE, VIEW_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddSystemEnvModal from '@/components/system/AddSystemEnvModal'
-import EnvHistoryModal from '@/components/history/EnvHistoryModal'
+import EnvHistoryModal from '@/components/content/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [

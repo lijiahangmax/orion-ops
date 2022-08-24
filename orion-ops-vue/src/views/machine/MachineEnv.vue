@@ -197,7 +197,7 @@ import { formatDate } from '@/lib/filters'
 import { HISTORY_VALUE_TYPE, VIEW_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddMachineEnvModal from '@/components/machine/AddMachineEnvModal'
-import EnvHistoryModal from '@/components/history/EnvHistoryModal'
+import EnvHistoryModal from '@/components/content/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 import MachineChecker from '@/components/machine/MachineChecker'
 
