@@ -2463,7 +2463,7 @@ const $api = {
   },
 
   /**
-   * 查询机器磁盘名称
+   * 查询机器硬盘名称
    */
   getMachineDiskName: param => {
     return $http.$get('/monitor-endpoint/disk-name', param)
@@ -2491,10 +2491,51 @@ const $api = {
   },
 
   /**
-   * 查询机器磁盘图表
+   * 查询机器硬盘图表
    */
   getMachineMonitorDiskChart: param => {
     return $http.$post('/monitor-endpoint/chart-disk', param)
+  },
+
+  /**
+   * 添加 webhook 配置
+   */
+  addWebhookConfig: param => {
+    return $http.$post('/webhook-config/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改 webhook 配置
+   */
+  updateWebhookConfig: param => {
+    return $http.$post('/webhook-config/update', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 删除 webhook 配置
+   */
+  deleteWebhookConfig: param => {
+    return $http.$post('/webhook-config/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取 webhook 详情
+   */
+  getWebhookConfigDetail: param => {
+    return $http.$post('/webhook-config/get', param)
+  },
+
+  /**
+   * 获取 webhook 列表
+   */
+  getWebhookConfigList: param => {
+    return $http.$post('/webhook-config/list', param)
   }
 
 }

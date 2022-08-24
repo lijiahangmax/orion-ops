@@ -147,7 +147,7 @@
 import { enumValueOf, BATCH_EXEC_STATUS, ENABLE_STATUS, FILE_DOWNLOAD_TYPE, FILE_TAIL_TYPE } from '@/lib/enum'
 import MachineChecker from '@/components/machine/MachineChecker'
 import Editor from '@/components/editor/Editor'
-import TemplateSelector from '@/components/template/TemplateSelector'
+import TemplateSelector from '@/components/content/TemplateSelector'
 import LogAppender from '@/components/log/LogAppender'
 
 export default {

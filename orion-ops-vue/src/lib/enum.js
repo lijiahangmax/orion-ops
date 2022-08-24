@@ -958,6 +958,10 @@ export const EVENT_CLASSIFY = {
     value: 50,
     label: '模板操作'
   },
+  WEBHOOK: {
+    value: 52,
+    label: 'webhook操作'
+  },
   USER: {
     value: 55,
     label: '用户操作'
@@ -1263,6 +1267,21 @@ export const EVENT_TYPE = {
     value: 2815,
     label: '删除模板',
     classify: 50
+  },
+  ADD_WEBHOOK: {
+    value: 2905,
+    label: '添加配置',
+    classify: 52
+  },
+  UPDATE_WEBHOOK: {
+    value: 2910,
+    label: '修改配置',
+    classify: 52
+  },
+  DELETE_WEBHOOK: {
+    value: 2915,
+    label: '删除配置',
+    classify: 52
   },
   ADD_USER: {
     value: 1105,
@@ -2615,5 +2634,15 @@ export const MONITOR_DATA_GRANULARITY = {
       const e = end - start
       return 60 * 60 * 24 * 7 <= e
     }
+  }
+}
+
+/**
+ * webhook 类型
+ */
+export const WEBHOOK_TYPE = {
+  DING_ROBOT: {
+    value: 10,
+    label: '钉钉机器人'
   }
 }

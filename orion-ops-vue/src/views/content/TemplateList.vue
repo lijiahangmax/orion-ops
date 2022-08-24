@@ -101,7 +101,7 @@
 <script>
 import { formatDate } from '@/lib/filters'
 import { IMPORT_TYPE } from '@/lib/enum'
-import AddTemplateModal from '@/components/template/AddTemplateModal'
+import AddTemplateModal from '@/components/content/AddTemplateModal'
 import EditorPreview from '@/components/preview/EditorPreview'
 import CommandTemplateExportModal from '@/components/export/CommandTemplateExportModal'
 import DataImportModal from '@/components/import/DataImportModal'

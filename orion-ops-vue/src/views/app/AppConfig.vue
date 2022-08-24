@@ -43,7 +43,7 @@ export default {
     AddAppForm,
     AppBuildConfigForm: () => import('@/components/app/AppBuildConfigForm'),
     AppReleaseConfigForm: () => import('@/components/app/AppReleaseConfigForm'),
-    TemplateSelector: () => import('@/components/template/TemplateSelector')
+    TemplateSelector: () => import('@/components/content/TemplateSelector')
   },
   data() {
     return {

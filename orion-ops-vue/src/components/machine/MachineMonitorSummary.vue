@@ -144,17 +144,17 @@
         </a-row>
       </a-col>
     </a-row>
-    <!-- 第二层 磁盘&进程 -->
+    <!-- 第二层 硬盘&进程 -->
     <a-row class="metrics-floor-2">
-      <!-- 磁盘 -->
+      <!-- 硬盘 -->
       <a-col :span="6">
         <div class="machine-card-wrapper machine-disk-wrapper">
           <a-card :loading="summaryLoading" :bodyStyle="{padding: '18px'}">
-            <h3 class="card-title">磁盘信息</h3>
+            <h3 class="card-title">硬盘信息</h3>
             <div class="disk-info-container">
               <div class="disk-info-box" v-for="(disk, index) of disks" :key="index">
                 <div class="disk-info-wrapper">
-                  <!-- 磁盘信息 -->
+                  <!-- 硬盘信息 -->
                   <div class="disk-text-wrapper">
                     <span class="disk-mount-text auto-ellipsis-item">{{ disk.name }}</span>
                     <span class="disk-using-text auto-ellipsis-item">可用: {{ disk.freeSpace }}</span>

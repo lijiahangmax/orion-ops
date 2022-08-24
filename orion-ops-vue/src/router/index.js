@@ -410,7 +410,16 @@ const routes = [
           requireAuth: true,
           title: '模板配置'
         },
-        component: () => import('../views/template/TemplateList')
+        component: () => import('../views/content/TemplateList')
+      },
+      {
+        path: '/webhook/list',
+        name: 'webhookList',
+        meta: {
+          requireAuth: true,
+          title: 'webhook 配置'
+        },
+        component: () => import('../views/content/WebhookList')
       },
       {
         path: '/system/env',

@@ -79,7 +79,7 @@ public class WebhookConfigController {
      */
     private void checkParams(WebhookConfigRequest request) {
         Valid.notNull(WebhookType.of(request.getType()));
-        Valid.allNotBlank(request.getName(), request.getUrl(), request.getConfig());
+        Valid.allNotBlank(request.getName(), request.getUrl());
     }
 
 }
