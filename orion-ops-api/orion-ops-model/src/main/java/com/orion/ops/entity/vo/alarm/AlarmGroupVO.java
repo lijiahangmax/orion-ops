@@ -27,7 +27,7 @@ public class AlarmGroupVO {
     private String description;
 
     @ApiModelProperty(value = "组员名称")
-    private String groupUsers;
+    private List<AlarmGroupUserVO> groupUsers;
 
     @ApiModelProperty(value = "报警组员id")
     private List<Long> userIdList;

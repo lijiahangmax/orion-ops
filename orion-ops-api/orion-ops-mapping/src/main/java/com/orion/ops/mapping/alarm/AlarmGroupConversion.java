@@ -2,6 +2,8 @@ package com.orion.ops.mapping.alarm;
 
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.AlarmGroupDO;
+import com.orion.ops.entity.domain.AlarmGroupUserDO;
+import com.orion.ops.entity.vo.alarm.AlarmGroupUserVO;
 import com.orion.ops.entity.vo.alarm.AlarmGroupVO;
 
 /**
@@ -19,6 +21,16 @@ public class AlarmGroupConversion {
             vo.setId(p.getId());
             vo.setName(p.getGroupName());
             vo.setDescription(p.getGroupDescription());
+            return vo;
+        });
+    }
+
+    static {
+        TypeStore.STORE.register(AlarmGroupUserDO.class, AlarmGroupUserVO.class, p -> {
+            AlarmGroupUserVO vo = new AlarmGroupUserVO();
+            vo.setId(p.getId());
+            vo.setUserId(p.getUserId());
+            vo.setUsername(p.getUsername());
             return vo;
         });
     }

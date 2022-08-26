@@ -10,6 +10,7 @@ import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.request.alarm.AlarmGroupRequest;
+import com.orion.ops.entity.vo.alarm.AlarmGroupUserVO;
 import com.orion.ops.entity.vo.alarm.AlarmGroupVO;
 import com.orion.ops.service.api.AlarmGroupNotifyService;
 import com.orion.ops.service.api.AlarmGroupService;
@@ -193,12 +194,12 @@ public class AlarmGroupServiceImpl implements AlarmGroupService {
                 .collect(Collectors.toMap(UserInfoDO::getId, UserInfoDO::getNickname));
         // 组合用户信息
         dataGrid.forEach(row -> {
-            String groupUserName = groupUsers.stream()
+            List<AlarmGroupUserVO> groupUserList = groupUsers.stream()
                     .filter(s -> s.getGroupId().equals(row.getId()))
-                    .map(AlarmGroupUserDO::getUserId)
-                    .map(userNickNameMap::get)
-                    .collect(Collectors.joining(", "));
-            row.setGroupUsers(groupUserName);
+                    .map(s -> Converts.to(s, AlarmGroupUserVO.class))
+                    .peek(s -> s.setNickname(userNickNameMap.get(s.getUserId())))
+                    .collect(Collectors.toList());
+            row.setGroupUsers(groupUserList);
         });
         return dataGrid;
     }
