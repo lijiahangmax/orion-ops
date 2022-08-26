@@ -386,6 +386,15 @@ const routes = [
         component: () => import('../views/user/UserList')
       },
       {
+        path: '/alarm/group/list',
+        name: 'alarmGroupList',
+        meta: {
+          requireAuth: true,
+          title: '报警组列表'
+        },
+        component: () => import('../views/alarm/AlarmGroupList')
+      },
+      {
         path: '/user/detail',
         name: 'userDetail',
         meta: {

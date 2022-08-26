@@ -2,25 +2,37 @@
   <a-modal v-model="visible"
            :title="title"
            :width="650"
+           :dialogStyle="{top: '128px'}"
+           :bodyStyle="{padding: '24px 8px 0 8px'}"
            :okButtonProps="{props: {disabled: loading}}"
            :maskClosable="false"
            :destroyOnClose="true"
+           :mask="mask"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="环境名称" hasFeedback>
+        <a-form-item label="报警组名称">
           <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="唯一标识" hasFeedback>
-          <a-input v-decorator="decorators.tag" allowClear/>
+        <a-form-item label="报警组员">
+          <a-select mode="multiple" v-decorator="decorators.userIdList" optionLabelProp="label" allowClear>
+            <a-select-option v-for="user of userList"
+                             :key="user.id"
+                             :value="user.id"
+                             :label="user.nickname">
+              {{ user.nickname }} ({{ user.username }})
+            </a-select-option>
+          </a-select>
         </a-form-item>
-        <a-form-item label="是否需要审核">
-          <a-radio-group v-decorator="decorators.releaseAudit" buttonStyle="solid">
-            <a-radio-button v-for="type in PROFILE_AUDIT_STATUS" :key="type.value" :value="type.value">
-              {{ type.label }}
-            </a-radio-button>
-          </a-radio-group>
+        <a-form-item label="报警通知方式">
+          <a-select mode="multiple" v-decorator="decorators.notifyIdList" allowClear>
+            <a-select-option v-for="webhook of webhookList"
+                             :key="webhook.id"
+                             :value="webhook.id">
+              {{ webhook.name }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="描述">
           <a-textarea v-decorator="decorators.description" allowClear/>
@@ -31,8 +43,9 @@
 </template>
 
 <script>
+
 import { pick } from 'lodash'
-import { PROFILE_AUDIT_STATUS } from '@/lib/enum'
+import { WEBHOOK_TYPE } from '@/lib/enum'
 
 const layout = {
   labelCol: { span: 5 },
@@ -44,72 +57,89 @@ function getDecorators() {
     name: ['name', {
       rules: [{
         required: true,
-        message: '请输入环境名称'
+        message: '请输入报警组名称'
       }, {
-        max: 32,
-        message: '环境名称长度不能大于32位'
-      }]
-    }],
-    tag: ['tag', {
-      rules: [{
-        required: true,
-        message: '请输入唯一标识'
-      }, {
-        max: 32,
-        message: '唯一标识长度不能大于32位'
-      }]
-    }],
-    releaseAudit: ['releaseAudit', {
-      initialValue: 2,
-      rules: [{
-        required: true,
-        message: '请选择是否需要审核'
+        max: 64,
+        message: '报警组名称长度不能大于64位'
       }]
     }],
     description: ['description', {
       rules: [{
-        max: 64,
-        message: '描述长度不能大于64位'
+        max: 128,
+        message: '描述长度不能大于128位'
+      }]
+    }],
+    userIdList: ['userIdList', {
+      rules: [{
+        required: true,
+        message: '请选择报警组员'
+      }]
+    }],
+    notifyIdList: ['notifyIdList', {
+      rules: [{
+        required: true,
+        message: '请选择报警通知方式'
       }]
     }]
   }
 }
 
 export default {
-  name: 'AddAppProfileModal',
+  name: 'AddAlarmGroup',
+  props: {
+    mask: Boolean
+  },
   data: function() {
     return {
-      PROFILE_AUDIT_STATUS,
+      WEBHOOK_TYPE,
       id: null,
       visible: false,
       title: null,
       loading: false,
       record: null,
       layout,
+      userList: [],
+      webhookList: [],
       decorators: getDecorators.call(this),
       form: this.$form.createForm(this)
     }
   },
   methods: {
     add() {
-      this.title = '新增环境'
+      this.title = '新增报警组'
       this.initRecord({})
     },
     update(id) {
-      this.title = '修改环境'
-      this.$api.getProfileDetail({ id })
+      this.title = '修改修改报警组'
+      this.$api.getAlarmGroupDetail({ id })
       .then(({ data }) => {
         this.initRecord(data)
       })
     },
-    initRecord(row) {
+    async initRecord(row) {
       this.form.resetFields()
       this.visible = true
+      await this.loadMetaData()
       this.id = row.id
-      this.record = pick(Object.assign({}, row), 'name', 'tag', 'releaseAudit', 'description')
+      this.record = pick(Object.assign({}, row), 'name', 'description', 'userIdList', 'notifyIdList')
       this.$nextTick(() => {
         this.form.setFieldsValue(this.record)
       })
+    },
+    async loadMetaData() {
+      if (this.userList.length || this.webhookList.length) {
+        return
+      }
+      this.loading = true
+      try {
+        const { data: userList } = await this.$api.getUserList({ limit: 10000 })
+        this.userList = userList.rows
+        const { data: webhookList } = await this.$api.getWebhookConfigList({ limit: 10000 })
+        this.webhookList = webhookList.rows
+        this.loading = false
+      } catch {
+        this.$message.error('加载数据失败')
+      }
     },
     check() {
       this.loading = true
@@ -126,12 +156,12 @@ export default {
       try {
         if (!this.id) {
           // 添加
-          res = await this.$api.addProfile({
+          res = await this.$api.addAlarmGroup({
             ...values
           })
         } else {
           // 修改
-          res = await this.$api.updateProfile({
+          res = await this.$api.updateAlarmGroup({
             ...values,
             id: this.id
           })

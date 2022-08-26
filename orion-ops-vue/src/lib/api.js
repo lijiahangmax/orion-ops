@@ -2536,6 +2536,47 @@ const $api = {
    */
   getWebhookConfigList: param => {
     return $http.$post('/webhook-config/list', param)
+  },
+
+  /**
+   * 添加报警组配置
+   */
+  addAlarmGroup: param => {
+    return $http.$post('/alarm-group/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改报警组配置
+   */
+  updateAlarmGroup: param => {
+    return $http.$post('/alarm-group/update', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 删除报警组配置
+   */
+  deleteAlarmGroup: param => {
+    return $http.$post('/alarm-group/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取报警组详情
+   */
+  getAlarmGroupDetail: param => {
+    return $http.$post('/alarm-group/get', param)
+  },
+
+  /**
+   * 获取报警组列表
+   */
+  getAlarmGroupList: param => {
+    return $http.$post('/alarm-group/list', param)
   }
 
 }

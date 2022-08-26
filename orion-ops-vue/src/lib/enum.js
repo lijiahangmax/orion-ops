@@ -156,13 +156,11 @@ export const AUDIT_STATUS = {
 export const PROFILE_AUDIT_STATUS = {
   ENABLE: {
     value: 1,
-    label: '需要审核',
-    color: 'blue'
+    label: '需要审核'
   },
   DISABLE: {
     value: 2,
-    label: '无需审核',
-    color: 'green'
+    label: '无需审核'
   }
 }
 
@@ -966,6 +964,10 @@ export const EVENT_CLASSIFY = {
     value: 55,
     label: '用户操作'
   },
+  ALARM_GROUP: {
+    value: 57,
+    label: '报警组操作'
+  },
   APP: {
     value: 60,
     label: '应用操作'
@@ -1304,9 +1306,24 @@ export const EVENT_TYPE = {
     classify: 55
   },
   UNLOCK_USER: {
-    value: 1125,
+    value: 1205,
     label: '解锁用户',
     classify: 55
+  },
+  ADD_ALARM_GROUP: {
+    value: 1210,
+    label: '添加报警组',
+    classify: 57
+  },
+  UPDATE_ALARM_GROUP: {
+    value: 1215,
+    label: '修改报警组',
+    classify: 57
+  },
+  DELETE_ALARM_GROUP: {
+    value: 1125,
+    label: '删除报警组',
+    classify: 57
   },
   ADD_APP: {
     value: 3005,
