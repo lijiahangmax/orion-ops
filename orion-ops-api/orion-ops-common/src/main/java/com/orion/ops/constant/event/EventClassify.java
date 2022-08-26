@@ -80,6 +80,11 @@ public enum EventClassify {
     USER(55, "用户操作"),
 
     /**
+     * 报警组操作
+     */
+    ALARM_GROUP(57, "报警组操作"),
+
+    /**
      * 应用操作
      */
     APP(60, "应用操作"),

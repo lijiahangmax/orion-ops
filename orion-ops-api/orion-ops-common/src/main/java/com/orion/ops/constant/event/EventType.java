@@ -58,6 +58,23 @@ public enum EventType {
      */
     UNLOCK_USER(1125, EventClassify.USER, "解锁用户", "解锁用户 <sb>${username}</sb>"),
 
+    // -------------------- 报警组操作 --------------------
+
+    /**
+     * 添加报警组
+     */
+    ADD_ALARM_GROUP(1205, EventClassify.ALARM_GROUP, "添加报警组", "添加报警组 <sb>${name}</sb>"),
+
+    /**
+     * 修改报警组
+     */
+    UPDATE_ALARM_GROUP(1210, EventClassify.ALARM_GROUP, "修改报警组", "修改报警组 <sb>${before}</sb>"),
+
+    /**
+     * 删除报警组
+     */
+    DELETE_ALARM_GROUP(1215, EventClassify.ALARM_GROUP, "删除报警组", "删除报警组 <sb>${name}</sb>"),
+
     // -------------------- 机器操作 --------------------
 
     /**

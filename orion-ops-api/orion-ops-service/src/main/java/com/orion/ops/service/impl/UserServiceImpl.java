@@ -17,7 +17,6 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.dao.UserInfoDAO;
@@ -26,6 +25,7 @@ import com.orion.ops.entity.dto.user.UserDTO;
 import com.orion.ops.entity.request.user.UserInfoRequest;
 import com.orion.ops.entity.vo.user.UserInfoVO;
 import com.orion.ops.interceptor.UserActiveInterceptor;
+import com.orion.ops.service.api.AlarmGroupUserService;
 import com.orion.ops.service.api.UserService;
 import com.orion.ops.utils.*;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserInfoDAO userInfoDAO;
+
+    @Resource
+    private AlarmGroupUserService alarmGroupUserService;
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -144,6 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer deleteUser(Long id) {
         Long userId = Currents.getUserId();
         // 删除检查
@@ -151,8 +155,10 @@ public class UserServiceImpl implements UserService {
         // 查询用户信息
         UserInfoDO userInfo = userInfoDAO.selectById(id);
         Valid.notNull(userInfo, MessageConst.UNKNOWN_USER);
-        // 删除
+        // 删除用户
         int effect = userInfoDAO.deleteById(id);
+        // 删除报警组员
+        effect += alarmGroupUserService.deleteByUserId(id);
         // 删除token
         RedisUtils.deleteLoginToken(redisTemplate, id);
         // 删除活跃时间

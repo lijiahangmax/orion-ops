@@ -135,6 +135,10 @@
         "path": "/user/list"
       },
       {
+        "name": "报警联系组",
+        "path": "/alarm/group/list"
+      },
+      {
         "name": "个人信息",
         "path": "/user/detail"
       }

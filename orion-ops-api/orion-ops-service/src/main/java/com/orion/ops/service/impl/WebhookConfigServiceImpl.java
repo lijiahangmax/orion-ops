@@ -10,6 +10,7 @@ import com.orion.ops.dao.WebhookConfigDAO;
 import com.orion.ops.entity.domain.WebhookConfigDO;
 import com.orion.ops.entity.request.webhook.WebhookConfigRequest;
 import com.orion.ops.entity.vo.webhook.WebhookConfigVO;
+import com.orion.ops.service.api.AlarmGroupNotifyService;
 import com.orion.ops.service.api.WebhookConfigService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.EventParamsHolder;
@@ -32,6 +33,9 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
 
     @Resource
     private WebhookConfigDAO webhookConfigDAO;
+
+    @Resource
+    private AlarmGroupNotifyService alarmGroupNotifyService;
 
     @Override
     public DataGrid<WebhookConfigVO> getWebhookList(WebhookConfigRequest request) {
@@ -102,7 +106,8 @@ public class WebhookConfigServiceImpl implements WebhookConfigService {
         Valid.notNull(config, MessageConst.WEBHOOK_ABSENT);
         // 删除
         int effect = webhookConfigDAO.deleteById(id);
-        // 删除关联
+        // 删除报警组通知方式
+        effect += alarmGroupNotifyService.deleteByWebhookId(id);
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, config.getWebhookName());
         // 设置日志参数
