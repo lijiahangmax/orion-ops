@@ -11,17 +11,18 @@ import java.util.Date;
 
 /**
  * <p>
- * 报警组
+ * 机器报警历史
  * </p>
  *
  * @author Jiahang Li
- * @since 2022-08-25
+ * @since 2022-08-26
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("alarm_group")
-@ApiModel(value = "AlarmGroupDO对象", description = "报警组")
-public class AlarmGroupDO implements Serializable {
+@TableName("machine_alarm_history")
+@ApiModel(value = "MachineAlarmHistoryDO对象", description = "机器报警历史")
+@SuppressWarnings("ALL")
+public class MachineAlarmHistoryDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,23 +30,28 @@ public class AlarmGroupDO implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "报警组名称")
-    @TableField("group_name")
-    private String groupName;
+    @ApiModelProperty(value = "机器id")
+    @TableField("machine_id")
+    private Long machineId;
 
-    @ApiModelProperty(value = "报警组描述")
-    @TableField("group_description")
-    private String groupDescription;
+    /**
+     * @see com.orion.ops.constant.machine.MachineAlarmType
+     */
+    @ApiModelProperty(value = "报警类型 10: cpu使用率 20: 内存使用率")
+    @TableField("alarm_type")
+    private Integer alarmType;
+
+    @ApiModelProperty(value = "报警时间")
+    @TableField("alarm_time")
+    private Date alarmTime;
 
     @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
     private Integer deleted;
 
-    @ApiModelProperty(value = "创建时间")
     @TableField("create_time")
     private Date createTime;
 
-    @ApiModelProperty(value = "修改时间")
     @TableField("update_time")
     private Date updateTime;
 

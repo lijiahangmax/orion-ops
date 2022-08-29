@@ -11,17 +11,17 @@ import java.util.Date;
 
 /**
  * <p>
- * 报警组
+ * 机器报警通知组
  * </p>
  *
  * @author Jiahang Li
- * @since 2022-08-25
+ * @since 2022-08-26
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("alarm_group")
-@ApiModel(value = "AlarmGroupDO对象", description = "报警组")
-public class AlarmGroupDO implements Serializable {
+@TableName("machine_alarm_group")
+@ApiModel(value = "MachineAlarmGroupDO对象", description = "机器报警通知组")
+public class MachineAlarmGroupDO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,13 +29,13 @@ public class AlarmGroupDO implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "报警组名称")
-    @TableField("group_name")
-    private String groupName;
+    @ApiModelProperty(value = "机器id")
+    @TableField("machine_id")
+    private Long machineId;
 
-    @ApiModelProperty(value = "报警组描述")
-    @TableField("group_description")
-    private String groupDescription;
+    @ApiModelProperty(value = " 报警组id")
+    @TableField("group_id")
+    private Long groupId;
 
     @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic
