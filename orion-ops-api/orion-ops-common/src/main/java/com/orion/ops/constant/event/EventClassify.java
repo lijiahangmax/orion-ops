@@ -45,6 +45,11 @@ public enum EventClassify {
     MACHINE_MONITOR(27, "机器监控"),
 
     /**
+     * 机器报警
+     */
+    MACHINE_ALARM(28, "机器报警"),
+
+    /**
      * 终端操作
      */
     TERMINAL(30, "终端操作"),

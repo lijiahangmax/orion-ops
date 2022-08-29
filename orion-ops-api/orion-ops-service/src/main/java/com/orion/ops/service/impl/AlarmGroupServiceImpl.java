@@ -15,6 +15,7 @@ import com.orion.ops.entity.vo.alarm.AlarmGroupVO;
 import com.orion.ops.service.api.AlarmGroupNotifyService;
 import com.orion.ops.service.api.AlarmGroupService;
 import com.orion.ops.service.api.AlarmGroupUserService;
+import com.orion.ops.service.api.MachineAlarmGroupService;
 import com.orion.ops.utils.DataQuery;
 import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.utils.Valid;
@@ -56,6 +57,9 @@ public class AlarmGroupServiceImpl implements AlarmGroupService {
 
     @Resource
     private AlarmGroupNotifyService alarmGroupNotifyService;
+
+    @Resource
+    private MachineAlarmGroupService machineAlarmGroupService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -158,6 +162,8 @@ public class AlarmGroupServiceImpl implements AlarmGroupService {
         effect += alarmGroupUserService.deleteByGroupId(id);
         // 删除通知方式
         effect += alarmGroupNotifyService.deleteByGroupId(id);
+        // 删除机器报警配置组
+        effect += machineAlarmGroupService.deleteByGroupId(id);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID, id);
         EventParamsHolder.addParam(EventKeys.NAME, group.getGroupName());

@@ -157,6 +157,7 @@ public class MonitorAgentInstallTask implements Runnable {
         for (int i = 0; i < 6; i++) {
             try {
                 Threads.sleep(Const.MS_S_10);
+                // TODO notify
                 version = machineMonitorEndpointService.getVersion(machineId);
                 break;
             } catch (Exception e) {

@@ -188,6 +188,13 @@ public enum EventType {
     // -------------------- 终端操作 --------------------
 
     /**
+     * 设置机器报警配置
+     */
+    SET_MACHINE_ALARM_CONFIG(2370, EventClassify.MACHINE_ALARM, "设置机器报警配置", "设置机器 <sb>${name}</sb> 报警配置"),
+
+    // -------------------- 终端操作 --------------------
+
+    /**
      * 打开机器终端
      */
     OPEN_TERMINAL(2400, EventClassify.TERMINAL, "打开机器终端", "打开机器终端 <sb>${machineName}</sb>"),

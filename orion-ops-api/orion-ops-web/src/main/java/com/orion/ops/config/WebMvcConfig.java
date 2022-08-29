@@ -76,10 +76,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/orion/api/**")
                 .excludePathPatterns("/orion/api/auth/**")
                 .order(30);
+        // TODO agent 端点请求头拦截器
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        // TODO agent 暴露端点允许跨域
         // registry.addMapping("/**")
         //         .allowCredentials(true)
         //         .allowedOriginPatterns("*")

@@ -85,6 +85,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private MachineMonitorService machineMonitorService;
 
     @Resource
+    private MachineAlarmConfigService machineAlarmConfigService;
+
+    @Resource
+    private MachineAlarmGroupServiceImpl machineAlarmGroupService;
+
+    @Resource
     private HistoryValueService historyValueService;
 
     @Override
@@ -151,8 +157,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         effect += fileTailService.deleteByMachineIdList(idList);
         // 删除调度任务
         effect += schedulerTaskMachineService.deleteByMachineIdList(idList);
-        // 删除机器监控
+        // 删除监控配置
         effect += machineMonitorService.deleteByMachineIdList(idList);
+        // 删除报警配置
+        effect += machineAlarmConfigService.deleteByMachineIdList(idList);
+        // 删除报警配置组
+        effect += machineAlarmGroupService.deleteByMachineIdList(idList);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());

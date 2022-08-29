@@ -128,6 +128,7 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
             } else {
                 update.setAgentVersion(monitorVersion);
                 update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
+                // TODO notify
             }
         }
         machineMonitorDAO.updateById(update);
