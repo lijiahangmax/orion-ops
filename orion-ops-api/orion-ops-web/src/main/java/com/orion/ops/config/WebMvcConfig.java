@@ -8,10 +8,7 @@ import com.orion.lang.exception.argument.InvalidArgumentException;
 import com.orion.lang.exception.argument.RpcWrapperException;
 import com.orion.lang.utils.Exceptions;
 import com.orion.ops.constant.MessageConst;
-import com.orion.ops.interceptor.AuthenticateInterceptor;
-import com.orion.ops.interceptor.IpFilterInterceptor;
-import com.orion.ops.interceptor.RoleInterceptor;
-import com.orion.ops.interceptor.UserActiveInterceptor;
+import com.orion.ops.interceptor.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.EncryptedDocumentException;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +54,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Resource
     private UserActiveInterceptor userActiveInterceptor;
 
+    @Resource
+    private ExposeApiHeaderInterceptor exposeApiHeaderInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // IP拦截器
@@ -76,18 +76,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/orion/api/**")
                 .excludePathPatterns("/orion/api/auth/**")
                 .order(30);
-        // TODO agent 端点请求头拦截器
+        // 暴露服务请求头拦截器
+        registry.addInterceptor(exposeApiHeaderInterceptor)
+                .addPathPatterns("/orion/expose-api/**")
+                .order(14);
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // TODO agent 暴露端点允许跨域
-        // registry.addMapping("/**")
-        //         .allowCredentials(true)
-        //         .allowedOriginPatterns("*")
-        //         .allowedMethods("*")
-        //         .allowedHeaders("*")
-        //         .maxAge(3600);
+        // 暴露服务允许跨域
+        registry.addMapping("/orion/expose-api/**")
+                .allowCredentials(true)
+                .allowedOriginPatterns("*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .maxAge(3600);
     }
 
     @ExceptionHandler(value = Exception.class)

@@ -24,7 +24,7 @@ public enum ResultCode implements CodeInfo {
     /**
      * 文件未找到
      */
-    FILE_MISSING(720, MessageConst.FILE_ABSENT),
+    FILE_MISSING(720, MessageConst.FILE_MISSING),
 
     /**
      * IP封禁
@@ -34,7 +34,12 @@ public enum ResultCode implements CodeInfo {
     /**
      * 用户禁用
      */
-    USER_DISABLE(740, MessageConst.USER_DISABLED),
+    USER_DISABLED(740, MessageConst.USER_DISABLED),
+
+    /**
+     * 非法访问
+     */
+    ILLEGAL_ACCESS(750, MessageConst.ILLEGAL_ACCESS),
 
     ;
 

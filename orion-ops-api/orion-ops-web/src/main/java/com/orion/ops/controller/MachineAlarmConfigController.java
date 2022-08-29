@@ -25,7 +25,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2022/8/29 15:53
  */
-@Api(tags = "机器报警配置 api")
+@Api(tags = "机器报警配置")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/machine-alarm-config")

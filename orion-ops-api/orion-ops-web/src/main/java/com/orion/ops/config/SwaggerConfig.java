@@ -4,6 +4,7 @@ import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.PropertiesConst;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -32,6 +33,12 @@ import java.util.List;
 @EnableKnife4j
 @Profile({"dev"})
 public class SwaggerConfig {
+
+    @Value("${login.token.header}")
+    private String loginTokenHeader;
+
+    @Value("${expose.api.access.header}")
+    private String accessTokenHeader;
 
     @Bean
     public Docket createRestApi() {
@@ -65,8 +72,9 @@ public class SwaggerConfig {
      * @return security scheme
      */
     private List<SecurityScheme> getSecuritySchemes() {
-        ApiKey loginToken = new ApiKey(PropertiesConst.LOGIN_TOKEN_HEADER, PropertiesConst.LOGIN_TOKEN_HEADER, "header");
-        return Lists.of(loginToken);
+        ApiKey loginToken = new ApiKey(loginTokenHeader, loginTokenHeader, "header");
+        ApiKey accessToken = new ApiKey(accessTokenHeader, accessTokenHeader, "header");
+        return Lists.of(loginToken, accessToken);
     }
 
 }

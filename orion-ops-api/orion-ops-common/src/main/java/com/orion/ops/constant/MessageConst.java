@@ -18,9 +18,11 @@ public class MessageConst {
 
     public static final String NO_PERMISSION = "无操作权限";
 
-    public static final String FILE_ABSENT = "文件不存在";
+    public static final String FILE_MISSING = "文件不存在";
 
     public static final String IP_BAN = "当前IP已被封禁";
+
+    public static final String ILLEGAL_ACCESS = "非法访问";
 
     public static final String ABSENT_PARAM = "参数缺失";
 

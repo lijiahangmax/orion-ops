@@ -8,10 +8,10 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.EnableType;
 import com.orion.ops.constant.ResultCode;
 import com.orion.ops.constant.system.SystemEnvAttr;
-import com.orion.ops.utils.UserHolder;
 import com.orion.ops.entity.dto.user.UserDTO;
 import com.orion.ops.service.api.PassportService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.UserHolder;
 import com.orion.web.servlet.web.Servlets;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -54,7 +54,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
             UserDTO user = passportService.getUserByToken(loginToken, ip);
             if (user != null) {
                 if (Const.DISABLE.equals(user.getUserStatus())) {
-                    rejectWrapper = HttpWrapper.of(ResultCode.USER_DISABLE);
+                    rejectWrapper = HttpWrapper.of(ResultCode.USER_DISABLED);
                 } else {
                     UserHolder.set(user);
                 }
