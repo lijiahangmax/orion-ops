@@ -41,6 +41,10 @@ public class MachineAlarmHistoryDO implements Serializable {
     @TableField("alarm_type")
     private Integer alarmType;
 
+    @ApiModelProperty(value = "报警值")
+    @TableField("alarm_value")
+    private Double alarmValue;
+
     @ApiModelProperty(value = "报警时间")
     @TableField("alarm_time")
     private Date alarmTime;

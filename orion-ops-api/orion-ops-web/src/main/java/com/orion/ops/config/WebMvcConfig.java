@@ -79,7 +79,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // 暴露服务请求头拦截器
         registry.addInterceptor(exposeApiHeaderInterceptor)
                 .addPathPatterns("/orion/expose-api/**")
-                .order(14);
+                .order(40);
     }
 
     @Override

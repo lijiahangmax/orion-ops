@@ -24,6 +24,11 @@ public enum MessageClassify {
      */
     IMPORT(20, "系统消息"),
 
+    /**
+     * 报警信息
+     */
+    ALARM(30, "报警信息"),
+
     ;
 
     private final Integer classify;

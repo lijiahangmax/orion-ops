@@ -93,6 +93,11 @@ public class EventKeys {
     public static final String TYPE = "type";
 
     /**
+     * value
+     */
+    public static final String VALUE = "value";
+
+    /**
      * token
      */
     public static final String TOKEN = "token";

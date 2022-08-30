@@ -212,6 +212,19 @@ public class SchedulerPools {
             .setAllowCoreThreadTimeout(true)
             .build();
 
+    /**
+     * 机器报警 线程池
+     */
+    public static final ThreadPoolExecutor MACHINE_ALARM_SCHEDULER = ExecutorBuilder.create()
+            .setNamedThreadFactory("machine-alarm-thread-")
+            .setCorePoolSize(1)
+            .setMaxPoolSize(Integer.MAX_VALUE)
+            .setKeepAliveTime(Const.MS_S_30)
+            .setWorkQueue(new SynchronousQueue<>())
+            .setAllowCoreThreadTimeout(true)
+            .build();
+
+
     static {
         Systems.addShutdownHook(() -> {
             Threads.shutdownPoolNow(TERMINAL_SCHEDULER, Const.MS_S_3);
@@ -230,6 +243,7 @@ public class SchedulerPools {
             Threads.shutdownPoolNow(PIPELINE_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(ASYNC_IMPORT_SCHEDULER, Const.MS_S_3);
             Threads.shutdownPoolNow(AGENT_INSTALL_SCHEDULER, Const.MS_S_3);
+            Threads.shutdownPoolNow(MACHINE_ALARM_SCHEDULER, Const.MS_S_3);
         });
     }
 

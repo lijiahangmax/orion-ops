@@ -17,16 +17,18 @@ public enum MachineAlarmType {
     /**
      * cpu 使用率
      */
-    CPU_USAGE(10),
+    CPU_USAGE(10, "CPU使用率"),
 
     /**
      * 内存使用率
      */
-    MEMORY_USAGE(20),
+    MEMORY_USAGE(20, "内存使用率"),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static MachineAlarmType of(Integer type) {
         if (type == null) {

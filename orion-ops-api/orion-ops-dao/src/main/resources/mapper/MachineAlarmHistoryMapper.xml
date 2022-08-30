@@ -7,6 +7,7 @@
         <id column="id" property="id"/>
         <result column="machine_id" property="machineId"/>
         <result column="alarm_type" property="alarmType"/>
+        <result column="alarm_value" property="alarmValue"/>
         <result column="alarm_time" property="alarmTime"/>
         <result column="deleted" property="deleted"/>
         <result column="create_time" property="createTime"/>
@@ -16,7 +17,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id
-        , machine_id, alarm_type, alarm_time, deleted, create_time, update_time
+        , machine_id, alarm_type, alarm_value, alarm_time, deleted, create_time, update_time
     </sql>
 
 </mapper>
