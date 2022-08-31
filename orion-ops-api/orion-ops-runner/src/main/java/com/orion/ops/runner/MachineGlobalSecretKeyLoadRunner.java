@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @Component
 @Order(1700)
 @Slf4j
-public class LoadMachineGlobalSecretKeyRunner implements CommandLineRunner {
+public class MachineGlobalSecretKeyLoadRunner implements CommandLineRunner {
 
     @Resource
     private MachineKeyService machineKeyService;

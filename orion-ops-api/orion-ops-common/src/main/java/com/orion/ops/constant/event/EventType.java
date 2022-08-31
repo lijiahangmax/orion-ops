@@ -197,6 +197,11 @@ public enum EventType {
      */
     SET_MACHINE_ALARM_GROUP(2375, EventClassify.MACHINE_ALARM, "修改报警联系组", "修改机器 <sb>${name}</sb> 报警联系组"),
 
+    /**
+     * 重新发送报警通知
+     */
+    RENOTIFY_MACHINE_ALARM_GROUP(2380, EventClassify.MACHINE_ALARM, "重新发送报警通知", "重新发送机器 <sb>${name}</sb> 报警通知"),
+
     // -------------------- 终端操作 --------------------
 
     /**

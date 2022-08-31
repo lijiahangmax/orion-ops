@@ -2,6 +2,7 @@ package com.orion.ops.runner;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.Strings;
+import com.orion.lang.utils.Threads;
 import com.orion.ops.constant.monitor.MonitorConst;
 import com.orion.ops.constant.monitor.MonitorStatus;
 import com.orion.ops.dao.MachineMonitorDAO;
@@ -41,8 +42,8 @@ public class MachineMonitorStatusRunner implements CommandLineRunner {
         log.info("重置机器监控插件状态-开始");
         // 清除启动中的状态
         this.clearStartingStatus();
-        // 检查插件状态及版本
-        this.checkMonitorStatus();
+        // 异步检查插件状态及版本
+        Threads.start(this::checkMonitorStatus);
         log.info("重置机器监控插件状态-结束");
     }
 

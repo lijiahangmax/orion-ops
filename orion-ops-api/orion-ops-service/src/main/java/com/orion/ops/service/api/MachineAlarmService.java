@@ -14,6 +14,13 @@ public interface MachineAlarmService {
     /**
      * 触发机器报警
      *
+     * @param alarmHistoryId alarmHistoryId
+     */
+    void triggerMachineAlarm(Long alarmHistoryId);
+
+    /**
+     * 触发机器报警
+     *
      * @param request request
      */
     void triggerMachineAlarm(MachineAlarmRequest request);
