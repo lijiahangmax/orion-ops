@@ -96,7 +96,7 @@ public enum MessageType {
      */
     MACHINE_AGENT_INSTALL_FAILURE(1160, "机器监控插件安装失败", MessageClassify.SYSTEM, "<sb>${name}</sb> 监控插件安装失败, 请手动安装或检查插件配置"),
 
-    // -------------------- 导入消息 --------------------
+    // -------------------- 数据导入 --------------------
 
     /**
      * 机器信息导入成功
@@ -168,13 +168,12 @@ public enum MessageType {
      */
     COMMAND_TEMPLATE_IMPORT_FAILURE(2140, "命令模板导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的命令模板导入操作执行失败"),
 
-    // -------------------- 报警消息 --------------------
+    // -------------------- 系统报警 --------------------
 
     /**
      * 机器发生报警
      */
-    MACHINE_ALARM(3010, "机器发生报警", MessageClassify.ALARM, "机器 <sb 0>${name}</sb>(<sb 0>${host}</sb>) ${time} <sb>${type}</sb>达到<sr>${value}%</sr>, 请及时排查!"),
-
+    MACHINE_ALARM(3010, "机器发生报警", MessageClassify.ALARM, "机器 <sb 0><b>${name}</b></sb>(<sb 0>${host}</sb>) ${time} <sb>${type}</sb>达到<sr><b>${value}%</b></sr>, 请及时排查!"),
 
     ;
 

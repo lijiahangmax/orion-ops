@@ -31,6 +31,14 @@ public interface MachineAlarmConfigService {
     void setAlarmConfig(MachineAlarmConfigRequest request);
 
     /**
+     * 设置报警联系组
+     *
+     * @param machineId   machineId
+     * @param groupIdList groupIdList
+     */
+    void setAlarmGroup(Long machineId, List<Long> groupIdList);
+
+    /**
      * 通过机器id查询
      *
      * @param machineId machineId

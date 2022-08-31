@@ -22,12 +22,12 @@ public enum MessageClassify {
     /**
      * 数据导入
      */
-    IMPORT(20, "系统消息"),
+    IMPORT(20, "数据导入"),
 
     /**
-     * 报警信息
+     * 系统报警
      */
-    ALARM(30, "报警信息"),
+    ALARM(30, "系统报警"),
 
     ;
 

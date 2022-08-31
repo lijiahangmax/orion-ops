@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
 @Service("machineAlarmHistoryService")
 public class MachineAlarmHistoryServiceImpl implements MachineAlarmHistoryService {
 
-    // TODO 列表 数据清理 数据导出  少字段 触发阈值 操作日志
+    // TODO 列表 数据清理 数据导出 操作日志
 
 }

@@ -5,8 +5,6 @@ import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventType;
-import com.orion.ops.constant.machine.MachineAlarmType;
-import com.orion.ops.entity.request.machine.MachineAlarmConfigMetricsRequest;
 import com.orion.ops.entity.request.machine.MachineAlarmConfigRequest;
 import com.orion.ops.entity.vo.machine.MachineAlarmConfigWrapperVO;
 import com.orion.ops.service.api.MachineAlarmConfigService;
@@ -40,20 +38,25 @@ public class MachineAlarmConfigController {
         return machineAlarmConfigService.getAlarmConfig(machineId);
     }
 
-    @PostMapping("/set")
+    @PostMapping("/set-alarm")
     @ApiOperation(value = "设置报警配置")
     @EventLog(EventType.SET_MACHINE_ALARM_CONFIG)
-    public HttpWrapper<?> add(@RequestBody MachineAlarmConfigRequest request) {
+    public HttpWrapper<?> setAlarmConfig(@RequestBody MachineAlarmConfigRequest request) {
         Valid.notNull(request.getMachineId());
-        Valid.notEmpty(request.getGroupIdList());
-        List<MachineAlarmConfigMetricsRequest> config = Valid.notEmpty(request.getConfig());
-        for (MachineAlarmConfigMetricsRequest c : config) {
-            Valid.notNull(MachineAlarmType.of(c.getType()));
-            Valid.gte(c.getAlarmThreshold(), 0D, MessageConst.INVALID_PARAM);
-            Valid.gte(c.getTriggerThreshold(), 0, MessageConst.INVALID_PARAM);
-            Valid.gte(c.getNotifySilence(), 0, MessageConst.INVALID_PARAM);
-        }
+        Valid.gte(request.getAlarmThreshold(), 0D, MessageConst.INVALID_PARAM);
+        Valid.gte(request.getTriggerThreshold(), 0, MessageConst.INVALID_PARAM);
+        Valid.gte(request.getNotifySilence(), 0, MessageConst.INVALID_PARAM);
         machineAlarmConfigService.setAlarmConfig(request);
+        return HttpWrapper.ok();
+    }
+
+    @PostMapping("/set-group")
+    @ApiOperation(value = "设置报警联系组")
+    @EventLog(EventType.SET_MACHINE_ALARM_GROUP)
+    public HttpWrapper<?> setAlarmGroup(@RequestBody MachineAlarmConfigRequest request) {
+        Long machineId = Valid.notNull(request.getMachineId());
+        List<Long> groupIdList = Valid.notEmpty(request.getGroupIdList());
+        machineAlarmConfigService.setAlarmGroup(machineId, groupIdList);
         return HttpWrapper.ok();
     }
 

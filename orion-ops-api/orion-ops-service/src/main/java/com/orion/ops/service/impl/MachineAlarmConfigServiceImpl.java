@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.constant.machine.MachineAlarmType;
 import com.orion.ops.dao.MachineAlarmConfigDAO;
 import com.orion.ops.dao.MachineAlarmGroupDAO;
 import com.orion.ops.entity.domain.MachineAlarmConfigDO;
@@ -62,45 +63,55 @@ public class MachineAlarmConfigServiceImpl implements MachineAlarmConfigService 
         return wrapper;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void setAlarmConfig(MachineAlarmConfigRequest request) {
-        // 查询机器配置
+        // 查询机器信息
         Long machineId = request.getMachineId();
+        MachineInfoDO machine = machineInfoService.selectById(machineId);
+        Valid.notNull(machine, MessageConst.INVALID_MACHINE);
+        // 删除配置
+        Integer type = request.getType();
+        LambdaQueryWrapper<MachineAlarmConfigDO> wrapper = new LambdaQueryWrapper<MachineAlarmConfigDO>()
+                .eq(MachineAlarmConfigDO::getMachineId, machineId)
+                .eq(MachineAlarmConfigDO::getAlarmType, type);
+        machineAlarmConfigDAO.delete(wrapper);
+        // 插入配置
+        MachineAlarmConfigDO config = new MachineAlarmConfigDO();
+        config.setMachineId(machineId);
+        config.setAlarmType(type);
+        config.setAlarmThreshold(request.getAlarmThreshold());
+        config.setTriggerThreshold(request.getTriggerThreshold());
+        config.setNotifySilence(request.getNotifySilence());
+        machineAlarmConfigDAO.insert(config);
+        // TODO notify
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.NAME, machine.getMachineName());
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.LABEL, MachineAlarmType.of(type).getLabel());
+        EventParamsHolder.addParams(request);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void setAlarmGroup(Long machineId, List<Long> groupIdList) {
         // 查询机器信息
         MachineInfoDO machine = machineInfoService.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-        // 查询数量
-        Integer alarmConfigCount = this.selectCountByMachineId(machineId);
-        if (alarmConfigCount > 0) {
-            // 删除配置
-            this.deleteByMachineId(machineId);
-            // 删除报警组
-            machineAlarmGroupService.deleteByMachineId(machineId);
-        }
-        // 插入配置
-        request.getConfig().stream()
-                .map(c -> {
-                    MachineAlarmConfigDO config = new MachineAlarmConfigDO();
-                    config.setMachineId(machineId);
-                    config.setAlarmType(c.getType());
-                    config.setAlarmThreshold(c.getAlarmThreshold());
-                    config.setTriggerThreshold(c.getTriggerThreshold());
-                    config.setNotifySilence(c.getNotifySilence());
-                    return config;
-                }).forEach(machineAlarmConfigDAO::insert);
+        // 删除报警组
+        machineAlarmGroupService.deleteByMachineId(machineId);
         // 插入报警组
-        request.getGroupIdList().stream()
+        groupIdList.stream()
                 .map(g -> {
                     MachineAlarmGroupDO group = new MachineAlarmGroupDO();
                     group.setMachineId(machineId);
                     group.setGroupId(g);
                     return group;
                 }).forEach(machineAlarmGroupDAO::insert);
-        // TODO notify
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.NAME, machine.getMachineName());
-        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);
+        EventParamsHolder.addParam(EventKeys.ID_LIST, groupIdList);
     }
 
     @Override

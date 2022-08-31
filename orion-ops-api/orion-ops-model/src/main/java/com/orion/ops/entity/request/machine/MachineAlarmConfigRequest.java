@@ -15,13 +15,26 @@ import java.util.List;
  */
 @Data
 @ApiModel(value = "机器报警配置请求")
+@SuppressWarnings("ALL")
 public class MachineAlarmConfigRequest {
 
     @ApiModelProperty(value = "machineId")
     private Long machineId;
 
-    @ApiModelProperty(value = "报警配置")
-    private List<MachineAlarmConfigMetricsRequest> config;
+    /**
+     * @see com.orion.ops.constant.machine.MachineAlarmType
+     */
+    @ApiModelProperty(value = "报警类型 10: cpu使用率 20: 内存使用率")
+    private Integer type;
+
+    @ApiModelProperty(value = "报警阈值")
+    private Double alarmThreshold;
+
+    @ApiModelProperty(value = "触发报警阈值 次")
+    private Integer triggerThreshold;
+
+    @ApiModelProperty(value = "报警通知沉默时间 分")
+    private Integer notifySilence;
 
     @ApiModelProperty(value = "报警组id")
     private List<Long> groupIdList;
