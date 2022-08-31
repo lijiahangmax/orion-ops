@@ -15,7 +15,7 @@
       </a-tab-pane>
       <!-- 报警配置 -->
       <a-tab-pane :key="4" tab="报警历史">
-        <MachineMonitorAlarmHistory :machineId="machineId"/>
+        <MachineMonitorAlarmHistory :machineId="machineId" :machineName="machineName"/>
       </a-tab-pane>
       <!-- 拓展 -->
       <template #tabBarExtraContent>
@@ -74,6 +74,7 @@ export default {
     return {
       active: null,
       machineId: null,
+      machineName: null,
       monitorStarted: false,
       config: null,
       autoRefresh: true,
@@ -124,6 +125,7 @@ export default {
       machineId: this.machineId
     }).then(({ data }) => {
       this.config = data
+      this.machineName = data.machineName
       this.monitorStarted = MONITOR_STATUS.RUNNING.value === data.status
       if (!this.monitorStarted && (this.active === 1 || this.active === 2)) {
         this.$message.warning('监控插件未运行')

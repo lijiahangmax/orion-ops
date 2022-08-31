@@ -2577,6 +2577,47 @@ const $api = {
    */
   getAlarmGroupList: param => {
     return $http.$post('/alarm-group/list', param)
+  },
+
+  /**
+   * 获取机器报警配置
+   */
+  getMachineAlarmConfig: param => {
+    return $http.$get('/machine-alarm/get-config', param)
+  },
+
+  /**
+   * 设置机器报警配置
+   */
+  setMachineAlarmConfig: param => {
+    return $http.$post('/machine-alarm/set-alarm-config', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 设置机器报警联系组
+   */
+  setMachineAlarmGroup: param => {
+    return $http.$post('/machine-alarm/set-group-config', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 获取机器报警历史
+   */
+  getMachineAlarmHistory: param => {
+    return $http.$post('/machine-alarm/history', param)
+  },
+
+  /**
+   * 触发机器报警通知
+   */
+  triggerMachineAlarmNotify: param => {
+    return $http.$post('/machine-alarm/trigger-alarm-notify', param, {
+      loading: '正在通知...'
+    })
   }
 
 }

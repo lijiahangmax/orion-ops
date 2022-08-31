@@ -530,6 +530,7 @@ export default {
 
   .machine-card-wrapper {
     box-shadow: 0 1px 4px 0 #D9D9D9;
+    border-radius: 2px;
   }
 
   .machine-summary-wrapper {

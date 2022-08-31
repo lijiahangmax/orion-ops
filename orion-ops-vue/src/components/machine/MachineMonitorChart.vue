@@ -963,6 +963,7 @@ export default {
   .machine-monitor-chart-wrapper {
     background: #FFFFFF;
     box-shadow: 0 1px 4px 0 #D9D9D9;
+    border-radius: 2px;
     margin: 2px;
     padding: 24px;
   }

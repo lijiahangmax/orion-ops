@@ -936,6 +936,10 @@ export const EVENT_CLASSIFY = {
     value: 27,
     label: '机器监控'
   },
+  MACHINE_ALARM: {
+    value: 28,
+    label: '机器报警'
+  },
   TERMINAL: {
     value: 30,
     label: '终端操作'
@@ -1139,6 +1143,21 @@ export const EVENT_TYPE = {
     value: 2355,
     label: '安装/升级插件',
     classify: 27
+  },
+  SET_MACHINE_ALARM_CONFIG: {
+    value: 2370,
+    label: '修改报警配置',
+    classify: 28
+  },
+  SET_MACHINE_ALARM_GROUP: {
+    value: 2375,
+    label: '修改报警联系组',
+    classify: 28
+  },
+  RENOTIFY_MACHINE_ALARM_GROUP: {
+    value: 2380,
+    label: '重新发送报警通知',
+    classify: 28
   },
   OPEN_TERMINAL: {
     value: 2400,
@@ -2014,6 +2033,11 @@ export const MESSAGE_CLASSIFY = {
     value: 20,
     label: '数据导入',
     icon: 'import'
+  },
+  ALARM: {
+    value: 30,
+    label: '系统报警',
+    icon: 'thunderbolt'
   }
 }
 
@@ -2230,6 +2254,13 @@ export const MESSAGE_TYPE = {
     label: '命令模板导入失败',
     notify: 'error',
     redirect: '/template/list'
+  },
+  MACHINE_ALARM: {
+    classify: 30,
+    value: 3010,
+    label: '机器发生报警',
+    notify: 'error',
+    redirect: '/machine/monitor/list'
   }
 }
 
@@ -2661,5 +2692,21 @@ export const WEBHOOK_TYPE = {
   DING_ROBOT: {
     value: 10,
     label: '钉钉机器人'
+  }
+}
+
+/**
+ * 机器报警类型
+ */
+export const MACHINE_ALARM_TYPE = {
+  CPU_USAGE: {
+    value: 10,
+    label: 'CPU使用率',
+    alarmProp: 'cpuAlarm'
+  },
+  MEMORY_USAGE: {
+    value: 20,
+    label: '内存使用率',
+    alarmProp: 'memoryAlarm'
   }
 }
