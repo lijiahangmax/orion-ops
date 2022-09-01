@@ -5,7 +5,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.orion.http.ok.OkRequest;
 import com.orion.lang.constant.StandardContentType;
 import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.utils.io.Files1;
 
 /**
  * http api 请求
@@ -17,7 +16,7 @@ import com.orion.lang.utils.io.Files1;
 public class HttpApiRequest extends OkRequest {
 
     public HttpApiRequest(String url, HttpApiDefined api) {
-        this.url = Files1.getPath(url + api.getPath());
+        this.url = url + api.getPath();
         this.method = api.getMethod().method();
     }
 

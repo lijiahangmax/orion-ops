@@ -46,7 +46,7 @@ public class MachineAlarmConfigController {
     @GetMapping("/get-config")
     @ApiOperation(value = "获取报警配置")
     public MachineAlarmConfigWrapperVO getAlarmConfig(@RequestParam("machineId") Long machineId) {
-        return machineAlarmConfigService.getAlarmConfig(machineId);
+        return machineAlarmConfigService.getAlarmConfigInfo(machineId);
     }
 
     @PostMapping("/set-alarm-config")

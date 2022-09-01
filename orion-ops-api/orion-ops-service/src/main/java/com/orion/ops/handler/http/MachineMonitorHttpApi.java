@@ -26,6 +26,11 @@ public enum MachineMonitorHttpApi implements HttpApiDefined {
     ENDPOINT_VERSION("/orion/machine-monitor-agent/api/endpoint/version", HttpMethod.GET),
 
     /**
+     * 端点 sync
+     */
+    ENDPOINT_SYNC("/orion/machine-monitor-agent/api/endpoint/sync", HttpMethod.POST),
+
+    /**
      * 指标 获取机器基本指标
      */
     METRICS_BASE("/orion/machine-monitor-agent/api/metrics/base", HttpMethod.GET),

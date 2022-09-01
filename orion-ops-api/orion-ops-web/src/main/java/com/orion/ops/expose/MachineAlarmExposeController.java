@@ -4,7 +4,7 @@ import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.machine.MachineAlarmType;
 import com.orion.ops.entity.request.machine.MachineAlarmRequest;
-import com.orion.ops.entity.vo.machine.MachineAlarmConfigWrapperVO;
+import com.orion.ops.entity.vo.machine.MachineAlarmConfigVO;
 import com.orion.ops.service.api.MachineAlarmConfigService;
 import com.orion.ops.service.api.MachineAlarmService;
 import com.orion.ops.utils.Valid;
@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 机器报警 暴露api
@@ -35,7 +36,7 @@ public class MachineAlarmExposeController {
 
     @GetMapping("/get-config")
     @ApiOperation(value = "获取报警配置")
-    public MachineAlarmConfigWrapperVO getAlarmConfig(@RequestParam("machineId") Long machineId) {
+    public List<MachineAlarmConfigVO> getAlarmConfig(@RequestParam("machineId") Long machineId) {
         return machineAlarmConfigService.getAlarmConfig(machineId);
     }
 

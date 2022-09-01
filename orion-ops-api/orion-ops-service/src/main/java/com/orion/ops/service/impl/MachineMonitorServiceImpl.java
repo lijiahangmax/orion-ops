@@ -22,10 +22,12 @@ import com.orion.ops.entity.domain.MachineMonitorDO;
 import com.orion.ops.entity.dto.MachineMonitorDTO;
 import com.orion.ops.entity.query.MachineMonitorQuery;
 import com.orion.ops.entity.request.machine.MachineMonitorRequest;
+import com.orion.ops.entity.request.machine.MachineMonitorSyncRequest;
 import com.orion.ops.entity.vo.machine.MachineMonitorVO;
 import com.orion.ops.handler.http.MachineMonitorHttpApi;
 import com.orion.ops.handler.http.MachineMonitorHttpApiRequester;
 import com.orion.ops.handler.monitor.MonitorAgentInstallTask;
+import com.orion.ops.service.api.MachineAlarmConfigService;
 import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.EventParamsHolder;
@@ -50,6 +52,9 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
 
     @Resource
     private MachineMonitorDAO machineMonitorDAO;
+
+    @Resource
+    private MachineAlarmConfigService machineAlarmConfigService;
 
     @Override
     public MachineMonitorDO selectByMachineId(Long machineId) {
@@ -110,7 +115,8 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         MachineMonitorDO monitor = machineMonitorDAO.selectById(id);
         Valid.notNull(monitor, MessageConst.CONFIG_ABSENT);
         // 查询机器
-        MachineInfoDO machine = machineInfoDAO.selectById(monitor.getMachineId());
+        Long machineId = monitor.getMachineId();
+        MachineInfoDO machine = machineInfoDAO.selectById(machineId);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 更新
         MachineMonitorDO update = new MachineMonitorDO();
@@ -120,15 +126,14 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         // 同步状态
         if (monitor.getMonitorStatus().equals(MonitorStatus.NOT_START.getStatus()) ||
                 monitor.getMonitorStatus().equals(MonitorStatus.RUNNING.getStatus())) {
-            // 获取版本
-            String monitorVersion = this.getMonitorVersion(url, accessToken);
+            // 同步并且获取插件版本
+            String monitorVersion = this.syncMonitorAgent(machineId, url, accessToken);
             if (monitorVersion == null) {
                 // 未启动
                 update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
             } else {
                 update.setAgentVersion(monitorVersion);
                 update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
-                // TODO notify
             }
         }
         machineMonitorDAO.updateById(update);
@@ -166,8 +171,8 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         MachineMonitorDO update = new MachineMonitorDO();
         update.setId(config.getId());
         if (!upgrade) {
-            // 安装
-            String version = this.getMonitorVersion(config.getUrl(), config.getAccessToken());
+            // 同步并且获取插件版本
+            String version = this.syncMonitorAgent(machineId, config.getUrl(), config.getAccessToken());
             if (version == null) {
                 // 未获取到版本则重新安装
                 reinstall = true;
@@ -206,8 +211,8 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         }
         MachineMonitorDO update = new MachineMonitorDO();
         update.setId(monitor.getId());
-        // 获取版本
-        String monitorVersion = this.getMonitorVersion(monitor.getUrl(), monitor.getAccessToken());
+        // 同步并且获取插件版本
+        String monitorVersion = this.syncMonitorAgent(machineId, monitor.getUrl(), monitor.getAccessToken());
         if (monitorVersion == null) {
             // 未启动
             update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
@@ -234,6 +239,29 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
                     .api(MachineMonitorHttpApi.ENDPOINT_VERSION)
                     .build()
                     .request(String.class)
+                    .getData();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String syncMonitorAgent(Long machineId, String url, String accessToken) {
+        try {
+            // 设置同步请求
+            MachineMonitorSyncRequest syncRequest = new MachineMonitorSyncRequest();
+            syncRequest.setMachineId(machineId);
+            // 查询报警配置
+            syncRequest.setAlarmConfig(machineAlarmConfigService.getAlarmConfig(machineId));
+            // 请求
+            return MachineMonitorHttpApiRequester.builder()
+                    .url(url)
+                    .accessToken(accessToken)
+                    .api(MachineMonitorHttpApi.ENDPOINT_SYNC)
+                    .build()
+                    .getRequest()
+                    .jsonBody(syncRequest)
+                    .getHttpWrapper(String.class)
                     .getData();
         } catch (Exception e) {
             return null;

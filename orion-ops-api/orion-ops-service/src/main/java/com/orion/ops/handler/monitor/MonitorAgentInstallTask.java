@@ -152,20 +152,21 @@ public class MonitorAgentInstallTask implements Runnable {
      * 同步检查 agent 状态
      */
     private void checkAgentRunStatus() {
-        // 尝试获取状态
+        // 查询配置
+        MachineMonitorDO monitor = machineMonitorService.selectByMachineId(machineId);
+        // 尝试进行同步 检查是否启动
         String version = null;
         for (int i = 0; i < 6; i++) {
             try {
                 Threads.sleep(Const.MS_S_10);
-                // TODO notify
-                version = machineMonitorEndpointService.getVersion(machineId);
+                version = machineMonitorService.syncMonitorAgent(machineId, monitor.getMonitorUrl(), monitor.getAccessToken());
                 break;
             } catch (Exception e) {
                 // ignore
             }
         }
         if (version == null) {
-            throw Exceptions.runtime("获取版本失败");
+            throw Exceptions.runtime("获取 agent 状态失败");
         }
         // 更新状态以及版本
         MachineMonitorDO update = new MachineMonitorDO();

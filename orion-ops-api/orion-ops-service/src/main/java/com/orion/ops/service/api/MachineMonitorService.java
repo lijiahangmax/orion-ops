@@ -91,4 +91,14 @@ public interface MachineMonitorService {
      */
     String getMonitorVersion(String url, String accessToken);
 
+    /**
+     * 同步机器插件信息
+     *
+     * @param machineId   machineId
+     * @param url         url
+     * @param accessToken accessToken
+     * @return version
+     */
+    String syncMonitorAgent(Long machineId, String url, String accessToken);
+
 }

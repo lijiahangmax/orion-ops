@@ -63,7 +63,6 @@ public class MachineMonitorStatusRunner implements CommandLineRunner {
      * 检查插件状态及版本
      */
     private void checkMonitorStatus() {
-        // TODO notify
         List<MachineMonitorDTO> monitors = machineMonitorDAO.selectMonitorList(new MachineMonitorQuery(), null);
         for (MachineMonitorDTO monitor : monitors) {
             log.info("检测机器监控插件状态-开始 {} ({})", monitor.getMachineName(), monitor.getMachineHost());
@@ -78,8 +77,8 @@ public class MachineMonitorStatusRunner implements CommandLineRunner {
                 update.setMonitorUrl(monitorUrl);
                 update.setAccessToken(accessToken);
             }
-            // 获取版本
-            String monitorVersion = machineMonitorService.getMonitorVersion(monitorUrl, accessToken);
+            // 同步并且获取插件版本
+            String monitorVersion = machineMonitorService.syncMonitorAgent(monitor.getMachineId(), monitorUrl, accessToken);
             if (monitorVersion == null) {
                 // 未启动
                 update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());

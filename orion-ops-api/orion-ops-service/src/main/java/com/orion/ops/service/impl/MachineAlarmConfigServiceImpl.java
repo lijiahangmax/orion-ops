@@ -10,12 +10,14 @@ import com.orion.ops.dao.MachineAlarmGroupDAO;
 import com.orion.ops.entity.domain.MachineAlarmConfigDO;
 import com.orion.ops.entity.domain.MachineAlarmGroupDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.domain.MachineMonitorDO;
 import com.orion.ops.entity.request.machine.MachineAlarmConfigRequest;
 import com.orion.ops.entity.vo.machine.MachineAlarmConfigVO;
 import com.orion.ops.entity.vo.machine.MachineAlarmConfigWrapperVO;
 import com.orion.ops.service.api.MachineAlarmConfigService;
 import com.orion.ops.service.api.MachineAlarmGroupService;
 import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.MachineMonitorService;
 import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.utils.Valid;
 import org.springframework.stereotype.Service;
@@ -47,8 +49,11 @@ public class MachineAlarmConfigServiceImpl implements MachineAlarmConfigService 
     @Resource
     private MachineInfoService machineInfoService;
 
+    @Resource
+    private MachineMonitorService machineMonitorService;
+
     @Override
-    public MachineAlarmConfigWrapperVO getAlarmConfig(Long machineId) {
+    public MachineAlarmConfigWrapperVO getAlarmConfigInfo(Long machineId) {
         MachineAlarmConfigWrapperVO wrapper = new MachineAlarmConfigWrapperVO();
         // 查询配置
         List<MachineAlarmConfigDO> config = this.selectByMachineId(machineId);
@@ -61,6 +66,13 @@ public class MachineAlarmConfigServiceImpl implements MachineAlarmConfigService 
         wrapper.setConfig(alarmConfig);
         wrapper.setGroupIdList(groupIdList);
         return wrapper;
+    }
+
+    @Override
+    public List<MachineAlarmConfigVO> getAlarmConfig(Long machineId) {
+        // 查询配置
+        List<MachineAlarmConfigDO> config = this.selectByMachineId(machineId);
+        return Converts.toList(config, MachineAlarmConfigVO.class);
     }
 
     @Override
@@ -84,7 +96,11 @@ public class MachineAlarmConfigServiceImpl implements MachineAlarmConfigService 
         config.setTriggerThreshold(request.getTriggerThreshold());
         config.setNotifySilence(request.getNotifySilence());
         machineAlarmConfigDAO.insert(config);
-        // TODO notify
+        // 同步报警配置
+        MachineMonitorDO machineMonitor = machineMonitorService.selectByMachineId(machineId);
+        if (machineMonitor != null) {
+            machineMonitorService.syncMonitorAgent(machineId, machineMonitor.getMonitorUrl(), machineMonitor.getAccessToken());
+        }
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.NAME, machine.getMachineName());
         EventParamsHolder.addParam(EventKeys.MACHINE_ID, machineId);

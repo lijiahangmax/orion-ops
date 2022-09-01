@@ -2,6 +2,7 @@ package com.orion.ops.service.api;
 
 import com.orion.ops.entity.domain.MachineAlarmConfigDO;
 import com.orion.ops.entity.request.machine.MachineAlarmConfigRequest;
+import com.orion.ops.entity.vo.machine.MachineAlarmConfigVO;
 import com.orion.ops.entity.vo.machine.MachineAlarmConfigWrapperVO;
 
 import java.util.List;
@@ -21,7 +22,15 @@ public interface MachineAlarmConfigService {
      * @param machineId machineId
      * @return config
      */
-    MachineAlarmConfigWrapperVO getAlarmConfig(Long machineId);
+    MachineAlarmConfigWrapperVO getAlarmConfigInfo(Long machineId);
+
+    /**
+     * 获取报警配置
+     *
+     * @param machineId machineId
+     * @return config
+     */
+    List<MachineAlarmConfigVO> getAlarmConfig(Long machineId);
 
     /**
      * 设置报警配置
