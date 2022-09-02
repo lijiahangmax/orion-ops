@@ -7,6 +7,9 @@
     <a-spin :spinning="loading">
       <div id="machine-descriptions">
         <a-descriptions bordered size="middle">
+          <a-descriptions-item label="机器id" :span="3">
+            {{ detail.id }}
+          </a-descriptions-item>
           <a-descriptions-item label="机器名称" :span="3">
             {{ detail.name }}
           </a-descriptions-item>
@@ -75,14 +78,13 @@ export default {
     open(id) {
       this.loading = true
       this.$api.getMachineDetail({ id })
-        .then(({ data }) => {
-          this.loading = false
-          this.visible = true
-          this.detail = data
-        })
-        .catch(() => {
-          this.loading = false
-        })
+      .then(({ data }) => {
+        this.loading = false
+        this.visible = true
+        this.detail = data
+      }).catch(() => {
+        this.loading = false
+      })
     },
     close() {
       this.visible = false
