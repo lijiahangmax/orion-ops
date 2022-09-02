@@ -62,7 +62,7 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <template v-slot:machine="record">
+        <template #machine="record">
           <a-tooltip placement="top">
             <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
@@ -71,17 +71,17 @@
           </a-tooltip>
         </template>
         <!-- 连接时间 -->
-        <template v-slot:connectedTime="record">
+        <template #connectedTime="record">
           {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
         </template>
         <!-- 断连时间 -->
-        <template v-slot:disconnectedTime="record">
+        <template #disconnectedTime="record">
           <span v-if="record.disconnectedTime">
            {{ record.disconnectedTime | formatDate }} ({{ record.disconnectedTimeAgo }})
           </span>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 回放 -->
           <span class="span-blue pointer" @click="openTerminalScreen(record)">回放</span>
           <a-divider type="vertical"/>

@@ -73,11 +73,11 @@
                :loading="loading"
                size="middle">
         <!-- 构建序列 -->
-        <template v-slot:seq="record">
+        <template #seq="record">
           <span class="span-blue">#{{ record.seq }}</span>
         </template>
         <!-- 版本 -->
-        <template v-slot:version="record">
+        <template #version="record">
           <span v-if="record.repoId">
             <!-- 分支 -->
             <span class="mr4 nowrap" v-if="record.branchName" title="分支">
@@ -95,17 +95,17 @@
           </span>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag class="m0" :color="record.status | formatBuildStatus('color')">
             {{ record.status | formatBuildStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 详情 -->
           <a @click="openDetail(record.id)">详情</a>
           <a-divider type="vertical"/>

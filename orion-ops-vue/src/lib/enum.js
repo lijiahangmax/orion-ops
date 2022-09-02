@@ -156,13 +156,11 @@ export const AUDIT_STATUS = {
 export const PROFILE_AUDIT_STATUS = {
   ENABLE: {
     value: 1,
-    label: '需要审核',
-    color: 'blue'
+    label: '需要审核'
   },
   DISABLE: {
     value: 2,
-    label: '无需审核',
-    color: 'green'
+    label: '无需审核'
   }
 }
 
@@ -191,14 +189,14 @@ export const MACHINE_PROXY_TYPE = {
     label: 'http',
     color: '#228BE6'
   },
-  SOCKET4: {
+  SOCKS4: {
     value: 2,
-    label: 'socket4',
+    label: 'socks4',
     color: '#1098AD'
   },
-  SOCKET5: {
+  SOCKS5: {
     value: 3,
-    label: 'socket5',
+    label: 'socks5',
     color: '#0CA678'
   }
 }
@@ -934,6 +932,14 @@ export const EVENT_CLASSIFY = {
     value: 25,
     label: '代理操作'
   },
+  MACHINE_MONITOR: {
+    value: 27,
+    label: '机器监控'
+  },
+  MACHINE_ALARM: {
+    value: 28,
+    label: '机器报警'
+  },
   TERMINAL: {
     value: 30,
     label: '终端操作'
@@ -954,9 +960,17 @@ export const EVENT_CLASSIFY = {
     value: 50,
     label: '模板操作'
   },
+  WEBHOOK: {
+    value: 52,
+    label: 'webhook操作'
+  },
   USER: {
     value: 55,
     label: '用户操作'
+  },
+  ALARM_GROUP: {
+    value: 57,
+    label: '报警组操作'
   },
   APP: {
     value: 60,
@@ -1120,6 +1134,31 @@ export const EVENT_TYPE = {
     label: '删除代理',
     classify: 25
   },
+  UPDATE_MACHINE_MONITOR_CONFIG: {
+    value: 2350,
+    label: '修改配置',
+    classify: 27
+  },
+  INSTALL_UPGRADE_MACHINE_MONITOR: {
+    value: 2355,
+    label: '安装/升级插件',
+    classify: 27
+  },
+  SET_MACHINE_ALARM_CONFIG: {
+    value: 2370,
+    label: '修改报警配置',
+    classify: 28
+  },
+  SET_MACHINE_ALARM_GROUP: {
+    value: 2375,
+    label: '修改报警联系组',
+    classify: 28
+  },
+  RENOTIFY_MACHINE_ALARM_GROUP: {
+    value: 2380,
+    label: '重新发送报警通知',
+    classify: 28
+  },
   OPEN_TERMINAL: {
     value: 2400,
     label: '打开机器终端',
@@ -1250,6 +1289,21 @@ export const EVENT_TYPE = {
     label: '删除模板',
     classify: 50
   },
+  ADD_WEBHOOK: {
+    value: 2905,
+    label: '添加配置',
+    classify: 52
+  },
+  UPDATE_WEBHOOK: {
+    value: 2910,
+    label: '修改配置',
+    classify: 52
+  },
+  DELETE_WEBHOOK: {
+    value: 2915,
+    label: '删除配置',
+    classify: 52
+  },
   ADD_USER: {
     value: 1105,
     label: '添加用户',
@@ -1271,9 +1325,24 @@ export const EVENT_TYPE = {
     classify: 55
   },
   UNLOCK_USER: {
-    value: 1125,
+    value: 1205,
     label: '解锁用户',
     classify: 55
+  },
+  ADD_ALARM_GROUP: {
+    value: 1210,
+    label: '添加报警组',
+    classify: 57
+  },
+  UPDATE_ALARM_GROUP: {
+    value: 1215,
+    label: '修改报警组',
+    classify: 57
+  },
+  DELETE_ALARM_GROUP: {
+    value: 1125,
+    label: '删除报警组',
+    classify: 57
   },
   ADD_APP: {
     value: 3005,
@@ -1964,6 +2033,11 @@ export const MESSAGE_CLASSIFY = {
     value: 20,
     label: '数据导入',
     icon: 'import'
+  },
+  ALARM: {
+    value: 30,
+    label: '系统报警',
+    icon: 'thunderbolt'
   }
 }
 
@@ -2069,6 +2143,20 @@ export const MESSAGE_TYPE = {
     notify: 'error',
     redirect: '/app/pipeline/record'
   },
+  MACHINE_AGENT_INSTALL_SUCCESS: {
+    classify: 10,
+    value: 1150,
+    label: '机器监控插件安装成功',
+    notify: 'success',
+    redirect: '/machine/monitor/list'
+  },
+  MACHINE_AGENT_INSTALL_FAILURE: {
+    classify: 10,
+    value: 1160,
+    label: '机器监控插件安装失败',
+    notify: 'error',
+    redirect: '/machine/monitor/list'
+  },
   MACHINE_IMPORT_SUCCESS: {
     classify: 20,
     value: 2010,
@@ -2166,6 +2254,13 @@ export const MESSAGE_TYPE = {
     label: '命令模板导入失败',
     notify: 'error',
     redirect: '/template/list'
+  },
+  MACHINE_ALARM: {
+    classify: 30,
+    value: 3010,
+    label: '机器发生报警',
+    notify: 'error',
+    redirect: '/machine/monitor/list'
   }
 }
 
@@ -2452,5 +2547,166 @@ export const IMPORT_TYPE = {
     tips: '使用模板名称来区分数据, 存在更新不存在新增',
     title: '命令模板 导入',
     api: 'importCommandTemplate'
+  }
+}
+
+/**
+ * 监控状态
+ */
+export const MONITOR_STATUS = {
+  NOT_START: {
+    value: 1,
+    label: '未启动',
+    status: 'default'
+  },
+  STARTING: {
+    value: 2,
+    label: '启动中',
+    status: 'success'
+  },
+  RUNNING: {
+    value: 3,
+    label: '运行中',
+    status: 'processing'
+  }
+}
+
+/**
+ * 监控数据区间
+ */
+export const MONITOR_DATA_RANGE = {
+  HOUR: {
+    value: 1,
+    label: '实时',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60)
+      return [start, end]
+    }
+  },
+  DAY: {
+    value: 2,
+    label: '近24时',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60 * 24)
+      return [start, end]
+    }
+  },
+  WEEK: {
+    value: 3,
+    label: '近7天',
+    rangeGetter: () => {
+      const end = ~~(Date.now() / 1000)
+      const start = end - (60 * 60 * 24 * 7)
+      return [start, end]
+    }
+  }
+}
+
+/**
+ * 监控数据粒度
+ */
+export const MONITOR_DATA_GRANULARITY = {
+  SECOND_30: {
+    value: 12,
+    label: '30秒',
+    check: (start, end) => {
+      return end - start <= 60 * 60
+    }
+  },
+  MINUTE_1: {
+    value: 20,
+    label: '1分',
+    min: 0,
+    max: 60 * 60 * 24,
+    default: true,
+    check: (start, end) => {
+      return end - start <= 60 * 60
+    }
+  },
+  MINUTE_5: {
+    value: 22,
+    label: '5分',
+    default: true,
+    check: (start, end) => {
+      return end - start <= 60 * 60 * 24
+    }
+  },
+  MINUTE_10: {
+    value: 24,
+    label: '10分',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 < e && e <= 60 * 60 * 24
+    }
+  },
+  MINUTE_30: {
+    value: 26,
+    label: '30分',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 < e && e <= 60 * 60 * 24
+    }
+  },
+  HOUR_1: {
+    value: 30,
+    label: '1时',
+    default: true,
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 <= e && e <= 60 * 60 * 24 * 7
+    }
+  },
+  HOUR_6: {
+    value: 32,
+    label: '6时',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 < e && e <= 60 * 60 * 24 * 7 * 2
+    }
+  },
+  HOUR_12: {
+    value: 34,
+    label: '12时',
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 < e && e <= 60 * 60 * 24 * 7 * 2
+    }
+  },
+  DAY: {
+    value: 40,
+    label: '1天',
+    default: true,
+    check: (start, end) => {
+      const e = end - start
+      return 60 * 60 * 24 * 7 <= e
+    }
+  }
+}
+
+/**
+ * webhook 类型
+ */
+export const WEBHOOK_TYPE = {
+  DING_ROBOT: {
+    value: 10,
+    label: '钉钉机器人'
+  }
+}
+
+/**
+ * 机器报警类型
+ */
+export const MACHINE_ALARM_TYPE = {
+  CPU_USAGE: {
+    value: 10,
+    label: 'CPU使用率',
+    alarmProp: 'cpuAlarm'
+  },
+  MEMORY_USAGE: {
+    value: 20,
+    label: '内存使用率',
+    alarmProp: 'memoryAlarm'
   }
 }

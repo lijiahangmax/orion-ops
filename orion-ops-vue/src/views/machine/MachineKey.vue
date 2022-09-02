@@ -98,7 +98,7 @@
                :loading="loading"
                size="middle">
         <!-- 秘钥路径 -->
-        <template v-slot:path="record">
+        <template #path="record">
           <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
           <a v-if="record.downloadUrl"
              target="_blank"
@@ -110,17 +110,17 @@
           </a>
         </template>
         <!-- 挂载状态 -->
-        <template v-slot:mountStatus="record">
+        <template #mountStatus="record">
           <a-tag :color="record.mountStatus | formatMountStatus('color')">
             {{ record.mountStatus | formatMountStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 挂载 -->
           <a-button v-if="record.mountStatus === 1" type="link" disabled style="height: 22px; padding: 0">
             挂载

@@ -51,7 +51,7 @@
                ref="table"
                size="middle">
         <!-- 展开的机器列表 -->
-        <template v-slot:expandedRowRender="record">
+        <template #expandedRowRender="record">
           <a-table
             v-if="record.machines"
             :rowKey="(record, index) => index"
@@ -61,17 +61,17 @@
             :pagination="false"
             size="middle">
             <!-- 构建版本 -->
-            <template v-slot:buildSeq="machine">
+            <template #buildSeq="machine">
               <span class="span-blue" v-if="machine.buildSeq">#{{ machine.buildSeq }}</span>
             </template>
             <!-- 操作 -->
-            <template v-slot:action="machine">
+            <template #action="machine">
               <a @click="removeAppMachine(record, machine.id)">删除</a>
             </template>
           </a-table>
         </template>
         <!-- sort -->
-        <template v-slot:sort="record">
+        <template #sort="record">
           <div class="sort-column">
             <a @click="adjustSort(record.id, 1)" title="上调排序">
               <a-icon type="up-square"/>
@@ -83,19 +83,19 @@
           </div>
         </template>
         <!-- tag -->
-        <template v-slot:tag="record">
+        <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
         </template>
         <!-- 配置 -->
-        <template v-slot:config="record">
+        <template #config="record">
           <a-tag :color=" record.isConfig | formatConfigStatus('color')">
             {{ record.isConfig | formatConfigStatus('label') }}
           </a-tag>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 配置 -->
           <span class="span-blue pointer" @click="toConfig(record.id)">
             配置

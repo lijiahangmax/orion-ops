@@ -80,7 +80,7 @@
                  :loading="loading"
                  size="middle">
           <!-- key -->
-          <template v-slot:key="record">
+          <template #key="record">
             <div class="auto-ellipsis">
               <a class="copy-icon-left" @click="$copy(record.key)">
                 <a-icon type="copy"/>
@@ -91,7 +91,7 @@
             </div>
           </template>
           <!-- value -->
-          <template v-slot:value="record">
+          <template #value="record">
             <div class="auto-ellipsis">
               <a class="copy-icon-left" @click="$copy(record.value)">
                 <a-icon type="copy"/>
@@ -102,11 +102,11 @@
             </div>
           </template>
           <!-- 修改时间 -->
-          <template v-slot:updateTime="record">
+          <template #updateTime="record">
             {{ record.updateTime | formatDate }}
           </template>
           <!-- 操作 -->
-          <template v-slot:action="record">
+          <template #action="record">
             <a @click="update(record.id)">修改</a>
             <a-divider type="vertical"/>
             <a @click="history(record)">历史</a>
@@ -151,7 +151,7 @@ import { formatDate } from '@/lib/filters'
 import { HISTORY_VALUE_TYPE, VIEW_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import AddSystemEnvModal from '@/components/system/AddSystemEnvModal'
-import EnvHistoryModal from '@/components/history/EnvHistoryModal'
+import EnvHistoryModal from '@/components/content/EnvHistoryModal'
 import TextPreview from '@/components/preview/TextPreview'
 
 const columns = [

@@ -78,38 +78,38 @@
                :loading="loading"
                size="middle">
         <!-- 用户名 -->
-        <template v-slot:username="record">
+        <template #username="record">
           <span class="pointer" @click="$copy(record.username)" title="复制">{{ record.username }}</span>
         </template>
         <!-- 昵称 -->
-        <template v-slot:nickname="record">
+        <template #nickname="record">
           <span class="pointer" @click="$copy(record.nickname)" title="复制">{{ record.nickname }}</span>
         </template>
         <!-- 手机号 -->
-        <template v-slot:phone="record">
+        <template #phone="record">
           <span class="pointer span-blue" @click="$copy(record.phone)" title="复制">{{ record.phone }}</span>
         </template>
         <!-- 邮箱 -->
-        <template v-slot:email="record">
+        <template #email="record">
           <span class="pointer span-blue" @click="$copy(record.email)" title="复制">{{ record.email }}</span>
         </template>
         <!-- 角色 -->
-        <template v-slot:role="record">
+        <template #role="record">
           <span>{{ record.role | formatRoleType('label') }}</span>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-badge :status="record.status | formatEnableStatus('status')"
                    :text="record.status | formatEnableStatus('label')"/>
         </template>
         <!-- 登陆时间 -->
-        <template v-slot:lastLoginTime="record">
+        <template #lastLoginTime="record">
           <span v-if="record.lastLoginTime">
             {{ record.lastLoginTime | formatDate }} ({{ record.lastLoginAgo }})
           </span>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <div v-if="record.id !== $getUserId()">
             <!-- 解锁 -->
             <a-button :disabled="record.locked === 1"

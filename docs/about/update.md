@@ -1,5 +1,111 @@
 ⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
 
+## 1.2.0-beta
+
+> sql 脚本
+
+```sql
+CREATE TABLE `machine_monitor` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `machine_id` bigint DEFAULT NULL COMMENT '机器id',
+  `monitor_status` tinyint DEFAULT '1' COMMENT '监控状态 1未启动 2启动中 3运行中',
+  `monitor_url` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '请求 api url',
+  `access_token` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '请求 api accessToken',
+  `agent_version` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '插件版本',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='机器监控配置表';
+
+CREATE TABLE `webhook_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `webhook_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '名称',
+  `webhook_url` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'url',
+  `webhook_type` int DEFAULT NULL COMMENT '类型 10: 钉钉机器人',
+  `webhook_config` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '配置项 json',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='webhook 配置';
+
+CREATE TABLE `alarm_group` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `group_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报警组名称',
+  `group_description` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报警组描述',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='报警组';
+
+CREATE TABLE `alarm_group_user` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `group_id` bigint DEFAULT NULL COMMENT '报警组id',
+  `user_id` bigint DEFAULT NULL COMMENT '报警组成员id',
+  `username` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报警组成员用户名',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_id_idx` (`group_id`,`user_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='报警组成员';
+
+CREATE TABLE `alarm_group_notify` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `group_id` bigint DEFAULT NULL COMMENT '报警组id',
+  `notify_id` bigint DEFAULT NULL COMMENT '通知id',
+  `notify_type` int DEFAULT NULL COMMENT '通知类型 10 webhook',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `group_idx` (`group_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='报警组通知方式';
+
+CREATE TABLE `machine_alarm_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `machine_id` bigint DEFAULT NULL COMMENT '机器id',
+  `alarm_type` int DEFAULT NULL COMMENT '报警类型 10: cpu使用率 20: 内存使用率',
+  `alarm_threshold` double DEFAULT NULL COMMENT '报警阈值',
+  `trigger_threshold` int DEFAULT NULL COMMENT '触发报警阈值 次',
+  `notify_silence` int DEFAULT NULL COMMENT '报警通知沉默时间 分',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `machine_idx` (`machine_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='机器报警配置';
+
+CREATE TABLE `machine_alarm_group` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `machine_id` bigint DEFAULT NULL COMMENT '机器id',
+  `group_id` bigint DEFAULT NULL COMMENT ' 报警组id',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `config_idx` (`machine_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='机器报警通知组';
+
+CREATE TABLE `machine_alarm_history` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `machine_id` bigint DEFAULT NULL COMMENT '机器id',
+  `alarm_type` int DEFAULT NULL COMMENT '报警类型 10: cpu使用率 20: 内存使用率',
+  `alarm_value` double DEFAULT NULL COMMENT '报警值',
+  `alarm_time` datetime(4) DEFAULT NULL COMMENT '报警时间',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `machine_idx` (`machine_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='机器报警历史';
+
+ALTER TABLE `machine_terminal_log` 
+CHANGE COLUMN `operate_log_file` `screen_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '录屏文件路径' AFTER `close_code`;
+```
+
 ## 1.1.4
 
 > 应用发布配置

@@ -73,41 +73,41 @@
                :loading="loading"
                size="middle">
         <!-- 操作描述 -->
-        <template v-slot:log="record">
+        <template #log="record">
           <span v-html="record.log"/>
         </template>
         <!-- 操作分类 -->
-        <template v-slot:classify="record">
+        <template #classify="record">
           <span class="span-blue pointer" @click="chooseClassify(record.classify)">
             {{ record.classify | filterClassify }}
           </span>
         </template>
         <!-- 操作类型 -->
-        <template v-slot:type="record">
+        <template #type="record">
           <span class="span-blue pointer" @click="chooseType(record.classify, record.type)">
             {{ record.type | filterType }}
           </span>
         </template>
         <!-- 操作用户 -->
-        <template v-slot:username="record">
+        <template #username="record">
           <span class="span-blue pointer" @click="chooseUser(record.userId)">
             {{ record.username }}
           </span>
         </template>
         <!-- 操作IP -->
-        <template v-slot:ip="record">
+        <template #ip="record">
           <span>{{ record.ip }}</span>
           <br>
           <span>{{ record.ipLocation }}</span>
         </template>
         <!-- 操作时间 -->
-        <template v-slot:time="record">
+        <template #time="record">
           <span>{{ record.createTime | formatDate }}</span>
           <br>
           <span>({{ record.createTimeAgo }})</span>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <span class="span-blue pointer" @click="preview(record.params)">参数</span>
         </template>
       </a-table>

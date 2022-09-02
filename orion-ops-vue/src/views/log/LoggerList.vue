@@ -70,7 +70,7 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <template v-slot:machine="record">
+        <template #machine="record">
           <a-tooltip placement="top">
             <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
@@ -79,23 +79,23 @@
           </a-tooltip>
         </template>
         <!-- 路径 -->
-        <template v-slot:path="record">
+        <template #path="record">
            <span class="pointer" title="预览" @click="previewText(record.path)">
              {{ record.path }}
            </span>
         </template>
         <!-- 命令 -->
-        <template v-slot:command="record">
+        <template #command="record">
           <span class="pointer" title="预览" @click="previewText(record.command)">
             {{ record.command }}
           </span>
         </template>
         <!-- 修改时间 -->
-        <template v-slot:updateTime="record">
+        <template #updateTime="record">
           {{ record.updateTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 打开 -->
           <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === ENABLE_STATUS.ENABLE.value">
             <a target="_blank"

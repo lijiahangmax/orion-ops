@@ -53,7 +53,7 @@
       <a-list :loading="loading"
               :pagination="pagination"
               :dataSource="rows">
-        <template v-slot:renderItem="item">
+        <template #renderItem="item">
           <a-list-item>
             <!-- 日志主体 -->
             <div class="log-item-container">

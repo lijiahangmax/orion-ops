@@ -49,19 +49,19 @@
                :loading="loading"
                size="middle">
         <!-- tag -->
-        <template v-slot:tag="record">
+        <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
         </template>
         <!-- 审核 -->
-        <template v-slot:releaseAudit="record">
-          <a-tag v-if="record.releaseAudit" :color="record.releaseAudit | formatReleaseAudit('color')">
+        <template #releaseAudit="record">
+          <span class="span-blue">
             {{ record.releaseAudit | formatReleaseAudit('label') }}
-          </a-tag>
+          </span>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 修改 -->
           <a @click="update(record.id)">修改</a>
           <a-divider type="vertical"/>
@@ -123,12 +123,11 @@ const columns = [
     scopedSlots: { customRender: 'tag' }
   },
   {
-    title: '发布是否需要审核',
+    title: '发布审核',
     key: 'releaseAudit',
     ellipsis: true,
     align: 'center',
-    width: 140,
-    sorter: (a, b) => a.releaseAudit - b.releaseAudit,
+    width: 110,
     scopedSlots: { customRender: 'releaseAudit' }
   },
   {

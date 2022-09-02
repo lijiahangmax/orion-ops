@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.orion.ops</groupId>
+        <artifactId>orion-ops-api</artifactId>
+        <version>1.2.0-beta</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>orion-ops-mapping</name>
+    <artifactId>orion-ops-mapping</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+
+    <dependencies>
+        <!-- dao -->
+        <dependency>
+            <groupId>com.orion.ops</groupId>
+            <artifactId>orion-ops-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- model -->
+        <dependency>
+            <groupId>com.orion.ops</groupId>
+            <artifactId>orion-ops-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- export -->
+        <dependency>
+            <groupId>com.orion.ops</groupId>
+            <artifactId>orion-ops-export</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

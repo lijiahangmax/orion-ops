@@ -140,6 +140,24 @@ const routes = [
         component: () => import('../views/machine/MachineList')
       },
       {
+        path: '/machine/monitor/list',
+        name: 'machineMonitorList',
+        meta: {
+          requireAuth: true,
+          title: '机器监控'
+        },
+        component: () => import('../views/machine/MachineMonitorList')
+      },
+      {
+        path: '/machine/monitor/metrics/:machineId',
+        name: 'machineMonitor',
+        meta: {
+          requireAuth: true,
+          title: '机器监控'
+        },
+        component: () => import('../views/machine/MachineMonitorMetrics')
+      },
+      {
         path: '/machine/env/:id?',
         name: 'machineEnv',
         meta: {
@@ -368,6 +386,15 @@ const routes = [
         component: () => import('../views/user/UserList')
       },
       {
+        path: '/alarm/group/list',
+        name: 'alarmGroupList',
+        meta: {
+          requireAuth: true,
+          title: '报警组列表'
+        },
+        component: () => import('../views/alarm/AlarmGroupList')
+      },
+      {
         path: '/user/detail',
         name: 'userDetail',
         meta: {
@@ -392,7 +419,16 @@ const routes = [
           requireAuth: true,
           title: '模板配置'
         },
-        component: () => import('../views/template/TemplateList')
+        component: () => import('../views/content/TemplateList')
+      },
+      {
+        path: '/webhook/list',
+        name: 'webhookList',
+        meta: {
+          requireAuth: true,
+          title: 'webhook 配置'
+        },
+        component: () => import('../views/content/WebhookList')
       },
       {
         path: '/system/env',

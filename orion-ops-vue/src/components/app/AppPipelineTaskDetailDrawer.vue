@@ -64,7 +64,7 @@
       <!-- 流水线操作 -->
       <a-divider>流水线操作</a-divider>
       <a-list size="small" :dataSource="detail.details">
-        <template v-slot:renderItem="item">
+        <template #renderItem="item">
           <a-list-item>
             <a-descriptions size="middle">
               <a-descriptions-item label="执行操作" :span="3">

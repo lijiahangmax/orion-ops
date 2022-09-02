@@ -1,9 +1,8 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 无 Agent 的方式接入应用, 使用多环境的概念, 提供了机器管理、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理,
-致力于企业级应用的智能运维。
+`orion-ops` 一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。
 
-<p style="text-align: center">
+<p style="text-align: left">
 	<a target="_blank" style="text-decoration: none" href="https://www.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lijiahangmax/orion-ops&amp;utm_campaign=Badge_Grade">
 		<img src="https://app.codacy.com/project/badge/Grade/18b08ef5e7294e80836c56d595fea4bb" alt="Codacy"/>
 	</a>
@@ -26,6 +25,7 @@
 
 <br/>  
 
+当前最新版本: **1.2.0-beta**
 github: https://github.com/lijiahangmax/orion-ops  
 gitee: https://gitee.com/lijiahangmax/orion-ops  
 csdn: https://blog.csdn.net/qq_41011894  
@@ -39,9 +39,10 @@ demo: http://101.43.254.243/ops/#/
 
 ## 特性
 
-* 易用方便: 极简配置, 开箱即用, 无 Agent 接入
+* 易用方便: 极简配置, 开箱即用, 支持 docker 部署
 * 在线终端: 支持在线 Web 终端, 记录操作日志, 管理员可强制下线, 录屏回放, 终端监视等
 * 文件管理: 支持远程机器文件批量上传、批量下载、暂停断点续传、实时传输速率、实时进度、打包传输等功能
+* 机器监控: 支持维护机器的监控以及报警, 支持采集 agent 的一键安装以及升级
 * 批量操作: 支持远程机器批量执行命令 以及 批量执行上传文件
 * 调度任务: 维护 cron 表达式, 定时执行机器命令
 * 环境隔离: 不同应用环境的配置及环境变量是相互隔离的
@@ -91,6 +92,12 @@ roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
 
 ![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files6081069371629929397.png "在线文件管理")  
 ![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4411594441981208271.png "在线文件管理")
+
+> 机器监控
+
+![机器监控概要](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/30401c36-add4-4f8c-955e-7721740b6646.png "机器监控概要")  
+![机器监控信息](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/824a63d9-48ac-4c89-a9bf-8cc4f71fe608.png "机器监控信息")
+![机器监控报警-钉钉](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/a064eb5c-896b-496c-90d4-c9abc18ff39a.png "机器监控报警-钉钉")
 
 > 批量执行
 

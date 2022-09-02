@@ -88,7 +88,7 @@
                    :loading="loading"
                    size="middle">
             <!-- 展开明细 -->
-            <template v-slot:expandedRowRender="record">
+            <template #expandedRowRender="record">
               <a-table
                 v-if="record.machines"
                 :rowKey="(record, index) => index"
@@ -98,13 +98,13 @@
                 :pagination="false"
                 size="middle">
                 <!-- 状态 -->
-                <template v-slot:status="machine">
+                <template #status="machine">
                   <a-tag :color="machine.status | formatMachineStatus('color')">
                     {{ machine.status | formatMachineStatus('label') }}
                   </a-tag>
                 </template>
                 <!-- 操作 -->
-                <template v-slot:action="machine">
+                <template #action="machine">
                   <!-- 日志 -->
                   <a-button class="p0"
                             type="link"
@@ -143,23 +143,23 @@
               </a-table>
             </template>
             <!-- 状态 -->
-            <template v-slot:status="record">
+            <template #status="record">
               <a-tag :color="record.status | formatMachineStatus('color')">
                 {{ record.status | formatMachineStatus('label') }}
               </a-tag>
             </template>
             <!-- 开始时间 -->
-            <template v-slot:startTime="record">
+            <template #startTime="record">
               {{ record.startTime | formatDate }}
             </template>
             <!-- 结束时间 -->
-            <template v-slot:endTime="record">
+            <template #endTime="record">
               <template v-if="record.endTime">
                 {{ record.endTime | formatDate }}
               </template>
             </template>
             <!-- 操作 -->
-            <template v-slot:action="record">
+            <template #action="record">
               <!-- 日志 -->
               <a-button class="p0"
                         type="link"

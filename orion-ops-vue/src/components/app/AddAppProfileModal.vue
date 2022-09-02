@@ -16,11 +16,11 @@
           <a-input v-decorator="decorators.tag" allowClear/>
         </a-form-item>
         <a-form-item label="是否需要审核">
-          <a-select v-decorator="decorators.releaseAudit">
-            <a-select-option :value="type.value" v-for="type in PROFILE_AUDIT_STATUS" :key="type.value">
+          <a-radio-group v-decorator="decorators.releaseAudit" buttonStyle="solid">
+            <a-radio-button v-for="type in PROFILE_AUDIT_STATUS" :key="type.value" :value="type.value">
               {{ type.label }}
-            </a-select-option>
-          </a-select>
+            </a-radio-button>
+          </a-radio-group>
         </a-form-item>
         <a-form-item label="描述">
           <a-textarea v-decorator="decorators.description" allowClear/>
@@ -98,9 +98,9 @@ export default {
     update(id) {
       this.title = '修改环境'
       this.$api.getProfileDetail({ id })
-        .then(({ data }) => {
-          this.initRecord(data)
-        })
+      .then(({ data }) => {
+        this.initRecord(data)
+      })
     },
     initRecord(row) {
       this.form.resetFields()

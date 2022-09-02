@@ -8,7 +8,7 @@
       <a-menu-item v-if="!menuItem.children" :key="menuItem.id">
         <a :href="`#${menuItem.path}`" :title="menuItem.name">
           <a-icon :type="menuItem.icon"/>
-          {{ menuItem.name }}
+          <span>{{ menuItem.name }}</span>
         </a>
       </a-menu-item>
       <!-- 二级菜单 -->

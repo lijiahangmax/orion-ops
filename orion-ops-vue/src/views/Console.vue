@@ -110,10 +110,10 @@ const quickRouter = [
     redirectTarget: '_self'
   },
   {
-    routerName: '日志面板',
-    routerIcon: 'book',
-    redirect: '#/log/list',
-    redirectTitle: '跳转至日志面板',
+    routerName: '机器监控',
+    routerIcon: 'fund',
+    redirect: '#/machine/monitor/list',
+    redirectTitle: '跳转至机器监控',
     redirectTarget: '_self'
   },
   {
@@ -131,14 +131,14 @@ const quickRouter = [
     redirectTarget: '_blank'
   },
   {
-    routerName: '应用构建任务',
+    routerName: '应用构建',
     routerIcon: 'build',
     redirect: '#/app/build/list',
     redirectTitle: '跳转至',
     redirectTarget: '_self'
   },
   {
-    routerName: '应用发布任务',
+    routerName: '应用发布',
     routerIcon: 'rocket',
     redirect: '#/app/release/list',
     redirectTitle: '跳转至',
@@ -152,10 +152,10 @@ const quickRouter = [
     redirectTarget: '_self'
   },
   {
-    routerName: '应用流水线统计',
-    routerIcon: 'fund',
-    redirect: '#/app/pipeline/statistics',
-    redirectTitle: '跳转至应用流水线统计',
+    routerName: '日志面板',
+    routerIcon: 'book',
+    redirect: '#/log/list',
+    redirectTitle: '跳转至日志面板',
     redirectTarget: '_self'
   },
   {

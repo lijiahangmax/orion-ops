@@ -24,14 +24,14 @@ Vue.directive('limit-integer', limitPattern(/^(0+)|[^\d]+/g))
  */
 Vue.directive('limit-decimal', {
   inserted: function(el, binding, vnode) {
-    // el是 input外层的div
+    // input外层的div
     const input = el.tagName === 'INPUT' ? el : el.querySelector('input')
     input.addEventListener('keyup', function() {
       const reg = new RegExp('\\d+(\\.\\d{0,' + binding.value + '})?')
       input.value = input.value.match(reg) ? input.value.match(reg)[0] : ''
-      // 当输入汉字时会导致vue model 数据不同步, 因此在回调函数添加上以下代码, 手动触发数据的双向绑定
+      // 手动触发数据的双向绑定
       if (vnode.componentInstance) {
-        vnode.componentInstance.$emit('input', input.value)
+        vnode.componentInstance.stateValue = input.value
       } else {
         vnode.elm.dispatchEvent(new CustomEvent('input', input.value))
       }
@@ -40,9 +40,9 @@ Vue.directive('limit-decimal', {
     input.addEventListener('afterpaste', function() {
       const reg = new RegExp('\\d+(\\.\\d{0,' + binding.value + '})?')
       input.value = input.value.match(reg) ? input.value.match(reg)[0] : ''
-      // 当输入汉字时会导致vue model 数据不同步, 因此在回调函数添加上以下代码, 手动触发数据的双向绑定
+      // 手动触发数据的双向绑定
       if (vnode.componentInstance) {
-        vnode.componentInstance.$emit('input', input.value)
+        vnode.componentInstance.stateValue = input.value
       } else {
         vnode.elm.dispatchEvent(new CustomEvent('input', input.value))
       }
@@ -104,14 +104,14 @@ Vue.directive('drag-modal', (el, bindings, vnode) => {
 function limitPattern(pattern) {
   return {
     inserted: function(el, binding, vnode) {
-      // el是 input外层的div
+      // input外层的div
       const input = el.tagName === 'INPUT' ? el : el.querySelector('input')
       input.addEventListener('keyup', function() {
         input.value = input.value.replace(pattern || binding.value, '')
-        // 当输入汉字时会导致vue model 数据不同步, 因此在回调函数添加上以下代码, 手动触发数据的双向绑定
+        // 手动触发数据的双向绑定
         vnode.context.$nextTick(() => {
           if (vnode.componentInstance) {
-            vnode.componentInstance.$emit('input', input.value)
+            vnode.componentInstance.stateValue = input.value
           } else {
             vnode.elm.dispatchEvent(new CustomEvent('input', input.value))
           }

@@ -2395,6 +2395,229 @@ const $api = {
    */
   cancelImportData: param => {
     return $http.$post('/data-import/cancel-import', param)
+  },
+
+  /**
+   * 获取机器监控列表
+   */
+  getMachineMonitorList: param => {
+    return $http.$post('/monitor/list', param)
+  },
+
+  /**
+   * 获取机器监控配置
+   */
+  getMachineMonitorConfig: param => {
+    return $http.$get('/monitor/get-config', param)
+  },
+
+  /**
+   * 设置机器监控配置
+   */
+  setMachineMonitorConfig: param => {
+    return $http.$post('/monitor/set-config', param)
+  },
+
+  /**
+   * 测试连接监控
+   */
+  testPingMachineMonitor: param => {
+    return $http.$post('/monitor/test', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 安装机器监控插件
+   */
+  installMachineMonitorAgent: param => {
+    return $http.$post('/monitor/install', param)
+  },
+
+  /**
+   * 检测机器监控插件状态
+   */
+  checkMachineMonitorAgentStatus: param => {
+    return $http.$post('/monitor/check', param)
+  },
+
+  /**
+   * 查询机器监控指标
+   */
+  getMachineMonitorMetrics: param => {
+    return $http.$get('/monitor-endpoint/metrics', param)
+  },
+
+  /**
+   * 查询机器 负载
+   */
+  getMachineMonitorLoad: param => {
+    return $http.$get('/monitor-endpoint/load', param)
+  },
+
+  /**
+   * 查询机器 top 进程
+   */
+  getMachineMonitorTop: param => {
+    return $http.$get('/monitor-endpoint/top', param)
+  },
+
+  /**
+   * 查询机器硬盘名称
+   */
+  getMachineDiskName: param => {
+    return $http.$get('/monitor-endpoint/disk-name', param)
+  },
+
+  /**
+   * 查询机器cpu图表
+   */
+  getMachineMonitorCpuChart: param => {
+    return $http.$post('/monitor-endpoint/chart-cpu', param)
+  },
+
+  /**
+   * 查询机器内存图表
+   */
+  getMachineMonitorMemoryChart: param => {
+    return $http.$post('/monitor-endpoint/chart-memory', param)
+  },
+
+  /**
+   * 查询机器网络图表
+   */
+  getMachineMonitorNetChart: param => {
+    return $http.$post('/monitor-endpoint/chart-net', param)
+  },
+
+  /**
+   * 查询机器硬盘图表
+   */
+  getMachineMonitorDiskChart: param => {
+    return $http.$post('/monitor-endpoint/chart-disk', param)
+  },
+
+  /**
+   * 添加 webhook 配置
+   */
+  addWebhookConfig: param => {
+    return $http.$post('/webhook-config/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改 webhook 配置
+   */
+  updateWebhookConfig: param => {
+    return $http.$post('/webhook-config/update', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 删除 webhook 配置
+   */
+  deleteWebhookConfig: param => {
+    return $http.$post('/webhook-config/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取 webhook 详情
+   */
+  getWebhookConfigDetail: param => {
+    return $http.$post('/webhook-config/get', param)
+  },
+
+  /**
+   * 获取 webhook 列表
+   */
+  getWebhookConfigList: param => {
+    return $http.$post('/webhook-config/list', param)
+  },
+
+  /**
+   * 添加报警组配置
+   */
+  addAlarmGroup: param => {
+    return $http.$post('/alarm-group/add', param, {
+      loading: '正在保存...'
+    })
+  },
+
+  /**
+   * 修改报警组配置
+   */
+  updateAlarmGroup: param => {
+    return $http.$post('/alarm-group/update', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 删除报警组配置
+   */
+  deleteAlarmGroup: param => {
+    return $http.$post('/alarm-group/delete', param, {
+      loading: '正在删除...'
+    })
+  },
+
+  /**
+   * 获取报警组详情
+   */
+  getAlarmGroupDetail: param => {
+    return $http.$post('/alarm-group/get', param)
+  },
+
+  /**
+   * 获取报警组列表
+   */
+  getAlarmGroupList: param => {
+    return $http.$post('/alarm-group/list', param)
+  },
+
+  /**
+   * 获取机器报警配置
+   */
+  getMachineAlarmConfig: param => {
+    return $http.$get('/machine-alarm/get-config', param)
+  },
+
+  /**
+   * 设置机器报警配置
+   */
+  setMachineAlarmConfig: param => {
+    return $http.$post('/machine-alarm/set-alarm-config', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 设置机器报警联系组
+   */
+  setMachineAlarmGroup: param => {
+    return $http.$post('/machine-alarm/set-group-config', param, {
+      loading: '正在修改...'
+    })
+  },
+
+  /**
+   * 获取机器报警历史
+   */
+  getMachineAlarmHistory: param => {
+    return $http.$post('/machine-alarm/history', param)
+  },
+
+  /**
+   * 触发机器报警通知
+   */
+  triggerMachineAlarmNotify: param => {
+    return $http.$post('/machine-alarm/trigger-alarm-notify', param, {
+      loading: '正在通知...'
+    })
   }
 
 }

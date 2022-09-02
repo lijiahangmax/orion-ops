@@ -6,7 +6,15 @@
                   :beforeUpload="selectAvatarFile"
                   :customRequest="() => {}"
                   :showUploadList="false">
-          <a-avatar class="pointer" :src="user.avatar" :size="96" title="更换头像"/>
+          <template v-if="user.avatar">
+            <a-avatar class="pointer" :src="user.avatar" :size="96" title="更换头像"/>
+          </template>
+          <template v-else-if="user.nickname">
+            <a-avatar class="pointer" :size="96" title="更换头像" :style="{backgroundColor: '#7265E6',
+             verticalAlign: 'middle', 'font-size': '48px'}">
+              {{ user.nickname.substring(user.nickname.length - 1) }}
+            </a-avatar>
+          </template>
         </a-upload>
         <!-- 用户信息表单 -->
         <a-form class="basic-user-form" :form="userForm" v-bind="userFormLayout">
@@ -95,17 +103,17 @@ export default {
     getUserInfo() {
       this.userLoading = true
       this.$api.getUserDetail({ id: this.$getUserId() })
-        .then(({ data }) => {
-          this.user = data
-          const formFields = pick(Object.assign({}, data), 'nickname', 'phone', 'email')
-          this.$nextTick(() => {
-            this.userForm.setFieldsValue(formFields)
-          })
-          this.userLoading = false
+      .then(({ data }) => {
+        this.user = data
+        const formFields = pick(Object.assign({}, data), 'nickname', 'phone', 'email')
+        this.$nextTick(() => {
+          this.userForm.setFieldsValue(formFields)
         })
-        .catch(() => {
-          this.userLoading = false
-        })
+        this.userLoading = false
+      })
+      .catch(() => {
+        this.userLoading = false
+      })
     },
     updateUserInfo() {
       this.userLoading = true

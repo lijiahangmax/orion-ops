@@ -92,7 +92,7 @@
                :loading="loading"
                size="middle">
         <!-- 主机 -->
-        <template v-slot:machine="record">
+        <template #machine="record">
           <a-tooltip placement="top">
             <template #title>
               <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
@@ -101,35 +101,35 @@
           </a-tooltip>
         </template>
         <!-- 命令 -->
-        <template v-slot:command="record">
+        <template #command="record">
           <span class="pointer" title="预览" @click="previewEditor(record.command)">
               {{ record.command }}
           </span>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag class="m0" :color="record.status | formatExecStatus('color')">
             {{ record.status | formatExecStatus('label') }}
           </a-tag>
         </template>
         <!-- 退出码 -->
-        <template v-slot:exitCode="record">
+        <template #exitCode="record">
           <span :style="{'color': record.exitCode === 0 ? '#4263EB' : '#E03131'}">
             {{ record.exitCode }}
           </span>
         </template>
         <!-- 描述 -->
-        <template v-slot:description="record">
+        <template #description="record">
           <span class="pointer" @click="previewText(record.description)">
             {{ record.description }}
           </span>
         </template>
         <!-- 创建时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }}
         </template>
         <!-- 日志 -->
-        <template v-slot:log="record">
+        <template #log="record">
           <!-- 日志面板 -->
           <a-tooltip title="ctrl 点击打开新页面">
             <a target="_blank"
@@ -142,7 +142,7 @@
           <a v-else @click="loadDownloadUrl(record)">获取</a>
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 详情 -->
           <a @click="detail(record.id)">详情</a>
           <a-divider type="vertical"/>

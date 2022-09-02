@@ -1,6 +1,6 @@
 <template>
-  <div class="user-detail-container">
-    <a-tabs default-active-key="1" tab-position="left">
+  <div class="system-setting-container">
+    <a-tabs defaultActiveKey="1" tabPosition="left">
       <!-- 统计分析 -->
       <a-tab-pane key="1" tab="统计分析">
         <SystemAnalysis/>
@@ -48,7 +48,7 @@ export default {
 
 <style lang="less" scoped>
 
-.user-detail-container {
+.system-setting-container {
   background: #FFF;
   padding: 8px 16px;
   border-radius: 4px;

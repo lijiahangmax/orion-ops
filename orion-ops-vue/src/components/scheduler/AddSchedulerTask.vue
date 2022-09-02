@@ -86,7 +86,7 @@ import { formatDate } from '@/lib/filters'
 import { EXCEPTION_HANDLER_TYPE, SERIAL_TYPE } from '@/lib/enum'
 import Editor from '@/components/editor/Editor'
 import MachineMultiSelector from '@/components/machine/MachineMultiSelector'
-import TemplateSelector from '@/components/template/TemplateSelector'
+import TemplateSelector from '@/components/content/TemplateSelector'
 
 const layout = {
   labelCol: { span: 5 },

@@ -50,7 +50,7 @@
       <div class="tools-fixed-right">
         <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="caret-right" @click="openPipelineList">执行</a-button>
         <a-divider type="vertical"/>
-        <a-icon type="delete" class="tools-icon" title="查询" @click="openClear"/>
+        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -68,7 +68,7 @@
                :expandedRowKeys.sync="expandedRowKeys"
                size="middle">
         <!-- 展开的详情列表 -->
-        <template v-slot:expandedRowRender="record">
+        <template #expandedRowRender="record">
           <a-table
             v-if="record.details"
             :rowKey="(record, index) => index"
@@ -78,13 +78,13 @@
             :pagination="false"
             size="middle">
             <!-- 操作 -->
-            <template v-slot:stage="detail">
+            <template #stage="detail">
               <span class="span-blue">
                 {{ detail.stageType | formatStageType('label') }}
               </span>
             </template>
             <!-- 配置 -->
-            <template v-slot:config="detail">
+            <template #config="detail">
               <!-- 构建 -->
               <div v-if="detail.stageType === STAGE_TYPE.BUILD.value && detail.config.branchName">
                 <a-icon type="branches"/>
@@ -123,13 +123,13 @@
               </div>
             </template>
             <!-- 状态 -->
-            <template v-slot:status="detail">
+            <template #status="detail">
               <a-tag class="m0" :color="detail.status | formatPipelineDetailStatus('color')">
                 {{ detail.status | formatPipelineDetailStatus('label') }}
               </a-tag>
             </template>
             <!-- 操作 -->
-            <template v-slot:action="detail">
+            <template #action="detail">
               <!-- 日志 -->
               <a-tooltip :disabled="!statusHolder.visibleDetailLog(detail.status)" title="ctrl 点击打开新页面">
                 <a target="_blank"
@@ -160,7 +160,7 @@
           </a-table>
         </template>
         <!-- 执行标题 -->
-        <template v-slot:pipelineTitle="record">
+        <template #pipelineTitle="record">
           <div class="timed-wrapper">
             <!-- 定时图标 -->
             <a-tooltip v-if="record.timedExec === TIMED_TYPE.TIMED.value">
@@ -174,17 +174,17 @@
           </div>
         </template>
         <!-- 状态 -->
-        <template v-slot:status="record">
+        <template #status="record">
           <a-tag class="m0" :color="record.status | formatPipelineStatus('color')">
             {{ record.status | formatPipelineStatus('label') }}
           </a-tag>
         </template>
         <!-- 创建时间 -->
-        <template v-slot:createTime="record">
+        <template #createTime="record">
           {{ record.createTime | formatDate }}
         </template>
         <!-- 操作 -->
-        <template v-slot:action="record">
+        <template #action="record">
           <!-- 审核 -->
           <span class="span-blue pointer" v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</span>
           <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>

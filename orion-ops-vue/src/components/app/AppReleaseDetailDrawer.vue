@@ -78,7 +78,7 @@
         <template #header>
           <span class="span-blue">共 {{ detail.machines.length }} 台机器</span>
         </template>
-        <template v-slot:renderItem="item">
+        <template #renderItem="item">
           <a-list-item>
             <span>{{ item.machineName }}</span>
             <div>
@@ -93,7 +93,7 @@
       <!-- 发布操作 -->
       <a-divider>发布操作</a-divider>
       <a-list size="small" :dataSource="detail.actions">
-        <template v-slot:renderItem="item">
+        <template #renderItem="item">
           <a-list-item>
             <a-descriptions size="middle">
               <a-descriptions-item label="操作名称" :span="3">
