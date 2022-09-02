@@ -205,7 +205,7 @@ public class SchedulerPools {
      */
     public static final ThreadPoolExecutor AGENT_INSTALL_SCHEDULER = ExecutorBuilder.create()
             .setNamedThreadFactory("agent-install-thread-")
-            .setCorePoolSize(2)
+            .setCorePoolSize(4)
             .setMaxPoolSize(4)
             .setKeepAliveTime(Const.MS_S_30)
             .setWorkQueue(new LinkedBlockingQueue<>())
