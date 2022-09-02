@@ -162,12 +162,12 @@ const columns = [
     width: 120,
     scopedSlots: { customRender: 'status' }
   },
-  {
-    title: '报警',
-    key: 'alarm',
-    width: 150,
-    scopedSlots: { customRender: 'alarm' }
-  },
+  // {
+  //   title: '报警',
+  //   key: 'alarm',
+  //   width: 150,
+  //   scopedSlots: { customRender: 'alarm' }
+  // },
   {
     title: '操作',
     key: 'action',
