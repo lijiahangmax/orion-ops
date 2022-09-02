@@ -2,7 +2,7 @@
 
 `orion-ops` 一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。
 
-<p style="text-align: center">
+<p style="text-align: left">
 	<a target="_blank" style="text-decoration: none" href="https://www.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lijiahangmax/orion-ops&amp;utm_campaign=Badge_Grade">
 		<img src="https://app.codacy.com/project/badge/Grade/18b08ef5e7294e80836c56d595fea4bb" alt="Codacy"/>
 	</a>

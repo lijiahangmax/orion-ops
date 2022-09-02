@@ -13,38 +13,42 @@
 ### 配置
 
 1. 拉取代码
-   ```
-   # github
-   git clone https://github.com/lijiahangmax/orion-ops
-   # gitee
-   git clone https://gitee.com/lijiahangmax/orion-ops
-   ```
+
+```
+# github
+git clone https://github.com/lijiahangmax/orion-ops
+# gitee
+git clone https://gitee.com/lijiahangmax/orion-ops
+```
 
 2. 初始化数据库
-   ```
-   # 执行DDL脚本
-   orion-ops/sql/init-schema.sql
-   # 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
-   orion-ops/sql/init-data.sql
-   ```
+
+```
+# 执行DDL脚本
+orion-ops/sql/init-schema.sql
+# 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
+orion-ops/sql/init-data.sql
+```
 
 3. 修改后端配置
-   ```
-   # 修改配置文件
-   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-dev.properties
-   # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
-   ```
+
+```
+# 修改配置文件
+orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-dev.properties
+# 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
+orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
+```
 
 4. 修改前端配置
-   ```
-   # 进入代码目录
-   cd orion-ops/orion-ops-vue
-   # 下载依赖
-   npm i 或 yarn
-   # 运行
-   npm run serve:dev
-   ```   
+
+```
+# 进入代码目录
+cd orion-ops/orion-ops-vue
+# 下载依赖
+npm i 或 yarn
+# 运行
+npm run serve:dev
+```   
 
 5. 运行  
    后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-data.sql` 则可以忽略)    
