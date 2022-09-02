@@ -319,7 +319,6 @@ export default {
         this.globaLoadingTip = `${row.machineName}(${row.machineHost}) 正在检测...`
         this.globaLoading = true
         const beforeStatus = row.status
-        row.status = MONITOR_STATUS.STARTING.value
         try {
           const { data } = await this.$api.checkMachineMonitorAgentStatus({
             machineId: row.machineId

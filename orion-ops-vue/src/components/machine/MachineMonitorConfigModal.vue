@@ -92,6 +92,11 @@ export default {
           this.loading = false
           return
         }
+        if (values.url.endsWith('/')) {
+          this.loading = false
+          this.$message.warning('url 不能以 / 结尾')
+          return
+        }
         if (submit) {
           this.submit(values)
         } else {

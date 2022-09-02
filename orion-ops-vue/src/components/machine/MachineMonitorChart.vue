@@ -1037,6 +1037,10 @@ export default {
     color: #000;
     padding-top: 4px;
   }
+
+  .monitor-action-wrapper {
+    display: none;
+  }
 }
 
 .disk-selector {
