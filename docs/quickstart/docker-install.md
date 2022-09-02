@@ -19,9 +19,9 @@
 2. 构建后端代码
    ```
    # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
+   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
    # 进入代码目录
-   cd orion-ops/orion-ops-service
+   cd orion-ops/orion-ops-api
    # 编译
    mvn -U clean install -DskipTests
    ```

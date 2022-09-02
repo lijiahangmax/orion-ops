@@ -10,7 +10,7 @@
 重启后端服务 添加启动参数 `--reset-admin` 会将 `orionadmin` 的密码重置为 `orionadmin`
 
 ```
-nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --reset-admin &
+nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --reset-admin &
 ```
 
 <br/> 
@@ -20,7 +20,7 @@ nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --rese
 重启后端服务 添加启动参数 `--disable-ip-filter` 会将禁用ip过滤器
 
 ```
-nohup java -jar orion-ops-service-1.0.0.jar --spring.profiles.active=prod --disable-ip-filter &
+nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --disable-ip-filter &
 ```
 
 <br/> 
@@ -111,11 +111,14 @@ server {
 同理, 在命令的最后一行设置 `exit 1` 结果将会是失败, 可以用此来中断后续流程  
 <br/>
 
-> ##### 17. docker 运行 orion-ops-service 失败提示 `sun.awt.FontConfiguration.getVersion(FontConfiguration.java:1264)`
+> ##### 17. 添加机器全局密钥时提示添加失败
 
-`1.1.4` 版本之前可能会出现此问题, 之后换成了配置文件中的默认头像      
-原因是用户创建时会生成默认的头像, 依赖于 `awt` 绘制   
-启动时需要添加 `RUN apk add --update ttf-dejavu fontconfig`  
+生成秘钥时可以指定密钥 -m PEM
+
+```shell
+ssh-keygen -t rsa -m PEM
+```
+
 <br/>
 
 > ##### 18. 应用发布中选择 SCP 作为传输方式, 为什么还需要手动输入密码?

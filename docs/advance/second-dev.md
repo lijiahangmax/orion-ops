@@ -23,17 +23,17 @@
 2. 初始化数据库
    ```
    # 执行DDL脚本
-   orion-ops/orion-ops-service/init-schema.sql
+   orion-ops/sql/init-schema.sql
    # 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
-   orion-ops/orion-ops-service/init-data.sql
+   orion-ops/sql/init-data.sql
    ```
 
 3. 修改后端配置
    ```
    # 修改配置文件
-   orion-ops/orion-ops-service/src/main/resources/application-dev.properties
+   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-dev.properties
    # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
+   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
    ```
 
 4. 修改前端配置

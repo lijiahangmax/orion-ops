@@ -23,19 +23,19 @@
 2. 初始化数据库
    ```
    # 执行DDL脚本
-   orion-ops/orion-ops-service/init-schema.sql
+   orion-ops/sql/init-schema.sql
    # 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
-   orion-ops/orion-ops-service/init-data.sql
+   orion-ops/sql/init-data.sql
    ```
 
 3. 构建后端代码
    ```
    # 修改配置文件 (mysql, redis)
-   orion-ops/orion-ops-service/src/main/resources/application-prod.properties
+   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-prod.properties
    # 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
-   orion-ops/orion-ops-service/src/main/resources/application.properties value.mix.secret.key
+   orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
    # 进入代码目录
-   cd orion-ops/orion-ops-service
+   cd orion-ops/orion-ops-api
    # 编译
    mvn -U clean install -DskipTests
    ```   
@@ -106,9 +106,9 @@ server {
 ```
 复制 orion-ops/orion-ops-vue/dist/index.html 到 /usr/share/nginx/html
 复制 orion-ops/orion-ops-vue/dist 到 /usr/share/nginx/html 并且重命名为 ops
-复制 orion-ops/orion-ops-service/target/orion-ops-service-1.1.4.jar 到 /data/orion
+复制 orion-ops/orion-ops-api/orion-ops-api/target/orion-ops-web-1.2.0-beta.jar 到 /data/orion
 # 启动后台服务
-nohup java -jar orion-ops-service-1.1.4.jar --spring.profiles.active=prod --generator-admin &
+nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --generator-admin &
 # 启动 nginx
 service nginx start
 ```

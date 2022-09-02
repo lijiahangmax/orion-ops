@@ -16,6 +16,7 @@
     * [应用管理](operator/app.md)
     * [构建发布](operator/build-release.md)
     * [用户管理](operator/user.md)
+    * [信息管理](operator/content.md)
     * [系统管理](operator/system.md)
 
 * 进阶指南

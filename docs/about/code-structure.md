@@ -60,36 +60,83 @@ enum.js 中对象必须为蛇形命名法且都是大写字母 如: `BUILD_STATU
 ### 后端代码结构
 
 ```code
-java com.orion.ops 
-  ├── annotation           自定义注解
-  ├── config               配置包
-  ├── constant             常量包 根据不同的业务划分不同的子包, 通常存放枚举以及常量 
-  ├── controller           contorller 层
-  ├── dao                  dao 层
-  ├── entity
-  │    ├─ domain           数据库实体 其中的类需要与数据库字段一一对应 不允许多字段
-  │    ├─ dto              业务实体 用于业务对象 如: redis 的 json 实体, 数据导入实体
-  │    ├─ request          请求实体 用于前端请求参数
-  │    └─ vo               展示实体 用于前端响应展示
-  ├── handler              复杂业务逻辑包 如: 用于构建, 用于发布
-  ├── interceptor          拦截器配置包
-  ├── runner               系统启动 runner 配置, 如: 自动修改状态, 加载转换器, 清除 redis 无效 key
-  ├── service
-  │    ├─ api              应用服务接口定义
-  │    └─ impl             业务服务接口实现
-  ├── task
-  │    ├─ fixed            固定定时任务 如: 数据统计
-  │    └─ impl             自定义定时任务 如: 调度任务, 定时发布
-  └── utils                工具包
-  
-resources
-  ├── config                配置文件目录
-  ├── mapper                mybatis mapper 文件存放目录
-  ├── menu                  菜单 json 文件存放目录
-  ├── static                静态文件存储目录
-  └── templates         
-       ├─ import            导入模板目录
-       └─ push              推送模板目录
+orion-ops-common                  公共模块
+   └── java com.orion.ops  
+        ├── annotation            自定义注解包
+        ├── constant              常量包 根据不同的业务划分不同的子包, 通常存放枚举以及常量 
+        └── utils                 通用工具包
+       
+orion-ops-dao                     dao 层模块
+   ├── java com.orion.ops  
+   │    ├── dao                   dao 层接口
+   │    ├── entity
+   │    │    ├── domain           数据库实体 其中的类需要与数据库字段一一对应 不允许多字段
+   │    │    ├── dto              复杂查询对象 查询返回
+   │    │    └── query            复杂查询对象 查询入参
+   │    └── utils                 dao 层工具包, 代码生成器, 数据查询器
+   │  
+   └── resources
+        ├── config                配置文件目录
+        └── mapper                mybatis mapper 文件存放目录
+             
+orion-ops-export                  导入导出模块
+   ├── java com.orion.ops 
+   │    ├── constant              导入导出常量包 
+   │    ├── entity
+   │    │    ├── exporter         导出对象解析实体包
+   │    │    └── importer         导入对象解析实体包
+   │    ├── service
+   │    │    ├── api              导入导出服务接口定义
+   │    │    └── impl             导入导出服务接口实现
+   │    └── validator             导入对象数据验证器
+   │  
+   └── resources
+        └── templates         
+             └── import           导入模板目录
+             
+orion-ops-mapping                 数据映射模块
+   └── java com.orion.ops 
+        └── mapping               数据映射包 根据不同的业务划分不同的子包
+             
+orion-ops-model                   实体对象模块
+   └── java com.orion.ops 
+        └── entity
+             ├── config           配置实体 用于业务中的配置对象
+             ├── dto              业务实体 用于业务对象 如: redis 的 json 实体
+             ├── request          请求实体 用于前端请求参数
+             └── vo               展示实体 用于前端响应展示
+             
+orion-ops-runner                  启动加载模块
+   └── java com.orion.ops 
+        └── runner                系统启动 runner 配置, 如: 自动修改状态, 加载转换器, 清除 redis 无效 key
+
+orion-ops-service                 服务实现模块
+   ├── java com.orion.ops 
+   │    ├── config                服务配置包 
+   │    ├── handler               复杂业务逻辑包 如: 用于构建, 用于发布
+   │    ├── interceptor           拦截器配置包
+   │    ├── service
+   │    │    ├── api              应用服务接口定义
+   │    │    └── impl             业务服务接口实现
+   │    ├── task
+   │    │    ├── fixed            固定定时任务 如: 数据统计
+   │    │    └── impl             自定义定时任务 如: 调度任务, 定时发布
+   │    └── utils                 业务工具类
+   │  
+   └── resources
+        └── templates         
+             ├── push             推送模板目录, 根据不同的类型拆分子包
+             └── script           脚本模板目录
+             
+orion-ops-web                     restful api模块
+   ├── java com.orion.ops 
+   │    ├── config                web 配置包 
+   │    ├── controller            orion-ops-vue 接口包
+   │    └── expose                对外暴露服务接口包
+   │  
+   └── resources
+        ├── config                配置文件目录         
+        └── menu                  菜单文件存放目录
 ```
 
 ### 后端代码规范
@@ -123,7 +170,11 @@ controller 禁止使用 map 传参
 
 分页的请求对象必须继承 PageRequest
 分页的响应类型必须为 DataGrid<T>
+每个表必须存在四个字段 id[bigint] deleted[tinyint] create_time[datetime(4)] update_time[datetime(4)]
+DO 对象必须和数据库结构一一对应
+复杂查询必要时需要创建 Query 以及 DTO 对象
 查询善用 DataQuery
+CodeGenerator 为代码生成器
 
 参数校验需要使用 utils.Valid 方法
 抛出异常需要用到 Exceptions 方法, 不要 new
@@ -135,8 +186,6 @@ DAO DTO DO VO 对象的定义 后缀必须为纯大写
 代码必须要有注释
 如果字段是一个枚举时 需要使用 @see 枚举
 
-CodeGenerator 为代码生成器
-可以不用写单元测试
 禁止使用 @Autowire 注入 bean, 只能使用 @Resource 注入
 @RestWrapper 为自定义注解, 自动返回 HttpWrapper
 
