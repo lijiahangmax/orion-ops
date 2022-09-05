@@ -29,7 +29,7 @@ public class MachineGlobalSecretKeyLoadRunner implements CommandLineRunner {
         log.info("机器登陆秘钥加载-开始");
         machineKeyService.mountAllKey();
         log.info("机器登陆秘钥加载-完成");
-        for (String loadKey : SessionHolder.getLoadKeys()) {
+        for (String loadKey : SessionHolder.HOLDER.getLoadKeys()) {
             log.info("机器登陆秘钥已加载-{}", loadKey);
         }
         log.info("机器登陆秘钥加载-结束");

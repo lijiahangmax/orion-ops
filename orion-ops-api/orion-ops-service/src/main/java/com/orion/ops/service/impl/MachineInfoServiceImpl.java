@@ -344,7 +344,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Long proxyId = machine.getProxyId();
         SessionStore session;
         try {
-            session = SessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
+            session = SessionHolder.HOLDER.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
             String password = machine.getPassword();
             if (Strings.isNotBlank(password)) {
                 session.password(ValueMix.decrypt(password));
@@ -362,9 +362,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 if (ProxyType.HTTP.equals(proxyType)) {
                     session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS4.equals(proxyType)) {
-                    session.socket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.sock4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS5.equals(proxyType)) {
-                    session.socket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.sock5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
             }
             session.connect(timeout);

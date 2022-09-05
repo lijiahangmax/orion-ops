@@ -194,7 +194,7 @@ public class SystemServiceImpl implements SystemService {
     public SystemAnalysisVO getSystemAnalysis() {
         SystemAnalysisVO vo = Converts.to(systemSpace, SystemAnalysisVO.class);
         // 挂载秘钥数
-        vo.setMountKeyCount(SessionHolder.getLoadKeys().size());
+        vo.setMountKeyCount(SessionHolder.HOLDER.getLoadKeys().size());
         // 文件清理
         vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
         vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());

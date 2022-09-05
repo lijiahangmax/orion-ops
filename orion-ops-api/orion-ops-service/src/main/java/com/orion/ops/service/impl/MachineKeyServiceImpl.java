@@ -14,17 +14,13 @@ import com.orion.net.remote.channel.SessionHolder;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.machine.MountKeyStatus;
 import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.machine.MachineKeyRequest;
 import com.orion.ops.entity.vo.machine.MachineSecretKeyVO;
 import com.orion.ops.service.api.MachineKeyService;
-import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.ops.utils.Valid;
-import com.orion.ops.utils.ValueMix;
+import com.orion.ops.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +60,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         FileWriters.writeFast(path, keyFileData);
         key.setPassword(ValueMix.encrypt(request.getPassword()));
         // 加载key
-        SessionHolder.addIdentity(path, request.getPassword());
+        SessionHolder.HOLDER.addIdentity(path, request.getPassword());
         machineSecretKeyDAO.insert(key);
         // 设置日志参数
         EventParamsHolder.addParams(key);
@@ -89,7 +85,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         if (updateKeyFile) {
             // 移除原先的key
             String keyPath = MachineKeyService.getKeyPath(beforeKey.getSecretKeyPath());
-            SessionHolder.removeIdentity(keyPath);
+            SessionHolder.HOLDER.removeIdentity(keyPath);
             // 修改秘钥文件 将新秘钥保存到本地
             if (!Strings.isBlank(fileBase64)) {
                 Files1.delete(keyPath);
@@ -103,7 +99,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             // 修改密码
             if (!Strings.isBlank(password)) {
                 updateKey.setPassword(ValueMix.encrypt(password));
-                SessionHolder.addIdentity(keyPath, password);
+                SessionHolder.HOLDER.addIdentity(keyPath, password);
             }
         }
 
@@ -126,7 +122,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             }
             String secretKeyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
             // 移除key
-            SessionHolder.removeIdentity(secretKeyPath);
+            SessionHolder.HOLDER.removeIdentity(secretKeyPath);
             // 删除key
             Files1.delete(secretKeyPath);
             effect += machineSecretKeyDAO.deleteById(id);
@@ -160,7 +156,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
                 .wrapper(wrapper)
                 .dataGrid(MachineSecretKeyVO.class);
         if (!dataGrid.isEmpty()) {
-            List<String> loadKeys = SessionHolder.getLoadKeys();
+            List<String> loadKeys = SessionHolder.HOLDER.getLoadKeys();
             for (MachineSecretKeyVO row : dataGrid.getRows()) {
                 String path = row.getPath();
                 boolean isFile = Files1.isFile(new File(MachineKeyService.getKeyPath(path)));
@@ -239,7 +235,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
                 continue;
             }
             try {
-                SessionHolder.addIdentity(secretKeyPath, password);
+                SessionHolder.HOLDER.addIdentity(secretKeyPath, password);
             } catch (Exception e) {
                 log.error("加载ssh秘钥失败 发生异常 {} {} {}", key.getKeyName(), secretKeyPath, e);
             }
@@ -248,7 +244,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
 
     @Override
     public void dumpAllKey() {
-        SessionHolder.removeAllIdentity();
+        SessionHolder.HOLDER.removeAllIdentity();
     }
 
     @Override
@@ -259,7 +255,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         byte[] keyFileData = Base64s.decode(Strings.bytes(fileData));
         FileWriters.writeFast(path, keyFileData);
         // 加载key
-        SessionHolder.addIdentity(path, password);
+        SessionHolder.HOLDER.addIdentity(path, password);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.PATH, path);
         // 检查状态
@@ -282,10 +278,10 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         }
         if (mount) {
             // 加载key
-            SessionHolder.addIdentity(keyPath, ValueMix.decrypt(key.getPassword()));
+            SessionHolder.HOLDER.addIdentity(keyPath, ValueMix.decrypt(key.getPassword()));
         } else {
             // 卸载
-            SessionHolder.removeIdentity(keyPath);
+            SessionHolder.HOLDER.removeIdentity(keyPath);
         }
         // 检查状态
         return this.getMountStatus(path);
@@ -298,7 +294,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
      * @return status
      */
     private Integer getMountStatus(String path) {
-        List<String> loadKeys = SessionHolder.getLoadKeys();
+        List<String> loadKeys = SessionHolder.HOLDER.getLoadKeys();
         boolean match = loadKeys.stream().anyMatch(k -> k.endsWith(path));
         if (match) {
             return MountKeyStatus.MOUNTED.getStatus();

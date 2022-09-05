@@ -156,7 +156,7 @@ public class MonitorAgentInstallTask implements Runnable {
         MachineMonitorDO monitor = machineMonitorService.selectByMachineId(machineId);
         // 尝试进行同步 检查是否启动
         String version = null;
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
                 Threads.sleep(Const.MS_S_10);
                 version = machineMonitorService.syncMonitorAgent(machineId, monitor.getMonitorUrl(), monitor.getAccessToken());
