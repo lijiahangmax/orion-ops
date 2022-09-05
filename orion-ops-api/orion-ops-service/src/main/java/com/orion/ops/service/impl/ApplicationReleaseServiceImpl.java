@@ -15,7 +15,6 @@ import com.orion.ops.constant.*;
 import com.orion.ops.constant.app.*;
 import com.orion.ops.constant.env.EnvConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.constant.user.RoleType;
@@ -30,10 +29,7 @@ import com.orion.ops.handler.app.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.*;
 import com.orion.spring.SpringHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -304,11 +300,11 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 // 提交任务
                 taskRegister.submit(TaskType.RELEASE, release.getTimedReleaseTime(), id);
             }
-            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_RESOLVE, release.getCreateUserId(), release.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_RESOLVE, id, release.getCreateUserId(), release.getCreateUserName(), params);
         } else {
             // 驳回
             update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
-            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_REJECT, release.getCreateUserId(), release.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_REJECT, id, release.getCreateUserId(), release.getCreateUserName(), params);
         }
         int effect = applicationReleaseDAO.updateById(update);
         // 设置日志参数

@@ -262,7 +262,7 @@ public class CommandExecHandler implements IExecHandler {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.ID, record.getId());
         params.put(EventKeys.NAME, record.getMachineName());
-        webSideMessageService.addMessage(MessageType.EXEC_SUCCESS, record.getUserId(), record.getUserName(), params);
+        webSideMessageService.addMessage(MessageType.EXEC_SUCCESS, record.getId(), record.getUserId(), record.getUserName(), params);
     }
 
     /**
@@ -305,7 +305,7 @@ public class CommandExecHandler implements IExecHandler {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.ID, record.getId());
         params.put(EventKeys.NAME, record.getMachineName());
-        webSideMessageService.addMessage(MessageType.EXEC_FAILURE, record.getUserId(), record.getUserName(), params);
+        webSideMessageService.addMessage(MessageType.EXEC_FAILURE, record.getId(), record.getUserId(), record.getUserName(), params);
     }
 
     @SneakyThrows

@@ -20,7 +20,6 @@ import com.orion.ops.constant.app.PipelineStatus;
 import com.orion.ops.constant.app.StageType;
 import com.orion.ops.constant.app.TimedType;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.user.RoleType;
 import com.orion.ops.dao.*;
@@ -38,6 +37,7 @@ import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
 import com.orion.ops.utils.Currents;
 import com.orion.ops.utils.DataQuery;
+import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.utils.Valid;
 import com.orion.spring.SpringHolder;
 import org.springframework.stereotype.Service;
@@ -212,11 +212,11 @@ public class ApplicationPipelineTaskServiceImpl implements ApplicationPipelineTa
                 // 提交任务
                 taskRegister.submit(TaskType.PIPELINE, task.getTimedExecTime(), id);
             }
-            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_RESOLVE, task.getCreateUserId(), task.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_RESOLVE, id, task.getCreateUserId(), task.getCreateUserName(), params);
         } else {
             // 驳回
             update.setExecStatus(PipelineStatus.AUDIT_REJECT.getStatus());
-            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_REJECT, task.getCreateUserId(), task.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.PIPELINE_AUDIT_REJECT, id, task.getCreateUserId(), task.getCreateUserName(), params);
         }
         int effect = applicationPipelineTaskDAO.updateById(update);
         this.setEventLogParams(task);

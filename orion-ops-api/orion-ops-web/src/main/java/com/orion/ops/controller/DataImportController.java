@@ -120,7 +120,7 @@ public class DataImportController {
     public HttpWrapper<?> importMachineInfoData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importMachineInfoData(d));
+        this.asyncImportData(token, dataImportService::importMachineInfoData);
         return HttpWrapper.ok();
     }
 
@@ -130,7 +130,7 @@ public class DataImportController {
     public HttpWrapper<?> importMachineProxyData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importMachineProxyData(d));
+        this.asyncImportData(token, dataImportService::importMachineProxyData);
         return HttpWrapper.ok();
     }
 
@@ -140,7 +140,7 @@ public class DataImportController {
     public HttpWrapper<?> importMachineTailFileData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importMachineTailFileData(d));
+        this.asyncImportData(token, dataImportService::importMachineTailFileData);
         return HttpWrapper.ok();
     }
 
@@ -151,7 +151,7 @@ public class DataImportController {
     public HttpWrapper<?> importAppProfileData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importAppProfileData(d));
+        this.asyncImportData(token, dataImportService::importAppProfileData);
         return HttpWrapper.ok();
     }
 
@@ -161,7 +161,7 @@ public class DataImportController {
     public HttpWrapper<?> importApplicationData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importApplicationData(d));
+        this.asyncImportData(token, dataImportService::importApplicationData);
         return HttpWrapper.ok();
     }
 
@@ -171,7 +171,7 @@ public class DataImportController {
     public HttpWrapper<?> importRepositoryData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importRepositoryData(d));
+        this.asyncImportData(token, dataImportService::importRepositoryData);
         return HttpWrapper.ok();
     }
 
@@ -181,7 +181,7 @@ public class DataImportController {
     public HttpWrapper<?> importCommandTemplateData(@RequestBody DataImportRequest request) {
         String token = Valid.notNull(request.getImportToken());
         // 导入
-        this.asyncImportData(token, d -> dataImportService.importCommandTemplateData(d));
+        this.asyncImportData(token, dataImportService::importCommandTemplateData);
         return HttpWrapper.ok();
     }
 

@@ -183,7 +183,7 @@ public class MonitorAgentInstallTask implements Runnable {
     private void sendWebsideMessage(MessageType type) {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.NAME, machine.getMachineName());
-        webSideMessageService.addMessage(type, user.getId(), user.getUsername(), params);
+        webSideMessageService.addMessage(type, machine.getId(), user.getId(), user.getUsername(), params);
     }
 
     /**

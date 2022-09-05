@@ -641,7 +641,7 @@ public class DataImportServiceImpl implements DataImportService {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.TIME, Dates.format(importData.getImportTime()));
         params.put(EventKeys.TOKEN, importData.getImportToken());
-        webSideMessageService.addMessage(type, importData.getUserId(), importData.getUserName(), params);
+        webSideMessageService.addMessage(type, importData.getType().longValue(), importData.getUserId(), importData.getUserName(), params);
     }
 
     /**

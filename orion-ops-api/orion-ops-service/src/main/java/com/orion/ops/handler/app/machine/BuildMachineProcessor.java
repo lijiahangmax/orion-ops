@@ -142,7 +142,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
         params.put(EventKeys.PROFILE_NAME, record.getProfileName());
         params.put(EventKeys.APP_NAME, record.getAppName());
         params.put(EventKeys.BUILD_SEQ, record.getBuildSeq());
-        webSideMessageService.addMessage(MessageType.BUILD_SUCCESS, record.getCreateUserId(), record.getCreateUserName(), params);
+        webSideMessageService.addMessage(MessageType.BUILD_SUCCESS, record.getId(), record.getCreateUserId(), record.getCreateUserName(), params);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class BuildMachineProcessor extends AbstractMachineProcessor implements E
         params.put(EventKeys.APP_NAME, record.getAppName());
         params.put(EventKeys.PROFILE_NAME, record.getProfileName());
         params.put(EventKeys.BUILD_SEQ, record.getBuildSeq());
-        webSideMessageService.addMessage(MessageType.BUILD_FAILURE, record.getCreateUserId(), record.getCreateUserName(), params);
+        webSideMessageService.addMessage(MessageType.BUILD_FAILURE, record.getId(), record.getCreateUserId(), record.getCreateUserName(), params);
     }
 
     @Override

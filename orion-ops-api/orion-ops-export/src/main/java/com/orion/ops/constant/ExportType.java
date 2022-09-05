@@ -57,11 +57,6 @@ public enum ExportType {
     COMMAND_TEMPLATE(310, () -> ExportConst.getFileName(ExportConst.COMMAND_TEMPLATE_EXPORT_NAME)),
 
     /**
-     * 站内信
-     */
-    WEB_SIDE_MESSAGE(320, () -> ExportConst.getFileName(ExportConst.WEB_SIDE_MESSAGE_EXPORT_NAME)),
-
-    /**
      * 操作日志
      */
     USER_EVENT_LOG(330, () -> ExportConst.getFileName(ExportConst.USER_EVENT_LOG_EXPORT_NAME)),

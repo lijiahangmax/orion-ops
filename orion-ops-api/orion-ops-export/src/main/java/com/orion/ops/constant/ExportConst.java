@@ -31,8 +31,6 @@ public class ExportConst {
 
     public static final String COMMAND_TEMPLATE_EXPORT_NAME = "命令模板导出-{}.xlsx";
 
-    public static final String WEB_SIDE_MESSAGE_EXPORT_NAME = "站内信导出-{}.xlsx";
-
     public static final String USER_EVENT_LOG_EXPORT_NAME = "操作日志导出-{}.xlsx";
 
     /**

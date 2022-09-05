@@ -20,7 +20,6 @@ import com.orion.ops.constant.app.RepositoryStatus;
 import com.orion.ops.constant.app.RepositoryTokenType;
 import com.orion.ops.constant.app.RepositoryType;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.ApplicationBuildDAO;
@@ -241,7 +240,7 @@ public class ApplicationRepositoryServiceImpl implements ApplicationRepositorySe
             Map<String, Object> params = Maps.newMap();
             params.put(EventKeys.ID, repo.getId());
             params.put(EventKeys.NAME, repo.getRepoName());
-            webSideMessageService.addMessage(message, user.getId(), user.getUsername(), params);
+            webSideMessageService.addMessage(message, repo.getId(), user.getId(), user.getUsername(), params);
             if (ex == null) {
                 log.info("应用仓库初始化成功 id: {}", id);
             } else {

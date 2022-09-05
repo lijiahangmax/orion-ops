@@ -238,7 +238,7 @@ public class DataExportServiceImpl implements DataExportService {
         ExcelExport<EventLogExportDTO> exporter = new ExcelExport<>(EventLogExportDTO.class).init();
         exporter.addRows(exportList);
         // 写入
-        this.writeWorkbook(request, response, exporter, ExportType.WEB_SIDE_MESSAGE);
+        this.writeWorkbook(request, response, exporter, ExportType.USER_EVENT_LOG);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.CLASSIFY, classify);
         EventParamsHolder.addParam(EventKeys.USER_ID, userId);

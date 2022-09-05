@@ -1,6 +1,5 @@
 package com.orion.ops.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Objects1;
@@ -182,13 +181,13 @@ public class WebSideMessageServiceImpl implements WebSideMessageService {
     }
 
     @Override
-    public void addMessage(MessageType type, Map<String, Object> params) {
+    public void addMessage(MessageType type, Long relId, Map<String, Object> params) {
         UserDTO user = Currents.getUser();
-        this.addMessage(type, user.getId(), user.getUsername(), params);
+        this.addMessage(type, relId, user.getId(), user.getUsername(), params);
     }
 
     @Override
-    public void addMessage(MessageType type, Long userId, String username, Map<String, Object> params) {
+    public void addMessage(MessageType type, Long relId, Long userId, String username, Map<String, Object> params) {
         WebSideMessageDO message = new WebSideMessageDO();
         message.setMessageClassify(type.getClassify().getClassify());
         message.setMessageType(type.getType());
@@ -196,7 +195,7 @@ public class WebSideMessageServiceImpl implements WebSideMessageService {
         message.setToUserId(userId);
         message.setToUserName(username);
         message.setSendMessage(Strings.format(type.getTemplate(), params));
-        message.setParamsJson(JSON.toJSONString(params));
+        message.setRelId(relId);
         message.setDeleted(Const.NOT_DELETED);
         Date now = new Date();
         message.setCreateTime(now);

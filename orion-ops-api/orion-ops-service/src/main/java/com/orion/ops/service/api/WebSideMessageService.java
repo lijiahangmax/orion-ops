@@ -99,18 +99,20 @@ public interface WebSideMessageService {
      * 添加站内信 给当前用户
      *
      * @param type   type
+     * @param relId  relId
      * @param params 参数
      */
-    void addMessage(MessageType type, Map<String, Object> params);
+    void addMessage(MessageType type, Long relId, Map<String, Object> params);
 
     /**
      * 添加站内信
      *
      * @param type     type
+     * @param relId    relId
      * @param userId   收信人 userId
-     * @param username 收信人  username
+     * @param username 收信人 username
      * @param params   参数
      */
-    void addMessage(MessageType type, Long userId, String username, Map<String, Object> params);
+    void addMessage(MessageType type, Long relId, Long userId, String username, Map<String, Object> params);
 
 }
