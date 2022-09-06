@@ -162,6 +162,7 @@ public class ApplicationRepositoryServiceImpl implements ApplicationRepositorySe
                 .like(Objects.nonNull(request.getDescription()), ApplicationRepositoryDO::getRepoDescription, request.getDescription())
                 .like(Objects.nonNull(request.getUrl()), ApplicationRepositoryDO::getRepoUrl, request.getUrl())
                 .like(Objects.nonNull(request.getUsername()), ApplicationRepositoryDO::getRepoUsername, request.getUsername())
+                .eq(Objects.nonNull(request.getId()), ApplicationRepositoryDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getType()), ApplicationRepositoryDO::getRepoType, request.getType())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationRepositoryDO::getRepoStatus, request.getStatus())
                 .orderByAsc(ApplicationRepositoryDO::getId);

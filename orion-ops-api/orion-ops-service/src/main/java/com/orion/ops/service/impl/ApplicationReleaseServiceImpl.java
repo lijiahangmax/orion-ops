@@ -115,6 +115,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .like(!Strings.isBlank(request.getTitle()), ApplicationReleaseDO::getReleaseTitle, request.getTitle())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationReleaseDO::getReleaseDescription, request.getDescription())
                 .like(!Strings.isBlank(request.getAppName()), ApplicationReleaseDO::getAppName, request.getAppName())
+                .eq(Objects.nonNull(request.getId()), ApplicationReleaseDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getAppId()), ApplicationReleaseDO::getAppId, request.getAppId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationReleaseDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationReleaseDO::getReleaseStatus, request.getStatus())

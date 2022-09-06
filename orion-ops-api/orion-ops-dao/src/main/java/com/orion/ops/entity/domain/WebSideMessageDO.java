@@ -62,7 +62,7 @@ public class WebSideMessageDO implements Serializable {
     private String sendMessage;
 
     @ApiModelProperty(value = "消息关联id")
-    @TableField("relId")
+    @TableField("rel_id")
     private Long relId;
 
     @ApiModelProperty(value = "是否删除 1未删除 2已删除")

@@ -100,6 +100,7 @@ public class ApplicationPipelineTaskServiceImpl implements ApplicationPipelineTa
     @Override
     public DataGrid<ApplicationPipelineTaskListVO> getPipelineTaskList(ApplicationPipelineTaskRequest request) {
         LambdaQueryWrapper<ApplicationPipelineTaskDO> wrapper = new LambdaQueryWrapper<ApplicationPipelineTaskDO>()
+                .eq(Objects.nonNull(request.getId()), ApplicationPipelineTaskDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationPipelineTaskDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getPipelineId()), ApplicationPipelineTaskDO::getPipelineId, request.getPipelineId())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationPipelineTaskDO::getExecStatus, request.getStatus())

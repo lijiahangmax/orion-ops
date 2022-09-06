@@ -19,22 +19,22 @@ public enum MessageType {
     /**
      * 命令执行完成
      */
-    EXEC_SUCCESS(1010, "命令执行完成", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 命令执行完成"),
+    EXEC_SUCCESS(1010, "命令执行完成", MessageClassify.SYSTEM, "机器 <sb>${name}</sb> 命令执行完成"),
 
     /**
      * 命令执行失败
      */
-    EXEC_FAILURE(1020, "命令执行失败", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 命令执行失败"),
+    EXEC_FAILURE(1020, "命令执行失败", MessageClassify.SYSTEM, "机器 <sb>${name}</sb> 命令执行失败"),
 
     /**
      * 版本仓库初始化成功
      */
-    REPOSITORY_INIT_SUCCESS(1030, "版本仓库初始化成功", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化成功"),
+    REPOSITORY_INIT_SUCCESS(1030, "版本仓库初始化成功", MessageClassify.SYSTEM, "仓库 <sb>${name}</sb> 初始化成功"),
 
     /**
      * 版本仓库初始化失败
      */
-    REPOSITORY_INIT_FAILURE(1040, "版本仓库初始化失败", MessageClassify.SYSTEM, "<sb 0>${name}</sb> 仓库初始化失败"),
+    REPOSITORY_INIT_FAILURE(1040, "版本仓库初始化失败", MessageClassify.SYSTEM, "仓库 <sb>${name}</sb> 初始化失败"),
 
     /**
      * 构建执行成功
@@ -89,12 +89,12 @@ public enum MessageType {
     /**
      * 机器监控插件安装成功
      */
-    MACHINE_AGENT_INSTALL_SUCCESS(1150, "机器监控插件安装成功", MessageClassify.SYSTEM, "<sb>${name}</sb> 监控插件安装成功"),
+    MACHINE_AGENT_INSTALL_SUCCESS(1150, "机器监控插件安装成功", MessageClassify.SYSTEM, "机器 <sb>${name}</sb> 监控插件安装成功"),
 
     /**
      * 机器监控插件安装失败
      */
-    MACHINE_AGENT_INSTALL_FAILURE(1160, "机器监控插件安装失败", MessageClassify.SYSTEM, "<sb>${name}</sb> 监控插件安装失败, 请手动安装或检查插件配置"),
+    MACHINE_AGENT_INSTALL_FAILURE(1160, "机器监控插件安装失败", MessageClassify.SYSTEM, "机器 <sb>${name}</sb> 监控插件安装失败, 请手动安装或检查插件配置"),
 
     // -------------------- 数据导入 --------------------
 
