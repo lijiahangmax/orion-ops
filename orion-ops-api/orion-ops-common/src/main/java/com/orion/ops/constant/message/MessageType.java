@@ -99,74 +99,14 @@ public enum MessageType {
     // -------------------- 数据导入 --------------------
 
     /**
-     * 机器信息导入成功
+     * 数据导入成功
      */
-    MACHINE_IMPORT_SUCCESS(2010, "机器信息导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器信息导入操作执行完成"),
+    DATA_IMPORT_SUCCESS(2010, "数据导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的<sb 0>${label}</sb>导入操作执行完成"),
 
     /**
-     * 机器信息导入失败
+     * 数据导入失败
      */
-    MACHINE_IMPORT_FAILURE(2020, "机器信息导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器信息导入操作执行失败"),
-
-    /**
-     * 机器代理导入成功
-     */
-    MACHINE_PROXY_IMPORT_SUCCESS(2030, "机器代理导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行完成"),
-
-    /**
-     * 机器代理导入失败
-     */
-    MACHINE_PROXY_IMPORT_FAILURE(2040, "机器代理导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的机器代理导入操作执行失败"),
-
-    /**
-     * 日志文件导入成功
-     */
-    MACHINE_TAIL_FILE_IMPORT_SUCCESS(2050, "日志文件导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行完成"),
-
-    /**
-     * 日志文件导入失败
-     */
-    MACHINE_TAIL_FILE_IMPORT_FAILURE(2060, "日志文件导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的日志文件导入操作执行失败"),
-
-    /**
-     * 应用环境导入成功
-     */
-    PROFILE_IMPORT_SUCCESS(2070, "应用环境导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行完成"),
-
-    /**
-     * 应用环境导入失败
-     */
-    PROFILE_IMPORT_FAILURE(2080, "应用环境导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用环境导入操作执行失败"),
-
-    /**
-     * 应用信息导入成功
-     */
-    APPLICATION_IMPORT_SUCCESS(2090, "应用信息导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用信息导入操作执行完成"),
-
-    /**
-     * 应用信息导入失败
-     */
-    APPLICATION_IMPORT_FAILURE(2100, "应用信息导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的应用信息导入操作执行失败"),
-
-    /**
-     * 版本仓库导入成功
-     */
-    REPOSITORY_IMPORT_SUCCESS(2110, "版本仓库导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行完成"),
-
-    /**
-     * 版本仓库导入失败
-     */
-    REPOSITORY_IMPORT_FAILURE(2120, "版本仓库导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的版本仓库导入操作执行失败"),
-
-    /**
-     * 命令模板导入成功
-     */
-    COMMAND_TEMPLATE_IMPORT_SUCCESS(2130, "命令模板导入成功", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的命令模板导入操作执行完成"),
-
-    /**
-     * 命令模板导入失败
-     */
-    COMMAND_TEMPLATE_IMPORT_FAILURE(2140, "命令模板导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的命令模板导入操作执行失败"),
+    DATA_IMPORT_FAILURE(2020, "数据导入失败", MessageClassify.IMPORT, "您在 <sb>${time}</sb> 进行的<sr 0>${label}</sr>导入操作执行失败"),
 
     // -------------------- 系统报警 --------------------
 

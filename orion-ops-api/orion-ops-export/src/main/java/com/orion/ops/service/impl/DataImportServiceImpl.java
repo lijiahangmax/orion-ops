@@ -571,7 +571,7 @@ public class DataImportServiceImpl implements DataImportService {
             log.error("{}导入失败 token: {}, data: {}", type.name(), importData.getImportToken(), JSON.toJSONString(importData), e);
         }
         // 发送站内信
-        this.sendImportWebSideMessage(importData, ex == null ? type.getSuccessType() : type.getFailureType());
+        this.sendImportWebSideMessage(importData, ex == null, type);
         // 保存日志
         this.saveImportDataJson(importData);
     }
@@ -636,12 +636,20 @@ public class DataImportServiceImpl implements DataImportService {
      * @param importData importData
      * @param type       type
      */
-    private void sendImportWebSideMessage(DataImportDTO importData, MessageType type) {
+    private void sendImportWebSideMessage(DataImportDTO importData, boolean success, ImportType type) {
+        // 消息类型
+        MessageType messageType;
+        if (success) {
+            messageType = MessageType.DATA_IMPORT_SUCCESS;
+        } else {
+            messageType = MessageType.DATA_IMPORT_FAILURE;
+        }
         // 站内信参数
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.TIME, Dates.format(importData.getImportTime()));
         params.put(EventKeys.TOKEN, importData.getImportToken());
-        webSideMessageService.addMessage(type, importData.getType().longValue(), importData.getUserId(), importData.getUserName(), params);
+        params.put(EventKeys.LABEL, type.getLabel());
+        webSideMessageService.addMessage(messageType, importData.getType().longValue(), importData.getUserId(), importData.getUserName(), params);
     }
 
     /**

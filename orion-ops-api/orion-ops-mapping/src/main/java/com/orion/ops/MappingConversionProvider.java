@@ -15,14 +15,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class TypeStoreConversionRegister implements InitializingBean {
+public class MappingConversionProvider implements InitializingBean {
 
-    private final String PACKAGE = this.getClass().getPackage().getName() + ".mapping.*";
+    private final String CONVERSION_PACKAGE = this.getClass().getPackage().getName() + ".mapping.*";
+
+    private static final String EXPORTER_PACKAGE = "com.orion.ops.entity.exporter";
+
+    private static final String IMPORTER_PACKAGE = "com.orion.ops.entity.importer";
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        new PackageScanner(PACKAGE)
-                .with(TypeStoreConversionRegister.class)
+        new PackageScanner(CONVERSION_PACKAGE, EXPORTER_PACKAGE, IMPORTER_PACKAGE)
+                .with(MappingConversionProvider.class)
+                .with(ExportModuleConversionProvider.class)
                 .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {
