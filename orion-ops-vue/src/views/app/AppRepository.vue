@@ -225,6 +225,7 @@ export default {
       REPOSITORY_AUTH_TYPE,
       REPOSITORY_STATUS,
       query: {
+        id: undefined,
         name: undefined,
         url: undefined,
         username: undefined,
@@ -308,6 +309,7 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.query.id = undefined
       this.getList({})
     }
   },
@@ -317,6 +319,7 @@ export default {
     }
   },
   mounted() {
+    this.query.id = this.$route.query.id
     this.getList({})
   }
 }

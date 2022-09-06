@@ -323,6 +323,7 @@ export default {
     return {
       BATCH_EXEC_STATUS,
       query: {
+        id: undefined,
         command: undefined,
         exitCode: undefined,
         userId: undefined,
@@ -450,6 +451,7 @@ export default {
       this.$refs.query.resetFields()
       this.$refs.machineSelector.reset()
       this.$refs.userSelector && this.$refs.userSelector.reset()
+      this.query.id = undefined
       this.query.machineId = undefined
       this.query.machineName = undefined
       this.query.userId = undefined
@@ -527,6 +529,7 @@ export default {
     }
   },
   mounted() {
+    this.query.id = this.$route.query.id
     // 设置轮询
     this.pollId = setInterval(this.pollStatus, 5000)
     // 查询列表

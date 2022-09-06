@@ -470,6 +470,7 @@ export default {
       STAGE_TYPE,
       TIMED_TYPE,
       query: {
+        id: undefined,
         profileId: undefined,
         pipelineId: undefined,
         pipelineName: undefined,
@@ -652,6 +653,7 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.query.id = undefined
       this.query.pipelineId = undefined
       this.query.pipelineName = undefined
       this.query.status = undefined
@@ -678,9 +680,9 @@ export default {
         return
       }
       const detailIdList = pollItems.map(s => s.details)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getAppPipelineTaskListStatus({
         idList,
         detailIdList
@@ -726,6 +728,7 @@ export default {
     }
   },
   async mounted() {
+    this.query.id = this.$route.query.id
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {

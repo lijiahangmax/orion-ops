@@ -350,6 +350,7 @@ export default {
     }
   },
   mounted() {
+    this.query.machineId = this.$route.query.machineId
     // 查询列表
     this.getList({})
   }

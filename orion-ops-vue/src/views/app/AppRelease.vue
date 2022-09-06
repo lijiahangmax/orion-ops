@@ -456,6 +456,7 @@ export default {
       TIMED_TYPE,
       RELEASE_TYPE,
       query: {
+        id: undefined,
         appId: undefined,
         appName: undefined,
         profileId: undefined,
@@ -669,6 +670,7 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.appSelector.reset()
+      this.query.id = undefined
       this.query.appId = undefined
       this.query.appName = undefined
       this.query.status = undefined
@@ -695,9 +697,9 @@ export default {
         return
       }
       const machineIdList = pollItems.map(s => s.machines)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getAppReleaseListStatus({
         idList,
         machineIdList
@@ -739,6 +741,7 @@ export default {
     }
   },
   mounted() {
+    this.query.id = this.$route.query.id
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {

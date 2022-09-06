@@ -9,18 +9,22 @@
         <a-descriptions bordered size="middle">
           <a-descriptions-item label="机器id" :span="3">
             {{ detail.id }}
+            <a-icon class="span-blue pointer" @click="$copy(detail.id)" type="copy"/>
           </a-descriptions-item>
           <a-descriptions-item label="机器名称" :span="3">
             {{ detail.name }}
+            <a-icon class="span-blue pointer" @click="$copy(detail.name)" type="copy"/>
           </a-descriptions-item>
           <a-descriptions-item label="主机" :span="2">
             {{ detail.host }}
+            <a-icon class="span-blue pointer" @click="$copy(detail.host)" type="copy"/>
           </a-descriptions-item>
           <a-descriptions-item label="端口" :span="1">
             {{ detail.sshPort }}
           </a-descriptions-item>
           <a-descriptions-item label="用户名" :span="3">
             {{ detail.username }}
+            <a-icon class="span-blue pointer" @click="$copy(detail.username)" type="copy"/>
           </a-descriptions-item>
           <a-descriptions-item label="唯一标识" :span="3">
             <span class="span-blue">

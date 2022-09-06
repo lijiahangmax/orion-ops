@@ -2050,217 +2050,150 @@ export const MESSAGE_TYPE = {
     value: 1010,
     label: '命令执行完成',
     notify: 'success',
-    redirect: '/batch/exec/list'
+    redirect: row => `/batch/exec/list?id=${row.relId || ''}`
   },
   EXEC_FAILURE: {
     classify: 10,
     value: 1020,
     label: '命令执行失败',
     notify: 'error',
-    redirect: '/batch/exec/list'
+    duration: null,
+    redirect: row => `/batch/exec/list?id=${row.relId || ''}`
   },
   REPOSITORY_INIT_SUCCESS: {
     classify: 10,
     value: 1030,
     label: '版本仓库初始化成功',
     notify: 'success',
-    redirect: '/app/repo'
+    redirect: row => `/app/repo?id=${row.relId || ''}`
   },
   REPOSITORY_INIT_FAILURE: {
     classify: 10,
     value: 1040,
     label: '版本仓库初始化失败',
     notify: 'error',
-    redirect: '/app/repo'
+    duration: null,
+    redirect: row => `/app/repo?id=${row.relId || ''}`
   },
   BUILD_SUCCESS: {
     classify: 10,
     value: 1050,
     label: '构建执行成功',
     notify: 'success',
-    redirect: '/app/build/list'
+    redirect: row => `/app/build/list?id=${row.relId || ''}`
   },
   BUILD_FAILURE: {
     classify: 10,
     value: 1060,
     label: '构建执行失败',
     notify: 'error',
-    redirect: '/app/build/list'
+    duration: null,
+    redirect: row => `/app/build/list?id=${row.relId || ''}`
   },
   RELEASE_AUDIT_RESOLVE: {
     classify: 10,
     value: 1070,
     label: '发布审批通过',
     notify: 'success',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_AUDIT_REJECT: {
     classify: 10,
     value: 1080,
     label: '发布审批驳回',
     notify: 'warning',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_SUCCESS: {
     classify: 10,
     value: 1090,
     label: '发布执行成功',
     notify: 'success',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_FAILURE: {
     classify: 10,
     value: 1100,
     label: '发布执行失败',
     notify: 'error',
-    redirect: '/app/release/list'
+    duration: null,
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   PIPELINE_AUDIT_RESOLVE: {
     classify: 10,
     value: 1110,
     label: '应用流水线审批通过',
     notify: 'success',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_AUDIT_REJECT: {
     classify: 10,
     value: 1120,
     label: '应用流水线审批驳回',
     notify: 'warning',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_EXEC_SUCCESS: {
     classify: 10,
     value: 1130,
     label: '流水线执行成功',
     notify: 'success',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_EXEC_FAILURE: {
     classify: 10,
     value: 1140,
     label: '流水线执行失败',
     notify: 'error',
-    redirect: '/app/pipeline/record'
+    duration: null,
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   MACHINE_AGENT_INSTALL_SUCCESS: {
     classify: 10,
     value: 1150,
     label: '机器监控插件安装成功',
     notify: 'success',
-    redirect: '/machine/monitor/list'
+    redirect: row => `/machine/monitor/list?machineId=${row.relId || ''}`
   },
   MACHINE_AGENT_INSTALL_FAILURE: {
     classify: 10,
     value: 1160,
     label: '机器监控插件安装失败',
     notify: 'error',
-    redirect: '/machine/monitor/list'
+    duration: null,
+    redirect: row => `/machine/monitor/list?machineId=${row.relId || ''}`
   },
-  MACHINE_IMPORT_SUCCESS: {
+  DATA_IMPORT_SUCCESS: {
     classify: 20,
     value: 2010,
-    label: '机器信息导入成功',
+    label: '数据导入成功',
     notify: 'success',
-    redirect: '/machine/list'
+    redirect: row => {
+      if (!row.relId) {
+        return null
+      }
+      return enumValueOf(IMPORT_TYPE, row.relId).redirect
+    }
   },
-  MACHINE_IMPORT_FAILURE: {
+  DATA_IMPORT_FAILURE: {
     classify: 20,
     value: 2020,
-    label: '机器信息导入失败',
+    label: '数据导入失败',
     notify: 'error',
-    redirect: '/machine/list'
-  },
-  MACHINE_PROXY_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2030,
-    label: '机器代理导入成功',
-    notify: 'success',
-    redirect: '/machine/proxy'
-  },
-  MACHINE_PROXY_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2040,
-    label: '机器代理导入失败',
-    notify: 'error',
-    redirect: '/machine/proxy'
-  },
-  MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2050,
-    label: '日志文件导入成功',
-    notify: 'success',
-    redirect: '/log/list'
-  },
-  MACHINE_TAIL_FILE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2060,
-    label: '日志文件导入失败',
-    notify: 'error',
-    redirect: '/log/list'
-  },
-  PROFILE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2070,
-    label: '应用环境导入成功',
-    notify: 'success',
-    redirect: '/app/profile'
-  },
-  PROFILE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2080,
-    label: '应用环境导入失败',
-    notify: 'error',
-    redirect: '/app/profile'
-  },
-  APPLICATION_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2090,
-    label: '应用信息导入成功',
-    notify: 'success',
-    redirect: '/app/list'
-  },
-  APPLICATION_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2100,
-    label: '应用信息导入失败',
-    notify: 'error',
-    redirect: '/app/list'
-  },
-  REPOSITORY_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2110,
-    label: '版本仓库导入成功',
-    notify: 'success',
-    redirect: '/app/repo'
-  },
-  REPOSITORY_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2120,
-    label: '版本仓库导入失败',
-    notify: 'error',
-    redirect: '/app/repo'
-  },
-  COMMAND_TEMPLATE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2130,
-    label: '命令模板导入成功',
-    notify: 'success',
-    redirect: '/template/list'
-  },
-  COMMAND_TEMPLATE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2140,
-    label: '命令模板导入失败',
-    notify: 'error',
-    redirect: '/template/list'
+    redirect: row => {
+      if (!row.relId) {
+        return null
+      }
+      return enumValueOf(IMPORT_TYPE, row.relId).redirect
+    }
   },
   MACHINE_ALARM: {
     classify: 30,
     value: 3010,
     label: '机器发生报警',
     notify: 'error',
-    redirect: '/machine/monitor/list'
+    duration: null,
+    redirect: row => `/machine/monitor/metrics/${row.relId || ''}`
   }
 }
 
@@ -2510,43 +2443,50 @@ export const IMPORT_TYPE = {
     value: 100,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '机器信息 导入',
-    api: 'importMachineData'
+    api: 'importMachineData',
+    redirect: '/machine/list'
   },
   MACHINE_PROXY: {
     value: 110,
     tips: '导入时优先使用导入密码',
     title: '机器代理 导入',
-    api: 'importMachineProxy'
+    api: 'importMachineProxy',
+    redirect: '/machine/proxy'
   },
   TAIL_FILE: {
     value: 130,
     tips: '通过机器标识来区分机器, 机器名称无需填写',
     title: '日志文件 导入',
-    api: 'importTailFile'
+    api: 'importTailFile',
+    redirect: '/log/list'
   },
   PROFILE: {
     value: 200,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用环境 导入',
-    api: 'importAppProfile'
+    api: 'importAppProfile',
+    redirect: '/app/profile'
   },
   APPLICATION: {
     value: 210,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用信息 导入',
-    api: 'importApplication'
+    api: 'importApplication',
+    redirect: '/app/list'
   },
   REPOSITORY: {
     value: 220,
     tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '版本仓库 导入',
-    api: 'importRepository'
+    api: 'importRepository',
+    redirect: '/app/repo'
   },
   COMMAND_TEMPLATE: {
     value: 310,
     tips: '使用模板名称来区分数据, 存在更新不存在新增',
     title: '命令模板 导入',
-    api: 'importCommandTemplate'
+    api: 'importCommandTemplate',
+    redirect: '/template/list'
   }
 }
 

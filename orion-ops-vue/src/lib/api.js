@@ -1959,7 +1959,9 @@ const $api = {
    * 设置已读站内信
    */
   setMessageRead: params => {
-    return $http.$post('/message/read', params)
+    return $http.$post('/message/read', params, {
+      skipErrorMessage: true
+    })
   },
 
   /**

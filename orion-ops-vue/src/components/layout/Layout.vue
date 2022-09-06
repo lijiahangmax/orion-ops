@@ -15,7 +15,7 @@
               @onHeaderEvent="onHeaderEvent"/>
       <!-- 主体部分 -->
       <a-layout-content id="common-content">
-        <router-view ref="route" @reloadProfile="reloadProfile"/>
+        <router-view ref="route" :key="$route.fullPath" @reloadProfile="reloadProfile"/>
       </a-layout-content>
     </a-layout>
   </a-layout>

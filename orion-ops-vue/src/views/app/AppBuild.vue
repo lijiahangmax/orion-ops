@@ -261,6 +261,7 @@ export default {
       BUILD_STATUS,
       query: {
         profileId: undefined,
+        id: undefined,
         seq: undefined,
         appId: undefined,
         appName: undefined,
@@ -382,6 +383,7 @@ export default {
     resetForm() {
       this.$refs.query.resetFields()
       this.$refs.appSelector.reset()
+      this.query.id = undefined
       this.query.appId = undefined
       this.query.appName = undefined
       this.query.status = undefined
@@ -422,6 +424,7 @@ export default {
     }
   },
   mounted() {
+    this.query.id = this.$route.query.id
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {
