@@ -177,14 +177,7 @@ $http.interceptors.response.use(
       if (!err.response || !err.response.status) {
         rejectWrapper = new RejectWrapper(0, '网络异常')
       } else {
-        switch (err.response.status) {
-          case 404:
-            rejectWrapper = new RejectWrapper(404, '接口不存在', 'warning')
-            break
-          default:
-            rejectWrapper = new RejectWrapper(err.response.status, '请求失败')
-            break
-        }
+        rejectWrapper = new RejectWrapper(err.response.status, '请求失败')
       }
     }
     if (!err.config.skipErrorMessage) {
