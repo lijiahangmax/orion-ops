@@ -113,6 +113,11 @@
               <a :href="`#/machine/monitor/metrics/${record.machineId}`">监控</a>
             </a-button>
             <a-divider type="vertical"/>
+            <!-- 检测 -->
+            <a-button class="p0" type="link" style="height: 22px">
+              <a @click="checkMonitor([record])">检测</a>
+            </a-button>
+            <a-divider type="vertical"/>
             <a @click="openAgentSetting(record)">插件配置</a>
             <a-divider type="vertical"/>
             <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=3`">报警配置</a>
@@ -310,11 +315,15 @@ export default {
       }
       this.globaLoading = false
     },
-    async batchCheckMonitor() {
+    batchCheckMonitor() {
       const rows = this.rows.filter(row => row.status !== MONITOR_STATUS.STARTING.value)
       if (!rows.length) {
         this.$message.warning('本页面没有可检查的机器')
+        return
       }
+      this.checkMonitor(rows)
+    },
+    async checkMonitor(rows) {
       for (const row of rows) {
         this.globaLoadingTip = `${row.machineName}(${row.machineHost}) 正在检测...`
         this.globaLoading = true

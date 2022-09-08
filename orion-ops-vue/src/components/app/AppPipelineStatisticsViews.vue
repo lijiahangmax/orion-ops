@@ -66,9 +66,9 @@
                     </div>
                     <!-- 可打开日志 -->
                     <a v-else target="_blank"
-                       :title="`点击查看${enumValueOf(STAGE_TYPE, detailLog.stageType).label}日志`"
-                       :href="`#/app/${enumValueOf(STAGE_TYPE, detailLog.stageType).symbol}/log/view/${detailLog.relId}`"
-                       @click="openLogView($event, enumValueOf(STAGE_TYPE, detailLog.stageType).symbol, detailLog.relId)">
+                       :title="detailLog.stageType | formatStageLogTitle"
+                       :href="detailLog.stageType | formatStageLogSrc(detailLog.relId)"
+                       @click="openLogView($event, detailLog.stageType, detailLog.relId)">
                       <div class="app-pipeline-detail-log-detail"
                            :style="getDetailLogStyle(detailLog)"
                            v-text="getDetailLogValue(detailLog)">
@@ -117,7 +117,6 @@ export default {
     }
   },
   methods: {
-    enumValueOf,
     async init(pipelineId) {
       this.loading = true
       this.initialized = false
@@ -140,10 +139,11 @@ export default {
       this.view = data
     },
     openLogView(e, type, id) {
+      const stageType = enumValueOf(STAGE_TYPE, type).symbol
       if (!e.ctrlKey) {
         e.preventDefault()
         // 打开模态框
-        this.$refs[`${type}LogView`].open(id)
+        this.$refs[`${stageType}LogView`].open(id)
         return false
       } else {
         // 跳转页面
@@ -174,17 +174,23 @@ export default {
       }
     }
   },
-  beforeDestroy() {
-    this.clean()
-  },
   filters: {
     formatDate,
     formatStageType(type, f) {
       return enumValueOf(STAGE_TYPE, type)[f]
     },
+    formatStageLogTitle(type) {
+      return `点击查看${enumValueOf(STAGE_TYPE, type).label}日志`
+    },
+    formatStageLogSrc(type, relId) {
+      return `#/app/${enumValueOf(STAGE_TYPE, type).symbol}/log/view/${relId}`
+    },
     formatPipelineStatus(status, f) {
       return enumValueOf(PIPELINE_STATUS, status)[f]
     }
+  },
+  beforeDestroy() {
+    this.clean()
   }
 }
 </script>
