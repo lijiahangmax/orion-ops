@@ -68,7 +68,7 @@ public class MonitorAgentInstallTask implements Runnable {
         try {
             this.machine = machineInfoService.selectById(machineId);
             String pluginPath = PathBuilders.getPluginPath(machine.getUsername());
-            String agentPath = pluginPath + Const.LIB_DIR + "/" + MonitorConst.AGENT_FILE_NAME;
+            String agentPath = pluginPath + Const.LIB_DIR + "/" + MonitorConst.getAgentFileName();
             // 打开会话
             this.session = machineInfoService.openSessionStore(machineId);
             // 传输

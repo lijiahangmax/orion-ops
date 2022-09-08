@@ -47,13 +47,6 @@ public class MonitorConst {
     public static final String AGENT_FILE_NAME_PREFIX = "machine-monitor-agent";
 
     /**
-     * agent 文件名称
-     */
-    public static final String AGENT_FILE_NAME = AGENT_FILE_NAME_PREFIX
-            + "_" + PropertiesConst.MACHINE_MONITOR_LATEST_VERSION
-            + "." + Const.SUFFIX_JAR;
-
-    /**
      * 启动脚本资源路径
      */
     public static final String START_SCRIPT_PATH = "/templates/script/start-monitor-agent.sh";
@@ -74,23 +67,34 @@ public class MonitorConst {
     public static final String AGENT_LOG_FILE_NAME = "machine-monitor-agent.out";
 
     @Value("${machine.monitor.latest.version}")
-    public void setLatestVersion(String latestVersion) {
+    private void setLatestVersion(String latestVersion) {
         MonitorConst.LATEST_VERSION = latestVersion;
     }
 
     @Value("${machine.monitor.default.url}")
-    public void setDefaultUrlFormat(String defaultUrlFormat) {
+    private void setDefaultUrlFormat(String defaultUrlFormat) {
         MonitorConst.DEFAULT_URL_FORMAT = defaultUrlFormat;
     }
 
     @Value("${machine.monitor.default.access.header}")
-    public void setDefaultAccessHeader(String defaultAccessHeader) {
+    private void setDefaultAccessHeader(String defaultAccessHeader) {
         MonitorConst.DEFAULT_ACCESS_HEADER = defaultAccessHeader;
     }
 
     @Value("${machine.monitor.default.access.token}")
-    public void setDefaultAccessToken(String defaultAccessToken) {
+    private void setDefaultAccessToken(String defaultAccessToken) {
         MonitorConst.DEFAULT_ACCESS_TOKEN = defaultAccessToken;
+    }
+
+    /**
+     * agent 文件名称
+     *
+     * @return 获取 agent 文件名称
+     */
+    public static String getAgentFileName() {
+        return AGENT_FILE_NAME_PREFIX
+                + "_" + PropertiesConst.MACHINE_MONITOR_LATEST_VERSION
+                + "." + Const.SUFFIX_JAR;
     }
 
 }

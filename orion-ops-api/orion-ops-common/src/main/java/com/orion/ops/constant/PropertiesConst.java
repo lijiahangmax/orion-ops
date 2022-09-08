@@ -36,22 +36,22 @@ public class PropertiesConst {
     public static String MACHINE_MONITOR_LATEST_VERSION;
 
     @Value("${app.version}")
-    public void setVersion(String version) {
+    private void setVersion(String version) {
         PropertiesConst.ORION_OPS_VERSION = version;
     }
 
     @Value("${login.token.header}")
-    public void setLoginTokenHeader(String loginTokenHeader) {
+    private void setLoginTokenHeader(String loginTokenHeader) {
         PropertiesConst.LOGIN_TOKEN_HEADER = loginTokenHeader;
     }
 
     @Value("${value.mix.secret.key}")
-    public void setValueMixSecretKey(String valueMixSecretKey) {
+    private void setValueMixSecretKey(String valueMixSecretKey) {
         PropertiesConst.VALUE_MIX_SECRET_KEY = valueMixSecretKey;
     }
 
     @Value("${machine.monitor.latest.version}")
-    public void setMachineMonitorLatestVersion(String agentVersion) {
+    private void setMachineMonitorLatestVersion(String agentVersion) {
         PropertiesConst.MACHINE_MONITOR_LATEST_VERSION = agentVersion;
     }
 
