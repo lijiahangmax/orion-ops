@@ -22,145 +22,148 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">应用列表</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="id"
-               @change="getList"
-               @expand="expandMachine"
-               :loading="loading"
-               :expandedRowKeys.sync="expandedRowKeys"
-               ref="table"
-               size="middle">
-        <!-- 展开的机器列表 -->
-        <template #expandedRowRender="record">
-          <a-table
-            v-if="record.machines"
-            :rowKey="(record, index) => index"
-            :columns="innerColumns"
-            :dataSource="record.machines"
-            :loading="record.loading"
-            :pagination="false"
-            size="middle">
-            <!-- 构建版本 -->
-            <template #buildSeq="machine">
-              <span class="span-blue" v-if="machine.buildSeq">#{{ machine.buildSeq }}</span>
-            </template>
-            <!-- 操作 -->
-            <template #action="machine">
-              <a @click="removeAppMachine(record, machine.id)">删除</a>
-            </template>
-          </a-table>
-        </template>
-        <!-- sort -->
-        <template #sort="record">
-          <div class="sort-column">
-            <a @click="adjustSort(record.id, 1)" title="上调排序">
-              <a-icon type="up-square"/>
-            </a>
-            <a-divider type="vertical"/>
-            <a @click="adjustSort(record.id, 2)" title="下调排序">
-              <a-icon type="down-square"/>
-            </a>
-          </div>
-        </template>
-        <!-- tag -->
-        <template #tag="record">
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">应用列表</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="id"
+                 @change="getList"
+                 @expand="expandMachine"
+                 :loading="loading"
+                 :expandedRowKeys.sync="expandedRowKeys"
+                 ref="table"
+                 size="middle">
+          <!-- 展开的机器列表 -->
+          <template #expandedRowRender="record">
+            <a-table
+              v-if="record.machines"
+              :rowKey="(record, index) => index"
+              :columns="innerColumns"
+              :dataSource="record.machines"
+              :loading="record.loading"
+              :pagination="false"
+              size="middle">
+              <!-- 构建版本 -->
+              <template #buildSeq="machine">
+                <span class="span-blue" v-if="machine.buildSeq">#{{ machine.buildSeq }}</span>
+              </template>
+              <!-- 操作 -->
+              <template #action="machine">
+                <a @click="removeAppMachine(record, machine.id)">删除</a>
+              </template>
+            </a-table>
+          </template>
+          <!-- sort -->
+          <template #sort="record">
+            <div class="sort-column">
+              <a @click="adjustSort(record.id, 1)" title="上调排序">
+                <a-icon type="up-square"/>
+              </a>
+              <a-divider type="vertical"/>
+              <a @click="adjustSort(record.id, 2)" title="下调排序">
+                <a-icon type="down-square"/>
+              </a>
+            </div>
+          </template>
+          <!-- tag -->
+          <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
-        </template>
-        <!-- 配置 -->
-        <template #config="record">
-          <a-tag :color=" record.isConfig | formatConfigStatus('color')">
-            {{ record.isConfig | formatConfigStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
+          </template>
           <!-- 配置 -->
-          <span class="span-blue pointer" @click="toConfig(record.id)">
+          <template #config="record">
+            <a-tag :color=" record.isConfig | formatConfigStatus('color')">
+              {{ record.isConfig | formatConfigStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 配置 -->
+            <span class="span-blue pointer" @click="toConfig(record.id)">
             配置
           </span>
-          <a-divider type="vertical"/>
-          <!-- 构建 -->
-          <a-button class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
-                    @click="buildApp(record.id)">
-            构建
-          </a-button>
-          <a-divider type="vertical"/>
-          <!-- 发布 -->
-          <a-button class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
-                    @click="releaseApp(record.id)">
-            发布
-          </a-button>
-          <a-divider type="vertical"/>
-          <!-- 同步 -->
-          <AppProfileChecker v-if="record.isConfig === CONFIG_STATUS.CONFIGURED.value" :ref="'profileChecker' + record.id">
-            <template #trigger>
-              <span class="span-blue pointer">同步</span>
-            </template>
-            <template #footer>
-              <a-button type="primary" size="small" @click="sync(record.id)">确定</a-button>
-            </template>
-          </AppProfileChecker>
-          <a-button v-else
-                    class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="true">
-            同步
-          </a-button>
-          <a-divider type="vertical"/>
-          <!-- 下拉菜单 -->
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多
-              <a-icon type="down"/>
-            </a>
-            <template #overlay>
-              <a-menu @click="menuHandler($event, record)">
-                <a-menu-item key="update">
-                  修改
-                </a-menu-item>
-                <a-menu-item key="remove">
-                  删除
-                </a-menu-item>
-                <a-menu-item key="copy">
-                  复制
-                </a-menu-item>
-                <a-menu-item key="openEnv">
-                  环境变量
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </template>
-      </a-table>
+            <a-divider type="vertical"/>
+            <!-- 构建 -->
+            <a-button class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
+                      @click="buildApp(record.id)">
+              构建
+            </a-button>
+            <a-divider type="vertical"/>
+            <!-- 发布 -->
+            <a-button class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="record.isConfig !== CONFIG_STATUS.CONFIGURED.value"
+                      @click="releaseApp(record.id)">
+              发布
+            </a-button>
+            <a-divider type="vertical"/>
+            <!-- 同步 -->
+            <AppProfileChecker v-if="record.isConfig === CONFIG_STATUS.CONFIGURED.value" :ref="'profileChecker' + record.id">
+              <template #trigger>
+                <span class="span-blue pointer">同步</span>
+              </template>
+              <template #footer>
+                <a-button type="primary" size="small" @click="sync(record.id)">确定</a-button>
+              </template>
+            </AppProfileChecker>
+            <a-button v-else
+                      class="p0"
+                      type="link"
+                      style="height: 22px"
+                      :disabled="true">
+              同步
+            </a-button>
+            <a-divider type="vertical"/>
+            <!-- 下拉菜单 -->
+            <a-dropdown>
+              <a class="ant-dropdown-link">
+                更多
+                <a-icon type="down"/>
+              </a>
+              <template #overlay>
+                <a-menu @click="menuHandler($event, record)">
+                  <a-menu-item key="update">
+                    修改
+                  </a-menu-item>
+                  <a-menu-item key="remove">
+                    删除
+                  </a-menu-item>
+                  <a-menu-item key="copy">
+                    复制
+                  </a-menu-item>
+                  <a-menu-item key="openEnv">
+                    环境变量
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="app-info-event">

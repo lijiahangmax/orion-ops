@@ -36,48 +36,50 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">构建列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="确认删除所选中的构建记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteBuild(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">构建列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="确认删除所选中的构建记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteBuild(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="build" @click="openBuild">构建应用</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="build" @click="openBuild">构建应用</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 构建序列 -->
-        <template #seq="record">
-          <span class="span-blue">#{{ record.seq }}</span>
-        </template>
-        <!-- 版本 -->
-        <template #version="record">
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 构建序列 -->
+          <template #seq="record">
+            <span class="span-blue">#{{ record.seq }}</span>
+          </template>
+          <!-- 版本 -->
+          <template #version="record">
           <span v-if="record.repoId">
             <!-- 分支 -->
             <span class="mr4 nowrap" v-if="record.branchName" title="分支">
@@ -93,59 +95,60 @@
               </span>
             </a-tooltip>
           </span>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-tag class="m0" :color="record.status | formatBuildStatus('color')">
-            {{ record.status | formatBuildStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 创建时间 -->
-        <template #createTime="record">
-          {{ record.createTime | formatDate }}
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 详情 -->
-          <a @click="openDetail(record.id)">详情</a>
-          <a-divider type="vertical"/>
-          <!-- 日志 -->
-          <a-tooltip title="ctrl 点击打开新页面">
-            <a target="_blank"
-               :href="`#/app/build/log/view/${record.id}`"
-               @click="openLogView($event, record.id)">日志</a>
-          </a-tooltip>
-          <a-divider type="vertical"/>
-          <!-- 重新构建 -->
-          <a-popconfirm title="是否要重新构建?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="rebuild(record.id)">
-            <span class="span-blue pointer">重新构建</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="visibleHolder.visibleTerminate(record.status)"/>
-          <!-- 停止 -->
-          <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
-                        title="是否要停止构建?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="terminate(record.id)">
-            <span class="span-blue pointer">停止</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="visibleHolder.visibleDelete(record.status)"/>
-          <!-- 删除 -->
-          <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
-                        title="确认删除当前构建记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteBuild([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-tag class="m0" :color="record.status | formatBuildStatus('color')">
+              {{ record.status | formatBuildStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 创建时间 -->
+          <template #createTime="record">
+            {{ record.createTime | formatDate }}
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 详情 -->
+            <a @click="openDetail(record.id)">详情</a>
+            <a-divider type="vertical"/>
+            <!-- 日志 -->
+            <a-tooltip title="ctrl 点击打开新页面">
+              <a target="_blank"
+                 :href="`#/app/build/log/view/${record.id}`"
+                 @click="openLogView($event, record.id)">日志</a>
+            </a-tooltip>
+            <a-divider type="vertical"/>
+            <!-- 重新构建 -->
+            <a-popconfirm title="是否要重新构建?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="rebuild(record.id)">
+              <span class="span-blue pointer">重新构建</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="visibleHolder.visibleTerminate(record.status)"/>
+            <!-- 停止 -->
+            <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
+                          title="是否要停止构建?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminate(record.id)">
+              <span class="span-blue pointer">停止</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="visibleHolder.visibleDelete(record.status)"/>
+            <!-- 删除 -->
+            <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
+                          title="确认删除当前构建记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteBuild([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="app-info-event">
@@ -198,13 +201,12 @@ const columns = [
     key: 'appName',
     dataIndex: 'appName',
     ellipsis: true,
-    width: 200,
-    sorter: (a, b) => a.appName.localeCompare(b.appName)
+    width: 200
   },
   {
     title: '版本',
     key: 'version',
-    width: 300,
+    ellipsis: true,
     scopedSlots: { customRender: 'version' }
   },
   {

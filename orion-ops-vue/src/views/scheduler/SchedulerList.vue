@@ -28,105 +28,108 @@
           </a-row>
         </a-form-model>
       </div>
-      <!-- 工具栏 -->
-      <div class="table-tools-bar">
-        <!-- 左侧 -->
-        <div class="tools-fixed-left">
-          <span class="table-title">任务列表</span>
-        </div>
-        <!-- 右侧 -->
-        <div class="tools-fixed-right">
-          <!-- 状态单选 -->
-          <div class="mr8 nowrap">
-            <a-radio-group v-model="query.enableStatus" @change="getList({})">
-              <a-radio-button :value="undefined">
-                全部
-              </a-radio-button>
-              <a-radio-button :value="type.value" v-for="type in ENABLE_STATUS" :key="type.value">
-                {{ type.label }}
-              </a-radio-button>
-            </a-radio-group>
-          </div>
-          <a-divider type="vertical"/>
-          <a-button class="mx8" type="primary" icon="plus" @click="add">新增</a-button>
-          <a-divider type="vertical"/>
-          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-        </div>
-      </div>
       <!-- 表格 -->
-      <div class="table-main-container table-scroll-x-auto">
-        <a-table :columns="columns"
-                 :dataSource="rows"
-                 :pagination="pagination"
-                 rowKey="id"
-                 @change="getList"
-                 :scroll="{x: '100%'}"
-                 :loading="loading"
-                 size="middle">
-          <!-- 最近状态 -->
-          <template #latelyStatus="record">
-            <template v-if="record.enableStatus === 1">
-              <a-tag :color="record.latelyStatus | formatTaskStatus('color')">
-                {{ record.latelyStatus | formatTaskStatus('label') }}
-              </a-tag>
-            </template>
-            <template v-else>
-              <a-tag>停用</a-tag>
-            </template>
-          </template>
-          <!-- 上次调度时间 -->
-          <template #latelyScheduleTime="record">
-            <template v-if="record.latelyScheduleTime">
-              {{ record.latelyScheduleTime | formatDate }}
-            </template>
-          </template>
-          <!-- 下次调度时间 -->
-          <template #nextTime="record">
-            <template v-if="record.nextTime && record.nextTime.length">
-              {{ record.nextTime[0] | formatDate }}
-            </template>
-          </template>
-          <!-- 更新时间 -->
-          <template #updateTime="record">
-            {{ record.updateTime | formatDate }}
-          </template>
-          <!-- 操作 -->
-          <template #action="record">
-            <!-- 修改 -->
-            <a @click="update(record.id)">修改</a>
+      <div class="table-wrapper">
+        <!-- 工具栏 -->
+        <div class="table-tools-bar">
+          <!-- 左侧 -->
+          <div class="tools-fixed-left">
+            <span class="table-title">任务列表</span>
+          </div>
+          <!-- 右侧 -->
+          <div class="tools-fixed-right">
+            <!-- 状态单选 -->
+            <div class="mr8 nowrap">
+              <a-radio-group v-model="query.enableStatus" @change="getList({})">
+                <a-radio-button :value="undefined">
+                  全部
+                </a-radio-button>
+                <a-radio-button :value="type.value" v-for="type in ENABLE_STATUS" :key="type.value">
+                  {{ type.label }}
+                </a-radio-button>
+              </a-radio-group>
+            </div>
             <a-divider type="vertical"/>
-            <!-- 启用/停用 -->
-            <a-popconfirm :title="`是否要${record.enableStatus === 1 ? '停用' : '启用'}此任务?`"
-                          placement="topRight"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="updateStatus(record)">
-              <span class="span-blue pointer" v-if="record.enableStatus === 1">停用</span>
-              <span class="span-blue pointer" v-else>启用</span>
-            </a-popconfirm>
+            <a-button class="mx8" type="primary" icon="plus" @click="add">新增</a-button>
             <a-divider type="vertical"/>
-            <a-dropdown>
-              <a class="ant-dropdown-link">
-                更多
-                <a-icon type="down"/>
-              </a>
-              <template #overlay>
-                <a-menu>
-                  <a-menu-item @click="remove(record.id)">
-                    删除
-                  </a-menu-item>
-                  <a-menu-item :disabled="record.enableStatus !== 1" @click="manualTrigger(record.id)">
-                    手动触发
-                  </a-menu-item>
-                  <a-menu-item @click="historyRecord(record.id)">
-                    历史记录
-                  </a-menu-item>
-                </a-menu>
+            <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+            <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+          </div>
+        </div>
+        <!-- 表格 -->
+        <div class="table-main-container table-scroll-x-auto">
+          <a-table :columns="columns"
+                   :dataSource="rows"
+                   :pagination="pagination"
+                   rowKey="id"
+                   @change="getList"
+                   :scroll="{x: '100%'}"
+                   :loading="loading"
+                   size="middle">
+            <!-- 最近状态 -->
+            <template #latelyStatus="record">
+              <template v-if="record.enableStatus === 1">
+                <a-tag :color="record.latelyStatus | formatTaskStatus('color')">
+                  {{ record.latelyStatus | formatTaskStatus('label') }}
+                </a-tag>
               </template>
-            </a-dropdown>
-          </template>
-        </a-table>
+              <template v-else>
+                <a-tag>停用</a-tag>
+              </template>
+            </template>
+            <!-- 上次调度时间 -->
+            <template #latelyScheduleTime="record">
+              <template v-if="record.latelyScheduleTime">
+                {{ record.latelyScheduleTime | formatDate }}
+              </template>
+            </template>
+            <!-- 下次调度时间 -->
+            <template #nextTime="record">
+              <template v-if="record.nextTime && record.nextTime.length">
+                {{ record.nextTime[0] | formatDate }}
+              </template>
+            </template>
+            <!-- 更新时间 -->
+            <template #updateTime="record">
+              {{ record.updateTime | formatDate }}
+            </template>
+            <!-- 操作 -->
+            <template #action="record">
+              <!-- 修改 -->
+              <a @click="update(record.id)">修改</a>
+              <a-divider type="vertical"/>
+              <!-- 启用/停用 -->
+              <a-popconfirm :title="`是否要${record.enableStatus === 1 ? '停用' : '启用'}此任务?`"
+                            placement="topRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="updateStatus(record)">
+                <span class="span-blue pointer" v-if="record.enableStatus === 1">停用</span>
+                <span class="span-blue pointer" v-else>启用</span>
+              </a-popconfirm>
+              <a-divider type="vertical"/>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多
+                  <a-icon type="down"/>
+                </a>
+                <template #overlay>
+                  <a-menu>
+                    <a-menu-item @click="remove(record.id)">
+                      删除
+                    </a-menu-item>
+                    <a-menu-item :disabled="record.enableStatus !== 1" @click="manualTrigger(record.id)">
+                      手动触发
+                    </a-menu-item>
+                    <a-menu-item @click="historyRecord(record.id)">
+                      历史记录
+                    </a-menu-item>
+                  </a-menu>
+                </template>
+              </a-dropdown>
+            </template>
+          </a-table>
+        </div>
       </div>
     </div>
     <!-- 事件 -->

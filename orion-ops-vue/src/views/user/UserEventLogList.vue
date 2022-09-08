@@ -46,71 +46,74 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">操作日志</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <div class="table-tools-bar p0 log-search-bar">
-          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">操作日志</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <div class="table-tools-bar p0 log-search-bar">
+            <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+            <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+            <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+            <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 操作描述 -->
-        <template #log="record">
-          <span v-html="record.log"/>
-        </template>
-        <!-- 操作分类 -->
-        <template #classify="record">
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 操作描述 -->
+          <template #log="record">
+            <span v-html="record.log"/>
+          </template>
+          <!-- 操作分类 -->
+          <template #classify="record">
           <span class="span-blue pointer" @click="chooseClassify(record.classify)">
             {{ record.classify | filterClassify }}
           </span>
-        </template>
-        <!-- 操作类型 -->
-        <template #type="record">
+          </template>
+          <!-- 操作类型 -->
+          <template #type="record">
           <span class="span-blue pointer" @click="chooseType(record.classify, record.type)">
             {{ record.type | filterType }}
           </span>
-        </template>
-        <!-- 操作用户 -->
-        <template #username="record">
+          </template>
+          <!-- 操作用户 -->
+          <template #username="record">
           <span class="span-blue pointer" @click="chooseUser(record.userId)">
             {{ record.username }}
           </span>
-        </template>
-        <!-- 操作IP -->
-        <template #ip="record">
-          <span>{{ record.ip }}</span>
-          <br>
-          <span>{{ record.ipLocation }}</span>
-        </template>
-        <!-- 操作时间 -->
-        <template #time="record">
-          <span>{{ record.createTime | formatDate }}</span>
-          <br>
-          <span>({{ record.createTimeAgo }})</span>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <span class="span-blue pointer" @click="preview(record.params)">参数</span>
-        </template>
-      </a-table>
+          </template>
+          <!-- 操作IP -->
+          <template #ip="record">
+            <span>{{ record.ip }}</span>
+            <br>
+            <span>{{ record.ipLocation }}</span>
+          </template>
+          <!-- 操作时间 -->
+          <template #time="record">
+            <span>{{ record.createTime | formatDate }}</span>
+            <br>
+            <span>({{ record.createTimeAgo }})</span>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <span class="span-blue pointer" @click="preview(record.params)">参数</span>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="command-template-event">

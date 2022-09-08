@@ -1,7 +1,7 @@
 <template>
   <div class="scheduler-record-container">
     <!-- 调度任务菜单 -->
-    <div class="scheduler-task-menu">
+    <div class="scheduler-task-menu gray-box-shadow">
       <!-- 任务列表头 -->
       <div class="scheduler-task-header">
         <a-page-header @back="() => {}">
@@ -26,7 +26,7 @@
       </a-spin>
     </div>
     <!-- 调度明细图表 -->
-    <div class="scheduler-task-statistic-container">
+    <div class="scheduler-task-statistic-container gray-box-shadow">
       <a-spin :spinning="loading">
         <!-- 统计指标容器 -->
         <div class="scheduler-statistic-header-wrapper">
@@ -140,9 +140,9 @@ export default {
       })
 
       this.chart.line()
-        .position('date*value')
-        .color('type')
-        .shape('circle')
+      .position('date*value')
+      .color('type')
+      .shape('circle')
       this.chart.render()
     }
   },
@@ -168,13 +168,13 @@ export default {
     padding: 0 8px 8px 8px;
     margin-right: 16px;
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   .scheduler-task-statistic-container {
     width: calc(100% - 232px);
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
     min-height: calc(100vh - 84px);
 
     .scheduler-statistic-header-wrapper {

@@ -10,7 +10,7 @@
            @cancel="close"
            width="96%">
     <!-- 日志面板 -->
-    <AppReleaseLogAppender ref="logger" appenderHeight="calc(100vh - 153px)" height="calc(100vh - 34px)"/>
+    <AppReleaseLogAppender ref="logger" appenderHeight="calc(100vh - 152px)" height="calc(100vh - 34px)"/>
   </a-modal>
 </template>
 

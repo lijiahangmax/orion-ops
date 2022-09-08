@@ -36,211 +36,214 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">发布列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="确认删除所选中的发布记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">发布列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="确认删除所选中的发布记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="deployment-unit" @click="openRelease">应用发布</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="deployment-unit" @click="openRelease">应用发布</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               @expand="expandMachine"
-               :loading="loading"
-               :expandedRowKeys.sync="expandedRowKeys"
-               size="middle">
-        <!-- 展开的机器列表 -->
-        <template #expandedRowRender="record">
-          <a-table
-            v-if="record.machines"
-            :rowKey="(record, index) => index"
-            :columns="innerColumns"
-            :dataSource="record.machines"
-            :loading="record.loading"
-            :pagination="false"
-            size="middle">
-            <!-- 状态 -->
-            <template #status="machine">
-              <a-tag class="m0" :color="machine.status | formatActionStatus('color')">
-                {{ machine.status | formatActionStatus('label') }}
-              </a-tag>
-            </template>
-            <!-- 操作 -->
-            <template #action="machine">
-              <!-- 日志 -->
-              <a-button class="p0"
-                        type="link"
-                        style="height: 22px"
-                        :disabled="!statusHolder.visibleActionLog(machine.status)">
-                <a-tooltip title="ctrl 点击打开新页面">
-                  <a target="_blank"
-                     :href="`#/app/release/machine/log/view/${machine.id}`"
-                     @click="openMachineLog($event, machine.id)">日志</a>
-                </a-tooltip>
-              </a-button>
-              <a-divider type="vertical"/>
-              <!-- 详情 -->
-              <a @click="openMachineDetail(machine.id)">详情</a>
-              <a-divider type="vertical" v-if="statusHolder.visibleMachineTerminate(machine.status)"/>
-              <!-- 停止 -->
-              <a-popconfirm v-if="statusHolder.visibleMachineTerminate(machine.status)"
-                            title="是否要停止执行?"
-                            placement="topRight"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="terminateMachine(record.id, machine.id)">
-                <span class="span-blue pointer">停止</span>
-              </a-popconfirm>
-              <a-divider type="vertical" v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"/>
-              <!-- 跳过 -->
-              <a-popconfirm v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"
-                            title="是否要跳过执行?"
-                            placement="topRight"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="skipMachine(record.id, machine.id)">
-                <span class="span-blue pointer">跳过</span>
-              </a-popconfirm>
-            </template>
-          </a-table>
-        </template>
-        <!-- 构建序列 -->
-        <template #seq="record">
-          <span class="span-blue">#{{ record.buildSeq }}</span>
-        </template>
-        <!-- 发布标题 -->
-        <template #releaseTitle="record">
-          <div class="timed-wrapper">
-            <!-- 回滚图标 -->
-            <a-tooltip v-if="record.type === RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
-              <a-icon class="rollback-icon" type="pull-request"/>
-            </a-tooltip>
-            <!-- 定时图标 -->
-            <a-tooltip v-if="record.timedRelease === TIMED_TYPE.TIMED.value">
-              <template #title>
-                调度时间: {{ record.timedReleaseTime | formatDate }}
+      <!-- 表格 -->
+      <div class="table-main-container">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 @expand="expandMachine"
+                 :loading="loading"
+                 :expandedRowKeys.sync="expandedRowKeys"
+                 size="middle">
+          <!-- 展开的机器列表 -->
+          <template #expandedRowRender="record">
+            <a-table
+              v-if="record.machines"
+              :rowKey="(record, index) => index"
+              :columns="innerColumns"
+              :dataSource="record.machines"
+              :loading="record.loading"
+              :pagination="false"
+              size="middle">
+              <!-- 状态 -->
+              <template #status="machine">
+                <a-tag class="m0" :color="machine.status | formatActionStatus('color')">
+                  {{ machine.status | formatActionStatus('label') }}
+                </a-tag>
               </template>
-              <a-icon class="timed-icon" type="hourglass"/>
-            </a-tooltip>
-            <!-- 标题 -->
-            <span :title="record.title">
+              <!-- 操作 -->
+              <template #action="machine">
+                <!-- 日志 -->
+                <a-button class="p0"
+                          type="link"
+                          style="height: 22px"
+                          :disabled="!statusHolder.visibleActionLog(machine.status)">
+                  <a-tooltip title="ctrl 点击打开新页面">
+                    <a target="_blank"
+                       :href="`#/app/release/machine/log/view/${machine.id}`"
+                       @click="openMachineLog($event, machine.id)">日志</a>
+                  </a-tooltip>
+                </a-button>
+                <a-divider type="vertical"/>
+                <!-- 详情 -->
+                <a @click="openMachineDetail(machine.id)">详情</a>
+                <a-divider type="vertical" v-if="statusHolder.visibleMachineTerminate(machine.status)"/>
+                <!-- 停止 -->
+                <a-popconfirm v-if="statusHolder.visibleMachineTerminate(machine.status)"
+                              title="是否要停止执行?"
+                              placement="topRight"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="terminateMachine(record.id, machine.id)">
+                  <span class="span-blue pointer">停止</span>
+                </a-popconfirm>
+                <a-divider type="vertical" v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"/>
+                <!-- 跳过 -->
+                <a-popconfirm v-if="statusHolder.visibleMachineSkip(record.status, machine.status)"
+                              title="是否要跳过执行?"
+                              placement="topRight"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="skipMachine(record.id, machine.id)">
+                  <span class="span-blue pointer">跳过</span>
+                </a-popconfirm>
+              </template>
+            </a-table>
+          </template>
+          <!-- 构建序列 -->
+          <template #seq="record">
+            <span class="span-blue">#{{ record.buildSeq }}</span>
+          </template>
+          <!-- 发布标题 -->
+          <template #releaseTitle="record">
+            <div class="timed-wrapper">
+              <!-- 回滚图标 -->
+              <a-tooltip v-if="record.type === RELEASE_TYPE.ROLLBACK.value" title="回滚发布">
+                <a-icon class="rollback-icon" type="pull-request"/>
+              </a-tooltip>
+              <!-- 定时图标 -->
+              <a-tooltip v-if="record.timedRelease === TIMED_TYPE.TIMED.value">
+                <template #title>
+                  调度时间: {{ record.timedReleaseTime | formatDate }}
+                </template>
+                <a-icon class="timed-icon" type="hourglass"/>
+              </a-tooltip>
+              <!-- 标题 -->
+              <span :title="record.title">
               {{ record.title }}
             </span>
-          </div>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-tag class="m0" :color="record.status | formatReleaseStatus('color')">
-            {{ record.status | formatReleaseStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 创建时间 -->
-        <template #createTime="record">
-          {{ record.createTime | formatDate }}
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 审核 -->
-          <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)" title="审核">审核</a>
-          <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
-          <!-- 复制 -->
-          <a-popconfirm v-if="statusHolder.visibleCopy(record.status)"
-                        title="是否要复制发布任务?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="copyRelease(record.id)">
-            <span class="span-blue pointer">复制</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
-          <!-- 发布 -->
-          <a-popconfirm v-if="statusHolder.visibleRelease(record.status)"
-                        title="是否要执行发布?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="runnableRelease(record)">
-            <span class="span-blue pointer">发布</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
-          <!-- 定时 -->
-          <a v-if="statusHolder.visibleTimed(record.status)" @click="openTimedRelease(record)" title="设置定时发布">定时</a>
-          <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
-          <!-- 停止 -->
-          <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
-                        title="是否要停止发布?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="terminate(record.id)">
-            <span class="span-blue pointer">停止</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
-          <!-- 回滚 -->
-          <a-popconfirm v-if="statusHolder.visibleRollback(record.status)"
-                        title="是否要回滚发布?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="rollback(record.id)">
-            <span class="span-blue pointer">回滚</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
-          <!-- 日志 -->
-          <a-tooltip v-if="statusHolder.visibleLog(record.status)" title="ctrl 点击打开新页面">
-            <a target="_blank"
-               :href="`#/app/release/log/view/${record.id}`"
-               @click="openReleaseLog($event, record.id)">日志</a>
-          </a-tooltip>
-          <a-divider v-if="statusHolder.visibleLog(record.status)" type="vertical"/>
-          <!-- 详情 -->
-          <a @click="openReleaseDetail(record.id)">详情</a>
-          <!-- 取消 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
-          <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
-                        title="是否要取消定时发布?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="cancelTimedRelease(record)">
-            <span class="span-blue pointer">取消</span>
-          </a-popconfirm>
-          <!-- 删除 -->
-          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
-          <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
-                        title="确认删除当前发布记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+            </div>
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-tag class="m0" :color="record.status | formatReleaseStatus('color')">
+              {{ record.status | formatReleaseStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 创建时间 -->
+          <template #createTime="record">
+            {{ record.createTime | formatDate }}
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 审核 -->
+            <a v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)" title="审核">审核</a>
+            <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
+            <!-- 复制 -->
+            <a-popconfirm v-if="statusHolder.visibleCopy(record.status)"
+                          title="是否要复制发布任务?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="copyRelease(record.id)">
+              <span class="span-blue pointer">复制</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="statusHolder.visibleCopy(record.status)"/>
+            <!-- 发布 -->
+            <a-popconfirm v-if="statusHolder.visibleRelease(record.status)"
+                          title="是否要执行发布?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="runnableRelease(record)">
+              <span class="span-blue pointer">发布</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="statusHolder.visibleRelease(record.status)"/>
+            <!-- 定时 -->
+            <a v-if="statusHolder.visibleTimed(record.status)" @click="openTimedRelease(record)" title="设置定时发布">定时</a>
+            <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
+            <!-- 停止 -->
+            <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
+                          title="是否要停止发布?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminate(record.id)">
+              <span class="span-blue pointer">停止</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
+            <!-- 回滚 -->
+            <a-popconfirm v-if="statusHolder.visibleRollback(record.status)"
+                          title="是否要回滚发布?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="rollback(record.id)">
+              <span class="span-blue pointer">回滚</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="statusHolder.visibleRollback(record.status)"/>
+            <!-- 日志 -->
+            <a-tooltip v-if="statusHolder.visibleLog(record.status)" title="ctrl 点击打开新页面">
+              <a target="_blank"
+                 :href="`#/app/release/log/view/${record.id}`"
+                 @click="openReleaseLog($event, record.id)">日志</a>
+            </a-tooltip>
+            <a-divider v-if="statusHolder.visibleLog(record.status)" type="vertical"/>
+            <!-- 详情 -->
+            <a @click="openReleaseDetail(record.id)">详情</a>
+            <!-- 取消 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
+            <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
+                          title="是否要取消定时发布?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="cancelTimedRelease(record)">
+              <span class="span-blue pointer">取消</span>
+            </a-popconfirm>
+            <!-- 删除 -->
+            <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
+            <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
+                          title="确认删除当前发布记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="app-info-event">
@@ -351,8 +354,7 @@ const columns = [
     title: '发布应用',
     key: 'appName',
     dataIndex: 'appName',
-    ellipsis: true,
-    sorter: (a, b) => a.appName.localeCompare(b.appName)
+    ellipsis: true
   },
   {
     title: '状态',

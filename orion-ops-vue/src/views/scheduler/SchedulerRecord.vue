@@ -1,7 +1,7 @@
 <template>
   <div class="scheduler-record-container">
     <!-- 调度任务菜单 -->
-    <div class="scheduler-task-menu">
+    <div class="scheduler-task-menu gray-box-shadow">
       <!-- 任务列表头 -->
       <div class="scheduler-task-header">
         <a-page-header @back="() => {}">
@@ -51,7 +51,7 @@
         </div>
       </div>
       <!-- 表格 -->
-      <div class="record-table-wrapper">
+      <div class="table-wrapper record-table-wrapper">
         <!-- 工具栏 -->
         <div class="table-tools-bar">
           <!-- 左侧 -->
@@ -616,7 +616,7 @@ export default {
   }
 
   .record-table-wrapper {
-    background: #F0F2F5;
+    height: calc(100% - 94px);
 
     .table-main-container {
       border-radius: 0;
