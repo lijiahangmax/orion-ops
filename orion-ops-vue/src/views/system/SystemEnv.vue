@@ -3,136 +3,141 @@
     <!-- 环境变量容器 -->
     <div class="system-env-wrapper">
       <!-- 环境变量筛选 -->
-      <div class="table-search-columns">
-        <a-form-model class="system-env-search-form" ref="query" :model="query">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="key" prop="key">
-                <a-input v-model="query.key" allowClear/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="value" prop="value">
-                <a-input v-model="query.value" allowClear/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="描述" prop="description">
-                <a-input v-model="query.description" allowClear/>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </div>
-      <!-- 工具栏 -->
-      <div class="table-tools-bar">
-        <!-- 左侧 -->
-        <div class="tools-fixed-left">
-          <span class="table-title">环境变量</span>
-          <a-divider type="vertical"/>
-          <!-- 视图 -->
-          <div class="mx8 nowrap">
-            <a-radio-group v-model="viewType" buttonStyle="solid">
-              <a-radio-button v-for="view in VIEW_TYPE"
-                              :key="view.value"
-                              :value="view.value"
-                              @click="changeView(view)">
-                {{ view.name }}
-              </a-radio-button>
-            </a-radio-group>
-          </div>
-          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm v-show="selectedRowKeys.length && viewType === VIEW_TYPE.TABLE.value"
-                        placement="topRight"
-                        title="是否删除选中环境变量?"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
-        </div>
-        <!-- 右侧 -->
-        <div class="tools-fixed-right">
-          <a-button class="mx8" v-if="viewType !== VIEW_TYPE.TABLE.value"
-                    type="primary"
-                    icon="check"
-                    :disabled="loading"
-                    @click="save">
-            保存
-          </a-button>
-          <a-divider v-if="viewType !== VIEW_TYPE.TABLE.value" type="vertical"/>
-          <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
-          <a-divider type="vertical"/>
-          <a-icon type="search" class="tools-icon" title="查询" @click="getSystemEnv({})"/>
-          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+      <div class="search-columns-wrapper">
+        <div class="table-search-columns">
+          <a-form-model class="system-env-search-form" ref="query" :model="query">
+            <a-row>
+              <a-col :span="6">
+                <a-form-model-item label="key" prop="key">
+                  <a-input v-model="query.key" allowClear/>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="value" prop="value">
+                  <a-input v-model="query.value" allowClear/>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="6">
+                <a-form-model-item label="描述" prop="description">
+                  <a-input v-model="query.description" allowClear/>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+          </a-form-model>
         </div>
       </div>
-      <!-- 环境变量表格 -->
-      <div class="table-main-container table-scroll-x-auto" v-if="viewType === VIEW_TYPE.TABLE.value">
-        <a-table :columns="columns"
-                 :dataSource="rows"
-                 :pagination="pagination"
-                 :rowSelection="rowSelection"
-                 rowKey="id"
-                 @change="getSystemEnv"
-                 :scroll="{x: '100%'}"
-                 :loading="loading"
-                 size="middle">
-          <!-- key -->
-          <template #key="record">
-            <div class="auto-ellipsis">
-              <a class="copy-icon-left" @click="$copy(record.key)">
-                <a-icon type="copy"/>
-              </a>
-              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
-                  {{ record.key }}
-                </span>
-            </div>
-          </template>
-          <!-- value -->
-          <template #value="record">
-            <div class="auto-ellipsis">
-              <a class="copy-icon-left" @click="$copy(record.value)">
-                <a-icon type="copy"/>
-              </a>
-              <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
-                  {{ record.value }}
-                </span>
-            </div>
-          </template>
-          <!-- 修改时间 -->
-          <template #updateTime="record">
-            {{ record.updateTime | formatDate }}
-          </template>
-          <!-- 操作 -->
-          <template #action="record">
-            <a @click="update(record.id)">修改</a>
+      <!-- 表格 -->
+      <div class="table-wrapper">
+        <!-- 工具栏 -->
+        <div class="table-tools-bar">
+          <!-- 左侧 -->
+          <div class="tools-fixed-left">
+            <span class="table-title">环境变量</span>
             <a-divider type="vertical"/>
-            <a @click="history(record)">历史</a>
-            <a-divider type="vertical"/>
-            <a-popconfirm :disabled="record.forbidDelete !== 1"
+            <!-- 视图 -->
+            <div class="mx8 nowrap">
+              <a-radio-group v-model="viewType" buttonStyle="solid">
+                <a-radio-button v-for="view in VIEW_TYPE"
+                                :key="view.value"
+                                :value="view.value"
+                                @click="changeView(view)">
+                  {{ view.name }}
+                </a-radio-button>
+              </a-radio-group>
+            </div>
+            <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm v-show="selectedRowKeys.length && viewType === VIEW_TYPE.TABLE.value"
                           placement="topRight"
-                          title="是否删除当前变量?"
+                          title="是否删除选中环境变量?"
                           ok-text="确定"
                           cancel-text="取消"
-                          @confirm="remove([record.id])">
-              <a-button class="p0"
-                        type="link"
-                        style="height: 22px"
-                        :disabled="record.forbidDelete !== 1">
-                删除
-              </a-button>
+                          @confirm="remove(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
             </a-popconfirm>
-          </template>
-        </a-table>
+          </div>
+          <!-- 右侧 -->
+          <div class="tools-fixed-right">
+            <a-button class="mx8" v-if="viewType !== VIEW_TYPE.TABLE.value"
+                      type="primary"
+                      icon="check"
+                      :disabled="loading"
+                      @click="save">
+              保存
+            </a-button>
+            <a-divider v-if="viewType !== VIEW_TYPE.TABLE.value" type="vertical"/>
+            <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+            <a-divider type="vertical"/>
+            <a-icon type="search" class="tools-icon" title="查询" @click="getSystemEnv({})"/>
+            <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+          </div>
+        </div>
+        <!-- 环境变量表格 -->
+        <div class="table-main-container table-scroll-x-auto" v-if="viewType === VIEW_TYPE.TABLE.value">
+          <a-table :columns="columns"
+                   :dataSource="rows"
+                   :pagination="pagination"
+                   :rowSelection="rowSelection"
+                   rowKey="id"
+                   @change="getSystemEnv"
+                   :scroll="{x: '100%'}"
+                   :loading="loading"
+                   size="middle">
+            <!-- key -->
+            <template #key="record">
+              <div class="auto-ellipsis">
+                <a class="copy-icon-left" @click="$copy(record.key)">
+                  <a-icon type="copy"/>
+                </a>
+                <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.key)">
+                  {{ record.key }}
+                </span>
+              </div>
+            </template>
+            <!-- value -->
+            <template #value="record">
+              <div class="auto-ellipsis">
+                <a class="copy-icon-left" @click="$copy(record.value)">
+                  <a-icon type="copy"/>
+                </a>
+                <span class="pointer auto-ellipsis-item" title="预览" @click="preview(record.value)">
+                  {{ record.value }}
+                </span>
+              </div>
+            </template>
+            <!-- 修改时间 -->
+            <template #updateTime="record">
+              {{ record.updateTime | formatDate }}
+            </template>
+            <!-- 操作 -->
+            <template #action="record">
+              <a @click="update(record.id)">修改</a>
+              <a-divider type="vertical"/>
+              <a @click="history(record)">历史</a>
+              <a-divider type="vertical"/>
+              <a-popconfirm :disabled="record.forbidDelete !== 1"
+                            placement="topRight"
+                            title="是否删除当前变量?"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="remove([record.id])">
+                <a-button class="p0"
+                          type="link"
+                          style="height: 22px"
+                          :disabled="record.forbidDelete !== 1">
+                  删除
+                </a-button>
+              </a-popconfirm>
+            </template>
+          </a-table>
+        </div>
+        <!-- 环境变量视图 -->
+        <div class="table-main-container env-editor-container" v-if="viewType !== VIEW_TYPE.TABLE.value">
+          <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
+            <Editor ref="editor" :lang="viewLang"/>
+          </a-spin>
+        </div>
       </div>
-    </div>
-    <!-- 环境变量视图 -->
-    <div class="table-main-container env-editor-container" v-if="viewType !== VIEW_TYPE.TABLE.value">
-      <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
-        <Editor ref="editor" :lang="viewLang"/>
-      </a-spin>
     </div>
     <!-- 事件 -->
     <div class="system-env-event-container">
@@ -346,7 +351,7 @@ export default {
 
   .env-editor-container {
     height: calc(100vh - 236px);
-    padding-bottom: 12px;
+    padding-bottom: 16px;
   }
 }
 

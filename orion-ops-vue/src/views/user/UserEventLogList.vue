@@ -334,22 +334,6 @@ export default {
 
 <style lang="less" scoped>
 
-.log-list-container {
-  background: #FFF;
-  border-radius: 4px;
-  padding: 16px;
-
-  .log-list-filter {
-    margin-bottom: 16px;
-    padding: 0;
-
-    .log-search-bar {
-      justify-content: flex-end;
-      height: 40px;
-    }
-  }
-}
-
 .log-item-container {
   width: 100%;
   display: flex;

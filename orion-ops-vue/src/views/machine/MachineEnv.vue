@@ -1,9 +1,9 @@
 <template>
   <div class="machine-env-container">
     <!-- 机器容器 -->
-    <div class="machine-env-machine-container">
+    <div class="machine-list-container gray-box-shadow">
       <!-- 机器头 -->
-      <div class="machine-env-machine-header">
+      <div class="machine-list-header">
         <a-page-header @back="() => {}">
           <template #title>
             <span class="ant-page-header-heading-title pointer" title="刷新" @click="getMachines">机器列表</span>
@@ -15,7 +15,7 @@
       </div>
       <!-- 机器菜单 -->
       <a-spin :spinning="machineLoading">
-        <div class="machine-env-machine-list">
+        <div class="machine-list-wrapper">
           <a-menu mode="inline" :defaultSelectedKeys="defaultSelectedMachineIds">
             <a-menu-item v-for="machine in machineList" :key="machine.id" :title="machine.host" @click="chooseMachine(machine.id)">
               <a-icon type="desktop"/>
@@ -26,11 +26,12 @@
       </a-spin>
     </div>
     <!-- 环境变量容器 -->
-    <div class="machine-env-machine-env-container">
-      <div class="machine-env-wrapper">
-        <!-- 环境变量筛选 -->
+    <div class="env-container">
+      <!-- 环境变量筛选 -->
+      <div class="search-columns-wrapper">
         <div class="table-search-columns">
-          <a-form-model class="machine-env-machine-env-search-form" ref="query" :model="query">
+
+          <a-form-model class="env-search-form" ref="query" :model="query">
             <a-row>
               <a-col :span="6">
                 <a-form-model-item label="key" prop="key">
@@ -50,6 +51,9 @@
             </a-row>
           </a-form-model>
         </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-wrapper">
         <!-- 工具栏 -->
         <div class="table-tools-bar">
           <!-- 左侧 -->
@@ -172,12 +176,12 @@
             </template>
           </a-table>
         </div>
-      </div>
-      <!-- 环境变量视图 -->
-      <div class="table-main-container env-editor-container" v-if="viewType !== VIEW_TYPE.TABLE.value">
-        <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
-          <Editor ref="editor" :lang="viewLang"/>
-        </a-spin>
+        <!-- 环境变量视图 -->
+        <div class="table-main-container env-editor-container" v-if="viewType !== VIEW_TYPE.TABLE.value">
+          <a-spin class="editor-spin" style="height: 100%" :spinning="loading">
+            <Editor ref="editor" :lang="viewLang"/>
+          </a-spin>
+        </div>
       </div>
     </div>
     <!-- 事件 -->
@@ -441,32 +445,41 @@ export default {
   justify-content: flex-start;
   width: 100%;
 
-  .machine-env-machine-container {
+  .machine-list-container {
     width: 216px;
     padding: 0 8px 8px 8px;
     margin-right: 16px;
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
-  .machine-env-machine-env-container {
+  .env-container {
     width: calc(100% - 228px);
     min-height: calc(100vh - 84px);
     background: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
 
-    .machine-env-wrapper {
+    .search-columns-wrapper {
       background: #F0F2F5;
-    }
-  }
+      padding-bottom: 18px;
 
-  .env-editor-container {
-    height: calc(100% - 150px);
-    padding-bottom: 12px;
+      .table-search-columns {
+        margin-bottom: 0;
+      }
+    }
+
+    .table-wrapper {
+      height: calc(100% - 94px);
+    }
+
+    .env-editor-container {
+      height: calc(100% - 64px);
+      padding-bottom: 6px;
+    }
   }
 }
 
-.machine-env-machine-list {
+.machine-list-wrapper {
   width: 200px;
   height: calc(100vh - 162px);
   border-radius: 5px;

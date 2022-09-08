@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import AddAlarmGroup from '@/components/alarm/AddAlarmGroup'
+import AddAlarmGroup from '@/components/user/AddAlarmGroup'
 
 /**
  * 列
