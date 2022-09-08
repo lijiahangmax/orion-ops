@@ -2,7 +2,9 @@
   <div class="sftp-container">
     <div class="sftp-main-container" ref="sftpMainContainer">
       <!-- 左侧主体 -->
-      <div id="sftp-left-fixed" v-if="leftFolderVisible" :style="{width: leftFolderVisible ? '16%' : '0px'}">
+      <div id="sftp-left-fixed"
+           :class="setContainerShadow ? 'gray-box-shadow' : ''"
+           v-if="leftFolderVisible" :style="{width: leftFolderVisible ? '16%' : '0px'}">
         <!-- 左侧地址输入框 -->
         <div class="sftp-left-top-redirector">
           <a-input ref="redirectPathInput" v-model="redirectPath" placeholder="路径" @pressEnter="redirectDirectory"/>
@@ -21,7 +23,8 @@
         </div>
       </div>
       <!-- 右侧主体 -->
-      <div class="sftp-body-container" :style="{width: leftFolderVisible ? '83.3%' : '100%'}">
+      <div :class="['sftp-body-container', setContainerShadow ? 'gray-box-shadow' : '']"
+           :style="{width: leftFolderVisible ? '83.3%' : '100%'}">
         <!-- 头部 -->
         <div class="table-tools-bar">
           <div class="sftp-bar-left">
@@ -381,7 +384,8 @@ export default {
   props: {
     machineId: Number,
     leftFolderDefaultVisible: Boolean,
-    visibleRightMenu: Boolean
+    visibleRightMenu: Boolean,
+    setContainerShadow: Boolean
   },
   components: {
     SftpFolderTree,

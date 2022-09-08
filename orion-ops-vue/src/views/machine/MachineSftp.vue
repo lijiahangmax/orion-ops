@@ -10,7 +10,7 @@
     <a-layout>
       <a-layout-content id="sftp-content-fixed-right">
         <!-- 面包屑 -->
-        <a-breadcrumb id="sftp-breadcrumb">
+        <a-breadcrumb id="sftp-breadcrumb" class="gray-box-shadow">
           <a-breadcrumb-item>
             <a-tag color="#7950F2" style="margin: 0">
               {{ currentMachine.name }}
@@ -27,6 +27,7 @@
                          :machineId="machineId"
                          :leftFolderDefaultVisible="true"
                          :visibleRightMenu="true"
+                         :setContainerShadow="true"
                          @opened="sftpOpened"/>
       </a-layout-content>
     </a-layout>
@@ -115,7 +116,7 @@ export default {
     margin: 0 0 12px 0;
     background-color: #FFF;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 }
 

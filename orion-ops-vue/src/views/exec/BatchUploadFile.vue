@@ -6,7 +6,7 @@
         <span v-else/>
       </template>
       <!-- 上传容器  -->
-      <div class="upload-list-container">
+      <div class="upload-list-container gray-box-shadow">
         <!-- 上传机器 -->
         <div class="upload-machine-checker-container">
           <span class="normal-label upload-label">上传机器</span>
@@ -56,7 +56,7 @@
       </div>
     </a-spin>
     <!-- 传输容器 -->
-    <div class="transfer-list-container">
+    <div class="transfer-list-container gray-box-shadow">
       <!-- 提示 -->
       <div class="transfer-clear-wrapper">
         <a-alert :type="status.type" style="width: 100%">
@@ -429,13 +429,13 @@ export default {
 .batch-upload-container {
   display: flex;
   height: calc(100vh - 84px);
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .upload-list-container {
   width: 500px;
   background: #FFFFFF;
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 16px;
   margin-right: 16px;
 
@@ -489,7 +489,7 @@ export default {
 
 .transfer-list-container {
   width: calc(100% - 516px);
-  border-radius: 4px;
+  border-radius: 2px;
   background: #FFFFFF;
   padding: 16px;
   overflow-y: auto;

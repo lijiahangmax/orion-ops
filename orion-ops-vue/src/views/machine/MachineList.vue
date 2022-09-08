@@ -36,155 +36,158 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">机器列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="是否要启用选中机器?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="batchStatus(1)">
-            <a-button class="ml8" type="primary" icon="build">启用</a-button>
-          </a-popconfirm>
-          <a-popconfirm title="是否要停用选中机器?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="batchStatus(2)">
-            <a-button class="ml8" type="primary" icon="fork">停用</a-button>
-          </a-popconfirm>
-          <a-popconfirm title="是否删除选择中机器? 将会删除机器相关联的所有数据!?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="batchRemove()">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">机器列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="是否要启用选中机器?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="batchStatus(1)">
+              <a-button class="ml8" type="primary" icon="build">启用</a-button>
+            </a-popconfirm>
+            <a-popconfirm title="是否要停用选中机器?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="batchStatus(2)">
+              <a-button class="ml8" type="primary" icon="fork">停用</a-button>
+            </a-popconfirm>
+            <a-popconfirm title="是否删除选择中机器? 将会删除机器相关联的所有数据!?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="batchRemove()">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a target="_blank" href="#/machine/terminal">
+            <a-button class="mr8" type="primary" icon="desktop">Terminal</a-button>
+          </a>
+          <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a target="_blank" href="#/machine/terminal">
-          <a-button class="mr8" type="primary" icon="desktop">Terminal</a-button>
-        </a>
-        <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 名称 -->
-        <template #name="record">
-          {{ record.name }}
-          <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
-        </template>
-        <!-- tag -->
-        <template #tag="record">
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 名称 -->
+          <template #name="record">
+            {{ record.name }}
+            <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
+          </template>
+          <!-- tag -->
+          <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
-        </template>
-        <!-- 主机 -->
-        <template #host="record">
+          </template>
+          <!-- 主机 -->
+          <template #host="record">
           <span class="span-blue pointer" title="复制主机" @click="$copy(record.host, true)">
             {{ record.host }}
           </span>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-badge v-if="record.status"
-                   :status="record.status | formatEnableStatus('status')"
-                   :text="record.status | formatEnableStatus('label')"/>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 启用 -->
-          <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="changeStatus(record)"
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-badge v-if="record.status"
+                     :status="record.status | formatEnableStatus('status')"
+                     :text="record.status | formatEnableStatus('label')"/>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 启用 -->
+            <a-popconfirm :title="`确认${record.status === 1 ? '停用' : '启用'}当前机器?`"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="changeStatus(record)"
+                          :disabled="record.id === 1">
+              <a-button class="p0"
+                        type="link"
+                        style="height: 22px"
                         :disabled="record.id === 1">
+                {{ (record.status === 1 ? 2 : 1) | formatEnableStatus('label') }}
+              </a-button>
+            </a-popconfirm>
+            <a-divider type="vertical"/>
+            <!-- 详情 -->
+            <a @click="openDetail(record.id)">详情</a>
+            <a-divider type="vertical"/>
+            <!-- 终端 -->
             <a-button class="p0"
                       type="link"
                       style="height: 22px"
-                      :disabled="record.id === 1">
-              {{ (record.status === 1 ? 2 : 1) | formatEnableStatus('label') }}
-            </a-button>
-          </a-popconfirm>
-          <a-divider type="vertical"/>
-          <!-- 详情 -->
-          <a @click="openDetail(record.id)">详情</a>
-          <a-divider type="vertical"/>
-          <!-- 终端 -->
-          <a-button class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="record.status !== 1">
-            <a-tooltip title="ctrl 点击新页面打开终端">
-              <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record)">
-                Terminal
-              </a>
-            </a-tooltip>
-          </a-button>
-          <a-divider type="vertical"/>
-          <!-- sftp -->
-          <a :href="`#/machine/sftp/${record.id}`">
-            <a-button title="打开sftp"
-                      class="p0"
-                      type="link"
-                      style="height: 22px"
                       :disabled="record.status !== 1">
-              sftp
+              <a-tooltip title="ctrl 点击新页面打开终端">
+                <a target="_blank" :href="`#/machine/terminal/${record.id}`" @click="openTerminal($event, record)">
+                  Terminal
+                </a>
+              </a-tooltip>
             </a-button>
-          </a>
-          <a-divider type="vertical"/>
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多
-              <a-icon type="down"/>
+            <a-divider type="vertical"/>
+            <!-- sftp -->
+            <a :href="`#/machine/sftp/${record.id}`">
+              <a-button title="打开sftp"
+                        class="p0"
+                        type="link"
+                        style="height: 22px"
+                        :disabled="record.status !== 1">
+                sftp
+              </a-button>
             </a>
-            <template #overlay>
-              <a-menu @click="menuHandler($event, record)">
-                <a-menu-item key="update">
-                  编辑
-                </a-menu-item>
-                <a-menu-item v-if="record.id !== 1" key="delete">
-                  删除
-                </a-menu-item>
-                <a-menu-item key="copy">
-                  复制
-                </a-menu-item>
-                <a-menu-item key="ping" v-if="record.status === 1">
-                  ping
-                </a-menu-item>
-                <a-menu-item key="connect" v-if="record.status === 1">
-                  测试连接
-                </a-menu-item>
-                <a-menu-item key="openEnv">
-                  环境变量
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
-        </template>
-      </a-table>
+            <a-divider type="vertical"/>
+            <a-dropdown>
+              <a class="ant-dropdown-link">
+                更多
+                <a-icon type="down"/>
+              </a>
+              <template #overlay>
+                <a-menu @click="menuHandler($event, record)">
+                  <a-menu-item key="update">
+                    编辑
+                  </a-menu-item>
+                  <a-menu-item v-if="record.id !== 1" key="delete">
+                    删除
+                  </a-menu-item>
+                  <a-menu-item key="copy">
+                    复制
+                  </a-menu-item>
+                  <a-menu-item key="ping" v-if="record.status === 1">
+                    ping
+                  </a-menu-item>
+                  <a-menu-item key="connect" v-if="record.status === 1">
+                    测试连接
+                  </a-menu-item>
+                  <a-menu-item key="openEnv">
+                    环境变量
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 终端模态框 -->
     <div v-if="openTerminalArr.length">

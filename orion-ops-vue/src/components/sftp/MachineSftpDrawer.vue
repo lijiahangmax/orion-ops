@@ -23,6 +23,7 @@
                      :machineId="machineId"
                      :leftFolderDefaultVisible="false"
                      :visibleRightMenu="false"
+                     :setContainerShadow="false"
                      @opened="() => init = true"/>
   </a-drawer>
 </template>

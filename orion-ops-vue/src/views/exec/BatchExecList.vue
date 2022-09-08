@@ -32,150 +32,153 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">执行列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="确认删除所选中的执行记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteTask(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
-        </div>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <!-- 状态 -->
-        <div class="exec-status-container">
-          <a-radio-group class="nowrap"
-                         v-model="query.status"
-                         @change="getList({})">
-            <a-radio-button :value="undefined">全部</a-radio-button>
-            <a-radio-button v-for="status in BATCH_EXEC_STATUS"
-                            :key="status.value"
-                            :value="status.value">
-              {{ status.label }}
-            </a-radio-button>
-          </a-radio-group>
-        </div>
-        <a-divider type="vertical"/>
-        <!-- 执行 -->
-        <a target="_blank" href="#/batch/exec/add">
-          <a-button class="mx8"
-                    type="primary"
-                    icon="code"
-                    title="ctrl 点击打开新页面"
-                    @click="openExecute">
-            批量执行
-          </a-button>
-        </a>
-        <a-divider type="vertical"/>
-        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 主机 -->
-        <template #machine="record">
-          <a-tooltip placement="top">
-            <template #title>
-              <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
-            </template>
-            <span>{{ record.machineName }}</span>
-          </a-tooltip>
-        </template>
-        <!-- 命令 -->
-        <template #command="record">
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">执行列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="确认删除所选中的执行记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteTask(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <!-- 状态 -->
+          <div class="exec-status-container">
+            <a-radio-group class="nowrap"
+                           v-model="query.status"
+                           @change="getList({})">
+              <a-radio-button :value="undefined">全部</a-radio-button>
+              <a-radio-button v-for="status in BATCH_EXEC_STATUS"
+                              :key="status.value"
+                              :value="status.value">
+                {{ status.label }}
+              </a-radio-button>
+            </a-radio-group>
+          </div>
+          <a-divider type="vertical"/>
+          <!-- 执行 -->
+          <a target="_blank" href="#/batch/exec/add">
+            <a-button class="mx8"
+                      type="primary"
+                      icon="code"
+                      title="ctrl 点击打开新页面"
+                      @click="openExecute">
+              批量执行
+            </a-button>
+          </a>
+          <a-divider type="vertical"/>
+          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 主机 -->
+          <template #machine="record">
+            <a-tooltip placement="top">
+              <template #title>
+                <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
+              </template>
+              <span>{{ record.machineName }}</span>
+            </a-tooltip>
+          </template>
+          <!-- 命令 -->
+          <template #command="record">
           <span class="pointer" title="预览" @click="previewEditor(record.command)">
               {{ record.command }}
           </span>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-tag class="m0" :color="record.status | formatExecStatus('color')">
-            {{ record.status | formatExecStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 退出码 -->
-        <template #exitCode="record">
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-tag class="m0" :color="record.status | formatExecStatus('color')">
+              {{ record.status | formatExecStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 退出码 -->
+          <template #exitCode="record">
           <span :style="{'color': record.exitCode === 0 ? '#4263EB' : '#E03131'}">
             {{ record.exitCode }}
           </span>
-        </template>
-        <!-- 描述 -->
-        <template #description="record">
+          </template>
+          <!-- 描述 -->
+          <template #description="record">
           <span class="pointer" @click="previewText(record.description)">
             {{ record.description }}
           </span>
-        </template>
-        <!-- 创建时间 -->
-        <template #createTime="record">
-          {{ record.createTime | formatDate }}
-        </template>
-        <!-- 日志 -->
-        <template #log="record">
-          <!-- 日志面板 -->
-          <a-tooltip title="ctrl 点击打开新页面">
-            <a target="_blank"
-               :href="`#/batch/exec/log/view/${record.id}`"
-               @click="openLogView($event, record.id)">日志</a>
-          </a-tooltip>
-          <a-divider type="vertical"/>
-          <!-- 下载 -->
-          <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(record)">获取</a>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 详情 -->
-          <a @click="detail(record.id)">详情</a>
-          <a-divider type="vertical"/>
-          <!-- 再次执行 -->
-          <a-popconfirm :title="record.status === BATCH_EXEC_STATUS.RUNNABLE.value ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="redo(record)">
-            <span class="span-blue pointer">再次执行</span>
-          </a-popconfirm>
-          <a-divider v-if="visibleHolder.visibleTerminate(record.status)" type="vertical"/>
-          <!-- 停止 -->
-          <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
-                        title="确认停止当前任务?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="terminate(record.id)">
-            <span class="span-blue pointer">停止</span>
-          </a-popconfirm>
-          <a-divider v-if="visibleHolder.visibleDelete(record.status)" type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
-                        title="确认删除当前任务?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteTask([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+          </template>
+          <!-- 创建时间 -->
+          <template #createTime="record">
+            {{ record.createTime | formatDate }}
+          </template>
+          <!-- 日志 -->
+          <template #log="record">
+            <!-- 日志面板 -->
+            <a-tooltip title="ctrl 点击打开新页面">
+              <a target="_blank"
+                 :href="`#/batch/exec/log/view/${record.id}`"
+                 @click="openLogView($event, record.id)">日志</a>
+            </a-tooltip>
+            <a-divider type="vertical"/>
+            <!-- 下载 -->
+            <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
+            <a v-else @click="loadDownloadUrl(record)">获取</a>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 详情 -->
+            <a @click="detail(record.id)">详情</a>
+            <a-divider type="vertical"/>
+            <!-- 再次执行 -->
+            <a-popconfirm :title="record.status === BATCH_EXEC_STATUS.RUNNABLE.value ? '当前任务未执行完毕, 确定再次执行?' : '是否再次执行当前任务?'"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="redo(record)">
+              <span class="span-blue pointer">再次执行</span>
+            </a-popconfirm>
+            <a-divider v-if="visibleHolder.visibleTerminate(record.status)" type="vertical"/>
+            <!-- 停止 -->
+            <a-popconfirm v-if="visibleHolder.visibleTerminate(record.status)"
+                          title="确认停止当前任务?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminate(record.id)">
+              <span class="span-blue pointer">停止</span>
+            </a-popconfirm>
+            <a-divider v-if="visibleHolder.visibleDelete(record.status)" type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm v-if="visibleHolder.visibleDelete(record.status)"
+                          title="确认删除当前任务?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteTask([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="exec-event-container">

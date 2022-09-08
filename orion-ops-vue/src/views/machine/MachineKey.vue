@@ -26,126 +26,129 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">机器秘钥</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <!-- 挂载 -->
-          <a-popconfirm title="是否挂载选中秘钥?"
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">机器秘钥</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <!-- 挂载 -->
+            <a-popconfirm title="是否挂载选中秘钥?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="batchMount">
+              <a-button class="ml8" type="primary" icon="pull-request">挂载</a-button>
+            </a-popconfirm>
+            <!-- 卸载 -->
+            <a-popconfirm title="是否卸载选中秘钥? 可能会导致机器无法连接!"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="batchDump">
+              <a-button class="ml8" type="danger" icon="poweroff">卸载</a-button>
+            </a-popconfirm>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除选中秘钥?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <!-- 临时挂载 -->
+          <a-button class="mr8" type="primary" @click="tempMount">临时挂载</a-button>
+          <!-- 挂载全部 -->
+          <a-popconfirm title="是否挂载全部秘钥?"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="batchMount">
-            <a-button class="ml8" type="primary" icon="pull-request">挂载</a-button>
+                        @confirm="mountAll">
+            <a-button class="mr8" type="primary">挂载全部</a-button>
           </a-popconfirm>
-          <!-- 卸载 -->
-          <a-popconfirm title="是否卸载选中秘钥? 可能会导致机器无法连接!"
+          <!-- 卸载全部 -->
+          <a-popconfirm title="是否卸载全部秘钥? 可能会导致机器无法连接!"
                         placement="topRight"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="batchDump">
-            <a-button class="ml8" type="danger" icon="poweroff">卸载</a-button>
+                        @confirm="dumpAll">
+            <a-button class="mr8" type="primary">卸载全部</a-button>
           </a-popconfirm>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除选中秘钥?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+          <a-divider type="vertical"/>
+          <a-button class="mx8" type="primary" icon="plus" @click="add">新建</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <!-- 临时挂载 -->
-        <a-button class="mr8" type="primary" @click="tempMount">临时挂载</a-button>
-        <!-- 挂载全部 -->
-        <a-popconfirm title="是否挂载全部秘钥?"
-                      placement="topRight"
-                      ok-text="确定"
-                      cancel-text="取消"
-                      @confirm="mountAll">
-          <a-button class="mr8" type="primary">挂载全部</a-button>
-        </a-popconfirm>
-        <!-- 卸载全部 -->
-        <a-popconfirm title="是否卸载全部秘钥? 可能会导致机器无法连接!"
-                      placement="topRight"
-                      ok-text="确定"
-                      cancel-text="取消"
-                      @confirm="dumpAll">
-          <a-button class="mr8" type="primary">卸载全部</a-button>
-        </a-popconfirm>
-        <a-divider type="vertical"/>
-        <a-button class="mx8" type="primary" icon="plus" @click="add">新建</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 秘钥路径 -->
+          <template #path="record">
+            <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
+            <a v-if="record.downloadUrl"
+               target="_blank"
+               title="下载"
+               style="margin-left: 10px"
+               :href="record.downloadUrl"
+               @click="clearDownloadUrl(record)">
+              <a-icon type="download"/>
+            </a>
+          </template>
+          <!-- 挂载状态 -->
+          <template #mountStatus="record">
+            <a-tag :color="record.mountStatus | formatMountStatus('color')">
+              {{ record.mountStatus | formatMountStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 创建时间 -->
+          <template #createTime="record">
+            {{ record.createTime | formatDate }}
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 挂载 -->
+            <a-button v-if="record.mountStatus === 1" type="link" disabled style="height: 22px; padding: 0">
+              挂载
+            </a-button>
+            <a-popconfirm v-else
+                          :title="record.mountStatus === 2 ? '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="changeMountStatus(record.id, record.mountStatus)">
+              <span class="span-blue pointer" v-text="record.mountStatus === 2 ? '卸载' : '挂载'"/>
+            </a-popconfirm>
+            <a-divider type="vertical"/>
+            <!-- 修改 -->
+            <a @click="update(record.id)">修改</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除当前秘钥?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
       </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 秘钥路径 -->
-        <template #path="record">
-          <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
-          <a v-if="record.downloadUrl"
-             target="_blank"
-             title="下载"
-             style="margin-left: 10px"
-             :href="record.downloadUrl"
-             @click="clearDownloadUrl(record)">
-            <a-icon type="download"/>
-          </a>
-        </template>
-        <!-- 挂载状态 -->
-        <template #mountStatus="record">
-          <a-tag :color="record.mountStatus | formatMountStatus('color')">
-            {{ record.mountStatus | formatMountStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 创建时间 -->
-        <template #createTime="record">
-          {{ record.createTime | formatDate }}
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 挂载 -->
-          <a-button v-if="record.mountStatus === 1" type="link" disabled style="height: 22px; padding: 0">
-            挂载
-          </a-button>
-          <a-popconfirm v-else
-                        :title="record.mountStatus === 2 ? '是否卸载当前秘钥? 可能会导致机器无法连接!' : '是否挂载当前秘钥?'"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="changeMountStatus(record.id, record.mountStatus)">
-            <span class="span-blue pointer" v-text="record.mountStatus === 2 ? '卸载' : '挂载'"/>
-          </a-popconfirm>
-          <a-divider type="vertical"/>
-          <!-- 修改 -->
-          <a @click="update(record.id)">修改</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除当前秘钥?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
     </div>
     <!-- 事件 -->
     <div class="machine-key-event">

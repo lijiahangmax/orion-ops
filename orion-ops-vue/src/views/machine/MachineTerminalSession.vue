@@ -17,43 +17,46 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">会话列表</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="token"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 连接时间 -->
-        <template #connectedTime="record">
-          {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <a-tooltip title="只读监视, ctrl 点击为读写监视">
-            <span class="span-blue pointer" @click="openTerminalWatcher($event, record)">监视</span>
-          </a-tooltip>
-          <a-divider type="vertical"/>
-          <a @click="forceOffline(record.token)">下线</a>
-        </template>
-      </a-table>
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">会话列表</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="token"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 连接时间 -->
+          <template #connectedTime="record">
+            {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <a-tooltip title="只读监视, ctrl 点击为读写监视">
+              <span class="span-blue pointer" @click="openTerminalWatcher($event, record)">监视</span>
+            </a-tooltip>
+            <a-divider type="vertical"/>
+            <a @click="forceOffline(record.token)">下线</a>
+          </template>
+        </a-table>
+      </div>
     </div>
-    <!-- 事件 -->
+    <!-- 监视模态框 -->
     <TerminalWatcherModal ref="watcher"/>
   </div>
 </template>
