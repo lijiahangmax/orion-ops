@@ -42,10 +42,12 @@
     <div class="table-tools-bar">
       <!-- 左侧 -->
       <div class="tools-fixed-left">
-        <span class="table-title">报警历史 ({{ machineName }})</span>
+        <span class="table-title">报警记录 ({{ machineName }})</span>
       </div>
       <!-- 右侧 -->
       <div class="tools-fixed-right">
+        <a-icon type="delete" class="tools-icon" title="清空" @click="openClear"/>
+        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
         <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
         <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
       </div>
@@ -86,12 +88,17 @@
       </a-table>
     </div>
     <!-- 事件 -->
+    <div class="alarm-event-container">
+      <!-- 数据导出模态框 -->
+      <MachineAlarmHistoryExportModal ref="export"/>
+    </div>
   </div>
 </template>
 
 <script>
 import { enumValueOf, MACHINE_ALARM_TYPE } from '@/lib/enum'
 import { formatDate } from '@/lib/filters'
+import MachineAlarmHistoryExportModal from '@/components/export/MachineAlarmHistoryExportModal'
 
 /**
  * 列
@@ -135,6 +142,7 @@ const columns = [
 
 export default {
   name: 'MachineMonitorAlarmHistory',
+  components: { MachineAlarmHistoryExportModal },
   props: {
     machineId: Number,
     machineName: String
@@ -185,6 +193,12 @@ export default {
     selectedAlarmTime(moments, dates) {
       this.query.alarmTimeStart = dates[0]
       this.query.alarmTimeEnd = dates[1]
+    },
+    openClear() {
+      this.$refs.clear.open()
+    },
+    openExport() {
+      this.$refs.export.open()
     },
     triggerAlarmNotify(id) {
       this.$api.triggerMachineAlarmNotify({ id }).then(() => {

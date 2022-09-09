@@ -35,10 +35,11 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
+import { EXPORT_TYPE } from '@/lib/enum'
 import MachineSelector from '@/components/machine/MachineSelector'
 
 export default {
-  name: 'MachineTailFileExportModal',
+  name: 'TailFileExportModal',
   components: { MachineSelector },
   data: function() {
     return {
@@ -57,7 +58,8 @@ export default {
     },
     exportData() {
       this.loading = true
-      this.$api.exportMachineTailFile({
+      this.$api.exportData({
+        exportType: EXPORT_TYPE.TAIL_FILE.value,
         protectPassword: this.protectPassword,
         machineId: this.machineId
       }).then((e) => {

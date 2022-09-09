@@ -33,6 +33,7 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
+import { EXPORT_TYPE } from '@/lib/enum'
 
 export default {
   name: 'MachineExportModal',
@@ -53,7 +54,8 @@ export default {
     },
     exportData() {
       this.loading = true
-      this.$api.exportMachine({
+      this.$api.exportData({
+        exportType: EXPORT_TYPE.MACHINE_INFO.value,
         exportPassword: this.exportPassword ? 1 : 2,
         protectPassword: this.protectPassword
       }).then((e) => {

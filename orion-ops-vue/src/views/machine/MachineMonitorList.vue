@@ -124,7 +124,7 @@
               <a-divider type="vertical"/>
               <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=3`">报警配置</a>
               <a-divider type="vertical"/>
-              <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=4`">报警历史</a>
+              <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=4`">报警记录</a>
             </template>
           </a-table>
         </div>

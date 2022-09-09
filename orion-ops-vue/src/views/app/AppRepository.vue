@@ -145,7 +145,7 @@
       <!-- 预览框 -->
       <TextPreview ref="preview"/>
       <!-- 导出模态框 -->
-      <RepositoryExportModal ref="export"/>
+      <AppRepositoryExportModal ref="export"/>
       <!-- 导入模态框 -->
       <DataImportModal ref="import" :importType="importType"/>
     </div>
@@ -156,7 +156,7 @@
 import { enumValueOf, IMPORT_TYPE, REPOSITORY_AUTH_TYPE, REPOSITORY_STATUS } from '@/lib/enum'
 import AddRepositoryModal from '@/components/app/AddRepositoryModal'
 import TextPreview from '@/components/preview/TextPreview'
-import RepositoryExportModal from '@/components/export/RepositoryExportModal'
+import AppRepositoryExportModal from '@/components/export/AppRepositoryExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
 /**
@@ -219,7 +219,7 @@ export default {
   name: 'AppRepository',
   components: {
     DataImportModal,
-    RepositoryExportModal,
+    AppRepositoryExportModal,
     TextPreview,
     AddRepositoryModal
   },

@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible"
-           title="应用版本仓库 导出"
+           title="终端日志 导出"
            okText="导出"
            :width="400"
            :okButtonProps="{props: {disabled: loading}}"
@@ -12,10 +12,12 @@
       <div class="data-export-container">
         <!-- 导出参数 -->
         <div class="data-export-params">
-          <!-- 密码导出 -->
+          <!-- 导出机器 -->
           <div class="data-export-param mb16">
-            <span class="normal-label export-label">导出密码</span>
-            <a-checkbox class="param-input" v-model="exportPassword">是否导出密码 (密文, 仅用于导入)</a-checkbox>
+            <span class="normal-label export-label">导出机器</span>
+            <MachineSelector class="param-input"
+                             placeholder="全部"
+                             @change="(m) => machineId = m"/>
           </div>
           <!-- 文档密码 -->
           <div class="data-export-param">
@@ -33,29 +35,33 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
+import { EXPORT_TYPE } from '@/lib/enum'
+import MachineSelector from '@/components/machine/MachineSelector'
 
 export default {
-  name: 'RepositoryExportModal',
+  name: 'TerminalLogExportModal',
+  components: { MachineSelector },
   data: function() {
     return {
       visible: false,
       loading: false,
-      exportPassword: false,
-      protectPassword: undefined
+      protectPassword: undefined,
+      machineId: undefined
     }
   },
   methods: {
     open() {
-      this.exportPassword = false
+      this.machineId = undefined
       this.protectPassword = undefined
       this.loading = false
       this.visible = true
     },
     exportData() {
       this.loading = true
-      this.$api.exportRepository({
-        exportPassword: this.exportPassword ? 1 : 2,
-        protectPassword: this.protectPassword
+      this.$api.exportData({
+        exportType: EXPORT_TYPE.TERMINAL_LOG.value,
+        protectPassword: this.protectPassword,
+        machineId: this.machineId
       }).then((e) => {
         this.loading = false
         this.visible = false

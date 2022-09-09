@@ -108,7 +108,7 @@
       <!-- 数据清理模态框 -->
       <TerminalLogClearModal ref="clear" @clear="getList({})"/>
       <!-- 数据导出模态框 -->
-      <MachineTerminalLogExportModal ref="export"/>
+      <TerminalLogExportModal ref="export"/>
       <!-- 终端录屏模态框 -->
       <TerminalScreenModal ref="screen"/>
     </div>
@@ -122,7 +122,7 @@ import { formatDate } from '@/lib/filters'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
-import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
+import TerminalLogExportModal from '@/components/export/TerminalLogExportModal'
 import TerminalScreenModal from '@/components/terminal/TerminalScreenModal'
 import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 
@@ -185,7 +185,7 @@ export default {
   name: 'MachineTerminalLogs',
   components: {
     TerminalScreenModal,
-    MachineTerminalLogExportModal,
+    TerminalLogExportModal,
     TerminalLogClearModal,
     MachineAutoComplete,
     UserAutoComplete

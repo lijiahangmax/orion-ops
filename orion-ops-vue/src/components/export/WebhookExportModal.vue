@@ -1,6 +1,6 @@
 <template>
   <a-modal v-model="visible"
-           title="终端日志 导出"
+           title="webhook 导出"
            okText="导出"
            :width="400"
            :okButtonProps="{props: {disabled: loading}}"
@@ -12,12 +12,16 @@
       <div class="data-export-container">
         <!-- 导出参数 -->
         <div class="data-export-params">
-          <!-- 导出机器 -->
+          <!-- 导出分类 -->
           <div class="data-export-param mb16">
-            <span class="normal-label export-label">导出机器</span>
-            <MachineSelector class="param-input"
-                             placeholder="全部"
-                             @change="(m) => machineId = m"/>
+            <span class="normal-label export-label">类型</span>
+            <a-select class="param-input"
+                      placeholder="全部"
+                      @change="(e) => type = e">
+              <a-select-option v-for="type in WEBHOOK_TYPE" :key="type.value" :value="type.value">
+                {{ type.label }}
+              </a-select-option>
+            </a-select>
           </div>
           <!-- 文档密码 -->
           <div class="data-export-param">
@@ -35,31 +39,32 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
-import MachineSelector from '@/components/machine/MachineSelector'
+import { EXPORT_TYPE, WEBHOOK_TYPE } from '@/lib/enum'
 
 export default {
-  name: 'MachineTerminalLogExportModal',
-  components: { MachineSelector },
+  name: 'WebhookExportModal',
   data: function() {
     return {
+      WEBHOOK_TYPE,
       visible: false,
       loading: false,
       protectPassword: undefined,
-      machineId: undefined
+      type: undefined
     }
   },
   methods: {
     open() {
-      this.machineId = undefined
+      this.type = undefined
       this.protectPassword = undefined
       this.loading = false
       this.visible = true
     },
     exportData() {
       this.loading = true
-      this.$api.exportMachineTerminalLog({
-        protectPassword: this.protectPassword,
-        machineId: this.machineId
+      this.$api.exportData({
+        type: this.type,
+        exportType: EXPORT_TYPE.WEBHOOK.value,
+        protectPassword: this.protectPassword
       }).then((e) => {
         this.loading = false
         this.visible = false

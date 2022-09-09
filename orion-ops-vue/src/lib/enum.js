@@ -1725,49 +1725,9 @@ export const EVENT_TYPE = {
     label: '导入命令模板',
     classify: 630
   },
-  DATA_EXPORT_MACHINE: {
+  DATA_EXPORT: {
     value: 640010,
-    label: '导出机器信息',
-    classify: 640
-  },
-  DATA_EXPORT_MACHINE_PROXY: {
-    value: 640020,
-    label: '导出机器代理',
-    classify: 640
-  },
-  DATA_EXPORT_TERMINAL_LOG: {
-    value: 640030,
-    label: '导出终端日志',
-    classify: 640
-  },
-  DATA_EXPORT_TAIL_FILE: {
-    value: 640040,
-    label: '导出日志文件',
-    classify: 640
-  },
-  DATA_EXPORT_PROFILE: {
-    value: 640050,
-    label: '导出应用环境',
-    classify: 640
-  },
-  DATA_EXPORT_APPLICATION: {
-    value: 640060,
-    label: '导出应用信息',
-    classify: 640
-  },
-  DATA_EXPORT_REPOSITORY: {
-    value: 640070,
-    label: '导出应用仓库',
-    classify: 640
-  },
-  DATA_EXPORT_COMMAND_TEMPLATE: {
-    value: 640080,
-    label: '导出命令模板',
-    classify: 640
-  },
-  DATA_EXPORT_EVENT_LOG: {
-    value: 640090,
-    label: '导出操作日志',
+    label: '导出数据',
     classify: 640
   }
 }
@@ -2433,6 +2393,45 @@ export const DATA_CLEAR_RANGE = {
   },
   REL_ID: {
     value: 30
+  }
+}
+
+/**
+ * 数据导出类型
+ */
+export const EXPORT_TYPE = {
+  MACHINE_INFO: {
+    value: 100
+  },
+  MACHINE_PROXY: {
+    value: 110
+  },
+  TERMINAL_LOG: {
+    value: 120
+  },
+  MACHINE_ALARM_HISTORY: {
+    value: 130
+  },
+  APP_PROFILE: {
+    value: 200
+  },
+  APPLICATION: {
+    value: 210
+  },
+  APP_REPOSITORY: {
+    value: 220
+  },
+  COMMAND_TEMPLATE: {
+    value: 300
+  },
+  USER_EVENT_LOG: {
+    value: 310
+  },
+  TAIL_FILE: {
+    value: 320
+  },
+  WEBHOOK: {
+    value: 330
   }
 }
 

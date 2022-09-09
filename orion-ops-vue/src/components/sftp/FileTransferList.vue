@@ -128,7 +128,7 @@
               </template>
               <!-- 60传输异常 -->
               <template class="transfer-list-item-status" v-if="item.status === 60">
-                <a-tooltip :title="`失败 ${item.current}/ ${item.size}`" :getPopupContainer="() => $refs.transferMain">
+                <a-tooltip :title="`失败 ${item.current} / ${item.size}`" :getPopupContainer="() => $refs.transferMain">
                   <a-progress :percent="item.progress" status="exception" :showInfo="false"/>
                 </a-tooltip>
               </template>

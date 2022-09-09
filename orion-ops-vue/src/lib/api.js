@@ -2258,66 +2258,10 @@ const $api = {
   },
 
   /**
-   * 导出机器信息
+   * 导出数据
    */
-  exportMachine: param => {
-    return $http.$export('/data-export/machine', param)
-  },
-
-  /**
-   * 导出机器代理
-   */
-  exportMachineProxy: param => {
-    return $http.$export('/data-export/machine-proxy', param)
-  },
-
-  /**
-   * 导出终端日志
-   */
-  exportMachineTerminalLog: param => {
-    return $http.$export('/data-export/machine-terminal-log', param)
-  },
-
-  /**
-   * 导出日志文件
-   */
-  exportMachineTailFile: param => {
-    return $http.$export('/data-export/machine-tail-file', param)
-  },
-
-  /**
-   * 导出应用环境
-   */
-  exportAppProfile: param => {
-    return $http.$export('/data-export/app-profile', param)
-  },
-
-  /**
-   * 导出应用信息
-   */
-  exportApplication: param => {
-    return $http.$export('/data-export/application', param)
-  },
-
-  /**
-   * 导出应用版本仓库
-   */
-  exportRepository: param => {
-    return $http.$export('/data-export/repository', param)
-  },
-
-  /**
-   * 导出命令模板
-   */
-  exportCommandTemplate: param => {
-    return $http.$export('/data-export/command-template', param)
-  },
-
-  /**
-   * 导出操作日志
-   */
-  exportEventLog: param => {
-    return $http.$export('/data-export/event-log', param)
+  exportData: param => {
+    return $http.$export('/data-export/export', param)
   },
 
   /**
@@ -2607,7 +2551,7 @@ const $api = {
   },
 
   /**
-   * 获取机器报警历史
+   * 获取机器报警记录
    */
   getMachineAlarmHistory: param => {
     return $http.$post('/machine-alarm/history', param)

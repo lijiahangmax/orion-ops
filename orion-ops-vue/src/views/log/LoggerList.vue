@@ -144,7 +144,7 @@
       <!-- 日志模态框 -->
       <LoggerViewModal ref="logView"/>
       <!-- 导出模态框 -->
-      <MachineTailFileExportModal ref="export"/>
+      <TailFileExportModal ref="export"/>
       <!-- 导入模态框 -->
       <DataImportModal ref="import" :importType="importType"/>
     </div>
@@ -158,7 +158,7 @@ import MachineSelector from '@/components/machine/MachineSelector'
 import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
-import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
+import TailFileExportModal from '@/components/export/TailFileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 import UploadLogFileModal from '@/components/log/UploadLogFileModal'
 import FileAnsiCleanModal from '@/components/log/FileAnsiCleanModal'
@@ -233,7 +233,7 @@ export default {
     FileAnsiCleanModal,
     UploadLogFileModal,
     DataImportModal,
-    MachineTailFileExportModal,
+    TailFileExportModal,
     LoggerViewModal,
     MachineSelector,
     AddLogFileModal,

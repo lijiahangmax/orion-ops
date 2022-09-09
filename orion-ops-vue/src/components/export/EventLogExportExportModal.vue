@@ -52,7 +52,7 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
-import { EVENT_CLASSIFY } from '@/lib/enum'
+import { EVENT_CLASSIFY, EXPORT_TYPE } from '@/lib/enum'
 import UserSelector from '@/components/user/UserSelector'
 
 export default {
@@ -83,7 +83,8 @@ export default {
     },
     exportData() {
       this.loading = true
-      this.$api.exportEventLog({
+      this.$api.exportData({
+        exportType: EXPORT_TYPE.USER_EVENT_LOG.value,
         protectPassword: this.protectPassword,
         classify: this.classify,
         userId: this.userId,

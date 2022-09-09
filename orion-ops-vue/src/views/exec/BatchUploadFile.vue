@@ -170,7 +170,7 @@
                 </template>
                 <!-- 60传输异常 -->
                 <template class="transfer-file-item-status" v-if="item.status === 60">
-                  <a-tooltip :title="`失败 ${item.current}/ ${item.size}`">
+                  <a-tooltip :title="`失败 ${item.current} / ${item.size}`">
                     <a-progress :percent="item.progress" status="exception" :showInfo="false"/>
                   </a-tooltip>
                 </template>
