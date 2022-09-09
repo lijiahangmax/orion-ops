@@ -177,7 +177,7 @@ export default {
         }
       },
       loading: false,
-      importType: IMPORT_TYPE.PROFILE,
+      importType: IMPORT_TYPE.APP_PROFILE,
       columns
     }
   },

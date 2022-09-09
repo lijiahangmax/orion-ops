@@ -391,7 +391,7 @@ export default {
       selectedRowKeys: [],
       openTerminalArr: [],
       minimizeTerminalArr: [],
-      importType: IMPORT_TYPE.MACHINE
+      importType: IMPORT_TYPE.MACHINE_INFO
     }
   },
   computed: {

@@ -245,7 +245,7 @@ export default {
         }
       },
       loading: false,
-      importType: IMPORT_TYPE.REPOSITORY,
+      importType: IMPORT_TYPE.APP_REPOSITORY,
       columns
     }
   },

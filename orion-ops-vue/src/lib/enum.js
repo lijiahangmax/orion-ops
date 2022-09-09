@@ -1690,39 +1690,14 @@ export const EVENT_TYPE = {
     label: '清理操作日志',
     classify: 620
   },
-  DATA_IMPORT_MACHINE: {
+  DATA_CLEAR: {
+    value: 620010,
+    label: '清理数据',
+    classify: 620
+  },
+  DATA_IMPORT: {
     value: 630010,
-    label: '导入机器信息',
-    classify: 630
-  },
-  DATA_IMPORT_MACHINE_PROXY: {
-    value: 630020,
-    label: '导入机器代理',
-    classify: 630
-  },
-  DATA_IMPORT_TAIL_FILE: {
-    value: 630030,
-    label: '导入日志文件',
-    classify: 630
-  },
-  DATA_IMPORT_PROFILE: {
-    value: 630040,
-    label: '导入应用环境',
-    classify: 630
-  },
-  DATA_IMPORT_APPLICATION: {
-    value: 630050,
-    label: '导入应用信息',
-    classify: 630
-  },
-  DATA_IMPORT_REPOSITORY: {
-    value: 630060,
-    label: '导入版本仓库',
-    classify: 630
-  },
-  DATA_IMPORT_COMMAND_TEMPLATE: {
-    value: 630070,
-    label: '导入命令模板',
+    label: '导入数据',
     classify: 630
   },
   DATA_EXPORT: {
@@ -2439,53 +2414,46 @@ export const EXPORT_TYPE = {
  * 数据导入类型
  */
 export const IMPORT_TYPE = {
-  MACHINE: {
+  MACHINE_INFO: {
     value: 100,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '机器信息 导入',
-    api: 'importMachineData',
     redirect: '/machine/list'
   },
   MACHINE_PROXY: {
     value: 110,
     tips: '导入时优先使用导入密码',
     title: '机器代理 导入',
-    api: 'importMachineProxy',
     redirect: '/machine/proxy'
   },
   TAIL_FILE: {
     value: 130,
     tips: '通过机器标识来区分机器, 机器名称无需填写',
     title: '日志文件 导入',
-    api: 'importTailFile',
     redirect: '/log/list'
   },
-  PROFILE: {
+  APP_PROFILE: {
     value: 200,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用环境 导入',
-    api: 'importAppProfile',
     redirect: '/app/profile'
   },
   APPLICATION: {
     value: 210,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用信息 导入',
-    api: 'importApplication',
     redirect: '/app/list'
   },
-  REPOSITORY: {
+  APP_REPOSITORY: {
     value: 220,
     tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '版本仓库 导入',
-    api: 'importRepository',
     redirect: '/app/repo'
   },
   COMMAND_TEMPLATE: {
     value: 310,
     tips: '使用模板名称来区分数据, 存在更新不存在新增',
     title: '命令模板 导入',
-    api: 'importCommandTemplate',
     redirect: '/template/list'
   }
 }

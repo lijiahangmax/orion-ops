@@ -2288,52 +2288,10 @@ const $api = {
   },
 
   /**
-   * 导入机器信息
+   * 导入数据
    */
-  importMachineData: param => {
-    return $http.$post('/data-import/import-machine', param)
-  },
-
-  /**
-   * 导入机器代理
-   */
-  importMachineProxy: param => {
-    return $http.$post('/data-import/import-machine-proxy', param)
-  },
-
-  /**
-   * 导入日志文件
-   */
-  importTailFile: param => {
-    return $http.$post('/data-import/import-tail-file', param)
-  },
-
-  /**
-   * 导入应用环境
-   */
-  importAppProfile: param => {
-    return $http.$post('/data-import/import-app-profile', param)
-  },
-
-  /**
-   * 导入应用信息
-   */
-  importApplication: param => {
-    return $http.$post('/data-import/import-application', param)
-  },
-
-  /**
-   * 导入应用版本仓库
-   */
-  importRepository: param => {
-    return $http.$post('/data-import/import-repository', param)
-  },
-
-  /**
-   * 导入命令模板
-   */
-  importCommandTemplate: param => {
-    return $http.$post('/data-import/import-command-template', param)
+  importData: param => {
+    return $http.$post('/data-import/import', param)
   },
 
   /**
