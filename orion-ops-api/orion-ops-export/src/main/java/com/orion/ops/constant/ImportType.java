@@ -2,7 +2,7 @@ package com.orion.ops.constant;
 
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.importer.*;
-import com.orion.ops.validator.*;
+import com.orion.ops.handler.importer.validator.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,80 +20,80 @@ import java.io.Serializable;
 public enum ImportType {
 
     /**
-     * 导入机器
+     * 机器信息
      */
-    MACHINE(100,
+    MACHINE_INFO(100,
             "机器信息",
             "/templates/import/machine-import-template.xlsx",
             "机器导入模板.xlsx",
-            MachineInfoImportDTO.class,
             MachineValidator.INSTANCE,
+            MachineInfoImportDTO.class,
             MachineInfoDO.class),
 
     /**
-     * 导入机器代理
+     * 机器代理
      */
     MACHINE_PROXY(110,
             "机器代理",
             "/templates/import/machine-proxy-import-template.xlsx",
             "机器代理导入模板.xlsx",
-            MachineProxyImportDTO.class,
             MachineProxyValidator.INSTANCE,
+            MachineProxyImportDTO.class,
             MachineProxyDO.class),
 
     /**
-     * 导入日志文件
+     * 日志文件
      */
-    MACHINE_TAIL_FILE(130,
+    TAIL_FILE(130,
             "日志文件",
             "/templates/import/tail-file-import-template.xlsx",
             "日志文件导入模板.xlsx",
-            MachineTailFileImportDTO.class,
             FileTailValidator.INSTANCE,
+            MachineTailFileImportDTO.class,
             FileTailListDO.class),
 
     /**
-     * 导入应用环境
+     * 应用环境
      */
-    PROFILE(200,
+    APP_PROFILE(200,
             "应用环境",
             "/templates/import/app-profile-import-template.xlsx",
             "应用环境导入模板.xlsx",
-            ApplicationProfileImportDTO.class,
             ApplicationProfileValidator.INSTANCE,
+            ApplicationProfileImportDTO.class,
             ApplicationProfileDO.class),
 
     /**
-     * 导入应用
+     * 应用信息
      */
     APPLICATION(210,
             "应用信息",
             "/templates/import/application-import-template.xlsx",
             "应用导入模板.xlsx",
-            ApplicationImportDTO.class,
             ApplicationValidator.INSTANCE,
+            ApplicationImportDTO.class,
             ApplicationInfoDO.class),
 
     /**
-     * 导入应用仓库
+     * 应用仓库
      */
-    REPOSITORY(220,
+    APP_REPOSITORY(220,
             "版本仓库",
             "/templates/import/app-repository-import-template.xlsx",
             "应用仓库导入模板.xlsx",
-            ApplicationRepositoryImportDTO.class,
             ApplicationRepositoryValidator.INSTANCE,
+            ApplicationRepositoryImportDTO.class,
             ApplicationRepositoryDO.class),
 
     /**
-     * 导入命令模板
+     * 命令模板
      */
     COMMAND_TEMPLATE(310,
             "命令模板",
             "/templates/import/command-template-import-template.xlsx",
             "命令模板导入模板.xlsx",
-            CommandTemplateImportDTO.class,
             CommandTemplateValidator.INSTANCE,
+            CommandTemplateImportDTO.class,
             CommandTemplateDO.class),
 
     ;
@@ -119,14 +119,14 @@ public enum ImportType {
     private final String templateName;
 
     /**
-     * importClass
-     */
-    private final Class<? extends BaseDataImportDTO> importClass;
-
-    /**
      * 数据验证器
      */
     private final DataValidator validator;
+
+    /**
+     * importClass
+     */
+    private final Class<? extends BaseDataImportDTO> importClass;
 
     private final Class<? extends Serializable> convertClass;
 

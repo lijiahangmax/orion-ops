@@ -729,39 +729,9 @@ public enum EventType {
     // -------------------- 数据导入 --------------------
 
     /**
-     * 导入机器信息
+     * 导入数据
      */
-    DATA_IMPORT_MACHINE(630010, EventClassify.DATA_IMPORT, "导入机器信息", "批量导入机器信息"),
-
-    /**
-     * 导入机器代理
-     */
-    DATA_IMPORT_MACHINE_PROXY(630020, EventClassify.DATA_IMPORT, "导入机器代理", "批量导入机器代理"),
-
-    /**
-     * 导入日志文件
-     */
-    DATA_IMPORT_TAIL_FILE(630030, EventClassify.DATA_IMPORT, "导入日志文件", "批量导入日志文件"),
-
-    /**
-     * 导入应用环境
-     */
-    DATA_IMPORT_PROFILE(630040, EventClassify.DATA_IMPORT, "导入应用环境", "批量导入应用环境"),
-
-    /**
-     * 导入应用信息
-     */
-    DATA_IMPORT_APPLICATION(630050, EventClassify.DATA_IMPORT, "导入应用信息", "批量导入应用信息"),
-
-    /**
-     * 导入版本仓库
-     */
-    DATA_IMPORT_REPOSITORY(630060, EventClassify.DATA_IMPORT, "导入版本仓库", "批量导入应用版本仓库"),
-
-    /**
-     * 导入日志文件
-     */
-    DATA_IMPORT_COMMAND_TEMPLATE(630070, EventClassify.DATA_IMPORT, "导入命令模板", "批量导入命令模板"),
+    DATA_IMPORT(630010, EventClassify.DATA_IMPORT, "导入机器信息", "批量导入 <sb 0>${label}</sb>"),
 
     // -------------------- 数据导出 --------------------
 
