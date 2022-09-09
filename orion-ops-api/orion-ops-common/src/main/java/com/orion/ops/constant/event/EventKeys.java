@@ -267,4 +267,9 @@ public class EventKeys {
      */
     public static final String REFRESH_LOGIN = "refreshLogin";
 
+    /**
+     * 导出类型
+     */
+    public static final String EXPORT_TYPE = "exportType";
+
 }

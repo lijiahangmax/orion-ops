@@ -51,7 +51,7 @@
     </select>
 
     <select id="selectNameByIdList" resultMap="BaseResultMap">
-        SELECT id, machine_name, machine_tag
+        SELECT id, machine_name, machine_tag, machine_host
         FROM machine_info
         WHERE id IN
         <foreach collection="idList" item="id" open="(" separator="," close=")">
@@ -61,7 +61,7 @@
     </select>
 
     <select id="selectIdByTagList" resultMap="BaseResultMap">
-        SELECT id, machine_name, machine_tag
+        SELECT id, machine_name, machine_tag, machine_host
         FROM machine_info
         WHERE machine_tag IN
         <foreach collection="tagList" item="tag" open="(" separator="," close=")">

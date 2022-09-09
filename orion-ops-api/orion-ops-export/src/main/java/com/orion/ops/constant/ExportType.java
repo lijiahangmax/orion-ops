@@ -1,5 +1,6 @@
 package com.orion.ops.constant;
 
+import com.orion.ops.entity.exporter.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,53 +18,100 @@ import java.util.function.Supplier;
 public enum ExportType {
 
     /**
-     * 导出机器
+     * 机器信息
      */
-    MACHINE(100, () -> ExportConst.getFileName(ExportConst.MACHINE_EXPORT_NAME)),
+    MACHINE_INFO(100,
+            "机器信息",
+            MachineInfoExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.MACHINE_EXPORT_NAME)),
 
     /**
-     * 导出机器代理
+     * 机器代理
      */
-    MACHINE_PROXY(110, () -> ExportConst.getFileName(ExportConst.MACHINE_PROXY_EXPORT_NAME)),
+    MACHINE_PROXY(110,
+            "机器代理",
+            MachineProxyExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.MACHINE_PROXY_EXPORT_NAME)),
 
     /**
      * 终端日志
      */
-    MACHINE_TERMINAL_LOG(120, () -> ExportConst.getFileName(ExportConst.MACHINE_TERMINAL_LOG_EXPORT_NAME)),
+    TERMINAL_LOG(120,
+            "终端日志",
+            MachineTerminalLogExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.TERMINAL_LOG_EXPORT_NAME)),
 
     /**
-     * 导出日志文件
+     * 机器报警记录
      */
-    MACHINE_TAIL_FILE(130, () -> ExportConst.getFileName(ExportConst.MACHINE_TAIL_FILE_EXPORT_NAME)),
+    MACHINE_ALARM_HISTORY(130,
+            "机器报警记录",
+            MachineAlarmHistoryExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.MACHINE_ALARM_HISTORY_EXPORT_NAME)),
 
     /**
-     * 导出应用环境
+     * 应用环境
      */
-    PROFILE(200, () -> ExportConst.getFileName(ExportConst.PROFILE_EXPORT_NAME)),
+    APP_PROFILE(200,
+            "应用环境",
+            ApplicationProfileExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.APP_PROFILE_EXPORT_NAME)),
 
     /**
-     * 导出应用
+     * 应用信息
      */
-    APPLICATION(210, () -> ExportConst.getFileName(ExportConst.APPLICATION_EXPORT_NAME)),
+    APPLICATION(210,
+            "应用信息",
+            ApplicationExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.APPLICATION_EXPORT_NAME)),
 
     /**
      * 应用仓库
      */
-    REPOSITORY(220, () -> ExportConst.getFileName(ExportConst.REPOSITORY_EXPORT_NAME)),
+    APP_REPOSITORY(220,
+            "应用仓库",
+            ApplicationRepositoryExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.APP_REPOSITORY_EXPORT_NAME)),
 
     /**
      * 命令模板
      */
-    COMMAND_TEMPLATE(310, () -> ExportConst.getFileName(ExportConst.COMMAND_TEMPLATE_EXPORT_NAME)),
+    COMMAND_TEMPLATE(300,
+            "命令模板",
+            CommandTemplateExportDTO.class
+            , () -> ExportConst.getFileName(ExportConst.COMMAND_TEMPLATE_EXPORT_NAME)),
 
     /**
-     * 操作日志
+     * 用户操作日志
      */
-    USER_EVENT_LOG(330, () -> ExportConst.getFileName(ExportConst.USER_EVENT_LOG_EXPORT_NAME)),
+    USER_EVENT_LOG(310,
+            "用户操作日志",
+            EventLogExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.USER_EVENT_LOG_EXPORT_NAME)),
+
+    /**
+     * 日志文件
+     */
+    TAIL_FILE(320,
+            "日志文件",
+            MachineTailFileExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.TAIL_FILE_EXPORT_NAME)),
+
+    /**
+     * webhook
+     */
+    WEBHOOK(330,
+            "webhook",
+            WebhookExportDTO.class,
+            () -> ExportConst.getFileName(ExportConst.WEBHOOK_EXPORT_NAME)),
 
     ;
 
     private final Integer type;
+
+    private final String label;
+
+    private final Class<?> dataClass;
 
     private final Supplier<String> nameSupplier;
 

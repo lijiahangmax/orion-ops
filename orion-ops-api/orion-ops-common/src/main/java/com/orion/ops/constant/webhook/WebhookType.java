@@ -17,11 +17,13 @@ public enum WebhookType {
     /**
      * 钉钉机器人
      */
-    DING_ROBOT(10),
+    DING_ROBOT(10, "钉钉机器人"),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static WebhookType of(Integer type) {
         if (type == null) {

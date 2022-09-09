@@ -17,6 +17,12 @@ import lombok.Data;
 public class DataExportRequest {
 
     /**
+     * @see com.orion.ops.constant.ExportType
+     */
+    @ApiModelProperty(value = "导出类型")
+    private Integer exportType;
+
+    /**
      * @see com.orion.ops.constant.Const#ENABLE
      * @see com.orion.ops.constant.Const#DISABLE
      */
@@ -31,6 +37,9 @@ public class DataExportRequest {
 
     @ApiModelProperty(value = "分类")
     private Integer classify;
+
+    @ApiModelProperty(value = "类型")
+    private Integer type;
 
     @ApiModelProperty(value = "用户id")
     private Long userId;

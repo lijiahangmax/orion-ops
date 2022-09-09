@@ -74,6 +74,8 @@ public class MessageConst {
 
     public static final String UNKNOWN_DATA = "未查询到数据";
 
+    public static final String UNKNOWN_EXPORT_TYPE = "未知的导出类型";
+
     public static final String INVALID_MACHINE = "未知的机器";
 
     public static final String MACHINE_DISABLE = "机器未启用";

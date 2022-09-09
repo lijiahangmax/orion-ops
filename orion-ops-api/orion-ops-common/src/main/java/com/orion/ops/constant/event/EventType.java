@@ -766,49 +766,9 @@ public enum EventType {
     // -------------------- 数据导出 --------------------
 
     /**
-     * 导出机器信息
+     * 导出数据
      */
-    DATA_EXPORT_MACHINE(640010, EventClassify.DATA_EXPORT, "导出机器信息", "导出机器信息 <sb>${count}</sb>条"),
-
-    /**
-     * 导出机器代理
-     */
-    DATA_EXPORT_MACHINE_PROXY(640020, EventClassify.DATA_EXPORT, "导出机器代理", "导出机器代理 <sb>${count}</sb>条"),
-
-    /**
-     * 导出机器终端日志
-     */
-    DATA_EXPORT_TERMINAL_LOG(640030, EventClassify.DATA_EXPORT, "导出终端日志", "导出机器终端日志 <sb>${count}</sb>条"),
-
-    /**
-     * 导出日志文件
-     */
-    DATA_EXPORT_TAIL_FILE(640040, EventClassify.DATA_EXPORT, "导出日志文件", "导出日志文件 <sb>${count}</sb>条"),
-
-    /**
-     * 导出应用环境
-     */
-    DATA_EXPORT_PROFILE(640050, EventClassify.DATA_EXPORT, "导出应用环境", "导出应用环境 <sb>${count}</sb>条"),
-
-    /**
-     * 导出应用信息
-     */
-    DATA_EXPORT_APPLICATION(640060, EventClassify.DATA_EXPORT, "导出应用信息", "导出应用信息 <sb>${count}</sb>条"),
-
-    /**
-     * 导出应用仓库
-     */
-    DATA_EXPORT_REPOSITORY(640070, EventClassify.DATA_EXPORT, "导出应用仓库", "导出应用版本仓库信息 <sb>${count}</sb>条"),
-
-    /**
-     * 导出命令模板
-     */
-    DATA_EXPORT_COMMAND_TEMPLATE(640080, EventClassify.DATA_EXPORT, "导出命令模板", "导出命令模板 <sb>${count}</sb>条"),
-
-    /**
-     * 导出操作日志
-     */
-    DATA_EXPORT_EVENT_LOG(640090, EventClassify.DATA_EXPORT, "导出操作日志", "导出操作日志 <sb>${count}</sb>条"),
+    DATA_EXPORT(640010, EventClassify.DATA_EXPORT, "导出数据", "导出 <sb 0>${label}</sb> <sb>${count}</sb>条"),
 
     ;
 
