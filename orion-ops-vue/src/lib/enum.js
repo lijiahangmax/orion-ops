@@ -1655,41 +1655,6 @@ export const EVENT_TYPE = {
     label: '保存系统环境变量',
     classify: 610
   },
-  DATA_CLEAR_BATCH_EXEC: {
-    value: 620010,
-    label: '清理批量执行',
-    classify: 620
-  },
-  DATA_CLEAR_TERMINAL_LOG: {
-    value: 620020,
-    label: '清理终端日志',
-    classify: 620
-  },
-  DATA_CLEAR_SCHEDULER_RECORD: {
-    value: 620030,
-    label: '清理任务调度',
-    classify: 620
-  },
-  DATA_CLEAR_APP_BUILD: {
-    value: 620040,
-    label: '清理应用构建',
-    classify: 620
-  },
-  DATA_CLEAR_APP_RELEASE: {
-    value: 620050,
-    label: '清理应用发布',
-    classify: 620
-  },
-  DATA_CLEAR_APP_PIPELINE: {
-    value: 620060,
-    label: '清理应用流水线',
-    classify: 620
-  },
-  DATA_CLEAR_EVENT_LOG: {
-    value: 620070,
-    label: '清理操作日志',
-    classify: 620
-  },
   DATA_CLEAR: {
     value: 620010,
     label: '清理数据',

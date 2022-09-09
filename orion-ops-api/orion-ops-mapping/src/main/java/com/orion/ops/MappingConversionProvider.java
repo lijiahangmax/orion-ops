@@ -27,7 +27,7 @@ public class MappingConversionProvider implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         new PackageScanner(CONVERSION_PACKAGE, EXPORTER_PACKAGE, IMPORTER_PACKAGE)
                 .with(MappingConversionProvider.class)
-                .with(ExportModuleConversionProvider.class)
+                .with(DataModuleConversionProvider.class)
                 .scan()
                 .getClasses()
                 .forEach(Attempt.rethrows(s -> {

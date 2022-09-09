@@ -24,7 +24,7 @@
         <module>orion-ops-runner</module>
         <module>orion-ops-service</module>
         <module>orion-ops-web</module>
-        <module>orion-ops-export</module>
+        <module>orion-ops-data</module>
     </modules>
 
     <properties>

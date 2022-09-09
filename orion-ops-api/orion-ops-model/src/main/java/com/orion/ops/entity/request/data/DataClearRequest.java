@@ -25,7 +25,13 @@ public class DataClearRequest {
     private Integer reserveTotal;
 
     /**
-     * @see com.orion.ops.constant.clear.DataClearRange
+     * @see com.orion.ops.constant.DataClearType
+     */
+    @ApiModelProperty(value = "清理类型")
+    private Integer clearType;
+
+    /**
+     * @see com.orion.ops.constant.DataClearRange
      */
     @ApiModelProperty(value = "清理区间")
     private Integer range;

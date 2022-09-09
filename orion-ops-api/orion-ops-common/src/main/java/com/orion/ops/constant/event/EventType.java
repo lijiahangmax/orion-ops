@@ -692,46 +692,16 @@ public enum EventType {
     // -------------------- 数据清理 --------------------
 
     /**
-     * 清理 批量执行数据
+     * 清理数据
      */
-    DATA_CLEAR_BATCH_EXEC(620010, EventClassify.DATA_CLEAR, "清理批量执行", "清理批量执行数据 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 终端日志
-     */
-    DATA_CLEAR_TERMINAL_LOG(620020, EventClassify.DATA_CLEAR, "清理终端日志", "清理终端日志 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 调度记录
-     */
-    DATA_CLEAR_SCHEDULER_RECORD(620030, EventClassify.DATA_CLEAR, "清理任务调度", "清理任务调度记录 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 应用构建
-     */
-    DATA_CLEAR_APP_BUILD(620040, EventClassify.DATA_CLEAR, "清理应用构建", "清理应用构建任务数据 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 应用发布
-     */
-    DATA_CLEAR_APP_RELEASE(620050, EventClassify.DATA_CLEAR, "清理应用发布", "清理应用发布任务数据 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 应用流水线
-     */
-    DATA_CLEAR_APP_PIPELINE(620060, EventClassify.DATA_CLEAR, "清理应用流水线", "清理应用流水线执行数据 <sb>${count}</sb>条"),
-
-    /**
-     * 清理 操作日志
-     */
-    DATA_CLEAR_EVENT_LOG(620070, EventClassify.DATA_CLEAR, "清理操作日志", "清理操作日志 <sb>${count}</sb>条"),
+    DATA_CLEAR(620010, EventClassify.DATA_CLEAR, "清理数据", "清理数据 <sb 0>${label}</sb> <sb>${count}</sb>条"),
 
     // -------------------- 数据导入 --------------------
 
     /**
      * 导入数据
      */
-    DATA_IMPORT(630010, EventClassify.DATA_IMPORT, "导入机器信息", "批量导入 <sb 0>${label}</sb>"),
+    DATA_IMPORT(630010, EventClassify.DATA_IMPORT, "导入数据", "批量导入 <sb 0>${label}</sb>"),
 
     // -------------------- 数据导出 --------------------
 

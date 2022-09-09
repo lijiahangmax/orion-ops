@@ -8,8 +8,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <name>orion-ops-export</name>
-    <artifactId>orion-ops-export</artifactId>
+    <name>orion-ops-data</name>
+    <artifactId>orion-ops-data</artifactId>
     <modelVersion>4.0.0</modelVersion>
 
     <dependencies>

@@ -5,19 +5,19 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.orion.lang.utils.time.Dates;
 import com.orion.ops.constant.Const;
+import com.orion.ops.constant.DataClearRange;
 import com.orion.ops.constant.app.BuildStatus;
 import com.orion.ops.constant.app.PipelineStatus;
 import com.orion.ops.constant.app.ReleaseStatus;
-import com.orion.ops.constant.clear.DataClearRange;
 import com.orion.ops.constant.command.ExecStatus;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.scheduler.SchedulerTaskStatus;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
 import com.orion.ops.entity.request.data.DataClearRequest;
 import com.orion.ops.service.api.DataClearService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.EventParamsHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,8 +54,15 @@ public class DataClearServiceImpl implements DataClearService {
     @Resource
     private UserEventLogDAO userEventLogDAO;
 
+    @Resource
+    private MachineAlarmHistoryDAO machineAlarmHistoryDAO;
+
     @Override
     public Integer clearBatchExec(DataClearRequest request) {
+        if (!Currents.isAdministrator()) {
+            request.setICreated(Const.ENABLE);
+        }
+        // 基础删除条件
         LambdaQueryWrapper<CommandExecDO> wrapper = new LambdaQueryWrapper<CommandExecDO>()
                 .ne(CommandExecDO::getExecStatus, ExecStatus.RUNNABLE.getStatus())
                 .eq(Const.ENABLE.equals(request.getICreated()), CommandExecDO::getUserId, Currents.getUserId());
@@ -181,6 +188,22 @@ public class DataClearServiceImpl implements DataClearService {
                 UserEventLogDO::getEventClassify,
                 request);
         int count = userEventLogDAO.delete(wrapper);
+        // 设置日志参数
+        EventParamsHolder.addParams(request);
+        EventParamsHolder.addParam(EventKeys.COUNT, count);
+        return count;
+    }
+
+    @Override
+    public Integer clearMachineAlarmHistory(DataClearRequest request) {
+        LambdaQueryWrapper<MachineAlarmHistoryDO> wrapper = new LambdaQueryWrapper<>();
+        // 设置删除筛选条件
+        this.setDeleteWrapper(machineAlarmHistoryDAO, wrapper,
+                MachineAlarmHistoryDO::getId,
+                MachineAlarmHistoryDO::getCreateTime,
+                MachineAlarmHistoryDO::getMachineId,
+                request);
+        int count = machineAlarmHistoryDAO.delete(wrapper);
         // 设置日志参数
         EventParamsHolder.addParams(request);
         EventParamsHolder.addParam(EventKeys.COUNT, count);

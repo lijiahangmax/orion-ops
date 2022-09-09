@@ -67,4 +67,12 @@ public interface DataClearService {
      */
     Integer clearEventLog(DataClearRequest request);
 
+    /**
+     * 清理 机器报警历史
+     *
+     * @param request request
+     * @return 删除数量
+     */
+    Integer clearMachineAlarmHistory(DataClearRequest request);
+
 }

@@ -27,10 +27,10 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- export -->
+        <!-- data -->
         <dependency>
             <groupId>com.orion.ops</groupId>
-            <artifactId>orion-ops-export</artifactId>
+            <artifactId>orion-ops-data</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
