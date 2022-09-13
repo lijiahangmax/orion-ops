@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { DATA_CLEAR_RANGE } from '@/lib/enum'
+import { DATA_CLEAR_RANGE, DATA_CLEAR_TYPE } from '@/lib/enum'
 
 export default {
   name: 'SchedulerRecordClearModal',
@@ -100,8 +100,9 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearSchedulerRecord({
-        ...this.submit
+      this.$api.clearData({
+        ...this.submit,
+        clearType: DATA_CLEAR_TYPE.SCHEDULER_RECORD.value
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -109,7 +110,6 @@ export default {
         this.$message.info(`共清理 ${data}条数据`)
       }).catch(() => {
         this.loading = false
-        this.$message.error('清理失败')
       })
     },
     close() {

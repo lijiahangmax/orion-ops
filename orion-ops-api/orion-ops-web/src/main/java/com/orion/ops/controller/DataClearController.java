@@ -44,7 +44,7 @@ public class DataClearController {
         // 检查参数
         DataClearType dataClearType = this.validParams(request);
         // 设置日志参数
-        EventParamsHolder.addParam(EventKeys.LABEL, Objects.requireNonNull(dataClearType).getLabel());
+        EventParamsHolder.addParam(EventKeys.LABEL, dataClearType.getLabel());
         // 清理
         switch (dataClearType) {
             case BATCH_EXEC:
@@ -65,6 +65,7 @@ public class DataClearController {
             case USER_EVENT_LOG:
                 return dataClearService.clearEventLog(request);
             case MACHINE_ALARM_HISTORY:
+                Valid.notNull(request.getMachineId());
                 return dataClearService.clearMachineAlarmHistory(request);
             default:
                 throw Exceptions.unsupported();
@@ -82,13 +83,13 @@ public class DataClearController {
         switch (range) {
             case DAY:
                 Valid.gte(request.getReserveDay(), 0);
-                return null;
+                break;
             case TOTAL:
                 Valid.gte(request.getReserveTotal(), 0);
-                return null;
+                break;
             case REL_ID:
                 Valid.notEmpty(request.getRelIdList());
-                return null;
+                break;
             default:
         }
         return Valid.notNull(DataClearType.of(request.getClearType()));

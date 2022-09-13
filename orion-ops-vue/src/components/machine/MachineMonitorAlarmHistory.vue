@@ -91,6 +91,8 @@
     <div class="alarm-event-container">
       <!-- 数据导出模态框 -->
       <MachineAlarmHistoryExportModal ref="export"/>
+      <!-- 数据清理模态框 -->
+      <MachineAlarmHistoryClearModal ref="clear" @clear="getList({})"/>
     </div>
   </div>
 </template>
@@ -99,6 +101,7 @@
 import { enumValueOf, MACHINE_ALARM_TYPE } from '@/lib/enum'
 import { formatDate } from '@/lib/filters'
 import MachineAlarmHistoryExportModal from '@/components/export/MachineAlarmHistoryExportModal'
+import MachineAlarmHistoryClearModal from '@/components/clear/MachineAlarmHistoryClearModal'
 
 /**
  * 列
@@ -128,6 +131,7 @@ const columns = [
     title: '报警时间',
     key: 'alarmTime',
     ellipsis: true,
+    width: 240,
     scopedSlots: { customRender: 'alarmTime' }
   },
   {
@@ -142,7 +146,10 @@ const columns = [
 
 export default {
   name: 'MachineMonitorAlarmHistory',
-  components: { MachineAlarmHistoryExportModal },
+  components: {
+    MachineAlarmHistoryClearModal,
+    MachineAlarmHistoryExportModal
+  },
   props: {
     machineId: Number,
     machineName: String
@@ -195,7 +202,7 @@ export default {
       this.query.alarmTimeEnd = dates[1]
     },
     openClear() {
-      this.$refs.clear.open()
+      this.$refs.clear.open(this.machineId)
     },
     openExport() {
       this.$refs.export.open()

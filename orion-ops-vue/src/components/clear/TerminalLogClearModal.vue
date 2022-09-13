@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { DATA_CLEAR_RANGE } from '@/lib/enum'
+import { DATA_CLEAR_RANGE, DATA_CLEAR_TYPE } from '@/lib/enum'
 import MachineSelector from '@/components/machine/MachineSelector'
 
 export default {
@@ -110,8 +110,9 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearTerminalLog({
-        ...this.submit
+      this.$api.clearData({
+        ...this.submit,
+        clearType: DATA_CLEAR_TYPE.TERMINAL_LOG.value
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -119,7 +120,6 @@ export default {
         this.$message.info(`共清理 ${data}条数据`)
       }).catch(() => {
         this.loading = false
-        this.$message.error('清理失败')
       })
     },
     close() {

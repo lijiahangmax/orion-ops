@@ -2325,54 +2325,26 @@ export const BATCH_UPLOAD_STATUS = {
  * 数据清理区间
  */
 export const DATA_CLEAR_RANGE = {
-  DAY: {
-    value: 10
-  },
-  TOTAL: {
-    value: 20
-  },
-  REL_ID: {
-    value: 30
-  }
+  DAY: { value: 10 },
+  TOTAL: { value: 20 },
+  REL_ID: { value: 30 }
 }
 
 /**
  * 数据导出类型
  */
 export const EXPORT_TYPE = {
-  MACHINE_INFO: {
-    value: 100
-  },
-  MACHINE_PROXY: {
-    value: 110
-  },
-  TERMINAL_LOG: {
-    value: 120
-  },
-  MACHINE_ALARM_HISTORY: {
-    value: 130
-  },
-  APP_PROFILE: {
-    value: 200
-  },
-  APPLICATION: {
-    value: 210
-  },
-  APP_REPOSITORY: {
-    value: 220
-  },
-  COMMAND_TEMPLATE: {
-    value: 300
-  },
-  USER_EVENT_LOG: {
-    value: 310
-  },
-  TAIL_FILE: {
-    value: 320
-  },
-  WEBHOOK: {
-    value: 330
-  }
+  MACHINE_INFO: { value: 100 },
+  MACHINE_PROXY: { value: 110 },
+  TERMINAL_LOG: { value: 120 },
+  MACHINE_ALARM_HISTORY: { value: 130 },
+  APP_PROFILE: { value: 200 },
+  APPLICATION: { value: 210 },
+  APP_REPOSITORY: { value: 220 },
+  COMMAND_TEMPLATE: { value: 300 },
+  USER_EVENT_LOG: { value: 310 },
+  TAIL_FILE: { value: 320 },
+  WEBHOOK: { value: 330 }
 }
 
 /**
@@ -2421,6 +2393,20 @@ export const IMPORT_TYPE = {
     title: '命令模板 导入',
     redirect: '/template/list'
   }
+}
+
+/**
+ * 数据清理类型
+ */
+export const DATA_CLEAR_TYPE = {
+  BATCH_EXEC: { value: 10 },
+  TERMINAL_LOG: { value: 20 },
+  SCHEDULER_RECORD: { value: 30 },
+  APP_BUILD: { value: 40 },
+  APP_RELEASE: { value: 50 },
+  APP_PIPELINE_EXEC: { value: 60 },
+  USER_EVENT_LOG: { value: 70 },
+  MACHINE_ALARM_HISTORY: { value: 80 }
 }
 
 /**

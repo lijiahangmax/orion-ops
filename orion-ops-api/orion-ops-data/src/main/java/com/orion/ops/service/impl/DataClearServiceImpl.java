@@ -196,7 +196,8 @@ public class DataClearServiceImpl implements DataClearService {
 
     @Override
     public Integer clearMachineAlarmHistory(DataClearRequest request) {
-        LambdaQueryWrapper<MachineAlarmHistoryDO> wrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<MachineAlarmHistoryDO> wrapper = new LambdaQueryWrapper<MachineAlarmHistoryDO>()
+                .eq(MachineAlarmHistoryDO::getMachineId, request.getMachineId());
         // 设置删除筛选条件
         this.setDeleteWrapper(machineAlarmHistoryDAO, wrapper,
                 MachineAlarmHistoryDO::getId,

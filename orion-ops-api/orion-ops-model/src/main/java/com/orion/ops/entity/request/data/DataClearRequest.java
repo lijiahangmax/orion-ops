@@ -42,6 +42,9 @@ public class DataClearRequest {
     @ApiModelProperty(value = "引用id")
     private Long relId;
 
+    @ApiModelProperty(value = "机器id")
+    private Long machineId;
+
     @ApiModelProperty(value = "环境id")
     private Long profileId;
 
