@@ -40,6 +40,8 @@ public interface IDataImporter {
                 return new AppRepositoryDataImporter(importData);
             case COMMAND_TEMPLATE:
                 return new CommandTemplateDataImporter(importData);
+            case WEBHOOK:
+                return new WebhookDataImporter(importData);
             default:
                 throw Exceptions.unsupported();
         }

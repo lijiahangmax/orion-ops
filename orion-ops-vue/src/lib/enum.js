@@ -2364,7 +2364,7 @@ export const IMPORT_TYPE = {
     redirect: '/machine/proxy'
   },
   TAIL_FILE: {
-    value: 130,
+    value: 120,
     tips: '通过机器标识来区分机器, 机器名称无需填写',
     title: '日志文件 导入',
     redirect: '/log/list'
@@ -2388,10 +2388,16 @@ export const IMPORT_TYPE = {
     redirect: '/app/repo'
   },
   COMMAND_TEMPLATE: {
-    value: 310,
+    value: 300,
     tips: '使用模板名称来区分数据, 存在更新不存在新增',
     title: '命令模板 导入',
     redirect: '/template/list'
+  },
+  WEBHOOK: {
+    value: 310,
+    tips: '使用名称来区分数据, 存在更新不存在新增',
+    title: 'webhook 导入',
+    redirect: '/webhook/list'
   }
 }
 

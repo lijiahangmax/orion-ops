@@ -90,14 +90,17 @@
       <AddWebhookModal ref="addModal" :mask="true" @added="getList({})" @updated="getList({})"/>
       <!-- 导出模态框 -->
       <WebhookExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
   </div>
 </template>
 
 <script>
-import { enumValueOf, WEBHOOK_TYPE } from '@/lib/enum'
+import { enumValueOf, IMPORT_TYPE, WEBHOOK_TYPE } from '@/lib/enum'
 import AddWebhookModal from '@/components/content/AddWebhookModal'
 import WebhookExportModal from '@/components/export/WebhookExportModal'
+import DataImportModal from '@/components/import/DataImportModal'
 
 /**
  * 列
@@ -142,6 +145,7 @@ const columns = [
 export default {
   name: 'WebhookList',
   components: {
+    DataImportModal,
     WebhookExportModal,
     AddWebhookModal
   },
@@ -163,6 +167,7 @@ export default {
         }
       },
       loading: false,
+      importType: IMPORT_TYPE.WEBHOOK,
       columns
     }
   },

@@ -44,7 +44,7 @@ public enum ImportType {
     /**
      * 日志文件
      */
-    TAIL_FILE(130,
+    TAIL_FILE(120,
             "日志文件",
             "/templates/import/tail-file-import-template.xlsx",
             "日志文件导入模板.xlsx",
@@ -88,13 +88,24 @@ public enum ImportType {
     /**
      * 命令模板
      */
-    COMMAND_TEMPLATE(310,
+    COMMAND_TEMPLATE(300,
             "命令模板",
             "/templates/import/command-template-import-template.xlsx",
             "命令模板导入模板.xlsx",
             CommandTemplateValidator.INSTANCE,
             CommandTemplateImportDTO.class,
             CommandTemplateDO.class),
+
+    /**
+     * webhook
+     */
+    WEBHOOK(310,
+            "webhook",
+            "/templates/import/webhook-import-template.xlsx",
+            "webhook导入模板.xlsx",
+            WebhookValidator.INSTANCE,
+            WebhookImportDTO.class,
+            WebhookConfigDO.class),
 
     ;
 

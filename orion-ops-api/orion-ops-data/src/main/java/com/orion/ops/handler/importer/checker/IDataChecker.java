@@ -44,6 +44,8 @@ public interface IDataChecker {
                 return new AppRepositoryDataChecker(workbook);
             case COMMAND_TEMPLATE:
                 return new CommandTemplateDataChecker(workbook);
+            case WEBHOOK:
+                return new WebhookDataChecker(workbook);
             default:
                 throw Exceptions.unsupported();
         }

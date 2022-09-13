@@ -37,4 +37,16 @@ public enum WebhookType {
         return null;
     }
 
+    public static WebhookType of(String label) {
+        if (label == null) {
+            return null;
+        }
+        for (WebhookType value : values()) {
+            if (value.label.equals(label)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
 }
