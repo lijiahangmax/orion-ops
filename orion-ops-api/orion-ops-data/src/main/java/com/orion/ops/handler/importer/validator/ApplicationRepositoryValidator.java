@@ -8,6 +8,9 @@ import com.orion.ops.entity.importer.ApplicationRepositoryImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * 应用版本仓库表 数据验证器
  *
@@ -44,11 +47,11 @@ public class ApplicationRepositoryValidator implements DataValidator {
 
     public static final String AUTH_TYPE_EMPTY_MESSAGE = "认证方式不能为空";
 
-    public static final String AUTH_TYPE_VALUE_MESSAGE = "认证方式只能为 " + RepositoryAuthType.PASSWORD.getLabel() + "和" + RepositoryAuthType.TOKEN.getLabel();
+    public static final String AUTH_TYPE_VALUE_MESSAGE = "认证方式只能为 " + Arrays.stream(RepositoryAuthType.values()).map(RepositoryAuthType::getLabel).collect(Collectors.toList());
 
     public static final String TOKEN_TYPE_EMPTY_MESSAGE = "认证方式为" + RepositoryAuthType.TOKEN.getLabel() + "时 令牌类型不能为空";
 
-    public static final String TOKEN_TYPE_VALUE_MESSAGE = "令牌类型只能为 " + RepositoryTokenType.GITHUB.getLabel() + "," + RepositoryTokenType.GITEE.getLabel() + "," + RepositoryTokenType.GITLAB.getLabel();
+    public static final String TOKEN_TYPE_VALUE_MESSAGE = "令牌类型只能为 " + Arrays.stream(RepositoryTokenType.values()).map(RepositoryTokenType::getLabel).collect(Collectors.toList());
 
     public static final String PASSWORD_TOKEN_DECRYPT_MESSAGE = "密码/令牌密文解密失败";
 

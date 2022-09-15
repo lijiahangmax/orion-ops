@@ -34,6 +34,9 @@ public class MachineProxyImportDTO extends BaseDataImportDTO {
     @ImportField(index = 1)
     private Integer port;
 
+    /**
+     * @see com.orion.ops.constant.machine.ProxyType
+     */
     @ApiModelProperty(value = "代理类型")
     @ImportField(index = 2)
     private String proxyType;

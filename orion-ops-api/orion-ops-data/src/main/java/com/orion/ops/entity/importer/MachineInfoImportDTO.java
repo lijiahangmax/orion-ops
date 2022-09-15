@@ -42,6 +42,9 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     @ImportField(index = 3)
     private Integer port;
 
+    /**
+     * @see com.orion.ops.constant.machine.MachineAuthType
+     */
     @ApiModelProperty(value = "认证方式")
     @ImportField(index = 4)
     private String authType;

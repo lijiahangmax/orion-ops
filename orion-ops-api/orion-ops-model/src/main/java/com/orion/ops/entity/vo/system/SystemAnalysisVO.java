@@ -15,9 +15,6 @@ import lombok.Data;
 @ApiModel(value = "系统分析响应")
 public class SystemAnalysisVO {
 
-    @ApiModelProperty(value = "已挂载秘钥数量")
-    private Integer mountKeyCount;
-
     @ApiModelProperty(value = "临时文件数量")
     private Integer tempFileCount;
 

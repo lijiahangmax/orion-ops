@@ -16,14 +16,16 @@ import lombok.Getter;
 public enum MachineAuthType {
 
     /**
-     * 1 密码
+     * 1 密码认证
      */
     PASSWORD(1, CnConst.PASSWORD),
 
     /**
-     * 2 秘钥
+     * 2 独立秘钥
      */
-    KEY(2, CnConst.SECRET_KEY);
+    SECRET_KEY(2, CnConst.SECRET_KEY),
+
+    ;
 
     private final Integer type;
 

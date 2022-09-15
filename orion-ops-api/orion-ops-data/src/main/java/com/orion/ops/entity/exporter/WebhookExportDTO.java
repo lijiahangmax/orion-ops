@@ -27,6 +27,9 @@ public class WebhookExportDTO {
     @ExportField(index = 0, header = "名称", width = 20, wrapText = true)
     private String name;
 
+    /**
+     * @see com.orion.ops.constant.webhook.WebhookType
+     */
     @ApiModelProperty(value = "类型")
     @ExportField(index = 1, header = "类型", width = 20, wrapText = true)
     private String type;

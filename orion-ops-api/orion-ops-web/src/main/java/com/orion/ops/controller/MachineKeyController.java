@@ -14,11 +14,13 @@ import com.orion.ops.utils.Valid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 机器秘钥 api
@@ -91,68 +93,6 @@ public class MachineKeyController {
         return machineKeyService.getKeyDetail(id);
     }
 
-    @PostMapping("/mount")
-    @ApiOperation(value = "挂载机器秘钥")
-    @EventLog(EventType.MOUNT_MACHINE_KEY)
-    public Map<String, Integer> mountKeys(@RequestBody MachineKeyRequest request) {
-        List<Long> idList = Valid.notEmpty(request.getIdList());
-        try {
-            return machineKeyService.mountOrDumpKeys(idList, true);
-        } catch (Exception e) {
-            log.error("挂载秘钥失败 {} {}", idList, e);
-            throw Exceptions.app(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
-        }
-    }
-
-    @PostMapping("/dump")
-    @ApiOperation(value = "卸载机器秘钥")
-    @EventLog(EventType.DUMP_MACHINE_KEY)
-    public Map<String, Integer> dumpKeys(@RequestBody MachineKeyRequest request) {
-        List<Long> idList = Valid.notEmpty(request.getIdList());
-        try {
-            return machineKeyService.mountOrDumpKeys(idList, false);
-        } catch (Exception e) {
-            log.error("卸载秘钥失败 {} {}", idList, e);
-            throw Exceptions.app(MessageConst.DUMP_SECRET_KEY_ERROR, e);
-        }
-    }
-
-    @GetMapping("/mount-all")
-    @ApiOperation(value = "挂载所有机器秘钥")
-    @EventLog(EventType.MOUNT_ALL_MACHINE_KEY)
-    public void mountAllKey() {
-        try {
-            machineKeyService.mountAllKey();
-        } catch (Exception e) {
-            log.error("挂载所有秘钥失败", e);
-            throw Exceptions.app(MessageConst.MOUNT_SECRET_KEY_ERROR, e);
-        }
-    }
-
-    @GetMapping("/dump-all")
-    @ApiOperation(value = "卸载所有机器秘钥")
-    @EventLog(EventType.DUMP_ALL_MACHINE_KEY)
-    public void dumpAllKey() {
-        try {
-            machineKeyService.dumpAllKey();
-        } catch (Exception e) {
-            log.error("卸载所有秘钥失败", e);
-            throw Exceptions.app(MessageConst.DUMP_SECRET_KEY_ERROR, e);
-        }
-    }
-
-    @PostMapping("/temp-mount")
-    @ApiOperation(value = "临时挂载机器秘钥")
-    @EventLog(EventType.TEMP_MOUNT_MACHINE_KEY)
-    public Integer tempMount(@RequestBody MachineKeyRequest request) {
-        String file = Valid.notBlank(request.getFile());
-        String password = Valid.notBlank(request.getPassword());
-        try {
-            return machineKeyService.tempMountKey(file, password);
-        } catch (Exception e) {
-            log.error("临时挂载秘钥失败", e);
-            throw Exceptions.app(MessageConst.TEMP_MOUNT_SECRET_KEY_ERROR, e);
-        }
-    }
+    // /mount /dump /mount-all /dump-all /temp-mount
 
 }

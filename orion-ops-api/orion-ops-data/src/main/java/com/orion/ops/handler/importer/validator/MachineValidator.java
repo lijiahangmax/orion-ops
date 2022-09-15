@@ -6,6 +6,9 @@ import com.orion.ops.entity.importer.MachineInfoImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * 机器表 数据验证器
  *
@@ -50,7 +53,7 @@ public class MachineValidator implements DataValidator {
 
     public static final String AUTH_TYPE_EMPTY_MESSAGE = "认证方式不能为空";
 
-    public static final String AUTH_TYPE_MESSAGE = "认证方式只能为 " + MachineAuthType.PASSWORD.getLabel() + "和" + MachineAuthType.KEY.getLabel();
+    public static final String AUTH_TYPE_MESSAGE = "认证方式只能为 " + Arrays.stream(MachineAuthType.values()).map(MachineAuthType::getLabel).collect(Collectors.toList());
 
     public static final String USER_NAME_EMPTY_MESSAGE = "用户名不能为空";
 

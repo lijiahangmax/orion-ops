@@ -6,6 +6,9 @@ import com.orion.ops.entity.importer.MachineProxyImportDTO;
 import com.orion.ops.utils.Valid;
 import com.orion.ops.utils.ValueMix;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * 机器代理表 数据验证器
  *
@@ -38,7 +41,7 @@ public class MachineProxyValidator implements DataValidator {
 
     public static final String PROXY_TYPE_EMPTY_MESSAGE = "代理类型不能为空";
 
-    public static final String PROXY_TYPE_MESSAGE = "代理类型只能为 " + ProxyType.HTTP.getLabel() + ", " + ProxyType.SOCKS4.getLabel() + ", " + ProxyType.SOCKS5.getLabel();
+    public static final String PROXY_TYPE_MESSAGE = "代理类型只能为 " + Arrays.stream(ProxyType.values()).map(ProxyType::getLabel).collect(Collectors.toList());
 
     public static final String USER_NAME_LEN_MESSAGE = "用户名长度不能大于 " + USER_NAME_MAX_LEN + "位";
 

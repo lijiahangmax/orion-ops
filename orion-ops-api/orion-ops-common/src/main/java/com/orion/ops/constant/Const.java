@@ -146,9 +146,9 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String OAUTH2 = "oauth2";
 
-    public static final String SOCKET4 = "socket4";
+    public static final String SOCKS4 = "socks4";
 
-    public static final String SOCKET5 = "socket5";
+    public static final String SOCKS5 = "socks5";
 
     public static final String DEFAULT_SHELL = "/bin/bash";
 

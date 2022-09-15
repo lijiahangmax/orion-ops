@@ -34,10 +34,16 @@ public class EventLogExportDTO {
     @ExportField(index = 0, header = "用户名", width = 15, wrapText = true)
     private String username;
 
+    /**
+     * @see com.orion.ops.constant.event.EventClassify
+     */
     @ApiModelProperty(value = "事件分类")
     @ExportField(index = 1, header = "事件分类", width = 17)
     private String classify;
 
+    /**
+     * @see com.orion.ops.constant.event.EventType
+     */
     @ApiModelProperty(value = "事件类型")
     @ExportField(index = 2, header = "事件类型", width = 22)
     private String type;

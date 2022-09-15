@@ -13,16 +13,16 @@
         "path": "/machine/list"
       },
       {
+        "name": "机器秘钥",
+        "path": "/machine/key"
+      },
+      {
         "name": "机器监控",
         "path": "/machine/monitor/list"
       },
       {
         "name": "环境变量",
         "path": "/machine/env"
-      },
-      {
-        "name": "机器秘钥",
-        "path": "/machine/key"
       },
       {
         "name": "机器代理",

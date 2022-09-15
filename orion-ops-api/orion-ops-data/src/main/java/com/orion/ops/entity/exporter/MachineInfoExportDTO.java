@@ -40,6 +40,9 @@ public class MachineInfoExportDTO {
     @ExportField(index = 3, header = "ssh 端口", width = 10)
     private Integer port;
 
+    /**
+     * @see com.orion.ops.constant.machine.MachineAuthType
+     */
     @ApiModelProperty(value = "认证方式")
     @ExportField(index = 4, header = "认证方式", width = 13, selectOptions = {CnConst.PASSWORD, CnConst.SECRET_KEY})
     private String authType;

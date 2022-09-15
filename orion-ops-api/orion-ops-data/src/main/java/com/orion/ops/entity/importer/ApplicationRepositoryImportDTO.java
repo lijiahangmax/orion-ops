@@ -37,10 +37,16 @@ public class ApplicationRepositoryImportDTO extends BaseDataImportDTO {
     @ImportField(index = 1)
     private String url;
 
+    /**
+     * @see com.orion.ops.constant.app.RepositoryAuthType
+     */
     @ApiModelProperty(value = "认证方式")
     @ImportField(index = 2)
     private String authType;
 
+    /**
+     * @see com.orion.ops.constant.app.RepositoryTokenType
+     */
     @ApiModelProperty(value = "令牌类型")
     @ImportField(index = 3)
     private String tokenType;

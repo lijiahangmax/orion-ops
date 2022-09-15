@@ -23,12 +23,12 @@ public enum ProxyType {
     /**
      * SOCKS4 代理
      */
-    SOCKS4(2, Const.SOCKET4),
+    SOCKS4(2, Const.SOCKS4),
 
     /**
      * SOCKS5 代理
      */
-    SOCKS5(3, Const.SOCKET5),
+    SOCKS5(3, Const.SOCKS5),
 
     ;
 

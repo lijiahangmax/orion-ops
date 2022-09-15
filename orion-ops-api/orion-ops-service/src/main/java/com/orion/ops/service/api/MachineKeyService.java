@@ -8,7 +8,6 @@ import com.orion.ops.entity.request.machine.MachineKeyRequest;
 import com.orion.ops.entity.vo.machine.MachineSecretKeyVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 机器秘钥服务
@@ -66,36 +65,6 @@ public interface MachineKeyService {
      * @return row
      */
     MachineSecretKeyVO getKeyDetail(Long id);
-
-    /**
-     * 挂载秘钥
-     *
-     * @param idList idList
-     * @param mount  挂碍/卸载
-     * @return key: idString value: status
-     * @see com.orion.ops.constant.machine.MountKeyStatus
-     */
-    Map<String, Integer> mountOrDumpKeys(List<Long> idList, boolean mount);
-
-    /**
-     * 挂载所有秘钥
-     */
-    void mountAllKey();
-
-    /**
-     * 卸载所有秘钥
-     */
-    void dumpAllKey();
-
-    /**
-     * 挂载秘钥
-     *
-     * @param fileData fileData
-     * @param password password
-     * @return status
-     * @see com.orion.ops.constant.machine.MountKeyStatus
-     */
-    Integer tempMountKey(String fileData, String password);
 
     /**
      * 获取key的实际路径

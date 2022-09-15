@@ -54,7 +54,7 @@ public class MachineInfoVO {
     /**
      * @see com.orion.ops.constant.machine.MachineAuthType
      */
-    @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
+    @ApiModelProperty(value = "机器认证方式 1: 密码认证 2: 独立秘钥")
     private Integer authType;
 
     /**

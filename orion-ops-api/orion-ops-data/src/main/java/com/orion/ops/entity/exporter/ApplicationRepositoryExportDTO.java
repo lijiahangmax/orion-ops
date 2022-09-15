@@ -36,10 +36,16 @@ public class ApplicationRepositoryExportDTO {
     @ExportField(index = 1, header = "url", width = 40, wrapText = true)
     private String url;
 
+    /**
+     * @see com.orion.ops.constant.app.RepositoryAuthType
+     */
     @ApiModelProperty(value = "认证方式(密码/令牌)")
     @ExportField(index = 2, header = "认证方式(密码/令牌)", width = 23, selectOptions = {CnConst.PASSWORD, CnConst.TOKEN})
     private String authType;
 
+    /**
+     * @see com.orion.ops.constant.app.RepositoryTokenType
+     */
     @ApiModelProperty(value = "令牌类型")
     @ExportField(index = 3, header = "令牌类型", width = 13, selectOptions = {Const.GITHUB, Const.GITEE, Const.GITLAB})
     private String tokenType;

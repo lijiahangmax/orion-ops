@@ -34,8 +34,11 @@ public class MachineProxyExportDTO {
     @ExportField(index = 1, header = "代理端口", width = 10)
     private Integer port;
 
+    /**
+     * @see com.orion.ops.constant.machine.ProxyType
+     */
     @ApiModelProperty(value = "代理类型")
-    @ExportField(index = 2, header = "代理类型", width = 13, selectOptions = {Const.PROTOCOL_HTTP, Const.SOCKET4, Const.SOCKET5})
+    @ExportField(index = 2, header = "代理类型", width = 13, selectOptions = {Const.PROTOCOL_HTTP, Const.SOCKS4, Const.SOCKS5})
     private String proxyType;
 
     @ApiModelProperty(value = "用户名")
