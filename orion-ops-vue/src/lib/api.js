@@ -641,55 +641,6 @@ const $api = {
   },
 
   /**
-   * 挂载秘钥
-   */
-  mountMachineKey: param => {
-    return $http.$post('/key/mount', param, {
-      skipErrorMessage: true,
-      loading: '正在挂载...'
-    })
-  },
-
-  /**
-   * 卸载秘钥
-   */
-  dumpMachineKey: param => {
-    return $http.$post('/key/dump', param, {
-      skipErrorMessage: true,
-      loading: '正在卸载...'
-    })
-  },
-
-  /**
-   * 挂载所有秘钥
-   */
-  mountAllMachineKey: () => {
-    return $http.$get('/key/mount-all', null, {
-      skipErrorMessage: true,
-      loading: '正在挂载...'
-    })
-  },
-
-  /**
-   * 卸载所有秘钥
-   */
-  dumpAllMachineKey: () => {
-    return $http.$get('/key/dump-all', null, {
-      skipErrorMessage: true,
-      loading: '正在卸载...'
-    })
-  },
-
-  /**
-   * 临时挂载秘钥
-   */
-  tempMountMachineKey: param => {
-    return $http.$post('/key/temp-mount', param, {
-      loading: '正在挂载...'
-    })
-  },
-
-  /**
    * 添加机器环境变量
    */
   addMachineEnv: param => {

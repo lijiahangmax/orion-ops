@@ -170,13 +170,11 @@ export const PROFILE_AUDIT_STATUS = {
 export const MACHINE_AUTH_TYPE = {
   PASSWORD: {
     value: 1,
-    label: '密码认证',
-    color: '#845EF7'
+    label: '密码认证'
   },
-  KEY: {
+  SECRET_KEY: {
     value: 2,
-    label: '秘钥认证',
-    color: '#5C7CFA'
+    label: '独立秘钥'
   }
 }
 
@@ -198,27 +196,6 @@ export const MACHINE_PROXY_TYPE = {
     value: 3,
     label: 'socks5',
     color: '#0CA678'
-  }
-}
-
-/**
- * 秘钥挂载状态
- */
-export const MACHINE_KEY_MOUNT_STATUS = {
-  NOT_FOUND: {
-    value: 1,
-    label: '未找到',
-    color: '#DEE2E6'
-  },
-  MOUNTED: {
-    value: 2,
-    label: '已挂载',
-    color: '#4C6EF5'
-  },
-  C: {
-    value: 3,
-    label: '未挂载',
-    color: '#FF922B'
   }
 }
 

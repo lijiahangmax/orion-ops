@@ -132,7 +132,7 @@ function getDecorators() {
       }]
     }],
     authType: ['authType', {
-      initialValue: MACHINE_AUTH_TYPE.KEY.value
+      initialValue: MACHINE_AUTH_TYPE.SECRET_KEY.value
     }],
     password: ['password', {
       rules: [{
