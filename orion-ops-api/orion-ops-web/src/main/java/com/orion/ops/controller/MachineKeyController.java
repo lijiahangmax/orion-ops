@@ -93,6 +93,6 @@ public class MachineKeyController {
         return machineKeyService.getKeyDetail(id);
     }
 
-    // /mount /dump /mount-all /dump-all /temp-mount
+    // 新增修改后测试挂载 关联机器 删除关联
 
 }

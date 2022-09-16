@@ -7,7 +7,6 @@ import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.FileWriters;
 import com.orion.lang.utils.io.Files1;
-import com.orion.net.remote.channel.SessionHolder;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.dao.MachineSecretKeyDAO;
@@ -51,8 +50,6 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         byte[] keyFileData = Base64s.decode(Strings.bytes(request.getFile()));
         FileWriters.writeFast(path, keyFileData);
         key.setPassword(ValueMix.encrypt(request.getPassword()));
-        // 加载key
-        SessionHolder.HOLDER.addIdentity(path, request.getPassword());
         machineSecretKeyDAO.insert(key);
         // 设置日志参数
         EventParamsHolder.addParams(key);
@@ -73,28 +70,20 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         updateKey.setUpdateTime(new Date());
         String password = request.getPassword();
         String fileBase64 = request.getFile();
-        final boolean updateKeyFile = !Strings.isBlank(fileBase64) || !Strings.isBlank(password);
-        if (updateKeyFile) {
-            // 移除原先的key
-            String keyPath = MachineKeyService.getKeyPath(beforeKey.getSecretKeyPath());
-            SessionHolder.HOLDER.removeIdentity(keyPath);
+        // 修改文件
+        if (!Strings.isBlank(fileBase64)) {
             // 修改秘钥文件 将新秘钥保存到本地
-            if (!Strings.isBlank(fileBase64)) {
-                Files1.delete(keyPath);
-                String afterKeyFile = PathBuilders.getSecretKeyPath();
-                keyPath = MachineKeyService.getKeyPath(afterKeyFile);
-                Files1.touch(keyPath);
-                byte[] keyFileData = Base64s.decode(Strings.bytes(fileBase64));
-                FileWriters.writeFast(keyPath, keyFileData);
-                updateKey.setSecretKeyPath(afterKeyFile);
-            }
-            // 修改密码
-            if (!Strings.isBlank(password)) {
-                updateKey.setPassword(ValueMix.encrypt(password));
-                SessionHolder.HOLDER.addIdentity(keyPath, password);
-            }
+            String keyFile = PathBuilders.getSecretKeyPath();
+            String keyPath = MachineKeyService.getKeyPath(keyFile);
+            Files1.touch(keyPath);
+            byte[] keyFileData = Base64s.decode(Strings.bytes(fileBase64));
+            FileWriters.writeFast(keyPath, keyFileData);
+            updateKey.setSecretKeyPath(keyFile);
         }
-
+        // 修改密码
+        if (!Strings.isBlank(password)) {
+            updateKey.setPassword(ValueMix.encrypt(password));
+        }
         // 更新
         int effect = machineSecretKeyDAO.updateById(updateKey);
         // 设置日志参数
@@ -106,15 +95,6 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer removeSecretKey(List<Long> idList) {
-        // 卸载秘钥
-        List<MachineSecretKeyDO> keys = machineSecretKeyDAO.selectBatchIds(idList);
-        for (MachineSecretKeyDO key : keys) {
-            String secretKeyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
-            // 移除key
-            SessionHolder.HOLDER.removeIdentity(secretKeyPath);
-            // 删除key
-            Files1.delete(secretKeyPath);
-        }
         // 删除秘钥
         int effect = machineSecretKeyDAO.deleteBatchIds(idList);
         // 设置日志参数

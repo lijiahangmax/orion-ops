@@ -27,11 +27,13 @@ public class MachineInfoDataImporter extends AbstractDataImporter<MachineInfoDO>
 
     @Override
     protected void updateFiller(MachineInfoDO row) {
-        // 检查是否有代理
+        // 填充忽略的字段
         Optional.ofNullable(row.getId())
                 .map(machineInfoDAO::selectById)
-                .map(MachineInfoDO::getProxyId)
-                .ifPresent(row::setProxyId);
+                .ifPresent(m -> {
+                    row.setProxyId(m.getProxyId());
+                    row.setKeyId(m.getKeyId());
+                });
     }
 
     @Override

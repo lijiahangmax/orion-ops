@@ -33,6 +33,12 @@ public class MachineInfoVO {
     @ApiModelProperty(value = "代理类型")
     private Integer proxyType;
 
+    @ApiModelProperty(value = "秘钥id")
+    private Long keyId;
+
+    @ApiModelProperty(value = "秘钥名称")
+    private String keyName;
+
     @ApiModelProperty(value = "主机ip")
     private String host;
 

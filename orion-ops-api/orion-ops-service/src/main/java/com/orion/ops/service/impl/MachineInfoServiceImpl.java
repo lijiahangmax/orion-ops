@@ -26,9 +26,11 @@ import com.orion.ops.constant.machine.ProxyType;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
+import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.machine.MachineInfoRequest;
 import com.orion.ops.entity.vo.machine.MachineInfoVO;
 import com.orion.ops.service.api.*;
@@ -62,6 +64,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Resource
     private MachineProxyDAO machineProxyDAO;
+
+    @Resource
+    private MachineSecretKeyDAO machineSecretKeyDAO;
 
     @Resource
     private MachineEnvDAO machineEnvDAO;
@@ -196,11 +201,8 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .like(Strings.isNotBlank(request.getTag()), MachineInfoDO::getMachineTag, request.getTag())
                 .like(Strings.isNotBlank(request.getDescription()), MachineInfoDO::getDescription, request.getDescription())
                 .like(Strings.isNotBlank(request.getUsername()), MachineInfoDO::getUsername, request.getUsername())
-                .eq(Objects.nonNull(request.getProxyId()), MachineInfoDO::getProxyId, request.getProxyId())
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
-                .ne(Objects.nonNull(request.getExcludeId()), MachineInfoDO::getId, request.getExcludeId())
-                .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, Const.ENABLE)
                 .orderByAsc(MachineInfoDO::getId);
         return DataQuery.of(machineInfoDAO)
                 .page(request)
@@ -213,6 +215,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         MachineInfoVO vo = Converts.to(machine, MachineInfoVO.class);
+        // 查询代理信息
         Optional.ofNullable(machine.getProxyId())
                 .map(machineProxyDAO::selectById)
                 .ifPresent(p -> {
@@ -220,6 +223,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     vo.setProxyPort(p.getProxyPort());
                     vo.setProxyType(p.getProxyType());
                 });
+        // 查询秘钥信息
+        Optional.ofNullable(machine.getKeyId())
+                .map(machineSecretKeyDAO::selectById)
+                .map(MachineSecretKeyDO::getKeyName)
+                .ifPresent(vo::setKeyName);
         return vo;
     }
 
@@ -488,6 +496,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private void copyProperties(MachineInfoRequest request, MachineInfoDO entity) {
         entity.setId(request.getId());
         entity.setProxyId(request.getProxyId());
+        entity.setKeyId(request.getKeyId());
         entity.setMachineHost(request.getHost());
         entity.setSshPort(request.getSshPort());
         entity.setMachineName(request.getName());

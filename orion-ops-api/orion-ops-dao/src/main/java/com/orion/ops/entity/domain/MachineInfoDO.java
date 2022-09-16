@@ -32,6 +32,10 @@ public class MachineInfoDO implements Serializable {
     @TableField(value = "proxy_id", updateStrategy = FieldStrategy.IGNORED)
     private Long proxyId;
 
+    @ApiModelProperty(value = "秘钥id")
+    @TableField(value = "key_id", updateStrategy = FieldStrategy.IGNORED)
+    private Long keyId;
+
     @ApiModelProperty(value = "主机ip")
     @TableField("machine_host")
     private String machineHost;

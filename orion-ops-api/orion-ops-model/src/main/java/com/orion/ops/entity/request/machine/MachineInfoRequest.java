@@ -24,14 +24,14 @@ public class MachineInfoRequest extends PageRequest {
     @ApiModelProperty(value = "id")
     private Long id;
 
-    @ApiModelProperty(value = "排除的id")
-    private Long excludeId;
-
     @ApiModelProperty(value = "idList")
     private List<Long> idList;
 
     @ApiModelProperty(value = "代理id")
     private Long proxyId;
+
+    @ApiModelProperty(value = "秘钥id")
+    private Long keyId;
 
     @ApiModelProperty(value = "主机ip")
     private String host;
@@ -66,11 +66,5 @@ public class MachineInfoRequest extends PageRequest {
      */
     @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer status;
-
-    @ApiModelProperty(value = "同步属性")
-    private String syncProp;
-
-    @ApiModelProperty(value = "跳过宿主机")
-    private Integer skipHost;
 
 }
