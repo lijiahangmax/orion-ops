@@ -1,15 +1,20 @@
 package com.orion.ops.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.FileWriters;
 import com.orion.lang.utils.io.Files1;
+import com.orion.net.remote.channel.SessionHolder;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
+import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineSecretKeyDAO;
+import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.machine.MachineKeyRequest;
 import com.orion.ops.entity.vo.machine.MachineSecretKeyVO;
@@ -37,6 +42,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Resource
     private MachineSecretKeyDAO machineSecretKeyDAO;
 
+    @Resource
+    private MachineInfoDAO machineInfoDAO;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long addSecretKey(MachineKeyRequest request) {
@@ -50,6 +58,9 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         byte[] keyFileData = Base64s.decode(Strings.bytes(request.getFile()));
         FileWriters.writeFast(path, keyFileData);
         key.setPassword(ValueMix.encrypt(request.getPassword()));
+        // 检查秘钥
+        this.checkLoadKey(path, request.getPassword());
+        // 插入
         machineSecretKeyDAO.insert(key);
         // 设置日志参数
         EventParamsHolder.addParams(key);
@@ -71,7 +82,8 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         String password = request.getPassword();
         String fileBase64 = request.getFile();
         // 修改文件
-        if (!Strings.isBlank(fileBase64)) {
+        final boolean updateFile = !Strings.isBlank(fileBase64);
+        if (updateFile) {
             // 修改秘钥文件 将新秘钥保存到本地
             String keyFile = PathBuilders.getSecretKeyPath();
             String keyPath = MachineKeyService.getKeyPath(keyFile);
@@ -81,8 +93,15 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             updateKey.setSecretKeyPath(keyFile);
         }
         // 修改密码
-        if (!Strings.isBlank(password)) {
+        final boolean updatePassword = !Strings.isBlank(password);
+        if (updatePassword) {
             updateKey.setPassword(ValueMix.encrypt(password));
+        }
+        // 检查秘钥
+        if (updateFile || updatePassword) {
+            String checkPath = updateFile ? updateKey.getSecretKeyPath() : beforeKey.getSecretKeyPath();
+            String checkPassword = updatePassword ? password : ValueMix.decrypt(beforeKey.getPassword());
+            this.checkLoadKey(MachineKeyService.getKeyPath(checkPath), checkPassword);
         }
         // 更新
         int effect = machineSecretKeyDAO.updateById(updateKey);
@@ -97,6 +116,11 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     public Integer removeSecretKey(List<Long> idList) {
         // 删除秘钥
         int effect = machineSecretKeyDAO.deleteBatchIds(idList);
+        // 删除机器关联
+        LambdaUpdateWrapper<MachineInfoDO> wrapper = new LambdaUpdateWrapper<MachineInfoDO>()
+                .set(MachineInfoDO::getKeyId, null)
+                .in(MachineInfoDO::getKeyId, idList);
+        machineInfoDAO.update(null, wrapper);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
@@ -125,6 +149,38 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         MachineSecretKeyDO key = machineSecretKeyDAO.selectById(id);
         Valid.notNull(key, MessageConst.UNKNOWN_DATA);
         return Converts.to(key, MachineSecretKeyVO.class);
+    }
+
+    @Override
+    public void bindMachineKey(Long id, List<Long> machineIdList) {
+        // 查询数据
+        MachineSecretKeyDO key = machineSecretKeyDAO.selectById(id);
+        Valid.notNull(key, MessageConst.UNKNOWN_DATA);
+        // 更新到机器表
+        LambdaUpdateWrapper<MachineInfoDO> wrapper = new LambdaUpdateWrapper<MachineInfoDO>()
+                .set(MachineInfoDO::getKeyId, id)
+                .in(MachineInfoDO::getId, machineIdList);
+        machineInfoDAO.update(null, wrapper);
+        // 设置日志参数
+        EventParamsHolder.addParam(EventKeys.ID, id);
+        EventParamsHolder.addParam(EventKeys.NAME, key.getKeyName());
+        EventParamsHolder.addParam(EventKeys.MACHINE_ID_LIST, machineIdList);
+        EventParamsHolder.addParam(EventKeys.COUNT, machineIdList.size());
+    }
+
+    /**
+     * 检查秘钥是否合法
+     *
+     * @param path     path
+     * @param password 密码
+     */
+    private void checkLoadKey(String path, String password) {
+        try {
+            SessionHolder.HOLDER.addIdentity(path, password);
+            SessionHolder.HOLDER.removeAllIdentity();
+        } catch (Exception e) {
+            throw Exceptions.app(MessageConst.ILLEGAL_MACHINE_SECRET_KEY, e);
+        }
     }
 
 }

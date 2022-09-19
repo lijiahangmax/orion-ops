@@ -140,17 +140,7 @@ public class MessageConst {
 
     public static final String TRANSFER_ACTION_PRESENT = "传输操作只能有一个";
 
-    public static final String ADD_SECRET_KEY_ERROR = "添加秘钥失败";
-
-    public static final String UPDATE_SECRET_KEY_ERROR = "修改秘钥失败";
-
-    public static final String REMOVE_SECRET_KEY_ERROR = "删除秘钥失败";
-
-    public static final String MOUNT_SECRET_KEY_ERROR = "挂载秘钥失败";
-
-    public static final String DUMP_SECRET_KEY_ERROR = "卸载秘钥失败";
-
-    public static final String TEMP_MOUNT_SECRET_KEY_ERROR = "临时挂载秘钥失败";
+    public static final String ILLEGAL_MACHINE_SECRET_KEY = "秘钥不合法, 请检查密码或使用 -m PEM 重新生成";
 
     public static final String AUTO_AUDIT_RESOLVE = "自动审核通过";
 

@@ -27,6 +27,9 @@ public class MachineKeyRequest extends PageRequest {
     @ApiModelProperty(value = "id")
     private List<Long> idList;
 
+    @ApiModelProperty(value = "机器id集合")
+    private List<Long> machineIdList;
+
     @ApiModelProperty(value = "名称")
     private String name;
 

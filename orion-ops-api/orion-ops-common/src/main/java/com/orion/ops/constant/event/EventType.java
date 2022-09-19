@@ -132,29 +132,9 @@ public enum EventType {
     DELETE_MACHINE_KEY(220030, EventClassify.MACHINE_KEY, "删除秘钥", "删除秘钥 <sb>${count}</sb>个"),
 
     /**
-     * 挂载秘钥
+     * 绑定秘钥
      */
-    MOUNT_MACHINE_KEY(220040, EventClassify.MACHINE_KEY, "挂载秘钥", "挂载秘钥 <sb>${count}</sb>个"),
-
-    /**
-     * 卸载秘钥
-     */
-    DUMP_MACHINE_KEY(220050, EventClassify.MACHINE_KEY, "卸载秘钥", "卸载秘钥 <sb>${count}</sb>个"),
-
-    /**
-     * 挂载全部秘钥
-     */
-    MOUNT_ALL_MACHINE_KEY(220060, EventClassify.MACHINE_KEY, "挂载全部秘钥", "挂载全部秘钥"),
-
-    /**
-     * 卸载全部秘钥
-     */
-    DUMP_ALL_MACHINE_KEY(220070, EventClassify.MACHINE_KEY, "卸载全部秘钥", "卸载全部秘钥"),
-
-    /**
-     * 临时挂载秘钥
-     */
-    TEMP_MOUNT_MACHINE_KEY(220080, EventClassify.MACHINE_KEY, "临时挂载秘钥", "临时挂载秘钥"),
+    BIND_MACHINE_KEY(220040, EventClassify.MACHINE_KEY, "绑定秘钥", "绑定秘钥 <sb>${name}</sb> 到<sb 0>${count}</sb>台机器"),
 
     // -------------------- 代理操作 --------------------
 

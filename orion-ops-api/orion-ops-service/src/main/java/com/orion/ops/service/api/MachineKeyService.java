@@ -67,6 +67,14 @@ public interface MachineKeyService {
     MachineSecretKeyVO getKeyDetail(Long id);
 
     /**
+     * 绑定机器秘钥
+     *
+     * @param id            id
+     * @param machineIdList 机器id
+     */
+    void bindMachineKey(Long id, List<Long> machineIdList);
+
+    /**
      * 获取key的实际路径
      *
      * @param path path
