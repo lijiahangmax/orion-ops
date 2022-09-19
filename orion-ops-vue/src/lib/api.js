@@ -562,7 +562,7 @@ const $api = {
    * 添加机器代理
    */
   addMachineProxy: param => {
-    return $http.$post('/proxy/add', param, {
+    return $http.$post('/machine-proxy/add', param, {
       loading: '正在添加...'
     })
   },
@@ -571,7 +571,7 @@ const $api = {
    * 更新机器代理
    */
   updateMachineProxy: param => {
-    return $http.$post('/proxy/update', param, {
+    return $http.$post('/machine-proxy/update', param, {
       loading: '正在修改...'
     })
   },
@@ -580,21 +580,21 @@ const $api = {
    * 机器代理列表
    */
   getMachineProxyList: param => {
-    return $http.$post('/proxy/list', param)
+    return $http.$post('/machine-proxy/list', param)
   },
 
   /**
    * 机器代理详情
    */
   getMachineProxyDetail: param => {
-    return $http.$post('/proxy/detail', param)
+    return $http.$post('/machine-proxy/detail', param)
   },
 
   /**
    * 删除机器代理
    */
   deleteMachineProxy: param => {
-    return $http.$post('/proxy/delete', param, {
+    return $http.$post('/machine-proxy/delete', param, {
       loading: '正在删除...'
     })
   },
@@ -603,7 +603,7 @@ const $api = {
    * 添加秘钥
    */
   addMachineKey: param => {
-    return $http.$post('/key/add', param, {
+    return $http.$post('/machine-key/add', param, {
       loading: '正在添加...'
     })
   },
@@ -612,7 +612,7 @@ const $api = {
    * 更新秘钥
    */
   updateMachineKey: param => {
-    return $http.$post('/key/update', param, {
+    return $http.$post('/machine-key/update', param, {
       loading: '正在修改...'
     })
   },
@@ -621,7 +621,7 @@ const $api = {
    * 删除秘钥
    */
   removeMachineKey: param => {
-    return $http.$post('/key/remove', param, {
+    return $http.$post('/machine-key/remove', param, {
       loading: '正在删除...'
     })
   },
@@ -630,14 +630,23 @@ const $api = {
    * 查询秘钥列表
    */
   getMachineKeyList: param => {
-    return $http.$post('/key/list', param)
+    return $http.$post('/machine-key/list', param)
   },
 
   /**
    * 查询秘钥详情
    */
   getMachineKeyDetail: param => {
-    return $http.$post('/key/detail', param)
+    return $http.$post('/machine-key/detail', param)
+  },
+
+  /**
+   * 绑定机器秘钥
+   */
+  bindMachineKey: param => {
+    return $http.$post('/machine-key/bind', param, {
+      loading: '正在绑定...'
+    })
   },
 
   /**

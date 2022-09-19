@@ -3,12 +3,14 @@
            :title="title"
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
+           :bodyStyle="{padding: '16px 24px 0 24px'}"
            :mask="mask"
            :maskClosable="false"
            :destroyOnClose="true"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
+      <a-alert class="mb16" message="添加代理后 请适当调整环境变量中的 connect_timeout 属性"/>
       <a-form :form="form" v-bind="layout">
         <a-form-item label="代理主机" hasFeedback>
           <a-input v-decorator="decorators.host" allowClear/>
@@ -121,10 +123,11 @@ export default {
     },
     update(id) {
       this.title = '修改代理'
-      this.$api.getMachineProxyDetail({ id })
-        .then(({ data }) => {
-          this.initRecord(data)
-        })
+      this.$api.getMachineProxyDetail({
+        id
+      }).then(({ data }) => {
+        this.initRecord(data)
+      })
     },
     initRecord(row) {
       this.form.resetFields()

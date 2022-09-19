@@ -74,9 +74,9 @@
           <!-- 操作 -->
           <template #action="record">
             <!-- 修改 -->
-            <MachineChecker ref="machineChecker">
+            <MachineChecker :ref="`machineChecker${record.id}`" placement="bottomRight">
               <template #trigger>
-                <a>关联机器</a>
+                <a>绑定机器</a>
               </template>
               <template #footer>
                 <a-button type="primary" size="small" @click="chooseRelMachines(record.id)">确定</a-button>
@@ -212,6 +212,20 @@ export default {
       })
     },
     chooseRelMachines(id) {
+      const ref = this.$refs[`machineChecker${id}`]
+      const checkedList = ref.checkedList
+      if (!checkedList || !checkedList.length) {
+        this.$message.warning('请选择绑定秘钥的机器')
+        return
+      }
+      ref.hide()
+      ref.clear()
+      this.$api.bindMachineKey({
+        id,
+        machineIdList: checkedList
+      }).then(() => {
+        this.$message.success('绑定成功')
+      })
     },
     add() {
       this.$refs.addModal.add()

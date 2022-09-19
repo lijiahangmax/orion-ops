@@ -7,12 +7,19 @@
     <!-- 标题 -->
     <template #title>
       <div class="machine-title">
-        <a-checkbox v-if="machines.length"
-                    :indeterminate="indeterminate"
-                    :checked="checkAll"
-                    @change="chooseAll">
-          全选
-        </a-checkbox>
+        <div v-if="machines.length" class="machine-title-left">
+          <a-checkbox :indeterminate="indeterminate"
+                      :checked="checkAll"
+                      @change="chooseAllOnChange">
+            全选
+          </a-checkbox>
+          <div class="line-input-wrapper">
+            <input class="line-input"
+                   v-model="filterKey"
+                   placeholder="名称/IP过滤"
+                   :disabled="loading">
+          </div>
+        </div>
         <div v-else/>
         <a @click="hide">关闭</a>
       </div>
@@ -24,13 +31,18 @@
           <!-- 复选框 -->
           <div class="machine-list-wrapper" v-if="machines.length">
             <div class="machine-list">
-              <a-checkbox-group v-model="checkedList" @change="onChange">
-                <a-row v-for="(option, index) of machines" :key="index" style="margin: 4px 0">
-                  <a-checkbox :value="option.id" :disabled="checkDisabled(option.id)">
+              <a-checkbox class="machine-check-box"
+                          v-for="(option, index) of machines"
+                          v-show="option.visible"
+                          :key="index"
+                          :value="option.id"
+                          :disabled="option.disabled"
+                          :checked="option.checked"
+                          @click="checkboxOnChange(option)">
+                  <span class="machine-check-box-name">
                     {{ `${option.name} (${option.host})` }}
-                  </a-checkbox>
-                </a-row>
-              </a-checkbox-group>
+                  </span>
+              </a-checkbox>
             </div>
           </div>
           <div class="machine-list-empty" v-if="empty">
@@ -86,7 +98,8 @@ export default {
       loading: false,
       checkedList: [],
       machines: [],
-      empty: false
+      empty: false,
+      filterKey: undefined
     }
   },
   watch: {
@@ -94,6 +107,9 @@ export default {
       if (e && !this.init) {
         this.initData()
       }
+    },
+    filterKey() {
+      this.filterMachineList()
     }
   },
   methods: {
@@ -106,25 +122,34 @@ export default {
       }).then(({ data }) => {
         this.loading = false
         if (data && data.rows && data.rows.length) {
-          this.machines = data.rows.map(s => {
+          const machines = data.rows.map(s => {
             return {
               id: s.id,
               name: s.name,
-              host: s.host
+              host: s.host,
+              visible: true,
+              checked: false,
+              disabled: false
             }
           })
+          // 设置禁用状态
+          if (this.disableValue.length) {
+            for (const machine of machines) {
+              machine.disabled = this.disableValue.filter(s => s === machine.id).length !== 0
+            }
+          }
+          // 设置默认选择状态
+          if (this.defaultValue.length) {
+            this.checkedList = [...this.defaultValue]
+            for (const machine of machines) {
+              machine.checked = this.defaultValue.filter(s => s === machine.id).length !== 0
+            }
+          }
+          this.machines = machines
+          // 同步全选状态
+          this.syncCheckedAllStatus()
         } else {
           this.empty = true
-        }
-        // 设置默认选择状态
-        if (this.defaultValue.length) {
-          this.checkedList = this.defaultValue
-          if (this.machines.length === this.checkedList.length) {
-            this.checkAll = true
-            this.indeterminate = false
-          } else {
-            this.indeterminate = true
-          }
         }
       }).catch(() => {
         this.loading = false
@@ -134,31 +159,77 @@ export default {
     hide() {
       this.visible = false
     },
-    onChange(checkedList) {
-      this.indeterminate = !!checkedList.length && checkedList.length < this.machines.length - this.disableValue.length
-      this.checkAll = checkedList.length === this.machines.length - this.disableValue.length
+    checkboxOnChange(option) {
+      // 修改单选状态
+      option.checked = !option.checked
+      if (option.checked) {
+        this.checkedList.push(option.id)
+      } else {
+        this.removeToCheckedList(option.id)
+      }
+      // 同步全选状态
+      this.syncCheckedAllStatus()
     },
-    chooseAll(e) {
-      Object.assign(this, {
-        checkedList: e.target.checked
-          ? this.machines.map(d => d.id).filter(id => !this.checkDisabled(id))
-          : [],
-        indeterminate: false,
-        checkAll: e.target.checked
+    chooseAllOnChange() {
+      this.checkAll = !this.checkAll
+      this.indeterminate = false
+      this.machines.forEach(machine => {
+        if (machine.visible && !machine.disabled) {
+          if (this.checkAll) {
+            // 全选
+            if (!machine.checked) {
+              machine.checked = true
+              this.checkedList.push(machine.id)
+            }
+          } else {
+            // 反选
+            if (machine.checked) {
+              machine.checked = false
+              this.removeToCheckedList(machine.id)
+            }
+          }
+        }
       })
     },
-    checkDisabled(id) {
-      for (const disable of this.disableValue) {
-        if (disable === id) {
-          return true
+    filterMachineList() {
+      let visibleCount = 0
+      for (const machine of this.machines) {
+        if (!this.filterKey) {
+          machine.visible = true
+        } else {
+          machine.visible = machine.name.includes(this.filterKey) || machine.host.includes(this.filterKey)
+        }
+        if (machine.visible) {
+          visibleCount++
         }
       }
-      return false
+      // 同步全选状态
+      this.syncCheckedAllStatus()
+      // 空列表判断
+      this.empty = visibleCount === 0
+    },
+    syncCheckedAllStatus() {
+      const validMachines = this.machines.filter(s => s.visible).filter(s => !s.disabled)
+      const checkValidMachineLen = validMachines.filter(s => s.checked).length
+      this.checkAll = validMachines.length === checkValidMachineLen
+      this.indeterminate = !(checkValidMachineLen === 0 || this.checkAll)
+    },
+    removeToCheckedList(id) {
+      this.checkedList.forEach((item, index, arr) => {
+        if (item === id) {
+          arr.splice(index, 1)
+        }
+      })
     },
     clear() {
-      this.checkedList = []
       this.checkAll = false
       this.indeterminate = false
+      this.checkedList = []
+      this.filterKey = undefined
+      this.machines.forEach(machine => {
+        machine.visible = true
+        machine.checked = false
+      })
     }
   }
 }
@@ -170,16 +241,36 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .machine-title-left {
+    display: flex;
+  }
+
+  .line-input-wrapper {
+    margin-left: 4px;
+    width: 208px;
+  }
 }
 
 .machine-list-wrapper {
   padding: 4px 2px 4px 16px;
-  min-width: 350px;
+  width: 350px;
 
   .machine-list {
     max-height: 130px;
     width: 100%;
-    overflow-y: auto;
+    overflow: auto;
+
+    .machine-check-box {
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .machine-check-box-name {
+      display: inline-block;
+      width: calc(100% - 25px);
+      white-space: nowrap;
+    }
   }
 }
 
@@ -197,4 +288,8 @@ export default {
   justify-content: flex-end;
 }
 
+::v-deep .ant-checkbox-wrapper {
+  padding: 2px 0;
+  margin: 0 !important;
+}
 </style>

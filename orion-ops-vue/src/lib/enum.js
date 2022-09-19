@@ -1112,29 +1112,9 @@ export const EVENT_TYPE = {
     label: '删除秘钥',
     classify: 220
   },
-  MOUNT_MACHINE_KEY: {
+  BIND_MACHINE_KEY: {
     value: 220040,
-    label: '挂载秘钥',
-    classify: 220
-  },
-  DUMP_MACHINE_KEY: {
-    value: 220050,
-    label: '卸载秘钥',
-    classify: 220
-  },
-  MOUNT_ALL_MACHINE_KEY: {
-    value: 220060,
-    label: '挂载全部秘钥',
-    classify: 220
-  },
-  DUMP_ALL_MACHINE_KEY: {
-    value: 220070,
-    label: '卸载全部秘钥',
-    classify: 220
-  },
-  TEMP_MOUNT_MACHINE_KEY: {
-    value: 220080,
-    label: '临时挂载秘钥',
+    label: '绑定秘钥',
     classify: 220
   },
   ADD_MACHINE_PROXY: {

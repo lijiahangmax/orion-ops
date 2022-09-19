@@ -6,10 +6,10 @@
     <div class="about-descriptions">
       <a-descriptions>
         <a-descriptions-item label="orion-ops 版本" :span="3">
-          <span class="about-value">{{ about.orionOpsVersion }}</span>
+          <a class="about-value" :href="`https://github.com/lijiahangmax/orion-ops/releases/tag/v${about.orionOpsVersion}`">{{ about.orionOpsVersion }}</a>
         </a-descriptions-item>
         <a-descriptions-item label="orion-kit 版本" :span="3">
-          <span class="about-value">{{ about.orionKitVersion }}</span>
+          <a class="about-value" :href="`https://github.com/lijiahangmax/orion-kit/releases/tag/v${about.orionKitVersion}`">{{ about.orionKitVersion }}</a>
         </a-descriptions-item>
         <a-descriptions-item label="orion-ops 作者" :span="3">
           <span class="about-value">{{ about.author }} ({{ about.authorCn }})</span>
