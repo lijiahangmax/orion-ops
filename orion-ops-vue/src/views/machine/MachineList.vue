@@ -94,10 +94,13 @@
                  size="middle">
           <!-- 名称 -->
           <template #name="record">
-            {{ record.name }}
+            <span :class="[ENABLE_STATUS.ENABLE.value === record.status ? 'machine-name-enabled' : 'machine-name-disabled']"
+                  :title="ENABLE_STATUS.ENABLE.value === record.status ? record.name : '机器已停用'">
+              {{ record.name }}
+            </span>
             <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
           </template>
-          <!-- tag -->
+          <!-- 唯一标识 -->
           <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
@@ -108,12 +111,6 @@
           <span class="span-blue pointer" title="复制主机" @click="$copy(record.host, true)">
             {{ record.host }}
           </span>
-          </template>
-          <!-- 状态 -->
-          <template #status="record">
-            <a-badge v-if="record.status"
-                     :status="record.status | formatEnableStatus('status')"
-                     :text="record.status | formatEnableStatus('label')"/>
           </template>
           <!-- 操作 -->
           <template #action="record">
@@ -240,28 +237,19 @@ const columns = [
     title: '名称',
     key: 'name',
     ellipsis: true,
-    sorter: (a, b) => a.name.localeCompare(b.name),
     scopedSlots: { customRender: 'name' }
   },
   {
     title: '唯一标识',
     key: 'tag',
     width: 150,
-    sorter: (a, b) => a.tag.localeCompare(b.tag),
     scopedSlots: { customRender: 'tag' }
   },
   {
     title: '主机',
     key: 'host',
     width: 180,
-    sorter: (a, b) => a.host.localeCompare(b.host),
     scopedSlots: { customRender: 'host' }
-  },
-  {
-    title: '状态',
-    key: 'status',
-    width: 80,
-    scopedSlots: { customRender: 'status' }
   },
   {
     title: '描述',
@@ -569,6 +557,20 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+.machine-name-enabled {
+  color: rgba(0, 0, 0, .7);
+}
+
+.machine-name-disabled {
+  color: rgba(0, 0, 0, .25);
+  background-color: transparent;
+  border-color: transparent;
+  text-shadow: none;
+  box-shadow: none;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 
 .host-machine-label {
   color: #5C7CFA;
