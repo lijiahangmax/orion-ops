@@ -140,6 +140,34 @@ const routes = [
         component: () => import('../views/machine/MachineList')
       },
       {
+        path: '/machine/add',
+        name: 'addMachine',
+        meta: {
+          requireAuth: true,
+          title: '添加机器',
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
+        },
+        component: () => import('../views/machine/AddMachine')
+      },
+      {
+        path: '/machine/update/:id',
+        name: 'updateMachine',
+        meta: {
+          requireAuth: true,
+          title: '修改机器',
+          leftProps: [{
+            icon: 'arrow-left',
+            title: '返回',
+            call: 'back'
+          }]
+        },
+        component: () => import('../views/machine/AddMachine')
+      },
+      {
         path: '/machine/monitor/list',
         name: 'machineMonitorList',
         meta: {

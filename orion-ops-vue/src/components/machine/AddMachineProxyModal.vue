@@ -4,7 +4,6 @@
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
            :bodyStyle="{padding: '16px 24px 0 24px'}"
-           :mask="mask"
            :maskClosable="false"
            :destroyOnClose="true"
            @ok="check"
@@ -106,7 +105,6 @@ export default {
       visible: false,
       title: null,
       loading: false,
-      mask: true,
       record: null,
       layout,
       decorators: getDecorators.call(this),
@@ -114,9 +112,6 @@ export default {
     }
   },
   methods: {
-    setMask(mask) {
-      this.mask = mask
-    },
     add() {
       this.title = '新增代理'
       this.initRecord({})

@@ -237,6 +237,23 @@ const $api = {
       skipErrorMessage: true
     })
   },
+  /**
+   * 直接测试机器ping
+   */
+  machineDirectTestPing: param => {
+    return $http.$post('/machine/direct-test-ping', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 直接测试机器连接
+   */
+  machineDirectConnect: param => {
+    return $http.$post('/machine/direct-test-connect', param, {
+      skipErrorMessage: true
+    })
+  },
 
   /**
    * 获取终端访问信息

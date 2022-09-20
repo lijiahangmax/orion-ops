@@ -99,9 +99,7 @@
           <!-- 操作 -->
           <template #action="record">
             <!-- 配置 -->
-            <span class="span-blue pointer" @click="toConfig(record.id)">
-            配置
-          </span>
+            <a :href="`#/app/conf/${record.id}`">配置</a>
             <a-divider type="vertical"/>
             <!-- 构建 -->
             <a-button class="p0"
@@ -156,7 +154,7 @@
                     复制
                   </a-menu-item>
                   <a-menu-item key="openEnv">
-                    环境变量
+                    <a :href="`#/app/env/${record.id}`">环境变量</a>
                   </a-menu-item>
                 </a-menu>
               </template>
@@ -320,9 +318,6 @@ const moreMenuHandler = {
         })
       }
     })
-  },
-  openEnv(record) {
-    this.$router.push({ path: `/app/env/${record.id}` })
   }
 }
 
@@ -440,11 +435,6 @@ export default {
     add() {
       this.$refs.addModal.add()
     },
-    toConfig(id) {
-      this.$router.push({
-        path: `/app/conf/${id}`
-      })
-    },
     buildApp(id) {
       this.$refs.buildModal.openBuild(this.query.profileId, id)
     },
@@ -470,7 +460,8 @@ export default {
       })
     },
     menuHandler({ key }, record) {
-      moreMenuHandler[key].call(this, record)
+      const handler = moreMenuHandler[key]
+      handler && handler.call(this, record)
     },
     openExport() {
       this.$refs.export.open()

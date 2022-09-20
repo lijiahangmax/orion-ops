@@ -73,7 +73,9 @@
           <a target="_blank" href="#/machine/terminal">
             <a-button class="mr8" type="primary" icon="desktop">Terminal</a-button>
           </a>
-          <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
+          <a href="#/machine/add">
+            <a-button class="mr8" type="primary" icon="plus">新建</a-button>
+          </a>
           <a-divider type="vertical"/>
           <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
           <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
@@ -128,9 +130,6 @@
               </a-button>
             </a-popconfirm>
             <a-divider type="vertical"/>
-            <!-- 详情 -->
-            <a @click="openDetail(record.id)">详情</a>
-            <a-divider type="vertical"/>
             <!-- 终端 -->
             <a-button class="p0"
                       type="link"
@@ -161,14 +160,20 @@
               </a>
               <template #overlay>
                 <a-menu @click="menuHandler($event, record)">
+                  <a-menu-item key="detail">
+                    详情
+                  </a-menu-item>
                   <a-menu-item key="update">
-                    编辑
+                    <a :href="`#/machine/update/${record.id}`">编辑</a>
                   </a-menu-item>
                   <a-menu-item v-if="record.id !== 1" key="delete">
                     删除
                   </a-menu-item>
                   <a-menu-item key="copy">
                     复制
+                  </a-menu-item>
+                  <a-menu-item key="bindKey" v-if="record.authType === MACHINE_AUTH_TYPE.SECRET_KEY.value">
+                    绑定秘钥
                   </a-menu-item>
                   <a-menu-item key="ping" v-if="record.status === 1">
                     ping
@@ -177,7 +182,7 @@
                     测试连接
                   </a-menu-item>
                   <a-menu-item key="openEnv">
-                    环境变量
+                    <a :href="`#/machine/env/${record.id}`">环境变量</a>
                   </a-menu-item>
                 </a-menu>
               </template>
@@ -186,51 +191,54 @@
         </a-table>
       </div>
     </div>
-    <!-- 终端模态框 -->
-    <div v-if="openTerminalArr.length">
-      <TerminalModal v-for="openTerminal of openTerminalArr"
-                     :key="openTerminal.terminalId"
-                     :ref='`terminalModal${openTerminal.terminalId}`'
-                     :visibleMinimize="true"
-                     @close="closedTerminal"
-                     @minimize="minimizeTerminal"/>
+    <!-- 事件 -->
+    <div class="machine-event-container">
+      <!-- 终端模态框 -->
+      <div v-if="openTerminalArr.length">
+        <TerminalModal v-for="openTerminal of openTerminalArr"
+                       :key="openTerminal.terminalId"
+                       :ref='`terminalModal${openTerminal.terminalId}`'
+                       :visibleMinimize="true"
+                       @close="closedTerminal"
+                       @minimize="minimizeTerminal"/>
+      </div>
+      <!-- 终端最小化 -->
+      <div class="terminal-minimize-container">
+        <a-card v-for="minimizeTerminal of minimizeTerminalArr"
+                :key="minimizeTerminal.terminalId"
+                :title="`${minimizeTerminal.name} (${minimizeTerminal.host})`"
+                class="terminal-minimize-item pointer"
+                size="small"
+                @click="maximizeTerminal(minimizeTerminal.terminalId)">
+          <!-- 关闭按钮 -->
+          <template #extra>
+            <a-icon class="ml4 pointer"
+                    type="close"
+                    title="关闭"
+                    @click.stop="closeMinimizeTerminal(minimizeTerminal.terminalId)"/>
+          </template>
+        </a-card>
+      </div>
+      <!-- 详情模态框 -->
+      <MachineDetailModal ref="detailModal"/>
+      <!-- 详情模态框 -->
+      <MachineKeyBindModal ref="keyBindModal" @bindSuccess="bindKeySuccess"/>
+      <!-- 导出模态框 -->
+      <MachineExportModal ref="export"/>
+      <!-- 导入模态框 -->
+      <DataImportModal ref="import" :importType="importType"/>
     </div>
-    <!-- 终端最小化 -->
-    <div class="terminal-minimize-container">
-      <a-card v-for="minimizeTerminal of minimizeTerminalArr"
-              :key="minimizeTerminal.terminalId"
-              :title="`${minimizeTerminal.name} (${minimizeTerminal.host})`"
-              class="terminal-minimize-item pointer"
-              size="small"
-              @click="maximizeTerminal(minimizeTerminal.terminalId)">
-        <!-- 关闭按钮 -->
-        <template #extra>
-          <a-icon class="ml4 pointer"
-                  type="close"
-                  title="关闭"
-                  @click.stop="closeMinimizeTerminal(minimizeTerminal.terminalId)"/>
-        </template>
-      </a-card>
-    </div>
-    <!-- 添加模态框 -->
-    <AddMachineModal ref="addModal" @added="getList()" @updated="getList()"/>
-    <!-- 详情模态框 -->
-    <MachineDetailModal ref="detailModal"/>
-    <!-- 导出模态框 -->
-    <MachineExportModal ref="export"/>
-    <!-- 导入模态框 -->
-    <DataImportModal ref="import" :importType="importType"/>
   </div>
 </template>
 
 <script>
-import { enumValueOf, ENABLE_STATUS, IMPORT_TYPE } from '@/lib/enum'
+import { enumValueOf, ENABLE_STATUS, MACHINE_AUTH_TYPE, IMPORT_TYPE } from '@/lib/enum'
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
-import AddMachineModal from '@/components/machine/AddMachineModal'
 import TerminalModal from '@/components/terminal/TerminalModal'
 import MachineExportModal from '@/components/export/MachineExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
+import MachineKeyBindModal from '@/components/machine/MachineKeyBindModal'
 
 const columns = [
   {
@@ -262,14 +270,14 @@ const columns = [
     key: 'operation',
     fixed: 'right',
     align: 'center',
-    width: 280,
+    width: 240,
     scopedSlots: { customRender: 'action' }
   }
 ]
 
 const moreMenuHandler = {
-  update(record) {
-    this.$refs.addModal.update(record.id)
+  detail(record) {
+    this.$refs.detailModal.open(record.id)
   },
   delete(record) {
     this.$confirm({
@@ -304,6 +312,9 @@ const moreMenuHandler = {
       }
     })
   },
+  bindKey(record) {
+    this.$refs.keyBindModal.open(record.id, record.keyId, record.name)
+  },
   ping(record) {
     const ping = this.$message.loading(`ping ${record.host}`)
     this.$api.machineTestPing({
@@ -336,27 +347,23 @@ const moreMenuHandler = {
       connecting()
       this.$message.error(`无法连接 ${ssh}`)
     })
-  },
-  openEnv(record) {
-    this.$router.push({
-      path: `/machine/env/${record.id}`
-    })
   }
 }
 
 export default {
   name: 'MachineList',
   components: {
+    MachineKeyBindModal,
     MachineAutoComplete,
     DataImportModal,
     MachineExportModal,
     TerminalModal,
-    MachineDetailModal,
-    AddMachineModal
+    MachineDetailModal
   },
   data() {
     return {
       ENABLE_STATUS,
+      MACHINE_AUTH_TYPE,
       rows: [],
       query: {
         id: undefined,
@@ -428,20 +435,15 @@ export default {
         this.getList({})
       }
     },
-    openAdd() {
-      this.$refs.addModal.add()
-    },
     openExport() {
       this.$refs.export.open()
     },
     openImport() {
       this.$refs.import.open()
     },
-    openDetail(id) {
-      this.$refs.detailModal.open(id)
-    },
     menuHandler({ key }, record) {
-      moreMenuHandler[key].call(this, record)
+      const handler = moreMenuHandler[key]
+      handler && handler.call(this, record)
     },
     changeStatus(record) {
       if (record.id === 1) {
@@ -482,6 +484,13 @@ export default {
       }).then(() => {
         this.$message.success('删除成功')
         this.getList({})
+      })
+    },
+    bindKeySuccess(id, keyId) {
+      this.rows.forEach(row => {
+        if (row.id === id) {
+          row.keyId = keyId
+        }
       })
     },
     openTerminal(e, record) {
@@ -569,7 +578,6 @@ export default {
   text-shadow: none;
   box-shadow: none;
   cursor: not-allowed;
-  pointer-events: none;
 }
 
 .host-machine-label {

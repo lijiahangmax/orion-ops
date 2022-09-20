@@ -68,7 +68,7 @@ export default {
     },
     closeLoading() {
       this.globalLoading = false
-      this.globalLoadingTip = ''
+      this.globalLoadingTip = null
     }
   },
   async beforeCreate() {

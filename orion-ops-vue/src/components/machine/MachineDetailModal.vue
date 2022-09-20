@@ -2,6 +2,7 @@
   <a-modal v-model="visible"
            title="详情"
            width="700px"
+           :footer="null"
            :maskClosable="false"
            :destroyOnClose="true">
     <a-spin :spinning="loading">
@@ -59,9 +60,6 @@
         </a-descriptions>
       </div>
     </a-spin>
-    <template #footer>
-      <a-button @click="close">关闭</a-button>
-    </template>
   </a-modal>
 </template>
 
