@@ -112,6 +112,28 @@ public class MachineInfoController {
         return machineInfoService.testConnect(id);
     }
 
+    @PostMapping("/direct-test-ping")
+    @ApiOperation(value = "直接尝试ping机器")
+    public Integer directPing(@RequestBody MachineInfoRequest request) {
+        String host = Valid.notBlank(request.getHost());
+        return machineInfoService.testPing(host);
+    }
+
+    @PostMapping("/direct-test-connect")
+    @ApiOperation(value = "直接尝试连接机器")
+    public Integer directConnect(@RequestBody MachineInfoRequest request) {
+        Valid.allNotBlank(request.getHost(), request.getUsername());
+        Integer sshPort = Valid.notNull(request.getSshPort());
+        Valid.inRange(sshPort, 2, 65534, MessageConst.ABSENT_PARAM);
+        MachineAuthType authType = Valid.notNull(MachineAuthType.of(request.getAuthType()));
+        if (MachineAuthType.PASSWORD.equals(authType)) {
+            Valid.notBlank(request.getPassword());
+        } else if (MachineAuthType.SECRET_KEY.equals(authType)) {
+            Valid.notNull(request.getKeyId());
+        }
+        return machineInfoService.testConnect(request);
+    }
+
     /**
      * 合法校验
      */
