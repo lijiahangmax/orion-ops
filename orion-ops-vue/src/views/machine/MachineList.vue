@@ -184,6 +184,9 @@
                   <a-menu-item key="openEnv">
                     <a :href="`#/machine/env/${record.id}`">环境变量</a>
                   </a-menu-item>
+                  <a-menu-item key="openMonitor">
+                    <a :href="`#/machine/monitor/metrics/${record.id}`">机器监控</a>
+                  </a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>

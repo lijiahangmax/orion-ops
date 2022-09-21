@@ -323,7 +323,6 @@ export default {
     async checkMonitor(rows) {
       for (const row of rows) {
         this.$emit('openLoading', `${row.machineName}(${row.machineHost}) 正在检测...`)
-        const beforeStatus = row.status
         try {
           const { data } = await this.$api.checkMachineMonitorAgentStatus({
             machineId: row.machineId
@@ -331,7 +330,7 @@ export default {
           row.status = data.status
           row.currentVersion = data.currentVersion || row.currentVersion
         } catch {
-          row.status = beforeStatus
+          // ignore
         }
       }
       this.$emit('closeLoading')
