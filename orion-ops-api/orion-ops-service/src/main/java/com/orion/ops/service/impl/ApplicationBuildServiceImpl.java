@@ -12,7 +12,6 @@ import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.app.*;
 import com.orion.ops.constant.env.EnvConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.*;
 import com.orion.ops.entity.domain.*;
@@ -364,13 +363,13 @@ public class ApplicationBuildServiceImpl implements ApplicationBuildService {
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_ID, buildId + Strings.EMPTY);
         env.put(EnvConst.BUILD_PREFIX + EnvConst.BUILD_SEQ, buildSeq + Strings.EMPTY);
-        env.put(EnvConst.BUILD_PREFIX + EnvConst.BRANCH, request.getBranchName() + Strings.EMPTY);
-        env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId() + Strings.EMPTY);
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BRANCH, request.getBranchName());
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.COMMIT, request.getCommitId());
+        env.put(EnvConst.BUILD_PREFIX + EnvConst.BUNDLE_PATH, Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), bundlePathReal));
         if (repoId != null) {
             env.put(EnvConst.BUILD_PREFIX + EnvConst.REPO_HOME, Files1.getPath(SystemEnvAttr.REPO_PATH.getValue(), repoId + "/" + buildId));
             env.put(EnvConst.BUILD_PREFIX + EnvConst.REPO_EVENT_HOME, Utils.getRepositoryEventDir(repoId));
         }
-        env.put(EnvConst.BUILD_PREFIX + EnvConst.BUNDLE_PATH, bundlePathReal);
         return env;
     }
 

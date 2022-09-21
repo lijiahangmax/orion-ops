@@ -846,9 +846,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_ID, build.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUNDLE_PATH, release.getBundlePath() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName());
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId());
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUNDLE_PATH, Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), release.getBundlePath()));
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_TITLE, release.getReleaseTitle());
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.TRANSFER_PATH, release.getTransferPath());
