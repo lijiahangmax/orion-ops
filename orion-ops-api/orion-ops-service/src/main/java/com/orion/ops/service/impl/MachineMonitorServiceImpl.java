@@ -205,9 +205,13 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
 
     @Override
     public MachineMonitorVO checkMonitorStatus(Long machineId) {
+        MachineMonitorVO returnValue = new MachineMonitorVO();
+        // 获取监控配置
         MachineMonitorVO monitor = this.getMonitorConfig(machineId);
+        // 启动中直接返回
         if (monitor.getStatus().equals(MonitorStatus.STARTING.getStatus())) {
-            return new MachineMonitorVO();
+            returnValue.setStatus(monitor.getStatus());
+            return returnValue;
         }
         MachineMonitorDO update = new MachineMonitorDO();
         update.setId(monitor.getId());
@@ -224,7 +228,6 @@ public class MachineMonitorServiceImpl implements MachineMonitorService {
         // 更新状态
         machineMonitorDAO.updateById(update);
         // 返回
-        MachineMonitorVO returnValue = new MachineMonitorVO();
         returnValue.setStatus(update.getMonitorStatus());
         returnValue.setCurrentVersion(update.getAgentVersion());
         return returnValue;
