@@ -122,9 +122,10 @@ public class MonitorAgentInstallTask implements Runnable {
             File localAgentFile = new File(SystemEnvAttr.MACHINE_MONITOR_AGENT_PATH.getValue());
             // 查询文件是否存在
             long size = executor.getSize(agentPath);
-            if (localAgentFile.length() != size) {
+            long totalSize = localAgentFile.length();
+            if (totalSize != size) {
                 // 传输文件
-                this.appendLog("插件包不存在-开始传输 {} {}B", agentPath, size);
+                this.appendLog("插件包不存在-开始传输 {} {}B", agentPath, totalSize);
                 executor.uploadFile(agentPath, localAgentFile);
                 this.appendLog("插件包传输完成 {}", agentPath);
             } else {
