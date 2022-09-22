@@ -1,5 +1,205 @@
 ⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
 
+## 1.2.0
+
+> sql 脚本
+
+```sql
+
+ALTER TABLE `web_side_message` 
+DROP COLUMN `params_json`,
+ADD COLUMN `rel_id` bigint(0) NULL COMMENT '消息关联id' AFTER `send_message`;
+
+ALTER TABLE `machine_info` 
+ADD COLUMN `key_id` bigint(0) NULL COMMENT '秘钥id' AFTER `proxy_id`,
+MODIFY COLUMN `auth_type` tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立秘钥' AFTER `password`;
+ 
+UPDATE web_side_message SET message_type = 2010 WHERE message_type IN (2030, 2050, 2070, 2090, 2110, 2130);
+UPDATE web_side_message SET message_type = 2020 WHERE message_type IN (2040, 2060, 2080, 2100, 2120, 2140);
+
+UPDATE user_event_log SET event_classify = 100 WHERE event_classify = 5;
+UPDATE user_event_log SET event_classify = 110 WHERE event_classify = 55;
+UPDATE user_event_log SET event_classify = 120 WHERE event_classify = 57;
+UPDATE user_event_log SET event_classify = 200 WHERE event_classify = 10;
+UPDATE user_event_log SET event_classify = 210 WHERE event_classify = 15;
+UPDATE user_event_log SET event_classify = 220 WHERE event_classify = 20;
+UPDATE user_event_log SET event_classify = 230 WHERE event_classify = 25;
+UPDATE user_event_log SET event_classify = 240 WHERE event_classify = 27;
+UPDATE user_event_log SET event_classify = 250 WHERE event_classify = 28;
+UPDATE user_event_log SET event_classify = 260 WHERE event_classify = 30;
+UPDATE user_event_log SET event_classify = 270 WHERE event_classify = 35;
+UPDATE user_event_log SET event_classify = 300 WHERE event_classify = 40;
+UPDATE user_event_log SET event_classify = 310 WHERE event_classify = 45;
+UPDATE user_event_log SET event_classify = 320 WHERE event_classify = 100;
+UPDATE user_event_log SET event_classify = 400 WHERE event_classify = 60;
+UPDATE user_event_log SET event_classify = 410 WHERE event_classify = 65;
+UPDATE user_event_log SET event_classify = 420 WHERE event_classify = 70;
+UPDATE user_event_log SET event_classify = 430 WHERE event_classify = 75;
+UPDATE user_event_log SET event_classify = 440 WHERE event_classify = 80;
+UPDATE user_event_log SET event_classify = 450 WHERE event_classify = 85;
+UPDATE user_event_log SET event_classify = 460 WHERE event_classify = 88;
+UPDATE user_event_log SET event_classify = 500 WHERE event_classify = 50;
+UPDATE user_event_log SET event_classify = 510 WHERE event_classify = 52;
+UPDATE user_event_log SET event_classify = 600 WHERE event_classify = 95;
+UPDATE user_event_log SET event_classify = 610 WHERE event_classify = 90;
+UPDATE user_event_log SET event_classify = 620 WHERE event_classify = 110;
+UPDATE user_event_log SET event_classify = 630 WHERE event_classify = 120;
+UPDATE user_event_log SET event_classify = 640 WHERE event_classify = 130;
+
+UPDATE user_event_log SET event_type = 100010 WHERE event_type = 1005;
+UPDATE user_event_log SET event_type = 100020 WHERE event_type = 1010;
+UPDATE user_event_log SET event_type = 100030 WHERE event_type = 1015;
+UPDATE user_event_log SET event_type = 110010 WHERE event_type = 1105;
+UPDATE user_event_log SET event_type = 110020 WHERE event_type = 1110;
+UPDATE user_event_log SET event_type = 110030 WHERE event_type = 1115;
+UPDATE user_event_log SET event_type = 110040 WHERE event_type = 1120;
+UPDATE user_event_log SET event_type = 110050 WHERE event_type = 1125;
+UPDATE user_event_log SET event_type = 120010 WHERE event_type = 1205;
+UPDATE user_event_log SET event_type = 120020 WHERE event_type = 1210;
+UPDATE user_event_log SET event_type = 120030 WHERE event_type = 1215;
+UPDATE user_event_log SET event_type = 200010 WHERE event_type = 2005;
+UPDATE user_event_log SET event_type = 200020 WHERE event_type = 2010;
+UPDATE user_event_log SET event_type = 200030 WHERE event_type = 2015;
+UPDATE user_event_log SET event_type = 200040 WHERE event_type = 2020;
+UPDATE user_event_log SET event_type = 200050 WHERE event_type = 2025;
+UPDATE user_event_log SET event_type = 210010 WHERE event_type = 2105;
+UPDATE user_event_log SET event_type = 210020 WHERE event_type = 2110;
+UPDATE user_event_log SET event_type = 220010 WHERE event_type = 2205;
+UPDATE user_event_log SET event_type = 220020 WHERE event_type = 2210;
+UPDATE user_event_log SET event_type = 220030 WHERE event_type = 2215;
+UPDATE user_event_log SET event_type = 220040 WHERE event_type = 2220;
+UPDATE user_event_log SET event_type = 220050 WHERE event_type = 2225;
+UPDATE user_event_log SET event_type = 220060 WHERE event_type = 2230;
+UPDATE user_event_log SET event_type = 220070 WHERE event_type = 2235;
+UPDATE user_event_log SET event_type = 220080 WHERE event_type = 2240;
+UPDATE user_event_log SET event_type = 230010 WHERE event_type = 2305;
+UPDATE user_event_log SET event_type = 230020 WHERE event_type = 2310;
+UPDATE user_event_log SET event_type = 230030 WHERE event_type = 2315;
+UPDATE user_event_log SET event_type = 240010 WHERE event_type = 2350;
+UPDATE user_event_log SET event_type = 240020 WHERE event_type = 2355;
+UPDATE user_event_log SET event_type = 250010 WHERE event_type = 2370;
+UPDATE user_event_log SET event_type = 250020 WHERE event_type = 2375;
+UPDATE user_event_log SET event_type = 250030 WHERE event_type = 2380;
+UPDATE user_event_log SET event_type = 260010 WHERE event_type = 2400;
+UPDATE user_event_log SET event_type = 260020 WHERE event_type = 2405;
+UPDATE user_event_log SET event_type = 260030 WHERE event_type = 2410;
+UPDATE user_event_log SET event_type = 260040 WHERE event_type = 2415;
+UPDATE user_event_log SET event_type = 270010 WHERE event_type = 2500;
+UPDATE user_event_log SET event_type = 270020 WHERE event_type = 2505;
+UPDATE user_event_log SET event_type = 270030 WHERE event_type = 2510;
+UPDATE user_event_log SET event_type = 270040 WHERE event_type = 2515;
+UPDATE user_event_log SET event_type = 270050 WHERE event_type = 2520;
+UPDATE user_event_log SET event_type = 270060 WHERE event_type = 2525;
+UPDATE user_event_log SET event_type = 270070 WHERE event_type = 2530;
+UPDATE user_event_log SET event_type = 270080 WHERE event_type = 2535;
+UPDATE user_event_log SET event_type = 270090 WHERE event_type = 2540;
+UPDATE user_event_log SET event_type = 270100 WHERE event_type = 2545;
+UPDATE user_event_log SET event_type = 270110 WHERE event_type = 2550;
+UPDATE user_event_log SET event_type = 270120 WHERE event_type = 2555;
+UPDATE user_event_log SET event_type = 300010 WHERE event_type = 2605;
+UPDATE user_event_log SET event_type = 300020 WHERE event_type = 2610;
+UPDATE user_event_log SET event_type = 300030 WHERE event_type = 2615;
+UPDATE user_event_log SET event_type = 310010 WHERE event_type = 2705;
+UPDATE user_event_log SET event_type = 310020 WHERE event_type = 2710;
+UPDATE user_event_log SET event_type = 310030 WHERE event_type = 2715;
+UPDATE user_event_log SET event_type = 310040 WHERE event_type = 2720;
+UPDATE user_event_log SET event_type = 320010 WHERE event_type = 7105;
+UPDATE user_event_log SET event_type = 320020 WHERE event_type = 7110;
+UPDATE user_event_log SET event_type = 320030 WHERE event_type = 7115;
+UPDATE user_event_log SET event_type = 320040 WHERE event_type = 7120;
+UPDATE user_event_log SET event_type = 320050 WHERE event_type = 7125;
+UPDATE user_event_log SET event_type = 320060 WHERE event_type = 7130;
+UPDATE user_event_log SET event_type = 320070 WHERE event_type = 7135;
+UPDATE user_event_log SET event_type = 320080 WHERE event_type = 7140;
+UPDATE user_event_log SET event_type = 320090 WHERE event_type = 7145;
+UPDATE user_event_log SET event_type = 400010 WHERE event_type = 3005;
+UPDATE user_event_log SET event_type = 400020 WHERE event_type = 3010;
+UPDATE user_event_log SET event_type = 400030 WHERE event_type = 3015;
+UPDATE user_event_log SET event_type = 400040 WHERE event_type = 3020;
+UPDATE user_event_log SET event_type = 400050 WHERE event_type = 3025;
+UPDATE user_event_log SET event_type = 400060 WHERE event_type = 3030;
+UPDATE user_event_log SET event_type = 410010 WHERE event_type = 3105;
+UPDATE user_event_log SET event_type = 410020 WHERE event_type = 3110;
+UPDATE user_event_log SET event_type = 410030 WHERE event_type = 3115;
+UPDATE user_event_log SET event_type = 420010 WHERE event_type = 3205;
+UPDATE user_event_log SET event_type = 420020 WHERE event_type = 3210;
+UPDATE user_event_log SET event_type = 430010 WHERE event_type = 3305;
+UPDATE user_event_log SET event_type = 430020 WHERE event_type = 3310;
+UPDATE user_event_log SET event_type = 430030 WHERE event_type = 3315;
+UPDATE user_event_log SET event_type = 430040 WHERE event_type = 3320;
+UPDATE user_event_log SET event_type = 430050 WHERE event_type = 3325;
+UPDATE user_event_log SET event_type = 430060 WHERE event_type = 3330;
+UPDATE user_event_log SET event_type = 440010 WHERE event_type = 4005;
+UPDATE user_event_log SET event_type = 440020 WHERE event_type = 4010;
+UPDATE user_event_log SET event_type = 440030 WHERE event_type = 4015;
+UPDATE user_event_log SET event_type = 440040 WHERE event_type = 4020;
+UPDATE user_event_log SET event_type = 450010 WHERE event_type = 5005;
+UPDATE user_event_log SET event_type = 450020 WHERE event_type = 5010;
+UPDATE user_event_log SET event_type = 450030 WHERE event_type = 5015;
+UPDATE user_event_log SET event_type = 450040 WHERE event_type = 5020;
+UPDATE user_event_log SET event_type = 450050 WHERE event_type = 5025;
+UPDATE user_event_log SET event_type = 450060 WHERE event_type = 5030;
+UPDATE user_event_log SET event_type = 450070 WHERE event_type = 5035;
+UPDATE user_event_log SET event_type = 450080 WHERE event_type = 5040;
+UPDATE user_event_log SET event_type = 450090 WHERE event_type = 5045;
+UPDATE user_event_log SET event_type = 450100 WHERE event_type = 5050;
+UPDATE user_event_log SET event_type = 450110 WHERE event_type = 5055;
+UPDATE user_event_log SET event_type = 460010 WHERE event_type = 5505;
+UPDATE user_event_log SET event_type = 460020 WHERE event_type = 5510;
+UPDATE user_event_log SET event_type = 460030 WHERE event_type = 5515;
+UPDATE user_event_log SET event_type = 460040 WHERE event_type = 5605;
+UPDATE user_event_log SET event_type = 460050 WHERE event_type = 5610;
+UPDATE user_event_log SET event_type = 460060 WHERE event_type = 5615;
+UPDATE user_event_log SET event_type = 460070 WHERE event_type = 5620;
+UPDATE user_event_log SET event_type = 460080 WHERE event_type = 5625;
+UPDATE user_event_log SET event_type = 460090 WHERE event_type = 5630;
+UPDATE user_event_log SET event_type = 460100 WHERE event_type = 5635;
+UPDATE user_event_log SET event_type = 460110 WHERE event_type = 5640;
+UPDATE user_event_log SET event_type = 460120 WHERE event_type = 5645;
+UPDATE user_event_log SET event_type = 460130 WHERE event_type = 5650;
+UPDATE user_event_log SET event_type = 500010 WHERE event_type = 2805;
+UPDATE user_event_log SET event_type = 500020 WHERE event_type = 2810;
+UPDATE user_event_log SET event_type = 500030 WHERE event_type = 2815;
+UPDATE user_event_log SET event_type = 510010 WHERE event_type = 2905;
+UPDATE user_event_log SET event_type = 510020 WHERE event_type = 2910;
+UPDATE user_event_log SET event_type = 510030 WHERE event_type = 2915;
+UPDATE user_event_log SET event_type = 600010 WHERE event_type = 6105;
+UPDATE user_event_log SET event_type = 600020 WHERE event_type = 6110;
+UPDATE user_event_log SET event_type = 600030 WHERE event_type = 6115;
+UPDATE user_event_log SET event_type = 600040 WHERE event_type = 6120;
+UPDATE user_event_log SET event_type = 610010 WHERE event_type = 6005;
+UPDATE user_event_log SET event_type = 610020 WHERE event_type = 6010;
+UPDATE user_event_log SET event_type = 610030 WHERE event_type = 6015;
+UPDATE user_event_log SET event_type = 610040 WHERE event_type = 6020;
+UPDATE user_event_log SET event_type = 620010 WHERE event_type = 8105;
+UPDATE user_event_log SET event_type = 620020 WHERE event_type = 8110;
+UPDATE user_event_log SET event_type = 620030 WHERE event_type = 8115;
+UPDATE user_event_log SET event_type = 620040 WHERE event_type = 8120;
+UPDATE user_event_log SET event_type = 620050 WHERE event_type = 8125;
+UPDATE user_event_log SET event_type = 620060 WHERE event_type = 8130;
+UPDATE user_event_log SET event_type = 620070 WHERE event_type = 8140;
+UPDATE user_event_log SET event_type = 630010 WHERE event_type = 8305;
+UPDATE user_event_log SET event_type = 630020 WHERE event_type = 8310;
+UPDATE user_event_log SET event_type = 630030 WHERE event_type = 8315;
+UPDATE user_event_log SET event_type = 630040 WHERE event_type = 8320;
+UPDATE user_event_log SET event_type = 630050 WHERE event_type = 8325;
+UPDATE user_event_log SET event_type = 630060 WHERE event_type = 8330;
+UPDATE user_event_log SET event_type = 630070 WHERE event_type = 8335;
+UPDATE user_event_log SET event_type = 640010 WHERE event_type = 8505;
+UPDATE user_event_log SET event_type = 640020 WHERE event_type = 8510;
+UPDATE user_event_log SET event_type = 640030 WHERE event_type = 8515;
+UPDATE user_event_log SET event_type = 640040 WHERE event_type = 8520;
+UPDATE user_event_log SET event_type = 640050 WHERE event_type = 8550;
+UPDATE user_event_log SET event_type = 640060 WHERE event_type = 8555;
+UPDATE user_event_log SET event_type = 640070 WHERE event_type = 8560;
+UPDATE user_event_log SET event_type = 640080 WHERE event_type = 8605;
+UPDATE user_event_log SET event_type = 640090 WHERE event_type = 8615;
+ 
+UPDATE user_event_log SET event_type = 620010 WHERE event_type IN (620020, 620030, 620040, 620050, 620060, 620070);
+UPDATE user_event_log SET event_type = 630010 WHERE event_type IN (630020, 630030, 630040, 630050, 630060, 630070);
+UPDATE user_event_log SET event_type = 640010 WHERE event_type IN (640020, 640030, 640040, 640050, 640060, 640070, 640080, 640090);
+```
+
 ## 1.2.0-beta
 
 > sql 脚本

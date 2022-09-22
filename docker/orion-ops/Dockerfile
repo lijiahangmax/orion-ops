@@ -13,7 +13,7 @@ RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config && 
     ssh-keygen -t ed25519 -P '' -f /etc/ssh/ssh_host_ed25519_key && \
     echo 'root:orionadmin' | chpasswd
 WORKDIR /app
-COPY orion-ops-api/orion-ops-web/target/orion-ops-web-1.2.0-beta.jar /app/app.jar
+COPY orion-ops-api/orion-ops-web/target/orion-ops-web-1.2.0.jar /app/app.jar
 COPY orion-ops-vue/dist/index.html /usr/share/nginx/html/
 COPY orion-ops-vue/dist /usr/share/nginx/html/ops
 ADD docker/orion-ops/entrypoint.sh /app/entrypoint.sh

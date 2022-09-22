@@ -8,7 +8,7 @@
 重启后端服务 添加启动参数 `--reset-admin` 会将 `orionadmin` 的密码重置为 `orionadmin`
 
 ```
-nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --reset-admin &
+nohup java -jar orion-ops-web-1.2.0.jar --spring.profiles.active=prod --reset-admin &
 ```
 
 <br/> 
@@ -18,7 +18,7 @@ nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --res
 重启后端服务 添加启动参数 `--disable-ip-filter` 会将禁用ip过滤器
 
 ```
-nohup java -jar orion-ops-web-1.2.0-beta.jar --spring.profiles.active=prod --disable-ip-filter &
+nohup java -jar orion-ops-web-1.2.0.jar --spring.profiles.active=prod --disable-ip-filter &
 ```
 
 <br/> 
@@ -109,12 +109,25 @@ server {
 同理, 在命令的最后一行设置 `exit 1` 结果将会是失败, 可以用此来中断后续流程  
 <br/>
 
-> ##### 17. 添加机器全局密钥时提示添加失败
+> ##### 17. 为什么使用秘钥认证还是无法连接机器?
 
-生成秘钥时可以指定密钥 -m PEM
+```
+# 升级 openssh
+yum update openssh
+sshd -v (我的版本: OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017)
 
-```shell
+# 生成秘钥时添加参数 -m PEM
 ssh-keygen -t rsa -m PEM
+chmod 700  ~/.ssh
+chmod 700  ~/.ssh/authorized_keys 
+
+# 修改 sshd 配置 /etc/ssh/sshd_config
+PubkeyAuthentication yes
+RSAAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+
+# 重启 sshd 服务
+service sshd restart
 ```
 
 <br/>
@@ -128,4 +141,25 @@ ssh-keygen -t rsa -m PEM
 
 这是 ANSI 码, 用于日志展示中的着色  
 系统提供了批量清除的功能, 在 `执行管理` > `日志面板` > `清除ANSI`
+<br/>
+
+> ##### 20. 执行命令时 可以用哪些环境变量?
+
+| 环境变量           | 描述                 |        
+| :----            | :---                 | 
+| `@{app.xxx}`     | 应用信息以及应用环境变量  | 
+| `@{machine.xxx}` | 机器信息以及机器环境变量  | 
+| `@{system.xxx}`  | 系统环境变量            |
+| `@{build.xxx}`   | 应用构建业务上下文       | 
+| `@{release.xxx}` | 应用发布业务上下文       |
+
+| 业务场景 | 可用变量                            |        
+| :----   | :---                              | 
+| 批量执行 | `machine` `system`                 | 
+| 定时任务 | `machine` `system`                 | 
+| 构建配置 | `build` `app` `machine` `system`   |
+| 发布配置 | `release` `app` `machine` `system` | 
+
+⚡ 详细使用请参考操作手册~
+
 <br/>

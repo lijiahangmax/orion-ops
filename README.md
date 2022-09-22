@@ -25,7 +25,7 @@
 
 <br/>  
 
-当前最新版本: **1.2.0-beta**  
+当前最新版本: **1.2.0**  
 github: https://github.com/lijiahangmax/orion-ops  
 gitee: https://gitee.com/lijiahangmax/orion-ops  
 csdn: https://blog.csdn.net/qq_41011894  
@@ -158,9 +158,9 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 ## 联系我
 
-<img src="https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-28/files5090991341399292419.jpg" alt="联系微信" width="268px"/>   
+<img src="https://img-blog.csdnimg.cn/3d56c65f2ce943f99c466a3eae76f02f.png" alt="联系方式" width="540px"/>   
 
-📧 添加备注: ops 还不快骚扰一下~  
+📧 微信添加备注: ops 还不快骚扰一下~  
 <br/>
 
 ## 支持一下
