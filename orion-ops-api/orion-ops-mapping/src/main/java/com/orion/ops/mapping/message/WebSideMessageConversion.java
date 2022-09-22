@@ -24,7 +24,7 @@ public class WebSideMessageConversion {
             vo.setToUserId(p.getToUserId());
             vo.setToUserName(p.getToUserName());
             vo.setMessage(p.getSendMessage());
-            vo.setParamsJson(p.getParamsJson());
+            vo.setRelId(p.getRelId());
             vo.setCreateTime(p.getCreateTime());
             vo.setCreateTimeAgo(Dates.ago(p.getCreateTime()));
             return vo;

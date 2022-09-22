@@ -1,7 +1,7 @@
 <template>
   <div class="app-config-container">
     <!-- 配置tab -->
-    <div id="app-config-wrapper">
+    <div id="app-config-wrapper" class="gray-box-shadow">
       <a-tabs defaultActiveKey="1" tabPosition="left">
         <!-- 基本配置 -->
         <a-tab-pane key="1" tab="基本配置">
@@ -109,7 +109,7 @@ export default {
 #app-config-wrapper {
   background: #FFF;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 2px;
 
   .app-basic-form-wrapper {
     padding: 16px 16px 8px 16px;

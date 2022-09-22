@@ -36,70 +36,73 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">代理列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <a-popconfirm v-show="selectedRowKeys.length"
-                      placement="topRight"
-                      title="是否删除选中代理?"
-                      ok-text="确定"
-                      cancel-text="取消"
-                      @confirm="remove(selectedRowKeys)">
-          <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-        </a-popconfirm>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 主机 -->
-        <template #host="record">
-          <span>{{ record.host }}</span>
-          <a class="copy-icon-right" title="复制" @click="$copy(record.host)">
-            <a-icon type="copy"/>
-          </a>
-        </template>
-        <!-- 类型 -->
-        <template #type="record">
-          <a-tag :color="record.type | formatProxyType('color')">
-            {{ record.type | formatProxyType('label') }}
-          </a-tag>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 修改 -->
-          <a @click="update(record.id)">修改</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除当前代理?"
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">代理列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <a-popconfirm v-show="selectedRowKeys.length"
                         placement="topRight"
+                        title="是否删除选中代理?"
                         ok-text="确定"
                         cancel-text="取消"
-                        @confirm="remove([record.id])">
-            <span class="span-blue pointer">删除</span>
+                        @confirm="remove(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
           </a-popconfirm>
-        </template>
-      </a-table>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 主机 -->
+          <template #host="record">
+            <span>{{ record.host }}</span>
+            <a class="copy-icon-right" title="复制" @click="$copy(record.host)">
+              <a-icon type="copy"/>
+            </a>
+          </template>
+          <!-- 类型 -->
+          <template #type="record">
+            <a-tag :color="record.type | formatProxyType('color')">
+              {{ record.type | formatProxyType('label') }}
+            </a-tag>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 修改 -->
+            <a @click="update(record.id)">修改</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除当前代理?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="machine-proxy-event">

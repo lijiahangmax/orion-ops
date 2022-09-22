@@ -14,7 +14,7 @@
         <MachineMonitorAlarmConfig :machineId="machineId"/>
       </a-tab-pane>
       <!-- 报警配置 -->
-      <a-tab-pane :key="4" tab="报警历史">
+      <a-tab-pane :key="4" tab="报警记录">
         <MachineMonitorAlarmHistory :machineId="machineId" :machineName="machineName"/>
       </a-tab-pane>
       <!-- 拓展 -->

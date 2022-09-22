@@ -45,12 +45,6 @@
     <!-- 系统统计分析 -->
     <div class="system-analysis-descriptions">
       <a-descriptions title="系统统计分析">
-        <!-- 已挂载秘钥 -->
-        <a-descriptions-item label="已挂载秘钥" :span="3">
-          <span class="analysis-count">
-            <span class="analysis-field">{{ analysis.mountKeyCount }}</span>个
-          </span>
-        </a-descriptions-item>
         <!-- 临时文件 -->
         <a-descriptions-item label="临时文件" :span="3">
           <span class="analysis-count">
@@ -182,7 +176,6 @@ export default {
       SYSTEM_CLEAR_TYPE,
       layout,
       analysis: {
-        mountKeyCount: 0,
         tempFileCount: 0,
         tempFileSize: '0 B',
         logFileCount: 0,

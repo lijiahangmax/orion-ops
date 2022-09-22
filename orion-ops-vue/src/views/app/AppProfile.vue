@@ -22,59 +22,62 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">环境列表</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- tag -->
-        <template #tag="record">
+    <div class="table-wrapper">
+      <!-- 工具 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">环境列表</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- tag -->
+          <template #tag="record">
           <span class="span-blue">
             {{ record.tag }}
           </span>
-        </template>
-        <!-- 审核 -->
-        <template #releaseAudit="record">
+          </template>
+          <!-- 审核 -->
+          <template #releaseAudit="record">
           <span class="span-blue">
             {{ record.releaseAudit | formatReleaseAudit('label') }}
           </span>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 修改 -->
-          <a @click="update(record.id)">修改</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除当前环境?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(record.id)">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 修改 -->
+            <a @click="update(record.id)">修改</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除当前环境?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(record.id)">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="profile-list-event">
@@ -174,7 +177,7 @@ export default {
         }
       },
       loading: false,
-      importType: IMPORT_TYPE.PROFILE,
+      importType: IMPORT_TYPE.APP_PROFILE,
       columns
     }
   },

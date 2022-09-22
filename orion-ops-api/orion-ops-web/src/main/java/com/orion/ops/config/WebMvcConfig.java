@@ -96,56 +96,56 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @ExceptionHandler(value = Exception.class)
     public HttpWrapper<?> normalExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("normalExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = ApplicationException.class)
     public HttpWrapper<?> applicationExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("applicationExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(ex.getMessage());
+        return HttpWrapper.error(ex.getMessage());
     }
 
     @ExceptionHandler(value = DataAccessResourceFailureException.class)
     public HttpWrapper<?> dataAccessResourceFailureExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("dataAccessResourceFailureExceptionHandler url: {}, 抛出异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.NETWORK_FLUCTUATION);
+        return HttpWrapper.error(MessageConst.NETWORK_FLUCTUATION);
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class,
             HttpMessageNotReadableException.class, MethodArgumentNotValidException.class, BindException.class})
     public HttpWrapper<?> httpRequestExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("httpRequestExceptionHandler url: {}, http请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.INVALID_PARAM);
+        return HttpWrapper.error(MessageConst.INVALID_PARAM);
     }
 
     @ExceptionHandler(value = {HttpRequestException.class})
     public HttpWrapper<?> httpApiRequestExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("httpApiRequestExceptionHandler url: {}, http-api请求异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.HTTP_API);
+        return HttpWrapper.error(MessageConst.HTTP_API);
     }
 
     @ExceptionHandler(value = {InvalidArgumentException.class, IllegalArgumentException.class, DisabledException.class})
     public HttpWrapper<?> invalidArgumentExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("invalidArgumentExceptionHandler url: {}, 参数异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(ex.getMessage());
+        return HttpWrapper.error(ex.getMessage());
     }
 
     @ExceptionHandler(value = {IOException.class, IORuntimeException.class})
     public HttpWrapper<?> ioExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("ioExceptionHandler url: {}, io异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.IO_EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = SQLException.class)
     public HttpWrapper<?> sqlExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("sqlExceptionHandler url: {}, sql异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.SQL_EXCEPTION_MESSAGE);
+        return HttpWrapper.error(MessageConst.SQL_EXCEPTION_MESSAGE);
     }
 
     @ExceptionHandler(value = {SftpException.class, com.jcraft.jsch.SftpException.class})
     public HttpWrapper<?> sftpExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("sftpExceptionHandler url: {}, sftp处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = ParseRuntimeException.class)
@@ -153,80 +153,80 @@ public class WebMvcConfig implements WebMvcConfigurer {
         log.error("parseExceptionHandler url: {}, 解析异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
         if (Exceptions.isCausedBy(ex, EncryptedDocumentException.class)) {
             // excel 密码错误
-            return HttpWrapper.error().msg(MessageConst.OPEN_TEMPLATE_ERROR).data(ex.getMessage());
+            return HttpWrapper.error(MessageConst.OPEN_TEMPLATE_ERROR).data(ex.getMessage());
         } else {
-            return HttpWrapper.error().msg(MessageConst.PARSE_TEMPLATE_DATA_ERROR).data(ex.getMessage());
+            return HttpWrapper.error(MessageConst.PARSE_TEMPLATE_DATA_ERROR).data(ex.getMessage());
         }
     }
 
     @ExceptionHandler(value = EncryptException.class)
     public HttpWrapper<?> encryptExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("encryptExceptionHandler url: {}, 数据加密异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.ENCRYPT_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.ENCRYPT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = DecryptException.class)
     public HttpWrapper<?> decryptExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("decryptExceptionHandler url: {}, 数据解密异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.DECRYPT_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.DECRYPT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = VcsException.class)
     public HttpWrapper<?> vcsExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("vcsExceptionHandler url: {}, vcs处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.REPOSITORY_OPERATOR_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.REPOSITORY_OPERATOR_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {TaskExecuteException.class, ExecuteException.class})
     public HttpWrapper<?> taskExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("taskExceptionHandler url: {}, task处理异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.TASK_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.TASK_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = ConnectionRuntimeException.class)
     public HttpWrapper<?> connectionExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("connectionExceptionHandler url: {}, connect异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.CONNECT_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.CONNECT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {TimeoutException.class, java.util.concurrent.TimeoutException.class})
     public HttpWrapper<?> timeoutExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("timeoutExceptionHandler url: {}, timeout异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.TIMEOUT_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.TIMEOUT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = {InterruptedException.class, InterruptedRuntimeException.class, InterruptedIOException.class})
     public HttpWrapper<?> interruptExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("interruptExceptionHandler url: {}, interrupt异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.INTERRUPT_ERROR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.INTERRUPT_ERROR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = UnsafeException.class)
     public HttpWrapper<?> unsafeExceptionHandler(HttpServletRequest request, Exception ex) {
         log.error("unsafeExceptionHandler url: {}, unsafe异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.UNSAFE_OPERATOR).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.UNSAFE_OPERATOR).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = LogException.class)
     public HttpWrapper<?> logExceptionHandler(HttpServletRequest request, LogException ex) {
         log.error("logExceptionHandler url: {}, 处理异常打印日志: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.EXCEPTION_MESSAGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = ParseCronException.class)
     public HttpWrapper<?> parseCronExceptionHandler(ParseCronException ex) {
-        return HttpWrapper.error().msg(MessageConst.ERROR_EXPRESSION).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.ERROR_EXPRESSION).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
     public HttpWrapper<?> maxUploadSizeExceededExceptionHandler(HttpServletRequest request, MaxUploadSizeExceededException ex) {
         log.error("maxUploadSizeExceededExceptionHandler url: {}, 上传异常: {}, message: {}", request.getRequestURI(), ex.getClass(), ex.getMessage(), ex);
-        return HttpWrapper.error().msg(MessageConst.FILE_TOO_LARGE).data(ex.getMessage());
+        return HttpWrapper.error(MessageConst.FILE_TOO_LARGE).data(ex.getMessage());
     }
 
     @ExceptionHandler(value = CodeArgumentException.class)
     public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
-        return HttpWrapper.error().code(ex.getCode()).msg(ex.getMessage());
+        return HttpWrapper.error(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(value = HttpWrapperException.class)

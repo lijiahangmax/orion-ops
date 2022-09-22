@@ -19,7 +19,6 @@ import com.orion.ops.constant.Const;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.sftp.SftpPackageType;
 import com.orion.ops.constant.sftp.SftpTransferStatus;
 import com.orion.ops.constant.sftp.SftpTransferType;
@@ -32,20 +31,17 @@ import com.orion.ops.entity.dto.sftp.SftpSessionTokenDTO;
 import com.orion.ops.entity.dto.sftp.SftpUploadInfoDTO;
 import com.orion.ops.entity.dto.user.UserDTO;
 import com.orion.ops.entity.request.sftp.*;
-import com.orion.ops.entity.vo.sftp.FileTransferLogVO;
 import com.orion.ops.entity.vo.sftp.FileDetailVO;
 import com.orion.ops.entity.vo.sftp.FileListVO;
 import com.orion.ops.entity.vo.sftp.FileOpenVO;
+import com.orion.ops.entity.vo.sftp.FileTransferLogVO;
 import com.orion.ops.handler.sftp.IFileTransferProcessor;
 import com.orion.ops.handler.sftp.SftpBasicExecutorHolder;
 import com.orion.ops.handler.sftp.TransferProcessorManager;
 import com.orion.ops.handler.sftp.hint.FileTransferHint;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.service.api.SftpService;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.ops.utils.Utils;
-import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -526,8 +522,8 @@ public class SftpServiceImpl implements SftpService {
             }
         } else {
             // 删除本地文件
-            String loacalPath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
-            Files1.delete(loacalPath);
+            String localPath = Files1.getPath(SystemEnvAttr.SWAP_PATH.getValue(), transferLog.getLocalFile());
+            Files1.delete(localPath);
         }
         // 修改进度
         FileTransferLogDO update = new FileTransferLogDO();

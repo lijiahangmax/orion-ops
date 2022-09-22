@@ -8,7 +8,7 @@
              :href="statisticItem.redirect"
              :title="statisticItem.redirectTitle">
             <a-col :span="6" :class="statisticItem.colClass">
-              <a-card :bordered="false" :hoverable="true">
+              <a-card class="gray-box-shadow" :bordered="false" :hoverable="true">
                 <a-statistic :title="statisticItem.title" :suffix="statisticItem.suffix">
                   <template #formatter>
                     <span class="span-blue">
@@ -26,7 +26,7 @@
     <div class="statistics-center">
       <!-- 快捷导航 -->
       <div class="quick-router-container">
-        <a-card title="快捷导航" :bordered="false" style="width: 100%; height: 100%;">
+        <a-card class="gray-box-shadow" title="快捷导航" :bordered="false" style="width: 100%; height: 100%;">
           <!-- 快捷导航 -->
           <a-row>
             <a-col v-for="(quickRouterItem, index) of quickRouter" :key="index" :span="12">
@@ -48,7 +48,7 @@
       </div>
       <!-- 操作日志 -->
       <div class="event-log-container">
-        <a-card title="操作日志" :bordered="false" style="width: 100%; height: 100%;">
+        <a-card class="gray-box-shadow" title="操作日志" :bordered="false" style="width: 100%; height: 100%;">
           <EventLogList class="event-log-list-wrapper"
                         :disableSearch="true"
                         :disableAction="true"

@@ -27,6 +27,9 @@ public class MachineKeyRequest extends PageRequest {
     @ApiModelProperty(value = "id")
     private List<Long> idList;
 
+    @ApiModelProperty(value = "机器id集合")
+    private List<Long> machineIdList;
+
     @ApiModelProperty(value = "名称")
     private String name;
 
@@ -35,12 +38,6 @@ public class MachineKeyRequest extends PageRequest {
 
     @ApiModelProperty(value = "描述")
     private String description;
-
-    /**
-     * @see com.orion.ops.constant.machine.MountKeyStatus
-     */
-    @ApiModelProperty(value = "挂载状态 1未找到 2已挂载 3未挂载")
-    private Integer mountStatus;
 
     @ApiModelProperty(value = "文件base64")
     private String file;

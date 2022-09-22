@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { clearStainKeywords, dateFormat, replaceStainKeywords } from '@/lib/utils'
+import { getUUID, clearStainKeywords, dateFormat, replaceStainKeywords } from '@/lib/utils'
 import { enumValueOf, MESSAGE_CLASSIFY, MESSAGE_TYPE, READ_STATUS } from '@/lib/enum'
 
 const messageStatusList = [{
@@ -211,12 +211,16 @@ export default {
       })
     },
     clickMessage(row) {
+      // 重定向
+      this.$router.push(enumValueOf(MESSAGE_TYPE, row.type).redirect(row))
+      this.onClose()
+      if (row.status === READ_STATUS.READ.value) {
+        return
+      }
+      // 修改状态
+      row.status = READ_STATUS.READ.value
       this.$api.setMessageRead({
         idList: [row.id]
-      }).then(() => {
-        row.status = READ_STATUS.READ.value
-        this.$router.push(enumValueOf(MESSAGE_TYPE, row.type).redirect)
-        this.onClose()
       })
     },
     addMessageActive(row) {
@@ -299,10 +303,19 @@ export default {
           for (const newMessage of newMessages) {
             setTimeout(() => {
               const messageType = enumValueOf(MESSAGE_TYPE, newMessage.type)
+              const key = getUUID()
               this.$notification[messageType.notify]({
+                key,
                 message: messageType.label,
                 description: clearStainKeywords(newMessage.message),
-                duration: 5
+                duration: messageType.duration,
+                onClick: () => {
+                  this.$notification.close(key)
+                  this.$router.push(messageType.redirect(newMessage))
+                  this.$api.setMessageRead({
+                    idList: [newMessage.id]
+                  })
+                }
               })
             })
           }

@@ -5,7 +5,7 @@ import router from '../router/index'
 
 const $http = axios.create({
   responseType: 'json',
-  baseURL: process.env.VUE_APP_BASE_URI + process.env.VUE_APP_BASE_API,
+  baseURL: process.env.VUE_APP_BASE_API,
   timeout: 10000
 })
 
@@ -53,7 +53,7 @@ const $fetch = (url, method = 'get', config) => {
   return new Promise((resolve, reject) => {
     $http.request({
       url: url,
-      mehod: method,
+      method: method,
       ...fillDefaultConfig(config)
     })
       .then(res => resolve(res))
@@ -167,9 +167,9 @@ $http.interceptors.response.use(
     let rejectWrapper
     if (err instanceof RequestError) {
       // 自定义error
-      rejectWrapper = err.swap()
+      rejectWrapper = err.toWrapper()
       if (err.code === 700) {
-        rejectWrapper.tlevel('warning')
+        rejectWrapper.notifyLevel('warning')
         router.push({ path: '/login' })
       }
     } else {
@@ -177,14 +177,7 @@ $http.interceptors.response.use(
       if (!err.response || !err.response.status) {
         rejectWrapper = new RejectWrapper(0, '网络异常')
       } else {
-        switch (err.response.status) {
-          case 404:
-            rejectWrapper = new RejectWrapper(404, '接口不存在', 'warning')
-            break
-          default:
-            rejectWrapper = new RejectWrapper(err.response.status, '请求失败')
-            break
-        }
+        rejectWrapper = new RejectWrapper(err.response.status, '请求失败')
       }
     }
     if (!err.config.skipErrorMessage) {
@@ -208,7 +201,7 @@ class RequestError extends Error {
     Error.captureStackTrace(this, this.constructor)
   }
 
-  swap() {
+  toWrapper() {
     return new RejectWrapper(this.code, this.msg)
   }
 }
@@ -227,7 +220,7 @@ class RejectWrapper {
     this.level = level
   }
 
-  tlevel(_level = 'error') {
+  notifyLevel(_level = 'error') {
     this.level = _level
     return this
   }
@@ -242,7 +235,5 @@ export default {
   $get,
   $post,
   $fetch,
-  $export,
-  BASE_URL: process.env.VUE_APP_BASE_URI,
-  BASE_HOST: process.env.VUE_APP_BASE_HOST
+  $export
 }

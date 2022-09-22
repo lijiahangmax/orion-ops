@@ -237,6 +237,23 @@ const $api = {
       skipErrorMessage: true
     })
   },
+  /**
+   * 直接测试机器ping
+   */
+  machineDirectTestPing: param => {
+    return $http.$post('/machine/direct-test-ping', param, {
+      skipErrorMessage: true
+    })
+  },
+
+  /**
+   * 直接测试机器连接
+   */
+  machineDirectConnect: param => {
+    return $http.$post('/machine/direct-test-connect', param, {
+      skipErrorMessage: true
+    })
+  },
 
   /**
    * 获取终端访问信息
@@ -562,7 +579,7 @@ const $api = {
    * 添加机器代理
    */
   addMachineProxy: param => {
-    return $http.$post('/proxy/add', param, {
+    return $http.$post('/machine-proxy/add', param, {
       loading: '正在添加...'
     })
   },
@@ -571,7 +588,7 @@ const $api = {
    * 更新机器代理
    */
   updateMachineProxy: param => {
-    return $http.$post('/proxy/update', param, {
+    return $http.$post('/machine-proxy/update', param, {
       loading: '正在修改...'
     })
   },
@@ -580,21 +597,21 @@ const $api = {
    * 机器代理列表
    */
   getMachineProxyList: param => {
-    return $http.$post('/proxy/list', param)
+    return $http.$post('/machine-proxy/list', param)
   },
 
   /**
    * 机器代理详情
    */
   getMachineProxyDetail: param => {
-    return $http.$post('/proxy/detail', param)
+    return $http.$post('/machine-proxy/detail', param)
   },
 
   /**
    * 删除机器代理
    */
   deleteMachineProxy: param => {
-    return $http.$post('/proxy/delete', param, {
+    return $http.$post('/machine-proxy/delete', param, {
       loading: '正在删除...'
     })
   },
@@ -603,7 +620,7 @@ const $api = {
    * 添加秘钥
    */
   addMachineKey: param => {
-    return $http.$post('/key/add', param, {
+    return $http.$post('/machine-key/add', param, {
       loading: '正在添加...'
     })
   },
@@ -612,7 +629,7 @@ const $api = {
    * 更新秘钥
    */
   updateMachineKey: param => {
-    return $http.$post('/key/update', param, {
+    return $http.$post('/machine-key/update', param, {
       loading: '正在修改...'
     })
   },
@@ -621,7 +638,7 @@ const $api = {
    * 删除秘钥
    */
   removeMachineKey: param => {
-    return $http.$post('/key/remove', param, {
+    return $http.$post('/machine-key/remove', param, {
       loading: '正在删除...'
     })
   },
@@ -630,62 +647,22 @@ const $api = {
    * 查询秘钥列表
    */
   getMachineKeyList: param => {
-    return $http.$post('/key/list', param)
+    return $http.$post('/machine-key/list', param)
   },
 
   /**
    * 查询秘钥详情
    */
   getMachineKeyDetail: param => {
-    return $http.$post('/key/detail', param)
+    return $http.$post('/machine-key/detail', param)
   },
 
   /**
-   * 挂载秘钥
+   * 绑定机器秘钥
    */
-  mountMachineKey: param => {
-    return $http.$post('/key/mount', param, {
-      skipErrorMessage: true,
-      loading: '正在挂载...'
-    })
-  },
-
-  /**
-   * 卸载秘钥
-   */
-  dumpMachineKey: param => {
-    return $http.$post('/key/dump', param, {
-      skipErrorMessage: true,
-      loading: '正在卸载...'
-    })
-  },
-
-  /**
-   * 挂载所有秘钥
-   */
-  mountAllMachineKey: () => {
-    return $http.$get('/key/mount-all', null, {
-      skipErrorMessage: true,
-      loading: '正在挂载...'
-    })
-  },
-
-  /**
-   * 卸载所有秘钥
-   */
-  dumpAllMachineKey: () => {
-    return $http.$get('/key/dump-all', null, {
-      skipErrorMessage: true,
-      loading: '正在卸载...'
-    })
-  },
-
-  /**
-   * 临时挂载秘钥
-   */
-  tempMountMachineKey: param => {
-    return $http.$post('/key/temp-mount', param, {
-      loading: '正在挂载...'
+  bindMachineKey: param => {
+    return $http.$post('/machine-key/bind', param, {
+      loading: '正在绑定...'
     })
   },
 
@@ -1959,7 +1936,9 @@ const $api = {
    * 设置已读站内信
    */
   setMessageRead: params => {
-    return $http.$post('/message/read', params)
+    return $http.$post('/message/read', params, {
+      skipErrorMessage: true
+    })
   },
 
   /**
@@ -2193,129 +2172,19 @@ const $api = {
   },
 
   /**
-   * 清理批量执行数据
+   * 清理数据
    */
-  clearBatchExec: param => {
-    return $http.$post('/data-clear/batch-exec', param, {
+  clearData: param => {
+    return $http.$post('/data-clear/clear', param, {
       loading: '正在清理...'
     })
   },
 
   /**
-   * 清理终端日志
+   * 导出数据
    */
-  clearTerminalLog: param => {
-    return $http.$post('/data-clear/terminal-log', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 清理调度记录
-   */
-  clearSchedulerRecord: param => {
-    return $http.$post('/data-clear/scheduler-record', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 清理应用构建记录
-   */
-  clearAppBuild: param => {
-    return $http.$post('/data-clear/app-build', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 清理应用发布记录
-   */
-  clearAppRelease: param => {
-    return $http.$post('/data-clear/app-release', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 清理应用流水线记录
-   */
-  clearAppPipeline: param => {
-    return $http.$post('/data-clear/app-pipeline', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 清理操作日志
-   */
-  clearEventLog: param => {
-    return $http.$post('/data-clear/event-log', param, {
-      loading: '正在清理...'
-    })
-  },
-
-  /**
-   * 导出机器信息
-   */
-  exportMachine: param => {
-    return $http.$export('/data-export/machine', param)
-  },
-
-  /**
-   * 导出机器代理
-   */
-  exportMachineProxy: param => {
-    return $http.$export('/data-export/machine-proxy', param)
-  },
-
-  /**
-   * 导出终端日志
-   */
-  exportMachineTerminalLog: param => {
-    return $http.$export('/data-export/machine-terminal-log', param)
-  },
-
-  /**
-   * 导出日志文件
-   */
-  exportMachineTailFile: param => {
-    return $http.$export('/data-export/machine-tail-file', param)
-  },
-
-  /**
-   * 导出应用环境
-   */
-  exportAppProfile: param => {
-    return $http.$export('/data-export/app-profile', param)
-  },
-
-  /**
-   * 导出应用信息
-   */
-  exportApplication: param => {
-    return $http.$export('/data-export/application', param)
-  },
-
-  /**
-   * 导出应用版本仓库
-   */
-  exportRepository: param => {
-    return $http.$export('/data-export/repository', param)
-  },
-
-  /**
-   * 导出命令模板
-   */
-  exportCommandTemplate: param => {
-    return $http.$export('/data-export/command-template', param)
-  },
-
-  /**
-   * 导出操作日志
-   */
-  exportEventLog: param => {
-    return $http.$export('/data-export/event-log', param)
+  exportData: param => {
+    return $http.$export('/data-export/export', param)
   },
 
   /**
@@ -2342,52 +2211,10 @@ const $api = {
   },
 
   /**
-   * 导入机器信息
+   * 导入数据
    */
-  importMachineData: param => {
-    return $http.$post('/data-import/import-machine', param)
-  },
-
-  /**
-   * 导入机器代理
-   */
-  importMachineProxy: param => {
-    return $http.$post('/data-import/import-machine-proxy', param)
-  },
-
-  /**
-   * 导入日志文件
-   */
-  importTailFile: param => {
-    return $http.$post('/data-import/import-tail-file', param)
-  },
-
-  /**
-   * 导入应用环境
-   */
-  importAppProfile: param => {
-    return $http.$post('/data-import/import-app-profile', param)
-  },
-
-  /**
-   * 导入应用信息
-   */
-  importApplication: param => {
-    return $http.$post('/data-import/import-application', param)
-  },
-
-  /**
-   * 导入应用版本仓库
-   */
-  importRepository: param => {
-    return $http.$post('/data-import/import-repository', param)
-  },
-
-  /**
-   * 导入命令模板
-   */
-  importCommandTemplate: param => {
-    return $http.$post('/data-import/import-command-template', param)
+  importData: param => {
+    return $http.$post('/data-import/import', param)
   },
 
   /**
@@ -2605,7 +2432,7 @@ const $api = {
   },
 
   /**
-   * 获取机器报警历史
+   * 获取机器报警记录
    */
   getMachineAlarmHistory: param => {
     return $http.$post('/machine-alarm/history', param)

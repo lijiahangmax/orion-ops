@@ -31,84 +31,86 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">任务列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <a-popconfirm v-show="selectedRowKeys.length"
-                      placement="topRight"
-                      title="是否删除选中记录?"
-                      ok-text="确定"
-                      cancel-text="取消"
-                      @confirm="remove(selectedRowKeys)">
-          <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-        </a-popconfirm>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="caret-right" @click="openPipelineList">执行</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               @expand="expandDetails"
-               :loading="loading"
-               :expandedRowKeys.sync="expandedRowKeys"
-               size="middle">
-        <!-- 展开的详情列表 -->
-        <template #expandedRowRender="record">
-          <a-table
-            v-if="record.details"
-            :rowKey="(record, index) => index"
-            :columns="innerColumns"
-            :dataSource="record.details"
-            :loading="record.loading"
-            :pagination="false"
-            size="middle">
-            <!-- 操作 -->
-            <template #stage="detail">
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">任务列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <a-popconfirm v-show="selectedRowKeys.length"
+                        placement="topRight"
+                        title="是否删除选中记录?"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="remove(selectedRowKeys)">
+            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+          </a-popconfirm>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button v-if="query.profileId" class="ml16 mr8" type="primary" icon="caret-right" @click="openPipelineList">执行</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="delete" class="tools-icon" title="清理" @click="openClear"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 @expand="expandDetails"
+                 :loading="loading"
+                 :expandedRowKeys.sync="expandedRowKeys"
+                 size="middle">
+          <!-- 展开的详情列表 -->
+          <template #expandedRowRender="record">
+            <a-table
+              v-if="record.details"
+              :rowKey="(record, index) => index"
+              :columns="innerColumns"
+              :dataSource="record.details"
+              :loading="record.loading"
+              :pagination="false"
+              size="middle">
+              <!-- 操作 -->
+              <template #stage="detail">
               <span class="span-blue">
                 {{ detail.stageType | formatStageType('label') }}
               </span>
-            </template>
-            <!-- 配置 -->
-            <template #config="detail">
-              <!-- 构建 -->
-              <div v-if="detail.stageType === STAGE_TYPE.BUILD.value && detail.config.branchName">
-                <a-icon type="branches"/>
-                {{ detail.config.branchName }}
-                <a-tooltip v-if="detail.config.commitId">
-                  <template #title>
-                    {{ detail.config.commitId }}
-                  </template>
-                  <span class="span-blue">
+              </template>
+              <!-- 配置 -->
+              <template #config="detail">
+                <!-- 构建 -->
+                <div v-if="detail.stageType === STAGE_TYPE.BUILD.value && detail.config.branchName">
+                  <a-icon type="branches"/>
+                  {{ detail.config.branchName }}
+                  <a-tooltip v-if="detail.config.commitId">
+                    <template #title>
+                      {{ detail.config.commitId }}
+                    </template>
+                    <span class="span-blue">
                     #{{ detail.config.commitId.substring(0, 7) }}
                   </span>
-                </a-tooltip>
-              </div>
-              <!-- 发布 -->
-              <div v-if="detail.stageType === STAGE_TYPE.RELEASE.value">
-                <!-- 发布版本 -->
-                <span class="stage-config-release-version">
+                  </a-tooltip>
+                </div>
+                <!-- 发布 -->
+                <div v-if="detail.stageType === STAGE_TYPE.RELEASE.value">
+                  <!-- 发布版本 -->
+                  <span class="stage-config-release-version">
                   发布版本:
                   <span class="span-blue ml4">
                     {{ detail.config.buildSeq ? `#${detail.config.buildSeq}` : '最新版本' }}
                   </span>
                 </span>
-                <!-- 发布机器 -->
-                <span class="stage-config-release-machine">
+                  <!-- 发布机器 -->
+                  <span class="stage-config-release-machine">
                   发布机器:
                   <a-tooltip v-if="detail.config.machineIdList && detail.config.machineIdList.length">
                     <template #title>
@@ -120,134 +122,135 @@
                   </a-tooltip>
                   <span v-else class="span-blue ml4">全部机器</span>
                 </span>
-              </div>
-            </template>
-            <!-- 状态 -->
-            <template #status="detail">
-              <a-tag class="m0" :color="detail.status | formatPipelineDetailStatus('color')">
-                {{ detail.status | formatPipelineDetailStatus('label') }}
-              </a-tag>
-            </template>
-            <!-- 操作 -->
-            <template #action="detail">
-              <!-- 日志 -->
-              <a-tooltip :disabled="!statusHolder.visibleDetailLog(detail.status)" title="ctrl 点击打开新页面">
-                <a target="_blank"
-                   :href="`#/app/${detail.stageType === STAGE_TYPE.BUILD.value ? 'build' : 'release'}/log/view/${detail.relId}`"
-                   @click="openDetailLog($event, detail.relId, detail.stageType)">日志</a>
-              </a-tooltip>
-              <!-- 停止 -->
-              <a-divider type="vertical" v-if="statusHolder.visibleDetailTerminate(detail.status)"/>
-              <a-popconfirm v-if="statusHolder.visibleDetailTerminate(detail.status)"
-                            title="是否要停止执行?"
-                            placement="bottomLeft"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="terminatePipelineDetail(record.id, detail.id)">
-                <span class="span-blue pointer">停止</span>
-              </a-popconfirm>
-              <!-- 跳过 -->
-              <a-divider type="vertical" v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"/>
-              <a-popconfirm v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"
-                            title="是否要跳过执行?"
-                            placement="bottomLeft"
-                            ok-text="确定"
-                            cancel-text="取消"
-                            @confirm="skipPipelineDetail(record.id, detail.id)">
-                <span class="span-blue pointer">跳过</span>
-              </a-popconfirm>
-            </template>
-          </a-table>
-        </template>
-        <!-- 执行标题 -->
-        <template #pipelineTitle="record">
-          <div class="timed-wrapper">
-            <!-- 定时图标 -->
-            <a-tooltip v-if="record.timedExec === TIMED_TYPE.TIMED.value">
-              <template #title>
-                调度时间: {{ record.timedExecTime | formatDate }}
+                </div>
               </template>
-              <a-icon class="timed-icon" type="hourglass"/>
-            </a-tooltip>
-            <!-- 标题 -->
-            {{ record.title }}
-          </div>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-tag class="m0" :color="record.status | formatPipelineStatus('color')">
-            {{ record.status | formatPipelineStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 创建时间 -->
-        <template #createTime="record">
-          {{ record.createTime | formatDate }}
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 审核 -->
-          <span class="span-blue pointer" v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</span>
-          <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
-          <!-- 复制 -->
-          <a-popconfirm v-if="statusHolder.visibleCopy(record.status)"
-                        title="是否要复制当前任务?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="copyPipeline(record.id)">
-            <span class="span-blue pointer">复制</span>
-          </a-popconfirm>
-          <!-- 执行 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleExec(record.status)"/>
-          <a-popconfirm v-if="statusHolder.visibleExec(record.status)"
-                        title="是否要之前当前任务?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="execPipeline(record)">
-            <span class="span-blue pointer">执行</span>
-          </a-popconfirm>
-          <!-- 定时 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
-          <span class="span-blue pointer" v-if="statusHolder.visibleTimed(record.status)" @click="openTimed(record)">定时</span>
-          <!--          &lt;!&ndash; 日志 &ndash;&gt;-->
-          <!--          <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>-->
-          <!--          <span class="span-blue pointer" v-if="statusHolder.visibleLog(record.status)" @click="openLog(record.id)">日志</span>-->
-          <!-- 停止 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
-          <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
-                        title="是否要取消停止执行?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="terminatePipeline(record.id)">
-            <span class="span-blue pointer">停止</span>
-          </a-popconfirm>
-          <!-- 详情 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleDetail(record.status)"/>
-          <span class="span-blue pointer" v-if="statusHolder.visibleDetail(record.status)" @click="openDetail(record.id)">详情</span>
-          <!-- 取消 -->
-          <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
-          <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
-                        title="是否要取消定时执行?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="cancelTimed(record)">
-            <span class="span-blue pointer">取消</span>
-          </a-popconfirm>
-          <!-- 删除 -->
-          <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
-          <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
-                        title="确认删除当前执行记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+              <!-- 状态 -->
+              <template #status="detail">
+                <a-tag class="m0" :color="detail.status | formatPipelineDetailStatus('color')">
+                  {{ detail.status | formatPipelineDetailStatus('label') }}
+                </a-tag>
+              </template>
+              <!-- 操作 -->
+              <template #action="detail">
+                <!-- 日志 -->
+                <a-tooltip :disabled="!statusHolder.visibleDetailLog(detail.status)" title="ctrl 点击打开新页面">
+                  <a target="_blank"
+                     :href="`#/app/${detail.stageType === STAGE_TYPE.BUILD.value ? 'build' : 'release'}/log/view/${detail.relId}`"
+                     @click="openDetailLog($event, detail.relId, detail.stageType)">日志</a>
+                </a-tooltip>
+                <!-- 停止 -->
+                <a-divider type="vertical" v-if="statusHolder.visibleDetailTerminate(detail.status)"/>
+                <a-popconfirm v-if="statusHolder.visibleDetailTerminate(detail.status)"
+                              title="是否要停止执行?"
+                              placement="bottomLeft"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="terminatePipelineDetail(record.id, detail.id)">
+                  <span class="span-blue pointer">停止</span>
+                </a-popconfirm>
+                <!-- 跳过 -->
+                <a-divider type="vertical" v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"/>
+                <a-popconfirm v-if="statusHolder.visibleDetailSkip(record.status, detail.status)"
+                              title="是否要跳过执行?"
+                              placement="bottomLeft"
+                              ok-text="确定"
+                              cancel-text="取消"
+                              @confirm="skipPipelineDetail(record.id, detail.id)">
+                  <span class="span-blue pointer">跳过</span>
+                </a-popconfirm>
+              </template>
+            </a-table>
+          </template>
+          <!-- 执行标题 -->
+          <template #pipelineTitle="record">
+            <div class="timed-wrapper">
+              <!-- 定时图标 -->
+              <a-tooltip v-if="record.timedExec === TIMED_TYPE.TIMED.value">
+                <template #title>
+                  调度时间: {{ record.timedExecTime | formatDate }}
+                </template>
+                <a-icon class="timed-icon" type="hourglass"/>
+              </a-tooltip>
+              <!-- 标题 -->
+              {{ record.title }}
+            </div>
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-tag class="m0" :color="record.status | formatPipelineStatus('color')">
+              {{ record.status | formatPipelineStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 创建时间 -->
+          <template #createTime="record">
+            {{ record.createTime | formatDate }}
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 审核 -->
+            <span class="span-blue pointer" v-if="statusHolder.visibleAudit(record.status)" @click="openAudit(record.id)">审核</span>
+            <a-divider type="vertical" v-if="statusHolder.visibleAudit(record.status)"/>
+            <!-- 复制 -->
+            <a-popconfirm v-if="statusHolder.visibleCopy(record.status)"
+                          title="是否要复制当前任务?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="copyPipeline(record.id)">
+              <span class="span-blue pointer">复制</span>
+            </a-popconfirm>
+            <!-- 执行 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleExec(record.status)"/>
+            <a-popconfirm v-if="statusHolder.visibleExec(record.status)"
+                          title="是否要之前当前任务?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="execPipeline(record)">
+              <span class="span-blue pointer">执行</span>
+            </a-popconfirm>
+            <!-- 定时 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleTimed(record.status)"/>
+            <span class="span-blue pointer" v-if="statusHolder.visibleTimed(record.status)" @click="openTimed(record)">定时</span>
+            <!--          &lt;!&ndash; 日志 &ndash;&gt;-->
+            <!--          <a-divider type="vertical" v-if="statusHolder.visibleLog(record.status)"/>-->
+            <!--          <span class="span-blue pointer" v-if="statusHolder.visibleLog(record.status)" @click="openLog(record.id)">日志</span>-->
+            <!-- 停止 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleTerminate(record.status)"/>
+            <a-popconfirm v-if="statusHolder.visibleTerminate(record.status)"
+                          title="是否要取消停止执行?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="terminatePipeline(record.id)">
+              <span class="span-blue pointer">停止</span>
+            </a-popconfirm>
+            <!-- 详情 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleDetail(record.status)"/>
+            <span class="span-blue pointer" v-if="statusHolder.visibleDetail(record.status)" @click="openDetail(record.id)">详情</span>
+            <!-- 取消 -->
+            <a-divider type="vertical" v-if="statusHolder.visibleCancel(record.status)"/>
+            <a-popconfirm v-if="statusHolder.visibleCancel(record.status)"
+                          title="是否要取消定时执行?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="cancelTimed(record)">
+              <span class="span-blue pointer">取消</span>
+            </a-popconfirm>
+            <!-- 删除 -->
+            <a-divider v-if="statusHolder.visibleDelete(record.status)" type="vertical"/>
+            <a-popconfirm v-if="statusHolder.visibleDelete(record.status)"
+                          title="确认删除当前执行记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="app-pipeline-event">
@@ -470,6 +473,7 @@ export default {
       STAGE_TYPE,
       TIMED_TYPE,
       query: {
+        id: undefined,
         profileId: undefined,
         pipelineId: undefined,
         pipelineName: undefined,
@@ -652,6 +656,7 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.query.id = undefined
       this.query.pipelineId = undefined
       this.query.pipelineName = undefined
       this.query.status = undefined
@@ -678,9 +683,9 @@ export default {
         return
       }
       const detailIdList = pollItems.map(s => s.details)
-        .filter(s => s && s.length)
-        .flat()
-        .map(s => s.id)
+      .filter(s => s && s.length)
+      .flat()
+      .map(s => s.id)
       this.$api.getAppPipelineTaskListStatus({
         idList,
         detailIdList
@@ -726,6 +731,7 @@ export default {
     }
   },
   async mounted() {
+    this.query.id = this.$route.query.id
     // 读取当前环境
     const activeProfile = this.$storage.get(this.$storage.keys.ACTIVE_PROFILE)
     if (!activeProfile) {

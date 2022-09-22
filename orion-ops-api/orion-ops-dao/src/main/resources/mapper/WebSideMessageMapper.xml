@@ -12,14 +12,15 @@
         <result column="to_user_name" property="toUserName"/>
         <result column="send_message" property="sendMessage"/>
         <result column="deleted" property="deleted"/>
-        <result column="params_json" property="paramsJson"/>
+        <result column="rel_id" property="relId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, message_classify, message_type, read_status, to_user_id, to_user_name, send_message, deleted, params_json, create_time, update_time
+        id
+        , message_classify, message_type, read_status, to_user_id, to_user_name, send_message, deleted, rel_id, create_time, update_time
     </sql>
 
 </mapper>

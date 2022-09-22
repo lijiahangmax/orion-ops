@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { DATA_CLEAR_RANGE } from '@/lib/enum'
+import { DATA_CLEAR_RANGE, DATA_CLEAR_TYPE } from '@/lib/enum'
 import AppSelector from '@/components/app/AppSelector'
 
 export default {
@@ -139,11 +139,12 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearAppRelease({
+      this.$api.clearData({
         ...this.submit,
         iCreated: this.iCreated ? 1 : 2,
         iAudited: this.iAudited ? 1 : 2,
-        iExecute: this.iExecute ? 1 : 2
+        iExecute: this.iExecute ? 1 : 2,
+        clearType: DATA_CLEAR_TYPE.APP_RELEASE.value
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -151,7 +152,6 @@ export default {
         this.$message.info(`共清理 ${data}条数据`)
       }).catch(() => {
         this.loading = false
-        this.$message.error('清理失败')
       })
     },
     close() {

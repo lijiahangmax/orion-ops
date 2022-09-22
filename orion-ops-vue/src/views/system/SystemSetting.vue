@@ -1,5 +1,5 @@
 <template>
-  <div class="system-setting-container">
+  <div class="system-setting-container gray-box-shadow">
     <a-tabs defaultActiveKey="1" tabPosition="left">
       <!-- 统计分析 -->
       <a-tab-pane key="1" tab="统计分析">
@@ -51,6 +51,6 @@ export default {
 .system-setting-container {
   background: #FFF;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 </style>

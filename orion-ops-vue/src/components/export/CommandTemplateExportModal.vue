@@ -28,6 +28,7 @@
 
 <script>
 import { downloadFile } from '@/lib/utils'
+import { EXPORT_TYPE } from '@/lib/enum'
 
 export default {
   name: 'CommandTemplateExportModal',
@@ -46,7 +47,8 @@ export default {
     },
     exportData() {
       this.loading = true
-      this.$api.exportCommandTemplate({
+      this.$api.exportData({
+        exportType: EXPORT_TYPE.COMMAND_TEMPLATE.value,
         protectPassword: this.protectPassword
       }).then((e) => {
         this.loading = false

@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { DATA_CLEAR_RANGE, EVENT_CLASSIFY } from '@/lib/enum'
+import { DATA_CLEAR_RANGE, EVENT_CLASSIFY, DATA_CLEAR_TYPE } from '@/lib/enum'
 
 export default {
   name: 'EventLogClearModal',
@@ -113,8 +113,9 @@ export default {
     },
     doClear() {
       this.loading = true
-      this.$api.clearEventLog({
-        ...this.submit
+      this.$api.clearData({
+        ...this.submit,
+        clearType: DATA_CLEAR_TYPE.USER_EVENT_LOG.value
       }).then(({ data }) => {
         this.loading = false
         this.visible = false
@@ -122,7 +123,6 @@ export default {
         this.$message.info(`共清理 ${data}条数据`)
       }).catch(() => {
         this.loading = false
-        this.$message.error('清理失败')
       })
     },
     close() {

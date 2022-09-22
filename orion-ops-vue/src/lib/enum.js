@@ -170,13 +170,11 @@ export const PROFILE_AUDIT_STATUS = {
 export const MACHINE_AUTH_TYPE = {
   PASSWORD: {
     value: 1,
-    label: '密码认证',
-    color: '#845EF7'
+    label: '密码认证'
   },
-  KEY: {
+  SECRET_KEY: {
     value: 2,
-    label: '秘钥认证',
-    color: '#5C7CFA'
+    label: '独立秘钥'
   }
 }
 
@@ -198,27 +196,6 @@ export const MACHINE_PROXY_TYPE = {
     value: 3,
     label: 'socks5',
     color: '#0CA678'
-  }
-}
-
-/**
- * 秘钥挂载状态
- */
-export const MACHINE_KEY_MOUNT_STATUS = {
-  NOT_FOUND: {
-    value: 1,
-    label: '未找到',
-    color: '#DEE2E6'
-  },
-  MOUNTED: {
-    value: 2,
-    label: '已挂载',
-    color: '#4C6EF5'
-  },
-  C: {
-    value: 3,
-    label: '未挂载',
-    color: '#FF922B'
   }
 }
 
@@ -913,115 +890,115 @@ export const STAGE_TYPE = {
  */
 export const EVENT_CLASSIFY = {
   AUTHENTICATION: {
-    value: 5,
+    value: 100,
     label: '认证操作'
   },
-  MACHINE: {
-    value: 10,
-    label: '机器操作'
-  },
-  MACHINE_ENV: {
-    value: 15,
-    label: '机器变量操作'
-  },
-  MACHINE_KEY: {
-    value: 20,
-    label: '秘钥操作'
-  },
-  MACHINE_PROXY: {
-    value: 25,
-    label: '代理操作'
-  },
-  MACHINE_MONITOR: {
-    value: 27,
-    label: '机器监控'
-  },
-  MACHINE_ALARM: {
-    value: 28,
-    label: '机器报警'
-  },
-  TERMINAL: {
-    value: 30,
-    label: '终端操作'
-  },
-  SFTP: {
-    value: 35,
-    label: '远程文件操作'
-  },
-  EXEC: {
-    value: 40,
-    label: '批量执行操作'
-  },
-  TAIL: {
-    value: 45,
-    label: '日志文件操作'
-  },
-  TEMPLATE: {
-    value: 50,
-    label: '模板操作'
-  },
-  WEBHOOK: {
-    value: 52,
-    label: 'webhook操作'
-  },
   USER: {
-    value: 55,
+    value: 110,
     label: '用户操作'
   },
   ALARM_GROUP: {
-    value: 57,
+    value: 120,
     label: '报警组操作'
   },
+  MACHINE: {
+    value: 200,
+    label: '机器操作'
+  },
+  MACHINE_ENV: {
+    value: 210,
+    label: '机器环境变量操作'
+  },
+  MACHINE_KEY: {
+    value: 220,
+    label: '秘钥操作'
+  },
+  MACHINE_PROXY: {
+    value: 230,
+    label: '代理操作'
+  },
+  MACHINE_MONITOR: {
+    value: 240,
+    label: '机器监控'
+  },
+  MACHINE_ALARM: {
+    value: 250,
+    label: '机器报警'
+  },
+  TERMINAL: {
+    value: 260,
+    label: '终端操作'
+  },
+  SFTP: {
+    value: 270,
+    label: 'sftp 操作'
+  },
+  EXEC: {
+    value: 300,
+    label: '批量执行操作'
+  },
+  TAIL: {
+    value: 310,
+    label: '日志追踪操作'
+  },
+  SCHEDULER: {
+    value: 320,
+    label: '调度操作'
+  },
   APP: {
-    value: 60,
+    value: 400,
     label: '应用操作'
   },
   PROFILE: {
-    value: 65,
+    value: 410,
     label: '环境操作'
   },
   APP_ENV: {
-    value: 70,
-    label: '应用变量操作'
+    value: 420,
+    label: '应用环境变量操作'
   },
   REPOSITORY: {
-    value: 75,
+    value: 430,
     label: '应用仓库操作'
   },
   BUILD: {
-    value: 80,
+    value: 440,
     label: '应用构建操作'
   },
   RELEASE: {
-    value: 85,
+    value: 450,
     label: '应用发布操作'
   },
-  APP_PIPELINE: {
-    value: 88,
+  PIPELINE: {
+    value: 460,
     label: '应用流水线'
   },
-  SYSTEM_ENV: {
-    value: 90,
-    label: '系统变量操作'
+  TEMPLATE: {
+    value: 500,
+    label: '模板操作'
+  },
+  WEBHOOK: {
+    value: 510,
+    label: 'webhook操作'
   },
   SYSTEM: {
-    value: 95,
+    value: 600,
     label: '系统操作'
   },
-  SCHEDULER: {
-    value: 100,
-    label: '调度任务操作'
+  SYSTEM_ENV: {
+    value: 610,
+    label: '系统环境变量操作'
   },
   DATA_CLEAR: {
-    value: 110,
+    value: 620,
     label: '数据清理'
   },
   DATA_IMPORT: {
-    value: 120,
+    value: 630,
     label: '数据导入'
   },
   DATA_EXPORT: {
-    value: 130,
+    value: 640,
     label: '数据导出'
   }
 }
@@ -1031,743 +1008,624 @@ export const EVENT_CLASSIFY = {
  */
 export const EVENT_TYPE = {
   LOGIN: {
-    value: 1005,
-    label: '登陆',
-    classify: 5
+    value: 100010,
+    label: '登陆系统',
+    classify: 100
   },
   LOGOUT: {
-    value: 1010,
-    label: '登出',
-    classify: 5
+    value: 100020,
+    label: '退出系统',
+    classify: 100
   },
   RESET_PASSWORD: {
-    value: 1015,
+    value: 100030,
     label: '重置密码',
-    classify: 5
-  },
-  ADD_MACHINE: {
-    value: 2005,
-    label: '添加机器',
-    classify: 10
-  },
-  UPDATE_MACHINE: {
-    value: 2010,
-    label: '修改机器',
-    classify: 10
-  },
-  DELETE_MACHINE: {
-    value: 2015,
-    label: '删除机器',
-    classify: 10
-  },
-  CHANGE_MACHINE_STATUS: {
-    value: 2020,
-    label: '修改状态',
-    classify: 10
-  },
-  COPY_MACHINE: {
-    value: 2025,
-    label: '复制机器',
-    classify: 10
-  },
-  DELETE_MACHINE_ENV: {
-    value: 2105,
-    label: '删除变量',
-    classify: 15
-  },
-  SYNC_MACHINE_ENV: {
-    value: 2110,
-    label: '同步变量',
-    classify: 15
-  },
-  ADD_MACHINE_KEY: {
-    value: 2205,
-    label: '新增秘钥',
-    classify: 20
-  },
-  UPDATE_MACHINE_KEY: {
-    value: 2210,
-    label: '修改秘钥',
-    classify: 20
-  },
-  DELETE_MACHINE_KEY: {
-    value: 2215,
-    label: '删除秘钥',
-    classify: 20
-  },
-  MOUNT_MACHINE_KEY: {
-    value: 2220,
-    label: '挂载秘钥',
-    classify: 20
-  },
-  DUMP_MACHINE_KEY: {
-    value: 2225,
-    label: '卸载秘钥'
-  },
-  MOUNT_ALL_MACHINE_KEY: {
-    value: 2230,
-    label: '挂载全部秘钥',
-    classify: 20
-  },
-  DUMP_ALL_MACHINE_KEY: {
-    value: 2235,
-    label: '卸载全部秘钥',
-    classify: 20
-  },
-  TEMP_MOUNT_MACHINE_KEY: {
-    value: 2240,
-    label: '临时挂载秘钥',
-    classify: 20
-  },
-  ADD_MACHINE_PROXY: {
-    value: 2305,
-    label: '新增代理',
-    classify: 25
-  },
-  UPDATE_MACHINE_PROXY: {
-    value: 2310,
-    label: '修改代理',
-    classify: 25
-  },
-  DELETE_MACHINE_PROXY: {
-    value: 2315,
-    label: '删除代理',
-    classify: 25
-  },
-  UPDATE_MACHINE_MONITOR_CONFIG: {
-    value: 2350,
-    label: '修改配置',
-    classify: 27
-  },
-  INSTALL_UPGRADE_MACHINE_MONITOR: {
-    value: 2355,
-    label: '安装/升级插件',
-    classify: 27
-  },
-  SET_MACHINE_ALARM_CONFIG: {
-    value: 2370,
-    label: '修改报警配置',
-    classify: 28
-  },
-  SET_MACHINE_ALARM_GROUP: {
-    value: 2375,
-    label: '修改报警联系组',
-    classify: 28
-  },
-  RENOTIFY_MACHINE_ALARM_GROUP: {
-    value: 2380,
-    label: '重新发送报警通知',
-    classify: 28
-  },
-  OPEN_TERMINAL: {
-    value: 2400,
-    label: '打开机器终端',
-    classify: 30
-  },
-  FORCE_OFFLINE_TERMINAL: {
-    value: 2405,
-    label: '强制下线终端',
-    classify: 30
-  },
-  UPDATE_TERMINAL_CONFIG: {
-    value: 2410,
-    label: '修改终端配置',
-    classify: 30
-  },
-  DELETE_TERMINAL_LOG: {
-    value: 2415,
-    label: '删除终端日志',
-    classify: 30
-  },
-  OPEN_SFTP: {
-    value: 2500,
-    label: '打开机器SFTP',
-    classify: 35
-  },
-  SFTP_MKDIR: {
-    value: 2505,
-    label: '创建文件夹',
-    classify: 35
-  },
-  SFTP_TOUCH: {
-    value: 2510,
-    label: '创建文件',
-    classify: 35
-  },
-  SFTP_TRUNCATE: {
-    value: 2515,
-    label: '截断文件',
-    classify: 35
-  },
-  SFTP_MOVE: {
-    value: 2520,
-    label: '移动文件',
-    classify: 35
-  },
-  SFTP_REMOVE: {
-    value: 2525,
-    label: '删除文件',
-    classify: 35
-  },
-  SFTP_CHMOD: {
-    value: 2530,
-    label: '修改权限',
-    classify: 35
-  },
-  SFTP_CHOWN: {
-    value: 2535,
-    label: '修改所有者',
-    classify: 35
-  },
-  SFTP_CHGRP: {
-    value: 2540,
-    label: '修改所有组',
-    classify: 35
-  },
-  SFTP_UPLOAD: {
-    value: 2545,
-    label: '上传文件',
-    classify: 35
-  },
-  SFTP_DOWNLOAD: {
-    value: 2550,
-    label: '下载文件',
-    classify: 35
-  },
-  SFTP_PACKAGE: {
-    value: 2555,
-    label: '打包文件',
-    classify: 35
-  },
-  EXEC_SUBMIT: {
-    value: 2605,
-    label: '批量执行',
-    classify: 40
-  },
-  EXEC_DELETE: {
-    value: 2610,
-    label: '删除执行',
-    classify: 40
-  },
-  EXEC_TERMINATE: {
-    value: 2615,
-    label: '停止执行',
-    classify: 40
-  },
-  ADD_TAIL_FILE: {
-    value: 2705,
-    label: '添加文件',
-    classify: 45
-  },
-  UPDATE_TAIL_FILE: {
-    value: 2710,
-    label: '修改文件',
-    classify: 45
-  },
-  DELETE_TAIL_FILE: {
-    value: 2715,
-    label: '删除文件',
-    classify: 45
-  },
-  UPLOAD_TAIL_FILE: {
-    value: 2720,
-    label: '上传文件',
-    classify: 45
-  },
-  ADD_TEMPLATE: {
-    value: 2805,
-    label: '添加模板',
-    classify: 50
-  },
-  UPDATE_TEMPLATE: {
-    value: 2810,
-    label: '修改模板',
-    classify: 50
-  },
-  DELETE_TEMPLATE: {
-    value: 2815,
-    label: '删除模板',
-    classify: 50
-  },
-  ADD_WEBHOOK: {
-    value: 2905,
-    label: '添加配置',
-    classify: 52
-  },
-  UPDATE_WEBHOOK: {
-    value: 2910,
-    label: '修改配置',
-    classify: 52
-  },
-  DELETE_WEBHOOK: {
-    value: 2915,
-    label: '删除配置',
-    classify: 52
+    classify: 100
   },
   ADD_USER: {
-    value: 1105,
+    value: 110010,
     label: '添加用户',
-    classify: 55
+    classify: 110
   },
   UPDATE_USER: {
-    value: 1110,
-    label: '修改信息',
-    classify: 55
+    value: 110020,
+    label: '修改用户信息',
+    classify: 110
   },
   DELETE_USER: {
-    value: 1115,
+    value: 110030,
     label: '删除用户',
-    classify: 55
+    classify: 110
   },
   CHANGE_USER_STATUS: {
-    value: 1120,
-    label: '修改状态',
-    classify: 55
+    value: 110040,
+    label: '修改用户状态',
+    classify: 110
   },
   UNLOCK_USER: {
-    value: 1205,
+    value: 110050,
     label: '解锁用户',
-    classify: 55
+    classify: 110
   },
   ADD_ALARM_GROUP: {
-    value: 1210,
+    value: 120010,
     label: '添加报警组',
-    classify: 57
+    classify: 120
   },
   UPDATE_ALARM_GROUP: {
-    value: 1215,
+    value: 120020,
     label: '修改报警组',
-    classify: 57
+    classify: 120
   },
   DELETE_ALARM_GROUP: {
-    value: 1125,
+    value: 120030,
     label: '删除报警组',
-    classify: 57
+    classify: 120
   },
-  ADD_APP: {
-    value: 3005,
-    label: '添加应用',
-    classify: 60
+  ADD_MACHINE: {
+    value: 200010,
+    label: '添加机器',
+    classify: 200
   },
-  UPDATE_APP: {
-    value: 3010,
-    label: '修改应用',
-    classify: 60
+  UPDATE_MACHINE: {
+    value: 200020,
+    label: '修改机器',
+    classify: 200
   },
-  DELETE_APP: {
-    value: 3015,
-    label: '删除应用',
-    classify: 60
+  DELETE_MACHINE: {
+    value: 200030,
+    label: '删除机器',
+    classify: 200
   },
-  CONFIG_APP: {
-    value: 3020,
-    label: '配置应用',
-    classify: 60
+  CHANGE_MACHINE_STATUS: {
+    value: 200040,
+    label: '修改机器状态',
+    classify: 200
   },
-  SYNC_APP: {
-    value: 3025,
-    label: '同步应用',
-    classify: 60
+  COPY_MACHINE: {
+    value: 200050,
+    label: '复制机器',
+    classify: 200
   },
-  COPY_APP: {
-    value: 3030,
-    label: '复制应用',
-    classify: 60
+  DELETE_MACHINE_ENV: {
+    value: 210010,
+    label: '删除机器环境变量',
+    classify: 210
   },
-  ADD_PROFILE: {
-    value: 3105,
-    label: '添加环境',
-    classify: 65
+  SYNC_MACHINE_ENV: {
+    value: 210020,
+    label: '同步机器环境变量',
+    classify: 210
   },
-  UPDATE_PROFILE: {
-    value: 3110,
-    label: '修改环境',
-    classify: 65
+  ADD_MACHINE_KEY: {
+    value: 220010,
+    label: '新增秘钥',
+    classify: 220
   },
-  DELETE_PROFILE: {
-    value: 3115,
-    label: '删除环境',
-    classify: 65
+  UPDATE_MACHINE_KEY: {
+    value: 220020,
+    label: '修改秘钥',
+    classify: 220
   },
-  DELETE_APP_ENV: {
-    value: 3205,
-    label: '删除变量',
-    classify: 70
+  DELETE_MACHINE_KEY: {
+    value: 220030,
+    label: '删除秘钥',
+    classify: 220
   },
-  SYNC_APP_ENV: {
-    value: 3210,
-    label: '同步变量',
-    classify: 70
+  BIND_MACHINE_KEY: {
+    value: 220040,
+    label: '绑定秘钥',
+    classify: 220
   },
-  ADD_REPOSITORY: {
-    value: 3305,
-    label: '添加仓库',
-    classify: 75
+  ADD_MACHINE_PROXY: {
+    value: 230010,
+    label: '新建代理',
+    classify: 230
   },
-  INIT_REPOSITORY: {
-    value: 3310,
-    label: '初始化仓库',
-    classify: 75
+  UPDATE_MACHINE_PROXY: {
+    value: 230020,
+    label: '修改代理',
+    classify: 230
   },
-  RE_INIT_REPOSITORY: {
-    value: 3315,
-    label: '重新初始化',
-    classify: 75
+  DELETE_MACHINE_PROXY: {
+    value: 230030,
+    label: '删除代理',
+    classify: 230
   },
-  UPDATE_REPOSITORY: {
-    value: 3320,
-    label: '更新仓库',
-    classify: 75
+  UPDATE_MACHINE_MONITOR_CONFIG: {
+    value: 240010,
+    label: '修改配置',
+    classify: 240
   },
-  DELETE_REPOSITORY: {
-    value: 3325,
-    label: '删除仓库',
-    classify: 75
+  INSTALL_UPGRADE_MACHINE_MONITOR: {
+    value: 240020,
+    label: '安装/升级插件',
+    classify: 240
   },
-  CLEAN_REPOSITORY: {
-    value: 3330,
-    label: '清空仓库',
-    classify: 75
+  SET_MACHINE_ALARM_CONFIG: {
+    value: 250010,
+    label: '修改报警配置',
+    classify: 250
   },
-  SUBMIT_BUILD: {
-    value: 4005,
-    label: '提交构建',
-    classify: 80
+  SET_MACHINE_ALARM_GROUP: {
+    value: 250020,
+    label: '修改报警联系组',
+    classify: 250
   },
-  BUILD_TERMINATE: {
-    value: 4010,
-    label: '停止构建',
-    classify: 80
+  RENOTIFY_MACHINE_ALARM_GROUP: {
+    value: 250030,
+    label: '重新发送报警通知',
+    classify: 250
   },
-  DELETE_BUILD: {
-    value: 4015,
-    label: '删除构建',
-    classify: 80
+  OPEN_TERMINAL: {
+    value: 260010,
+    label: '打开机器终端',
+    classify: 260
   },
-  SUBMIT_REBUILD: {
-    value: 4020,
-    label: '重新构建',
-    classify: 80
+  FORCE_OFFLINE_TERMINAL: {
+    value: 260020,
+    label: '强制下线终端',
+    classify: 260
   },
-  SUBMIT_RELEASE: {
-    value: 5005,
-    label: '提交发布',
-    classify: 85
+  UPDATE_TERMINAL_CONFIG: {
+    value: 260030,
+    label: '修改终端配置',
+    classify: 260
   },
-  AUDIT_RELEASE: {
-    value: 5010,
-    label: '发布审核',
-    classify: 85
+  DELETE_TERMINAL_LOG: {
+    value: 260040,
+    label: '删除终端日志',
+    classify: 260
   },
-  RUNNABLE_RELEASE: {
-    value: 5015,
-    label: '执行发布',
-    classify: 85
+  OPEN_SFTP: {
+    value: 270010,
+    label: '打开机器 SFTP',
+    classify: 270
   },
-  ROLLBACK_RELEASE: {
-    value: 5020,
-    label: '回滚发布',
-    classify: 85
+  SFTP_MKDIR: {
+    value: 270020,
+    label: '创建文件夹',
+    classify: 270
   },
-  TERMINATE_RELEASE: {
-    value: 5025,
-    label: '停止发布',
-    classify: 85
+  SFTP_TOUCH: {
+    value: 270030,
+    label: '创建文件',
+    classify: 270
   },
-  DELETE_RELEASE: {
-    value: 5030,
-    label: '删除发布',
-    classify: 85
+  SFTP_TRUNCATE: {
+    value: 270040,
+    label: '截断文件',
+    classify: 270
   },
-  COPY_RELEASE: {
-    value: 5035,
-    label: '复制发布',
-    classify: 85
+  SFTP_MOVE: {
+    value: 270050,
+    label: '移动文件',
+    classify: 270
   },
-  CANCEL_TIMED_RELEASE: {
-    value: 5040,
-    label: '取消定时发布',
-    classify: 85
+  SFTP_REMOVE: {
+    value: 270060,
+    label: '删除文件',
+    classify: 270
   },
-  SET_TIMED_RELEASE: {
-    value: 5045,
-    label: '设置定时发布',
-    classify: 85
+  SFTP_CHMOD: {
+    value: 270070,
+    label: '修改文件权限',
+    classify: 270
   },
-  TERMINATE_MACHINE_RELEASE: {
-    value: 5050,
-    label: '停止机器操作',
-    classify: 85
+  SFTP_CHOWN: {
+    value: 270080,
+    label: '修改文件所有者',
+    classify: 270
   },
-  SKIP_MACHINE_RELEASE: {
-    value: 5055,
-    label: '跳过机器操作',
-    classify: 85
+  SFTP_CHGRP: {
+    value: 270090,
+    label: '修改文件所有组',
+    classify: 270
   },
-  ADD_PIPELINE: {
-    value: 5505,
-    label: '添加流水线',
-    classify: 88
+  SFTP_UPLOAD: {
+    value: 270100,
+    label: '上传文件',
+    classify: 270
   },
-  UPDATE_PIPELINE: {
-    value: 5510,
-    label: '修改流水线',
-    classify: 88
+  SFTP_DOWNLOAD: {
+    value: 270110,
+    label: '下载文件',
+    classify: 270
   },
-  DELETE_PIPELINE: {
-    value: 5515,
-    label: '删除流水线',
-    classify: 88
+  SFTP_PACKAGE: {
+    value: 270120,
+    label: '打包文件',
+    classify: 270
   },
-  SUBMIT_PIPELINE_TASK: {
-    value: 5605,
-    label: '提交执行任务',
-    classify: 88
+  EXEC_SUBMIT: {
+    value: 300010,
+    label: '批量执行',
+    classify: 300
   },
-  AUDIT_PIPELINE_TASK: {
-    value: 5610,
-    label: '审核任务',
-    classify: 88
+  EXEC_DELETE: {
+    value: 300020,
+    label: '删除执行',
+    classify: 300
   },
-  COPY_PIPELINE_TASK: {
-    value: 5615,
-    label: '复制任务',
-    classify: 88
+  EXEC_TERMINATE: {
+    value: 300030,
+    label: '终止执行',
+    classify: 300
   },
-  EXEC_PIPELINE_TASK: {
-    value: 5620,
-    label: '执行任务',
-    classify: 88
+  ADD_TAIL_FILE: {
+    value: 310010,
+    label: '添加日志文件',
+    classify: 310
   },
-  DELETE_PIPELINE_TASK: {
-    value: 5625,
-    label: '删除任务',
-    classify: 88
+  UPDATE_TAIL_FILE: {
+    value: 310020,
+    label: '修改日志文件',
+    classify: 310
   },
-  SET_PIPELINE_TIMED_TASK: {
-    value: 5630,
-    label: '设置定时执行',
-    classify: 88
+  DELETE_TAIL_FILE: {
+    value: 310030,
+    label: '删除日志文件',
+    classify: 310
   },
-  CANCEL_PIPELINE_TIMED_TASK: {
-    value: 5635,
-    label: '取消定时执行',
-    classify: 88
-  },
-  TERMINATE_PIPELINE_TASK: {
-    value: 5640,
-    label: '停止执行任务',
-    classify: 88
-  },
-  TERMINATE_PIPELINE_TASK_DETAIL: {
-    value: 5645,
-    label: '停止执行操作',
-    classify: 88
-  },
-  SKIP_PIPELINE_TASK_DETAIL: {
-    value: 5650,
-    label: '跳过执行操作',
-    classify: 88
-  },
-  ADD_SYSTEM_ENV: {
-    value: 6005,
-    label: '添加变量',
-    classify: 90
-  },
-  UPDATE_SYSTEM_ENV: {
-    value: 6010,
-    label: '更新变量',
-    classify: 90
-  },
-  DELETE_SYSTEM_ENV: {
-    value: 6015,
-    label: '删除变量',
-    classify: 90
-  },
-  SAVE_SYSTEM_ENV: {
-    value: 6020,
-    label: '保存变量',
-    classify: 90
-  },
-  CONFIG_IP_LIST: {
-    value: 6105,
-    label: '配置IP过滤器',
-    classify: 95
-  },
-  RE_ANALYSIS_SYSTEM: {
-    value: 6110,
-    label: '系统统计分析',
-    classify: 95
-  },
-  CLEAN_SYSTEM_FILE: {
-    value: 6115,
-    label: '清理系统文件',
-    classify: 95
-  },
-  UPDATE_SYSTEM_CONFIG: {
-    value: 6120,
-    label: '修改系统配置',
-    classify: 95
+  UPLOAD_TAIL_FILE: {
+    value: 310040,
+    label: '上传日志文件',
+    classify: 310
   },
   ADD_SCHEDULER_TASK: {
-    value: 7105,
+    value: 320010,
     label: '添加调度任务',
-    classify: 100
+    classify: 320
   },
   UPDATE_SCHEDULER_TASK: {
-    value: 7110,
+    value: 320020,
     label: '修改调度任务',
-    classify: 100
+    classify: 320
   },
   UPDATE_SCHEDULER_TASK_STATUS: {
-    value: 7115,
+    value: 320030,
     label: '更新任务状态',
-    classify: 100
+    classify: 320
   },
   DELETE_SCHEDULER_TASK: {
-    value: 7120,
+    value: 320040,
     label: '删除调度任务',
-    classify: 100
+    classify: 320
   },
   MANUAL_TRIGGER_SCHEDULER_TASK: {
-    value: 7125,
+    value: 320050,
     label: '手动触发任务',
-    classify: 100
+    classify: 320
   },
   TERMINATE_ALL_SCHEDULER_TASK: {
-    value: 7130,
+    value: 320060,
     label: '停止任务',
-    classify: 100
+    classify: 320
   },
   TERMINATE_SCHEDULER_TASK_MACHINE: {
-    value: 7135,
+    value: 320070,
     label: '停止机器操作',
-    classify: 100
+    classify: 320
   },
   SKIP_SCHEDULER_TASK_MACHINE: {
-    value: 7140,
+    value: 320080,
     label: '跳过机器操作',
-    classify: 100
+    classify: 320
   },
   DELETE_TASK_RECORD: {
-    value: 7145,
+    value: 320090,
     label: '删除调度明细',
-    classify: 100
+    classify: 320
   },
-  DATA_CLEAR_BATCH_EXEC: {
-    value: 8105,
-    label: '批量执行',
-    classify: 110
+  ADD_APP: {
+    value: 400010,
+    label: '添加应用',
+    classify: 400
   },
-  DATA_CLEAR_TERMINAL_LOG: {
-    value: 8110,
-    label: '终端日志',
-    classify: 110
+  UPDATE_APP: {
+    value: 400020,
+    label: '修改应用',
+    classify: 400
   },
-  DATA_CLEAR_SCHEDULER_RECORD: {
-    value: 8115,
-    label: '任务调度',
-    classify: 110
+  DELETE_APP: {
+    value: 400030,
+    label: '删除应用',
+    classify: 400
   },
-  DATA_CLEAR_APP_BUILD: {
-    value: 8120,
-    label: '应用构建',
-    classify: 110
+  CONFIG_APP: {
+    value: 400040,
+    label: '配置应用',
+    classify: 400
   },
-  DATA_CLEAR_APP_RELEASE: {
-    value: 8125,
-    label: '应用发布',
-    classify: 110
+  SYNC_APP: {
+    value: 400050,
+    label: '同步应用',
+    classify: 400
   },
-  DATA_CLEAR_APP_PIPELINE: {
-    value: 8130,
-    label: '流水线任务',
-    classify: 110
+  COPY_APP: {
+    value: 400060,
+    label: '复制应用',
+    classify: 400
   },
-  DATA_CLEAR_EVENT_LOG: {
-    value: 8140,
-    label: '操作日志',
-    classify: 110
+  ADD_PROFILE: {
+    value: 410010,
+    label: '添加应用环境',
+    classify: 410
   },
-  DATA_IMPORT_MACHINE: {
-    value: 8305,
-    label: '机器信息',
-    classify: 120
+  UPDATE_PROFILE: {
+    value: 410020,
+    label: '修改应用环境',
+    classify: 410
   },
-  DATA_IMPORT_MACHINE_PROXY: {
-    value: 8310,
-    label: '导入机器代理',
-    classify: 120
+  DELETE_PROFILE: {
+    value: 410030,
+    label: '删除应用环境',
+    classify: 410
   },
-  DATA_IMPORT_TAIL_FILE: {
-    value: 8315,
-    label: '导入日志文件',
-    classify: 120
+  DELETE_APP_ENV: {
+    value: 420010,
+    label: '删除应用环境变量',
+    classify: 420
   },
-  DATA_IMPORT_PROFILE: {
-    value: 8320,
-    label: '导入应用环境',
-    classify: 120
+  SYNC_APP_ENV: {
+    value: 420020,
+    label: '同步应用环境变量',
+    classify: 420
   },
-  DATA_IMPORT_APPLICATION: {
-    value: 8325,
-    label: '导入应用信息',
-    classify: 120
+  ADD_REPOSITORY: {
+    value: 430010,
+    label: '添加版本仓库',
+    classify: 430
   },
-  DATA_IMPORT_REPOSITORY: {
-    value: 8330,
-    label: '导入版本仓库',
-    classify: 120
+  INIT_REPOSITORY: {
+    value: 430020,
+    label: '初始化版本仓库',
+    classify: 430
   },
-  DATA_IMPORT_COMMAND_TEMPLATE: {
-    value: 8335,
-    label: '导入命令模板',
-    classify: 120
+  RE_INIT_REPOSITORY: {
+    value: 430030,
+    label: '重新初始化版本仓库',
+    classify: 430
   },
-  DATA_EXPORT_MACHINE: {
-    value: 8505,
-    label: '机器信息',
-    classify: 130
+  UPDATE_REPOSITORY: {
+    value: 430040,
+    label: '更新版本仓库',
+    classify: 430
   },
-  DATA_EXPORT_MACHINE_PROXY: {
-    value: 8510,
-    label: '机器代理',
-    classify: 130
+  DELETE_REPOSITORY: {
+    value: 430050,
+    label: '删除版本仓库',
+    classify: 430
   },
-  DATA_EXPORT_TERMINAL_LOG: {
-    value: 8515,
-    label: '终端日志',
-    classify: 130
+  CLEAN_REPOSITORY: {
+    value: 430060,
+    label: '清空版本仓库',
+    classify: 430
   },
-  DATA_EXPORT_TAIL_FILE: {
-    value: 8520,
-    label: '日志文件',
-    classify: 130
+  SUBMIT_BUILD: {
+    value: 440010,
+    label: '提交应用构建',
+    classify: 440
   },
-  DATA_EXPORT_PROFILE: {
-    value: 8550,
-    label: '应用环境',
-    classify: 130
+  BUILD_TERMINATE: {
+    value: 440020,
+    label: '停止应用构建',
+    classify: 440
   },
-  DATA_EXPORT_APPLICATION: {
-    value: 8555,
-    label: '应用信息',
-    classify: 130
+  DELETE_BUILD: {
+    value: 440030,
+    label: '删除应用构建',
+    classify: 440
   },
-  DATA_EXPORT_REPOSITORY: {
-    value: 8560,
-    label: '应用仓库',
-    classify: 130
+  SUBMIT_REBUILD: {
+    value: 440040,
+    label: '重新构建应用',
+    classify: 440
   },
-  DATA_EXPORT_COMMAND_TEMPLATE: {
-    value: 8605,
-    label: '命令模板',
-    classify: 130
+  SUBMIT_RELEASE: {
+    value: 450010,
+    label: '提交应用发布',
+    classify: 450
   },
-  DATA_EXPORT_EVENT_LOG: {
-    value: 8615,
-    label: '操作日志',
-    classify: 130
+  AUDIT_RELEASE: {
+    value: 450020,
+    label: '应用发布审核',
+    classify: 450
+  },
+  RUNNABLE_RELEASE: {
+    value: 450030,
+    label: '执行应用发布',
+    classify: 450
+  },
+  ROLLBACK_RELEASE: {
+    value: 450040,
+    label: '应用回滚发布',
+    classify: 450
+  },
+  TERMINATE_RELEASE: {
+    value: 450050,
+    label: '停止应用发布',
+    classify: 450
+  },
+  DELETE_RELEASE: {
+    value: 450060,
+    label: '删除应用发布',
+    classify: 450
+  },
+  COPY_RELEASE: {
+    value: 450070,
+    label: '复制应用发布',
+    classify: 450
+  },
+  CANCEL_TIMED_RELEASE: {
+    value: 450080,
+    label: '取消定时发布',
+    classify: 450
+  },
+  SET_TIMED_RELEASE: {
+    value: 450090,
+    label: '设置定时发布',
+    classify: 450
+  },
+  TERMINATE_MACHINE_RELEASE: {
+    value: 450100,
+    label: '停止机器操作',
+    classify: 450
+  },
+  SKIP_MACHINE_RELEASE: {
+    value: 450110,
+    label: '跳过机器操作',
+    classify: 450
+  },
+  ADD_PIPELINE: {
+    value: 460010,
+    label: '添加流水线',
+    classify: 460
+  },
+  UPDATE_PIPELINE: {
+    value: 460020,
+    label: '修改流水线',
+    classify: 460
+  },
+  DELETE_PIPELINE: {
+    value: 460030,
+    label: '删除流水线',
+    classify: 460
+  },
+  SUBMIT_PIPELINE_TASK: {
+    value: 460040,
+    label: '提交执行任务',
+    classify: 460
+  },
+  AUDIT_PIPELINE_TASK: {
+    value: 460050,
+    label: '审核任务',
+    classify: 460
+  },
+  COPY_PIPELINE_TASK: {
+    value: 460060,
+    label: '复制任务',
+    classify: 460
+  },
+  EXEC_PIPELINE_TASK: {
+    value: 460070,
+    label: '执行任务',
+    classify: 460
+  },
+  DELETE_PIPELINE_TASK: {
+    value: 460080,
+    label: '删除任务',
+    classify: 460
+  },
+  SET_PIPELINE_TIMED_TASK: {
+    value: 460090,
+    label: '设置定时执行',
+    classify: 460
+  },
+  CANCEL_PIPELINE_TIMED_TASK: {
+    value: 460100,
+    label: '取消定时执行',
+    classify: 460
+  },
+  TERMINATE_PIPELINE_TASK: {
+    value: 460110,
+    label: '停止执行任务',
+    classify: 460
+  },
+  TERMINATE_PIPELINE_TASK_DETAIL: {
+    value: 460120,
+    label: '停止执行操作',
+    classify: 460
+  },
+  SKIP_PIPELINE_TASK_DETAIL: {
+    value: 460130,
+    label: '跳过执行操作',
+    classify: 460
+  },
+  ADD_TEMPLATE: {
+    value: 500010,
+    label: '添加模板',
+    classify: 500
+  },
+  UPDATE_TEMPLATE: {
+    value: 500020,
+    label: '修改模板',
+    classify: 500
+  },
+  DELETE_TEMPLATE: {
+    value: 500030,
+    label: '删除模板',
+    classify: 500
+  },
+  ADD_WEBHOOK: {
+    value: 510010,
+    label: '添加配置',
+    classify: 510
+  },
+  UPDATE_WEBHOOK: {
+    value: 510020,
+    label: '修改配置',
+    classify: 510
+  },
+  DELETE_WEBHOOK: {
+    value: 510030,
+    label: '删除配置',
+    classify: 510
+  },
+  CONFIG_IP_LIST: {
+    value: 600010,
+    label: '配置IP过滤器',
+    classify: 600
+  },
+  RE_ANALYSIS_SYSTEM: {
+    value: 600020,
+    label: '系统统计分析',
+    classify: 600
+  },
+  CLEAN_SYSTEM_FILE: {
+    value: 600030,
+    label: '清理系统文件',
+    classify: 600
+  },
+  UPDATE_SYSTEM_OPTION: {
+    value: 600040,
+    label: '修改系统配置',
+    classify: 600
+  },
+  ADD_SYSTEM_ENV: {
+    value: 610010,
+    label: '添加系统环境变量',
+    classify: 610
+  },
+  UPDATE_SYSTEM_ENV: {
+    value: 610020,
+    label: '修改系统环境变量',
+    classify: 610
+  },
+  DELETE_SYSTEM_ENV: {
+    value: 610030,
+    label: '删除系统环境变量',
+    classify: 610
+  },
+  SAVE_SYSTEM_ENV: {
+    value: 610040,
+    label: '保存系统环境变量',
+    classify: 610
+  },
+  DATA_CLEAR: {
+    value: 620010,
+    label: '清理数据',
+    classify: 620
+  },
+  DATA_IMPORT: {
+    value: 630010,
+    label: '导入数据',
+    classify: 630
+  },
+  DATA_EXPORT: {
+    value: 640010,
+    label: '导出数据',
+    classify: 640
   }
 }
 
@@ -2050,217 +1908,150 @@ export const MESSAGE_TYPE = {
     value: 1010,
     label: '命令执行完成',
     notify: 'success',
-    redirect: '/batch/exec/list'
+    redirect: row => `/batch/exec/list?id=${row.relId || ''}`
   },
   EXEC_FAILURE: {
     classify: 10,
     value: 1020,
     label: '命令执行失败',
     notify: 'error',
-    redirect: '/batch/exec/list'
+    duration: null,
+    redirect: row => `/batch/exec/list?id=${row.relId || ''}`
   },
   REPOSITORY_INIT_SUCCESS: {
     classify: 10,
     value: 1030,
     label: '版本仓库初始化成功',
     notify: 'success',
-    redirect: '/app/repo'
+    redirect: row => `/app/repo?id=${row.relId || ''}`
   },
   REPOSITORY_INIT_FAILURE: {
     classify: 10,
     value: 1040,
     label: '版本仓库初始化失败',
     notify: 'error',
-    redirect: '/app/repo'
+    duration: null,
+    redirect: row => `/app/repo?id=${row.relId || ''}`
   },
   BUILD_SUCCESS: {
     classify: 10,
     value: 1050,
     label: '构建执行成功',
     notify: 'success',
-    redirect: '/app/build/list'
+    redirect: row => `/app/build/list?id=${row.relId || ''}`
   },
   BUILD_FAILURE: {
     classify: 10,
     value: 1060,
     label: '构建执行失败',
     notify: 'error',
-    redirect: '/app/build/list'
+    duration: null,
+    redirect: row => `/app/build/list?id=${row.relId || ''}`
   },
   RELEASE_AUDIT_RESOLVE: {
     classify: 10,
     value: 1070,
     label: '发布审批通过',
     notify: 'success',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_AUDIT_REJECT: {
     classify: 10,
     value: 1080,
     label: '发布审批驳回',
     notify: 'warning',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_SUCCESS: {
     classify: 10,
     value: 1090,
     label: '发布执行成功',
     notify: 'success',
-    redirect: '/app/release/list'
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   RELEASE_FAILURE: {
     classify: 10,
     value: 1100,
     label: '发布执行失败',
     notify: 'error',
-    redirect: '/app/release/list'
+    duration: null,
+    redirect: row => `/app/release/list?id=${row.relId || ''}`
   },
   PIPELINE_AUDIT_RESOLVE: {
     classify: 10,
     value: 1110,
     label: '应用流水线审批通过',
     notify: 'success',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_AUDIT_REJECT: {
     classify: 10,
     value: 1120,
     label: '应用流水线审批驳回',
     notify: 'warning',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_EXEC_SUCCESS: {
     classify: 10,
     value: 1130,
     label: '流水线执行成功',
     notify: 'success',
-    redirect: '/app/pipeline/record'
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   PIPELINE_EXEC_FAILURE: {
     classify: 10,
     value: 1140,
     label: '流水线执行失败',
     notify: 'error',
-    redirect: '/app/pipeline/record'
+    duration: null,
+    redirect: row => `/app/pipeline/task?id=${row.relId || ''}`
   },
   MACHINE_AGENT_INSTALL_SUCCESS: {
     classify: 10,
     value: 1150,
     label: '机器监控插件安装成功',
     notify: 'success',
-    redirect: '/machine/monitor/list'
+    redirect: row => `/machine/monitor/list?machineId=${row.relId || ''}`
   },
   MACHINE_AGENT_INSTALL_FAILURE: {
     classify: 10,
     value: 1160,
     label: '机器监控插件安装失败',
     notify: 'error',
-    redirect: '/machine/monitor/list'
+    duration: null,
+    redirect: row => `/machine/monitor/list?machineId=${row.relId || ''}`
   },
-  MACHINE_IMPORT_SUCCESS: {
+  DATA_IMPORT_SUCCESS: {
     classify: 20,
     value: 2010,
-    label: '机器信息导入成功',
+    label: '数据导入成功',
     notify: 'success',
-    redirect: '/machine/list'
+    redirect: row => {
+      if (!row.relId) {
+        return null
+      }
+      return enumValueOf(IMPORT_TYPE, row.relId).redirect
+    }
   },
-  MACHINE_IMPORT_FAILURE: {
+  DATA_IMPORT_FAILURE: {
     classify: 20,
     value: 2020,
-    label: '机器信息导入失败',
+    label: '数据导入失败',
     notify: 'error',
-    redirect: '/machine/list'
-  },
-  MACHINE_PROXY_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2030,
-    label: '机器代理导入成功',
-    notify: 'success',
-    redirect: '/machine/proxy'
-  },
-  MACHINE_PROXY_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2040,
-    label: '机器代理导入失败',
-    notify: 'error',
-    redirect: '/machine/proxy'
-  },
-  MACHINE_TAIL_FILE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2050,
-    label: '日志文件导入成功',
-    notify: 'success',
-    redirect: '/log/list'
-  },
-  MACHINE_TAIL_FILE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2060,
-    label: '日志文件导入失败',
-    notify: 'error',
-    redirect: '/log/list'
-  },
-  PROFILE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2070,
-    label: '应用环境导入成功',
-    notify: 'success',
-    redirect: '/app/profile'
-  },
-  PROFILE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2080,
-    label: '应用环境导入失败',
-    notify: 'error',
-    redirect: '/app/profile'
-  },
-  APPLICATION_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2090,
-    label: '应用信息导入成功',
-    notify: 'success',
-    redirect: '/app/list'
-  },
-  APPLICATION_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2100,
-    label: '应用信息导入失败',
-    notify: 'error',
-    redirect: '/app/list'
-  },
-  REPOSITORY_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2110,
-    label: '版本仓库导入成功',
-    notify: 'success',
-    redirect: '/app/repo'
-  },
-  REPOSITORY_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2120,
-    label: '版本仓库导入失败',
-    notify: 'error',
-    redirect: '/app/repo'
-  },
-  COMMAND_TEMPLATE_IMPORT_SUCCESS: {
-    classify: 20,
-    value: 2130,
-    label: '命令模板导入成功',
-    notify: 'success',
-    redirect: '/template/list'
-  },
-  COMMAND_TEMPLATE_IMPORT_FAILURE: {
-    classify: 20,
-    value: 2140,
-    label: '命令模板导入失败',
-    notify: 'error',
-    redirect: '/template/list'
+    redirect: row => {
+      if (!row.relId) {
+        return null
+      }
+      return enumValueOf(IMPORT_TYPE, row.relId).redirect
+    }
   },
   MACHINE_ALARM: {
     classify: 30,
     value: 3010,
     label: '机器发生报警',
     notify: 'error',
-    redirect: '/machine/monitor/list'
+    duration: null,
+    redirect: row => `/machine/monitor/metrics/${row.relId || ''}`
   }
 }
 
@@ -2491,63 +2282,94 @@ export const BATCH_UPLOAD_STATUS = {
  * 数据清理区间
  */
 export const DATA_CLEAR_RANGE = {
-  DAY: {
-    value: 10
-  },
-  TOTAL: {
-    value: 20
-  },
-  REL_ID: {
-    value: 30
-  }
+  DAY: { value: 10 },
+  TOTAL: { value: 20 },
+  REL_ID: { value: 30 }
+}
+
+/**
+ * 数据导出类型
+ */
+export const EXPORT_TYPE = {
+  MACHINE_INFO: { value: 100 },
+  MACHINE_PROXY: { value: 110 },
+  TERMINAL_LOG: { value: 120 },
+  MACHINE_ALARM_HISTORY: { value: 130 },
+  APP_PROFILE: { value: 200 },
+  APPLICATION: { value: 210 },
+  APP_REPOSITORY: { value: 220 },
+  COMMAND_TEMPLATE: { value: 300 },
+  USER_EVENT_LOG: { value: 310 },
+  TAIL_FILE: { value: 320 },
+  WEBHOOK: { value: 330 }
 }
 
 /**
  * 数据导入类型
  */
 export const IMPORT_TYPE = {
-  MACHINE: {
+  MACHINE_INFO: {
     value: 100,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '机器信息 导入',
-    api: 'importMachineData'
+    redirect: '/machine/list'
   },
   MACHINE_PROXY: {
     value: 110,
     tips: '导入时优先使用导入密码',
     title: '机器代理 导入',
-    api: 'importMachineProxy'
+    redirect: '/machine/proxy'
   },
   TAIL_FILE: {
-    value: 130,
+    value: 120,
     tips: '通过机器标识来区分机器, 机器名称无需填写',
     title: '日志文件 导入',
-    api: 'importTailFile'
+    redirect: '/log/list'
   },
-  PROFILE: {
+  APP_PROFILE: {
     value: 200,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用环境 导入',
-    api: 'importAppProfile'
+    redirect: '/app/profile'
   },
   APPLICATION: {
     value: 210,
     tips: '使用唯一标识来区分数据, 存在更新不存在新增',
     title: '应用信息 导入',
-    api: 'importApplication'
+    redirect: '/app/list'
   },
-  REPOSITORY: {
+  APP_REPOSITORY: {
     value: 220,
     tips: '使用名称来区分数据, 存在更新不存在新增, 优先使用导入密码',
     title: '版本仓库 导入',
-    api: 'importRepository'
+    redirect: '/app/repo'
   },
   COMMAND_TEMPLATE: {
-    value: 310,
+    value: 300,
     tips: '使用模板名称来区分数据, 存在更新不存在新增',
     title: '命令模板 导入',
-    api: 'importCommandTemplate'
+    redirect: '/template/list'
+  },
+  WEBHOOK: {
+    value: 310,
+    tips: '使用名称来区分数据, 存在更新不存在新增',
+    title: 'webhook 导入',
+    redirect: '/webhook/list'
   }
+}
+
+/**
+ * 数据清理类型
+ */
+export const DATA_CLEAR_TYPE = {
+  BATCH_EXEC: { value: 10 },
+  TERMINAL_LOG: { value: 20 },
+  SCHEDULER_RECORD: { value: 30 },
+  APP_BUILD: { value: 40 },
+  APP_RELEASE: { value: 50 },
+  APP_PIPELINE_EXEC: { value: 60 },
+  USER_EVENT_LOG: { value: 70 },
+  MACHINE_ALARM_HISTORY: { value: 80 }
 }
 
 /**

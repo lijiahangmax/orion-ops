@@ -27,106 +27,109 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">日志列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="确认删除所选中的执行记录吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">日志列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="确认删除所选中的执行记录吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="mr8" icon="filter" @click="cleanAnsi">清除 ANSI</a-button>
+          <a target="_blank" href="#/log/view">
+            <a-button class="mr8" type="primary" icon="file-text">日志面板</a-button>
+          </a>
+          <a-button class="mr8" type="primary" icon="upload" @click="upload">上传</a-button>
+          <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button class="mr8" icon="filter" @click="cleanAnsi">清除 ANSI</a-button>
-        <a target="_blank" href="#/log/view">
-          <a-button class="mr8" type="primary" icon="file-text">日志面板</a-button>
-        </a>
-        <a-button class="mr8" type="primary" icon="upload" @click="upload">上传</a-button>
-        <a-button class="mr8" type="primary" icon="plus" @click="add">添加</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 主机 -->
-        <template #machine="record">
-          <a-tooltip placement="top">
-            <template #title>
-              <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
-            </template>
-            <span>{{ record.machineName }}</span>
-          </a-tooltip>
-        </template>
-        <!-- 路径 -->
-        <template #path="record">
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="{selectedRowKeys, onChange: e => selectedRowKeys = e}"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 主机 -->
+          <template #machine="record">
+            <a-tooltip placement="top">
+              <template #title>
+                <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
+              </template>
+              <span>{{ record.machineName }}</span>
+            </a-tooltip>
+          </template>
+          <!-- 路径 -->
+          <template #path="record">
            <span class="pointer" title="预览" @click="previewText(record.path)">
              {{ record.path }}
            </span>
-        </template>
-        <!-- 命令 -->
-        <template #command="record">
+          </template>
+          <!-- 命令 -->
+          <template #command="record">
           <span class="pointer" title="预览" @click="previewText(record.command)">
             {{ record.command }}
           </span>
-        </template>
-        <!-- 修改时间 -->
-        <template #updateTime="record">
-          {{ record.updateTime | formatDate }}
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 打开 -->
-          <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === ENABLE_STATUS.ENABLE.value">
-            <a target="_blank"
-               :href="`#/log/view/${record.id}`"
-               @click="openLogView($event, record.id)">
-              <a-button class="open-log-trigger" type="link">
+          </template>
+          <!-- 修改时间 -->
+          <template #updateTime="record">
+            {{ record.updateTime | formatDate }}
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 打开 -->
+            <a-tooltip title="ctrl 点击打开新页面" v-if="record.machineStatus === ENABLE_STATUS.ENABLE.value">
+              <a target="_blank"
+                 :href="`#/log/view/${record.id}`"
+                 @click="openLogView($event, record.id)">
+                <a-button class="open-log-trigger" type="link">
+                  打开
+                </a-button>
+              </a>
+            </a-tooltip>
+            <a-tooltip title="机器未启用" v-else>
+              <a-button class="open-log-trigger"
+                        type="link"
+                        :disabled="true">
                 打开
               </a-button>
-            </a>
-          </a-tooltip>
-          <a-tooltip title="机器未启用" v-else>
-            <a-button class="open-log-trigger"
-                      type="link"
-                      :disabled="true">
-              打开
-            </a-button>
-          </a-tooltip>
-          <a-divider type="vertical"/>
-          <!-- 修改 -->
-          <a @click="update(record.id)">修改</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="是否要删除当前日志记录?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="remove([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+            </a-tooltip>
+            <a-divider type="vertical"/>
+            <!-- 修改 -->
+            <a @click="update(record.id)">修改</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="是否要删除当前日志记录?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="remove([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="log-list-event">
@@ -141,7 +144,7 @@
       <!-- 日志模态框 -->
       <LoggerViewModal ref="logView"/>
       <!-- 导出模态框 -->
-      <MachineTailFileExportModal ref="export"/>
+      <TailFileExportModal ref="export"/>
       <!-- 导入模态框 -->
       <DataImportModal ref="import" :importType="importType"/>
     </div>
@@ -155,7 +158,7 @@ import MachineSelector from '@/components/machine/MachineSelector'
 import AddLogFileModal from '@/components/log/AddLogFileModal'
 import TextPreview from '@/components/preview/TextPreview'
 import LoggerViewModal from '@/components/log/LoggerViewModal'
-import MachineTailFileExportModal from '@/components/export/MachineTailFileExportModal'
+import TailFileExportModal from '@/components/export/TailFileExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 import UploadLogFileModal from '@/components/log/UploadLogFileModal'
 import FileAnsiCleanModal from '@/components/log/FileAnsiCleanModal'
@@ -230,7 +233,7 @@ export default {
     FileAnsiCleanModal,
     UploadLogFileModal,
     DataImportModal,
-    MachineTailFileExportModal,
+    TailFileExportModal,
     LoggerViewModal,
     MachineSelector,
     AddLogFileModal,

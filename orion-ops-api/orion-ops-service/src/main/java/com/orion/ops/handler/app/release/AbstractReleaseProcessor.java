@@ -173,7 +173,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.ID, release.getId());
         params.put(EventKeys.TITLE, release.getReleaseTitle());
-        webSideMessageService.addMessage(MessageType.RELEASE_SUCCESS, release.getReleaseUserId(), release.getReleaseUserName(), params);
+        webSideMessageService.addMessage(MessageType.RELEASE_SUCCESS, release.getId(), release.getReleaseUserId(), release.getReleaseUserName(), params);
     }
 
     /**
@@ -188,7 +188,7 @@ public abstract class AbstractReleaseProcessor implements IReleaseProcessor {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.ID, release.getId());
         params.put(EventKeys.TITLE, release.getReleaseTitle());
-        webSideMessageService.addMessage(MessageType.RELEASE_FAILURE, release.getReleaseUserId(), release.getReleaseUserName(), params);
+        webSideMessageService.addMessage(MessageType.RELEASE_FAILURE, release.getId(), release.getReleaseUserId(), release.getReleaseUserName(), params);
     }
 
     /**

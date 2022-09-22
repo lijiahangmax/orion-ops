@@ -3,12 +3,14 @@
            :title="title"
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
-           :mask="mask"
+           :bodyStyle="{padding: '16px 24px 0 24px'}"
+           :dialogStyle="{ top: '90px' }"
            :maskClosable="false"
            :destroyOnClose="true"
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
+      <a-alert class="mb16" message="请使用 ssh-keygen -m PEM -t rsa 生成秘钥"/>
       <a-form :form="form" v-bind="layout">
         <a-form-item label="秘钥名称" hasFeedback>
           <a-input v-decorator="decorators.name" allowClear/>
@@ -82,7 +84,6 @@ export default {
       visible: false,
       title: null,
       loading: false,
-      mask: true,
       record: null,
       layout,
       fileList: [],
@@ -91,19 +92,17 @@ export default {
     }
   },
   methods: {
-    setMask(mask) {
-      this.mask = mask
-    },
     add() {
       this.title = '新增秘钥'
       this.initRecord({})
     },
     update(id) {
       this.title = '修改秘钥'
-      this.$api.getMachineKeyDetail({ id })
-        .then(({ data }) => {
-          this.initRecord(data)
-        })
+      this.$api.getMachineKeyDetail({
+        id
+      }).then(({ data }) => {
+        this.initRecord(data)
+      })
     },
     initRecord(row) {
       this.form.resetFields()

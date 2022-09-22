@@ -15,7 +15,6 @@ import com.orion.ops.constant.*;
 import com.orion.ops.constant.app.*;
 import com.orion.ops.constant.env.EnvConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.message.MessageType;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.constant.user.RoleType;
@@ -30,10 +29,7 @@ import com.orion.ops.handler.app.release.ReleaseSessionHolder;
 import com.orion.ops.service.api.*;
 import com.orion.ops.task.TaskRegister;
 import com.orion.ops.task.TaskType;
-import com.orion.ops.utils.Currents;
-import com.orion.ops.utils.DataQuery;
-import com.orion.ops.utils.PathBuilders;
-import com.orion.ops.utils.Valid;
+import com.orion.ops.utils.*;
 import com.orion.spring.SpringHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,6 +115,7 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 .like(!Strings.isBlank(request.getTitle()), ApplicationReleaseDO::getReleaseTitle, request.getTitle())
                 .like(!Strings.isBlank(request.getDescription()), ApplicationReleaseDO::getReleaseDescription, request.getDescription())
                 .like(!Strings.isBlank(request.getAppName()), ApplicationReleaseDO::getAppName, request.getAppName())
+                .eq(Objects.nonNull(request.getId()), ApplicationReleaseDO::getId, request.getId())
                 .eq(Objects.nonNull(request.getAppId()), ApplicationReleaseDO::getAppId, request.getAppId())
                 .eq(Objects.nonNull(request.getProfileId()), ApplicationReleaseDO::getProfileId, request.getProfileId())
                 .eq(Objects.nonNull(request.getStatus()), ApplicationReleaseDO::getReleaseStatus, request.getStatus())
@@ -304,11 +301,11 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
                 // 提交任务
                 taskRegister.submit(TaskType.RELEASE, release.getTimedReleaseTime(), id);
             }
-            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_RESOLVE, release.getCreateUserId(), release.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_RESOLVE, id, release.getCreateUserId(), release.getCreateUserName(), params);
         } else {
             // 驳回
             update.setReleaseStatus(ReleaseStatus.AUDIT_REJECT.getStatus());
-            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_REJECT, release.getCreateUserId(), release.getCreateUserName(), params);
+            webSideMessageService.addMessage(MessageType.RELEASE_AUDIT_REJECT, id, release.getCreateUserId(), release.getCreateUserName(), params);
         }
         int effect = applicationReleaseDAO.updateById(update);
         // 设置日志参数
@@ -849,9 +846,9 @@ public class ApplicationReleaseServiceImpl implements ApplicationReleaseService 
         MutableLinkedHashMap<String, String> env = Maps.newMutableLinkedMap();
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_ID, build.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUILD_SEQ, build.getBuildSeq() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId() + Const.EMPTY);
-        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUNDLE_PATH, release.getBundlePath() + Const.EMPTY);
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BRANCH, build.getBranchName());
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.COMMIT, build.getCommitId());
+        env.put(EnvConst.RELEASE_PREFIX + EnvConst.BUNDLE_PATH, Files1.getPath(SystemEnvAttr.DIST_PATH.getValue(), release.getBundlePath()));
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_ID, release.getId() + Const.EMPTY);
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.RELEASE_TITLE, release.getReleaseTitle());
         env.put(EnvConst.RELEASE_PREFIX + EnvConst.TRANSFER_PATH, release.getTransferPath());

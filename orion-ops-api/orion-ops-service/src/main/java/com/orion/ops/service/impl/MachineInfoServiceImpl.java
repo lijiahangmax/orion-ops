@@ -22,13 +22,17 @@ import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.constant.history.HistoryOperator;
 import com.orion.ops.constant.history.HistoryValueType;
+import com.orion.ops.constant.machine.MachineAuthType;
+import com.orion.ops.constant.machine.MachineConst;
 import com.orion.ops.constant.machine.ProxyType;
 import com.orion.ops.dao.MachineEnvDAO;
 import com.orion.ops.dao.MachineInfoDAO;
 import com.orion.ops.dao.MachineProxyDAO;
+import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineEnvDO;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineProxyDO;
+import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.request.machine.MachineInfoRequest;
 import com.orion.ops.entity.vo.machine.MachineInfoVO;
 import com.orion.ops.service.api.*;
@@ -62,6 +66,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
 
     @Resource
     private MachineProxyDAO machineProxyDAO;
+
+    @Resource
+    private MachineSecretKeyDAO machineSecretKeyDAO;
 
     @Resource
     private MachineEnvDAO machineEnvDAO;
@@ -196,11 +203,8 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .like(Strings.isNotBlank(request.getTag()), MachineInfoDO::getMachineTag, request.getTag())
                 .like(Strings.isNotBlank(request.getDescription()), MachineInfoDO::getDescription, request.getDescription())
                 .like(Strings.isNotBlank(request.getUsername()), MachineInfoDO::getUsername, request.getUsername())
-                .eq(Objects.nonNull(request.getProxyId()), MachineInfoDO::getProxyId, request.getProxyId())
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
-                .ne(Objects.nonNull(request.getExcludeId()), MachineInfoDO::getId, request.getExcludeId())
-                .ne(Const.ENABLE.equals(request.getSkipHost()), MachineInfoDO::getId, Const.ENABLE)
                 .orderByAsc(MachineInfoDO::getId);
         return DataQuery.of(machineInfoDAO)
                 .page(request)
@@ -213,6 +217,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         MachineInfoVO vo = Converts.to(machine, MachineInfoVO.class);
+        // 查询代理信息
         Optional.ofNullable(machine.getProxyId())
                 .map(machineProxyDAO::selectById)
                 .ifPresent(p -> {
@@ -220,6 +225,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     vo.setProxyPort(p.getProxyPort());
                     vo.setProxyType(p.getProxyType());
                 });
+        // 查询秘钥信息
+        Optional.ofNullable(machine.getKeyId())
+                .map(machineSecretKeyDAO::selectById)
+                .map(MachineSecretKeyDO::getKeyName)
+                .ifPresent(vo::setKeyName);
         return vo;
     }
 
@@ -271,19 +281,60 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 查询超时时间
         Integer connectTimeout = machineEnvService.getConnectTimeout(id);
-        boolean ping = IPs.ping(machine.getMachineHost(), connectTimeout);
-        return ping ? Const.ENABLE : Const.DISABLE;
+        return IPs.ping(machine.getMachineHost(), connectTimeout) ? Const.ENABLE : Const.DISABLE;
+    }
+
+    @Override
+    public Integer testPing(String host) {
+        return IPs.ping(host, MachineConst.CONNECT_TIMEOUT) ? Const.ENABLE : Const.DISABLE;
     }
 
     @Override
     public Integer testConnect(Long id) {
+        // 查询机器
+        MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+        // 测试连接
+        return this.testConnectMachine(machine);
+    }
+
+    @Override
+    public Integer testConnect(MachineInfoRequest request) {
+        MachineInfoDO machine = new MachineInfoDO();
+        machine.setProxyId(request.getProxyId());
+        machine.setKeyId(request.getKeyId());
+        machine.setMachineHost(request.getHost());
+        machine.setSshPort(request.getSshPort());
+        machine.setUsername(request.getUsername());
+        machine.setAuthType(request.getAuthType());
+        Optional.ofNullable(request.getPassword())
+                .map(ValueMix::encrypt)
+                .ifPresent(machine::setPassword);
+        // 测试连接
+        return this.testConnectMachine(machine);
+    }
+
+    /**
+     * 测试连接机器
+     *
+     * @param machine machine
+     * @return result
+     */
+    private Integer testConnectMachine(MachineInfoDO machine) {
         SessionStore s = null;
         try {
-            // 查询机器
-            MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
+            // 查询秘钥
+            MachineSecretKeyDO key = Optional.ofNullable(machine.getKeyId())
+                    .map(machineSecretKeyDAO::selectById)
+                    .orElse(null);
+            // 查询代理
+            MachineProxyDO proxy = Optional.ofNullable(machine.getProxyId())
+                    .map(machineProxyDAO::selectById)
+                    .orElse(null);
             // 查询超时时间
-            Integer connectTimeout = machineEnvService.getConnectTimeout(id);
-            s = this.connectSessionStore(machine, connectTimeout);
+            Integer timeout = Optional.ofNullable(machine.getId())
+                    .map(machineEnvService::getConnectTimeout)
+                    .orElse(MachineConst.CONNECT_TIMEOUT);
+            s = this.connectSessionStore(machine, key, proxy, timeout);
             return Const.ENABLE;
         } catch (Exception e) {
             return Const.DISABLE;
@@ -309,12 +360,20 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Integer connectTimeout = machineEnvService.getConnectTimeout(id);
         // 重试次数
         Integer retryTimes = machineEnvService.getConnectRetryTimes(id);
+        // 查询秘钥
+        MachineSecretKeyDO key = Optional.ofNullable(machine.getKeyId())
+                .map(machineSecretKeyDAO::selectById)
+                .orElse(null);
+        // 查询代理
+        MachineProxyDO proxy = Optional.ofNullable(machine.getProxyId())
+                .map(machineProxyDAO::selectById)
+                .orElse(null);
         Exception ex = null;
         String msg = MessageConst.CONNECT_ERROR;
         for (int i = 0, t = retryTimes + 1; i < t; i++) {
             log.info("远程机器建立连接-尝试连接远程服务器 第{}次尝试 machineId: {}, host: {}", (i + 1), id, machine.getMachineHost());
             try {
-                return this.connectSessionStore(machine, connectTimeout);
+                return this.connectSessionStore(machine, key, proxy, connectTimeout);
             } catch (Exception e) {
                 ex = e;
                 if (e instanceof ConnectionRuntimeException) {
@@ -333,26 +392,36 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     /**
-     * 打开sessionStore
+     * 打开 sessionStore
      *
      * @param machine machine
+     * @param key     key
+     * @param proxy   proxy
      * @param timeout timeout
      * @return SessionStore
      */
-    private SessionStore connectSessionStore(MachineInfoDO machine, int timeout) {
+    private SessionStore connectSessionStore(MachineInfoDO machine, MachineSecretKeyDO key,
+                                             MachineProxyDO proxy, int timeout) {
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
-        Long proxyId = machine.getProxyId();
+        SessionHolder sessionHolder = new SessionHolder();
         SessionStore session;
         try {
-            session = SessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
-            String password = machine.getPassword();
-            if (Strings.isNotBlank(password)) {
-                session.password(ValueMix.decrypt(password));
+            // 加载秘钥
+            if (MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType())) {
+                String keyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
+                String keyPassword = ValueMix.decrypt(key.getPassword());
+                sessionHolder.addIdentity(keyPath, keyPassword);
             }
-            MachineProxyDO proxy = null;
-            if (proxyId != null) {
-                proxy = machineProxyDAO.selectById(proxyId);
+            // 获取会话
+            session = sessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
+            // 密码验证
+            if (MachineAuthType.PASSWORD.getType().equals(machine.getAuthType())) {
+                String password = machine.getPassword();
+                if (Strings.isNotBlank(password)) {
+                    session.password(ValueMix.decrypt(password));
+                }
             }
+            // 加载代理
             if (proxy != null) {
                 ProxyType proxyType = ProxyType.of(proxy.getProxyType());
                 String proxyPassword = proxy.getProxyPassword();
@@ -362,11 +431,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 if (ProxyType.HTTP.equals(proxyType)) {
                     session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS4.equals(proxyType)) {
-                    session.socket4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.sock4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS5.equals(proxyType)) {
-                    session.socket5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.sock5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
             }
+            // 连接
             session.connect(timeout);
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
             return session;
@@ -488,6 +558,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private void copyProperties(MachineInfoRequest request, MachineInfoDO entity) {
         entity.setId(request.getId());
         entity.setProxyId(request.getProxyId());
+        entity.setKeyId(request.getKeyId());
         entity.setMachineHost(request.getHost());
         entity.setSshPort(request.getSshPort());
         entity.setMachineName(request.getName());

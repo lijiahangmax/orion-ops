@@ -17,11 +17,13 @@ public enum WebhookType {
     /**
      * 钉钉机器人
      */
-    DING_ROBOT(10),
+    DING_ROBOT(10, "钉钉机器人"),
 
     ;
 
     private final Integer type;
+
+    private final String label;
 
     public static WebhookType of(Integer type) {
         if (type == null) {
@@ -29,6 +31,18 @@ public enum WebhookType {
         }
         for (WebhookType value : values()) {
             if (value.type.equals(type)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public static WebhookType of(String label) {
+        if (label == null) {
+            return null;
+        }
+        for (WebhookType value : values()) {
+            if (value.label.equals(label)) {
                 return value;
             }
         }

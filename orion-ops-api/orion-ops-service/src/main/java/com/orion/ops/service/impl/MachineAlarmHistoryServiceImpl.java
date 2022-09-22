@@ -24,7 +24,7 @@ import java.util.Objects;
 @Service("machineAlarmHistoryService")
 public class MachineAlarmHistoryServiceImpl implements MachineAlarmHistoryService {
 
-    // TODO 监控列表历史 最近7天的报警记录 数据清理 数据导出
+    // TODO 最近7天的报警记录
 
     @Resource
     private MachineAlarmHistoryDAO machineAlarmHistoryDAO;

@@ -15,7 +15,13 @@
               @onHeaderEvent="onHeaderEvent"/>
       <!-- 主体部分 -->
       <a-layout-content id="common-content">
-        <router-view ref="route" @reloadProfile="reloadProfile"/>
+        <a-spin :spinning="globalLoading" :tip="globalLoadingTip">
+          <router-view ref="route"
+                       :key="$route.fullPath"
+                       @reloadProfile="reloadProfile"
+                       @openLoading="openLoading"
+                       @closeLoading="closeLoading"/>
+        </a-spin>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -41,7 +47,9 @@ export default {
   data() {
     return {
       collapsed: false,
-      validToken: false
+      validToken: false,
+      globalLoading: false,
+      globalLoadingTip: null
     }
   },
   methods: {
@@ -53,6 +61,14 @@ export default {
     },
     reloadProfile() {
       this.$refs.header.reloadProfile()
+    },
+    openLoading(tip = null) {
+      this.globalLoading = true
+      this.globalLoadingTip = tip
+    },
+    closeLoading() {
+      this.globalLoading = false
+      this.globalLoadingTip = null
     }
   },
   async beforeCreate() {

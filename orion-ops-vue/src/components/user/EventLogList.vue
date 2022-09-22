@@ -241,6 +241,7 @@ export default {
 .log-list-filter {
   padding: 8px 0 0 0 !important;
   margin-bottom: 16px;
+  box-shadow: none;
 
   .log-search-bar {
     justify-content: flex-end;

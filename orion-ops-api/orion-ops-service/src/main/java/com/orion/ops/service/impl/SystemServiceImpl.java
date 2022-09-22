@@ -6,7 +6,6 @@ import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.Valid;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.Files1;
-import com.orion.net.remote.channel.SessionHolder;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.EnableType;
 import com.orion.ops.constant.MessageConst;
@@ -193,8 +192,6 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public SystemAnalysisVO getSystemAnalysis() {
         SystemAnalysisVO vo = Converts.to(systemSpace, SystemAnalysisVO.class);
-        // 挂载秘钥数
-        vo.setMountKeyCount(SessionHolder.getLoadKeys().size());
         // 文件清理
         vo.setFileCleanThreshold(Integer.valueOf(SystemEnvAttr.FILE_CLEAN_THRESHOLD.getValue()));
         vo.setAutoCleanFile(EnableType.of(SystemEnvAttr.ENABLE_AUTO_CLEAN_FILE.getValue()).getValue());

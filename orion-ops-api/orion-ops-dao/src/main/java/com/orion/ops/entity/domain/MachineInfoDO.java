@@ -32,6 +32,10 @@ public class MachineInfoDO implements Serializable {
     @TableField(value = "proxy_id", updateStrategy = FieldStrategy.IGNORED)
     private Long proxyId;
 
+    @ApiModelProperty(value = "秘钥id")
+    @TableField(value = "key_id", updateStrategy = FieldStrategy.IGNORED)
+    private Long keyId;
+
     @ApiModelProperty(value = "主机ip")
     @TableField("machine_host")
     private String machineHost;
@@ -63,7 +67,7 @@ public class MachineInfoDO implements Serializable {
     /**
      * @see com.orion.ops.constant.machine.MachineAuthType
      */
-    @ApiModelProperty(value = "机器认证方式 1: 账号认证 2: key认证")
+    @ApiModelProperty(value = "机器认证方式 1: 密码认证 2: 独立秘钥")
     @TableField("auth_type")
     private Integer authType;
 

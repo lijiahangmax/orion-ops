@@ -138,7 +138,7 @@ export default {
         return
       }
       this.loading = true
-      this.$api[this.importType.api]({
+      this.$api.importData({
         importToken: this.checkData.importToken
       }).then(() => {
         this.loading = false

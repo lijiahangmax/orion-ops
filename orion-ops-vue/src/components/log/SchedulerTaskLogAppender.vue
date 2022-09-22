@@ -2,7 +2,7 @@
   <a-spin :spinning="loading">
     <div class="task-logger-container" :style="{height}">
       <!-- 菜单 -->
-      <div class="task-machines-menu">
+      <div class="task-machines-menu gray-box-shadow">
         <a-menu mode="inline" v-model="selectedKeys">
           <a-menu-item v-for="machine in record.machines"
                        :key="machine.id"
@@ -22,7 +22,7 @@
         </a-menu>
       </div>
       <!-- 日志 -->
-      <div class="task-logger-appender-container">
+      <div class="task-logger-appender-container gray-box-shadow">
         <div class="task-logger-appender"
              v-for="machine in record.machines"
              v-show="machine.id === selectedKeys[0]"
@@ -267,7 +267,7 @@ export default {
     margin: 16px;
     padding: 8px;
     background: #FFFFFF;
-    border-radius: 4px;
+    border-radius: 2px;
 
     ::v-deep .ant-menu-item {
       padding: 0 0 0 12px !important;
@@ -288,7 +288,7 @@ export default {
     width: calc(100% - 287px);
     margin: 16px 16px 16px 0;
     background: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
 
     .appender-left-tools {
       display: flex;

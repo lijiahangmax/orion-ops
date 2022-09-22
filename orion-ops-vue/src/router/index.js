@@ -392,7 +392,7 @@ const routes = [
           requireAuth: true,
           title: '报警组列表'
         },
-        component: () => import('../views/alarm/AlarmGroupList')
+        component: () => import('../views/user/AlarmGroupList')
       },
       {
         path: '/user/detail',

@@ -1,5 +1,5 @@
 <template>
-  <div class="user-detail-container">
+  <div class="user-detail-container gray-box-shadow">
     <a-tabs :defaultActiveKey="key" tabPosition="left" @change="changeTab">
       <!-- 基本信息 -->
       <a-tab-pane :key="1" tab="基本信息">
@@ -64,6 +64,6 @@ export default {
 .user-detail-container {
   background: #FFF;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 </style>

@@ -1,27 +1,28 @@
 <template>
   <div class="monitor-container">
-    <a-spin :spinning="globaLoading" :tip="globaLoadingTip">
-      <!-- 筛选列 -->
-      <div class="table-search-columns">
-        <a-form-model ref="query" :model="query">
-          <a-row>
-            <a-col :span="6">
-              <a-form-model-item label="主机" prop="machine">
-                <MachineAutoComplete ref="machineSelector" @change="selectedMachine" @choose="getList({})"/>
-              </a-form-model-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-model-item label="状态" prop="status">
-                <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
-                  <a-select-option :value="status.value" v-for="status in MONITOR_STATUS" :key="status.value">
-                    {{ status.label }}
-                  </a-select-option>
-                </a-select>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-        </a-form-model>
-      </div>
+    <!-- 筛选列 -->
+    <div class="table-search-columns">
+      <a-form-model ref="query" :model="query">
+        <a-row>
+          <a-col :span="6">
+            <a-form-model-item label="主机" prop="machine">
+              <MachineAutoComplete ref="machineSelector" @change="selectedMachine" @choose="getList({})"/>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="6">
+            <a-form-model-item label="状态" prop="status">
+              <a-select v-model="query.status" placeholder="全部" @change="getList({})" allowClear>
+                <a-select-option :value="status.value" v-for="status in MONITOR_STATUS" :key="status.value">
+                  {{ status.label }}
+                </a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </a-form-model>
+    </div>
+    <!-- 表格 -->
+    <div class="table-wrapper">
       <!-- 工具栏 -->
       <div class="table-tools-bar">
         <!-- 左侧 -->
@@ -113,15 +114,20 @@
               <a :href="`#/machine/monitor/metrics/${record.machineId}`">监控</a>
             </a-button>
             <a-divider type="vertical"/>
+            <!-- 检测 -->
+            <a-button class="p0" type="link" style="height: 22px">
+              <a @click="checkMonitor([record])">检测</a>
+            </a-button>
+            <a-divider type="vertical"/>
             <a @click="openAgentSetting(record)">插件配置</a>
             <a-divider type="vertical"/>
             <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=3`">报警配置</a>
             <a-divider type="vertical"/>
-            <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=4`">报警历史</a>
+            <a :href="`#/machine/monitor/metrics/${record.machineId}?tab=4`">报警记录</a>
           </template>
         </a-table>
       </div>
-    </a-spin>
+    </div>
     <!-- 配置模态框 -->
     <MachineMonitorConfigModal ref="configModal"/>
   </div>
@@ -200,8 +206,6 @@ export default {
           return `共 ${total} 条`
         }
       },
-      globaLoading: false,
-      globaLoadingTip: null,
       loading: false,
       columns
     }
@@ -273,8 +277,7 @@ export default {
         this.$message.warning('本页面没有可安装的机器')
       }
       for (const row of rows) {
-        this.globaLoadingTip = `${row.machineName}(${row.machineHost}) 正在安装...`
-        this.globaLoading = true
+        this.$emit('openLoading', `${row.machineName}(${row.machineHost}) 正在安装...`)
         const beforeStatus = row.status
         row.status = MONITOR_STATUS.STARTING.value
         try {
@@ -287,7 +290,7 @@ export default {
           row.status = beforeStatus
         }
       }
-      this.globaLoading = false
+      this.$emit('closeLoading')
     },
     async batchUpgradeMonitor() {
       const rows = this.rows.filter(row => row.currentVersion && row.latestVersion && row.currentVersion !== row.latestVersion)
@@ -295,8 +298,7 @@ export default {
         this.$message.warning('本页面没有可升级的机器')
       }
       for (const row of rows) {
-        this.globaLoadingTip = `${row.machineName}(${row.machineHost}) 正在升级...`
-        this.globaLoading = true
+        this.$emit('openLoading', `${row.machineName}(${row.machineHost}) 正在升级...`)
         const beforeStatus = row.status
         row.status = MONITOR_STATUS.STARTING.value
         try {
@@ -308,17 +310,19 @@ export default {
           row.status = beforeStatus
         }
       }
-      this.globaLoading = false
+      this.$emit('closeLoading')
     },
-    async batchCheckMonitor() {
+    batchCheckMonitor() {
       const rows = this.rows.filter(row => row.status !== MONITOR_STATUS.STARTING.value)
       if (!rows.length) {
         this.$message.warning('本页面没有可检查的机器')
+        return
       }
+      this.checkMonitor(rows)
+    },
+    async checkMonitor(rows) {
       for (const row of rows) {
-        this.globaLoadingTip = `${row.machineName}(${row.machineHost}) 正在检测...`
-        this.globaLoading = true
-        const beforeStatus = row.status
+        this.$emit('openLoading', `${row.machineName}(${row.machineHost}) 正在检测...`)
         try {
           const { data } = await this.$api.checkMachineMonitorAgentStatus({
             machineId: row.machineId
@@ -326,10 +330,10 @@ export default {
           row.status = data.status
           row.currentVersion = data.currentVersion || row.currentVersion
         } catch {
-          row.status = beforeStatus
+          // ignore
         }
       }
-      this.globaLoading = false
+      this.$emit('closeLoading')
     },
     openAgentSetting(record) {
       this.$refs.configModal.open(record)
@@ -350,6 +354,7 @@ export default {
     }
   },
   mounted() {
+    this.query.machineId = this.$route.query.machineId
     // 查询列表
     this.getList({})
   }

@@ -61,9 +61,9 @@ public class WebSideMessageDO implements Serializable {
     @TableField("send_message")
     private String sendMessage;
 
-    @ApiModelProperty(value = "参数")
-    @TableField("params_json")
-    private String paramsJson;
+    @ApiModelProperty(value = "消息关联id")
+    @TableField("rel_id")
+    private Long relId;
 
     @ApiModelProperty(value = "是否删除 1未删除 2已删除")
     @TableLogic

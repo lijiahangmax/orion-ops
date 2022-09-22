@@ -38,119 +38,122 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">用户列表</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <!-- 状态单选 -->
-        <div class="mr8 nowrap">
-          <a-radio-group v-model="query.status" @change="getList({})">
-            <a-radio-button :value="undefined">
-              全部
-            </a-radio-button>
-            <a-radio-button :value="1">
-              启用
-            </a-radio-button>
-            <a-radio-button :value="2">
-              禁用
-            </a-radio-button>
-          </a-radio-group>
-        </div>
-        <a-divider type="vertical"/>
-        <a-button class="mx8" type="primary" icon="plus" @click="add">添加</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 用户名 -->
-        <template #username="record">
-          <span class="pointer" @click="$copy(record.username)" title="复制">{{ record.username }}</span>
-        </template>
-        <!-- 昵称 -->
-        <template #nickname="record">
-          <span class="pointer" @click="$copy(record.nickname)" title="复制">{{ record.nickname }}</span>
-        </template>
-        <!-- 手机号 -->
-        <template #phone="record">
-          <span class="pointer span-blue" @click="$copy(record.phone)" title="复制">{{ record.phone }}</span>
-        </template>
-        <!-- 邮箱 -->
-        <template #email="record">
-          <span class="pointer span-blue" @click="$copy(record.email)" title="复制">{{ record.email }}</span>
-        </template>
-        <!-- 角色 -->
-        <template #role="record">
-          <span>{{ record.role | formatRoleType('label') }}</span>
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-badge :status="record.status | formatEnableStatus('status')"
-                   :text="record.status | formatEnableStatus('label')"/>
-        </template>
-        <!-- 登陆时间 -->
-        <template #lastLoginTime="record">
+    <div class="table-wrapper">
+      <!-- 工具 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">用户列表</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <!-- 状态单选 -->
+          <div class="mr8 nowrap">
+            <a-radio-group v-model="query.status" @change="getList({})">
+              <a-radio-button :value="undefined">
+                全部
+              </a-radio-button>
+              <a-radio-button :value="1">
+                启用
+              </a-radio-button>
+              <a-radio-button :value="2">
+                禁用
+              </a-radio-button>
+            </a-radio-group>
+          </div>
+          <a-divider type="vertical"/>
+          <a-button class="mx8" type="primary" icon="plus" @click="add">添加</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 用户名 -->
+          <template #username="record">
+            <span class="pointer" @click="$copy(record.username)" title="复制">{{ record.username }}</span>
+          </template>
+          <!-- 昵称 -->
+          <template #nickname="record">
+            <span class="pointer" @click="$copy(record.nickname)" title="复制">{{ record.nickname }}</span>
+          </template>
+          <!-- 手机号 -->
+          <template #phone="record">
+            <span class="pointer span-blue" @click="$copy(record.phone)" title="复制">{{ record.phone }}</span>
+          </template>
+          <!-- 邮箱 -->
+          <template #email="record">
+            <span class="pointer span-blue" @click="$copy(record.email)" title="复制">{{ record.email }}</span>
+          </template>
+          <!-- 角色 -->
+          <template #role="record">
+            <span>{{ record.role | formatRoleType('label') }}</span>
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-badge :status="record.status | formatEnableStatus('status')"
+                     :text="record.status | formatEnableStatus('label')"/>
+          </template>
+          <!-- 登陆时间 -->
+          <template #lastLoginTime="record">
           <span v-if="record.lastLoginTime">
             {{ record.lastLoginTime | formatDate }} ({{ record.lastLoginAgo }})
           </span>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <div v-if="record.id !== $getUserId()">
-            <!-- 解锁 -->
-            <a-button :disabled="record.locked === 1"
-                      style="padding: 0; height: 24px"
-                      type="link"
-                      @click="unlock(record.id)">
-              解锁
-            </a-button>
-            <a-divider type="vertical"/>
-            <!-- 状态 -->
-            <a-popconfirm :title="`确认${record.status === 1 ? '禁用' : '启用'}当前用户?`"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="updateStatus(record)">
-              <span class="span-blue pointer">{{ record.status === 1 ? '禁用' : '启用' }}</span>
-            </a-popconfirm>
-            <a-divider type="vertical"/>
-            <!-- 修改 -->
-            <span class="span-blue pointer" @click="update(record.id)">修改</span>
-            <a-divider type="vertical"/>
-            <!-- 操作日志 -->
-            <a :href="`#/user/event/logs/${record.id}`">日志</a>
-            <a-divider type="vertical"/>
-            <!-- 重置密码 -->
-            <a @click="resetPassword(record.id)">重置密码</a>
-            <a-divider type="vertical"/>
-            <!-- 删除 -->
-            <a-popconfirm title="是否要删除当前用户?"
-                          placement="topRight"
-                          ok-text="确定"
-                          cancel-text="取消"
-                          @confirm="remove(record.id)">
-              <span class="span-blue pointer">删除</span>
-            </a-popconfirm>
-          </div>
-          <div v-else>
-            <!-- 操作日志 -->
-            <a :href="`#/user/event/logs/${record.id}`">日志</a>
-          </div>
-        </template>
-      </a-table>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <div v-if="record.id !== $getUserId()">
+              <!-- 解锁 -->
+              <a-button :disabled="record.locked === 1"
+                        style="padding: 0; height: 24px"
+                        type="link"
+                        @click="unlock(record.id)">
+                解锁
+              </a-button>
+              <a-divider type="vertical"/>
+              <!-- 状态 -->
+              <a-popconfirm :title="`确认${record.status === 1 ? '禁用' : '启用'}当前用户?`"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="updateStatus(record)">
+                <span class="span-blue pointer">{{ record.status === 1 ? '禁用' : '启用' }}</span>
+              </a-popconfirm>
+              <a-divider type="vertical"/>
+              <!-- 修改 -->
+              <span class="span-blue pointer" @click="update(record.id)">修改</span>
+              <a-divider type="vertical"/>
+              <!-- 操作日志 -->
+              <a :href="`#/user/event/logs/${record.id}`">日志</a>
+              <a-divider type="vertical"/>
+              <!-- 重置密码 -->
+              <a @click="resetPassword(record.id)">重置密码</a>
+              <a-divider type="vertical"/>
+              <!-- 删除 -->
+              <a-popconfirm title="是否要删除当前用户?"
+                            placement="topRight"
+                            ok-text="确定"
+                            cancel-text="取消"
+                            @confirm="remove(record.id)">
+                <span class="span-blue pointer">删除</span>
+              </a-popconfirm>
+            </div>
+            <div v-else>
+              <!-- 操作日志 -->
+              <a :href="`#/user/event/logs/${record.id}`">日志</a>
+            </div>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="log-list-event">

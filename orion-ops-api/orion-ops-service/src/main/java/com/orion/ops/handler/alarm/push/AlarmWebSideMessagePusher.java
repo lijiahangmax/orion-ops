@@ -39,7 +39,7 @@ public class AlarmWebSideMessagePusher implements IAlarmPusher {
         params.put(EventKeys.VALUE, Numbers.setScale(context.getAlarmValue(), 2));
         params.put(EventKeys.TIME, Dates.format(context.getAlarmTime()));
         context.getUserMapping().forEach((k, v) -> {
-            webSideMessageService.addMessage(MessageType.MACHINE_ALARM, k, v.getUsername(), params);
+            webSideMessageService.addMessage(MessageType.MACHINE_ALARM, context.getMachineId(), k, v.getUsername(), params);
         });
     }
 

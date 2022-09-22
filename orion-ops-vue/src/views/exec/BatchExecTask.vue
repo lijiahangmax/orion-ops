@@ -1,7 +1,7 @@
 <template>
   <div class="batch-exec-task-container">
     <!-- 左侧 -->
-    <div class="task-left-container" :style="leftContainerStyle">
+    <div class="task-left-container gray-box-shadow" :style="leftContainerStyle">
       <!-- 执行配置 -->
       <transition name="fade">
         <div class="exec-config-container" v-show="visibleCommand">
@@ -74,14 +74,14 @@
       </transition>
     </div>
     <!-- 右侧 -->
-    <div class="exec-logger-container">
+    <div class="exec-logger-container gray-box-shadow">
       <!-- 日志 -->
       <div v-if="runnable" class="logger-appender-container">
         <div v-for="execMachine in execMachines"
              v-show="execMachine.execId === selectedMachineKeys[0]"
              :key="execMachine.execId">
           <LogAppender :ref="'appender' + execMachine.execId"
-                       height="calc(100vh - 125px)"
+                       height="calc(100vh - 124px)"
                        size="default"
                        :relId="execMachine.execId"
                        :tailType="FILE_TAIL_TYPE.EXEC_LOG.value"
@@ -338,7 +338,7 @@ export default {
     transition: width 0.3s;
     background: #FFFFFF;
     padding: 16px 20px 20px 20px;
-    border-radius: 4px;
+    border-radius: 2px;
     margin-right: 16px;
 
     .exec-config-container {
@@ -379,7 +379,7 @@ export default {
         margin: 8px 8px 4px 8px;
         display: flex;
         background: #118AFA;
-        border-radius: 4px;
+        border-radius: 2px;
 
         .reset-button {
           width: 100%;
@@ -389,7 +389,7 @@ export default {
           align-items: center;
           justify-content: center;
           transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-          border-radius: 4px;
+          border-radius: 2px;
           cursor: pointer;
 
           i {
@@ -424,7 +424,7 @@ export default {
   .exec-logger-container {
     width: calc(100% - 252px);
     background: #FFFFFF;
-    border-radius: 4px;
+    border-radius: 2px;
     flex: 1;
 
     .appender-left-tools {

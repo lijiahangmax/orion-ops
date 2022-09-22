@@ -43,7 +43,7 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
     public JSONObject getBaseMetrics(Long machineId) {
         HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.METRICS_BASE)
                 .getRequest();
-        request.queryParam(ParamConst.LIMIT, Const.N_10.toString());
+        request.queryParam(ParamConst.LIMIT, Const.N_10);
         HttpWrapper<JSONObject> wrapper = request.getHttpWrapper(JSONObject.class);
         return Valid.api(wrapper);
     }
@@ -59,7 +59,7 @@ public class MachineMonitorEndpointServiceImpl implements MachineMonitorEndpoint
     public JSONArray getTopProcesses(Long machineId, String name) {
         HttpApiRequest request = this.getRequester(machineId, MachineMonitorHttpApi.METRICS_TOP_PROCESSES)
                 .getRequest();
-        request.queryParam(ParamConst.LIMIT, Const.N_10.toString())
+        request.queryParam(ParamConst.LIMIT, Const.N_10)
                 .queryParam(ParamConst.NAME, name);
         HttpWrapper<JSONArray> wrapper = request.getHttpWrapper(JSONArray.class);
         return Valid.api(wrapper);

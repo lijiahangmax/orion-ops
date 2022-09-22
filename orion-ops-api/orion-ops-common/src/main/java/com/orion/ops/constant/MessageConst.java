@@ -74,6 +74,8 @@ public class MessageConst {
 
     public static final String UNKNOWN_DATA = "未查询到数据";
 
+    public static final String UNKNOWN_EXPORT_TYPE = "未知的导出类型";
+
     public static final String INVALID_MACHINE = "未知的机器";
 
     public static final String MACHINE_DISABLE = "机器未启用";
@@ -138,17 +140,7 @@ public class MessageConst {
 
     public static final String TRANSFER_ACTION_PRESENT = "传输操作只能有一个";
 
-    public static final String ADD_SECRET_KEY_ERROR = "添加秘钥失败";
-
-    public static final String UPDATE_SECRET_KEY_ERROR = "修改秘钥失败";
-
-    public static final String REMOVE_SECRET_KEY_ERROR = "删除秘钥失败";
-
-    public static final String MOUNT_SECRET_KEY_ERROR = "挂载秘钥失败";
-
-    public static final String DUMP_SECRET_KEY_ERROR = "卸载秘钥失败";
-
-    public static final String TEMP_MOUNT_SECRET_KEY_ERROR = "临时挂载秘钥失败";
+    public static final String ILLEGAL_MACHINE_SECRET_KEY = "秘钥不合法, 请检查密码或使用 ssh-keygen -m PEM -t rsa 重新生成";
 
     public static final String AUTO_AUDIT_RESOLVE = "自动审核通过";
 

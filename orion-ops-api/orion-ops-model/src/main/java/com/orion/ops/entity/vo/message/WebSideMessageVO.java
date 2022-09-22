@@ -48,8 +48,8 @@ public class WebSideMessageVO {
     @ApiModelProperty(value = "消息")
     private String message;
 
-    @ApiModelProperty(value = "参数")
-    private String paramsJson;
+    @ApiModelProperty(value = "消息关联id")
+    private Long relId;
 
     @ApiModelProperty(value = "创建时间")
     private Date createTime;

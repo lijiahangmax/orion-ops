@@ -30,7 +30,7 @@ import java.util.List;
 @Api(tags = "机器代理")
 @RestController
 @RestWrapper
-@RequestMapping("/orion/api/proxy")
+@RequestMapping("/orion/api/machine-proxy")
 public class MachineProxyController {
 
     @Resource

@@ -1,11 +1,14 @@
 package com.orion.ops.handler.monitor;
 
+import com.orion.lang.constant.Letters;
+import com.orion.lang.utils.Arrays1;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Threads;
 import com.orion.lang.utils.collect.Maps;
 import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
+import com.orion.lang.utils.time.Dates;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.SessionStore;
@@ -23,6 +26,7 @@ import com.orion.ops.entity.dto.user.UserDTO;
 import com.orion.ops.service.api.*;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.spring.SpringHolder;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -57,6 +61,8 @@ public class MonitorAgentInstallTask implements Runnable {
 
     private MachineInfoDO machine;
 
+    private OutputStream logStream;
+
     public MonitorAgentInstallTask(Long machineId, UserDTO user) {
         this.machineId = machineId;
         this.user = user;
@@ -66,18 +72,28 @@ public class MonitorAgentInstallTask implements Runnable {
     public void run() {
         log.info("开始安装监控插件 machineId: {}", machineId);
         try {
+            // 查询机器信息
             this.machine = machineInfoService.selectById(machineId);
-            String pluginPath = PathBuilders.getPluginPath(machine.getUsername());
-            String agentPath = pluginPath + Const.LIB_DIR + "/" + MonitorConst.AGENT_FILE_NAME;
+            // 打开日志流
+            String logPath = PathBuilders.getInstallLogPath(machineId, MonitorConst.AGENT_FILE_NAME_PREFIX);
+            File logFile = new File(Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), logPath));
+            Files1.touch(logFile);
+            this.logStream = Files1.openOutputStreamFast(logFile);
             // 打开会话
             this.session = machineInfoService.openSessionStore(machineId);
+            String pluginPath = PathBuilders.getPluginPath(machine.getUsername());
+            String agentPath = pluginPath + Const.LIB_DIR + "/" + MonitorConst.getAgentFileName();
             // 传输
             this.transferAgentFile(agentPath);
             // 启动
             this.startAgentApp(pluginPath, agentPath);
             // 同步等待
             this.checkAgentRunStatus();
+            // 拼接日志
+            this.appendLog("安装成功 {}", Dates.current());
         } catch (Exception e) {
+            // 拼接日志
+            this.appendLog("安装失败 {}", Exceptions.getStackTraceAsString(e));
             // 更新状态
             MachineMonitorDO update = new MachineMonitorDO();
             update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
@@ -86,6 +102,7 @@ public class MonitorAgentInstallTask implements Runnable {
             this.sendWebsideMessage(MessageType.MACHINE_AGENT_INSTALL_FAILURE);
         } finally {
             Streams.close(session);
+            Streams.close(logStream);
         }
     }
 
@@ -107,7 +124,11 @@ public class MonitorAgentInstallTask implements Runnable {
             long size = executor.getSize(agentPath);
             if (localAgentFile.length() != size) {
                 // 传输文件
+                this.appendLog("插件包不存在-开始传输 {} {}B", agentPath, size);
                 executor.uploadFile(agentPath, localAgentFile);
+                this.appendLog("插件包传输完成 {}", agentPath);
+            } else {
+                this.appendLog("插件包已存在 {}", agentPath);
             }
         } catch (Exception e) {
             throw Exceptions.sftp("文件上传失败", e);
@@ -124,26 +145,20 @@ public class MonitorAgentInstallTask implements Runnable {
      */
     private void startAgentApp(String pluginPath, String agentPath) {
         CommandExecutor executor = null;
-        OutputStream out = null;
         try {
-            // 启动日志目录
-            String logPath = PathBuilders.getInstallLogPath(machineId, MonitorConst.AGENT_FILE_NAME_PREFIX);
-            File logFile = new File(Files1.getPath(SystemEnvAttr.LOG_PATH.getValue(), logPath));
-            Files1.touch(logFile);
-            out = Files1.openOutputStreamFast(logFile);
             // 执行启动命令
             String script = this.getStartScript(pluginPath, agentPath);
+            this.appendLog("开始执行命令 {}", script);
             executor = session.getCommandExecutor(script);
-            executor.getChannel().setPty(false);
-            CommandExecutors.syncExecCommand(executor, out);
+            CommandExecutors.syncExecCommand(executor, logStream);
             int exitCode = executor.getExitCode();
             if (!ExitCode.isSuccess(exitCode)) {
                 throw Exceptions.runtime("执行启动失败");
             }
+            this.appendLog("命令执行完成 exit: {}", exitCode);
         } catch (Exception e) {
             throw Exceptions.runtime("执行启动异常", e);
         } finally {
-            Streams.close(out);
             Streams.close(executor);
         }
     }
@@ -156,18 +171,18 @@ public class MonitorAgentInstallTask implements Runnable {
         MachineMonitorDO monitor = machineMonitorService.selectByMachineId(machineId);
         // 尝试进行同步 检查是否启动
         String version = null;
-        for (int i = 0; i < 6; i++) {
-            try {
-                Threads.sleep(Const.MS_S_10);
-                version = machineMonitorService.syncMonitorAgent(machineId, monitor.getMonitorUrl(), monitor.getAccessToken());
+        for (int i = 0; i < 5; i++) {
+            Threads.sleep(Const.MS_S_10);
+            version = machineMonitorService.syncMonitorAgent(machineId, monitor.getMonitorUrl(), monitor.getAccessToken());
+            this.appendLog("检查agent状态 第{}次", i + 1);
+            if (version != null) {
                 break;
-            } catch (Exception e) {
-                // ignore
             }
         }
         if (version == null) {
             throw Exceptions.runtime("获取 agent 状态失败");
         }
+        this.appendLog("agent启动成功 version: {}", version);
         // 更新状态以及版本
         MachineMonitorDO update = new MachineMonitorDO();
         update.setMonitorStatus(MonitorStatus.RUNNING.getStatus());
@@ -183,7 +198,7 @@ public class MonitorAgentInstallTask implements Runnable {
     private void sendWebsideMessage(MessageType type) {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.NAME, machine.getMachineName());
-        webSideMessageService.addMessage(type, user.getId(), user.getUsername(), params);
+        webSideMessageService.addMessage(type, machine.getId(), user.getId(), user.getUsername(), params);
     }
 
     /**
@@ -202,6 +217,24 @@ public class MonitorAgentInstallTask implements Runnable {
         param.put("scriptPath", pluginPath + "/" + MonitorConst.START_SCRIPT_FILE_NAME);
         param.put("logPath", pluginPath + "/" + MonitorConst.AGENT_LOG_FILE_NAME);
         return Strings.format(MonitorConst.START_SCRIPT_VALUE, param);
+    }
+
+    /**
+     * 拼接日志
+     *
+     * @param log  log
+     * @param args args
+     */
+    @SneakyThrows
+    private void appendLog(String log, Object... args) {
+        if (!Arrays1.isEmpty(args)) {
+            this.log.info("安装监控插件-" + log, args);
+        }
+        if (logStream != null) {
+            logStream.write(Strings.bytes(Strings.format(log, args)));
+            logStream.write(Letters.LF);
+            logStream.flush();
+        }
     }
 
 }

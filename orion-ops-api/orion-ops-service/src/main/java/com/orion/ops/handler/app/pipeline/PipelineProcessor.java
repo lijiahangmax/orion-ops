@@ -179,7 +179,7 @@ public class PipelineProcessor implements IPipelineProcessor {
         params.put(EventKeys.ID, task.getId());
         params.put(EventKeys.NAME, task.getPipelineName());
         params.put(EventKeys.TITLE, task.getExecTitle());
-        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_SUCCESS, task.getExecUserId(), task.getExecUserName(), params);
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_SUCCESS, task.getId(), task.getExecUserId(), task.getExecUserName(), params);
 
     }
 
@@ -196,7 +196,7 @@ public class PipelineProcessor implements IPipelineProcessor {
         params.put(EventKeys.ID, task.getId());
         params.put(EventKeys.NAME, task.getPipelineName());
         params.put(EventKeys.TITLE, task.getExecTitle());
-        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_FAILURE, task.getExecUserId(), task.getExecUserName(), params);
+        webSideMessageService.addMessage(MessageType.PIPELINE_EXEC_FAILURE, task.getId(), task.getExecUserId(), task.getExecUserName(), params);
     }
 
     /**

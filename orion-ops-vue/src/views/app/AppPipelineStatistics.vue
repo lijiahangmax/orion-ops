@@ -1,7 +1,7 @@
 <template>
   <div class="pipeline-statistics-record-container">
     <!-- 流水线列表菜单 -->
-    <div class="pipeline-list-menu">
+    <div class="pipeline-list-menu gray-box-shadow">
       <!-- 流水线列表表头 -->
       <div class="pipeline-list-menu-header">
         <a-page-header @back="() => {}">
@@ -26,7 +26,7 @@
       </a-spin>
     </div>
     <!-- 构建明细 -->
-    <div class="pipeline-statistics-container">
+    <div class="pipeline-statistics-container gray-box-shadow">
       <div class="statistic-tabs-wrapper" v-show="profileId && pipelineList.length">
         <a-tabs v-model="activeTab" :animated="false" @change="chooseStatisticsTab">
           <!-- 视图 -->
@@ -158,13 +158,13 @@ export default {
     padding: 0 8px 8px 8px;
     margin-right: 16px;
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   .pipeline-statistics-container {
     width: calc(100% - 232px);
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
     min-height: calc(100vh - 84px);
 
     .statistic-tabs-wrapper {

@@ -18,6 +18,7 @@ public class MachineConversion {
             MachineInfoVO vo = new MachineInfoVO();
             vo.setId(p.getId());
             vo.setProxyId(p.getProxyId());
+            vo.setKeyId(p.getKeyId());
             vo.setHost(p.getMachineHost());
             vo.setSshPort(p.getSshPort());
             vo.setName(p.getMachineName());

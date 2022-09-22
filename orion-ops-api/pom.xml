@@ -11,7 +11,7 @@
     <name>orion-ops-api</name>
     <groupId>com.orion.ops</groupId>
     <artifactId>orion-ops-api</artifactId>
-    <version>1.2.0-beta</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <url>https://github.com/lijiahangmax/orion-ops</url>
@@ -24,7 +24,7 @@
         <module>orion-ops-runner</module>
         <module>orion-ops-service</module>
         <module>orion-ops-web</module>
-        <module>orion-ops-export</module>
+        <module>orion-ops-data</module>
     </modules>
 
     <properties>
@@ -38,7 +38,7 @@
         <druid.version>1.1.20</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <knife4j.version>2.0.5</knife4j.version>
-        <orion.all.version>1.0.3</orion.all.version>
+        <orion.all.version>1.0.4</orion.all.version>
         <dingding.service.version>2.0.0</dingding.service.version>
     </properties>
 

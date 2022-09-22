@@ -36,104 +36,107 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">仓库列表</span>
-      </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
-        <a-divider type="vertical"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- url -->
-        <template #url="record">
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">仓库列表</span>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-button class="ml16 mr8" type="primary" icon="plus" @click="add">新建</a-button>
+          <a-divider type="vertical"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- url -->
+          <template #url="record">
           <span class="span-blue pointer" title="预览" @click="$refs.preview.preview(record.url)">
             {{ record.url }}
           </span>
-        </template>
-        <!-- 资源用户 -->
-        <template #username="record">
-          {{ record.authType === REPOSITORY_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
-        </template>
-        <!-- 状态 -->
-        <template #status="record">
-          <a-tag :color="record.status | formatRepoStatus('color')">
-            {{ record.status | formatRepoStatus('label') }}
-          </a-tag>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 初始化 -->
-          <a v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status || REPOSITORY_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
-          <a-popconfirm title="确定要重新初始化吗?"
-                        v-else-if="REPOSITORY_STATUS.OK.value === record.status"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
-                        @confirm="reInit(record)">
-            <span class="span-blue pointer">重新初始化</span>
-          </a-popconfirm>
-          <a-divider type="vertical" v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status ||
+          </template>
+          <!-- 资源用户 -->
+          <template #username="record">
+            {{ record.authType === REPOSITORY_AUTH_TYPE.PASSWORD.value ? record.username : '私人令牌' }}
+          </template>
+          <!-- 状态 -->
+          <template #status="record">
+            <a-tag :color="record.status | formatRepoStatus('color')">
+              {{ record.status | formatRepoStatus('label') }}
+            </a-tag>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 初始化 -->
+            <a v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status || REPOSITORY_STATUS.ERROR.value === record.status" @click="init(record)">初始化</a>
+            <a-popconfirm title="确定要重新初始化吗?"
+                          v-else-if="REPOSITORY_STATUS.OK.value === record.status"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
+                          @confirm="reInit(record)">
+              <span class="span-blue pointer">重新初始化</span>
+            </a-popconfirm>
+            <a-divider type="vertical" v-if="REPOSITORY_STATUS.UNINITIALIZED.value === record.status ||
                   REPOSITORY_STATUS.ERROR.value === record.status ||
                   REPOSITORY_STATUS.OK.value === record.status"/>
-          <!-- 修改 -->
-          <a-button class="p0"
-                    type="link"
-                    style="height: 22px"
-                    :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
-                    @click="update(record.id)">
-            修改
-          </a-button>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除当前仓库? 将会清空所有应用的关联!"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
-                        @confirm="remove(record.id)">
+            <!-- 修改 -->
             <a-button class="p0"
                       type="link"
                       style="height: 22px"
-                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">
-              删除
+                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
+                      @click="update(record.id)">
+              修改
             </a-button>
-          </a-popconfirm>
-          <!--          <a-divider type="vertical"/>-->
-          <!--          &lt;!&ndash; 清空 &ndash;&gt;-->
-          <!--          <a-popconfirm title="确认要清空历史应用构建仓库?"-->
-          <!--                        placement="topRight"-->
-          <!--                        ok-text="确定"-->
-          <!--                        cancel-text="取消"-->
-          <!--                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"-->
-          <!--                        @confirm="clean(record.id)">-->
-          <!--            <a-button class="p0"-->
-          <!--                      type="link"-->
-          <!--                      style="height: 22px"-->
-          <!--                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">-->
-          <!--              清空-->
-          <!--            </a-button>-->
-          <!--          </a-popconfirm>-->
-        </template>
-      </a-table>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除当前仓库? 将会清空所有应用的关联!"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"
+                          @confirm="remove(record.id)">
+              <a-button class="p0"
+                        type="link"
+                        style="height: 22px"
+                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">
+                删除
+              </a-button>
+            </a-popconfirm>
+            <!--          <a-divider type="vertical"/>-->
+            <!--          &lt;!&ndash; 清空 &ndash;&gt;-->
+            <!--          <a-popconfirm title="确认要清空历史应用构建仓库?"-->
+            <!--                        placement="topRight"-->
+            <!--                        ok-text="确定"-->
+            <!--                        cancel-text="取消"-->
+            <!--                        :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status"-->
+            <!--                        @confirm="clean(record.id)">-->
+            <!--            <a-button class="p0"-->
+            <!--                      type="link"-->
+            <!--                      style="height: 22px"-->
+            <!--                      :disabled="REPOSITORY_STATUS.INITIALIZING.value === record.status">-->
+            <!--              清空-->
+            <!--            </a-button>-->
+            <!--          </a-popconfirm>-->
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="app-repo-event">
@@ -142,7 +145,7 @@
       <!-- 预览框 -->
       <TextPreview ref="preview"/>
       <!-- 导出模态框 -->
-      <RepositoryExportModal ref="export"/>
+      <AppRepositoryExportModal ref="export"/>
       <!-- 导入模态框 -->
       <DataImportModal ref="import" :importType="importType"/>
     </div>
@@ -153,7 +156,7 @@
 import { enumValueOf, IMPORT_TYPE, REPOSITORY_AUTH_TYPE, REPOSITORY_STATUS } from '@/lib/enum'
 import AddRepositoryModal from '@/components/app/AddRepositoryModal'
 import TextPreview from '@/components/preview/TextPreview'
-import RepositoryExportModal from '@/components/export/RepositoryExportModal'
+import AppRepositoryExportModal from '@/components/export/AppRepositoryExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 
 /**
@@ -216,7 +219,7 @@ export default {
   name: 'AppRepository',
   components: {
     DataImportModal,
-    RepositoryExportModal,
+    AppRepositoryExportModal,
     TextPreview,
     AddRepositoryModal
   },
@@ -225,6 +228,7 @@ export default {
       REPOSITORY_AUTH_TYPE,
       REPOSITORY_STATUS,
       query: {
+        id: undefined,
         name: undefined,
         url: undefined,
         username: undefined,
@@ -241,7 +245,7 @@ export default {
         }
       },
       loading: false,
-      importType: IMPORT_TYPE.REPOSITORY,
+      importType: IMPORT_TYPE.APP_REPOSITORY,
       columns
     }
   },
@@ -308,6 +312,7 @@ export default {
     },
     resetForm() {
       this.$refs.query.resetFields()
+      this.query.id = undefined
       this.getList({})
     }
   },
@@ -317,6 +322,7 @@ export default {
     }
   },
   mounted() {
+    this.query.id = this.$route.query.id
     this.getList({})
   }
 }

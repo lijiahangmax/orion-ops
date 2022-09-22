@@ -22,90 +22,93 @@
         </a-row>
       </a-form-model>
     </div>
-    <!-- 工具栏 -->
-    <div class="table-tools-bar">
-      <!-- 左侧 -->
-      <div class="tools-fixed-left">
-        <span class="table-title">日志列表</span>
-        <a-divider v-show="selectedRowKeys.length" type="vertical"/>
-        <div v-show="selectedRowKeys.length">
-          <a-popconfirm title="确认删除所选中的操作日志吗?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteLog(selectedRowKeys)">
-            <a-button class="ml8" type="danger" icon="delete">删除</a-button>
-          </a-popconfirm>
+    <!-- 表格 -->
+    <div class="table-wrapper">
+      <!-- 工具栏 -->
+      <div class="table-tools-bar">
+        <!-- 左侧 -->
+        <div class="tools-fixed-left">
+          <span class="table-title">日志列表</span>
+          <a-divider v-show="selectedRowKeys.length" type="vertical"/>
+          <div v-show="selectedRowKeys.length">
+            <a-popconfirm title="确认删除所选中的操作日志吗?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteLog(selectedRowKeys)">
+              <a-button class="ml8" type="danger" icon="delete">删除</a-button>
+            </a-popconfirm>
+          </div>
+        </div>
+        <!-- 右侧 -->
+        <div class="tools-fixed-right">
+          <a-upload accept=".cast" :fileList="[]" :beforeUpload="selectScreenFile">
+            <a-button type="primary" icon="caret-right" class="mr8">回放</a-button>
+          </a-upload>
+          <a-divider type="vertical"/>
+          <a-icon v-if="$isAdmin()" type="delete" class="tools-icon" title="清空" @click="openClear"/>
+          <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
+          <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
+          <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
         </div>
       </div>
-      <!-- 右侧 -->
-      <div class="tools-fixed-right">
-        <a-upload accept=".cast" :fileList="[]" :beforeUpload="selectScreenFile">
-          <a-button type="primary" icon="caret-right" class="mr8">回放</a-button>
-        </a-upload>
-        <a-divider type="vertical"/>
-        <a-icon v-if="$isAdmin()" type="delete" class="tools-icon" title="清空" @click="openClear"/>
-        <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
-        <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
-        <a-icon type="reload" class="tools-icon" title="重置" @click="resetForm"/>
-      </div>
-    </div>
-    <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto">
-      <a-table :columns="columns"
-               :dataSource="rows"
-               :pagination="pagination"
-               :rowSelection="rowSelection"
-               rowKey="id"
-               @change="getList"
-               :scroll="{x: '100%'}"
-               :loading="loading"
-               size="middle">
-        <!-- 主机 -->
-        <template #machine="record">
-          <a-tooltip placement="top">
-            <template #title>
-              <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
-            </template>
-            <span>{{ record.machineName }}</span>
-          </a-tooltip>
-        </template>
-        <!-- 连接时间 -->
-        <template #connectedTime="record">
-          {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
-        </template>
-        <!-- 断连时间 -->
-        <template #disconnectedTime="record">
+      <!-- 表格 -->
+      <div class="table-main-container table-scroll-x-auto">
+        <a-table :columns="columns"
+                 :dataSource="rows"
+                 :pagination="pagination"
+                 :rowSelection="rowSelection"
+                 rowKey="id"
+                 @change="getList"
+                 :scroll="{x: '100%'}"
+                 :loading="loading"
+                 size="middle">
+          <!-- 主机 -->
+          <template #machine="record">
+            <a-tooltip placement="top">
+              <template #title>
+                <span>{{ `${record.machineName} (${record.machineHost})` }}</span>
+              </template>
+              <span>{{ record.machineName }}</span>
+            </a-tooltip>
+          </template>
+          <!-- 连接时间 -->
+          <template #connectedTime="record">
+            {{ record.connectedTime | formatDate }} ({{ record.connectedTimeAgo }})
+          </template>
+          <!-- 断连时间 -->
+          <template #disconnectedTime="record">
           <span v-if="record.disconnectedTime">
            {{ record.disconnectedTime | formatDate }} ({{ record.disconnectedTimeAgo }})
           </span>
-        </template>
-        <!-- 操作 -->
-        <template #action="record">
-          <!-- 回放 -->
-          <span class="span-blue pointer" @click="openTerminalScreen(record)">回放</span>
-          <a-divider type="vertical"/>
-          <!-- 下载 -->
-          <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
-          <a v-else @click="loadDownloadUrl(record)">获取</a>
-          <a-divider type="vertical"/>
-          <!-- 删除 -->
-          <a-popconfirm title="确认删除当前终端日志?"
-                        placement="topRight"
-                        ok-text="确定"
-                        cancel-text="取消"
-                        @confirm="deleteLog([record.id])">
-            <span class="span-blue pointer">删除</span>
-          </a-popconfirm>
-        </template>
-      </a-table>
+          </template>
+          <!-- 操作 -->
+          <template #action="record">
+            <!-- 回放 -->
+            <span class="span-blue pointer" @click="openTerminalScreen(record)">回放</span>
+            <a-divider type="vertical"/>
+            <!-- 下载 -->
+            <a v-if="record.downloadUrl" @click="clearDownloadUrl(record)" target="_blank" :href="record.downloadUrl">下载</a>
+            <a v-else @click="loadDownloadUrl(record)">获取</a>
+            <a-divider type="vertical"/>
+            <!-- 删除 -->
+            <a-popconfirm title="确认删除当前终端日志?"
+                          placement="topRight"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="deleteLog([record.id])">
+              <span class="span-blue pointer">删除</span>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </div>
     </div>
     <!-- 事件 -->
     <div class="terminal-event-container">
       <!-- 数据清理模态框 -->
       <TerminalLogClearModal ref="clear" @clear="getList({})"/>
       <!-- 数据导出模态框 -->
-      <MachineTerminalLogExportModal ref="export"/>
+      <TerminalLogExportModal ref="export"/>
       <!-- 终端录屏模态框 -->
       <TerminalScreenModal ref="screen"/>
     </div>
@@ -119,7 +122,7 @@ import { formatDate } from '@/lib/filters'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import UserAutoComplete from '@/components/user/UserAutoComplete'
 import TerminalLogClearModal from '@/components/clear/TerminalLogClearModal'
-import MachineTerminalLogExportModal from '@/components/export/MachineTerminalLogExportModal'
+import TerminalLogExportModal from '@/components/export/TerminalLogExportModal'
 import TerminalScreenModal from '@/components/terminal/TerminalScreenModal'
 import { FILE_DOWNLOAD_TYPE } from '@/lib/enum'
 
@@ -182,7 +185,7 @@ export default {
   name: 'MachineTerminalLogs',
   components: {
     TerminalScreenModal,
-    MachineTerminalLogExportModal,
+    TerminalLogExportModal,
     TerminalLogClearModal,
     MachineAutoComplete,
     UserAutoComplete

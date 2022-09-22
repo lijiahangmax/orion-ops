@@ -1,7 +1,7 @@
 <template>
   <div class="app-release-statistics-record-container">
     <!-- 应用列表菜单 -->
-    <div class="app-list-menu">
+    <div class="app-list-menu gray-box-shadow">
       <!-- 应用列表表头 -->
       <div class="app-list-menu-header">
         <a-page-header @back="() => {}">
@@ -26,7 +26,7 @@
       </a-spin>
     </div>
     <!-- 发布明细 -->
-    <div class="app-release-statistics-container">
+    <div class="app-release-statistics-container gray-box-shadow">
       <div class="app-release-tabs-wrapper" v-show="profileId && appList.length">
         <a-tabs v-model="activeTab" :animated="false" @change="chooseStatisticsTab">
           <!-- 视图 -->
@@ -149,13 +149,13 @@ export default {
     padding: 0 8px 8px 8px;
     margin-right: 16px;
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   .app-release-statistics-container {
     width: calc(100% - 232px);
     background-color: #FFF;
-    border-radius: 4px;
+    border-radius: 2px;
     min-height: calc(100vh - 84px);
 
     .app-release-tabs-wrapper {
