@@ -73,9 +73,7 @@
           <a target="_blank" href="#/machine/terminal">
             <a-button class="mr8" type="primary" icon="desktop">Terminal</a-button>
           </a>
-          <a href="#/machine/add">
-            <a-button class="mr8" type="primary" icon="plus">新建</a-button>
-          </a>
+          <a-button class="mr8" type="primary" icon="plus" @click="openAdd">新建</a-button>
           <a-divider type="vertical"/>
           <a-icon type="export" class="tools-icon" title="导出数据" @click="openExport"/>
           <a-icon type="import" class="tools-icon" title="导入数据" @click="openImport"/>
@@ -95,18 +93,20 @@
                  :loading="loading"
                  size="middle">
           <!-- 名称 -->
-          <template #name="record">
-            <span :class="[ENABLE_STATUS.ENABLE.value === record.status ? 'machine-name-enabled' : 'machine-name-disabled']"
-                  :title="ENABLE_STATUS.ENABLE.value === record.status ? record.name : '机器已停用'">
-              {{ record.name }}
-            </span>
-            <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
-          </template>
-          <!-- 唯一标识 -->
-          <template #tag="record">
-          <span class="span-blue">
-            {{ record.tag }}
-          </span>
+          <template #info="record">
+            <div :class="{'machine-info-wrapper': true, 'machine-disabled': ENABLE_STATUS.ENABLE.value !== record.status}">
+              <!-- 机器名称 -->
+              <div class="machine-info-name-wrapper">
+                <span class="machine-info-label">名称: </span>
+                <span class="machine-info-name-value">{{ record.name }}</span>
+                <span v-if="record.id === 1" class="host-machine-label usn">#宿主机</span>
+              </div>
+              <!-- 唯一标识 -->
+              <div class="machine-info-tag-wrapper">
+                <span class="machine-info-label">标识: </span>
+                <span class="machine-info-tag-value">{{ record.tag }}</span>
+              </div>
+            </div>
           </template>
           <!-- 主机 -->
           <template #host="record">
@@ -164,7 +164,7 @@
                     详情
                   </a-menu-item>
                   <a-menu-item key="update">
-                    <a :href="`#/machine/update/${record.id}`">编辑</a>
+                    编辑
                   </a-menu-item>
                   <a-menu-item v-if="record.id !== 1" key="delete">
                     删除
@@ -172,14 +172,14 @@
                   <a-menu-item key="copy">
                     复制
                   </a-menu-item>
-                  <a-menu-item key="bindKey" v-if="record.authType === MACHINE_AUTH_TYPE.SECRET_KEY.value">
-                    绑定秘钥
-                  </a-menu-item>
                   <a-menu-item key="ping" v-if="record.status === 1">
                     ping
                   </a-menu-item>
                   <a-menu-item key="connect" v-if="record.status === 1">
                     测试连接
+                  </a-menu-item>
+                  <a-menu-item key="bindKey" v-if="record.authType === MACHINE_AUTH_TYPE.SECRET_KEY.value">
+                    绑定秘钥
                   </a-menu-item>
                   <a-menu-item key="openEnv">
                     <a :href="`#/machine/env/${record.id}`">环境变量</a>
@@ -222,6 +222,8 @@
           </template>
         </a-card>
       </div>
+      <!-- 添加模态框 -->
+      <AddMachineModal ref="addModal" @added="getList" @updated="getList"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
       <!-- 详情模态框 -->
@@ -242,24 +244,19 @@ import MachineExportModal from '@/components/export/MachineExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import MachineKeyBindModal from '@/components/machine/MachineKeyBindModal'
+import AddMachineModal from '@/components/machine/AddMachineModal'
 
 const columns = [
   {
-    title: '名称',
+    title: '机器信息',
     key: 'name',
     ellipsis: true,
-    scopedSlots: { customRender: 'name' }
+    scopedSlots: { customRender: 'info' }
   },
   {
-    title: '唯一标识',
-    key: 'tag',
-    width: 150,
-    scopedSlots: { customRender: 'tag' }
-  },
-  {
-    title: '主机',
+    title: '机器主机',
     key: 'host',
-    width: 180,
+    width: 200,
     scopedSlots: { customRender: 'host' }
   },
   {
@@ -281,6 +278,9 @@ const columns = [
 const moreMenuHandler = {
   detail(record) {
     this.$refs.detailModal.open(record.id)
+  },
+  update(record) {
+    this.$refs.addModal.update(record.id)
   },
   delete(record) {
     this.$confirm({
@@ -356,6 +356,7 @@ const moreMenuHandler = {
 export default {
   name: 'MachineList',
   components: {
+    AddMachineModal,
     MachineKeyBindModal,
     MachineAutoComplete,
     DataImportModal,
@@ -437,6 +438,9 @@ export default {
       if (id === undefined && name === undefined) {
         this.getList({})
       }
+    },
+    openAdd() {
+      this.$refs.addModal.add()
     },
     openExport() {
       this.$refs.export.open()
@@ -570,12 +574,7 @@ export default {
 
 <style lang="less" scoped>
 
-.machine-name-enabled {
-  color: rgba(0, 0, 0, .7);
-}
-
-.machine-name-disabled {
-  color: rgba(0, 0, 0, .25);
+.machine-disabled {
   background-color: transparent;
   border-color: transparent;
   text-shadow: none;
@@ -583,9 +582,37 @@ export default {
   cursor: not-allowed;
 }
 
+.machine-disabled span {
+  color: rgba(0, 0, 0, .25) !important;
+}
+
 .host-machine-label {
   color: #5C7CFA;
   margin-left: 2px;
+}
+
+.machine-info-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  .machine-info-label {
+    user-select: none;
+    display: inline-block;
+    color: rgba(0, 0, 0.9);
+    margin-right: 4px;
+  }
+
+  .machine-info-name-wrapper {
+    margin-bottom: 2px;
+  }
+
+  .machine-info-tag-wrapper {
+    margin-top: 2px;
+  }
+
+  .machine-info-name-value, .machine-info-tag-value {
+    color: rgba(0, 0, 0, .7);
+  }
 }
 
 .terminal-minimize-container {

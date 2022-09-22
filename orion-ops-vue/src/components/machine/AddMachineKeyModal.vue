@@ -4,6 +4,7 @@
            :width="450"
            :okButtonProps="{props: {disabled: loading}}"
            :bodyStyle="{padding: '16px 24px 0 24px'}"
+           :dialogStyle="{ top: '90px' }"
            :maskClosable="false"
            :destroyOnClose="true"
            @ok="check"
