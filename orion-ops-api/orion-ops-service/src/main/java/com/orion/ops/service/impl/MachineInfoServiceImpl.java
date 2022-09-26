@@ -5,6 +5,7 @@ import com.orion.ext.process.Processes;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.exception.AuthenticationException;
 import com.orion.lang.exception.ConnectionRuntimeException;
+import com.orion.lang.utils.Booleans;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Valid;
@@ -46,10 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 机器信息服务
@@ -98,6 +96,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private MachineAlarmGroupServiceImpl machineAlarmGroupService;
 
     @Resource
+    private MachineGroupRelService machineGroupRelService;
+
+    @Resource
     private HistoryValueService historyValueService;
 
     @Override
@@ -109,8 +110,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         this.checkNamePresent(null, request.getName());
         // 检查唯一标识
         this.checkTagPresent(null, request.getTag());
-        MachineInfoDO entity = new MachineInfoDO();
-        this.copyProperties(request, entity);
+        MachineInfoDO entity = Converts.to(request, MachineInfoDO.class);
         // 添加机器
         entity.setMachineStatus(Const.ENABLE);
         String password = request.getPassword();
@@ -121,6 +121,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Long id = entity.getId();
         // 初始化环境变量
         machineEnvService.initEnv(id);
+        // 设置分组
+        List<Long> groupIdList = request.getGroupIdList();
+        if (!Lists.isEmpty(groupIdList)) {
+            machineGroupRelService.updateMachineGroup(id, groupIdList);
+        }
         // 设置日志参数
         EventParamsHolder.addParams(entity);
         return id;
@@ -136,14 +141,18 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         this.checkNamePresent(id, request.getName());
         // 检查唯一标识
         this.checkTagPresent(id, request.getTag());
-        MachineInfoDO entity = new MachineInfoDO();
-        this.copyProperties(request, entity);
+        MachineInfoDO entity = Converts.to(request, MachineInfoDO.class);
         String password = request.getPassword();
         if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password));
         }
         // 修改
         int effect = machineInfoDAO.updateById(entity);
+        // 设置分组
+        List<Long> groupIdList = request.getGroupIdList();
+        if (!Lists.isEmpty(groupIdList)) {
+            machineGroupRelService.updateMachineGroup(id, groupIdList);
+        }
         // 设置日志参数
         EventParamsHolder.addParams(entity);
         return effect;
@@ -170,6 +179,8 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         effect += machineAlarmConfigService.deleteByMachineIdList(idList);
         // 删除报警配置组
         effect += machineAlarmGroupService.deleteByMachineIdList(idList);
+        // 删除机器分组
+        effect += machineGroupRelService.deleteByMachineIdList(idList);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
@@ -206,10 +217,17 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
                 .orderByAsc(MachineInfoDO::getId);
-        return DataQuery.of(machineInfoDAO)
+        // 查询数据
+        DataGrid<MachineInfoVO> dataGrid = DataQuery.of(machineInfoDAO)
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(MachineInfoVO.class);
+        // 查询分组
+        if (Booleans.isTrue(request.getQueryGroup())) {
+            Map<Long, List<Long>> rel = machineGroupRelService.getMachineRelByCache();
+            dataGrid.forEach(s -> s.setGroupIdList(rel.get(s.getId())));
+        }
+        return dataGrid;
     }
 
     @Override
@@ -550,24 +568,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .eq(MachineInfoDO::getMachineTag, tag);
         boolean present = DataQuery.of(machineInfoDAO).wrapper(presentWrapper).present();
         com.orion.ops.utils.Valid.isTrue(!present, MessageConst.TAG_PRESENT);
-    }
-
-    /**
-     * 复制属性
-     */
-    private void copyProperties(MachineInfoRequest request, MachineInfoDO entity) {
-        entity.setId(request.getId());
-        entity.setProxyId(request.getProxyId());
-        entity.setKeyId(request.getKeyId());
-        entity.setMachineHost(request.getHost());
-        entity.setSshPort(request.getSshPort());
-        entity.setMachineName(request.getName());
-        entity.setMachineTag(request.getTag());
-        entity.setDescription(request.getDescription());
-        entity.setUsername(request.getUsername());
-        entity.setPassword(null);
-        entity.setAuthType(request.getAuthType());
-        entity.setMachineStatus(request.getStatus());
     }
 
 }

@@ -2,6 +2,7 @@ package com.orion.ops.mapping.machine;
 
 import com.orion.lang.utils.convert.TypeStore;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.request.machine.MachineInfoRequest;
 import com.orion.ops.entity.vo.machine.MachineInfoVO;
 
 /**
@@ -30,6 +31,24 @@ public class MachineConversion {
             vo.setCreateTime(p.getCreateTime());
             vo.setUpdateTime(p.getUpdateTime());
             return vo;
+        });
+    }
+
+    static {
+        TypeStore.STORE.register(MachineInfoRequest.class, MachineInfoDO.class, p -> {
+            MachineInfoDO d = new MachineInfoDO();
+            d.setId(p.getId());
+            d.setProxyId(p.getProxyId());
+            d.setKeyId(p.getKeyId());
+            d.setMachineHost(p.getHost());
+            d.setSshPort(p.getSshPort());
+            d.setMachineName(p.getName());
+            d.setMachineTag(p.getTag());
+            d.setDescription(p.getDescription());
+            d.setUsername(p.getUsername());
+            d.setAuthType(p.getAuthType());
+            d.setMachineStatus(p.getStatus());
+            return d;
         });
     }
 

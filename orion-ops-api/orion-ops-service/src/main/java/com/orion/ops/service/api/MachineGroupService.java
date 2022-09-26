@@ -18,7 +18,7 @@ public interface MachineGroupService {
      * 添加组
      *
      * @param request request
-     * @return if
+     * @return id
      */
     Long addGroup(MachineGroupRequest request);
 

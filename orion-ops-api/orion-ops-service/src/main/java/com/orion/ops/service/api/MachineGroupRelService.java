@@ -1,6 +1,9 @@
 package com.orion.ops.service.api;
 
+import com.orion.ops.entity.request.machine.MachineGroupRelRequest;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * 机器分组关联服务
@@ -12,7 +15,7 @@ import java.util.List;
 public interface MachineGroupRelService {
 
     /**
-     * 组内添加机器 一组多机器
+     * 组内添加机器 一组多机器 (分组视图添加/修改机器时)
      *
      * @param groupId       groupId
      * @param machineIdList machineIdList
@@ -20,20 +23,28 @@ public interface MachineGroupRelService {
     void addMachineRelByGroup(Long groupId, List<Long> machineIdList);
 
     /**
-     * 组内添加机器 一机器多组
+     * 修改机器分组 一机器多组 (新增/修改机器时)
      *
      * @param machineId   machineId
      * @param groupIdList groupIdList
      */
-    void addMachineRelByMachineId(Long machineId, List<Long> groupIdList);
+    void updateMachineGroup(Long machineId, List<Long> groupIdList);
+
+    /**
+     * 移动机器引用
+     *
+     * @param request request
+     */
+    void moveMachineRel(MachineGroupRelRequest request);
 
     /**
      * 组内删除机器
      *
-     * @param id id
+     * @param groupId       groupId
+     * @param machineIdList machineIdList
      * @return effect
      */
-    Integer deleteById(Long id);
+    Integer deleteByGroupMachineId(Long groupId, List<Long> machineIdList);
 
     /**
      * 通过机器id删除
@@ -51,6 +62,16 @@ public interface MachineGroupRelService {
      */
     Integer deleteByGroupIdList(List<Long> groupIdList);
 
-    //   机器查询所有list并且查询rel 移动 添加/移动去重
+    /**
+     * 获取机器分组引用缓存
+     *
+     * @return cache
+     */
+    Map<Long, List<Long>> getMachineRelByCache();
+
+    /**
+     * 清理分组机器引用缓存
+     */
+    void clearGroupRelCache();
 
 }
