@@ -102,6 +102,10 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final Long HOST_MACHINE_ID = 1L;
 
+    public static final Long ROOT_TREE_ID = -1L;
+
+    public static final Integer DEFAULT_TREE_SORT = 1;
+
     public static final String HOST_MACHINE_TAG = "host";
 
     public static final String SWAP_FILE_SUFFIX = ".swp";
