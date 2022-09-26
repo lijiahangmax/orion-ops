@@ -6,8 +6,7 @@ const $storage = {
     LOGIN_TOKEN: 'O-Login-Token',
     CURRENT_USER: 'currentUser',
     ACTIVE_PROFILE: 'activeProfile',
-    LINES_THRESHOLD: 'linesThreshold',
-    MESSAGE_ID: 'messageId'
+    MACHINE_VIEW: 'machineView'
   },
 
   /**

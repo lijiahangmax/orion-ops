@@ -50,14 +50,14 @@ public class MachineGroupController {
     }
 
     @PostMapping("/move")
-    @ApiOperation(value = "移动组")
+    @ApiOperation(value = "移动分组")
     public Integer moveGroup(MachineGroupRequest request) {
         Valid.allNotNull(request.getId(), request.getPrevId());
         return machineGroupService.moveGroup(request);
     }
 
     @PostMapping("/rename")
-    @ApiOperation(value = "修改名称")
+    @ApiOperation(value = "修改分组名称")
     public Integer renameGroup(@RequestBody MachineGroupRequest request) {
         Long id = Valid.notNull(request.getId());
         String name = Valid.notBlank(request.getName());

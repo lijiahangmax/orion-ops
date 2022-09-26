@@ -135,7 +135,12 @@ const routes = [
         name: 'machineList',
         meta: {
           requireAuth: true,
-          title: '机器列表'
+          title: '机器列表',
+          leftProps: [{
+            icon: 'swap',
+            title: '切换视图',
+            event: 'changeView'
+          }]
         },
         component: () => import('../views/machine/MachineList')
       },

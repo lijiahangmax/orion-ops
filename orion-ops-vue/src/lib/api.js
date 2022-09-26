@@ -256,6 +256,62 @@ const $api = {
   },
 
   /**
+   * 添加机器分组
+   */
+  addMachineGroup: param => {
+    return $http.$post('/machine-group/add', param)
+  },
+
+  /**
+   * 删除机器分组
+   */
+  deleteMachineGroup: param => {
+    return $http.$post('/machine-group/delete', param)
+  },
+
+  /**
+   * 移动机器分组
+   */
+  moveMachineGroup: param => {
+    return $http.$post('/machine-group/move', param)
+  },
+
+  /**
+   * 修改机器分组名称
+   */
+  renameMachineGroup: param => {
+    return $http.$post('/machine-group/rename', param)
+  },
+
+  /**
+   * 获取机器分组树
+   */
+  getMachineGroupTree: () => {
+    return $http.$get('/machine-group/tree')
+  },
+
+  /**
+   * 添加机器分组机器
+   */
+  addMachineGroupMachine: param => {
+    return $http.$post('/machine-group/add-machine', param)
+  },
+
+  /**
+   * 移动机器分组机器
+   */
+  moveMachineGroupMachine: param => {
+    return $http.$post('/machine-group/move-machine', param)
+  },
+
+  /**
+   * 删除机器分组机器
+   */
+  deleteMachineGroupMachine: param => {
+    return $http.$post('/machine-group/delete-machine', param)
+  },
+
+  /**
    * 获取终端访问信息
    */
   accessTerminal: param => {
