@@ -5,8 +5,8 @@ import com.orion.lang.function.Conversion;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Valid;
-import com.orion.ops.constant.EnableType;
 import com.orion.ops.constant.MessageConst;
+import com.orion.ops.constant.common.EnableType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

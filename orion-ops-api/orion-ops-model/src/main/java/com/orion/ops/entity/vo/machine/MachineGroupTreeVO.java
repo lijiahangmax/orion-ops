@@ -1,5 +1,6 @@
 package com.orion.ops.entity.vo.machine;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
 @ApiModel(value = "机器分组树响应")
 public class MachineGroupTreeVO {
 
+    @JSONField(name = "key")
     @ApiModelProperty(value = "id")
     private Long id;
 
@@ -24,8 +26,9 @@ public class MachineGroupTreeVO {
     private Long parentId;
 
     @ApiModelProperty(value = "名称")
-    private String name;
+    private String title;
 
+    @JSONField(serialize = false)
     @ApiModelProperty(value = "排序")
     private Integer sort;
 

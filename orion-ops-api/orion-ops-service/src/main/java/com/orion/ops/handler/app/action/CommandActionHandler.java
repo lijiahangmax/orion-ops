@@ -6,7 +6,7 @@ import com.orion.lang.utils.io.Streams;
 import com.orion.net.remote.CommandExecutors;
 import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.common.StainCode;
 import com.orion.ops.utils.Utils;
 import lombok.Getter;
 

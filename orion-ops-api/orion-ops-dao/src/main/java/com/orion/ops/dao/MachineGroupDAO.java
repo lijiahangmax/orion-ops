@@ -23,4 +23,12 @@ public interface MachineGroupDAO extends BaseMapper<MachineGroupDO> {
      */
     Integer incrementSort(@Param("parentId") Long parentId, @Param("greaterSort") Integer greaterSort);
 
+    /**
+     * 增加最大 sort
+     *
+     * @param parentId parentId
+     * @return sort
+     */
+    Integer getMaxSort(@Param("parentId") Long parentId);
+
 }

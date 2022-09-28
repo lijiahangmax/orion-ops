@@ -41,15 +41,15 @@ public enum ApplicationEnvAttr {
     /**
      * 发布序列方式
      *
-     * @see com.orion.ops.constant.SerialType
+     * @see com.orion.ops.constant.common.SerialType
      */
     RELEASE_SERIAL("发布序列方式 (serial/parallel)"),
 
     /**
      * 异常处理类型
      *
-     * @see com.orion.ops.constant.SerialType#SERIAL
-     * @see com.orion.ops.constant.ExceptionHandlerType
+     * @see com.orion.ops.constant.common.SerialType#SERIAL
+     * @see com.orion.ops.constant.common.ExceptionHandlerType
      */
     EXCEPTION_HANDLER("异常处理类型 (skip_all/skip_error)"),
 

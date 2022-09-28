@@ -42,15 +42,15 @@ public class ApplicationConfigEnvRequest {
 
     /**
      * @see com.orion.ops.constant.app.ApplicationEnvAttr#RELEASE_SERIAL
-     * @see com.orion.ops.constant.SerialType
+     * @see com.orion.ops.constant.common.SerialType
      */
     @ApiModelProperty(value = "发布序列 10串行 20并行")
     private Integer releaseSerial;
 
     /**
      * @see com.orion.ops.constant.app.ApplicationEnvAttr#EXCEPTION_HANDLER
-     * @see com.orion.ops.constant.ExceptionHandlerType
-     * @see com.orion.ops.constant.SerialType#SERIAL
+     * @see com.orion.ops.constant.common.ExceptionHandlerType
+     * @see com.orion.ops.constant.common.SerialType#SERIAL
      */
     @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     private Integer exceptionHandler;

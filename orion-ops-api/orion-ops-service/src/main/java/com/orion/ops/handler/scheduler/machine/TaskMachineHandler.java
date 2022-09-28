@@ -12,7 +12,7 @@ import com.orion.net.remote.ExitCode;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.common.StainCode;
 import com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.dao.SchedulerTaskMachineRecordDAO;

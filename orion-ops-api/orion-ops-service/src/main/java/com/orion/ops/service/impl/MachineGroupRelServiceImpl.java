@@ -1,10 +1,8 @@
 package com.orion.ops.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.orion.lang.utils.Strings;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.dao.MachineGroupRelDAO;
 import com.orion.ops.entity.domain.MachineGroupRelDO;
@@ -147,11 +145,11 @@ public class MachineGroupRelServiceImpl extends ServiceImpl<MachineGroupRelDAO, 
     @Override
     public Map<Long, List<Long>> getMachineRelByCache() {
         // 查询缓存
-        String cacheData = redisTemplate.opsForValue().get(KeyConst.MACHINE_GROUP_REL_KEY);
-        if (!Strings.isBlank(cacheData)) {
-            return JSON.parseObject(cacheData, new TypeReference<Map<Long, List<Long>>>() {
-            });
-        }
+        // String cacheData = redisTemplate.opsForValue().get(KeyConst.MACHINE_GROUP_REL_KEY);
+        // if (!Strings.isBlank(cacheData)) {
+        //     return JSON.parseObject(cacheData, new TypeReference<Map<Long, List<Long>>>() {
+        //     });
+        // }
         // 查询数据
         Map<Long, List<Long>> groupMachines = machineGroupRelDAO.selectList(null)
                 .stream().collect(Collectors.groupingBy(MachineGroupRelDO::getMachineId,

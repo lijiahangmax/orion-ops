@@ -34,9 +34,8 @@ public interface MachineGroupService {
      * 移动组
      *
      * @param request request
-     * @return effect
      */
-    Integer moveGroup(MachineGroupRequest request);
+    void moveGroup(MachineGroupRequest request);
 
     /**
      * 重命名

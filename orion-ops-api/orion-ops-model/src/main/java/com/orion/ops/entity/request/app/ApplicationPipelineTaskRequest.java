@@ -65,7 +65,7 @@ public class ApplicationPipelineTaskRequest extends PageRequest {
     private Integer status;
 
     /**
-     * @see com.orion.ops.constant.AuditStatus
+     * @see com.orion.ops.constant.common.AuditStatus
      */
     @ApiModelProperty(value = "审核状态 10通过 20驳回")
     private Integer auditStatus;

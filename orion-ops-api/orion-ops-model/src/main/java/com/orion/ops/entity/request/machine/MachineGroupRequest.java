@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 @ApiModel(value = "机器分组请求")
+@SuppressWarnings("ALL")
 public class MachineGroupRequest {
 
     @ApiModelProperty(value = "id")
@@ -23,8 +24,8 @@ public class MachineGroupRequest {
     @ApiModelProperty(value = "id")
     private List<Long> idList;
 
-    @ApiModelProperty(value = "同级上个节点id")
-    private Long prevId;
+    @ApiModelProperty(value = "移动到的节点id")
+    private Long targetId;
 
     @ApiModelProperty(value = "父id")
     private Long parentId;
@@ -34,5 +35,11 @@ public class MachineGroupRequest {
 
     @ApiModelProperty(value = "排序")
     private Integer sort;
+
+    /**
+     * @see com.orion.ops.constant.common.TreeMoveType
+     */
+    @ApiModelProperty(value = "移动类型")
+    private Integer moveType;
 
 }

@@ -22,10 +22,16 @@
     <update id="incrementSort">
         UPDATE machine_group
         SET sort = sort + 1
-        WHERE parentId = #{parentId}
+        WHERE parent_id = #{parentId}
         <if test="greaterSort != null">
             AND sort > #{greaterSort}
         </if>
     </update>
+
+    <select id="getMaxSort" resultType="java.lang.Integer">
+        SELECT max(sort)
+        FROM machine_group
+        WHERE parent_id = #{parentId}
+    </select>
 
 </mapper>

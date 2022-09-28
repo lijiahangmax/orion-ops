@@ -4,7 +4,7 @@ import com.orion.lang.able.Executable;
 import com.orion.lang.able.SafeCloseable;
 import com.orion.lang.function.select.Branches;
 import com.orion.lang.function.select.Selector;
-import com.orion.ops.constant.SerialType;
+import com.orion.ops.constant.common.SerialType;
 import com.orion.ops.entity.domain.ApplicationReleaseDO;
 
 /**

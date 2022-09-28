@@ -1,7 +1,7 @@
 package com.orion.ops.handler.app.release;
 
-import com.orion.ops.constant.ExceptionHandlerType;
 import com.orion.ops.constant.app.ActionStatus;
+import com.orion.ops.constant.common.ExceptionHandlerType;
 import com.orion.ops.handler.app.machine.IMachineProcessor;
 import com.orion.ops.handler.app.machine.ReleaseMachineProcessor;
 

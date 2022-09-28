@@ -83,14 +83,14 @@ public class ApplicationReleaseDO implements Serializable {
     private Integer releaseStatus;
 
     /**
-     * @see com.orion.ops.constant.SerialType
+     * @see com.orion.ops.constant.common.SerialType
      */
     @ApiModelProperty(value = "发布序列 10串行 20并行")
     @TableField("release_serialize")
     private Integer releaseSerialize;
 
     /**
-     * @see com.orion.ops.constant.ExceptionHandlerType
+     * @see com.orion.ops.constant.common.ExceptionHandlerType
      */
     @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     @TableField("exception_handler")

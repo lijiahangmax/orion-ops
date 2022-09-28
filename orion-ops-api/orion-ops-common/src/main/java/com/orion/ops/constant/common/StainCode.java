@@ -1,4 +1,4 @@
-package com.orion.ops.constant;
+package com.orion.ops.constant.common;
 
 /**
  * ANSI 高亮颜色转义码

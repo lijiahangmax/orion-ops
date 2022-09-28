@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.RestWrapper;
+import com.orion.ops.constant.common.TreeMoveType;
 import com.orion.ops.entity.request.machine.MachineGroupRelRequest;
 import com.orion.ops.entity.request.machine.MachineGroupRequest;
 import com.orion.ops.entity.vo.machine.MachineGroupTreeVO;
@@ -51,9 +52,10 @@ public class MachineGroupController {
 
     @PostMapping("/move")
     @ApiOperation(value = "移动分组")
-    public Integer moveGroup(MachineGroupRequest request) {
-        Valid.allNotNull(request.getId(), request.getPrevId());
-        return machineGroupService.moveGroup(request);
+    public HttpWrapper<?> moveGroup(@RequestBody MachineGroupRequest request) {
+        Valid.allNotNull(request.getId(), request.getTargetId(), TreeMoveType.of(request.getMoveType()));
+        machineGroupService.moveGroup(request);
+        return HttpWrapper.ok();
     }
 
     @PostMapping("/rename")

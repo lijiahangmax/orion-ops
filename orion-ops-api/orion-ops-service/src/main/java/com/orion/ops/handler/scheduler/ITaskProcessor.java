@@ -3,7 +3,7 @@ package com.orion.ops.handler.scheduler;
 import com.orion.lang.able.SafeCloseable;
 import com.orion.lang.function.select.Branches;
 import com.orion.lang.function.select.Selector;
-import com.orion.ops.constant.SerialType;
+import com.orion.ops.constant.common.SerialType;
 
 /**
  * 任务处理器基类

@@ -18,7 +18,7 @@ public class MachineGroupConversion {
             MachineGroupTreeVO vo = new MachineGroupTreeVO();
             vo.setId(p.getId());
             vo.setParentId(p.getParentId());
-            vo.setName(p.getGroupName());
+            vo.setTitle(p.getGroupName());
             vo.setSort(p.getSort());
             return vo;
         });
