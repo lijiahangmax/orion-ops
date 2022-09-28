@@ -76,7 +76,8 @@
 </template>
 
 <script>
-import { getUUID, findParentNode, getChildNodeKeys } from '@/lib/utils'
+import { getUUID, defineArrayKey } from '@/lib/utils'
+import { findNode, findParentNode, getChildNodeKeys, setTreeDataProps, getDepthKeys } from '@/lib/tree'
 
 function fillTreeNodeProps(node) {
   node.scopedSlots = {
@@ -86,16 +87,37 @@ function fillTreeNodeProps(node) {
   node.rename = false
   node.add = false
   node.machineCount = 0
+  node.machines = []
 }
 
-function setTreeDataProps(tree) {
-  if (tree != null) {
-    tree.forEach(node => {
-      fillTreeNodeProps(node)
-      setTreeDataProps(node.children)
-    })
+function computeNodeMachineCount(node, machines) {
+  // 计算当前节点机器数量
+  const nodeMachineIds = machines.filter(s => s.visible)
+  .filter(s => s.groupIdList && s.groupIdList.includes(node.key))
+  .map(s => s.id)
+  const childMachines = new Set(nodeMachineIds)
+  // 计算叶子节点数量
+  if (node.children && node.children.length) {
+    for (const child of node.children) {
+      computeNodeMachineCount(child, machines).forEach(s => childMachines.add(s))
+    }
   }
-  return tree || []
+  node.machineCount = childMachines.size
+  return childMachines
+}
+
+function computeNodeMachine(node, machines) {
+  // 计算当前节点机器
+  const nodeMachines = machines.filter(s => s.visible)
+  .filter(s => s.groupIdList && s.groupIdList.includes(node.key))
+  const childMachines = new Set(nodeMachines)
+  // 计算叶子节点数量
+  if (node.children && node.children.length) {
+    for (const child of node.children) {
+      computeNodeMachine(child, machines).forEach(s => childMachines.add(s))
+    }
+  }
+  return childMachines
 }
 
 const nodeRightMenuHandler = {
@@ -186,6 +208,7 @@ export default {
       selectedTreeNode: [],
       expandedTreeNode: [],
       machines: [],
+      filterMachines: [],
       groupMachines: [],
       treeData: []
     }
@@ -204,12 +227,20 @@ export default {
         queryGroup: true
       }).then(({ data }) => {
         this.machineLoading = false
-        this.machines = data.rows
+        const rows = data.rows || []
+        defineArrayKey(rows, 'visible', true)
+        this.machines = rows
       })
       .then(this.$api.getMachineGroupTree)
       .then(({ data }) => {
         this.treeLoading = false
-        this.treeData = setTreeDataProps(data)
+        // 填充属性
+        this.treeData = setTreeDataProps(data, fillTreeNodeProps)
+        // 展开前三层
+        this.expandedTreeNode = getDepthKeys(this.treeData, 3)
+        // 加载分组机器数量
+        this.reloadMachineCount()
+        // 加载第一个分组数据
         if (this.treeData.length) {
           this.selectedTreeNode = [this.treeData[0].key]
         }
@@ -243,13 +274,6 @@ export default {
         this.expandedTreeNode.push(curr)
       }
     },
-    loadMachines(id) {
-      if (id) {
-        this.groupMachines = this.machines.filter(s => s.groupIdList && s.groupIdList.includes(id))
-      } else {
-        this.groupMachines = []
-      }
-    },
     deleteNode(row) {
       let nodes
       if (row.parentId === -1) {
@@ -266,6 +290,23 @@ export default {
           nodes.splice(i, 1)
           return
         }
+      }
+    },
+    reloadMachineCount() {
+      for (const treeNode of this.treeData) {
+        computeNodeMachineCount(treeNode, this.machines)
+      }
+    },
+    loadMachines(id) {
+      if (id) {
+        const node = findNode(this.treeData, id)
+        if (node) {
+          this.groupMachines = Array.from(computeNodeMachine(node, this.machines))
+        } else {
+          this.groupMachines = []
+        }
+      } else {
+        this.groupMachines = []
       }
     },
     saveGroup(e, row) {
