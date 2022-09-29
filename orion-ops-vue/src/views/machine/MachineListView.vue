@@ -501,30 +501,6 @@ export default {
   margin-left: 2px;
 }
 
-.machine-info-wrapper {
-  display: flex;
-  flex-direction: column;
-
-  .machine-info-label {
-    user-select: none;
-    display: inline-block;
-    color: rgba(0, 0, 0.9);
-    margin-right: 4px;
-  }
-
-  .machine-info-name-wrapper {
-    margin-bottom: 2px;
-  }
-
-  .machine-info-tag-wrapper {
-    margin-top: 2px;
-  }
-
-  .machine-info-name-value, .machine-info-tag-value {
-    color: rgba(0, 0, 0, .7);
-  }
-}
-
 ::v-deep .ant-table-row-cell-ellipsis{
   padding: 8px !important;
 }

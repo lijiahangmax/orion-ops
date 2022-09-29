@@ -12,9 +12,28 @@
       <div class="table-tools-bar">
         <!-- 左侧 -->
         <div class="tools-fixed-left">
+          <a-input style="width: 240px"
+                   placeholder="输入名称/标识/主机过滤"
+                   @change="doFilterMachine"
+                   allowClear/>
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">
+          <a-popconfirm v-show="filterMachines.length"
+                        placement="topRight"
+                        :title="`确定要将这 ${filterMachines.length} 台机器移出当前分组及子分组吗?`"
+                        ok-text="确定"
+                        cancel-text="取消"
+                        @confirm="removeToGroup(filterMachines)">
+            <a-button class="mr8" type="danger" icon="minus">全部移出</a-button>
+          </a-popconfirm>
+          <a-button class="mr8"
+                    v-if="$refs.tree"
+                    v-show="$refs.tree.treeData.length"
+                    type="primary"
+                    icon="plus"
+                    @click="openAddMachine">移入机器
+          </a-button>
           <a target="_blank" href="#/machine/terminal">
             <a-button type="primary" icon="desktop">Terminal</a-button>
           </a>
@@ -64,7 +83,14 @@
             <a :href="`#/machine/sftp/${record.id}`" title="打开sftp">sftp</a>
             <a-divider type="vertical"/>
             <!-- 移出 -->
-            <span class="span-light-red pointer" title="移出分组" @click="removeToGroup(record)">移出</span>
+            <a-popconfirm v-show="filterMachines.length"
+                          placement="topRight"
+                          :title="`确定要将 [${record.name}] 移出当前分组及子分组吗?`"
+                          ok-text="确定"
+                          cancel-text="取消"
+                          @confirm="removeToGroup([record])">
+              <span class="span-light-red pointer" title="移出分组">移出</span>
+            </a-popconfirm>
             <a-divider type="vertical"/>
             <a-dropdown>
               <a class="ant-dropdown-link">
@@ -92,6 +118,13 @@
         </a-table>
       </div>
     </div>
+    <!-- 事件 -->
+    <div class="machine-group-view-event-container">
+      <!-- 机器选择模态框 -->
+      <MachineMultiTableSelectorModal ref="selector"
+                                      :query="{status: ENABLE_STATUS.ENABLE.value}"
+                                      @choose="addMachineToGroup"/>
+    </div>
   </div>
 </template>
 
@@ -100,6 +133,7 @@ import { defineArrayKey } from '@/lib/utils'
 import { ENABLE_STATUS } from '@/lib/enum'
 
 import MachineEditableTree from '@/components/machine/MachineEditableTree'
+import MachineMultiTableSelectorModal from '@/components/machine/MachineMultiTableSelectorModal'
 
 const columns = [
   {
@@ -160,9 +194,13 @@ const moreMenuHandler = {
 
 export default {
   name: 'MachineGroupView',
-  components: { MachineEditableTree },
+  components: {
+    MachineMultiTableSelectorModal,
+    MachineEditableTree
+  },
   data() {
     return {
+      ENABLE_STATUS,
       loading: false,
       machines: [],
       filterMachines: [],
@@ -209,7 +247,7 @@ export default {
       const handler = moreMenuHandler[key]
       handler && handler.call(this, record)
     },
-    removeToGroup(record) {
+    removeToGroup(records) {
       const nodeKeys = this.$refs.tree.findCurrentNodeAndChildrenKeys()
       if (!nodeKeys.length) {
         return
@@ -217,13 +255,15 @@ export default {
       this.loading = true
       this.$api.deleteMachineGroupMachine({
         groupIdList: nodeKeys,
-        machineId: record.id
+        machineIdList: records.map(s => s.id)
       }).then(() => {
         // 移出分组
         for (const nodeKey of nodeKeys) {
-          for (let i = 0; i < record.groupIdList.length; i++) {
-            if (nodeKey === record.groupIdList[i]) {
-              record.groupIdList.splice(i, 1)
+          for (const record of records) {
+            for (let i = 0; i < record.groupIdList.length; i++) {
+              if (nodeKey === record.groupIdList[i]) {
+                record.groupIdList.splice(i, 1)
+              }
             }
           }
         }
@@ -235,6 +275,59 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    openAddMachine() {
+      this.$refs.selector.open()
+    },
+    addMachineToGroup(machineIdList) {
+      const curr = this.$refs.tree.curr
+      if (!curr) {
+        this.$message.warn('请先选择分组')
+        return
+      }
+      if (!machineIdList.length) {
+        this.$message.warn('请选择机器')
+        return
+      }
+      const groupId = curr.key
+      this.loading = true
+      this.$api.addMachineGroupMachine({
+        groupId,
+        machineIdList
+      }).then(() => {
+        this.loading = false
+        // 设置机器分组id
+        this.machines.forEach(m => {
+          if (!machineIdList.includes(m.id)) {
+            return
+          }
+          if (m.groupIdList) {
+            m.groupIdList.push(groupId)
+          } else {
+            m.groupIdList = [groupId]
+          }
+        })
+        // 计算数量
+        this.$refs.tree.reloadMachineCount()
+        // 重新加载机器
+        this.$refs.tree.loadMachines(this.$refs.tree.selectedTreeNode[0])
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    doFilterMachine(e) {
+      const value = e.target.value
+      this.machines.forEach(machine => {
+        if (value) {
+          machine.visible = machine.name.includes(value) || machine.tag.includes(value) || machine.host.includes(value)
+        } else {
+          machine.visible = true
+        }
+      })
+      // 计算数量
+      this.$refs.tree.reloadMachineCount()
+      // 重新加载机器
+      this.$refs.tree.loadMachines(this.$refs.tree.selectedTreeNode[0])
     }
   },
   mounted() {
@@ -253,30 +346,6 @@ export default {
   border-radius: 2px;
   margin-left: 8px;
   width: 75%;
-}
-
-.machine-info-wrapper {
-  display: flex;
-  flex-direction: column;
-
-  .machine-info-label {
-    user-select: none;
-    display: inline-block;
-    color: rgba(0, 0, 0.9);
-    margin-right: 4px;
-  }
-
-  .machine-info-name-wrapper {
-    margin-bottom: 2px;
-  }
-
-  .machine-info-tag-wrapper {
-    margin-top: 2px;
-  }
-
-  .machine-info-name-value, .machine-info-tag-value {
-    color: rgba(0, 0, 0, .7);
-  }
 }
 
 ::v-deep .ant-table-row-cell-ellipsis {

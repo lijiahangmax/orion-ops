@@ -11,15 +11,15 @@
             </template>
             <template v-else-if="summaryData">
               <h3 class="card-title">机器信息</h3>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">机器id</span>
                 <span class="machine-info-value auto-ellipsis-item">{{ summaryData.machineId }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">主机名称</span>
                 <span class="machine-info-value auto-ellipsis-item">{{ summaryData.os.hostname }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">
                   系统负载
                   <a-tooltip v-if="summaryData.isWindows" title="windows 无法统计">
@@ -37,34 +37,34 @@
                   </template>
                 </span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">启动时间</span>
                 <span class="machine-info-value auto-ellipsis-item">{{ summaryData.os.uptime }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">系统版本</span>
                 <span class="machine-info-value auto-ellipsis-item" :title="summaryData.os.osName">{{ summaryData.os.osName }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">CPU 型号</span>
                 <span class="machine-info-value auto-ellipsis-item" :title="summaryData.os.cpuName">{{ summaryData.os.cpuName }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">CPU 核心数</span>
                 <span class="machine-info-value auto-ellipsis-item">{{ summaryData.os.cpuLogicalCore }}核</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">总内存</span>
                 <span class="machine-info-value auto-ellipsis-item">{{ summaryData.os.totalMemory }}</span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">采集状态</span>
                 <span class="machine-info-value auto-ellipsis-item">
                   <a-badge :status="summaryData.status ? 'processing' : 'default'"/>
                   {{ summaryData.status ? '采集中' : '已暂停' }}
                 </span>
               </div>
-              <div class="machine-info-wrapper">
+              <div class="machine-summary-info-wrapper">
                 <span class="machine-info-label">插件版本</span>
                 <span class="machine-info-value auto-ellipsis-item">V{{ summaryData.version }}</span>
               </div>
@@ -557,7 +557,7 @@ export default {
     margin-right: 2px;
   }
 
-  .machine-info-wrapper {
+  .machine-summary-info-wrapper {
     width: 100%;
     margin-bottom: 15px;
     display: flex;

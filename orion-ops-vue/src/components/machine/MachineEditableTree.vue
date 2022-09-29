@@ -218,7 +218,8 @@ export default {
       loading: false,
       selectedTreeNode: [],
       expandedTreeNode: [],
-      treeData: []
+      treeData: [],
+      curr: null
     }
   },
   watch: {
@@ -380,6 +381,8 @@ export default {
             fillTreeNodeProps(row)
             this.loading = false
           }).catch(() => {
+            e.target.focus()
+            e.target.value = value
             this.loading = false
           })
         } else {
@@ -389,16 +392,25 @@ export default {
       } else {
         // 重命名
         if (value) {
+          const call = () => {
+            row.title = value
+            row.editable = false
+            row.rename = false
+          }
+          if (value === row.title) {
+            call()
+            return
+          }
           this.loading = true
           this.$api.renameMachineGroup({
             id: row.key,
             name: value
           }).then(() => {
-            row.title = value
-            row.editable = false
-            row.rename = false
+            call()
             this.loading = false
           }).catch(() => {
+            e.target.focus()
+            e.target.value = value
             this.loading = false
           })
         }
@@ -407,24 +419,23 @@ export default {
     loadMachines(id) {
       this.machineLoading = true
       if (id) {
-        const node = findNode(this.treeData, id)
-        if (node) {
-          this.$emit('reloadMachine', Array.from(computeNodeMachine(node, this.machines)))
+        this.curr = findNode(this.treeData, id)
+        if (this.curr) {
+          this.$emit('reloadMachine', Array.from(computeNodeMachine(this.curr, this.machines)))
         } else {
           this.$emit('reloadMachine', [])
         }
       } else {
+        this.curr = null
         this.$emit('reloadMachine', [])
       }
       this.machineLoading = false
     },
     findCurrentNodeAndChildrenKeys() {
-      const groupId = this.selectedTreeNode[0]
-      if (!groupId) {
+      if (!this.curr) {
         return []
       }
-      const node = findNode(this.treeData, groupId)
-      return getChildNodeKeys(node, [node.key])
+      return getChildNodeKeys(this.curr, [this.curr.key])
     }
   }
 }
