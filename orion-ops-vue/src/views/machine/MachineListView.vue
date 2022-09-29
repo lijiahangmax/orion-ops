@@ -525,4 +525,7 @@ export default {
   }
 }
 
+::v-deep .ant-table-row-cell-ellipsis{
+  padding: 8px !important;
+}
 </style>

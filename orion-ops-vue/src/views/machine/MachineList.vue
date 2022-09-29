@@ -11,7 +11,7 @@
     <!-- 机器列表 -->
     <MachineListView v-if="listView" @openTerminal="openTerminal"/>
     <!-- 机器分组 -->
-    <MachineGroupView v-else/>
+    <MachineGroupView v-else @openTerminal="openTerminal"/>
     <!-- 终端最小化 -->
     <div class="terminal-minimize-container">
       <a-card v-for="minimizeTerminal of minimizeTerminalArr"

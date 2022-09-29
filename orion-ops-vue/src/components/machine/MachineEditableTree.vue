@@ -85,7 +85,7 @@ function fillTreeNodeProps(node) {
   node.rename = false
   node.add = false
   node.machineCount = 0
-  node.machines = []
+  node.parentId = undefined
 }
 
 function computeNodeMachineCount(node, machines) {
@@ -274,9 +274,10 @@ export default {
     deleteNode(row) {
       let nodes
       if (row.parentId === -1) {
+        // 添加根节点 取消
         nodes = this.treeData
       } else {
-        nodes = findParentNode(this.treeData, row.key).children
+        nodes = findParentNode(this.treeData, row.key).children || this.treeData
       }
       if (!nodes) {
         return
@@ -364,20 +365,6 @@ export default {
         this.loading = false
       })
     },
-    loadMachines(id) {
-      this.machineLoading = true
-      if (id) {
-        const node = findNode(this.treeData, id)
-        if (node) {
-          this.$emit('reloadMachine', Array.from(computeNodeMachine(node, this.machines)))
-        } else {
-          this.$emit('reloadMachine', [])
-        }
-      } else {
-        this.$emit('reloadMachine', [])
-      }
-      this.machineLoading = false
-    },
     saveGroup(e, row) {
       const value = e.target.value
       if (row.add) {
@@ -416,6 +403,28 @@ export default {
           })
         }
       }
+    },
+    loadMachines(id) {
+      this.machineLoading = true
+      if (id) {
+        const node = findNode(this.treeData, id)
+        if (node) {
+          this.$emit('reloadMachine', Array.from(computeNodeMachine(node, this.machines)))
+        } else {
+          this.$emit('reloadMachine', [])
+        }
+      } else {
+        this.$emit('reloadMachine', [])
+      }
+      this.machineLoading = false
+    },
+    findCurrentNodeAndChildrenKeys() {
+      const groupId = this.selectedTreeNode[0]
+      if (!groupId) {
+        return []
+      }
+      const node = findNode(this.treeData, groupId)
+      return getChildNodeKeys(node, [node.key])
     }
   }
 }

@@ -290,13 +290,6 @@ const $api = {
   },
 
   /**
-   * 移动机器分组机器
-   */
-  moveMachineGroupMachine: param => {
-    return $http.$post('/machine-group/move-machine', param)
-  },
-
-  /**
    * 删除机器分组机器
    */
   deleteMachineGroupMachine: param => {
