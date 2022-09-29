@@ -224,35 +224,27 @@ const $api = {
    * 测试机器ping
    */
   machineTestPing: param => {
-    return $http.$post('/machine/test-ping', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/test-ping', param)
   },
 
   /**
    * 测试机器连接
    */
   machineTestConnect: param => {
-    return $http.$post('/machine/test-connect', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/test-connect', param)
   },
   /**
    * 直接测试机器ping
    */
   machineDirectTestPing: param => {
-    return $http.$post('/machine/direct-test-ping', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/direct-test-ping', param)
   },
 
   /**
    * 直接测试机器连接
    */
   machineDirectConnect: param => {
-    return $http.$post('/machine/direct-test-connect', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/direct-test-connect', param)
   },
 
   /**

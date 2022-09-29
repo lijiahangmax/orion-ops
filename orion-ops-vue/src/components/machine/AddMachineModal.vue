@@ -279,16 +279,12 @@ export default {
       const ping = this.$message.loading(`ping ${host}`)
       this.$api.machineDirectTestPing({
         host: host
-      }).then(e => {
+      }).then(() => {
         ping()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法访问 ${host}`)
-        }
-      }).catch(() => {
+        this.$message.success('ok')
+      }).catch(({ msg }) => {
         ping()
-        this.$message.error(`无法访问 ${host}`)
+        this.$message.error(msg)
       })
     },
     testConnect() {
@@ -330,16 +326,12 @@ export default {
       const connecting = this.$message.loading(`connecting ${ssh}`)
       this.$api.machineDirectConnect({
         ...values
-      }).then(e => {
+      }).then(() => {
         connecting()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法连接 ${ssh}`)
-        }
-      }).catch(() => {
+        this.$message.success('ok')
+      }).catch(({ msg }) => {
         connecting()
-        this.$message.error(`无法连接 ${ssh}`)
+        this.$message.error(msg)
       })
     },
     check() {

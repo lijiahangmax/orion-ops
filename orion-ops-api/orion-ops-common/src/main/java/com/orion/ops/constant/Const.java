@@ -88,6 +88,8 @@ public class Const extends com.orion.lang.constant.Const {
 
     public static final String PLUGINS = "plugins";
 
+    public static final String TIMEOUT = "timeout";
+
     public static final String CAST_SUFFIX = "cast";
 
     public static final Integer FORBID_DELETE_CAN = 1;

@@ -20,6 +20,8 @@ public class WsCloseReason {
 
     public static final String REMOTE_SERVER_UNREACHABLE = "remote server unreachable...";
 
+    public static final String CONNECTION_TIMEOUT = "connection timeout...";
+
     public static final String REMOTE_SERVER_AUTHENTICATION_FAILURE = "remote server authentication failure...";
 
     public static final String MACHINE_DISABLED = "machine disabled...";

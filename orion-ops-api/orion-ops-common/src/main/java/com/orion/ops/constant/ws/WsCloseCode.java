@@ -50,19 +50,24 @@ public enum WsCloseCode {
     INVALID_MACHINE(4200, WsCloseReason.CLOSED_CONNECTION),
 
     /**
+     * 连接远程服务器连接超时
+     */
+    CONNECTION_TIMEOUT(4201, WsCloseReason.CONNECTION_TIMEOUT),
+
+    /**
      * 连接远程服务器失败
      */
-    CONNECTED_FAILURE(4202, WsCloseReason.REMOTE_SERVER_UNREACHABLE),
+    CONNECTION_FAILURE(4202, WsCloseReason.REMOTE_SERVER_UNREACHABLE),
 
     /**
      * 远程服务器认证失败
      */
-    CONNECTED_AUTH_FAILURE(4205, WsCloseReason.REMOTE_SERVER_AUTHENTICATION_FAILURE),
+    CONNECTION_AUTH_FAILURE(4205, WsCloseReason.REMOTE_SERVER_AUTHENTICATION_FAILURE),
 
     /**
      * 远程服务器认证出现异常
      */
-    CONNECTED_EXCEPTION(4210, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
+    CONNECTION_EXCEPTION(4210, WsCloseReason.UNABLE_TO_CONNECT_REMOTE_SERVER),
 
     /**
      * 机器未启用

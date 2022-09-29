@@ -4,6 +4,7 @@ import com.orion.lang.define.wrapper.Tuple;
 import com.orion.lang.exception.AuthenticationException;
 import com.orion.lang.exception.ConnectionRuntimeException;
 import com.orion.lang.exception.DisabledException;
+import com.orion.lang.exception.TimeoutException;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Urls;
 import com.orion.ops.constant.terminal.TerminalOperate;
@@ -138,14 +139,16 @@ public class WebSockets {
      * @param e       e
      */
     public static void openSessionStoreThrowClose(WebSocketSession session, Exception e) {
-        if (e instanceof ConnectionRuntimeException) {
-            close(session, WsCloseCode.CONNECTED_FAILURE);
-        } else if (e instanceof AuthenticationException) {
-            close(session, WsCloseCode.CONNECTED_AUTH_FAILURE);
-        } else if (e instanceof DisabledException) {
+        if (Exceptions.isCausedBy(e, TimeoutException.class)) {
+            close(session, WsCloseCode.CONNECTION_TIMEOUT);
+        } else if (Exceptions.isCausedBy(e, ConnectionRuntimeException.class)) {
+            close(session, WsCloseCode.CONNECTION_FAILURE);
+        } else if (Exceptions.isCausedBy(e, AuthenticationException.class)) {
+            close(session, WsCloseCode.CONNECTION_AUTH_FAILURE);
+        } else if (Exceptions.isCausedBy(e, DisabledException.class)) {
             close(session, WsCloseCode.MACHINE_DISABLED);
         } else {
-            close(session, WsCloseCode.CONNECTED_EXCEPTION);
+            close(session, WsCloseCode.CONNECTION_EXCEPTION);
         }
     }
 

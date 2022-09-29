@@ -245,6 +245,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 });
         // 查询秘钥信息
         Optional.ofNullable(machine.getKeyId())
+                .filter(s -> MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType()))
                 .map(machineSecretKeyDAO::selectById)
                 .map(MachineSecretKeyDO::getKeyName)
                 .ifPresent(vo::setKeyName);
@@ -294,29 +295,33 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     @Override
-    public Integer testPing(Long id) {
+    public void testPing(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 查询超时时间
         Integer connectTimeout = machineEnvService.getConnectTimeout(id);
-        return IPs.ping(machine.getMachineHost(), connectTimeout) ? Const.ENABLE : Const.DISABLE;
+        if (!IPs.ping(machine.getMachineHost(), connectTimeout)) {
+            throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
-    public Integer testPing(String host) {
-        return IPs.ping(host, MachineConst.CONNECT_TIMEOUT) ? Const.ENABLE : Const.DISABLE;
+    public void testPing(String host) {
+        if (!IPs.ping(host, MachineConst.CONNECT_TIMEOUT)) {
+            throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
-    public Integer testConnect(Long id) {
+    public void testConnect(Long id) {
         // 查询机器
         MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
         // 测试连接
-        return this.testConnectMachine(machine);
+        this.testConnectMachine(machine);
     }
 
     @Override
-    public Integer testConnect(MachineInfoRequest request) {
+    public void testConnect(MachineInfoRequest request) {
         MachineInfoDO machine = new MachineInfoDO();
         machine.setProxyId(request.getProxyId());
         machine.setKeyId(request.getKeyId());
@@ -328,16 +333,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .map(ValueMix::encrypt)
                 .ifPresent(machine::setPassword);
         // 测试连接
-        return this.testConnectMachine(machine);
+        this.testConnectMachine(machine);
     }
 
     /**
      * 测试连接机器
      *
      * @param machine machine
-     * @return result
      */
-    private Integer testConnectMachine(MachineInfoDO machine) {
+    private void testConnectMachine(MachineInfoDO machine) {
         SessionStore s = null;
         try {
             // 查询秘钥
@@ -353,9 +357,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     .map(machineEnvService::getConnectTimeout)
                     .orElse(MachineConst.CONNECT_TIMEOUT);
             s = this.connectSessionStore(machine, key, proxy, timeout);
-            return Const.ENABLE;
         } catch (Exception e) {
-            return Const.DISABLE;
+            String message = e.getMessage();
+            if (Strings.contains(message, Const.TIMEOUT)) {
+                throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+            } else if (e instanceof AuthenticationException) {
+                throw Exceptions.app(MessageConst.AUTH_EXCEPTION_MESSAGE);
+            } else {
+                throw Exceptions.app(MessageConst.CONNECT_ERROR);
+            }
         } finally {
             Streams.close(s);
         }
@@ -394,7 +404,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 return this.connectSessionStore(machine, key, proxy, connectTimeout);
             } catch (Exception e) {
                 ex = e;
-                if (e instanceof ConnectionRuntimeException) {
+                String message = e.getMessage();
+                if (Strings.contains(message, Const.TIMEOUT)) {
+                    log.info("远程机器建立连接-连接超时");
+                    msg = MessageConst.TIMEOUT_EXCEPTION_MESSAGE;
+                    ex = Exceptions.timeout(message, e);
+                } else if (e instanceof ConnectionRuntimeException) {
                     log.info("远程机器建立连接-连接失败");
                 } else if (e instanceof AuthenticationException) {
                     msg = MessageConst.AUTH_EXCEPTION_MESSAGE;

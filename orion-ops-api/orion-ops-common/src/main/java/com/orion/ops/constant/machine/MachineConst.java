@@ -22,6 +22,6 @@ public class MachineConst {
     /**
      * 远程连接超时时间
      */
-    public static final int CONNECT_TIMEOUT = Const.MS_S_5;
+    public static final int CONNECT_TIMEOUT = Const.MS_S_30;
 
 }

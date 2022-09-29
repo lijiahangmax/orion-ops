@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -100,28 +101,31 @@ public class MachineInfoController {
 
     @PostMapping("/test-ping")
     @ApiOperation(value = "尝试ping机器")
-    public Integer ping(@RequestBody MachineInfoRequest request) {
+    public HttpWrapper<?> ping(@RequestBody MachineInfoRequest request) {
         Long id = Valid.notNull(request.getId());
-        return machineInfoService.testPing(id);
+        machineInfoService.testPing(id);
+        return HttpWrapper.ok();
     }
 
     @PostMapping("/test-connect")
     @ApiOperation(value = "尝试连接机器")
-    public Integer connect(@RequestBody MachineInfoRequest request) {
+    public HttpWrapper<?> connect(@RequestBody MachineInfoRequest request) {
         Long id = Valid.notNull(request.getId());
-        return machineInfoService.testConnect(id);
+        machineInfoService.testConnect(id);
+        return HttpWrapper.ok();
     }
 
     @PostMapping("/direct-test-ping")
     @ApiOperation(value = "直接尝试ping机器")
-    public Integer directPing(@RequestBody MachineInfoRequest request) {
+    public HttpWrapper<?> directPing(@RequestBody MachineInfoRequest request) {
         String host = Valid.notBlank(request.getHost());
-        return machineInfoService.testPing(host);
+        machineInfoService.testPing(host);
+        return HttpWrapper.ok();
     }
 
     @PostMapping("/direct-test-connect")
     @ApiOperation(value = "直接尝试连接机器")
-    public Integer directConnect(@RequestBody MachineInfoRequest request) {
+    public HttpWrapper<?> directConnect(@RequestBody MachineInfoRequest request) {
         Valid.allNotBlank(request.getHost(), request.getUsername());
         Integer sshPort = Valid.notNull(request.getSshPort());
         Valid.inRange(sshPort, 2, 65534, MessageConst.ABSENT_PARAM);
@@ -131,7 +135,8 @@ public class MachineInfoController {
         } else if (MachineAuthType.SECRET_KEY.equals(authType)) {
             Valid.notNull(request.getKeyId());
         }
-        return machineInfoService.testConnect(request);
+        machineInfoService.testConnect(request);
+        return HttpWrapper.ok();
     }
 
     /**
