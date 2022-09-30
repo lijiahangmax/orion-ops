@@ -249,6 +249,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .map(machineSecretKeyDAO::selectById)
                 .map(MachineSecretKeyDO::getKeyName)
                 .ifPresent(vo::setKeyName);
+        // 查询分组
+        List<Long> groupIdList = machineGroupRelService.getMachineRelByCache().get(id);
+        vo.setGroupIdList(groupIdList);
         return vo;
     }
 

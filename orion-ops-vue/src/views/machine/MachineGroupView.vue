@@ -180,9 +180,8 @@ const moreMenuHandler = {
     }).then(() => {
       ping()
       this.$message.success('ok')
-    }).catch(({ msg }) => {
+    }).catch(() => {
       ping()
-      this.$message.error(msg)
     })
   },
   connect(record) {
@@ -193,9 +192,8 @@ const moreMenuHandler = {
     }).then(() => {
       connecting()
       this.$message.success('ok')
-    }).catch(({ msg }) => {
+    }).catch(() => {
       connecting()
-      this.$message.error(msg)
     })
   }
 }

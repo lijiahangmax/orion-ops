@@ -88,3 +88,24 @@ export function getDepthKeys(tree, depth, keys = [], curr = 1) {
   }
   return keys
 }
+
+/**
+ * 设置 tree 全路径
+ */
+export function setTreePath(tree) {
+  if (!tree || !tree.length) {
+    return []
+  }
+  const loop = (node, parents = []) => {
+    const current = [...parents, node.title]
+    if (node.children && node.children.length) {
+      for (const child of node.children) {
+        loop(child, current)
+      }
+    }
+    node.path = current.join('/')
+    return current
+  }
+  tree.forEach(s => loop(s))
+  return tree || []
+}
