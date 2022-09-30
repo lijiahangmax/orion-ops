@@ -22,6 +22,7 @@ public class MachineGroupTreeVO {
     @ApiModelProperty(value = "id")
     private Long id;
 
+    @JSONField(serialize = false)
     @ApiModelProperty(value = "父id")
     private Long parentId;
 

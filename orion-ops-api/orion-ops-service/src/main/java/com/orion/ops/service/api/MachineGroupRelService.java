@@ -1,7 +1,5 @@
 package com.orion.ops.service.api;
 
-import com.orion.ops.entity.request.machine.MachineGroupRelRequest;
-
 import java.util.List;
 import java.util.Map;
 
@@ -31,20 +29,13 @@ public interface MachineGroupRelService {
     void updateMachineGroup(Long machineId, List<Long> groupIdList);
 
     /**
-     * 移动机器引用
-     *
-     * @param request request
-     */
-    void moveMachineRel(MachineGroupRelRequest request);
-
-    /**
      * 组内删除机器
      *
-     * @param groupId       groupId
+     * @param groupIdList   groupIdList
      * @param machineIdList machineIdList
      * @return effect
      */
-    Integer deleteByGroupMachineId(Long groupId, List<Long> machineIdList);
+    Integer deleteByGroupMachineId(List<Long> groupIdList, List<Long> machineIdList);
 
     /**
      * 通过机器id删除

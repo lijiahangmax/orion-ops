@@ -81,22 +81,12 @@ public class MachineGroupController {
         return HttpWrapper.ok();
     }
 
-    @PostMapping("/move-machine")
-    @ApiOperation(value = "移动组内机器")
-    public HttpWrapper<?> moveMachineRel(@RequestBody MachineGroupRelRequest request) {
-        Valid.notNull(request.getGroupId());
-        Valid.notNull(request.getTargetGroupId());
-        Valid.notEmpty(request.getMachineIdList());
-        machineGroupRelService.moveMachineRel(request);
-        return HttpWrapper.ok();
-    }
-
     @PostMapping("/delete-machine")
     @ApiOperation(value = "删除组内机器")
     public Integer deleteByGroupMachineId(@RequestBody MachineGroupRelRequest request) {
-        Long groupId = Valid.notNull(request.getGroupId());
+        List<Long> groupIdList = Valid.notEmpty(request.getGroupIdList());
         List<Long> machineIdList = Valid.notEmpty(request.getMachineIdList());
-        return machineGroupRelService.deleteByGroupMachineId(groupId, machineIdList);
+        return machineGroupRelService.deleteByGroupMachineId(groupIdList, machineIdList);
     }
 
 }

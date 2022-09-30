@@ -20,8 +20,14 @@ public class MachineGroupRelRequest {
     @ApiModelProperty(value = "组id")
     private Long groupId;
 
+    @ApiModelProperty(value = "组id")
+    private List<Long> groupIdList;
+
     @ApiModelProperty(value = "目标组id")
     private Long targetGroupId;
+
+    @ApiModelProperty(value = "机器id")
+    private Long machineId;
 
     @ApiModelProperty(value = "机器id")
     private List<Long> machineIdList;

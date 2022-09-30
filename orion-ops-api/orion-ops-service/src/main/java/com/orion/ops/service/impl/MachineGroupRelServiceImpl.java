@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.dao.MachineGroupRelDAO;
 import com.orion.ops.entity.domain.MachineGroupRelDO;
-import com.orion.ops.entity.request.machine.MachineGroupRelRequest;
 import com.orion.ops.service.api.MachineGroupRelService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -79,40 +78,10 @@ public class MachineGroupRelServiceImpl extends ServiceImpl<MachineGroupRelDAO, 
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void moveMachineRel(MachineGroupRelRequest request) {
-        // 删除组内id
-        Long groupId = request.getGroupId();
-        List<Long> machineIdList = request.getMachineIdList();
-        LambdaQueryWrapper<MachineGroupRelDO> deleteWrapper = new LambdaQueryWrapper<MachineGroupRelDO>()
-                .eq(MachineGroupRelDO::getGroupId, groupId)
-                .in(MachineGroupRelDO::getMachineId, machineIdList);
-        machineGroupRelDAO.delete(deleteWrapper);
-        // 目标去重
-        LambdaQueryWrapper<MachineGroupRelDO> queryWrapper = new LambdaQueryWrapper<MachineGroupRelDO>()
-                .eq(MachineGroupRelDO::getGroupId, request.getTargetGroupId());
-        machineGroupRelDAO.selectList(queryWrapper)
-                .forEach(m -> machineIdList.removeIf(m.getMachineId()::equals));
-        // 批量插入
-        if (!machineIdList.isEmpty()) {
-            List<MachineGroupRelDO> relList = machineIdList.stream()
-                    .map(m -> {
-                        MachineGroupRelDO rel = new MachineGroupRelDO();
-                        rel.setMachineId(m);
-                        rel.setGroupId(request.getTargetGroupId());
-                        return rel;
-                    }).collect(Collectors.toList());
-            this.saveBatch(relList);
-        }
-        // 清理缓存
-        this.clearGroupRelCache();
-    }
-
-    @Override
-    public Integer deleteByGroupMachineId(Long groupId, List<Long> machineIdList) {
+    public Integer deleteByGroupMachineId(List<Long> groupIdList, List<Long> machineIdList) {
         // 删除数据库
         LambdaQueryWrapper<MachineGroupRelDO> wrapper = new LambdaQueryWrapper<MachineGroupRelDO>()
-                .eq(MachineGroupRelDO::getGroupId, groupId)
+                .in(MachineGroupRelDO::getGroupId, groupIdList)
                 .in(MachineGroupRelDO::getMachineId, machineIdList);
         int effect = machineGroupRelDAO.delete(wrapper);
         // 清理缓存
