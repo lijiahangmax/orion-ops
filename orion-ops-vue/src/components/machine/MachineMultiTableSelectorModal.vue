@@ -1,10 +1,10 @@
 <template>
   <a-modal v-model="visible"
            title="机器列表"
-           :width="1000"
+           width="75%"
            :dialogStyle="{top: '48px'}"
            :bodyStyle="{padding: '8px'}"
-           :okButtonProps="{ props: { disabled: selectedRowKeys.length === 0 } }"
+           :okButtonProps="{props: {disabled: selectedRowKeys.length === 0}}"
            @ok="choose"
            @cancel="close">
     <!-- 搜索列 -->
@@ -26,14 +26,14 @@
       </div>
     </div>
     <!-- 表格 -->
-    <div class="table-main-container table-scroll-x-auto machine-selector-table">
+    <div class="table-main-container table-scroll-y-auto">
       <a-table :columns="columns"
                :dataSource="visibleRows"
                :pagination="pagination"
                :rowSelection="rowSelection"
                @change="changePage"
                rowKey="id"
-               :scroll="{x: '100%'}"
+               :scroll="{x: '100%', y: 'calc(100vh - 378px)'}"
                :loading="loading"
                size="middle">
         <!-- 名称 -->
@@ -69,13 +69,15 @@ const columns = [
     title: '机器信息',
     key: 'name',
     ellipsis: true,
-    scopedSlots: { customRender: 'info' }
+    scopedSlots: { customRender: 'info' },
+    sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
     title: '机器主机',
     key: 'host',
-    width: 200,
-    scopedSlots: { customRender: 'host' }
+    ellipsis: true,
+    scopedSlots: { customRender: 'host' },
+    sorter: (a, b) => a.host.localeCompare(b.host)
   },
   {
     title: '描述',
@@ -101,7 +103,6 @@ export default {
       rows: [],
       visibleRows: [],
       selectedRowKeys: [],
-      selectedRows: [],
       pagination: {
         current: 1,
         pageSize: 10,
@@ -118,17 +119,15 @@ export default {
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
-        onChange: (keys, rows) => {
-          this.selectedRowKeys = keys
-          this.selectedRows = rows
+        onChange: e => {
+          this.selectedRowKeys = e
         }
       }
     }
   },
   methods: {
-    open() {
-      this.selectedRowKeys = []
-      this.selectedRows = []
+    open(selected = []) {
+      this.selectedRowKeys = [...selected]
       this.visible = true
       if (!this.rows.length) {
         this.getList({})
@@ -168,21 +167,16 @@ export default {
     },
     cancelChoose() {
       this.selectedRowKeys = []
-      this.selectedRows = []
     },
     choose() {
       this.close()
-      this.$emit('choose', this.selectedRowKeys, this.selectedRows)
+      this.$emit('choose', this.selectedRowKeys)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-::v-deep .machine-selector-table .ant-table {
-  max-height: calc(100vh - 330px);
-  overflow-y: auto;
-}
 
 ::v-deep .ant-table-row-cell-ellipsis {
   padding: 8px !important;

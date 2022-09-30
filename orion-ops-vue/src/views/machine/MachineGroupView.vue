@@ -1,8 +1,14 @@
 <template>
   <div class="machine-group-view-container">
     <!-- 机器组树 -->
-    <MachineEditableTree class="gray-box-shadow"
+    <MachineEditableTree class="gray-box-shadow machine-group-tree"
                          ref="tree"
+                         :treeStyle="{
+                           'min-height': '238px',
+                           'max-height': 'calc(100vh - 136px)',
+                            padding: '0 8px',
+                            overflow: 'auto'
+                         }"
                          :machines="machines"
                          :visibleEdit="true"
                          @reloadMachine="reloadMachine"/>
@@ -40,13 +46,13 @@
         </div>
       </div>
       <!-- 表格 -->
-      <div class="table-main-container table-scroll-x-auto">
+      <div class="table-main-container table-scroll-y-auto">
         <a-table :columns="columns"
                  :dataSource="filterMachines"
                  :pagination="pagination"
                  @change="changePage"
                  rowKey="id"
-                 :scroll="{x: '100%'}"
+                 :scroll="{x: '100%', y: 'calc(100vh - 244px)'}"
                  :loading="loading"
                  size="middle">
           <!-- 名称 -->
@@ -140,13 +146,15 @@ const columns = [
     title: '机器信息',
     key: 'name',
     ellipsis: true,
-    scopedSlots: { customRender: 'info' }
+    scopedSlots: { customRender: 'info' },
+    sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
     title: '机器主机',
     key: 'host',
-    width: 200,
-    scopedSlots: { customRender: 'host' }
+    ellipsis: true,
+    scopedSlots: { customRender: 'host' },
+    sorter: (a, b) => a.host.localeCompare(b.host)
   },
   {
     title: '描述',
@@ -339,6 +347,11 @@ export default {
 <style lang="less" scoped>
 .machine-group-view-container {
   display: flex;
+}
+
+.machine-group-tree {
+  width: 25%;
+  margin-right: 8px;
 }
 
 .machine-group-table {

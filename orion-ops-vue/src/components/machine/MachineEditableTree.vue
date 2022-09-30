@@ -2,13 +2,16 @@
   <!-- 机器组树 -->
   <div class="machine-group-tree">
     <!-- 标题 -->
-    <div class="machine-group-tree-title-wrapper">
+    <div v-if="visibleEdit" class="machine-group-tree-editable-title-wrapper">
       <span class="machine-group-tree-title-text">分组列表</span>
-      <a-switch v-if="visibleEdit" v-model="editable" checkedChildren="编辑" unCheckedChildren="浏览"/>
+      <a-switch v-model="editable" checkedChildren="编辑" unCheckedChildren="浏览"/>
     </div>
-    <a-divider class="m0"/>
+    <div v-else class="machine-group-tree-uneditable-title-wrapper">
+      分组列表
+    </div>
+    <a-divider v-if="visibleEdit" class="m0"/>
     <!-- 树 -->
-    <a-spin wrapperClassName="machine-group-tree-wrapper" :spinning="loading">
+    <a-spin wrapperClassName="machine-group-tree-wrapper" :style="treeStyle" :spinning="loading">
       <!-- 加载完成有数据 -->
       <a-tree v-if="treeData.length"
               :treeData="treeData"
@@ -61,7 +64,7 @@
         </template>
       </a-tree>
       <!-- 加载完成无数据 -->
-      <div v-if="!loading && !treeData.length">
+      <div v-if="!loading && !treeData.length" class="m8">
         <a v-if="$isAdmin() && visibleEdit" @click="clickNodeMenu(null,'addRoot')">点击这里添加分组</a>
         <p v-else-if="$isAdmin() && !visibleEdit">请先添加机器分组</p>
         <p v-else>您还没有可访问的主机分组, 请联系管理员添加权限</p>
@@ -210,7 +213,8 @@ export default {
   name: 'MachineEditableTree',
   props: {
     machines: Array,
-    visibleEdit: Boolean
+    visibleEdit: Boolean,
+    treeStyle: Object
   },
   data() {
     return {
@@ -272,20 +276,28 @@ export default {
         this.expandedTreeNode.push(curr)
       }
     },
-    deleteNode(row) {
+    deleteNode({ key }) {
+      // 检查是否为root层
       let nodes
-      if (row.parentId === -1) {
-        // 添加根节点 取消
-        nodes = this.treeData
-      } else {
-        nodes = findParentNode(this.treeData, row.key).children || this.treeData
+      for (const treeNode of this.treeData) {
+        if (treeNode.key === key) {
+          nodes = this.treeData
+          break
+        }
+      }
+      // 没有则查询tree子节点
+      if (nodes) {
+        const findParent = findParentNode(this.treeData, key)
+        if (findParent) {
+          nodes = findParent.children
+        }
       }
       if (!nodes) {
         return
       }
       // 移除
       for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].key === row.key) {
+        if (nodes[i].key === key) {
           nodes.splice(i, 1)
           return
         }
@@ -444,13 +456,11 @@ export default {
 <style lang="less" scoped>
 
 .machine-group-tree {
-  width: 25%;
   background-color: #FFF;
   border-radius: 2px;
-  margin-right: 8px;
   overflow-x: hidden;
 
-  .machine-group-tree-title-wrapper {
+  .machine-group-tree-editable-title-wrapper {
     height: 50px;
     padding: 8px 12px;
     display: flex;
@@ -464,12 +474,18 @@ export default {
     }
   }
 
+  .machine-group-tree-uneditable-title-wrapper {
+    height: 42px;
+    line-height: 42px;
+    padding-left: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    background: #F0F0F0;
+  }
+
 }
 
 .machine-group-tree-wrapper {
-  padding: 0 8px;
-  min-height: 220px;
-
   ::v-deep .ant-tree-title {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -513,6 +529,10 @@ export default {
       text-align: end;
     }
   }
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 ::v-deep .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
