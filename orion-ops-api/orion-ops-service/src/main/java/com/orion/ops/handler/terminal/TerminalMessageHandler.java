@@ -51,15 +51,14 @@ public class TerminalMessageHandler implements WebSocketHandler {
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) {
         if (!(message instanceof TextMessage)) {
             return;
         }
         String token = session.getId();
-        String payload = ((TextMessage) message).getPayload();
         try {
             // 解析请求
-            Tuple tuple = WebSockets.parsePayload(payload);
+            Tuple tuple = WebSockets.parsePayload(((TextMessage) message).getPayload());
             if (tuple == null) {
                 WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
@@ -90,7 +89,7 @@ public class TerminalMessageHandler implements WebSocketHandler {
             // 操作
             handler.handleMessage(operate, body);
         } catch (Exception e) {
-            log.error("terminal 处理操作异常 token: {}, payload: {}", token, payload, e);
+            log.error("terminal 处理操作异常 token: {}", token, e);
             WebSockets.close(session, WsCloseCode.RUNTIME_EXCEPTION);
         }
     }

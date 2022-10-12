@@ -391,3 +391,28 @@ export function downloadFile(res, fileName) {
   document.body.removeChild(tempLink)
   window.URL.revokeObjectURL(blobURL)
 }
+
+/**
+ * 将消息转为分段消息
+ */
+export function messageToPartialMessages(msg) {
+  const max = 4096
+  const len = msg.length
+  if (len <= max) {
+    return [msg]
+  }
+  let c = ~~(len / max)
+  const mod = len % max
+  if (mod !== 0) {
+    c++
+  }
+  const arr = []
+  for (let i = 0; i < c; i++) {
+    if (i === c - 1) {
+      arr.push(msg.substr(i * max, mod === 0 ? max : mod))
+    } else {
+      arr.push(msg.substr(i * max, max))
+    }
+  }
+  return arr
+}
