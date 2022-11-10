@@ -499,7 +499,7 @@ export default {
   margin-left: 2px;
 }
 
-::v-deep .ant-table-row-cell-ellipsis{
+::v-deep .ant-table-row-cell-ellipsis {
   padding: 8px !important;
 }
 </style>

@@ -141,10 +141,11 @@ export default {
     this.listView = !view || view === 'list'
   },
   mounted() {
+    // GROUP_FLAG
     // 显示提示
-    setTimeout(() => {
-      this.showChangeViewTips()
-    }, 100)
+    // setTimeout(() => {
+    //   this.showChangeViewTips()
+    // }, 100)
   },
   beforeDestroy() {
     // 关闭所有最小化的终端
