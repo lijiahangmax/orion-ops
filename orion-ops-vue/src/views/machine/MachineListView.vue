@@ -196,8 +196,6 @@
     </div>
     <!-- 事件 -->
     <div class="machine-event-container">
-      <!-- 添加模态框 -->
-      <AddMachineModal ref="addModal" @added="getList" @updated="getList"/>
       <!-- 详情模态框 -->
       <MachineDetailModal ref="detailModal"/>
       <!-- 详情模态框 -->
@@ -213,12 +211,10 @@
 <script>
 import { enumValueOf, ENABLE_STATUS, MACHINE_AUTH_TYPE, IMPORT_TYPE } from '@/lib/enum'
 import MachineDetailModal from '@/components/machine/MachineDetailModal'
-import TerminalModal from '@/components/terminal/TerminalModal'
 import MachineExportModal from '@/components/export/MachineExportModal'
 import DataImportModal from '@/components/import/DataImportModal'
 import MachineAutoComplete from '@/components/machine/MachineAutoComplete'
 import MachineKeyBindModal from '@/components/machine/MachineKeyBindModal'
-import AddMachineModal from '@/components/machine/AddMachineModal'
 
 const columns = [
   {
@@ -254,7 +250,7 @@ const moreMenuHandler = {
     this.$refs.detailModal.open(record.id)
   },
   update(record) {
-    this.$refs.addModal.update(record.id)
+    this.$router.push(`/machine/update/${record.id}`)
   },
   delete(record) {
     this.$confirm({
@@ -320,7 +316,6 @@ const moreMenuHandler = {
 export default {
   name: 'MachineListView',
   components: {
-    AddMachineModal,
     MachineKeyBindModal,
     MachineAutoComplete,
     DataImportModal,
@@ -401,7 +396,7 @@ export default {
       }
     },
     openAdd() {
-      this.$refs.addModal.add()
+      this.$router.push('/machine/add')
     },
     openExport() {
       this.$refs.export.open()

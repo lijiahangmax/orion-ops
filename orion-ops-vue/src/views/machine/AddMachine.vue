@@ -1,98 +1,87 @@
 <template>
   <div class="machine-wrapper">
-    <!-- 机器模态框 -->
-    <a-modal v-model="visible"
-             :title="title"
-             :width="580"
-             :bodyStyle="{padding: '8px 16px 4px 16px', 'max-height': 'calc(100vh - 230px)', 'overflow-y': 'auto'}"
-             :dialogStyle="{top: '60px'}"
-             :maskClosable="false"
-             @ok="check"
-             @cancel="close">
-      <!-- 表单 -->
-      <a-spin :spinning="loading">
-        <div class="machine-info-form">
-          <a-form :form="form" v-bind="layout">
-            <h2 class="m0">基本信息</h2>
-            <a-divider class="title-divider"/>
-            <!-- GROUP_FLAG -->
-            <a-form-item v-show="false" label="机器分组">
-              <a-tree-select class="machine-input"
-                             v-decorator="decorators.groupIdList"
-                             :dropdown-style="{maxHeight: '400px', overflow: 'auto'}"
-                             :multiple="true"
-                             :treeData="treeData"
-                             treeNodeLabelProp="label"
-                             allowClear/>
-            </a-form-item>
-            <a-form-item label="机器名称">
-              <a-input class="machine-input" v-decorator="decorators.name" allowClear/>
-            </a-form-item>
-            <a-form-item label="唯一标识">
-              <a-input class="machine-input" v-decorator="decorators.tag" allowClear/>
-            </a-form-item>
-            <a-form-item label="机器描述">
-              <a-textarea class="machine-input" v-decorator="decorators.description" allowClear/>
-            </a-form-item>
-            <h2 class="m0">SSH 配置</h2>
-            <a-divider class="title-divider"/>
-            <a-form-item label="主机IP">
-              <a-input class="machine-input" v-decorator="decorators.host" allowClear/>
-              <a class="option-button" @click="testPing">ping</a>
-            </a-form-item>
-            <a-form-item label="用户名">
-              <a-input class="machine-input" v-decorator="decorators.username" allowClear/>
-            </a-form-item>
-            <a-form-item label="SSH 端口">
-              <a-input class="machine-input" v-decorator="decorators.sshPort" allowClear/>
-            </a-form-item>
-            <a-form-item label="认证方式">
-              <a-radio-group class="machine-input" v-decorator="decorators.authType" buttonStyle="solid">
-                <a-radio-button :value="type.value" v-for="type in MACHINE_AUTH_TYPE" :key="type.value">
-                  {{ type.label }}
-                </a-radio-button>
-              </a-radio-group>
-            </a-form-item>
-            <a-form-item label="认证密码" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.PASSWORD.value">
-              <a-input-password class="machine-input" v-decorator="decorators.password" allowClear/>
-            </a-form-item>
-            <a-form-item label="认证秘钥" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.SECRET_KEY.value">
-              <a-select class="machine-input" placeholder="请选择" v-decorator="decorators.keyId" allowClear>
-                <a-select-option v-for="key in keyList" :key="key.id" :value="key.id">
-                  {{ key.name }}
-                </a-select-option>
-              </a-select>
-              <a class="reload-icon" title="刷新" @click="getKeyList">
-                <a-icon type="reload"/>
-              </a>
-              <a class="option-button" @click="addKey">新增</a>
-            </a-form-item>
-            <a-form-item label="机器代理">
-              <a-select class="machine-input proxy-selector" placeholder="请选择" v-decorator="decorators.proxyId" allowClear>
-                <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
-                  <div class="proxy-select-option">
-                    <span>{{ proxy.host }}:{{ proxy.port }}</span>
-                    <a-tag :color="proxy.type | formatProxyType('color')">
-                      {{ proxy.type | formatProxyType('label') }}
-                    </a-tag>
-                  </div>
-                </a-select-option>
-              </a-select>
-              <a class="reload-icon" title="刷新" @click="getProxyList">
-                <a-icon type="reload"/>
-              </a>
-              <a class="option-button" @click="addProxy">新增</a>
-            </a-form-item>
-          </a-form>
-        </div>
-      </a-spin>
-      <!-- 页脚 -->
-      <template #footer>
-        <a-button @click="testConnect">测试连接</a-button>
-        <a-button @click="close">取消</a-button>
-        <a-button type="primary" @click="check">确定</a-button>
-      </template>
-    </a-modal>
+    <!-- 表单 -->
+    <a-spin :spinning="loading">
+      <div class="machine-info-form">
+        <a-form :form="form" v-bind="layout">
+          <h2 class="m0">基本信息</h2>
+          <a-divider class="title-divider"/>
+          <!-- GROUP_FLAG -->
+          <a-form-item v-show="false" label="机器分组">
+            <a-tree-select class="machine-input"
+                           v-decorator="decorators.groupIdList"
+                           :dropdown-style="{maxHeight: '400px', overflow: 'auto'}"
+                           :multiple="true"
+                           :treeData="treeData"
+                           treeNodeLabelProp="label"
+                           allowClear/>
+          </a-form-item>
+          <a-form-item label="机器名称">
+            <a-input class="machine-input" v-decorator="decorators.name" allowClear/>
+          </a-form-item>
+          <a-form-item label="唯一标识">
+            <a-input class="machine-input" v-decorator="decorators.tag" allowClear/>
+          </a-form-item>
+          <a-form-item label="机器描述">
+            <a-textarea class="machine-input" v-decorator="decorators.description" allowClear/>
+          </a-form-item>
+          <h2 class="m0">SSH 配置</h2>
+          <a-divider class="title-divider"/>
+          <a-form-item label="主机IP">
+            <a-input class="machine-input" v-decorator="decorators.host" allowClear/>
+            <a class="option-button" @click="testPing">ping</a>
+          </a-form-item>
+          <a-form-item label="用户名">
+            <a-input class="machine-input" v-decorator="decorators.username" allowClear/>
+          </a-form-item>
+          <a-form-item label="SSH 端口">
+            <a-input class="machine-input" v-decorator="decorators.sshPort" allowClear/>
+          </a-form-item>
+          <a-form-item label="认证方式">
+            <a-radio-group class="machine-input" v-decorator="decorators.authType" buttonStyle="solid">
+              <a-radio-button :value="type.value" v-for="type in MACHINE_AUTH_TYPE" :key="type.value">
+                {{ type.label }}
+              </a-radio-button>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="认证密码" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.PASSWORD.value">
+            <a-input-password class="machine-input" v-decorator="decorators.password" allowClear/>
+          </a-form-item>
+          <a-form-item label="认证秘钥" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.SECRET_KEY.value">
+            <a-select class="machine-input" placeholder="请选择" v-decorator="decorators.keyId" allowClear>
+              <a-select-option v-for="key in keyList" :key="key.id" :value="key.id">
+                {{ key.name }}
+              </a-select-option>
+            </a-select>
+            <a class="reload-icon" title="刷新" @click="getKeyList">
+              <a-icon type="reload"/>
+            </a>
+            <a class="option-button" @click="addKey">新增</a>
+          </a-form-item>
+          <a-form-item label="机器代理">
+            <a-select class="machine-input proxy-selector" placeholder="请选择" v-decorator="decorators.proxyId" allowClear>
+              <a-select-option v-for="proxy in proxyList" :key="proxy.id" :value="proxy.id">
+                <div class="proxy-select-option">
+                  <span>{{ proxy.host }}:{{ proxy.port }}</span>
+                  <a-tag :color="proxy.type | formatProxyType('color')">
+                    {{ proxy.type | formatProxyType('label') }}
+                  </a-tag>
+                </div>
+              </a-select-option>
+            </a-select>
+            <a class="reload-icon" title="刷新" @click="getProxyList">
+              <a-icon type="reload"/>
+            </a>
+            <a class="option-button" @click="addProxy">新增</a>
+          </a-form-item>
+        </a-form>
+      </div>
+    </a-spin>
+    <!-- 页脚 -->
+    <div class="machine-footer">
+      <a-button @click="testConnect">测试连接</a-button>
+      <a-button type="primary" @click="check">确定</a-button>
+    </div>
     <!-- 事件 -->
     <div class="machine-add-modal-event-container">
       <!-- 新增秘钥模态框 -->
@@ -108,7 +97,7 @@ import { pick } from 'lodash'
 import { enumValueOf, MACHINE_AUTH_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
 import { setTreePath, setTreeDataProps } from '@/lib/tree'
 import { validatePort } from '@/lib/validate'
-import AddMachineKeyModal from '../machine/AddMachineKeyModal'
+import AddMachineKeyModal from '@/components/machine/AddMachineKeyModal'
 import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
 
 const layout = {
@@ -193,8 +182,6 @@ export default {
       MACHINE_AUTH_TYPE,
       id: null,
       init: false,
-      visible: false,
-      title: null,
       loading: false,
       keyList: [],
       proxyList: [],
@@ -241,11 +228,9 @@ export default {
       }
     },
     add() {
-      this.title = '新增机器'
       this.initRecord({})
     },
     update(id) {
-      this.title = '修改机器'
       this.$api.getMachineDetail({
         id
       }).then(({ data }) => {
@@ -273,7 +258,6 @@ export default {
         this.initData()
       }
       this.form.resetFields()
-      this.visible = true
       this.id = row.id
       row.proxyId = row.proxyId || undefined
       row.keyId = row.keyId || undefined
@@ -390,19 +374,13 @@ export default {
         }
         if (!this.id) {
           this.$message.success('新增成功')
-          this.$emit('added', res.data)
+          this.$router.back()
         } else {
           this.$message.success('修改成功')
-          this.$emit('updated', res.data)
         }
-        this.close()
       } catch (e) {
         // ignore
       }
-      this.loading = false
-    },
-    close() {
-      this.visible = false
       this.loading = false
     }
   },
@@ -410,11 +388,36 @@ export default {
     formatProxyType(type, f) {
       return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
     }
+  },
+  mounted() {
+    const id = this.$route.params.id
+    if (id) {
+      this.update(id)
+    } else {
+      this.add()
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.machine-wrapper {
+  background: #FFF;
+  padding: 24px;
+  border-radius: 4px;
+}
+
+.machine-info-form {
+  width: 700px;
+}
+
+.machine-footer {
+  margin-left: 44px;
+
+  button {
+    margin-right: 8px;
+  }
+}
 
 .machine-input {
   width: 380px;
