@@ -9,28 +9,28 @@ const $ws = {
    * 机器终端
    */
   terminal: param => {
-    return `ws://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
   },
 
   /**
    * 机器终端监视
    */
   terminalWatcher: param => {
-    return `ws://${window.location.host}/orion/keep-alive/watcher/terminal/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/watcher/terminal/${param.token}`
   },
 
   /**
    * sftp传输列表
    */
   sftpNotify: param => {
-    return `ws://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
   },
 
   /**
    * 文件tail
    */
   fileTail: param => {
-    return `ws://${window.location.host}/orion/keep-alive/tail/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/tail/${param.token}`
   }
 
 }
