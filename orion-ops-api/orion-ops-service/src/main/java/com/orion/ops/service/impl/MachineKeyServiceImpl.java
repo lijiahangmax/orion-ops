@@ -10,6 +10,7 @@ import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.FileWriters;
 import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.channel.SessionHolder;
+import com.orion.ops.constant.Const;
 import com.orion.ops.constant.MessageConst;
 import com.orion.ops.constant.event.EventKeys;
 import com.orion.ops.dao.MachineInfoDAO;
@@ -57,9 +58,14 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         Files1.touch(path);
         byte[] keyFileData = Base64s.decode(Strings.bytes(request.getFile()));
         FileWriters.writeFast(path, keyFileData);
-        key.setPassword(ValueMix.encrypt(request.getPassword()));
+        String password = request.getPassword();
+        if (Strings.isEmpty(password)) {
+            key.setPassword(Const.EMPTY);
+        } else {
+            key.setPassword(ValueMix.encrypt(password));
+        }
         // 检查秘钥
-        this.checkLoadKey(path, request.getPassword());
+        this.checkLoadKey(path, password);
         // 插入
         machineSecretKeyDAO.insert(key);
         // 设置日志参数
@@ -93,16 +99,14 @@ public class MachineKeyServiceImpl implements MachineKeyService {
             updateKey.setSecretKeyPath(keyFile);
         }
         // 修改密码
-        final boolean updatePassword = !Strings.isBlank(password);
-        if (updatePassword) {
+        if (Strings.isBlank(password)) {
+            updateKey.setPassword(Const.EMPTY);
+        } else {
             updateKey.setPassword(ValueMix.encrypt(password));
         }
         // 检查秘钥
-        if (updateFile || updatePassword) {
-            String checkPath = updateFile ? updateKey.getSecretKeyPath() : beforeKey.getSecretKeyPath();
-            String checkPassword = updatePassword ? password : ValueMix.decrypt(beforeKey.getPassword());
-            this.checkLoadKey(MachineKeyService.getKeyPath(checkPath), checkPassword);
-        }
+        String checkPath = updateFile ? updateKey.getSecretKeyPath() : beforeKey.getSecretKeyPath();
+        this.checkLoadKey(MachineKeyService.getKeyPath(checkPath), password);
         // 更新
         int effect = machineSecretKeyDAO.updateById(updateKey);
         // 设置日志参数
@@ -176,7 +180,11 @@ public class MachineKeyServiceImpl implements MachineKeyService {
      */
     private void checkLoadKey(String path, String password) {
         try {
-            SessionHolder.HOLDER.addIdentity(path, password);
+            if (Strings.isEmpty(password)) {
+                SessionHolder.HOLDER.addIdentity(path);
+            } else {
+                SessionHolder.HOLDER.addIdentity(path, password);
+            }
             SessionHolder.HOLDER.removeAllIdentity();
         } catch (Exception e) {
             throw Exceptions.app(MessageConst.ILLEGAL_MACHINE_SECRET_KEY, e);

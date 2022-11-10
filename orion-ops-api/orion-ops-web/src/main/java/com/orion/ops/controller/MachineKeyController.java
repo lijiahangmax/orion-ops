@@ -40,7 +40,6 @@ public class MachineKeyController {
     @EventLog(EventType.ADD_MACHINE_KEY)
     public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
-        Valid.notBlank(request.getPassword());
         Valid.notBlank(request.getFile());
         return machineKeyService.addSecretKey(request);
     }

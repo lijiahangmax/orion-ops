@@ -445,8 +445,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             // 加载秘钥
             if (MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType())) {
                 String keyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
-                String keyPassword = ValueMix.decrypt(key.getPassword());
-                sessionHolder.addIdentity(keyPath, keyPassword);
+                String password = key.getPassword();
+                if (Strings.isEmpty(password)) {
+                    sessionHolder.addIdentity(keyPath);
+                } else {
+                    sessionHolder.addIdentity(keyPath, ValueMix.decrypt(password));
+                }
             }
             // 获取会话
             session = sessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
