@@ -61,11 +61,6 @@ public class MonitorConst {
      */
     public static final String START_SCRIPT_FILE_NAME = "start-machine-monitor-agent.sh";
 
-    /**
-     * agent 日志文件名称
-     */
-    public static final String AGENT_LOG_FILE_NAME = "machine-monitor-agent.out";
-
     @Value("${machine.monitor.latest.version}")
     private void setLatestVersion(String latestVersion) {
         MonitorConst.LATEST_VERSION = latestVersion;
