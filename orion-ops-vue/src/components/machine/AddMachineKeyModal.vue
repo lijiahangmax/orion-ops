@@ -23,8 +23,10 @@
             <a-button icon="upload">选择文件</a-button>
           </a-upload>
         </a-form-item>
-        <a-form-item label="密码">
-          <a-input-password v-decorator="decorators.password" allowClear/>
+        <a-form-item label="秘钥密码">
+          <a-input-password v-decorator="decorators.password"
+                            placeholder="为空则代表秘钥无密码"
+                            allowClear/>
         </a-form-item>
         <a-form-item label="描述">
           <a-textarea v-decorator="decorators.description" allowClear/>
@@ -63,8 +65,6 @@ function getDecorators() {
       rules: [{
         max: 128,
         message: '密码长度不能大于128位'
-      }, {
-        validator: this.validatePassword
       }]
     }],
     description: ['description', {
@@ -120,15 +120,6 @@ export default {
     validateFile(rule, value, callback) {
       if (!this.id && !this.fileList.length) {
         callback(new Error('请选择秘钥文件'))
-      } else {
-        callback()
-      }
-    },
-    validatePassword(rule, value, callback) {
-      if (!this.id && !value) {
-        callback(new Error('请输入密码'))
-      } else if (this.id && !value && this.fileList.length) {
-        callback(new Error('请输入密码'))
       } else {
         callback()
       }

@@ -3,7 +3,7 @@ package com.orion.ops.runner;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.common.EnableType;
 import com.orion.ops.constant.scheduler.SchedulerTaskMachineStatus;
 import com.orion.ops.constant.scheduler.SchedulerTaskStatus;
 import com.orion.ops.constant.system.SystemEnvAttr;

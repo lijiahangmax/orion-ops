@@ -2532,3 +2532,21 @@ export const MACHINE_ALARM_TYPE = {
     alarmProp: 'memoryAlarm'
   }
 }
+
+/**
+ * 树状结构移动类型
+ */
+export const TREE_MOVE_TYPE = {
+  IN_TOP: {
+    value: 1
+  },
+  IN_BOTTOM: {
+    value: 2
+  },
+  PREV: {
+    value: 3
+  },
+  NEXT: {
+    value: 4
+  }
+}

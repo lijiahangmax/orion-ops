@@ -9,7 +9,7 @@ import com.orion.lang.utils.net.IPs;
 import com.orion.lang.utils.time.Dates;
 import com.orion.ops.constant.CnConst;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.common.StainCode;
 import com.orion.ops.constant.system.SystemEnvAttr;
 
 import java.util.List;

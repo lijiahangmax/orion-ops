@@ -81,12 +81,12 @@ public class MonitorAgentInstallTask implements Runnable {
             this.logStream = Files1.openOutputStreamFast(logFile);
             // 打开会话
             this.session = machineInfoService.openSessionStore(machineId);
-            String pluginPath = PathBuilders.getPluginPath(machine.getUsername());
-            String agentPath = pluginPath + Const.LIB_DIR + "/" + MonitorConst.getAgentFileName();
+            String pluginDirectory = PathBuilders.getPluginPath(machine.getUsername());
+            String startScriptPath = pluginDirectory + "/" + MonitorConst.START_SCRIPT_FILE_NAME;
             // 传输
-            this.transferAgentFile(agentPath);
+            this.transferAgentFile(pluginDirectory, startScriptPath);
             // 启动
-            this.startAgentApp(pluginPath, agentPath);
+            this.startAgentApp(startScriptPath);
             // 同步等待
             this.checkAgentRunStatus();
             // 拼接日志
@@ -99,7 +99,7 @@ public class MonitorAgentInstallTask implements Runnable {
             update.setMonitorStatus(MonitorStatus.NOT_START.getStatus());
             machineMonitorService.updateMonitorConfigByMachineId(machineId, update);
             // 发送站内信
-            this.sendWebsideMessage(MessageType.MACHINE_AGENT_INSTALL_FAILURE);
+            this.sendWebSideMessage(MessageType.MACHINE_AGENT_INSTALL_FAILURE);
         } finally {
             Streams.close(session);
             Streams.close(logStream);
@@ -109,16 +109,24 @@ public class MonitorAgentInstallTask implements Runnable {
     /**
      * 传输文件
      *
-     * @param agentPath agentPath
+     * @param pluginDirectory pluginDirectory
+     * @param startScriptPath startScriptPath
      */
-    private void transferAgentFile(String agentPath) {
+    private void transferAgentFile(String pluginDirectory, String startScriptPath) {
+        // 传输脚本目录
+        String agentPath = pluginDirectory + Const.LIB_DIR + "/" + MonitorConst.getAgentFileName();
         SftpExecutor executor = null;
         try {
             // 打开 sftp 连接
             String charset = machineEnvService.getSftpCharset(machineId);
             executor = session.getSftpExecutor(charset);
             executor.connect();
-            // 获取本地文件
+            // 传输启动脚本文件
+            String startScript = this.getStartScript(agentPath);
+            this.appendLog("开始生成启动脚本 path: {}, command: \n{}", agentPath, startScript);
+            executor.write(startScriptPath, Strings.bytes(startScript));
+            executor.chmod(startScriptPath, 777);
+            // 传输 agent 文件
             File localAgentFile = new File(SystemEnvAttr.MACHINE_MONITOR_AGENT_PATH.getValue());
             // 查询文件是否存在
             long size = executor.getSize(agentPath);
@@ -141,16 +149,15 @@ public class MonitorAgentInstallTask implements Runnable {
     /**
      * 启动 agent 应用
      *
-     * @param pluginPath pluginPath
-     * @param agentPath  agentPath
+     * @param startScriptPath startScriptPath
      */
-    private void startAgentApp(String pluginPath, String agentPath) {
+    private void startAgentApp(String startScriptPath) {
         CommandExecutor executor = null;
         try {
             // 执行启动命令
-            String script = this.getStartScript(pluginPath, agentPath);
-            this.appendLog("开始执行命令 {}", script);
-            executor = session.getCommandExecutor(script);
+            this.appendLog("开始执行启动脚本 path: {}", startScriptPath);
+            executor = session.getCommandExecutor(startScriptPath);
+            executor.getChannel().setPty(false);
             CommandExecutors.syncExecCommand(executor, logStream);
             int exitCode = executor.getExitCode();
             if (!ExitCode.isSuccess(exitCode)) {
@@ -190,13 +197,13 @@ public class MonitorAgentInstallTask implements Runnable {
         update.setAgentVersion(version);
         machineMonitorService.updateMonitorConfigByMachineId(machineId, update);
         // 发送站内信
-        this.sendWebsideMessage(MessageType.MACHINE_AGENT_INSTALL_SUCCESS);
+        this.sendWebSideMessage(MessageType.MACHINE_AGENT_INSTALL_SUCCESS);
     }
 
     /**
      * 发送站内信
      */
-    private void sendWebsideMessage(MessageType type) {
+    private void sendWebSideMessage(MessageType type) {
         Map<String, Object> params = Maps.newMap();
         params.put(EventKeys.NAME, machine.getMachineName());
         webSideMessageService.addMessage(type, machine.getId(), user.getId(), user.getUsername(), params);
@@ -205,34 +212,30 @@ public class MonitorAgentInstallTask implements Runnable {
     /**
      * 获取启动脚本
      *
-     * @param pluginPath   文件创建路径
      * @param agentJarPath agentJar 路径
      * @return 脚本内容
      */
-    private String getStartScript(String pluginPath, String agentJarPath) {
+    private String getStartScript(String agentJarPath) {
         Map<Object, Object> param = Maps.newMap();
-        param.put("killTag", MonitorConst.AGENT_FILE_NAME_PREFIX);
+        param.put("processName", MonitorConst.AGENT_FILE_NAME_PREFIX);
         param.put("machineId", machineId);
-        param.put("pluginPath", pluginPath);
         param.put("agentJarPath", agentJarPath);
-        param.put("scriptPath", pluginPath + "/" + MonitorConst.START_SCRIPT_FILE_NAME);
-        param.put("logPath", pluginPath + "/" + MonitorConst.AGENT_LOG_FILE_NAME);
         return Strings.format(MonitorConst.START_SCRIPT_VALUE, param);
     }
 
     /**
      * 拼接日志
      *
-     * @param log  log
-     * @param args args
+     * @param logString log
+     * @param args      args
      */
     @SneakyThrows
-    private void appendLog(String log, Object... args) {
+    private void appendLog(String logString, Object... args) {
         if (!Arrays1.isEmpty(args)) {
-            this.log.info("安装监控插件-" + log, args);
+            log.info("安装监控插件-" + logString, args);
         }
         if (logStream != null) {
-            logStream.write(Strings.bytes(Strings.format(log, args)));
+            logStream.write(Strings.bytes(Strings.format(logString, args)));
             logStream.write(Letters.LF);
             logStream.flush();
         }

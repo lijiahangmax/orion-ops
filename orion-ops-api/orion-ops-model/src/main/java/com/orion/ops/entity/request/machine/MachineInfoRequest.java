@@ -67,4 +67,10 @@ public class MachineInfoRequest extends PageRequest {
     @ApiModelProperty(value = "机器状态 1有效 2无效")
     private Integer status;
 
+    @ApiModelProperty(value = "是否查询分组")
+    private Boolean queryGroup;
+
+    @ApiModelProperty(value = "分组id")
+    private List<Long> groupIdList;
+
 }

@@ -8,10 +8,8 @@ import com.orion.lang.utils.collect.Maps;
 import com.orion.lang.utils.convert.Converts;
 import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.ops.constant.Const;
 import com.orion.ops.constant.KeyConst;
 import com.orion.ops.constant.event.EventKeys;
-import com.orion.ops.utils.EventParamsHolder;
 import com.orion.ops.constant.sftp.SftpTransferStatus;
 import com.orion.ops.constant.sftp.SftpTransferType;
 import com.orion.ops.dao.FileTransferLogDAO;
@@ -20,8 +18,8 @@ import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.dto.sftp.SftpSessionTokenDTO;
 import com.orion.ops.entity.dto.sftp.SftpUploadInfoDTO;
 import com.orion.ops.entity.dto.user.UserDTO;
-import com.orion.ops.entity.request.upload.BatchUploadRequest;
 import com.orion.ops.entity.request.sftp.FileUploadRequest;
+import com.orion.ops.entity.request.upload.BatchUploadRequest;
 import com.orion.ops.entity.vo.upload.BatchUploadCheckFileVO;
 import com.orion.ops.entity.vo.upload.BatchUploadCheckMachineVO;
 import com.orion.ops.entity.vo.upload.BatchUploadCheckVO;
@@ -33,6 +31,7 @@ import com.orion.ops.handler.sftp.hint.FileTransferHint;
 import com.orion.ops.service.api.BatchUploadService;
 import com.orion.ops.service.api.MachineInfoService;
 import com.orion.ops.utils.Currents;
+import com.orion.ops.utils.EventParamsHolder;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -148,7 +147,7 @@ public class BatchUploadServiceImpl implements BatchUploadService {
         SftpSessionTokenDTO info = new SftpSessionTokenDTO();
         info.setUserId(userId);
         info.setMachineIdList(uploadInfo.getMachineIdList());
-        redisTemplate.opsForValue().set(notifyKey, JSON.toJSONString(info), Const.N_5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(notifyKey, JSON.toJSONString(info), KeyConst.SFTP_SESSION_EXPIRE, TimeUnit.SECONDS);
 
         // 返回
         BatchUploadTokenVO token = new BatchUploadTokenVO();

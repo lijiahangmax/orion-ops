@@ -15,7 +15,7 @@ CREATE TABLE `alarm_group`
     `create_time`       datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`       datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for alarm_group_notify
@@ -32,7 +32,7 @@ CREATE TABLE `alarm_group_notify`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `group_idx`(`group_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组通知方式' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组通知方式' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for alarm_group_user
@@ -49,7 +49,7 @@ CREATE TABLE `alarm_group_user`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `group_id_idx`(`group_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组成员' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '报警组成员' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_action
@@ -69,7 +69,7 @@ CREATE TABLE `application_action`
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX            `app_profile_idx`(`app_id`, `profile_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用构建发布执行块' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用构建发布执行块' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_action_log
@@ -95,7 +95,7 @@ CREATE TABLE `application_action_log`
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX            `rel_id_idx`(`stage_type`, `rel_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用操作日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用操作日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_build
@@ -126,7 +126,7 @@ CREATE TABLE `application_build`
     `create_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用构建' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用构建' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_env
@@ -146,7 +146,7 @@ CREATE TABLE `application_env`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `app_profile_idx`(`app_id`, `profile_id`, `attr_key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用环境变量' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用环境变量' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_info
@@ -164,7 +164,7 @@ CREATE TABLE `application_info`
     `create_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_machine
@@ -184,7 +184,7 @@ CREATE TABLE `application_machine`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `app_profile_idx`(`app_id`, `profile_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用依赖机器表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用依赖机器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_pipeline
@@ -200,7 +200,7 @@ CREATE TABLE `application_pipeline`
     `create_time`   datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     `update_time`   datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_pipeline_detail
@@ -218,7 +218,7 @@ CREATE TABLE `application_pipeline_detail`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `pipeline_id_idx`(`pipeline_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线详情' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线详情' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_pipeline_task
@@ -252,7 +252,7 @@ CREATE TABLE `application_pipeline_task`
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX              `pipeline_id_idx`(`pipeline_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_pipeline_task_detail
@@ -278,7 +278,7 @@ CREATE TABLE `application_pipeline_task_detail`
     `update_time`        datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX                `rel_id_idx`(`pipeline_id`, `pipeline_detail_id`, `task_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务详情' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务详情' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_pipeline_task_log
@@ -297,7 +297,7 @@ CREATE TABLE `application_pipeline_task_log`
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX            `record_idx`(`task_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用流水线任务日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_profile
@@ -314,7 +314,7 @@ CREATE TABLE `application_profile`
     `create_time`   datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`   datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用环境表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用环境表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_release
@@ -358,7 +358,7 @@ CREATE TABLE `application_release`
     `create_time`         datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`         datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '发布单' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '发布单' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_release_machine
@@ -381,7 +381,7 @@ CREATE TABLE `application_release_machine`
     `update_time`  datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX          `release_idx`(`release_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '发布单机器表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '发布单机器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for application_repository
@@ -404,7 +404,7 @@ CREATE TABLE `application_repository`
     `create_time`        datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`        datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用版本仓库' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '应用版本仓库' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for command_exec
@@ -432,7 +432,7 @@ CREATE TABLE `command_exec`
     `update_time`  datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX          `machine_idx`(`machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '命令执行表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '命令执行表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for command_template
@@ -452,7 +452,7 @@ CREATE TABLE `command_template`
     `create_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '命令模板表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '命令模板表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for file_tail_list
@@ -472,7 +472,7 @@ CREATE TABLE `file_tail_list`
     `create_time`  datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`  datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件tail表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件tail表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for file_transfer_log
@@ -499,7 +499,7 @@ CREATE TABLE `file_transfer_log`
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `token_unidx`(`file_token`) USING BTREE,
   INDEX `user_machine_idx`(`user_id`, `machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'sftp传输日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'sftp传输日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for history_value_snapshot
@@ -519,7 +519,7 @@ CREATE TABLE `history_value_snapshot`
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX              `value_idx`(`value_id`, `value_type`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '历史值快照表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '历史值快照表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_alarm_config
@@ -538,7 +538,7 @@ CREATE TABLE `machine_alarm_config`
     `update_time`       datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX               `machine_idx`(`machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_alarm_group
@@ -554,7 +554,7 @@ CREATE TABLE `machine_alarm_group`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `config_idx`(`machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警通知组' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警通知组' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_alarm_history
@@ -572,7 +572,7 @@ CREATE TABLE `machine_alarm_history`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `machine_idx`(`machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警历史' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器报警历史' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_env
@@ -590,7 +590,40 @@ CREATE TABLE `machine_env`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `machine_key_index`(`machine_id`, `attr_key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器环境变量' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器环境变量' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for machine_group
+-- ----------------------------
+DROP TABLE IF EXISTS `machine_group`;
+CREATE TABLE `machine_group`
+(
+    `id`          bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `parent_id`   bigint(0) NULL DEFAULT NULL COMMENT '父id',
+    `group_name`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组名称',
+    `sort`        int(0) NULL DEFAULT 0 COMMENT '排序',
+    `deleted`     tinyint(0) NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
+    `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX         `parent_idx`(`parent_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器分组' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for machine_group_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `machine_group_rel`;
+CREATE TABLE `machine_group_rel`
+(
+    `id`          bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `group_id`    bigint(0) NULL DEFAULT NULL COMMENT '组id',
+    `machine_id`  bigint(0) NULL DEFAULT NULL COMMENT '机器id',
+    `deleted`     tinyint(0) NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
+    `create_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
+    `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX         `group_idx`(`group_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器分组关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_info
@@ -615,7 +648,7 @@ CREATE TABLE `machine_info`
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX            `host_idx`(`machine_host`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器信息表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器信息表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Table structure for machine_monitor
@@ -633,7 +666,7 @@ CREATE TABLE `machine_monitor`
     `create_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器监控配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器监控配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_proxy
@@ -652,7 +685,7 @@ CREATE TABLE `machine_proxy`
     `create_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器代理' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器代理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_secret_key
@@ -669,7 +702,7 @@ CREATE TABLE `machine_secret_key`
     `create_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登陆秘钥' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登陆秘钥' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_terminal
@@ -690,7 +723,7 @@ CREATE TABLE `machine_terminal`
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX              `machine_idx`(`machine_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器终端配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器终端配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_terminal_log
@@ -713,7 +746,7 @@ CREATE TABLE `machine_terminal_log`
     `create_time`       datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`       datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器终端操作日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器终端操作日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for scheduler_task
@@ -735,7 +768,7 @@ CREATE TABLE `scheduler_task`
     `create_time`          datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`          datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for scheduler_task_machine
@@ -751,7 +784,7 @@ CREATE TABLE `scheduler_task_machine`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `task_idx`(`task_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务机器' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务机器' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for scheduler_task_machine_record
@@ -778,7 +811,7 @@ CREATE TABLE `scheduler_task_machine_record`
     `update_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX             `task_record_idx`(`task_id`, `record_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务执行明细机器详情' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务执行明细机器详情' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for scheduler_task_record
@@ -797,7 +830,7 @@ CREATE TABLE `scheduler_task_record`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `task_id_idx`(`task_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务执行日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度任务执行日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for system_env
@@ -815,7 +848,7 @@ CREATE TABLE `system_env`
     `update_time` datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `key_idx`(`attr_key`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统环境变量' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统环境变量' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_event_log
@@ -835,7 +868,7 @@ CREATE TABLE `user_event_log`
     `create_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX            `user_event`(`user_id`, `event_classify`, `event_type`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户事件日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户事件日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_info
@@ -861,7 +894,7 @@ CREATE TABLE `user_info`
     `update_time`        datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX                `username_idx`(`username`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for web_side_message
@@ -882,7 +915,7 @@ CREATE TABLE `web_side_message`
     `update_time`      datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX              `to_user_id_idx`(`to_user_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统站内信' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统站内信' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for webhook_config
@@ -899,7 +932,7 @@ CREATE TABLE `webhook_config`
     `create_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'webhook 配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'webhook 配置' ROW_FORMAT = Dynamic;
 
 SET
 FOREIGN_KEY_CHECKS = 1;

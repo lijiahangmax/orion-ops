@@ -65,13 +65,13 @@ public class ApplicationReleaseDetailVO {
     private Integer status;
 
     /**
-     * @see com.orion.ops.constant.SerialType
+     * @see com.orion.ops.constant.common.SerialType
      */
     @ApiModelProperty(value = "发布序列 10串行 20并行")
     private Integer serializer;
 
     /**
-     * @see com.orion.ops.constant.ExceptionHandlerType
+     * @see com.orion.ops.constant.common.ExceptionHandlerType
      */
     @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     private Integer exceptionHandler;

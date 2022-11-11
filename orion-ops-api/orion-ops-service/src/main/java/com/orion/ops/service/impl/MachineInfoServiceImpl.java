@@ -5,6 +5,7 @@ import com.orion.ext.process.Processes;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.exception.AuthenticationException;
 import com.orion.lang.exception.ConnectionRuntimeException;
+import com.orion.lang.utils.Booleans;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.Valid;
@@ -46,10 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 机器信息服务
@@ -98,6 +96,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private MachineAlarmGroupServiceImpl machineAlarmGroupService;
 
     @Resource
+    private MachineGroupRelService machineGroupRelService;
+
+    @Resource
     private HistoryValueService historyValueService;
 
     @Override
@@ -109,8 +110,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         this.checkNamePresent(null, request.getName());
         // 检查唯一标识
         this.checkTagPresent(null, request.getTag());
-        MachineInfoDO entity = new MachineInfoDO();
-        this.copyProperties(request, entity);
+        MachineInfoDO entity = Converts.to(request, MachineInfoDO.class);
         // 添加机器
         entity.setMachineStatus(Const.ENABLE);
         String password = request.getPassword();
@@ -121,6 +121,11 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Long id = entity.getId();
         // 初始化环境变量
         machineEnvService.initEnv(id);
+        // 设置分组
+        List<Long> groupIdList = request.getGroupIdList();
+        if (!Lists.isEmpty(groupIdList)) {
+            machineGroupRelService.updateMachineGroup(id, groupIdList);
+        }
         // 设置日志参数
         EventParamsHolder.addParams(entity);
         return id;
@@ -136,14 +141,18 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         this.checkNamePresent(id, request.getName());
         // 检查唯一标识
         this.checkTagPresent(id, request.getTag());
-        MachineInfoDO entity = new MachineInfoDO();
-        this.copyProperties(request, entity);
+        MachineInfoDO entity = Converts.to(request, MachineInfoDO.class);
         String password = request.getPassword();
         if (Strings.isNotBlank(password)) {
             entity.setPassword(ValueMix.encrypt(password));
         }
         // 修改
         int effect = machineInfoDAO.updateById(entity);
+        // 设置分组
+        List<Long> groupIdList = request.getGroupIdList();
+        if (!Lists.isEmpty(groupIdList)) {
+            machineGroupRelService.updateMachineGroup(id, groupIdList);
+        }
         // 设置日志参数
         EventParamsHolder.addParams(entity);
         return effect;
@@ -170,6 +179,8 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         effect += machineAlarmConfigService.deleteByMachineIdList(idList);
         // 删除报警配置组
         effect += machineAlarmGroupService.deleteByMachineIdList(idList);
+        // 删除机器分组
+        effect += machineGroupRelService.deleteByMachineIdList(idList);
         // 设置日志参数
         EventParamsHolder.addParam(EventKeys.ID_LIST, idList);
         EventParamsHolder.addParam(EventKeys.COUNT, idList.size());
@@ -206,10 +217,17 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .eq(Objects.nonNull(request.getStatus()), MachineInfoDO::getMachineStatus, request.getStatus())
                 .eq(Objects.nonNull(request.getId()), MachineInfoDO::getId, request.getId())
                 .orderByAsc(MachineInfoDO::getId);
-        return DataQuery.of(machineInfoDAO)
+        // 查询数据
+        DataGrid<MachineInfoVO> dataGrid = DataQuery.of(machineInfoDAO)
                 .page(request)
                 .wrapper(wrapper)
                 .dataGrid(MachineInfoVO.class);
+        // 查询分组
+        if (Booleans.isTrue(request.getQueryGroup())) {
+            Map<Long, List<Long>> rel = machineGroupRelService.getMachineRelByCache();
+            dataGrid.forEach(s -> s.setGroupIdList(rel.get(s.getId())));
+        }
+        return dataGrid;
     }
 
     @Override
@@ -227,9 +245,13 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 });
         // 查询秘钥信息
         Optional.ofNullable(machine.getKeyId())
+                .filter(s -> MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType()))
                 .map(machineSecretKeyDAO::selectById)
                 .map(MachineSecretKeyDO::getKeyName)
                 .ifPresent(vo::setKeyName);
+        // 查询分组
+        List<Long> groupIdList = machineGroupRelService.getMachineRelByCache().get(id);
+        vo.setGroupIdList(groupIdList);
         return vo;
     }
 
@@ -276,29 +298,33 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     }
 
     @Override
-    public Integer testPing(Long id) {
+    public void testPing(Long id) {
         MachineInfoDO machine = machineInfoDAO.selectById(id);
         Valid.notNull(machine, MessageConst.INVALID_MACHINE);
         // 查询超时时间
         Integer connectTimeout = machineEnvService.getConnectTimeout(id);
-        return IPs.ping(machine.getMachineHost(), connectTimeout) ? Const.ENABLE : Const.DISABLE;
+        if (!IPs.ping(machine.getMachineHost(), connectTimeout)) {
+            throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
-    public Integer testPing(String host) {
-        return IPs.ping(host, MachineConst.CONNECT_TIMEOUT) ? Const.ENABLE : Const.DISABLE;
+    public void testPing(String host) {
+        if (!IPs.ping(host, MachineConst.CONNECT_TIMEOUT)) {
+            throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+        }
     }
 
     @Override
-    public Integer testConnect(Long id) {
+    public void testConnect(Long id) {
         // 查询机器
         MachineInfoDO machine = Valid.notNull(machineInfoDAO.selectById(id), MessageConst.INVALID_MACHINE);
         // 测试连接
-        return this.testConnectMachine(machine);
+        this.testConnectMachine(machine);
     }
 
     @Override
-    public Integer testConnect(MachineInfoRequest request) {
+    public void testConnect(MachineInfoRequest request) {
         MachineInfoDO machine = new MachineInfoDO();
         machine.setProxyId(request.getProxyId());
         machine.setKeyId(request.getKeyId());
@@ -310,16 +336,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .map(ValueMix::encrypt)
                 .ifPresent(machine::setPassword);
         // 测试连接
-        return this.testConnectMachine(machine);
+        this.testConnectMachine(machine);
     }
 
     /**
      * 测试连接机器
      *
      * @param machine machine
-     * @return result
      */
-    private Integer testConnectMachine(MachineInfoDO machine) {
+    private void testConnectMachine(MachineInfoDO machine) {
         SessionStore s = null;
         try {
             // 查询秘钥
@@ -335,9 +360,15 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     .map(machineEnvService::getConnectTimeout)
                     .orElse(MachineConst.CONNECT_TIMEOUT);
             s = this.connectSessionStore(machine, key, proxy, timeout);
-            return Const.ENABLE;
         } catch (Exception e) {
-            return Const.DISABLE;
+            String message = e.getMessage();
+            if (Strings.contains(message, Const.TIMEOUT)) {
+                throw Exceptions.app(MessageConst.TIMEOUT_EXCEPTION_MESSAGE);
+            } else if (e instanceof AuthenticationException) {
+                throw Exceptions.app(MessageConst.AUTH_EXCEPTION_MESSAGE);
+            } else {
+                throw Exceptions.app(MessageConst.CONNECT_ERROR);
+            }
         } finally {
             Streams.close(s);
         }
@@ -376,7 +407,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 return this.connectSessionStore(machine, key, proxy, connectTimeout);
             } catch (Exception e) {
                 ex = e;
-                if (e instanceof ConnectionRuntimeException) {
+                String message = e.getMessage();
+                if (Strings.contains(message, Const.TIMEOUT)) {
+                    log.info("远程机器建立连接-连接超时");
+                    msg = MessageConst.TIMEOUT_EXCEPTION_MESSAGE;
+                    ex = Exceptions.timeout(message, e);
+                } else if (e instanceof ConnectionRuntimeException) {
                     log.info("远程机器建立连接-连接失败");
                 } else if (e instanceof AuthenticationException) {
                     msg = MessageConst.AUTH_EXCEPTION_MESSAGE;
@@ -409,8 +445,12 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             // 加载秘钥
             if (MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType())) {
                 String keyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
-                String keyPassword = ValueMix.decrypt(key.getPassword());
-                sessionHolder.addIdentity(keyPath, keyPassword);
+                String password = key.getPassword();
+                if (Strings.isEmpty(password)) {
+                    sessionHolder.addIdentity(keyPath);
+                } else {
+                    sessionHolder.addIdentity(keyPath, ValueMix.decrypt(password));
+                }
             }
             // 获取会话
             session = sessionHolder.getSession(machine.getMachineHost(), machine.getSshPort(), machine.getUsername());
@@ -550,24 +590,6 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 .eq(MachineInfoDO::getMachineTag, tag);
         boolean present = DataQuery.of(machineInfoDAO).wrapper(presentWrapper).present();
         com.orion.ops.utils.Valid.isTrue(!present, MessageConst.TAG_PRESENT);
-    }
-
-    /**
-     * 复制属性
-     */
-    private void copyProperties(MachineInfoRequest request, MachineInfoDO entity) {
-        entity.setId(request.getId());
-        entity.setProxyId(request.getProxyId());
-        entity.setKeyId(request.getKeyId());
-        entity.setMachineHost(request.getHost());
-        entity.setSshPort(request.getSshPort());
-        entity.setMachineName(request.getName());
-        entity.setMachineTag(request.getTag());
-        entity.setDescription(request.getDescription());
-        entity.setUsername(request.getUsername());
-        entity.setPassword(null);
-        entity.setAuthType(request.getAuthType());
-        entity.setMachineStatus(request.getStatus());
     }
 
 }

@@ -36,13 +36,16 @@
             <a-tag v-if="detail.authType">
               {{ detail.authType | formatAuthType('label') }}
             </a-tag>
+            <span v-if="detail.keyName">
+                {{ detail.keyName }}
+              </span>
           </a-descriptions-item>
           <a-descriptions-item label="状态" :span="1">
             <a-badge v-if="detail.status"
                      :status="detail.status | formatEnableStatus('status')"
                      :text="detail.status | formatEnableStatus('label')"/>
           </a-descriptions-item>
-          <a-descriptions-item label="描述" :span="3">
+          <a-descriptions-item label="描述" :span="3" v-if="detail.description">
             {{ detail.description }}
           </a-descriptions-item>
           <a-descriptions-item label="代理" v-if="detail.proxyType" :span="3">

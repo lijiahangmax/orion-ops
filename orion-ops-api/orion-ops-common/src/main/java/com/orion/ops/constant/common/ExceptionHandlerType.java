@@ -1,4 +1,4 @@
-package com.orion.ops.constant;
+package com.orion.ops.constant.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

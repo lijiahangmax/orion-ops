@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * terminal watcher 处理器
@@ -45,10 +44,9 @@ public class TerminalWatcherHandler implements WebSocketHandler {
             return;
         }
         String token = session.getId();
-        String payload = ((TextMessage) message).getPayload();
         try {
             // 解析请求
-            Tuple tuple = WebSockets.parsePayload(payload);
+            Tuple tuple = WebSockets.parsePayload(((TextMessage) message).getPayload());
             if (tuple == null) {
                 WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
@@ -88,7 +86,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
             // 操作
             handler.handleMessage(operate, body);
         } catch (Exception e) {
-            log.error("terminal 处理操作异常 token: {}, payload: {}", token, payload, e);
+            log.error("terminal 处理操作异常 token: {}", token, e);
             WebSockets.close(session, WsCloseCode.RUNTIME_EXCEPTION);
         }
     }
@@ -96,7 +94,6 @@ public class TerminalWatcherHandler implements WebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
         log.error("terminal-watcher 操作异常拦截 token: {}", session.getId(), exception);
-
     }
 
     @Override
@@ -120,9 +117,8 @@ public class TerminalWatcherHandler implements WebSocketHandler {
      *
      * @param session    session
      * @param loginToken loginToken
-     * @throws IOException IOException
      */
-    private void auth(WebSocketSession session, String loginToken) throws IOException {
+    private void auth(WebSocketSession session, String loginToken) {
         // 检查参数
         Long userId = (Long) session.getAttributes().get(WebSockets.UID);
         // 获取登陆用户

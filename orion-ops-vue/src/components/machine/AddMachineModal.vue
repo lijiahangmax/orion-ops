@@ -5,9 +5,8 @@
              :title="title"
              :width="580"
              :bodyStyle="{padding: '8px 16px 4px 16px', 'max-height': 'calc(100vh - 230px)', 'overflow-y': 'auto'}"
-             :dialogStyle="{ top: '60px' }"
+             :dialogStyle="{top: '60px'}"
              :maskClosable="false"
-             :destroyOnClose="true"
              @ok="check"
              @cancel="close">
       <!-- 表单 -->
@@ -16,6 +15,16 @@
           <a-form :form="form" v-bind="layout">
             <h2 class="m0">基本信息</h2>
             <a-divider class="title-divider"/>
+            <!-- GROUP_FLAG -->
+            <a-form-item v-show="false" label="机器分组">
+              <a-tree-select class="machine-input"
+                             v-decorator="decorators.groupIdList"
+                             :dropdown-style="{maxHeight: '400px', overflow: 'auto'}"
+                             :multiple="true"
+                             :treeData="treeData"
+                             treeNodeLabelProp="label"
+                             allowClear/>
+            </a-form-item>
             <a-form-item label="机器名称">
               <a-input class="machine-input" v-decorator="decorators.name" allowClear/>
             </a-form-item>
@@ -97,6 +106,7 @@
 <script>
 import { pick } from 'lodash'
 import { enumValueOf, MACHINE_AUTH_TYPE, MACHINE_PROXY_TYPE } from '@/lib/enum'
+import { setTreePath, setTreeDataProps } from '@/lib/tree'
 import { validatePort } from '@/lib/validate'
 import AddMachineKeyModal from '../machine/AddMachineKeyModal'
 import AddMachineProxyModal from '@/components/machine/AddMachineProxyModal'
@@ -108,6 +118,7 @@ const layout = {
 
 function getDecorators() {
   return {
+    groupIdList: ['groupIdList'],
     name: ['name', {
       rules: [{
         required: true,
@@ -141,6 +152,7 @@ function getDecorators() {
     }],
     host: ['host', {
       rules: [{
+        required: true,
         validator: this.validateHost
       }]
     }],
@@ -180,11 +192,13 @@ export default {
     return {
       MACHINE_AUTH_TYPE,
       id: null,
+      init: false,
       visible: false,
       title: null,
       loading: false,
       keyList: [],
       proxyList: [],
+      treeData: [],
       record: null,
       layout,
       decorators: getDecorators.call(this),
@@ -238,13 +252,32 @@ export default {
         this.initRecord(data)
       })
     },
+    initData() {
+      // 加载分组
+      this.$api.getMachineGroupTree().then(({ data }) => {
+        this.treeData = setTreeDataProps(setTreePath(data), node => {
+          node.value = node.key
+          node.label = node.path
+        })
+      }).then(() => {
+        // 加载秘钥
+        this.getKeyList()
+      }).then(() => {
+        // 加载代理
+        this.getProxyList()
+      })
+      this.init = true
+    },
     initRecord(row) {
+      if (!this.init) {
+        this.initData()
+      }
       this.form.resetFields()
       this.visible = true
       this.id = row.id
       row.proxyId = row.proxyId || undefined
       row.keyId = row.keyId || undefined
-      this.record = pick(Object.assign({}, row), 'name', 'tag', 'username', 'host',
+      this.record = pick(Object.assign({}, row), 'groupIdList', 'name', 'tag', 'username', 'host',
         'sshPort', 'authType', 'proxyId', 'keyId', 'description')
       this.$nextTick(() => {
         this.form.setFieldsValue(this.record)
@@ -279,16 +312,11 @@ export default {
       const ping = this.$message.loading(`ping ${host}`)
       this.$api.machineDirectTestPing({
         host: host
-      }).then(e => {
+      }).then(() => {
         ping()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法访问 ${host}`)
-        }
+        this.$message.success('ok')
       }).catch(() => {
         ping()
-        this.$message.error(`无法访问 ${host}`)
       })
     },
     testConnect() {
@@ -330,16 +358,11 @@ export default {
       const connecting = this.$message.loading(`connecting ${ssh}`)
       this.$api.machineDirectConnect({
         ...values
-      }).then(e => {
+      }).then(() => {
         connecting()
-        if (e.data === 1) {
-          this.$message.success('ok')
-        } else {
-          this.$message.error(`无法连接 ${ssh}`)
-        }
+        this.$message.success('ok')
       }).catch(() => {
         connecting()
-        this.$message.error(`无法连接 ${ssh}`)
       })
     },
     check() {
@@ -387,10 +410,6 @@ export default {
     formatProxyType(type, f) {
       return enumValueOf(MACHINE_PROXY_TYPE, type)[f]
     }
-  },
-  mounted() {
-    this.getKeyList()
-    this.getProxyList()
   }
 }
 </script>
@@ -402,6 +421,7 @@ export default {
 }
 
 .option-button {
+  user-select: none;
   margin-left: 8px;
   position: relative;
   top: -2px;

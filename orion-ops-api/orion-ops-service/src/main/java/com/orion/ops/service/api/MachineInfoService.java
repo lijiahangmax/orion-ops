@@ -85,33 +85,29 @@ public interface MachineInfoService {
      * 尝试ping 主机
      *
      * @param id id
-     * @return 1正常 2异常
      */
-    Integer testPing(Long id);
+    void testPing(Long id);
 
     /**
      * 尝试ping 主机
      *
      * @param host host
-     * @return 1正常 2异常
      */
-    Integer testPing(String host);
+    void testPing(String host);
 
     /**
      * 尝试连接 主机
      *
      * @param id id
-     * @return 1正常 2异常
      */
-    Integer testConnect(Long id);
+    void testConnect(Long id);
 
     /**
      * 尝试连接 主机
      *
      * @param request request
-     * @return 1正常 2异常
      */
-    Integer testConnect(MachineInfoRequest request);
+    void testConnect(MachineInfoRequest request);
 
     /**
      * 建立远程连接

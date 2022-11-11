@@ -5,7 +5,7 @@ import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.MessageConst;
-import com.orion.ops.constant.StainCode;
+import com.orion.ops.constant.common.StainCode;
 import com.orion.ops.entity.domain.ApplicationRepositoryDO;
 import com.orion.ops.service.api.ApplicationRepositoryService;
 import com.orion.ops.utils.Utils;

@@ -50,33 +50,27 @@ public class DataQuery<T> {
     }
 
     public Optional<T> get() {
-        Valid.notNull(wrapper, "wrapper is null");
         return Optional.ofNullable(dao.selectOne(wrapper));
     }
 
     public <R> Optional<R> get(Class<R> c) {
-        Valid.notNull(wrapper, "wrapper is null");
         return Optional.ofNullable(dao.selectOne(wrapper))
                 .map(s -> Converts.to(s, c));
     }
 
     public Stream<T> list() {
-        Valid.notNull(wrapper, "wrapper is null");
         return dao.selectList(wrapper).stream();
     }
 
     public <R> List<R> list(Class<R> c) {
-        Valid.notNull(wrapper, "wrapper is null");
         return Converts.toList(dao.selectList(wrapper), c);
     }
 
     public Integer count() {
-        Valid.notNull(wrapper, "wrapper is null");
         return dao.selectCount(wrapper);
     }
 
     public boolean present() {
-        Valid.notNull(wrapper, "wrapper is null");
         return dao.selectCount(wrapper) > 0;
     }
 

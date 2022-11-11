@@ -60,14 +60,14 @@ public class SchedulerTaskDO implements Serializable {
     private Integer latelyStatus;
 
     /**
-     * @see com.orion.ops.constant.SerialType
+     * @see com.orion.ops.constant.common.SerialType
      */
     @ApiModelProperty(value = "调度序列 10串行 20并行")
     @TableField("serialize_type")
     private Integer serializeType;
 
     /**
-     * @see com.orion.ops.constant.ExceptionHandlerType
+     * @see com.orion.ops.constant.common.ExceptionHandlerType
      */
     @ApiModelProperty(value = "异常处理 10跳过所有 20跳过错误")
     @TableField("exception_handler")

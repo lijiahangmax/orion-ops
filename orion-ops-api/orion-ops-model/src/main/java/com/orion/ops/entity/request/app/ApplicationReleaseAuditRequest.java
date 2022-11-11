@@ -20,7 +20,7 @@ public class ApplicationReleaseAuditRequest {
     private Long id;
 
     /**
-     * @see com.orion.ops.constant.AuditStatus
+     * @see com.orion.ops.constant.common.AuditStatus
      */
     @ApiModelProperty(value = "状态 10通过 20驳回")
     private Integer status;

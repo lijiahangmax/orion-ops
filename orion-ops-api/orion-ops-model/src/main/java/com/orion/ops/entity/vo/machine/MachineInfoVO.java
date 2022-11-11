@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 机器信息响应
@@ -75,5 +76,8 @@ public class MachineInfoVO {
 
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
+
+    @ApiModelProperty(value = "分组id")
+    private List<Long> groupIdList;
 
 }

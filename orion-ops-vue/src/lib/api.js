@@ -9,28 +9,28 @@ const $ws = {
    * 机器终端
    */
   terminal: param => {
-    return `ws://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/machine/terminal/${param.token}`
   },
 
   /**
    * 机器终端监视
    */
   terminalWatcher: param => {
-    return `ws://${window.location.host}/orion/keep-alive/watcher/terminal/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/watcher/terminal/${param.token}`
   },
 
   /**
    * sftp传输列表
    */
   sftpNotify: param => {
-    return `ws://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/sftp/notify/${param.token}`
   },
 
   /**
    * 文件tail
    */
   fileTail: param => {
-    return `ws://${window.location.host}/orion/keep-alive/tail/${param.token}`
+    return `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/orion/keep-alive/tail/${param.token}`
   }
 
 }
@@ -224,35 +224,76 @@ const $api = {
    * 测试机器ping
    */
   machineTestPing: param => {
-    return $http.$post('/machine/test-ping', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/test-ping', param)
   },
 
   /**
    * 测试机器连接
    */
   machineTestConnect: param => {
-    return $http.$post('/machine/test-connect', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/test-connect', param)
   },
   /**
    * 直接测试机器ping
    */
   machineDirectTestPing: param => {
-    return $http.$post('/machine/direct-test-ping', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/direct-test-ping', param)
   },
 
   /**
    * 直接测试机器连接
    */
   machineDirectConnect: param => {
-    return $http.$post('/machine/direct-test-connect', param, {
-      skipErrorMessage: true
-    })
+    return $http.$post('/machine/direct-test-connect', param)
+  },
+
+  /**
+   * 添加机器分组
+   */
+  addMachineGroup: param => {
+    return $http.$post('/machine-group/add', param)
+  },
+
+  /**
+   * 删除机器分组
+   */
+  deleteMachineGroup: param => {
+    return $http.$post('/machine-group/delete', param)
+  },
+
+  /**
+   * 移动机器分组
+   */
+  moveMachineGroup: param => {
+    return $http.$post('/machine-group/move', param)
+  },
+
+  /**
+   * 修改机器分组名称
+   */
+  renameMachineGroup: param => {
+    return $http.$post('/machine-group/rename', param)
+  },
+
+  /**
+   * 获取机器分组树
+   */
+  getMachineGroupTree: () => {
+    return $http.$get('/machine-group/tree')
+  },
+
+  /**
+   * 添加机器分组机器
+   */
+  addMachineGroupMachine: param => {
+    return $http.$post('/machine-group/add-machine', param)
+  },
+
+  /**
+   * 删除机器分组机器
+   */
+  deleteMachineGroupMachine: param => {
+    return $http.$post('/machine-group/delete-machine', param)
   },
 
   /**

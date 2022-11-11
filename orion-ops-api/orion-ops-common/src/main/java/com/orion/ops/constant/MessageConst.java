@@ -88,6 +88,8 @@ public class MessageConst {
 
     public static final String AUTH_EXCEPTION_MESSAGE = "认证失败";
 
+    public static final String TIMEOUT_EXCEPTION_MESSAGE = "连接超时";
+
     public static final String IO_EXCEPTION_MESSAGE = "网络异常";
 
     public static final String SQL_EXCEPTION_MESSAGE = "数据异常";

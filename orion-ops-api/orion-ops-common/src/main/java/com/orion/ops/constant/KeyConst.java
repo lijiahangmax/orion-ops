@@ -136,4 +136,28 @@ public class KeyConst {
      */
     public static final int DATA_IMPORT_TOKEN_EXPIRE = 60 * 5;
 
+    /**
+     * 机器分组数据 key
+     * <p>
+     * machine:group:data
+     */
+    public static final String MACHINE_GROUP_DATA_KEY = "machine:group:data";
+
+    /**
+     * 5 h
+     */
+    public static final int MACHINE_GROUP_DATA_EXPIRE = 60 * 60 * 5;
+
+    /**
+     * 机器分组引用 key
+     * <p>
+     * machine:group:rel
+     */
+    public static final String MACHINE_GROUP_REL_KEY = "machine:group:rel";
+
+    /**
+     * 5 h
+     */
+    public static final int MACHINE_GROUP_REL_EXPIRE = 60 * 60 * 5;
+
 }

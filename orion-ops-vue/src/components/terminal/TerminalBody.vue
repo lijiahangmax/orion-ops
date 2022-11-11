@@ -121,7 +121,7 @@ const rightMenuHandler = {
   },
   paste() {
     getClipboardText().then(clipText => {
-      this.sendKey(clipText)
+      this.term.paste(clipText)
       this.term.focus()
     })
   },

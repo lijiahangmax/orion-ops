@@ -3,7 +3,7 @@ package com.orion.ops.runner;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.orion.lang.utils.io.Files1;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.EnableType;
+import com.orion.ops.constant.common.EnableType;
 import com.orion.ops.constant.history.HistoryOperator;
 import com.orion.ops.constant.history.HistoryValueType;
 import com.orion.ops.constant.system.SystemEnvAttr;
@@ -120,9 +120,9 @@ public class SystemEnvInitializeRunner implements CommandLineRunner {
             case ENABLE_AUTO_CLEAN_FILE:
             case ALLOW_MULTIPLE_LOGIN:
             case RESUME_ENABLE_SCHEDULER_TASK:
+            case LOGIN_IP_BIND:
                 return EnableType.DISABLED.getLabel();
             case LOGIN_FAILURE_LOCK:
-            case LOGIN_IP_BIND:
             case LOGIN_TOKEN_AUTO_RENEW:
                 return EnableType.ENABLED.getLabel();
             case LOGIN_TOKEN_EXPIRE:
