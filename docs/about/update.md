@@ -1,11 +1,39 @@
 ⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
 
+## 1.2.1
+
+> sql 脚本
+
+```sql
+CREATE TABLE `machine_group` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `parent_id` bigint DEFAULT NULL COMMENT '父id',
+  `group_name` varchar(32) DEFAULT NULL COMMENT '组名称',
+  `sort` int DEFAULT '0' COMMENT '排序',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `parent_idx` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机器分组';
+
+CREATE TABLE `machine_group_rel` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `group_id` bigint DEFAULT NULL COMMENT '组id',
+  `machine_id` bigint DEFAULT NULL COMMENT '机器id',
+  `deleted` tinyint DEFAULT '1' COMMENT '是否删除 1未删除 2已删除',
+  `create_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) COMMENT '创建时间',
+  `update_time` datetime(4) DEFAULT CURRENT_TIMESTAMP(4) ON UPDATE CURRENT_TIMESTAMP(4) COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `group_idx` (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机器分组关联表';
+```
+
 ## 1.2.0
 
 > sql 脚本
 
 ```sql
-
 ALTER TABLE `web_side_message` 
 DROP COLUMN `params_json`,
 ADD COLUMN `rel_id` bigint(0) NULL COMMENT '消息关联id' AFTER `send_message`;
