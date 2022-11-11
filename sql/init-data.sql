@@ -4,6 +4,9 @@ INSERT INTO application_profile VALUES (1, '开发环境', 'dev', '开发环境'
 # 默认管理员用户
 INSERT INTO user_info VALUES (1, 'orionadmin', '管理员', 'aa8d3073dbc3958d10bb6e5240816d57', 'Yxy3ZRJ0IOkc2zszJ3y', 10, 1, 1, 0, '/avatar/1.png', '18888888888', NULL, NULL, 1, NOW(), NOW());
 
+# 默认机器分组
+INSERT INTO machine_group VALUES (1, -1, '默认分组', 1, 1, NOW(), NOW());
+
 # 默认命令模板
 INSERT INTO command_template VALUES (1, 'echo 测试', 'echo \'123\'\necho \'1234\'', 'echo 模板', 1, 'orionadmin', 1, 'orionadmin', 1, NOW(), NOW());
 INSERT INTO command_template VALUES (2, 'for echo 0.05', 'for i in `seq 1 250`\ndo\n    sleep 0.05\n	echo $i\ndone', NULL, 1, 'orionadmin', 1, 'orionadmin', 1, NOW(), NOW());
