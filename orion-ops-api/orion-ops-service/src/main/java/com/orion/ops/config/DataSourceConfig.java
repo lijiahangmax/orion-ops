@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  * @since 2021/3/28 11:18
  */
 @Configuration
-public class DateSourceConfig {
+public class DataSourceConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource")
