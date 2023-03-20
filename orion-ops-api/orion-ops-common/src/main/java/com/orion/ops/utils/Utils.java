@@ -1,7 +1,7 @@
 package com.orion.ops.utils;
 
+import com.orion.ext.location.Region;
 import com.orion.ext.location.region.LocationRegions;
-import com.orion.ext.location.region.core.Region;
 import com.orion.lang.id.UUIds;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.io.Files1;
