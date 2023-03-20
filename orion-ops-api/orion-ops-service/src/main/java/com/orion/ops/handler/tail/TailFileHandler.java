@@ -34,9 +34,10 @@ public class TailFileHandler implements WebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         String id = session.getId();
         FileTailDTO config = (FileTailDTO) session.getAttributes().get(WebSockets.CONFIG);
-        log.info("tail 建立ws连接 token: {}, id: {}, config: {}", WebSockets.getToken(session), id, JSON.toJSONString(config));
+        String token = (String) session.getAttributes().get(WebSockets.TOKEN);
+        log.info("tail 建立ws连接 token: {}, id: {}, config: {}", token, id, JSON.toJSONString(config));
         try {
-            this.openTailHandler(session, config);
+            this.openTailHandler(session, config, token);
         } catch (Exception e) {
             log.error("tail 打开处理器-失败 id: {}", id, e);
         }
@@ -53,7 +54,7 @@ public class TailFileHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String token = session.getId();
+        String token = (String) session.getAttributes().get(WebSockets.TOKEN);
         // 释放资源
         ITailHandler handler = tailSessionHolder.removeSession(token);
         if (handler == null) {
@@ -72,10 +73,10 @@ public class TailFileHandler implements WebSocketHandler {
      *
      * @param session  session
      * @param fileTail tailDTO
+     * @param token    token
      * @throws Exception Exception
      */
-    private void openTailHandler(WebSocketSession session, FileTailDTO fileTail) throws Exception {
-        String token = session.getId();
+    private void openTailHandler(WebSocketSession session, FileTailDTO fileTail, String token) throws Exception {
         TailFileHint hint = new TailFileHint();
         hint.setToken(token);
         hint.setMachineId(fileTail.getMachineId());
@@ -85,7 +86,7 @@ public class TailFileHandler implements WebSocketHandler {
         hint.setCommand(fileTail.getCommand());
         FileTailMode mode = FileTailMode.of(fileTail.getMode());
         if (FileTailMode.TRACKER.equals(mode)) {
-            // 获取delay
+            // 获取 delay
             String delayValue = SystemEnvAttr.TRACKER_DELAY_TIME.getValue();
             int delay = Strings.isInteger(delayValue) ? Integer.parseInt(delayValue) : Const.TRACKER_DELAY_MS;
             hint.setDelay(Math.max(delay, Const.MIN_TRACKER_DELAY_MS));
