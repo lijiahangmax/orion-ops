@@ -24,6 +24,9 @@ import lombok.Data;
 @ExportSheet(name = "机器信息", height = 22, freezeHeader = true, filterHeader = true)
 public class MachineInfoExportDTO {
 
+    @ApiModelProperty(value = "id")
+    private Long id;
+
     @ApiModelProperty(value = "机器名称")
     @ExportField(index = 0, header = "机器名称", width = 20, wrapText = true)
     private String name;
@@ -59,13 +62,18 @@ public class MachineInfoExportDTO {
     @ExportField(index = 7, header = "导入密码", width = 16, wrapText = true)
     private String importPassword;
 
+    @ApiModelProperty(value = "秘钥名称")
+    @ExportField(index = 8, header = "秘钥名称", width = 16, wrapText = true)
+    private String usingKeyName;
+
     @ApiModelProperty(value = "描述")
-    @ExportField(index = 8, header = "描述", width = 25, wrapText = true)
+    @ExportField(index = 9, header = "描述", width = 25, wrapText = true)
     private String description;
 
     static {
         TypeStore.STORE.register(MachineInfoDO.class, MachineInfoExportDTO.class, p -> {
             MachineInfoExportDTO dto = new MachineInfoExportDTO();
+            dto.setId(p.getId());
             dto.setName(p.getMachineName());
             dto.setTag(p.getMachineTag());
             dto.setHost(p.getMachineHost());

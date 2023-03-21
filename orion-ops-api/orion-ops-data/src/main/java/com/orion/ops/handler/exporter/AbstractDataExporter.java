@@ -51,6 +51,7 @@ public abstract class AbstractDataExporter<T> implements IDataExporter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void doExport() throws IOException {
         // 查询数据
         List<T> exportList = this.queryData();
