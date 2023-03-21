@@ -11,13 +11,13 @@ import com.orion.net.remote.channel.ssh.ShellExecutor;
 import com.orion.ops.constant.Const;
 import com.orion.ops.constant.SchedulerPools;
 import com.orion.ops.constant.system.SystemEnvAttr;
+import com.orion.ops.constant.terminal.TerminalClientOperate;
 import com.orion.ops.constant.terminal.TerminalConst;
-import com.orion.ops.constant.terminal.TerminalOperate;
 import com.orion.ops.constant.ws.WsCloseCode;
 import com.orion.ops.constant.ws.WsProtocol;
+import com.orion.ops.entity.config.TerminalConnectConfig;
 import com.orion.ops.entity.domain.MachineTerminalLogDO;
 import com.orion.ops.entity.dto.terminal.TerminalSizeDTO;
-import com.orion.ops.entity.config.TerminalConnectConfig;
 import com.orion.ops.handler.terminal.screen.TerminalScreenEnv;
 import com.orion.ops.handler.terminal.screen.TerminalScreenHeader;
 import com.orion.ops.handler.terminal.watcher.ITerminalWatcherProcessor;
@@ -75,9 +75,9 @@ public class TerminalOperateHandler implements IOperateHandler {
     private OutputStream screenStream;
 
     /**
-     * 最后一次发送心跳的时间
+     * 最后一次心跳通讯时间
      */
-    private volatile long lastPing;
+    private volatile long lastHeartbeat;
 
     protected volatile boolean close;
 
@@ -87,7 +87,7 @@ public class TerminalOperateHandler implements IOperateHandler {
         this.watcher = new TerminalWatcherProcessor();
         this.session = session;
         this.sessionStore = sessionStore;
-        this.lastPing = System.currentTimeMillis();
+        this.lastHeartbeat = System.currentTimeMillis();
         this.initShell();
     }
 
@@ -223,18 +223,23 @@ public class TerminalOperateHandler implements IOperateHandler {
     }
 
     @Override
-    public void heartDown() {
+    public void heartbeatDownClose() {
         WebSockets.close(session, WsCloseCode.HEART_DOWN);
         log.info("terminal 心跳结束断连 {}", token);
     }
 
     @Override
-    public boolean isDown() {
-        return (System.currentTimeMillis() - lastPing) > TerminalConst.TERMINAL_CONNECT_DOWN;
+    public void sendHeartbeat() {
+        WebSockets.sendText(session, WsProtocol.PING.get());
     }
 
     @Override
-    public void handleMessage(TerminalOperate operate, String body) {
+    public boolean isDown() {
+        return (System.currentTimeMillis() - lastHeartbeat) > TerminalConst.TERMINAL_CONNECT_DOWN;
+    }
+
+    @Override
+    public void handleMessage(TerminalClientOperate operate, String body) {
         if (close) {
             return;
         }
@@ -243,8 +248,13 @@ public class TerminalOperateHandler implements IOperateHandler {
                 executor.write(Strings.bytes(body));
                 return;
             case PING:
-                this.lastPing = System.currentTimeMillis();
+                // client 主动发送 ping
+                this.lastHeartbeat = System.currentTimeMillis();
                 WebSockets.sendText(session, WsProtocol.PONG.get());
+                return;
+            case PONG:
+                // server 主动发送 ping, client 响应 pong
+                this.lastHeartbeat = System.currentTimeMillis();
                 return;
             case RESIZE:
                 this.resize(body);

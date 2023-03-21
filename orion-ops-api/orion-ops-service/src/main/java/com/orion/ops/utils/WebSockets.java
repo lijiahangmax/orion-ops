@@ -7,7 +7,7 @@ import com.orion.lang.exception.DisabledException;
 import com.orion.lang.exception.TimeoutException;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.Urls;
-import com.orion.ops.constant.terminal.TerminalOperate;
+import com.orion.ops.constant.terminal.TerminalClientOperate;
 import com.orion.ops.constant.ws.WsCloseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
@@ -56,11 +56,11 @@ public class WebSockets {
      */
     public static Tuple parsePayload(String payload) {
         // 检查长度
-        if (payload.length() < TerminalOperate.PREFIX_SIZE) {
+        if (payload.length() < TerminalClientOperate.PREFIX_SIZE) {
             return null;
         }
         // 解析操作
-        TerminalOperate operate = TerminalOperate.of(payload.substring(0, TerminalOperate.PREFIX_SIZE));
+        TerminalClientOperate operate = TerminalClientOperate.of(payload.substring(0, TerminalClientOperate.PREFIX_SIZE));
         if (operate == null) {
             return null;
         }
@@ -68,10 +68,10 @@ public class WebSockets {
             return Tuple.of(operate, null);
         }
         // 检查是否有body
-        if (payload.length() < TerminalOperate.PREFIX_SIZE + 1) {
+        if (payload.length() < TerminalClientOperate.PREFIX_SIZE + 1) {
             return null;
         }
-        return Tuple.of(operate, payload.substring(TerminalOperate.PREFIX_SIZE + 1));
+        return Tuple.of(operate, payload.substring(TerminalClientOperate.PREFIX_SIZE + 1));
     }
 
     /**

@@ -21,6 +21,11 @@ public interface TerminalManagementHandler {
      *
      * @throws Exception Exception
      */
-    void heartDown() throws Exception;
+    void heartbeatDownClose() throws Exception;
+
+    /**
+     * 主动发送心跳
+     */
+    void sendHeartbeat();
 
 }
