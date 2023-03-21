@@ -77,6 +77,12 @@ public class SystemOptionVO {
     private Boolean resumeEnableSchedulerTask;
 
     /**
+     * @see com.orion.ops.constant.system.SystemEnvAttr#TERMINAL_ACTIVE_PUSH_HEARTBEAT
+     */
+    @ApiModelProperty(value = "终端后台主动推送心跳")
+    private Boolean terminalActivePushHeartbeat;
+
+    /**
      * @see com.orion.ops.constant.system.SystemEnvAttr#SFTP_UPLOAD_THRESHOLD
      */
     @ApiModelProperty(value = "SFTP 上传文件最大阈值 (MB)")

@@ -173,6 +173,16 @@ public enum SystemConfigKey {
         }
     },
 
+    /**
+     * 终端后台主动推送心跳
+     */
+    TERMINAL_ACTIVE_PUSH_HEARTBEAT(130, SystemEnvAttr.TERMINAL_ACTIVE_PUSH_HEARTBEAT) {
+        @Override
+        protected String conversionValue(String s) {
+            return ENABLED_TYPE.apply(s);
+        }
+    },
+
     ;
 
     private static final String FILE_CLEAN_THRESHOLD_TIPS = "文件清理阈值需要在 10 ~ 2048 之间";

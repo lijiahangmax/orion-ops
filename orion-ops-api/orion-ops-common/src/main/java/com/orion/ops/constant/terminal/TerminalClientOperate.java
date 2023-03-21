@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 终端操作 operate
+ * 终端操作 client 端
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -12,7 +12,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum TerminalOperate {
+public enum TerminalClientOperate {
 
     /**
      * 键入
@@ -30,19 +30,24 @@ public enum TerminalOperate {
     PING("2", false),
 
     /**
+     * pong
+     */
+    PONG("3", false),
+
+    /**
      * 更改大小
      */
-    RESIZE("3", true),
+    RESIZE("4", true),
 
     /**
      * 键入命令
      */
-    COMMAND("4", true),
+    COMMAND("5", true),
 
     /**
      * ctrl + l
      */
-    CLEAR("5", false),
+    CLEAR("6", false),
 
     ;
 
@@ -55,8 +60,8 @@ public enum TerminalOperate {
 
     private final boolean hasBody;
 
-    public static TerminalOperate of(String operate) {
-        for (TerminalOperate value : values()) {
+    public static TerminalClientOperate of(String operate) {
+        for (TerminalClientOperate value : values()) {
             if (value.operate.equals(operate)) {
                 return value;
             }
