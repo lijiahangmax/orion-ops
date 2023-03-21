@@ -38,13 +38,12 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title
   }
   // 添加水印
-  const user = $storage.get($storage.keys.CURRENT_USER)
-  if (user) {
-    if (to.meta.mask === false) {
-      watermark.remove()
-    } else {
-      watermark.set(JSON.parse(user).username)
-    }
+  const userInfo = $storage.get($storage.keys.CURRENT_USER)
+  if (to.meta.mask === false) {
+    watermark.remove()
+  } else if (userInfo) {
+    const user = JSON.parse(userInfo)
+    watermark.set(`${user.username} (${user.nickname})`)
   }
   next()
 })

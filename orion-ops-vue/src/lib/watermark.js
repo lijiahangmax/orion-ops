@@ -6,6 +6,9 @@ const watermark = {
  * 设置水印
  */
 watermark.set = (str) => {
+  if (process.env.VUE_APP_WATERMARK !== 'true') {
+    return undefined
+  }
   let reset = true
   if (watermark.currentId) {
     // 存在并且文本变化
@@ -32,16 +35,16 @@ watermark.set = (str) => {
 watermark.reset = (str) => {
   const id = 'water.mask.' + new Date().getTime()
   const can = document.createElement('canvas')
-  can.width = 400
-  can.height = 300
+  can.width = 450
+  can.height = 350
 
   const cans = can.getContext('2d')
   cans.rotate((-15 * Math.PI) / 180)
-  cans.font = '14px Vedana'
+  cans.font = '13px Vedana'
   cans.fillStyle = 'rgba(200, 200, 200, 0.60)'
   cans.textAlign = 'center'
   cans.textBaseline = 'hanging'
-  cans.fillText(str, can.width / 8, can.height / 6)
+  cans.fillText(str, can.width / 3, can.height / 2)
 
   const div = document.createElement('div')
   div.id = id
@@ -51,8 +54,9 @@ watermark.reset = (str) => {
   div.style.left = '0px'
   div.style.position = 'fixed'
   div.style.zIndex = '100000'
-  div.style.width = document.documentElement.clientWidth + 'px'
-  div.style.height = document.documentElement.clientHeight + 'px'
+  div.style.display = 'block'
+  div.style.width = '100%'
+  div.style.height = '100%'
   div.style.background = 'url(' + can.toDataURL('image/png') + ') left top repeat'
   document.body.appendChild(div)
   watermark.currentId = id

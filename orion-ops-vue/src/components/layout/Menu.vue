@@ -19,7 +19,7 @@
         </template>
         <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id">
           <a :href="`#${subMenuItem.path}`" :title="subMenuItem.name">
-            {{ subMenuItem.name }}
+            <span>{{ subMenuItem.name }}</span>
           </a>
         </a-menu-item>
       </a-sub-menu>
