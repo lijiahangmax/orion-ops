@@ -64,7 +64,7 @@ public class MachineInfoExportDTO {
 
     @ApiModelProperty(value = "秘钥名称")
     @ExportField(index = 8, header = "秘钥名称", width = 16, wrapText = true)
-    private String usingKeyName;
+    private String keyName;
 
     @ApiModelProperty(value = "描述")
     @ExportField(index = 9, header = "描述", width = 25, wrapText = true)

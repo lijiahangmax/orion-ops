@@ -52,7 +52,7 @@ public class MachineInfoDataExporter extends AbstractDataExporter<MachineInfoExp
                     .collect(Collectors.toMap(MachineSecretKeyDO::getId, MachineSecretKeyDO::getKeyName));
             // 设置秘钥名称
             for (MachineInfoExportDTO machine : exportList) {
-                machine.setUsingKeyName(keyNameMap.get(machine.getId()));
+                machine.setKeyName(keyNameMap.get(machine.getId()));
             }
         }
         // 设置密码

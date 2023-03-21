@@ -63,7 +63,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
 
     @ApiModelProperty(value = "秘钥名称")
     @ImportField(index = 8)
-    private String usingKeyName;
+    private String keyName;
 
     @ApiModelProperty(value = "描述")
     @ImportField(index = 9)
@@ -71,6 +71,9 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
 
     @ApiModelProperty(value = "密码密文解密后的明文", hidden = true)
     private String decryptPassword;
+
+    @ApiModelProperty(value = "秘钥id", hidden = true)
+    private Long keyId;
 
     static {
         TypeStore.STORE.register(MachineInfoImportDTO.class, DataImportCheckRowVO.class, p -> {
@@ -87,6 +90,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
             d.setMachineTag(p.tag);
             d.setMachineHost(p.host);
             d.setSshPort(p.port);
+            d.setKeyId(p.keyId);
             Optional.ofNullable(p.authType)
                     .map(MachineAuthType::of)
                     .map(MachineAuthType::getType)

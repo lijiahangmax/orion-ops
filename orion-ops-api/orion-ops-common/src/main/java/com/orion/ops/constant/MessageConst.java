@@ -220,6 +220,8 @@ public class MessageConst {
 
     public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
 
+    public static final String UNKNOWN_MACHINE_KEY = "未查询到机器秘钥: {}";
+
     public static final String UNKNOWN_APP_REPOSITORY = "未查询到应用仓库: {}";
 
     public static final String AGENT_STATUS_IS_STARTING = "插件正在启动中";
