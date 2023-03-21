@@ -43,7 +43,7 @@ import { SearchAddon } from 'xterm-addon-search'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import { copyToClipboard, getClipboardText } from '@/lib/utils'
-import { TERMINAL_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
+import { TERMINAL_CLIENT_OPERATOR, TERMINAL_STATUS, WS_PROTOCOL } from '@/lib/enum'
 import 'xterm/css/xterm.css'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
 
@@ -70,7 +70,7 @@ const clientHandler = {
   onopen() {
     // 发送认证信息 xx|cols|rows|loginToken
     const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
-    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${loginToken}`
+    const body = `${TERMINAL_CLIENT_OPERATOR.CONNECT.value}|${this.term.cols}|${this.term.rows}|${loginToken}`
     this.client.send(body)
   },
   onmessage({ data: msg }) {
@@ -81,11 +81,14 @@ const clientHandler = {
     const code = msg.substring(0, 1)
     const len = msg.length
     switch (code) {
+      case WS_PROTOCOL.OK.value:
+        this.term.write(msg.substring(2, len))
+        break
       case WS_PROTOCOL.CONNECTED.value:
         this.onConnected()
         break
-      case WS_PROTOCOL.OK.value:
-        this.term.write(msg.substring(2, len))
+      case WS_PROTOCOL.PING.value:
+        this.sendPong()
         break
       default:
         break
@@ -275,18 +278,21 @@ export default {
         return
       }
       // xx|cols|rows
-      const body = `${TERMINAL_OPERATOR.RESIZE.value}|${cols}|${rows}`
+      const body = `${TERMINAL_CLIENT_OPERATOR.RESIZE.value}|${cols}|${rows}`
       this.client.send(body)
     },
     sendKey(e) {
       if (this.status !== TERMINAL_STATUS.CONNECTED.value) {
         return
       }
-      const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
+      const body = `${TERMINAL_CLIENT_OPERATOR.KEY.value}|${e}`
       this.client.send(body)
     },
     sendPing() {
-      this.client.send(TERMINAL_OPERATOR.PING.value)
+      this.client.send(TERMINAL_CLIENT_OPERATOR.PING.value)
+    },
+    sendPong() {
+      this.client.send(TERMINAL_CLIENT_OPERATOR.PONG.value)
     },
     focus() {
       this.term.focus()

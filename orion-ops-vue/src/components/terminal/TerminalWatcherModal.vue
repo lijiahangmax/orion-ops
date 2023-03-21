@@ -85,7 +85,7 @@ import { Terminal } from 'xterm'
 import { SearchAddon } from 'xterm-addon-search'
 import { formatDate } from '@/lib/filters'
 import 'xterm/css/xterm.css'
-import { enumValueOf, TERMINAL_STATUS, TERMINAL_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
+import { enumValueOf, TERMINAL_STATUS, TERMINAL_CLIENT_OPERATOR, WS_PROTOCOL } from '@/lib/enum'
 import { copyToClipboard, getClipboardText } from '@/lib/utils'
 import TerminalSearch from '@/components/terminal/TerminalSearch'
 
@@ -96,7 +96,7 @@ const clientHandler = {
   onopen() {
     // xx|loginToken
     const loginToken = this.$storage.get(this.$storage.keys.LOGIN_TOKEN)
-    const body = `${TERMINAL_OPERATOR.CONNECT.value}|${loginToken}`
+    const body = `${TERMINAL_CLIENT_OPERATOR.CONNECT.value}|${loginToken}`
     this.client.send(body)
   },
   onmessage({ data: msg }) {
@@ -259,7 +259,7 @@ export default {
         this.$message.warn('当前为只读模式')
         return
       }
-      const body = `${TERMINAL_OPERATOR.KEY.value}|${e}`
+      const body = `${TERMINAL_CLIENT_OPERATOR.KEY.value}|${e}`
       this.client.send(body)
     },
     sendClear() {
@@ -267,7 +267,7 @@ export default {
         return
       }
       this.received = true
-      this.client.send(TERMINAL_OPERATOR.CLEAR.value)
+      this.client.send(TERMINAL_CLIENT_OPERATOR.CLEAR.value)
       this.term.focus()
     },
     clickTerminal() {
