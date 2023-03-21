@@ -9,6 +9,7 @@ import './lib/directive'
 import ant from 'ant-design-vue'
 import $message from 'ant-design-vue/lib/message'
 import 'ant-design-vue/dist/antd.min.css'
+import watermark from '@/lib/watermark'
 
 Vue.use(ant)
 
@@ -35,6 +36,15 @@ router.beforeEach((to, from, next) => {
   // 设置标题
   if (to.meta.title) {
     document.title = to.meta.title
+  }
+  // 添加水印
+  const user = $storage.get($storage.keys.CURRENT_USER)
+  if (user) {
+    if (to.meta.mask === false) {
+      watermark.remove()
+    } else {
+      watermark.set(JSON.parse(user).username)
+    }
   }
   next()
 })
