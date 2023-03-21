@@ -12,9 +12,9 @@ export function enumValueOf(e, value) {
 }
 
 /**
- * 终端操作
+ * 终端操作 client 端
  */
-export const TERMINAL_OPERATOR = {
+export const TERMINAL_CLIENT_OPERATOR = {
   KEY: {
     value: '0'
   },
@@ -24,14 +24,17 @@ export const TERMINAL_OPERATOR = {
   PING: {
     value: '2'
   },
-  RESIZE: {
+  PONG: {
     value: '3'
   },
-  COMMAND: {
+  RESIZE: {
     value: '4'
   },
-  CLEAR: {
+  COMMAND: {
     value: '5'
+  },
+  CLEAR: {
+    value: '6'
   }
 }
 
@@ -71,11 +74,14 @@ export const WS_PROTOCOL = {
   CONNECTED: {
     value: '1'
   },
-  PONG: {
+  PING: {
     value: '2'
   },
-  ERROR: {
+  PONG: {
     value: '3'
+  },
+  ERROR: {
+    value: '4'
   }
 }
 
@@ -1716,6 +1722,10 @@ export const SYSTEM_OPTION_KEY = {
   STATISTICS_CACHE_EXPIRE: {
     key: 'statisticsCacheExpire',
     value: 120
+  },
+  TERMINAL_ACTIVE_PUSH_HEARTBEAT: {
+    key: 'terminalActivePushHeartbeat',
+    value: 130
   }
 }
 

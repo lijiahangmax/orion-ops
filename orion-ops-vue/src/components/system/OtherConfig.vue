@@ -18,6 +18,20 @@
             </span>
           </template>
         </a-form-model-item>
+        <!-- 终端后台主动推送心跳 -->
+        <a-form-model-item label="终端后台主动推送心跳">
+          <a-switch v-model="option.terminalActivePushHeartbeat"
+                    :loading="loading.terminalActivePushHeartbeat"
+                    checkedChildren="启用"
+                    unCheckedChildren="停用"
+                    @change="changeOption(SYSTEM_OPTION_KEY.TERMINAL_ACTIVE_PUSH_HEARTBEAT)"/>
+          <template #extra>
+            <span class="help-text">
+              某些浏览器标签页后台运行可能会导致 setInterval 定时器挂起 <br>
+              为了防止 terminal client 心跳主动上报失败, 可以将此开关开启 (大数据量不建议开启)
+            </span>
+          </template>
+        </a-form-model-item>
         <!-- 上传文件最大阈值 -->
         <a-form-model-item label="上传文件最大阈值">
           <a-input-search class="option-input"
@@ -65,7 +79,7 @@
 import { SYSTEM_OPTION_KEY } from '@/lib/enum'
 
 const layout = {
-  labelCol: { span: 5 },
+  labelCol: { span: 7 },
   wrapperCol: { span: 17 }
 }
 export default {
@@ -76,11 +90,13 @@ export default {
       layout,
       option: {
         resumeEnableSchedulerTask: false,
+        terminalActivePushHeartbeat: false,
         sftpUploadThreshold: null,
         statisticsCacheExpire: null
       },
       loading: {
         resumeEnableSchedulerTask: false,
+        terminalActivePushHeartbeat: false,
         sftpUploadThreshold: false,
         statisticsCacheExpire: false
       }
