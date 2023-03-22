@@ -2,7 +2,7 @@ package com.orion.ops.handler.terminal;
 
 import com.orion.lang.define.wrapper.Tuple;
 import com.orion.net.remote.channel.SessionStore;
-import com.orion.ops.constant.terminal.TerminalOperate;
+import com.orion.ops.constant.terminal.TerminalClientOperate;
 import com.orion.ops.constant.ws.WsCloseCode;
 import com.orion.ops.constant.ws.WsProtocol;
 import com.orion.ops.entity.config.TerminalConnectConfig;
@@ -63,11 +63,11 @@ public class TerminalMessageHandler implements WebSocketHandler {
                 WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
             }
-            TerminalOperate operate = tuple.get(0);
+            TerminalClientOperate operate = tuple.get(0);
             String body = tuple.get(1);
 
             // 建立连接
-            if (operate == TerminalOperate.CONNECT) {
+            if (operate == TerminalClientOperate.CONNECT) {
                 // 建立连接
                 if (session.getAttributes().get(WebSockets.CONNECTED) != null) {
                     return;

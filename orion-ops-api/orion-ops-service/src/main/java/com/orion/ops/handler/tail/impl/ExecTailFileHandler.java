@@ -3,7 +3,6 @@ package com.orion.ops.handler.tail.impl;
 import com.alibaba.fastjson.JSON;
 import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.io.Streams;
-import com.orion.net.base.ssh.IRemoteExecutor;
 import com.orion.net.remote.channel.SessionStore;
 import com.orion.net.remote.channel.ssh.CommandExecutor;
 import com.orion.ops.constant.Const;
@@ -99,10 +98,8 @@ public class ExecTailFileHandler implements ITailHandler {
 
     /**
      * 回调
-     *
-     * @param executor executor
      */
-    private void callback(IRemoteExecutor executor) {
+    private void callback() {
         log.info("tail EXEC_TAIL 监听文件结束 token: {}", token);
         WebSockets.close(session, WsCloseCode.EOF);
     }

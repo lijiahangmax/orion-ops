@@ -19,7 +19,6 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "机器ssh登陆秘钥")
 @TableName("machine_secret_key")
-@SuppressWarnings("ALL")
 public class MachineSecretKeyDO implements Serializable {
 
     private static final long serialVersionUID = 1L;

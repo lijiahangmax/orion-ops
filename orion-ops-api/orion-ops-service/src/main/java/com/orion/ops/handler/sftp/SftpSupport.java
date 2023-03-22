@@ -1,6 +1,7 @@
 package com.orion.ops.handler.sftp;
 
 import com.orion.lang.id.UUIds;
+import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.io.Files1;
 import com.orion.net.remote.channel.sftp.SftpExecutor;
 import com.orion.ops.constant.sftp.SftpTransferStatus;
@@ -30,15 +31,20 @@ public class SftpSupport {
      * @return 是否为本机
      */
     public static boolean checkUseFileSystem(SftpExecutor executor) {
-        // 创建一个临时文件
-        String checkPath = Files1.getPath(SystemEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
-        File checkFile = new File(checkPath);
-        Files1.touch(checkFile);
-        checkFile.deleteOnExit();
-        // 查询远程机器是否有此文件 如果有则证明传输机器和宿主机是同一台
-        boolean exist = executor.getFile(checkFile.getAbsolutePath()) != null;
-        Files1.delete(checkFile);
-        return exist;
+        try {
+            // 创建一个临时文件
+            String checkPath = Files1.getPath(SystemEnvAttr.TEMP_PATH.getValue(), UUIds.random32() + ".ck");
+            File checkFile = new File(checkPath);
+            Files1.touch(checkFile);
+            checkFile.deleteOnExit();
+            // 查询远程机器是否有此文件 如果有则证明传输机器和宿主机是同一台
+            boolean exist = executor.getFile(checkFile.getAbsolutePath()) != null;
+            Files1.delete(checkFile);
+            return exist;
+        } catch (Exception e) {
+            log.error("无法使用FSC {}", Exceptions.getDigest(e));
+            return false;
+        }
     }
 
     /**

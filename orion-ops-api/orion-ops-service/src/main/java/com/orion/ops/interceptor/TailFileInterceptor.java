@@ -42,6 +42,7 @@ public class TailFileInterceptor implements HandshakeInterceptor {
             // 设置信息
             access = true;
             attributes.put(WebSockets.CONFIG, JSON.parseObject(tokenValue, FileTailDTO.class));
+            attributes.put(WebSockets.TOKEN, token);
             // 删除 token
             redisTemplate.delete(tokenKey);
         }

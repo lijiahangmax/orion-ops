@@ -148,6 +148,11 @@ public enum SystemEnvAttr {
     RESUME_ENABLE_SCHEDULER_TASK("自动恢复启用的调度任务", true),
 
     /**
+     * 终端后台主动推送心跳
+     */
+    TERMINAL_ACTIVE_PUSH_HEARTBEAT("终端后台主动推送心跳", true),
+
+    /**
      * SFTP 上传文件最大阈值 (MB)
      */
     SFTP_UPLOAD_THRESHOLD("sftp 上传文件最大阈值 (MB)", true),

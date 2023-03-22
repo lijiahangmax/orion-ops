@@ -161,7 +161,9 @@ export default {
 <style lang="less" scoped>
 
 #terminal-layout-container {
+  width: 100%;
   height: 100vh;
+  position: fixed;
 }
 
 #terminal-content-fixed-right {

@@ -21,7 +21,8 @@ const routes = [
     name: 'login',
     meta: {
       requireAuth: false,
-      title: '登陆'
+      title: '登陆',
+      mask: false
     },
     component: Login
   },
@@ -529,6 +530,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode: 'hash',
   routes
 })
 

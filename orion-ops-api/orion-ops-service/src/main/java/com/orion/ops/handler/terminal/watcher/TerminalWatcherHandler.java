@@ -2,7 +2,7 @@ package com.orion.ops.handler.terminal.watcher;
 
 import com.orion.lang.define.wrapper.Tuple;
 import com.orion.ops.constant.Const;
-import com.orion.ops.constant.terminal.TerminalOperate;
+import com.orion.ops.constant.terminal.TerminalClientOperate;
 import com.orion.ops.constant.ws.WsCloseCode;
 import com.orion.ops.constant.ws.WsProtocol;
 import com.orion.ops.entity.dto.user.UserDTO;
@@ -51,11 +51,11 @@ public class TerminalWatcherHandler implements WebSocketHandler {
                 WebSockets.sendText(session, WsProtocol.ERROR.get());
                 return;
             }
-            TerminalOperate operate = tuple.get(0);
+            TerminalClientOperate operate = tuple.get(0);
             String body = tuple.get(1);
 
             // 建立连接
-            if (operate == TerminalOperate.CONNECT) {
+            if (operate == TerminalClientOperate.CONNECT) {
                 // 建立连接
                 if (session.getAttributes().get(WebSockets.AUTHED) != null) {
                     return;
@@ -63,7 +63,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
                 this.auth(session, body);
                 return;
             }
-            if (operate != TerminalOperate.KEY && operate != TerminalOperate.CLEAR) {
+            if (operate != TerminalClientOperate.KEY && operate != TerminalClientOperate.CLEAR) {
                 return;
             }
             // 检查连接
@@ -73,7 +73,7 @@ public class TerminalWatcherHandler implements WebSocketHandler {
             }
             // 检查是否只读
             final boolean readonly = Const.ENABLE.equals(session.getAttributes().get(WebSockets.READONLY));
-            if (operate == TerminalOperate.KEY && readonly) {
+            if (operate == TerminalClientOperate.KEY && readonly) {
                 return;
             }
             // 获取连接

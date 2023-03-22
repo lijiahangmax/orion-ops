@@ -120,6 +120,7 @@ public class SystemEnvInitializeRunner implements CommandLineRunner {
             case ENABLE_AUTO_CLEAN_FILE:
             case ALLOW_MULTIPLE_LOGIN:
             case RESUME_ENABLE_SCHEDULER_TASK:
+            case TERMINAL_ACTIVE_PUSH_HEARTBEAT:
             case LOGIN_IP_BIND:
                 return EnableType.DISABLED.getLabel();
             case LOGIN_FAILURE_LOCK:

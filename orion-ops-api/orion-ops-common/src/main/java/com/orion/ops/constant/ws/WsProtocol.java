@@ -29,14 +29,19 @@ public enum WsProtocol {
     CONNECTED("1"),
 
     /**
+     * ping
+     */
+    PING("2"),
+
+    /**
      * pong
      */
-    PONG("2"),
+    PONG("3"),
 
     /**
      * 未知操作
      */
-    ERROR("3"),
+    ERROR("4"),
 
     ;
 

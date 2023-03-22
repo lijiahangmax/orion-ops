@@ -1,6 +1,5 @@
 package com.orion.ops.handler.sftp;
 
-import com.orion.lang.support.progress.ByteTransferProgress;
 import com.orion.lang.support.progress.ByteTransferRateProgress;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.io.Files1;
@@ -149,7 +148,7 @@ public abstract class FileTransferProcessor implements IFileTransferProcessor {
      *
      * @param pro progress
      */
-    protected void transferDoneCallback(ByteTransferProgress pro) {
+    protected void transferDoneCallback() {
         try {
             FileTransferLogDO update = new FileTransferLogDO();
             update.setId(record.getId());

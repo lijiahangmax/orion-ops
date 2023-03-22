@@ -1,8 +1,11 @@
 package com.orion.ops.handler.importer.checker;
 
 import com.orion.ops.constant.ImportType;
+import com.orion.ops.constant.MessageConst;
 import com.orion.ops.dao.MachineInfoDAO;
+import com.orion.ops.dao.MachineSecretKeyDAO;
 import com.orion.ops.entity.domain.MachineInfoDO;
+import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.importer.MachineInfoImportDTO;
 import com.orion.ops.entity.vo.data.DataImportCheckVO;
 import com.orion.spring.SpringHolder;
@@ -21,6 +24,8 @@ public class MachineInfoDataChecker extends AbstractDataChecker<MachineInfoImpor
 
     private static final MachineInfoDAO machineInfoDAO = SpringHolder.getBean(MachineInfoDAO.class);
 
+    private static final MachineSecretKeyDAO machineSecretKeyDAO = SpringHolder.getBean(MachineSecretKeyDAO.class);
+
     public MachineInfoDataChecker(Workbook workbook) {
         super(ImportType.MACHINE_INFO, workbook);
     }
@@ -29,6 +34,13 @@ public class MachineInfoDataChecker extends AbstractDataChecker<MachineInfoImpor
     protected DataImportCheckVO checkImportData(List<MachineInfoImportDTO> rows) {
         // 检查数据合法性
         this.validImportRows(rows);
+        // 设置机器id
+        this.setCheckRowsRelId(rows, MachineInfoImportDTO::getKeyName,
+                machineSecretKeyDAO::selectIdByNameList,
+                MachineSecretKeyDO::getKeyName,
+                MachineSecretKeyDO::getId,
+                MachineInfoImportDTO::setKeyId,
+                MessageConst.UNKNOWN_MACHINE_KEY);
         // 通过唯一标识查询机器
         List<MachineInfoDO> presentMachines = this.getImportRowsPresentValues(rows, MachineInfoImportDTO::getTag,
                 machineInfoDAO, MachineInfoDO::getMachineTag);

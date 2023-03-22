@@ -1,7 +1,7 @@
 package com.orion.ops.handler.terminal;
 
 import com.orion.lang.able.SafeCloseable;
-import com.orion.ops.constant.terminal.TerminalOperate;
+import com.orion.ops.constant.terminal.TerminalClientOperate;
 import com.orion.ops.entity.config.TerminalConnectConfig;
 import com.orion.ops.handler.terminal.manager.TerminalManagementHandler;
 import com.orion.ops.handler.terminal.watcher.ITerminalWatcherProcessor;
@@ -32,7 +32,7 @@ public interface IOperateHandler extends TerminalManagementHandler, SafeCloseabl
      * @param body    body
      * @throws Exception ex
      */
-    void handleMessage(TerminalOperate operate, String body) throws Exception;
+    void handleMessage(TerminalClientOperate operate, String body) throws Exception;
 
     /**
      * 心跳是否结束
