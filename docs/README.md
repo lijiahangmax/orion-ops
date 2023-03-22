@@ -1,6 +1,7 @@
 ## orion-ops 是什么
 
-`orion-ops` 一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能, 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。
+`orion-ops` 一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
+帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。
 
 <p style="text-align: left">
 	<a target="_blank" style="text-decoration: none" href="https://www.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lijiahangmax/orion-ops&amp;utm_campaign=Badge_Grade">
@@ -35,7 +36,8 @@ demo: http://101.43.254.243/ops/#/
 
 演示账号: `orionadmin`    
 演示密码: `orionadmin`  
-留个小星星再走吧⭐
+留个小星星再走吧⭐  
+由于个人精力有限 更新迭代速度不如往日 后续会进行2.0完全重构 可以浅浅期待一下⭐
 
 ## 特性
 
