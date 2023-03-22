@@ -25,7 +25,7 @@
 
 <br/>  
 
-当前最新版本: **1.2.1**  
+当前最新版本: **1.2.2**  
 github: https://github.com/lijiahangmax/orion-ops  
 gitee: https://gitee.com/lijiahangmax/orion-ops  
 csdn: https://blog.csdn.net/qq_41011894  

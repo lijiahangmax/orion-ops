@@ -8,7 +8,7 @@
 重启后端服务 添加启动参数 `--reset-admin` 会将 `orionadmin` 的密码重置为 `orionadmin`
 
 ```
-nohup java -jar orion-ops-web-1.2.1.jar --spring.profiles.active=prod --reset-admin &
+nohup java -jar orion-ops-web-1.2.2.jar --spring.profiles.active=prod --reset-admin &
 ```
 
 <br/> 
@@ -18,7 +18,7 @@ nohup java -jar orion-ops-web-1.2.1.jar --spring.profiles.active=prod --reset-ad
 重启后端服务 添加启动参数 `--disable-ip-filter` 会将禁用ip过滤器
 
 ```
-nohup java -jar orion-ops-web-1.2.1.jar --spring.profiles.active=prod --disable-ip-filter &
+nohup java -jar orion-ops-web-1.2.2.jar --spring.profiles.active=prod --disable-ip-filter &
 ```
 
 <br/> 
