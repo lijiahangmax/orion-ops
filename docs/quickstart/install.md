@@ -110,9 +110,9 @@ server {
 ```
 复制 orion-ops/orion-ops-vue/dist/index.html 到 /usr/share/nginx/html
 复制 orion-ops/orion-ops-vue/dist 到 /usr/share/nginx/html 并且重命名为 ops
-复制 orion-ops/orion-ops-api/orion-ops-api/target/orion-ops-web-1.2.2.jar 到 /data/orion
+复制 orion-ops/orion-ops-api/orion-ops-api/target/orion-ops-web-1.2.3.jar 到 /data/orion
 # 启动后台服务
-nohup java -jar orion-ops-web-1.2.2.jar --spring.profiles.active=prod --generator-admin &
+nohup java -jar orion-ops-web-1.2.3.jar --spring.profiles.active=prod --generator-admin &
 # 启动 nginx
 service nginx start
 ```
