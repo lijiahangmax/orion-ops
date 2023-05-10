@@ -156,7 +156,7 @@ public class MonitorAgentInstallTask implements Runnable {
         try {
             // 执行启动命令
             this.appendLog("开始执行启动脚本 path: {}", startScriptPath);
-            executor = session.getCommandExecutor(startScriptPath);
+            executor = session.getCommandExecutor("bash -l " + startScriptPath);
             executor.getChannel().setPty(false);
             CommandExecutors.syncExecCommand(executor, logStream);
             int exitCode = executor.getExitCode();
