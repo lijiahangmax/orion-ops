@@ -6,10 +6,10 @@
     <template v-for="menuItem in menuList">
       <!-- 一级菜单 -->
       <a-menu-item v-if="!menuItem.children" :key="menuItem.id">
-        <a :href="`#${menuItem.path}`" :title="menuItem.name">
+        <router-link :to="menuItem.path">
           <a-icon :type="menuItem.icon"/>
           <span>{{ menuItem.name }}</span>
-        </a>
+        </router-link>
       </a-menu-item>
       <!-- 二级菜单 -->
       <a-sub-menu v-else :key="menuItem.id">
@@ -18,9 +18,10 @@
           <span class="usn">{{ menuItem.name }}</span>
         </template>
         <a-menu-item v-for="subMenuItem in menuItem.children" :key="subMenuItem.id">
-          <a :href="`#${subMenuItem.path}`" :title="subMenuItem.name">
+          <router-link :to="subMenuItem.path">
+            <a-icon :type="subMenuItem.icon"/>
             <span>{{ subMenuItem.name }}</span>
-          </a>
+          </router-link>
         </a-menu-item>
       </a-sub-menu>
     </template>
