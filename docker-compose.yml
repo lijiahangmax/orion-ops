@@ -1,34 +1,47 @@
 version: '3.3'
 services:
   orion-ops:
-    build: 
+    build:
       context: .
       dockerfile: docker/orion-ops/Dockerfile
     image: orion-ops:1.2.3
     ports:
-      - "3090:80"
+      - 1022:22
+      - 1080:80
     environment:
-      - MYSQL_HOST=orion-db
-      - REDIS_HOST=orion-redis
+      - MYSQL_HOST=orion-ops-db
+      - REDIS_HOST=orion-ops-redis
+      - MYSQL_USER=orion
+      - MYSQL_PASSWORD=Data@123456
+    volumes:
+      - /data/orion-ops-space/docker-volumns/root:/root
     depends_on:
-      - orion-db
-      - orion-redis
-  orion-db:
-    build: 
+      - orion-ops-db
+      - orion-ops-redis
+  orion-ops-db:
+    build:
       context: .
       dockerfile: docker/mysql/Dockerfile
+    privileged: true
     environment:
       - MYSQL_DATABASE=orion-ops
-      - MYSQL_USER=lijiahang
-      - MYSQL_PASSWORD=lijiahang
-      - MYSQL_ROOT_PASSWORD=admin123
-    image: orion-db:8.0
+      - MYSQL_USER=orion
+      - MYSQL_PASSWORD=Data@123456
+      - MYSQL_ROOT_PASSWORD=Data@123456
+    ports:
+      - 13306:3306
+    volumes:
+      - /data/orion-ops-space/docker-volumns/mysql/var-lib-mysql:/var/lib/mysql
+      - /data/orion-ops-space/docker-volumns/mysql/var-lib-mysql-files:/var/lib/mysql-files
+      - /data/orion-ops-space/docker-volumns/mysql/etc-mysql:/etc/mysql
+    image: orion-ops-db:8.0
   orion-adminer:
     image: adminer
     restart: always
     ports:
-      - 8000:8080
-  orion-redis:
+      - 18080:8080
+  orion-ops-redis:
     image: redis:6.0.16-alpine
-    command: redis-server --requirepass lijiahang
-
+    command: redis-server --requirepass Data@123456
+    ports:
+      - 16379:6379
