@@ -6,26 +6,7 @@
 后面没想会被 `gitee` 推荐 也有了越来越多用户 发现了很多业务设计/技术选型的有着很多的问题 毕竟现在是个云原生的时代 技术迭代非常的迅速 我需要对 `orion-ops`
 这个产品的未来规划考虑一下. 做到小而细杜绝大而杂.
 
-代码及为艺术 `code is art` 我希望做一个好的产品 是我的目标也是我的初心
+### 项目地址
 
-### 技术选型
-
-
-> 前端
-
-我很喜欢 vue 的语法和 arco 的样式风格
-我选择使用 `vue3` `arco design pro`
-
-> 后端
-
-我想把代码做成分布式的应用 这样的话就可以按需部署 按资源扩展  
-`orion-bridge` 项目基础服务  
-`orion-sec` 堡垒机及资产服务  
-`orion-one` 应用构建发布服务  
-`...`   
-这里我想到的分布式治理方案为 `dubbo` `nacos`  
-并且使用 `nacos` 就可以有一套分布式配置中心. 原来 `orion-ops` 的系统配置就可以迁移到这里
-
-### 重构内容
-
+**orion-ops-pro** [gitee](https://gitee.com/lijiahangmax/orion-ops-pro) [github](https://github.com/lijiahangmax/orion-ops-pro)
 

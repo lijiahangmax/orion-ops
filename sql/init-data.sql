@@ -1,3 +1,5 @@
+USE `orion-ops`;
+
 # 默认应用环境
 INSERT INTO application_profile VALUES (1, '开发环境', 'dev', '开发环境', 1, 1, NOW(), NOW());
 
