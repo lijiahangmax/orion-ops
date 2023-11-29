@@ -26,7 +26,7 @@
 
 <br/>  
 
-当前最新版本: **1.2.2**  
+当前最新版本: **1.2.3**  
 github: https://github.com/lijiahangmax/orion-ops  
 gitee: https://gitee.com/lijiahangmax/orion-ops  
 csdn: https://blog.csdn.net/qq_41011894  
@@ -36,8 +36,12 @@ demo: http://101.43.254.243/ops/#/
 
 演示账号: `orionadmin`    
 演示密码: `orionadmin`  
-留个小星星再走吧⭐  
-由于个人精力有限 更新迭代速度不如往日 后续会进行2.0完全重构 可以浅浅期待一下⭐
+留个小星星再走吧⭐
+
+## 重构
+
+`orion-ops` 后续应该不会更新了(除了修复bug) 个人精力有限  
+后续开发及维护 **`orion-ops-pro`** [gitee](https://gitee.com/lijiahangmax/orion-ops-pro) [github](https://github.com/lijiahangmax/orion-ops-pro)
 
 ## 特性
 

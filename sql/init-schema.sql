@@ -1,6 +1,9 @@
 SET NAMES utf8mb4;
-SET
-FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS `orion-ops` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `orion-ops`;
 
 -- ----------------------------
 -- Table structure for alarm_group
@@ -934,5 +937,4 @@ CREATE TABLE `webhook_config`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'webhook 配置' ROW_FORMAT = Dynamic;
 
-SET
-FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 1;

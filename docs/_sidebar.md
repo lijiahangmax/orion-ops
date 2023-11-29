@@ -3,6 +3,7 @@
     * [更新日志](about/change-log.md)
     * [如何升级](about/update.md)
     * [设计概念](about/concepts.md)
+    * [2.0重构计划](about/refactor_2_0.md)
 * 快速开始
     * [docker安装](quickstart/docker-install.md)
     * [普通安装](quickstart/install.md)
