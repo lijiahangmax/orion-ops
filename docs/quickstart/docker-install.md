@@ -70,6 +70,6 @@ docker compose up -d
 
 ### 测试访问
 
-在浏览器中输入 http://localhost:3090/ops 访问  
+在浏览器中输入 http://localhost:1080/ops 访问  
 账号: orionadmin  
 密码: orionadmin  
