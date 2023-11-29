@@ -6,6 +6,7 @@ services:
       dockerfile: docker/orion-ops/Dockerfile
     image: orion-ops:1.2.3
     ports:
+      - 1022:22
       - 1080:80
     environment:
       - MYSQL_HOST=orion-ops-db

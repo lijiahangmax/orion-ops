@@ -68,8 +68,21 @@ docker compose build
 docker compose up -d
 ```
 
+6. 连接 mysql (如果需要在 nacivat 中连接)
+```
+访问 adminer: http://localhost:18080
+服务器: orion-ops-db
+用户名: root
+密码: Data@123456
+数据库: orion-ops
+
+点击左侧 SQL命令 输入:
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'Data@123456';
+执行 OK
+```
+
 ### 测试访问
 
-在浏览器中输入 http://localhost:1080/ops 访问  
+在浏览器中输入 http://localhost:1080/ 访问  
 账号: orionadmin  
 密码: orionadmin  

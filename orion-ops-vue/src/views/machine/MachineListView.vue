@@ -111,7 +111,7 @@
           <!-- 主机 -->
           <template #host="record">
             <span class="span-blue pointer" title="复制主机" @click="$copy(record.host, true)">
-              {{ record.host }}
+              {{ `${record.host}:${record.sshPort}` }}
             </span>
           </template>
           <!-- 操作 -->

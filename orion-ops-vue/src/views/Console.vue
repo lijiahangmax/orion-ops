@@ -4,9 +4,9 @@
     <div class="statistics-top">
       <a-row>
         <template v-for="statisticItem of topStatistic">
-          <a :key="statisticItem.field"
-             :href="statisticItem.redirect"
-             :title="statisticItem.redirectTitle">
+          <router-link :key="statisticItem.field"
+                       :to="statisticItem.redirect"
+                       :title="statisticItem.redirectTitle">
             <a-col :span="6" :class="statisticItem.colClass">
               <a-card class="gray-box-shadow" :bordered="false" :hoverable="true">
                 <a-statistic :title="statisticItem.title" :suffix="statisticItem.suffix">
@@ -18,7 +18,7 @@
                 </a-statistic>
               </a-card>
             </a-col>
-          </a>
+          </router-link>
         </template>
       </a-row>
     </div>
@@ -30,9 +30,9 @@
           <!-- 快捷导航 -->
           <a-row>
             <a-col v-for="(quickRouterItem, index) of quickRouter" :key="index" :span="12">
-              <a :href="quickRouterItem.redirect"
-                 :target="quickRouterItem.redirectTarget"
-                 :title="quickRouterItem.redirectTitle">
+              <router-link :to="quickRouterItem.redirect"
+                           :target="quickRouterItem.redirectTarget"
+                           :title="quickRouterItem.redirectTitle">
                 <a-card :class="['quick-router-card', index % 2 === 0 ? 'quick-router-card-left' : 'quick-router-card-right']"
                         :style="{'margin-bottom': ((index >= quickRouter.length - 2) ? '' : '12px')}"
                         :hoverable="true">
@@ -41,7 +41,7 @@
                     <span class="quick-router-item-name">{{ quickRouterItem.routerName }}</span>
                   </div>
                 </a-card>
-              </a>
+              </router-link>
             </a-col>
           </a-row>
         </a-card>
@@ -71,28 +71,28 @@ const topStatistic = [
     title: '机器数量',
     suffix: '台',
     colClass: 'pr8',
-    redirect: '#/machine/list',
+    redirect: 'machine/list',
     redirectTitle: '跳转至机器列表',
     field: 'machineCount'
   }, {
     title: '环境数量',
     suffix: '个',
     colClass: 'px8',
-    redirect: '#/app/profile',
+    redirect: 'app/profile',
     redirectTitle: '跳转至环境列表',
     field: 'profileCount'
   }, {
     title: '应用数量',
     suffix: '个',
     colClass: 'px8',
-    redirect: '#/app/list',
+    redirect: 'app/list',
     redirectTitle: '跳转至引用列表',
     field: 'appCount'
   }, {
     title: '应用流水线数量',
     suffix: '个',
     colClass: 'pl8',
-    redirect: '#/app/pipeline/list',
+    redirect: 'app/pipeline/list',
     redirectTitle: '跳转至应用流水线列表',
     field: 'pipelineCount'
   }
@@ -105,70 +105,70 @@ const quickRouter = [
   {
     routerName: '批量执行',
     routerIcon: 'code',
-    redirect: '#/batch/exec/add',
+    redirect: 'batch/exec/add',
     redirectTitle: '跳转至批量执行',
     redirectTarget: '_self'
   },
   {
     routerName: '机器监控',
     routerIcon: 'fund',
-    redirect: '#/machine/monitor/list',
+    redirect: 'machine/monitor/list',
     redirectTitle: '跳转至机器监控',
     redirectTarget: '_self'
   },
   {
     routerName: '机器终端',
     routerIcon: 'cloud',
-    redirect: '#/machine/terminal',
+    redirect: 'machine/terminal',
     redirectTitle: '跳转至机器终端',
     redirectTarget: '_blank'
   },
   {
     routerName: '文件管理器',
     routerIcon: 'reconciliation',
-    redirect: '#/machine/sftp',
+    redirect: 'machine/sftp',
     redirectTitle: '跳转至机文件管理器',
     redirectTarget: '_blank'
   },
   {
     routerName: '应用构建',
     routerIcon: 'build',
-    redirect: '#/app/build/list',
+    redirect: 'app/build/list',
     redirectTitle: '跳转至',
     redirectTarget: '_self'
   },
   {
     routerName: '应用发布',
     routerIcon: 'rocket',
-    redirect: '#/app/release/list',
+    redirect: 'app/release/list',
     redirectTitle: '跳转至',
     redirectTarget: '_self'
   },
   {
     routerName: '应用流水线任务',
     routerIcon: 'api',
-    redirect: '#/app/pipeline/task',
+    redirect: 'app/pipeline/task',
     redirectTitle: '跳转至应用流水线任务',
     redirectTarget: '_self'
   },
   {
     routerName: '日志面板',
     routerIcon: 'book',
-    redirect: '#/log/list',
+    redirect: 'log/list',
     redirectTitle: '跳转至日志面板',
     redirectTarget: '_self'
   },
   {
     routerName: '调度任务',
     routerIcon: 'schedule',
-    redirect: '#/scheduler/list',
+    redirect: 'scheduler/list',
     redirectTitle: '跳转至',
     redirectTarget: '_self'
   },
   {
     routerName: '调度明细',
     routerIcon: 'dashboard',
-    redirect: '#/scheduler/record',
+    redirect: 'scheduler/record',
     redirectTitle: '跳转至调度明细',
     redirectTarget: '_self'
   }
