@@ -8,7 +8,7 @@
 * Nginx
 
 ⚡ maven 推荐使用阿里云 mirror   
-⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npm.taobao.org`
+⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npmmirror.com/`
 
 ### 构建
 

@@ -5,7 +5,7 @@
 * Maven 3.5.4(+)
 
 ⚡ maven 推荐使用阿里云 mirror    
-⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npm.taobao.org`
+⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npmmirror.com/`
 
 ### 编译Docker镜像
 
@@ -68,7 +68,7 @@ docker compose build
 docker compose up -d
 ```
 
-6. 连接 mysql (如果需要在 nacivat 中连接)
+6. 连接 mysql (如果需要在 navicat 中连接)
 ```
 访问 adminer: http://localhost:18080
 服务器: orion-ops-db
