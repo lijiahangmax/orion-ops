@@ -38,10 +38,12 @@ demo: http://101.43.254.243:1080/#/
 演示密码: `orionadmin`  
 留个小星星再走吧⭐  
 
-## 重构
+## 重构版 orion-ops-pro
 
-`orion-ops` 后续应该不会更新了(除了修复bug) 个人精力有限  
-后续开发及维护 **`orion-ops-pro`** [gitee](https://gitee.com/lijiahangmax/orion-ops-pro) [github](https://github.com/lijiahangmax/orion-ops-pro)  
+`orion-ops` 除了修复发现的bug之外, 预计不会再进行后续的功能更新, 未来的开发重心为 **`orion-ops-pro`**  
+gitee: https://gitee.com/lijiahangmax/orion-ops-pro    
+github: https://github.com/lijiahangmax/orion-ops-pro  
+给 orion-ops-pro 点个 star 吧 ⭐
 
 ## 特性
 

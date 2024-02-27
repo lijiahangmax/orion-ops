@@ -14,7 +14,7 @@ services:
       - MYSQL_USER=orion
       - MYSQL_PASSWORD=Data@123456
     volumes:
-      - /data/orion-ops-space/docker-volumns/root:/root
+      - /data/orion-ops-space/docker-volumes/root:/root
     depends_on:
       - orion-ops-db
       - orion-ops-redis
@@ -31,9 +31,9 @@ services:
     ports:
       - 13306:3306
     volumes:
-      - /data/orion-ops-space/docker-volumns/mysql/var-lib-mysql:/var/lib/mysql
-      - /data/orion-ops-space/docker-volumns/mysql/var-lib-mysql-files:/var/lib/mysql-files
-      - /data/orion-ops-space/docker-volumns/mysql/etc-mysql:/etc/mysql
+      - /data/orion-ops-space/docker-volumes/mysql/var-lib-mysql:/var/lib/mysql
+      - /data/orion-ops-space/docker-volumes/mysql/var-lib-mysql-files:/var/lib/mysql-files
+      - /data/orion-ops-space/docker-volumes/mysql/etc-mysql:/etc/mysql
     image: orion-ops-db:8.0
   orion-adminer:
     image: adminer
