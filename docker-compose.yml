@@ -18,7 +18,7 @@ services:
       - orion-ops-db
       - orion-ops-redis
   orion-ops-db:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-mysql:latest
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-mysql:1.2.3
     privileged: true
     environment:
       - MYSQL_DATABASE=orion-ops
