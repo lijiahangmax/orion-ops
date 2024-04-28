@@ -48,8 +48,10 @@ mvn -U clean install -DskipTests
 ```
 # 进入代码目录
 cd orion-ops/orion-ops-vue
+# 下载 yarn
+npm i -g yarn
 # 下载依赖
-npm i 或 yarn
+yarn install
 # 编译
 npm run build:prod
 ```   

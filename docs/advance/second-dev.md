@@ -44,8 +44,10 @@ orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties 
 ```
 # 进入代码目录
 cd orion-ops/orion-ops-vue
+# 下载 yarn
+npm i -g yarn
 # 下载依赖
-npm i 或 yarn
+yarn install
 # 运行
 npm run serve:dev
 ```   
