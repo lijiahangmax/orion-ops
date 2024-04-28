@@ -1,27 +1,24 @@
 version: '3.3'
 services:
   orion-ops:
-    build:
-      context: .
-      dockerfile: docker/orion-ops/Dockerfile
-    image: orion-ops:1.2.3
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:1.2.3
     ports:
       - 1022:22
       - 1080:80
     environment:
       - MYSQL_HOST=orion-ops-db
-      - REDIS_HOST=orion-ops-redis
       - MYSQL_USER=orion
       - MYSQL_PASSWORD=Data@123456
+      - REDIS_HOST=orion-ops-redis
+      - REDIS_PASSWORD=Data@123456
+      - SECRET_KEY=orion_ops
     volumes:
       - /data/orion-ops-space/docker-volumes/root:/root
     depends_on:
       - orion-ops-db
       - orion-ops-redis
   orion-ops-db:
-    build:
-      context: .
-      dockerfile: docker/mysql/Dockerfile
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-mysql:latest
     privileged: true
     environment:
       - MYSQL_DATABASE=orion-ops
@@ -34,7 +31,6 @@ services:
       - /data/orion-ops-space/docker-volumes/mysql/var-lib-mysql:/var/lib/mysql
       - /data/orion-ops-space/docker-volumes/mysql/var-lib-mysql-files:/var/lib/mysql-files
       - /data/orion-ops-space/docker-volumes/mysql/etc-mysql:/etc/mysql
-    image: orion-ops-db:8.0
   orion-adminer:
     image: adminer
     restart: always
