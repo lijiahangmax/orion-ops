@@ -4,3 +4,4 @@ cp $HOME/orion-ops/lib/machine-monitor-agent-latest.jar ./
 docker build -t orion-ops:1.2.4 .
 rm -f ./orion-ops-web-1.2.4.jar
 rm -rf ./dist
+rm -rf $HOME/orion-ops/lib/machine-monitor-agent-latest.jar
