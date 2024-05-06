@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   orion-ops:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:1.2.3
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:1.2.4
     ports:
       - 1022:22
       - 1080:80
@@ -18,7 +18,7 @@ services:
       - orion-ops-db
       - orion-ops-redis
   orion-ops-db:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-mysql:1.2.3
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-mysql:1.2.4
     privileged: true
     environment:
       - MYSQL_DATABASE=orion-ops

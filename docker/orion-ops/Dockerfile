@@ -13,6 +13,7 @@ RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config && 
     ssh-keygen -t ed25519 -P '' -f /etc/ssh/ssh_host_ed25519_key && \
     echo 'root:orionadmin' | chpasswd
 WORKDIR /app
+COPY ./machine-monitor-agent-latest.jar /root/orion-ops/lib/machine-monitor-agent-latest.jar
 COPY ./orion-ops-web-1.2.3.jar /app/app.jar
 COPY ./dist/index.html /usr/share/nginx/html/
 COPY ./dist /usr/share/nginx/html/ops
