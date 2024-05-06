@@ -19,19 +19,19 @@
 	<a target="_blank" style="text-decoration: none" href="https://gitee.com/lijiahangmax/orion-ops/members">
 		<img src="https://gitee.com/lijiahangmax/orion-ops/badge/fork.svg?theme=dark" alt="fork"/>
 	</a>		
-	<!-- <a target="_blank" style="text-decoration: none" href="https://github.com/lijiahangmax/orion-ops">
+	<a target="_blank" style="text-decoration: none" href="https://github.com/lijiahangmax/orion-ops">
 		<img src="https://img.shields.io/github/stars/lijiahangmax/orion-ops.svg?style=social" alt="star"/>
-	</a> -->	
+	</a>	
 </p>
 
 <br/>  
 
-当前最新版本: **1.2.3**  
+当前最新版本: **1.2.4**  
 github: https://github.com/lijiahangmax/orion-ops  
 gitee: https://gitee.com/lijiahangmax/orion-ops  
 csdn: https://blog.csdn.net/qq_41011894  
 orion-kit: [gitee](https://gitee.com/lijiahangmax/orion-kit) [github](https://github.com/lijiahangmax/orion-kit)    
-文档: https://lijiahangmax.gitee.io/orion-ops/#/    
+文档: https://lijiahangmax.github.io/orion-ops/#/    
 demo: http://101.43.254.243:1080/#/
 
 演示账号: `orionadmin`    
@@ -62,12 +62,12 @@ github: https://github.com/lijiahangmax/orion-ops-pro
 
 ## 快速开始
 
-安装文档: https://lijiahangmax.gitee.io/orion-ops/#/quickstart/install   
-开发文档: https://lijiahangmax.gitee.io/orion-ops/#/advance/second-dev   
-操作手册: https://lijiahangmax.gitee.io/orion-ops/#/operator/machine  
-常见问题: https://lijiahangmax.gitee.io/orion-ops/#/quickstart/faq  
-通用模板: https://lijiahangmax.gitee.io/orion-ops/#/template/java-springboot-template  
-roadmap: https://lijiahangmax.gitee.io/orion-ops/#/about/roadmap
+安装文档: https://lijiahangmax.github.io/orion-ops/#/quickstart/install   
+开发文档: https://lijiahangmax.github.io/orion-ops/#/advance/second-dev   
+操作手册: https://lijiahangmax.github.io/orion-ops/#/operator/machine  
+常见问题: https://lijiahangmax.github.io/orion-ops/#/quickstart/faq  
+通用模板: https://lijiahangmax.github.io/orion-ops/#/template/java-springboot-template  
+roadmap: https://lijiahangmax.github.io/orion-ops/#/about/roadmap
 
 ## 技术栈
 

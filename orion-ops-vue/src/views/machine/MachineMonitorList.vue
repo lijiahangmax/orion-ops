@@ -31,23 +31,24 @@
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">
+          <a href="https://lijiahangmax.github.io/orion-ops-extension-plugins/#/machine-monitor-agent/quickstart-download" target="_blank">安装文档</a>
           <a-popconfirm title="确定执行批量安装本页监控插件?"
                         okText="确定"
                         cancelText="取消"
                         @confirm="batchInstallMonitor">
-            <a-button type="primary" icon="cloud-server">安装</a-button>
+            <a-button class="ml16" type="primary" icon="cloud-server">安装</a-button>
           </a-popconfirm>
           <a-popconfirm title="确定执行批量升级本页监控插件?"
                         okText="确定"
                         cancelText="取消"
                         @confirm="batchUpgradeMonitor">
-            <a-button class="mx16" type="primary" icon="cloud-upload">升级</a-button>
+            <a-button class="ml16" type="primary" icon="cloud-upload">升级</a-button>
           </a-popconfirm>
           <a-popconfirm title="确定执行批量检测本页监控插件状态?"
                         okText="确定"
                         cancelText="取消"
                         @confirm="batchCheckMonitor">
-            <a-button type="primary" icon="cloud-sync">检测</a-button>
+            <a-button class="ml16" type="primary" icon="cloud-sync">检测</a-button>
           </a-popconfirm>
           <a-divider class="ml16" type="vertical"/>
           <a-icon type="search" class="tools-icon" title="查询" @click="getList({})"/>
@@ -68,8 +69,8 @@
           <template #machineHost="record">
             <a-tooltip title="点击复制">
             <span class="span-blue pointer" @click="$copy(record.machineHost)">
-            {{ record.machineHost }}
-          </span>
+              {{ record.machineHost }}
+            </span>
             </a-tooltip>
           </template>
           <!-- 状态 -->

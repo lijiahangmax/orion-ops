@@ -226,7 +226,7 @@ public class MessageConst {
 
     public static final String AGENT_STATUS_IS_STARTING = "插件正在启动中";
 
-    public static final String AGENT_FILE_NON_EXIST = "插件包不存在 请确认文件路径: {}";
+    public static final String AGENT_FILE_NON_EXIST = "插件包不存在 请参考文档并移动到: {}";
 
     public static final String WEBHOOK_ABSENT = "webhook 不存在";
 
