@@ -1,5 +1,21 @@
 ⚡ 注意: 应用不支持跨版本升级, 可以进行多次升级
 
+## 1.2.5
+
+> sql 脚本
+
+```sql
+ALTER TABLE `machine_secret_key` 
+MODIFY COLUMN `key_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥名称' AFTER `id`,
+MODIFY COLUMN `secret_key_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥文件本地路径' AFTER `key_name`,
+MODIFY COLUMN `password` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥密码' AFTER `secret_key_path`,
+COMMENT = '机器ssh登陆密钥';
+
+ALTER TABLE `machine_info` 
+MODIFY COLUMN `key_id` bigint(0) NULL DEFAULT NULL COMMENT '密钥id' AFTER `proxy_id`,
+MODIFY COLUMN `auth_type` tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立密钥' AFTER `password`;
+```
+
 ## 1.2.1
 
 > sql 脚本
@@ -39,8 +55,8 @@ DROP COLUMN `params_json`,
 ADD COLUMN `rel_id` bigint(0) NULL COMMENT '消息关联id' AFTER `send_message`;
 
 ALTER TABLE `machine_info` 
-ADD COLUMN `key_id` bigint(0) NULL COMMENT '秘钥id' AFTER `proxy_id`,
-MODIFY COLUMN `auth_type` tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立秘钥' AFTER `password`;
+ADD COLUMN `key_id` bigint(0) NULL COMMENT '密钥id' AFTER `proxy_id`,
+MODIFY COLUMN `auth_type` tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立密钥' AFTER `password`;
  
 UPDATE web_side_message SET message_type = 2010 WHERE message_type IN (2030, 2050, 2070, 2090, 2110, 2130);
 UPDATE web_side_message SET message_type = 2020 WHERE message_type IN (2040, 2060, 2080, 2100, 2120, 2140);

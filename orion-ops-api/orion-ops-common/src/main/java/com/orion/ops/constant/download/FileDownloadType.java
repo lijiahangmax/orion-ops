@@ -15,7 +15,7 @@ import lombok.Getter;
 public enum FileDownloadType {
 
     /**
-     * 秘钥
+     * 密钥
      *
      * @see com.orion.ops.constant.system.SystemEnvAttr#KEY_PATH
      */

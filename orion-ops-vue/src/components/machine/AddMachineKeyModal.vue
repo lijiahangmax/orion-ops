@@ -10,12 +10,12 @@
            @ok="check"
            @cancel="close">
     <a-spin :spinning="loading">
-      <a-alert class="mb16" message="请使用 ssh-keygen -m PEM -t rsa 生成秘钥"/>
+      <a-alert class="mb16" message="请使用 ssh-keygen -m PEM -t rsa 生成密钥"/>
       <a-form :form="form" v-bind="layout">
-        <a-form-item label="秘钥名称" hasFeedback>
+        <a-form-item label="密钥名称" hasFeedback>
           <a-input v-decorator="decorators.name" allowClear/>
         </a-form-item>
-        <a-form-item label="秘钥文件">
+        <a-form-item label="密钥文件">
           <a-upload v-decorator="decorators.file"
                     :beforeUpload="selectFile"
                     :fileList="fileList"
@@ -23,9 +23,9 @@
             <a-button icon="upload">选择文件</a-button>
           </a-upload>
         </a-form-item>
-        <a-form-item label="秘钥密码">
+        <a-form-item label="密钥密码">
           <a-input-password v-decorator="decorators.password"
-                            placeholder="为空则代表秘钥无密码"
+                            placeholder="为空则代表密钥无密码"
                             allowClear/>
         </a-form-item>
         <a-form-item label="描述">
@@ -50,10 +50,10 @@ function getDecorators() {
     name: ['name', {
       rules: [{
         required: true,
-        message: '请输入秘钥名称'
+        message: '请输入密钥名称'
       }, {
         max: 32,
-        message: '秘钥名称长度不能大于32位'
+        message: '密钥名称长度不能大于32位'
       }]
     }],
     file: ['file', {
@@ -93,11 +93,11 @@ export default {
   },
   methods: {
     add() {
-      this.title = '新增秘钥'
+      this.title = '新增密钥'
       this.initRecord({})
     },
     update(id) {
-      this.title = '修改秘钥'
+      this.title = '修改密钥'
       this.$api.getMachineKeyDetail({
         id
       }).then(({ data }) => {
@@ -119,7 +119,7 @@ export default {
     },
     validateFile(rule, value, callback) {
       if (!this.id && !this.fileList.length) {
-        callback(new Error('请选择秘钥文件'))
+        callback(new Error('请选择密钥文件'))
       } else {
         callback()
       }

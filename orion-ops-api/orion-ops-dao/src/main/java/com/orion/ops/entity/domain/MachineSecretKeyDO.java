@@ -10,14 +10,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 机器ssh登陆秘钥
+ * 机器 ssh 登陆密钥
  *
  * @author Jiahang Li
  * @since 2021-04-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "机器ssh登陆秘钥")
+@ApiModel(value = "机器ssh登陆密钥")
 @TableName("machine_secret_key")
 public class MachineSecretKeyDO implements Serializable {
 
@@ -27,15 +27,15 @@ public class MachineSecretKeyDO implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "秘钥名称")
+    @ApiModelProperty(value = "密钥名称")
     @TableField("key_name")
     private String keyName;
 
-    @ApiModelProperty(value = "秘钥文件本地路径")
+    @ApiModelProperty(value = "密钥文件本地路径")
     @TableField("secret_key_path")
     private String secretKeyPath;
 
-    @ApiModelProperty(value = "秘钥密码")
+    @ApiModelProperty(value = "密钥密码")
     @TableField("password")
     private String password;
 

@@ -78,7 +78,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         // 获取日志绝对路径
         switch (type) {
             case SECRET_KEY:
-                // 秘钥
+                // 密钥
                 path = this.getDownloadSecretKeyFilePath(id);
                 name = Optional.ofNullable(path).map(Files1::getFileName).orElse(null);
                 break;
@@ -211,7 +211,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     }
 
     /**
-     * 获取下载 秘钥路径
+     * 获取下载 密钥路径
      *
      * @param id id
      * @return path

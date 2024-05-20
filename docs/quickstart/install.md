@@ -35,7 +35,7 @@ orion-ops/sql/init-data.sql
 ```
 # 修改配置文件 (mysql, redis)
 orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-prod.properties
-# 修改全局加密秘钥, 为了密码安全考虑 (推荐修改)
+# 修改全局加密密钥, 为了密码安全考虑 (推荐修改)
 orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
 # 进入代码目录
 cd orion-ops/orion-ops-api
@@ -129,7 +129,7 @@ service nginx start
 
 登录后需要配置宿主机 SSH 信息, 直到可以访问  
 如果是密码登录: 机器管理 > 机器列表 > `宿主机` > 更多 > 编辑 > 选择认证方式为密码 > 输入密码 > 确定  
-如果是秘钥登陆: 机器管理 > 机器秘钥 > 新建  
+如果是密钥登陆: 机器管理 > 机器密钥 > 新建  
 配置完成后测试连接: 机器管理 > 机器列表 > `宿主机` > 更多 > 测试连接   
 创建应用环境: 应用管理 > 环境管理 > 添加 (已执行 `init-data.sql` 则可以忽略)
 

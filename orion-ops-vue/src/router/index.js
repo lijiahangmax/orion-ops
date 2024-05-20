@@ -211,7 +211,7 @@ const routes = [
         name: 'MachineKey',
         meta: {
           requireAuth: true,
-          title: '机器秘钥'
+          title: '机器密钥'
         },
         component: () => import('../views/machine/MachineKey')
       },

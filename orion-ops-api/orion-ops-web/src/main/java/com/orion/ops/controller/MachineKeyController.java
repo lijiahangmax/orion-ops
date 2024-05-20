@@ -20,13 +20,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * 机器秘钥 api
+ * 机器密钥 api
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/3 23:10
  */
-@Api(tags = "机器秘钥")
+@Api(tags = "机器密钥")
 @RestController
 @RestWrapper
 @RequestMapping("/orion/api/machine-key")
@@ -36,7 +36,7 @@ public class MachineKeyController {
     private MachineKeyService machineKeyService;
 
     @PostMapping("/add")
-    @ApiOperation(value = "添加机器秘钥")
+    @ApiOperation(value = "添加机器密钥")
     @EventLog(EventType.ADD_MACHINE_KEY)
     public Long addKey(@RequestBody MachineKeyRequest request) {
         Valid.notBlank(request.getName());
@@ -45,7 +45,7 @@ public class MachineKeyController {
     }
 
     @PostMapping("/update")
-    @ApiOperation(value = "更新机器秘钥")
+    @ApiOperation(value = "更新机器密钥")
     @EventLog(EventType.UPDATE_MACHINE_KEY)
     public Integer updateKey(@RequestBody MachineKeyRequest request) {
         Valid.notNull(request.getId());
@@ -53,7 +53,7 @@ public class MachineKeyController {
     }
 
     @PostMapping("/remove")
-    @ApiOperation(value = "删除机器秘钥")
+    @ApiOperation(value = "删除机器密钥")
     @EventLog(EventType.DELETE_MACHINE_KEY)
     public Integer removeKey(@RequestBody MachineKeyRequest request) {
         List<Long> idList = Valid.notEmpty(request.getIdList());
@@ -61,20 +61,20 @@ public class MachineKeyController {
     }
 
     @PostMapping("/list")
-    @ApiOperation(value = "获取机器秘钥列表")
+    @ApiOperation(value = "获取机器密钥列表")
     public DataGrid<MachineSecretKeyVO> listKeys(@RequestBody MachineKeyRequest request) {
         return machineKeyService.listKeys(request);
     }
 
     @PostMapping("/detail")
-    @ApiOperation(value = "获取机器秘钥详情")
+    @ApiOperation(value = "获取机器密钥详情")
     public MachineSecretKeyVO getKeyDetail(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());
         return machineKeyService.getKeyDetail(id);
     }
 
     @PostMapping("/bind")
-    @ApiOperation(value = "绑定机器秘钥")
+    @ApiOperation(value = "绑定机器密钥")
     @EventLog(EventType.BIND_MACHINE_KEY)
     public HttpWrapper<?> bindMachineKey(@RequestBody MachineKeyRequest request) {
         Long id = Valid.notNull(request.getId());

@@ -9,10 +9,10 @@
            @ok="bind"
            @cancel="close">
     <a-spin :spinning="loading">
-      <span class="normal-label">机器秘钥</span>
+      <span class="normal-label">机器密钥</span>
       <a-select class="key-selector"
                 v-model="keyId"
-                placeholder="选择秘钥"
+                placeholder="选择密钥"
                 allowClear>
         <a-select-option v-for="key of keys" :key="key.id" :value="key.id">
           {{ key.name }}
@@ -52,7 +52,7 @@ export default {
       this.visible = true
       this.id = id
       this.keyId = keyId
-      this.title = `秘钥绑定 ${name}`
+      this.title = `密钥绑定 ${name}`
     },
     loadMachineKeys() {
       this.loading = true
@@ -67,7 +67,7 @@ export default {
     },
     bind() {
       if (!this.keyId) {
-        this.$message.error('请选择绑定的秘钥')
+        this.$message.error('请选择绑定的密钥')
         return
       }
       this.$api.bindMachineKey({

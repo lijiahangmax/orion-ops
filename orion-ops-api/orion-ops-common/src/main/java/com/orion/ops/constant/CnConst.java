@@ -40,7 +40,7 @@ public class CnConst {
 
     public static final String TOKEN = "令牌";
 
-    public static final String SECRET_KEY = "独立秘钥";
+    public static final String SECRET_KEY = "独立密钥";
 
     public static final String READ = "已读";
 

@@ -40,9 +40,9 @@ public enum EventClassify {
     MACHINE_ENV(210, "机器环境变量操作"),
 
     /**
-     * 秘钥操作
+     * 密钥操作
      */
-    MACHINE_KEY(220, "秘钥操作"),
+    MACHINE_KEY(220, "密钥操作"),
 
     /**
      * 代理操作

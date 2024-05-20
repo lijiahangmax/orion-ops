@@ -6,7 +6,7 @@
 
 | key        | 示例               | 描述                      |
 | :----      | :---              | :----                     |
-| key_path   | /root/orion/keys  | 秘钥存放目录                |
+| key_path   | /root/orion/keys  | 密钥存放目录                |
 | pic_path   | /root/orion/pic   | 图片存放目录                |
 | swap_path  | /root/orion/swap  | 交换分区目录                | 
 | log_path   | /root/orion/log   | 日志存放目录                | 

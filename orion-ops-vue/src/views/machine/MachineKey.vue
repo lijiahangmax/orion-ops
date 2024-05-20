@@ -5,7 +5,7 @@
       <a-form-model class="machine-key-search-form" ref="query" :model="query">
         <a-row>
           <a-col :span="6">
-            <a-form-model-item label="秘钥名称" prop="name">
+            <a-form-model-item label="密钥名称" prop="name">
               <a-input v-model="query.name" allowClear/>
             </a-form-model-item>
           </a-col>
@@ -23,11 +23,11 @@
       <div class="table-tools-bar">
         <!-- 左侧 -->
         <div class="tools-fixed-left">
-          <span class="table-title">机器秘钥</span>
+          <span class="table-title">机器密钥</span>
           <a-divider v-show="selectedRowKeys.length" type="vertical"/>
           <div v-show="selectedRowKeys.length">
             <!-- 删除 -->
-            <a-popconfirm title="确认删除选中秘钥?"
+            <a-popconfirm title="确认删除选中密钥?"
                           placement="topRight"
                           ok-text="确定"
                           cancel-text="取消"
@@ -55,7 +55,7 @@
                  :scroll="{x: '100%'}"
                  :loading="loading"
                  size="middle">
-          <!-- 秘钥路径 -->
+          <!-- 密钥路径 -->
           <template #path="record">
             <a @click="loadDownloadUrl(record)" title="获取下载链接">{{ record.path }}</a>
             <a v-if="record.downloadUrl"
@@ -87,7 +87,7 @@
             <a @click="update(record.id)">修改</a>
             <a-divider type="vertical"/>
             <!-- 删除 -->
-            <a-popconfirm title="确认删除当前秘钥?"
+            <a-popconfirm title="确认删除当前密钥?"
                           placement="topRight"
                           ok-text="确定"
                           cancel-text="取消"
@@ -118,7 +118,7 @@ import MachineChecker from '@/components/machine/MachineChecker'
  */
 const columns = [
   {
-    title: '秘钥名称',
+    title: '密钥名称',
     dataIndex: 'name',
     key: 'name',
     width: 200,
@@ -126,7 +126,7 @@ const columns = [
     sorter: (a, b) => a.name.localeCompare(b.name)
   },
   {
-    title: '秘钥路径',
+    title: '密钥路径',
     key: 'path',
     width: 265,
     scopedSlots: { customRender: 'path' }
@@ -215,7 +215,7 @@ export default {
       const ref = this.$refs[`machineChecker${id}`]
       const checkedList = ref.checkedList
       if (!checkedList || !checkedList.length) {
-        this.$message.warning('请选择绑定秘钥的机器')
+        this.$message.warning('请选择绑定密钥的机器')
         return
       }
       ref.hide()

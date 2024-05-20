@@ -243,7 +243,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                     vo.setProxyPort(p.getProxyPort());
                     vo.setProxyType(p.getProxyType());
                 });
-        // 查询秘钥信息
+        // 查询密钥信息
         Optional.ofNullable(machine.getKeyId())
                 .filter(s -> MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType()))
                 .map(machineSecretKeyDAO::selectById)
@@ -347,7 +347,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
     private void testConnectMachine(MachineInfoDO machine) {
         SessionStore s = null;
         try {
-            // 查询秘钥
+            // 查询密钥
             MachineSecretKeyDO key = Optional.ofNullable(machine.getKeyId())
                     .map(machineSecretKeyDAO::selectById)
                     .orElse(null);
@@ -391,7 +391,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         Integer connectTimeout = machineEnvService.getConnectTimeout(id);
         // 重试次数
         Integer retryTimes = machineEnvService.getConnectRetryTimes(id);
-        // 查询秘钥
+        // 查询密钥
         MachineSecretKeyDO key = Optional.ofNullable(machine.getKeyId())
                 .map(machineSecretKeyDAO::selectById)
                 .orElse(null);
@@ -442,7 +442,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
         SessionHolder sessionHolder = new SessionHolder();
         SessionStore session;
         try {
-            // 加载秘钥
+            // 加载密钥
             if (MachineAuthType.SECRET_KEY.getType().equals(machine.getAuthType())) {
                 String keyPath = MachineKeyService.getKeyPath(key.getSecretKeyPath());
                 String password = key.getPassword();

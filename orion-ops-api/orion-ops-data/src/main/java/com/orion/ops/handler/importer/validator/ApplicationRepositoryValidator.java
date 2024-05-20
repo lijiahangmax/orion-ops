@@ -59,11 +59,11 @@ public class ApplicationRepositoryValidator implements DataValidator {
 
     public static final String TOKEN_EMPTY_MESSAGE = "令牌不能为空";
 
-    public static final String USERNAME_TOKEN_MESSAGE = "令牌类型为 " + RepositoryTokenType.GITEE.getLabel() + " 时 用户名和秘钥必须同时存在";
+    public static final String USERNAME_TOKEN_MESSAGE = "令牌类型为 " + RepositoryTokenType.GITEE.getLabel() + " 时 用户名和密钥必须同时存在";
 
     public static final String USERNAME_LEN_MESSAGE = "用户名长度不能大于 " + USERNAME_MAX_LEN + "位";
 
-    public static final String TOKEN_LEN_MESSAGE = "秘钥长度不能大于 " + TOKEN_MAX_LEN + "位";
+    public static final String TOKEN_LEN_MESSAGE = "密钥长度不能大于 " + TOKEN_MAX_LEN + "位";
 
     public static final String PASSWORD_LEN_MESSAGE = "密码长度不能大于 " + PASSWORD_MAX_LEN + "位";
 

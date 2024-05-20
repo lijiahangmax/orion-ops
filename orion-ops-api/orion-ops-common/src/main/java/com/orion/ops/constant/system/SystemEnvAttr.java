@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public enum SystemEnvAttr {
 
     /**
-     * 秘钥存放目录
+     * 密钥存放目录
      */
-    KEY_PATH("秘钥存放目录", false),
+    KEY_PATH("密钥存放目录", false),
 
     /**
      * 图片存放目录
