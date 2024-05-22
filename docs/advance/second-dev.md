@@ -25,9 +25,9 @@ git clone https://gitee.com/lijiahangmax/orion-ops
 
 ```
 # 执行DDL脚本
-orion-ops/sql/init-schema.sql
+orion-ops/sql/init-1-schema.sql
 # 执行默认数据脚本 [默认用户, 默认应用环境, 常用命令模板] (可选)
-orion-ops/sql/init-data.sql
+orion-ops/sql/init-2-data.sql
 ```
 
 3. 修改后端配置
@@ -53,7 +53,7 @@ npm run serve:dev
 ```   
 
 5. 运行  
-   后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-data.sql` 则可以忽略)    
+   后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-2-data.sql` 则可以忽略)    
    启动参数 idea 中设置 `应用设置` > `Environment` > `Program arguments`
 
 ### 测试访问
@@ -73,7 +73,7 @@ npm run serve:dev
 如果是密码登录: 机器管理 > 机器列表 > `宿主机` > 更多 > 编辑 > 选择认证方式为密码 > 输入密码 > 确定  
 如果是密钥登陆: 机器管理 > 机器密钥 > 新建  
 配置完成后测试连接: 机器管理 > 机器列表 > `宿主机` > 更多 > 测试连接  
-创建应用环境: 应用管理 > 环境管理 > 添加 (已执行 `init-data.sql` 则可以忽略)
+创建应用环境: 应用管理 > 环境管理 > 添加 (已执行 `init-2-data.sql` 则可以忽略)
 
 ### 启动参数
 

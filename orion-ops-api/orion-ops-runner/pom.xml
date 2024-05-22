@@ -4,7 +4,7 @@
     <parent>
         <artifactId>orion-ops-api</artifactId>
         <groupId>com.orion.ops</groupId>
-        <version>1.2.4</version>
+        <version>1.2.5</version>
     </parent>
 
     <name>orion-ops-runner</name>
