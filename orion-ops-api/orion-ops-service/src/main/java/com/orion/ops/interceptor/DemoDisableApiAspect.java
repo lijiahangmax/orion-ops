@@ -30,7 +30,7 @@ public class DemoDisableApiAspect {
     }
 
     @Before(value = "disableApi(e)", argNames = "e")
-    public void beforeLogRecord(DemoDisableApi e) {
+    public void beforeDisableApi(DemoDisableApi e) {
         throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.DEMO_DISABLE_API));
     }
 

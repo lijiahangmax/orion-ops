@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -38,6 +39,7 @@ public class MachineInfoController {
     @Resource
     private MachineInfoService machineInfoService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加机器")
     @EventLog(EventType.ADD_MACHINE)
@@ -50,6 +52,7 @@ public class MachineInfoController {
         return machineInfoService.addMachine(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改机器")
     @EventLog(EventType.UPDATE_MACHINE)
@@ -59,6 +62,7 @@ public class MachineInfoController {
         return machineInfoService.updateMachine(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除机器")
     @EventLog(EventType.DELETE_MACHINE)
@@ -68,6 +72,7 @@ public class MachineInfoController {
         return machineInfoService.deleteMachine(idList);
     }
 
+    @DemoDisableApi
     @PostMapping("/update-status")
     @ApiOperation(value = "停用/启用机器")
     @EventLog(EventType.CHANGE_MACHINE_STATUS)
@@ -91,6 +96,7 @@ public class MachineInfoController {
         return machineInfoService.machineDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/copy")
     @ApiOperation(value = "复制机器")
     @EventLog(EventType.COPY_MACHINE)
