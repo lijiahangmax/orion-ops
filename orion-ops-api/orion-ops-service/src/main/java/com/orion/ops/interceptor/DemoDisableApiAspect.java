@@ -5,9 +5,9 @@ import com.orion.lang.utils.Exceptions;
 import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.constant.ResultCode;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -25,8 +25,12 @@ public class DemoDisableApiAspect {
     public DemoDisableApiAspect() {
     }
 
-    @Around("@annotation(o)")
-    public Object around(ProceedingJoinPoint joinPoint, DemoDisableApi o) {
+    @Pointcut("@annotation(e)")
+    public void disableApi(DemoDisableApi e) {
+    }
+
+    @Before(value = "disableApi(e)", argNames = "e")
+    public void beforeLogRecord(DemoDisableApi e) {
         throw Exceptions.httpWrapper(HttpWrapper.of(ResultCode.DEMO_DISABLE_API));
     }
 

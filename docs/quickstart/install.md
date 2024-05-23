@@ -1,14 +1,15 @@
 ### 所需环境
 
-* JDK 1.8
-* Mysql 8.0(+)
-* Redis 5.0.5(+)
-* Node 11.12.0(+)
-* Maven 3.5.4(+)
-* Nginx
+* jdk 1.8
+* mysql 8.0.+
+* redis 6.0.+
+* node 16.16.+ (16及以下, 16+不可以)
+* maven 3.5.+
+* nginx
 
 ⚡ maven 推荐使用阿里云 mirror   
-⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npmmirror.com/`
+⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npmmirror.com/`  
+⚡ yarn 建议使用淘宝镜像 `yarn config set registry https://registry.npmmirror.com/`
 
 ### 构建
 

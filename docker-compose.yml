@@ -12,7 +12,7 @@ services:
       - REDIS_HOST=orion-ops-redis
       - REDIS_PASSWORD=Data@123456
       - SECRET_KEY=orion_ops
-      - PREVIEW=false
+      - DEMO_MODE=false
     volumes:
       - /data/orion-ops-space/docker-volumes/root:/root
     depends_on:

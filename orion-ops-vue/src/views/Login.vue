@@ -75,10 +75,11 @@ export default {
   data: function() {
     return {
       rules,
+      demoMode: process.env.VUE_APP_DEMO_MODE,
       isSubmit: false,
       form: {
-        username: null,
-        password: null
+        username: this.demoMode ? 'orionadmin' : null,
+        password: this.demoMode ? 'orionadmin' : null
       }
     }
   },
