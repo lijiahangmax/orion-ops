@@ -39,18 +39,18 @@ public class MachineInfoDataExporter extends AbstractDataExporter<MachineInfoExp
         // 查询机器信息
         List<MachineInfoDO> machineList = machineInfoDAO.selectList(null);
         List<MachineInfoExportDTO> exportList = Converts.toList(machineList, MachineInfoExportDTO.class);
-        // 查询秘钥
+        // 查询密钥
         List<Long> keyIdList = machineList.stream()
                 .map(MachineInfoDO::getKeyId)
                 .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
         if (!keyIdList.isEmpty()) {
-            // 查询秘钥
+            // 查询密钥
             Map<Long, String> keyNameMap = machineSecretKeyDAO.selectBatchIds(keyIdList)
                     .stream()
                     .collect(Collectors.toMap(MachineSecretKeyDO::getId, MachineSecretKeyDO::getKeyName));
-            // 设置秘钥名称
+            // 设置密钥名称
             for (MachineInfoExportDTO machine : exportList) {
                 machine.setKeyName(keyNameMap.get(machine.getId()));
             }

@@ -7,6 +7,7 @@ import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.codec.Base64s;
 import com.orion.lang.utils.io.FileReaders;
 import com.orion.net.remote.TerminalType;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -125,6 +126,7 @@ public class MachineTerminalController {
         return terminalSessionManager.getOnlineTerminal(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/manager/offline")
     @ApiOperation(value = "强制下线终端会话")
     @RequireRole(RoleType.ADMINISTRATOR)

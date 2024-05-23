@@ -4,6 +4,7 @@ import com.orion.lang.define.collect.MutableLinkedHashMap;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -50,6 +51,7 @@ public class SystemEnvController {
         return systemEnvService.addEnv(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改环境变量")
     @EventLog(EventType.UPDATE_SYSTEM_ENV)
@@ -59,6 +61,7 @@ public class SystemEnvController {
         return systemEnvService.updateEnv(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_SYSTEM_ENV)
@@ -91,6 +94,7 @@ public class SystemEnvController {
         return viewType.toValue(env);
     }
 
+    @DemoDisableApi
     @PostMapping("/view-save")
     @ApiOperation(value = "保存环境变量视图")
     @EventLog(EventType.SAVE_SYSTEM_ENV)

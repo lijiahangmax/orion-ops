@@ -14,7 +14,7 @@ RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config && 
     echo 'root:orionadmin' | chpasswd
 WORKDIR /app
 COPY ./machine-monitor-agent-latest.jar /root/orion-ops/lib/machine-monitor-agent-latest.jar
-COPY ./orion-ops-web-1.2.4.jar /app/app.jar
+COPY ./orion-ops-web.jar /app/app.jar
 COPY ./dist/index.html /usr/share/nginx/html/
 COPY ./dist /usr/share/nginx/html/ops
 ADD ./entrypoint.sh /app/entrypoint.sh

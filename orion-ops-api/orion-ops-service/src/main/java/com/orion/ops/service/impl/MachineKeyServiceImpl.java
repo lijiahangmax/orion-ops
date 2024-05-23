@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 机器秘钥服务
+ * 机器密钥服务
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -64,7 +64,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         } else {
             key.setPassword(ValueMix.encrypt(password));
         }
-        // 检查秘钥
+        // 检查密钥
         this.checkLoadKey(path, password);
         // 插入
         machineSecretKeyDAO.insert(key);
@@ -90,7 +90,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         // 修改文件
         final boolean updateFile = !Strings.isBlank(fileBase64);
         if (updateFile) {
-            // 修改秘钥文件 将新秘钥保存到本地
+            // 修改密钥文件 将新密钥保存到本地
             String keyFile = PathBuilders.getSecretKeyPath();
             String keyPath = MachineKeyService.getKeyPath(keyFile);
             Files1.touch(keyPath);
@@ -104,7 +104,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
         } else {
             updateKey.setPassword(ValueMix.encrypt(password));
         }
-        // 检查秘钥
+        // 检查密钥
         String checkPath = updateFile ? updateKey.getSecretKeyPath() : beforeKey.getSecretKeyPath();
         this.checkLoadKey(MachineKeyService.getKeyPath(checkPath), password);
         // 更新
@@ -118,7 +118,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer removeSecretKey(List<Long> idList) {
-        // 删除秘钥
+        // 删除密钥
         int effect = machineSecretKeyDAO.deleteBatchIds(idList);
         // 删除机器关联
         LambdaUpdateWrapper<MachineInfoDO> wrapper = new LambdaUpdateWrapper<MachineInfoDO>()
@@ -173,7 +173,7 @@ public class MachineKeyServiceImpl implements MachineKeyService {
     }
 
     /**
-     * 检查秘钥是否合法
+     * 检查密钥是否合法
      *
      * @param path     path
      * @param password 密码

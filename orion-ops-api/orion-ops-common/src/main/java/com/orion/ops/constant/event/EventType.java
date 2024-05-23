@@ -114,27 +114,27 @@ public enum EventType {
      */
     SYNC_MACHINE_ENV(210020, EventClassify.MACHINE_ENV, "同步机器环境变量", "同步 <sb>${envCount}</sb>个环境变量 到 <sb>${machineCount}</sb>台机器"),
 
-    // -------------------- 秘钥操作 --------------------
+    // -------------------- 密钥操作 --------------------
 
     /**
-     * 新增秘钥
+     * 新增密钥
      */
-    ADD_MACHINE_KEY(220010, EventClassify.MACHINE_KEY, "新增秘钥", "新建秘钥 <sb>${keyName}</sb>"),
+    ADD_MACHINE_KEY(220010, EventClassify.MACHINE_KEY, "新增密钥", "新建密钥 <sb>${keyName}</sb>"),
 
     /**
-     * 修改秘钥
+     * 修改密钥
      */
-    UPDATE_MACHINE_KEY(220020, EventClassify.MACHINE_KEY, "修改秘钥", "修改秘钥 <sb>${name}</sb>"),
+    UPDATE_MACHINE_KEY(220020, EventClassify.MACHINE_KEY, "修改密钥", "修改密钥 <sb>${name}</sb>"),
 
     /**
-     * 删除秘钥
+     * 删除密钥
      */
-    DELETE_MACHINE_KEY(220030, EventClassify.MACHINE_KEY, "删除秘钥", "删除秘钥 <sb>${count}</sb>个"),
+    DELETE_MACHINE_KEY(220030, EventClassify.MACHINE_KEY, "删除密钥", "删除密钥 <sb>${count}</sb>个"),
 
     /**
-     * 绑定秘钥
+     * 绑定密钥
      */
-    BIND_MACHINE_KEY(220040, EventClassify.MACHINE_KEY, "绑定秘钥", "绑定秘钥 <sb>${name}</sb> 到<sb 0>${count}</sb>台机器"),
+    BIND_MACHINE_KEY(220040, EventClassify.MACHINE_KEY, "绑定密钥", "绑定密钥 <sb>${name}</sb> 到<sb 0>${count}</sb>台机器"),
 
     // -------------------- 代理操作 --------------------
 

@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Objects1;
 import com.orion.lang.utils.convert.Converts;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.IgnoreAuth;
 import com.orion.ops.annotation.RestWrapper;
@@ -61,6 +62,7 @@ public class AuthenticateController {
         return HttpWrapper.ok();
     }
 
+    @DemoDisableApi
     @PostMapping("/reset")
     @ApiOperation(value = "重置密码")
     @EventLog(EventType.RESET_PASSWORD)

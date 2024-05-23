@@ -10,7 +10,7 @@ import com.orion.ops.entity.vo.machine.MachineSecretKeyVO;
 import java.util.List;
 
 /**
- * 机器秘钥服务
+ * 机器密钥服务
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -51,7 +51,7 @@ public interface MachineKeyService {
     MachineSecretKeyDO getKeyById(Long id);
 
     /**
-     * 查询秘钥列表
+     * 查询密钥列表
      *
      * @param request request
      * @return dataGrid
@@ -59,7 +59,7 @@ public interface MachineKeyService {
     DataGrid<MachineSecretKeyVO> listKeys(MachineKeyRequest request);
 
     /**
-     * 查询秘钥详情
+     * 查询密钥详情
      *
      * @param id id
      * @return row
@@ -67,7 +67,7 @@ public interface MachineKeyService {
     MachineSecretKeyVO getKeyDetail(Long id);
 
     /**
-     * 绑定机器秘钥
+     * 绑定机器密钥
      *
      * @param id            id
      * @param machineIdList 机器id

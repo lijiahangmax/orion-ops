@@ -179,7 +179,7 @@
                     测试连接
                   </a-menu-item>
                   <a-menu-item key="bindKey" v-if="record.authType === MACHINE_AUTH_TYPE.SECRET_KEY.value">
-                    绑定秘钥
+                    绑定密钥
                   </a-menu-item>
                   <a-menu-item key="openEnv">
                     <a :href="`#/machine/env/${record.id}`">环境变量</a>

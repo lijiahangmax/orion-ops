@@ -658,7 +658,7 @@ const $api = {
   },
 
   /**
-   * 添加秘钥
+   * 添加密钥
    */
   addMachineKey: param => {
     return $http.$post('/machine-key/add', param, {
@@ -667,7 +667,7 @@ const $api = {
   },
 
   /**
-   * 更新秘钥
+   * 更新密钥
    */
   updateMachineKey: param => {
     return $http.$post('/machine-key/update', param, {
@@ -676,7 +676,7 @@ const $api = {
   },
 
   /**
-   * 删除秘钥
+   * 删除密钥
    */
   removeMachineKey: param => {
     return $http.$post('/machine-key/remove', param, {
@@ -685,21 +685,21 @@ const $api = {
   },
 
   /**
-   * 查询秘钥列表
+   * 查询密钥列表
    */
   getMachineKeyList: param => {
     return $http.$post('/machine-key/list', param)
   },
 
   /**
-   * 查询秘钥详情
+   * 查询密钥详情
    */
   getMachineKeyDetail: param => {
     return $http.$post('/machine-key/detail', param)
   },
 
   /**
-   * 绑定机器秘钥
+   * 绑定机器密钥
    */
   bindMachineKey: param => {
     return $http.$post('/machine-key/bind', param, {

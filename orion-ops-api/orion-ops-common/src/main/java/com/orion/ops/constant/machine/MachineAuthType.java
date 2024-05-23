@@ -21,7 +21,7 @@ public enum MachineAuthType {
     PASSWORD(1, CnConst.PASSWORD),
 
     /**
-     * 2 独立秘钥
+     * 2 独立密钥
      */
     SECRET_KEY(2, CnConst.SECRET_KEY),
 

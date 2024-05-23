@@ -15,7 +15,8 @@ module.exports = {
         changeOrigin: true
       }
     }
-  }
+  },
+  transpileDependencies: true
   // configureWebpack: config => {
   //   if (isProduction) {
   //     // 开启分离js

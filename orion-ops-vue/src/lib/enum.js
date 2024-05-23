@@ -180,7 +180,7 @@ export const MACHINE_AUTH_TYPE = {
   },
   SECRET_KEY: {
     value: 2,
-    label: '独立秘钥'
+    label: '独立密钥'
   }
 }
 
@@ -422,7 +422,7 @@ export const LOG_TAIL_STATUS = {
  */
 export const FILE_DOWNLOAD_TYPE = {
   /**
-   * 秘钥
+   * 密钥
    */
   SECRET_KEY: {
     value: 10
@@ -917,7 +917,7 @@ export const EVENT_CLASSIFY = {
   },
   MACHINE_KEY: {
     value: 220,
-    label: '秘钥操作'
+    label: '密钥操作'
   },
   MACHINE_PROXY: {
     value: 230,
@@ -1105,22 +1105,22 @@ export const EVENT_TYPE = {
   },
   ADD_MACHINE_KEY: {
     value: 220010,
-    label: '新增秘钥',
+    label: '新增密钥',
     classify: 220
   },
   UPDATE_MACHINE_KEY: {
     value: 220020,
-    label: '修改秘钥',
+    label: '修改密钥',
     classify: 220
   },
   DELETE_MACHINE_KEY: {
     value: 220030,
-    label: '删除秘钥',
+    label: '删除密钥',
     classify: 220
   },
   BIND_MACHINE_KEY: {
     value: 220040,
-    label: '绑定秘钥',
+    label: '绑定密钥',
     classify: 220
   },
   ADD_MACHINE_PROXY: {

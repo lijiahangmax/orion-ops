@@ -8,7 +8,7 @@
 重启后端服务 添加启动参数 `--reset-admin` 会将 `orionadmin` 的密码重置为 `orionadmin`
 
 ```
-nohup java -jar orion-ops-web-1.2.4.jar --spring.profiles.active=prod --reset-admin &
+nohup java -jar orion-ops-web-1.2.5.jar --spring.profiles.active=prod --reset-admin &
 ```
 
 <br/> 
@@ -18,7 +18,7 @@ nohup java -jar orion-ops-web-1.2.4.jar --spring.profiles.active=prod --reset-ad
 重启后端服务 添加启动参数 `--disable-ip-filter` 会将禁用ip过滤器
 
 ```
-nohup java -jar orion-ops-web-1.2.4.jar --spring.profiles.active=prod --disable-ip-filter &
+nohup java -jar orion-ops-web-1.2.5.jar --spring.profiles.active=prod --disable-ip-filter &
 ```
 
 <br/> 
@@ -109,14 +109,14 @@ server {
 同理, 在命令的最后一行设置 `exit 1` 结果将会是失败, 可以用此来中断后续流程  
 <br/>
 
-> ##### 17. 为什么使用秘钥认证还是无法连接机器?
+> ##### 17. 为什么使用密钥认证还是无法连接机器?
 
 ```
 # 升级 openssh
 yum update openssh
 sshd -v (我的版本: OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017)
 
-# 生成秘钥时添加参数 -m PEM
+# 生成密钥时添加参数 -m PEM
 ssh-keygen -t rsa -m PEM
 chmod 700  ~/.ssh
 chmod 700  ~/.ssh/authorized_keys 

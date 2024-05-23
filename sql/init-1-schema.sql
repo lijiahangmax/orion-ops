@@ -636,7 +636,7 @@ CREATE TABLE `machine_info`
 (
     `id`             bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
     `proxy_id`       bigint(0) NULL DEFAULT NULL COMMENT '代理id',
-    `key_id`         bigint(0) NULL DEFAULT NULL COMMENT '秘钥id',
+    `key_id`         bigint(0) NULL DEFAULT NULL COMMENT '密钥id',
     `machine_host`   varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主机ip',
     `ssh_port`       int(0) NULL DEFAULT 22 COMMENT 'ssh端口',
     `machine_name`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器名称',
@@ -644,7 +644,7 @@ CREATE TABLE `machine_info`
     `description`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器描述',
     `username`       varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器账号',
     `password`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '机器密码',
-    `auth_type`      tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立秘钥',
+    `auth_type`      tinyint(1) NULL DEFAULT NULL COMMENT '机器认证方式 1: 密码认证 2: 独立密钥',
     `machine_status` tinyint(1) NULL DEFAULT 1 COMMENT '机器状态 1有效 2无效',
     `deleted`        tinyint(0) NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time`    datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
@@ -697,15 +697,15 @@ DROP TABLE IF EXISTS `machine_secret_key`;
 CREATE TABLE `machine_secret_key`
 (
     `id`              bigint(0) NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `key_name`        varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '秘钥名称',
-    `secret_key_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '秘钥文件本地路径',
-    `password`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '秘钥密码',
+    `key_name`        varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥名称',
+    `secret_key_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥文件本地路径',
+    `password`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密钥密码',
     `description`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
     `deleted`         tinyint(0) NULL DEFAULT 1 COMMENT '是否删除 1未删除 2已删除',
     `create_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登陆秘钥' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登陆密钥' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_terminal

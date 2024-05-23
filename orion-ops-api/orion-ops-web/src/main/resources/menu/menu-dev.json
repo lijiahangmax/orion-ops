@@ -13,7 +13,7 @@
         "path": "/machine/list"
       },
       {
-        "name": "机器秘钥",
+        "name": "机器密钥",
         "path": "/machine/key"
       },
       {

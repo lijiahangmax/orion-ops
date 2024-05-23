@@ -32,6 +32,8 @@ public class MessageConst {
 
     public static final String OPERATOR_ERROR = "操作失败";
 
+    public static final String DEMO_DISABLE_API = "演示模式不支持此功能";
+
     public static final String HTTP_API = "api 调用异常";
 
     public static final String NETWORK_FLUCTUATION = "当前环境网路波动";
@@ -142,7 +144,7 @@ public class MessageConst {
 
     public static final String TRANSFER_ACTION_PRESENT = "传输操作只能有一个";
 
-    public static final String ILLEGAL_MACHINE_SECRET_KEY = "秘钥不合法, 请检查密码或使用 ssh-keygen -m PEM -t rsa 重新生成";
+    public static final String ILLEGAL_MACHINE_SECRET_KEY = "密钥不合法, 请检查密码或使用 ssh-keygen -m PEM -t rsa 重新生成";
 
     public static final String AUTO_AUDIT_RESOLVE = "自动审核通过";
 
@@ -220,7 +222,7 @@ public class MessageConst {
 
     public static final String UNKNOWN_MACHINE_TAG = "未查询到机器: {}";
 
-    public static final String UNKNOWN_MACHINE_KEY = "未查询到机器秘钥: {}";
+    public static final String UNKNOWN_MACHINE_KEY = "未查询到机器密钥: {}";
 
     public static final String UNKNOWN_APP_REPOSITORY = "未查询到应用仓库: {}";
 

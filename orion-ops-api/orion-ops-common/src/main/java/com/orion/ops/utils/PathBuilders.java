@@ -227,7 +227,7 @@ public class PathBuilders {
     }
 
     /**
-     * 获取秘钥路径
+     * 获取密钥路径
      *
      * @return path
      */

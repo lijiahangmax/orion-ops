@@ -41,6 +41,11 @@ public enum ResultCode implements CodeInfo {
      */
     ILLEGAL_ACCESS(750, MessageConst.ILLEGAL_ACCESS),
 
+    /**
+     * 演示模式不支持此功能
+     */
+    DEMO_DISABLE_API(760, MessageConst.DEMO_DISABLE_API),
+
     ;
 
     private final int code;

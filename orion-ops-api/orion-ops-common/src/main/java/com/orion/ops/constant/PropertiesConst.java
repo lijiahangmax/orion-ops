@@ -26,7 +26,7 @@ public class PropertiesConst {
     public static String LOGIN_TOKEN_HEADER;
 
     /**
-     * 加密秘钥
+     * 加密密钥
      */
     public static String VALUE_MIX_SECRET_KEY;
 

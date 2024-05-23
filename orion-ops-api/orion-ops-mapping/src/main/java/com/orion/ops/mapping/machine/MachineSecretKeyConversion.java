@@ -5,7 +5,7 @@ import com.orion.ops.entity.domain.MachineSecretKeyDO;
 import com.orion.ops.entity.vo.machine.MachineSecretKeyVO;
 
 /**
- * 机器秘钥 对象转换器
+ * 机器密钥 对象转换器
  *
  * @author Jiahang Li
  * @version 1.0.0

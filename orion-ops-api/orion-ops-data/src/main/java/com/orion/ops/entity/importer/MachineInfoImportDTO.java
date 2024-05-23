@@ -61,7 +61,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     @ImportField(index = 7)
     private String importPassword;
 
-    @ApiModelProperty(value = "秘钥名称")
+    @ApiModelProperty(value = "密钥名称")
     @ImportField(index = 8)
     private String keyName;
 
@@ -72,7 +72,7 @@ public class MachineInfoImportDTO extends BaseDataImportDTO {
     @ApiModelProperty(value = "密码密文解密后的明文", hidden = true)
     private String decryptPassword;
 
-    @ApiModelProperty(value = "秘钥id", hidden = true)
+    @ApiModelProperty(value = "密钥id", hidden = true)
     private Long keyId;
 
     static {

@@ -34,10 +34,10 @@ public class MachineInfoVO {
     @ApiModelProperty(value = "代理类型")
     private Integer proxyType;
 
-    @ApiModelProperty(value = "秘钥id")
+    @ApiModelProperty(value = "密钥id")
     private Long keyId;
 
-    @ApiModelProperty(value = "秘钥名称")
+    @ApiModelProperty(value = "密钥名称")
     private String keyName;
 
     @ApiModelProperty(value = "主机ip")
@@ -61,7 +61,7 @@ public class MachineInfoVO {
     /**
      * @see com.orion.ops.constant.machine.MachineAuthType
      */
-    @ApiModelProperty(value = "机器认证方式 1: 密码认证 2: 独立秘钥")
+    @ApiModelProperty(value = "机器认证方式 1: 密码认证 2: 独立密钥")
     private Integer authType;
 
     /**

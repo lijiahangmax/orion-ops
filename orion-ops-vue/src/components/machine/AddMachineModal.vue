@@ -56,7 +56,7 @@
             <a-form-item label="认证密码" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.PASSWORD.value">
               <a-input-password class="machine-input" v-decorator="decorators.password" allowClear/>
             </a-form-item>
-            <a-form-item label="认证秘钥" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.SECRET_KEY.value">
+            <a-form-item label="认证密钥" v-show="form.getFieldValue('authType') === MACHINE_AUTH_TYPE.SECRET_KEY.value">
               <a-select class="machine-input" placeholder="请选择" v-decorator="decorators.keyId" allowClear>
                 <a-select-option v-for="key in keyList" :key="key.id" :value="key.id">
                   {{ key.name }}
@@ -95,7 +95,7 @@
     </a-modal>
     <!-- 事件 -->
     <div class="machine-add-modal-event-container">
-      <!-- 新增秘钥模态框 -->
+      <!-- 新增密钥模态框 -->
       <AddMachineKeyModal ref="addKeyModal" @added="getKeyList"/>
       <!-- 新增代理模态框 -->
       <AddMachineProxyModal ref="addProxyModal" @added="getProxyList"/>
@@ -227,7 +227,7 @@ export default {
     validateKeyId(rule, value, callback) {
       const authType = this.form.getFieldValue('authType')
       if (!value && authType === MACHINE_AUTH_TYPE.SECRET_KEY.value) {
-        callback(new Error('请选择认证秘钥'))
+        callback(new Error('请选择认证密钥'))
       } else {
         callback()
       }
@@ -260,7 +260,7 @@ export default {
           node.label = node.path
         })
       }).then(() => {
-        // 加载秘钥
+        // 加载密钥
         this.getKeyList()
       }).then(() => {
         // 加载代理
@@ -346,7 +346,7 @@ export default {
         return false
       }
       if (authType === MACHINE_AUTH_TYPE.SECRET_KEY.value && !keyId) {
-        this.$message.error('请选择认证秘钥')
+        this.$message.error('请选择认证密钥')
         return false
       }
       if (authType === MACHINE_AUTH_TYPE.PASSWORD.value && !password) {

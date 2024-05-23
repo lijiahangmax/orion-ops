@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 机器秘钥请求
+ * 机器密钥请求
  *
  * @author Jiahang Li
  * @version 1.0.0
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "机器秘钥请求")
+@ApiModel(value = "机器密钥请求")
 @SuppressWarnings("ALL")
 public class MachineKeyRequest extends PageRequest {
 

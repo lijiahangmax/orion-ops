@@ -1,6 +1,6 @@
 {
   "name": "orion-ops-vue",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,11 +15,11 @@
     "ant-design-vue": "^1.7.8",
     "asciinema-player": "^3.0.1",
     "axios": "^0.23.0",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.3",
     "js-md5": "^0.7.3",
     "lodash": "^4.17.21",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.1",
     "vue2-ace-editor": "^0.0.15",
     "xterm": "^4.14.1",
     "xterm-addon-fit": "^0.5.0",
@@ -27,21 +27,36 @@
     "xterm-addon-web-links": "^0.4.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^8.2.2",
-    "brace": "^0.11.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.2.2",
-    "less": "^3.0.4",
-    "less-loader": "^5.0.0",
-    "vue-template-compiler": "^2.6.11"
-  }
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "less": "^4.0.0",
+    "less-loader": "^8.0.0",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "eslintIgnore": ["*"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

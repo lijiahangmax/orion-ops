@@ -1,49 +1,44 @@
-## orion-ops 是什么
-
-`orion-ops` 一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
-帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。
-
-<p style="text-align: left">
-	<a target="_blank" style="text-decoration: none" href="https://www.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lijiahangmax/orion-ops&amp;utm_campaign=Badge_Grade">
-		<img src="https://app.codacy.com/project/badge/Grade/18b08ef5e7294e80836c56d595fea4bb" alt="Codacy"/>
-	</a>
-	<a target="_blank" style="text-decoration: none" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-8+-green.svg" alt="jdk8"/>
-	</a>
-	<a target="_blank" style="text-decoration: none" href="https://www.apache.org/licenses/LICENSE-2.0">
-		<img src="https://img.shields.io/github/license/lijiahangmax/orion-ops" alt="License"/>
-	</a>
-	<a target="_blank" style="text-decoration: none" href="https://gitee.com/lijiahangmax/orion-ops/stargazers">
-		<img src="https://gitee.com/lijiahangmax/orion-ops/badge/star.svg?theme=dark" alt="star"/>
-	</a>
-	<a target="_blank" style="text-decoration: none" href="https://gitee.com/lijiahangmax/orion-ops/members">
-		<img src="https://gitee.com/lijiahangmax/orion-ops/badge/fork.svg?theme=dark" alt="fork"/>
-	</a>		
-	<a target="_blank" style="text-decoration: none" href="https://github.com/lijiahangmax/orion-ops">
-		<img src="https://img.shields.io/github/stars/lijiahangmax/orion-ops.svg?style=social" alt="star"/>
-	</a>	
+<p style="margin-top: 12px" align="center"><b>一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
+帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。</b></p>
+<p align="center">
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://app.codacy.com/gh/lijiahangmax/orion-ops/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade">
+      <img src="https://app.codacy.com/project/badge/Grade/49eaab3a9a474af3b87e1d21ffec71c4" alt="quality" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://www.apache.org/licenses/LICENSE-2.0">
+      <img src="https://img.shields.io/github/license/lijiahangmax/orion-ops" alt="License" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://github.com/lijiahangmax/orion-ops/releases">
+      <img src="https://img.shields.io/github/v/release/lijiahangmax/orion-ops" alt="release" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://gitee.com/lijiahangmax/orion-ops/stargazers">
+      <img src="https://gitee.com/lijiahangmax/orion-ops/badge/star.svg?theme=dark" alt="star" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://gitee.com/lijiahangmax/orion-ops/members">
+      <img src="https://gitee.com/lijiahangmax/orion-ops/badge/fork.svg?theme=dark" alt="fork" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://github.com/lijiahangmax/orion-ops">
+      <img src="https://img.shields.io/github/stars/lijiahangmax/orion-ops" alt="star" />
+    </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://github.com/lijiahangmax/orion-ops">
+      <img src="https://img.shields.io/github/forks/lijiahangmax/orion-ops" alt="star" />
+    </a>
 </p>
 
-<br/>  
-
-当前最新版本: **1.2.4**  
-github: https://github.com/lijiahangmax/orion-ops  
-gitee: https://gitee.com/lijiahangmax/orion-ops  
-csdn: https://blog.csdn.net/qq_41011894  
-orion-kit: [gitee](https://gitee.com/lijiahangmax/orion-kit) [github](https://github.com/lijiahangmax/orion-kit)    
-文档: https://lijiahangmax.github.io/orion-ops/#/    
-demo: http://101.43.254.243:1080/#/
-
-演示账号: `orionadmin`    
-演示密码: `orionadmin`  
-留个小星星再走吧⭐  
-
-## 重构版 orion-ops-pro
-
-`orion-ops` 除了修复发现的bug之外, 预计不会再进行后续的功能更新, 未来的开发重心为 **`orion-ops-pro`**  
-gitee: https://gitee.com/lijiahangmax/orion-ops-pro    
-github: https://github.com/lijiahangmax/orion-ops-pro  
-给 orion-ops-pro 点个 star 吧 ⭐
+------------------------------
 
 ## 特性
 
@@ -60,14 +55,28 @@ github: https://github.com/lijiahangmax/orion-ops-pro
 * 高扩展性: 前后端代码规范统一, 代码健壮质量高, 写法优雅, 易读好拓展
 * 免费开源: 前后端代码完全开源, 方便二次开发
 
+## 演示环境
+
+演示地址: http://101.43.254.243:1080/#/  
+演示账号: orionadmin/orionadmin
+
+⭐ 体验后可以点一下 `star` 这对我很重要!  
+🌈 如果本项目对你有帮助请帮忙推广一下 让更多的人知道此项目!
+[github](https://github.com/lijiahangmax/orion-ops)  [gitee](https://gitee.com/lijiahangmax/orion-ops)
+
 ## 快速开始
 
-安装文档: https://lijiahangmax.github.io/orion-ops/#/quickstart/install   
-开发文档: https://lijiahangmax.github.io/orion-ops/#/advance/second-dev   
-操作手册: https://lijiahangmax.github.io/orion-ops/#/operator/machine  
-常见问题: https://lijiahangmax.github.io/orion-ops/#/quickstart/faq  
-通用模板: https://lijiahangmax.github.io/orion-ops/#/template/java-springboot-template  
-roadmap: https://lijiahangmax.github.io/orion-ops/#/about/roadmap
+* [文档地址](https://lijiahangmax.github.io/orion-ops/#/)
+* [安装文档](https://lijiahangmax.github.io/orion-ops/#/quickstart/install)
+* [开发文档](https://lijiahangmax.github.io/orion-ops/#/advance/second-dev)
+* [操作手册](https://lijiahangmax.github.io/orion-ops/#/operator/machine)
+* [常见问题](https://lijiahangmax.github.io/orion-ops/#/quickstart/faq)
+* [通用模板](https://lijiahangmax.github.io/orion-ops/#/template/java-springboot-template)
+
+## 重构版 orion-visor
+
+`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全!
+[github](https://github.com/lijiahangmax/orion-visor)  [gitee](https://gitee.com/lijiahangmax/orion-visor)
 
 ## 技术栈
 
@@ -155,6 +164,10 @@ roadmap: https://lijiahangmax.github.io/orion-ops/#/about/roadmap
 ![操作日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/432c6dd0-0943-4868-9a2a-32147f566d55.jpg "操作日志")
 ![站内信](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/cfcbb03c-fafa-4e7c-9e2d-f22f8c56c753.jpg "站内信")
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=lijiahangmax/orion-ops&type=Date)](https://star-history.com/#lijiahangmax/orion-ops&Date)
+
 ## 添砖加瓦
 
 PR 规则: 只能在 `github` 的 `dev` 分支提交 PR, merge 后我会手动同步 gitee  
@@ -168,8 +181,8 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 <img src="https://oos-sdqd.ctyunapi.cn/album/2022/9/22/018ac2ff-164a-4f7d-a8ae-030c5d899726.png" alt="联系方式" width="540px"/>   
 
-📧 微信添加备注: ops 还不快骚扰一下~  
-<br/>
+📧 微信添加备注: ops   
+📧 合作/功能定制备注: 合作
 
 ## 支持一下
 

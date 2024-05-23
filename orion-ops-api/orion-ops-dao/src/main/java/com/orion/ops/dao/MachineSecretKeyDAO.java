@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- * 机器ssh登陆秘钥 Mapper 接口
+ * 机器 ssh 登陆密钥 Mapper 接口
  * </p>
  *
  * @author Jiahang Li

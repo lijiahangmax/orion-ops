@@ -35,7 +35,7 @@ git clone https://gitee.com/lijiahangmax/orion-ops
 # MYSQL_HOST           mysql 主机
 # MYSQL_USER           mysql 用户名
 # MYSQL_PASSWORD       mysql 密码
-# SECRET_KEY           加密秘钥
+# SECRET_KEY           加密密钥
 ```
 
 ### 启动镜像

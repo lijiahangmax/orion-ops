@@ -11,6 +11,8 @@ import com.orion.ops.constant.MessageConst;
 import com.orion.ops.interceptor.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.EncryptedDocumentException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -91,6 +93,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .maxAge(3600);
+    }
+
+    /**
+     * @return 演示模式禁用 api 切面
+     */
+    @Bean
+    @ConditionalOnProperty(value = "demo.mode", havingValue = "true")
+    public DemoDisableApiAspect demoDisableApiAspect() {
+        return new DemoDisableApiAspect();
     }
 
     @ExceptionHandler(value = Exception.class)

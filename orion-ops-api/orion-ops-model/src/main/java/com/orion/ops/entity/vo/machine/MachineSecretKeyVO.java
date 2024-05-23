@@ -7,21 +7,21 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 机器秘钥响应
+ * 机器密钥响应
  *
  * @author Jiahang Li
  * @version 1.0.0
  * @since 2021/4/5 13:44
  */
 @Data
-@ApiModel(value = "机器秘钥响应")
+@ApiModel(value = "机器密钥响应")
 @SuppressWarnings("ALL")
 public class MachineSecretKeyVO {
 
     @ApiModelProperty(value = "id")
     private Long id;
 
-    @ApiModelProperty(value = "秘钥名称")
+    @ApiModelProperty(value = "密钥名称")
     private String name;
 
     @ApiModelProperty(value = "路径")

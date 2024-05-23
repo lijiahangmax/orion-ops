@@ -46,7 +46,11 @@
           </a-form-model-item>
           <!-- 按钮 -->
           <a-form-model-item>
-            <a-button class="login-form-submit-button" type="primary" :disabled="isSubmit" html-type="submit">
+            <a-button class="login-form-submit-button"
+                      :class="{ 'demo': demoMode }"
+                      type="primary"
+                      :disabled="isSubmit"
+                      html-type="submit">
               登录
             </a-button>
           </a-form-model-item>
@@ -57,7 +61,7 @@
 </template>
 
 <script>
-import { md5 } from '@/lib/utils'
+import { md5, strToBoo } from '@/lib/utils'
 
 const rules = {
   username: [{
@@ -75,10 +79,11 @@ export default {
   data: function() {
     return {
       rules,
+      demoMode: strToBoo(process.env.VUE_APP_DEMO_MODE),
       isSubmit: false,
       form: {
-        username: null,
-        password: null
+        username: this.demoMode ? 'orionadmin' : null,
+        password: this.demoMode ? 'orionadmin' : null
       }
     }
   },
