@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.history.HistoryValueType;
 import com.orion.ops.entity.request.history.HistoryValueRequest;
@@ -41,6 +42,7 @@ public class HistoryValueController {
         return historyValueService.list(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/rollback")
     @ApiOperation(value = "回滚历史值")
     public HttpWrapper<?> rollback(@RequestBody HistoryValueRequest request) {

@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @Component
 @Aspect
 @Slf4j
-@Order(20)
+@Order(30)
 public class UserEventLogAspect {
 
     @Resource

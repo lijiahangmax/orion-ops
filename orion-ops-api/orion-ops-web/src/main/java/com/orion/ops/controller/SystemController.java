@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -48,6 +49,7 @@ public class SystemController {
         return systemService.getIpInfo(Servlets.getRemoteAddr(request));
     }
 
+    @DemoDisableApi
     @PostMapping("/config-ip")
     @ApiOperation(value = "配置ip过滤器列表")
     @EventLog(EventType.CONFIG_IP_LIST)
@@ -57,6 +59,7 @@ public class SystemController {
         return HttpWrapper.ok();
     }
 
+    @DemoDisableApi
     @PostMapping("/clean-system-file")
     @ApiOperation(value = "清理系统文件")
     @EventLog(EventType.CLEAN_SYSTEM_FILE)
@@ -73,6 +76,7 @@ public class SystemController {
         return systemService.getSystemAnalysis();
     }
 
+    @DemoDisableApi
     @GetMapping("/re-analysis")
     @ApiOperation(value = "重新进行系统统计分析")
     @EventLog(EventType.RE_ANALYSIS_SYSTEM)
@@ -82,6 +86,7 @@ public class SystemController {
         return systemService.getSystemAnalysis();
     }
 
+    @DemoDisableApi
     @PostMapping("/update-system-option")
     @ApiOperation(value = "修改系统配置项")
     @EventLog(EventType.UPDATE_SYSTEM_OPTION)

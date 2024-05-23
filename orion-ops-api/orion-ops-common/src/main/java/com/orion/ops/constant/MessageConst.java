@@ -32,6 +32,8 @@ public class MessageConst {
 
     public static final String OPERATOR_ERROR = "操作失败";
 
+    public static final String DEMO_DISABLE_API = "演示模式不支持此功能";
+
     public static final String HTTP_API = "api 调用异常";
 
     public static final String NETWORK_FLUCTUATION = "当前环境网路波动";
