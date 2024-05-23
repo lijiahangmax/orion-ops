@@ -8,6 +8,16 @@ export function isEmptyStr(val) {
 }
 
 /**
+ *  string -> boolean
+ */
+export function strToBoo(str) {
+  if (!str) {
+    return false
+  }
+  return str === 'true'
+}
+
+/**
  * 复制到剪切板
  */
 export function copyToClipboard(content) {
@@ -264,7 +274,7 @@ export function getPathAnalysis(analysisPath, paths = []) {
  */
 export function getPath(path) {
   return path.replace(new RegExp('\\\\+', 'g'), '/')
-    .replace(new RegExp('/+', 'g'), '/')
+  .replace(new RegExp('/+', 'g'), '/')
 }
 
 /**
@@ -327,16 +337,16 @@ export function cleanXss(s) {
  */
 export function replaceStainKeywords(message) {
   return cleanXss(message)
-    .replaceAll('&lt;sb 0&gt;', '<span class="span-blue mx0">')
-    .replaceAll('&lt;sb 2&gt;', '<span class="span-blue mx2">')
-    .replaceAll('&lt;sb&gt;', '<span class="span-blue mx4">')
-    .replaceAll('&lt;/sb&gt;', '</span>')
-    .replaceAll('&lt;sr 0&gt;', '<span class="span-red mx0">')
-    .replaceAll('&lt;sr 2&gt;', '<span class="span-red mx2">')
-    .replaceAll('&lt;sr&gt;', '<span class="span-red mx4">')
-    .replaceAll('&lt;/sr&gt;', '</span>')
-    .replaceAll('&lt;b&gt;', '<b>')
-    .replaceAll('&lt;/b&gt;', '</b>')
+  .replaceAll('&lt;sb 0&gt;', '<span class="span-blue mx0">')
+  .replaceAll('&lt;sb 2&gt;', '<span class="span-blue mx2">')
+  .replaceAll('&lt;sb&gt;', '<span class="span-blue mx4">')
+  .replaceAll('&lt;/sb&gt;', '</span>')
+  .replaceAll('&lt;sr 0&gt;', '<span class="span-red mx0">')
+  .replaceAll('&lt;sr 2&gt;', '<span class="span-red mx2">')
+  .replaceAll('&lt;sr&gt;', '<span class="span-red mx4">')
+  .replaceAll('&lt;/sr&gt;', '</span>')
+  .replaceAll('&lt;b&gt;', '<b>')
+  .replaceAll('&lt;/b&gt;', '</b>')
 }
 
 /**
@@ -344,17 +354,17 @@ export function replaceStainKeywords(message) {
  */
 export function clearStainKeywords(message) {
   return cleanXss(message)
-    .replaceAll('&lt;sb 0&gt;', '')
-    .replaceAll('&lt;sb 2&gt;', '')
-    .replaceAll('&lt;sb&gt;', '')
-    .replaceAll('&lt;/sb&gt;', '')
-    .replaceAll('&lt;sr 0&gt;', '')
-    .replaceAll('&lt;sr 2&gt;', '')
-    .replaceAll('&lt;sr&gt;', '')
-    .replaceAll('&lt;/sr&gt;', '')
-    .replaceAll('&lt;b&gt;', '')
-    .replaceAll('&lt;/b&gt;', '')
-    .replaceAll('<br/>', '\n')
+  .replaceAll('&lt;sb 0&gt;', '')
+  .replaceAll('&lt;sb 2&gt;', '')
+  .replaceAll('&lt;sb&gt;', '')
+  .replaceAll('&lt;/sb&gt;', '')
+  .replaceAll('&lt;sr 0&gt;', '')
+  .replaceAll('&lt;sr 2&gt;', '')
+  .replaceAll('&lt;sr&gt;', '')
+  .replaceAll('&lt;/sr&gt;', '')
+  .replaceAll('&lt;b&gt;', '')
+  .replaceAll('&lt;/b&gt;', '')
+  .replaceAll('<br/>', '\n')
 }
 
 /**
