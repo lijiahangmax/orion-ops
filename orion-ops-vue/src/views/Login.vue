@@ -82,8 +82,8 @@ export default {
       demoMode: strToBoo(process.env.VUE_APP_DEMO_MODE),
       isSubmit: false,
       form: {
-        username: this.demoMode ? 'orionadmin' : null,
-        password: this.demoMode ? 'orionadmin' : null
+        username: null,
+        password: null
       }
     }
   },
