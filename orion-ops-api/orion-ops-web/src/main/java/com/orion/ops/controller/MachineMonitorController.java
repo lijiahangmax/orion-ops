@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Booleans;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.event.EventType;
@@ -61,6 +62,7 @@ public class MachineMonitorController {
         return machineMonitorService.getMonitorVersion(url, accessToken);
     }
 
+    @DemoDisableApi
     @PostMapping("/install")
     @ApiOperation(value = "安装监控插件")
     @EventLog(EventType.INSTALL_UPGRADE_MACHINE_MONITOR)

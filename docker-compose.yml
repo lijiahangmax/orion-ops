@@ -40,7 +40,7 @@ services:
     environment:
       - REDIS_PASSWORD=Data@123456
     volumes:
-      - /data/orion-ops-space/docker-volumes/orion-visor-redis/data:/data
+      - /data/orion-ops-space/docker-volumes/orion-ops-redis/data:/data
     command: sh -c "redis-server /usr/local/redis.conf --requirepass $${REDIS_PASSWORD}"
   orion-adminer:
     image: adminer
