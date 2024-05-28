@@ -1,20 +1,20 @@
-#### tomcat 项目模板
+### tomcat 项目模板
 
 以一个普通的 maven 构建的 web 项目为例  
 构建操作为: `checkout` > `maven build`  
 发布操作为: `删除 tomcat/webapps/ROOT 和 ROOT.war` > `传输ROOT.war` > `shutdown.sh` > `startup.sh`  
 <br/>
 
-> 构建配置
+> 构建配置预览
 
 ![构建配置](../assert/img/template_tomcat_build.png "构建配置")
 
-> 发布配置
+> 发布配置预览
 
 ![发布配置1](../assert/img/template_tomcat_release_1.png "发布配置1")
 ![发布配置2](../assert/img/template_tomcat_release_2.png "发布配置2")
 
-#### 构建配置
+### 构建配置
 
 > 构建产物路径
 
@@ -37,7 +37,7 @@ mvn -U clean install -DskipTests
 echo '构建完成'
 ```
 
-#### 发布配置
+### 发布配置
 
 > 发布操作1 删除原有文件
 

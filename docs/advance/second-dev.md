@@ -15,7 +15,7 @@
 
 1. 拉取代码
 
-```
+```shell
 # github
 git clone https://github.com/lijiahangmax/orion-ops
 # gitee
@@ -42,7 +42,7 @@ orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties 
 
 4. 修改前端配置
 
-```
+```shell
 # 进入代码目录
 cd orion-ops/orion-ops-vue
 # 下载 yarn

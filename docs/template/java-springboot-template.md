@@ -1,20 +1,20 @@
-#### springboot 项目模板
+### springboot 项目模板
 
 以一个普通的 maven 构建的 springboot 项目为例  
 构建操作为: `checkout` > `maven build`  
 发布操作为: `删除旧版文件` > `传输文件` > `nohup java -jar demo-1.0.0-SNAPSHOT.jar &`  
 <br/>
 
-> 构建配置
+> 构建配置预览
 
 ![构建配置](../assert/img/template_boot_build.png "构建配置")
 
-> 发布配置
+> 发布配置预览
 
 ![发布配置1](../assert/img/template_boot_release_1.png "发布配置1")
 ![发布配置2](../assert/img/template_boot_release_2.png "发布配置2")
 
-#### 构建配置
+### 构建配置
 
 > 构建产物路径
 
@@ -37,7 +37,7 @@ mvn -U clean install -DskipTests
 echo '构建完成'
 ```
 
-#### 发布配置
+### 发布配置
 
 > 发布操作1 删除旧版文件
 

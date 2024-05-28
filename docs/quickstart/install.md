@@ -15,7 +15,7 @@
 
 1. 拉取代码
 
-```
+```shell
 # github
 git clone https://github.com/lijiahangmax/orion-ops
 # gitee
@@ -46,7 +46,7 @@ mvn -U clean install -DskipTests
 
 4. 构建前端代码
 
-```
+```shell
 # 进入代码目录
 cd orion-ops/orion-ops-vue
 # 下载 yarn

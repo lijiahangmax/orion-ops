@@ -1,3 +1,4 @@
+<div align="center"><img src="./assert/logo.svg" alt="logo" width="32" /></div>
 <p style="margin-top: 12px" align="center"><b>一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。</b></p>
 <p align="center">
@@ -89,15 +90,15 @@
 
 ## 功能预览
 
-> 控制台
+### 控制台
 
 ![控制台](./assert/img/console.png "控制台")
 
-> 机器列表
+### 机器列表
 
 ![机器列表](./assert/img/machine_list.png "机器列表")
 
-> 在线终端
+### 在线终端
 
 ![终端模态框](./assert/img/web_terminal_modal.png "终端模态框")
 ![终端banner](./assert/img/web_terminal_banner.png "终端banner")
@@ -105,61 +106,61 @@
 ![录屏回放](./assert/img/web_terminal_screen.png "录屏回放")
 ![终端监视](./assert/img/web_terminal_watcher.png "终端监视")
 
-> 在线文件管理
+### 在线文件管理
 
 ![在线文件管理](./assert/img/sftp_1.png "在线文件管理")  
 ![在线文件管理](./assert/img/sftp_2.png "在线文件管理")
 
-> 机器监控
+### 机器监控
 
 ![机器监控概要](./assert/img/machine_monitor_summary.png "机器监控概要")  
 ![机器监控信息](./assert/img/machine_monitor_view.png "机器监控信息")
 ![机器监控报警-钉钉](./assert/img/machine_monitor_alarm_ding.png "机器监控报警-钉钉")
 
-> 批量执行
+### 批量执行
 
 ![批量执行](./assert/img/batch_exec.png "批量执行")
 
-> 日志文件
+### 日志文件
 
 ![日志文件](./assert/img/log_view.png "日志文件")
 
-> 调度任务
+### 调度任务
 
 ![调度任务](./assert/img/scheduler.png "调度任务")  
 ![调度执行列表](./assert/img/scheduler_record.png "调度执行列表")  
 ![调度执行日志](./assert/img/scheduler_record_log.png "调度执行日志")
 
-> 应用配置
+### 应用配置
 
 ![应用列表](./assert/img/app_list.png "应用列表")  
 ![构建配置](./assert/img/app_build_config.png "构建配置")  
 ![发布配置](./assert/img/app_release_config.png "发布配置")
 
-> 构建列表
+### 构建列表
 
 ![构建列表](./assert/img/build_list.png "构建列表")  
 ![构建日志](./assert/img/build_log.png "构建日志")
 
-> 发布列表
+### 发布列表
 
 ![发布列表](./assert/img/release_list.png "发布列表")
 ![发布日志](./assert/img/release_log.png "发布日志")
 
-> 流水线任务
+### 流水线任务
 
 ![流水线配置](./assert/img/pipeline_list.png "流水线配置")
 ![流水线任务](./assert/img/pipeline_record_list.png "流水线任务")
 
-> 登陆日志
+### 登陆日志
 
 ![登陆日志](./assert/img/login_history.png "登陆日志")
 
-> 安全配置
+### 安全配置
 
 ![安全配置](./assert/img/security_config.png "安全配置")
 
-> 消息
+### 消息
 
 ![操作日志](./assert/img/event_log.png "操作日志")
 ![站内信](./assert/img/about_messsage.png "站内信")
