@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve  --mode dev",
     "build": "vue-cli-service build --mode production",
-    "build:demo": "cross-env VUE_APP_DEMO_MODE=true npm run build",
+    "build:demo": "set VUE_APP_DEMO_MODE=true&& npm run build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
