@@ -20,14 +20,14 @@
 
 应用在配置后系统会将部分配置信息存储到应用环境变量中。
 
-| key                | 示例                      | 描述                                          |
-| :----              | :---                     | :----                                         |
-| bundle_path        | target/build.jar         | 宿主机构建产物路径 (绝对路径/基于版本仓库的相对路径) |
-| transfer_path      | /data/projects/demo.jar  | 产物传输目标机器绝对路径                          |
-| transfer_mode      | sftp                     | 产物传输方式 (sftp/scp)                         |
-| transfer_file_type | normal                   | 产物传输文件类型 (normal/zip)                    |
-| release_serial     | parallel                 | 发布序列方式 (serial/parallel)                  |
-| exception_handler  | skip_all                 | 异常处理类型 (skip_all/skip_error)              |
+| key                | 示例                      | 描述                           |
+|:-------------------|:------------------------|:-----------------------------|
+| bundle_path        | target/build.jar        | 宿主机构建产物路径 (绝对路径/基于版本仓库的相对路径) |
+| transfer_path      | /data/projects/demo.jar | 产物传输目标机器绝对路径                 |
+| transfer_mode      | sftp                    | 产物传输方式 (sftp/scp)            |
+| transfer_file_type | normal                  | 产物传输文件类型 (normal/zip)        |
+| release_serial     | parallel                | 发布序列方式 (serial/parallel)     |
+| exception_handler  | skip_all                | 异常处理类型 (skip_all/skip_error) |
 
 <br/>  
 
@@ -54,15 +54,15 @@
 
 构建时系统提供了几个默认的变量, 在构建操作的命令中可以使用 `@{build.xxx}` 来替换。
 
-| key             | 示例                                     | 描述                                       |
-| :----           | :---                                     | :----                                     |
-| build_id        | 10                                       | 构建id (数据库自增)                         |
-| build_seq       | 1                                        | 当前环境该应用的构建序列                     |
+| key             | 示例                                       | 描述                            |
+|:----------------|:-----------------------------------------|:------------------------------|
+| build_id        | 10                                       | 构建id (数据库自增)                  |
+| build_seq       | 1                                        | 当前环境该应用的构建序列                  |
 | repo_home       | /orion/repo/2/10                         | 当前应用配置的版本仓库的 `clone` 目录 (如果有) |
-| repo_event_home | /orion/repo/event/2                      | 版本仓库的 (获取分支/commit) 目录 (只有一个)  |
-| branch          | origin/master                            | 构建所选的 `branch`                        |
-| commit          | 8ab50bada8525f6670c36114ad46baa70efda820 | 构建所选的 `commit`                        |
-| bundle_path     | /root/orion_ops/dist/build/128/dist      | 构建完成后产物存储路径                       |
+| repo_event_home | /orion/repo/event/2                      | 版本仓库的 (获取分支/commit) 目录 (只有一个) |
+| branch          | origin/master                            | 构建所选的 `branch`                |
+| commit          | 8ab50bada8525f6670c36114ad46baa70efda820 | 构建所选的 `commit`                |
+| bundle_path     | /root/orion_ops/dist/build/128/dist      | 构建完成后产物存储路径                   |
 | bundle_zip_path | /root/orion_ops/dist/build/128/dist.zip  | 构建完成后产物 zip文件 存储路径 (如果有)      |
 
 <br/>   
@@ -84,12 +84,12 @@
 当 `产物传输方式` 选择 `SCP` 时可配置 `scp 传输命令`  
 默认命令为 `scp "@{bundle_path}" @{target_username}@@{target_host}:"@{transfer_path}"`, 使用 `@{xxx}` 替换变量。
 
-| key             | 示例                                          | 描述                                 |
-| :----           | :---                                         | :----                                |
-| bundle_path     | /root/orion_ops/dist/build/128/build.jar     | 构建完成后产物存储路径                  |
-| transfer_path   | /data/projects/demo.jar                      | 产物传输路径                           |  
-| target_username | root                                         | 目标机器用户                           |
-| target_host     | 192.168.5.65                                 | 目标机器主机                           |  
+| key             | 示例                                       | 描述          |
+|:----------------|:-----------------------------------------|:------------|
+| bundle_path     | /root/orion_ops/dist/build/128/build.jar | 构建完成后产物存储路径 |
+| transfer_path   | /data/projects/demo.jar                  | 产物传输路径      |  
+| target_username | root                                     | 目标机器用户      |
+| target_host     | 192.168.5.65                             | 目标机器主机      |  
 
 ⚡ **注意**: 传输时需要确保传输目录文件不存在后再进行传输操作, 否则可能会导致数据无法传输, 通常在传输之前需要配置删除旧版本包命令!    
 这里更推荐使用 `SCP` 的方式来传输产物文件, 速度更快, 以命令的形式配置, 更加灵活。
@@ -103,16 +103,16 @@ scp "/root/orion_ops/dist/build/128/build.jar" root@192.168.5.65:"/data/projects
 
 应用发布时系统提供了几个默认的变量, 在发布操作的命令中可以使用 `@{release.xxx}` 来替换。
 
-| key            | 示例                                        | 描述                         | 
-| :----          | :---                                       | :----                        |
-| build_id       | 128                                        | 发布所选的构建版本的id          |
-| build_seq      | 10                                         | 发布所选的构建版本的序列         |
-| branch         | origin/master                              | 发布所选的构建版本的 `branch`   |
-| commit         | 8ab50bada8525f6670c36114ad46baa70efda820   | 发布所选的构建版本的 `commit`   |
-| bundle_path    | /root/orion_ops/dist/build/128/build.jar   | 发布所选的构建版本的产物路径     |
-| release_id     | 10                                         | 发布id                        |
-| release_title  | 发布应用                                    | 发布标题                       |
-| transfer_path  | /data/projects/demo.jar                    | 产物传输路径                   |
+| key           | 示例                                       | 描述                  | 
+|:--------------|:-----------------------------------------|:--------------------|
+| build_id      | 128                                      | 发布所选的构建版本的id        |
+| build_seq     | 10                                       | 发布所选的构建版本的序列        |
+| branch        | origin/master                            | 发布所选的构建版本的 `branch` |
+| commit        | 8ab50bada8525f6670c36114ad46baa70efda820 | 发布所选的构建版本的 `commit` |
+| bundle_path   | /root/orion_ops/dist/build/128/build.jar | 发布所选的构建版本的产物路径      |
+| release_id    | 10                                       | 发布id                |
+| release_title | 发布应用                                     | 发布标题                |
+| transfer_path | /data/projects/demo.jar                  | 产物传输路径              |
 
 <br/>
 
@@ -136,14 +136,14 @@ scp "/root/orion_ops/dist/build/128/build.jar" root@192.168.5.65:"/data/projects
 配置不同环境的应用环境变量, 不同环境之间的变量是相互隔离的。  
 系统提供了几个默认的应用变量, 执行命令时使用 `@{app.xxx}` 来替换。
 
-| key          | 示例       | 描述       |
-| :----        | :---      | :----      |
-| app_id       | 1         | 应用id     |
-| app_name     | 订单服务   | 应用名称    |
-| app_tag      | order     | 应用标签    |
-| profile_id   | 1         | 应用环境id  |
-| profile_name | 开发环境   | 应用环境名称 |
-| profile_tag  | dev       | 应用环境标签 |
+| key          | 示例    | 描述     |
+|:-------------|:------|:-------|
+| app_id       | 1     | 应用id   |
+| app_name     | 订单服务  | 应用名称   |
+| app_tag      | order | 应用标签   |
+| profile_id   | 1     | 应用环境id |
+| profile_name | 开发环境  | 应用环境名称 |
+| profile_tag  | dev   | 应用环境标签 |
 
 > ##### 示例
 

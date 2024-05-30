@@ -1,5 +1,5 @@
 #/bin/bash
-version=1.2.5
+version=1.2.6
 mv ../../orion-ops-api/orion-ops-web/target/orion-ops-web-${version}.jar ./orion-ops-web.jar
 mv ../../orion-ops-vue/dist ./
 cp $HOME/orion-ops/lib/machine-monitor-agent-latest.jar ./

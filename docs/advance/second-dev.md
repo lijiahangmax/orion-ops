@@ -11,9 +11,7 @@
 ⚡ yarn 建议使用淘宝镜像 `yarn config set registry https://registry.npmmirror.com/`   
 ⚡ windows 环境二次开发需要安装 OpenSSH Server
 
-### 配置
-
-1. 拉取代码
+### 拉取代码
 
 ```shell
 # github
@@ -22,7 +20,7 @@ git clone https://github.com/lijiahangmax/orion-ops
 git clone https://gitee.com/lijiahangmax/orion-ops
 ```
 
-2. 初始化数据库
+### 初始化数据库
 
 ```
 # 执行DDL脚本
@@ -31,7 +29,7 @@ orion-ops/sql/init-1-schema.sql
 orion-ops/sql/init-2-data.sql
 ```
 
-3. 修改后端配置
+### 修改后端配置
 
 ```
 # 修改配置文件
@@ -40,7 +38,7 @@ orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application-dev.propert
 orion-ops/orion-ops-api/orion-ops-web/src/main/resources/application.properties value.mix.secret.key
 ```
 
-4. 修改前端配置
+### 修改前端配置
 
 ```shell
 # 进入代码目录
@@ -53,9 +51,10 @@ yarn install
 npm run serve:dev
 ```   
 
-5. 运行  
-   后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-2-data.sql` 则可以忽略)    
-   启动参数 idea 中设置 `应用设置` > `Environment` > `Program arguments`
+### 运行
+
+后端服务启动时需要设置启动参数 `--generator-admin` 来生成默认管理员用户 (已执行 `init-2-data.sql` 则可以忽略)    
+启动参数 idea 中设置 `应用设置` > `Environment` > `Program arguments`
 
 ### 测试访问
 
@@ -78,7 +77,7 @@ npm run serve:dev
 
 ### 启动参数
 
-> 启动项目时提供了一些可选的执行参数
+#### 启动项目时提供了一些可选的执行参数
 
 关闭IP过滤器   `--disable-ip-filter`  
 生成默认管理员账号 `--generator-admin`  账号: `orionadmin` 密码: `orionadmin`  

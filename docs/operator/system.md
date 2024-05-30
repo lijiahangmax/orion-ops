@@ -4,16 +4,16 @@
 
 系统内部维护了几个默认的变量, 执行命令时使用 `@{system.xxx}` 来替换。
 
-| key        | 示例               | 描述                      |
-| :----      | :---              | :----                     |
-| key_path   | /root/orion/keys  | 密钥存放目录                |
-| pic_path   | /root/orion/pic   | 图片存放目录                |
-| swap_path  | /root/orion/swap  | 交换分区目录                | 
-| log_path   | /root/orion/log   | 日志存放目录                | 
-| temp_path  | /root/orion/temp  | 临时文件目录                | 
-| repo_path  | /root/orion/repo  | 应用版本仓库目录             | 
-| dist_path  | /root/orion/dist  | 构建产物目录                | 
-| tail_mode  | tracker           | 文件追踪模式 tracker 或 tail | 
+| key       | 示例               | 描述                    |
+|:----------|:-----------------|:----------------------|
+| key_path  | /root/orion/keys | 密钥存放目录                |
+| pic_path  | /root/orion/pic  | 图片存放目录                |
+| swap_path | /root/orion/swap | 交换分区目录                | 
+| log_path  | /root/orion/log  | 日志存放目录                | 
+| temp_path | /root/orion/temp | 临时文件目录                | 
+| repo_path | /root/orion/repo | 应用版本仓库目录              | 
+| dist_path | /root/orion/dist | 构建产物目录                | 
+| tail_mode | tracker          | 文件追踪模式 tracker 或 tail | 
 
 > ##### 示例
 

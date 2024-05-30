@@ -22,9 +22,6 @@ import org.springframework.core.annotation.Order;
 @Order(20)
 public class DemoDisableApiAspect {
 
-    public DemoDisableApiAspect() {
-    }
-
     @Pointcut("@annotation(e)")
     public void disableApi(DemoDisableApi e) {
     }

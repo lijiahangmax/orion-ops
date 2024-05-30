@@ -28,14 +28,14 @@
 `批量执行` `调度任务` `应用发布` `应用构建` 都可以用到, 设计的初衷是每台机器的配置不一样, 不同的机器执行相同的命令时设置不同的参数。  
 系统提供了几个默认的机器变量, 执行命令时使用 `@{machine.xxx}` 来替换。
 
-| key               | 示例       | 描述      |
-| :----             | :---      | :----     |
-| machine_id        | 1         | 机器id    |
-| machine_name      | server1   | 机器名称   |
-| machine_tag       | host      | 机器标签   |
-| machine_host      | 127.0.0.1 | 机器主机   |
-| machine_port      | 22        | 机器端口   |
-| machine_username  | root      | 机器用户名 |
+| key              | 示例        | 描述    |
+|:-----------------|:----------|:------|
+| machine_id       | 1         | 机器id  |
+| machine_name     | server1   | 机器名称  |
+| machine_tag      | host      | 机器标签  |
+| machine_host     | 127.0.0.1 | 机器主机  |
+| machine_port     | 22        | 机器端口  |
+| machine_username | root      | 机器用户名 |
 
 > ##### 示例
 
@@ -54,12 +54,12 @@ java -jar demo.jar -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/o
 
 机器创建后系统会生成几个默认的环境变量, 用于部分功能的交互。
 
-| key                    | 示例                             | 描述                |
-| :----                  | :---                            | :----              |
-| sftp_charset           | UTF-8                           | sftp 文件名称编码格式 |
-| tail_charset           | UTF-8                           | 文件追踪编码格式      |
-| tail_offset            | 400                             | 文件追踪偏移量(行)    |
-| tail_default_command   | tail -f -n @{offset} '@{file}'  | 文件追踪默认命令      |
+| key                  | 示例                             | 描述            |
+|:---------------------|:-------------------------------|:--------------|
+| sftp_charset         | UTF-8                          | sftp 文件名称编码格式 |
+| tail_charset         | UTF-8                          | 文件追踪编码格式      |
+| tail_offset          | 400                            | 文件追踪偏移量(行)    |
+| tail_default_command | tail -f -n @{offset} '@{file}' | 文件追踪默认命令      |
 
 ⚡ 注意: 切换视图后保存只会增量保存, 并不会删除变量
 
