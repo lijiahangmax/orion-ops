@@ -13,6 +13,8 @@
       <div class="login-form-wrapper">
         <!-- 标题 -->
         <h3 class="login-label">用户登录</h3>
+        <!-- 预览模式 -->
+        <div v-if="demoMode" class="demo-tips">演示环境账号: orionadmin/orionadmin</div>
         <!-- 表单 -->
         <a-form-model class="login-form"
                       :model="form"
@@ -213,6 +215,11 @@ export default {
       border: none;
     }
   }
+}
+
+.demo-tips {
+  margin: -18px 0 8px 0;
+  color: #868e96;
 }
 
 </style>

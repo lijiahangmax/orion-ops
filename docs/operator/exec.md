@@ -33,10 +33,10 @@ kubectl get pods -n dev | awk '{print $1}' | grep @{file} | xargs -I '{}' kubect
 
 这里只有两个可替换的变量, 当然这里也是可以写死的
 
-| key       | 示例           | 描述       |  
-| :----     | :---           | :----     |  
-| offset    | 500            | 偏移量(行) |  
-| file      | /data/info.log | 机器名称   |  
+| key    | 示例             | 描述     |  
+|:-------|:---------------|:-------|  
+| offset | 500            | 偏移量(行) |  
+| file   | /data/info.log | 机器名称   |  
 
 ⚡ 按住 `Ctrl` 点击 `打开` 可以打开一个新页面, 否则将会打开一个模态框。
 

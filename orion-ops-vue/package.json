@@ -1,14 +1,12 @@
 {
   "name": "orion-ops-vue",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "serve:dev": "vue-cli-service serve --mode dev",
-    "serve:prod": "vue-cli-service serve --mode production",
-    "build:prod": "vue-cli-service build --mode production"
+    "serve": "vue-cli-service serve  --mode dev",
+    "build": "vue-cli-service build --mode production",
+    "build:demo": "set VUE_APP_DEMO_MODE=true&& npm run build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@antv/g2": "^4.1.48",

@@ -1,3 +1,4 @@
+<div align="center"><img src="https://bjuimg.obs.cn-north-4.myhuaweicloud.com/images/2024/2/27/8c687ef1-5711-4a93-9db0-79c010af7902.png" alt="logo" width="32" /></div>
 <p style="margin-top: 12px" align="center"><b>一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。</b></p>
 <p align="center">
@@ -89,15 +90,15 @@
 
 ## 功能预览
 
-> 控制台
+### 控制台
 
 ![控制台](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/25/1d5d1740-dff1-4e17-93dc-b2b329e3bbe4.png "控制台")
 
-> 机器列表
+### 机器列表
 
 ![机器列表](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/f8b84d93-6cbe-4aa0-8e29-104a82ec9fc0.jpg "机器列表")
 
-> 在线终端
+### 在线终端
 
 ![终端模态框](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/72d02782-cbf1-4eea-8c23-637f1193f289.png "终端模态框")
 ![终端banner](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/b0353c63-3d25-4945-95a4-b1f2735743a5.png "终端banner")
@@ -105,61 +106,61 @@
 ![录屏回放](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/5c460a5c-d934-47df-9e70-dcee87e0c801.png "录屏回放")
 ![终端监视](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/58257d2e-37ed-4244-b21f-183fe02c1f91.png "终端监视")
 
-> 在线文件管理
+### 在线文件管理
 
 ![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files6081069371629929397.png "在线文件管理")  
 ![在线文件管理](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-03-14/files4411594441981208271.png "在线文件管理")
 
-> 机器监控
+### 机器监控
 
 ![机器监控概要](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/30401c36-add4-4f8c-955e-7721740b6646.png "机器监控概要")  
 ![机器监控信息](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/824a63d9-48ac-4c89-a9bf-8cc4f71fe608.png "机器监控信息")
 ![机器监控报警-钉钉](https://oos-sdqd.ctyunapi.cn/album/2022/9/2/a064eb5c-896b-496c-90d4-c9abc18ff39a.png "机器监控报警-钉钉")
 
-> 批量执行
+### 批量执行
 
 ![批量执行](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files4899857856529374903.png "批量执行")
 
-> 日志文件
+### 日志文件
 
 ![日志文件](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/31/9b1beae3-a480-47bb-8c79-668ad52ec965.png "日志文件")
 
-> 调度任务
+### 调度任务
 
 ![调度任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files5065881246088616914.png "调度任务")  
 ![调度执行列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files9138174215052119985.png "调度执行列表")  
 ![调度执行日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files3786363821214889886.png "调度执行日志")
 
-> 应用配置
+### 应用配置
 
 ![应用列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files2712336456731415928.png "应用列表")  
 ![构建配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files7988531022696126381.png "构建配置")  
 ![发布配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files1800464505453752748.png "发布配置")
 
-> 构建列表
+### 构建列表
 
 ![构建列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files2590331112837583257.png "构建列表")  
 ![构建日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files4232688502598769434.png "构建日志")
 
-> 发布列表
+### 发布列表
 
 ![发布列表](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6859723679488097151.png "发布列表")
 ![发布日志](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files3662304038159928145.png "发布日志")
 
-> 流水线任务
+### 流水线任务
 
 ![流水线配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files694386343461173439.png "流水线配置")
 ![流水线任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6446052342050924823.png "流水线任务")
 
-> 登陆日志
+### 登陆日志
 
 ![登陆日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/4a548584-6cee-4b95-9811-5d2a670bfca8.jpg "登陆日志")
 
-> 安全配置
+### 安全配置
 
 ![安全配置](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/f79d16a1-500c-4b4c-bd2e-1bc212d453bf.png "安全配置")
 
-> 消息
+### 消息
 
 ![操作日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/432c6dd0-0943-4868-9a2a-32147f566d55.jpg "操作日志")
 ![站内信](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/cfcbb03c-fafa-4e7c-9e2d-f22f8c56c753.jpg "站内信")

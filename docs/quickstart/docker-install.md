@@ -19,7 +19,7 @@ Dashboard 修改)
 
 ### 拉取代码
 
-```
+```shell
 # github
 git clone https://github.com/lijiahangmax/orion-ops
 # gitee
@@ -40,11 +40,11 @@ git clone https://gitee.com/lijiahangmax/orion-ops
 
 ### 启动镜像
 
-```
+```shell
 docker compose up -d
 ```
 
-### 连接 mysql (如果需要在 navicat 中连接)
+### 修改加密方式
 
 ```
 访问 adminer: http://localhost:18080

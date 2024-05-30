@@ -1,21 +1,21 @@
-#### vue 项目模板
+### vue 项目模板
 
 以一个普通的 npm 构建的 vue 项目为例  
 构建操作为: `checkout` > `npm i` > `npm run build`  
 发布操作为: `删除旧版文件` > `传输文件` > `复制到 nginx 静态目录` > `启动nginx`   
 <br/>
 
-> 构建配置
+> 构建配置预览
 
 ![构建配置1](../assert/img/template_vue_build_1.png "构建配置1")
 ![构建配置2](../assert/img/template_vue_build_2.png "构建配置2")
 
-> 发布配置
+> 发布配置预览
 
 ![发布配置1](../assert/img/template_vue_release_1.png "发布配置1")
 ![发布配置2](../assert/img/template_vue_release_2.png "发布配置2")
 
-#### 构建配置
+### 构建配置
 
 > 构建产物路径
 
@@ -50,7 +50,7 @@ cnpm run build
 echo '构建完成'
 ```
 
-#### 发布配置
+### 发布配置
 
 > 发布操作1 删除原有文件
 

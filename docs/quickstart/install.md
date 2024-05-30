@@ -11,18 +11,16 @@
 ⚡ npm 建议使用淘宝镜像 `npm config set registry https://registry.npmmirror.com/`  
 ⚡ yarn 建议使用淘宝镜像 `yarn config set registry https://registry.npmmirror.com/`
 
-### 构建
+### 拉取代码
 
-1. 拉取代码
-
-```
+```shell
 # github
 git clone https://github.com/lijiahangmax/orion-ops
 # gitee
 git clone https://gitee.com/lijiahangmax/orion-ops
 ```
 
-2. 初始化数据库
+### 初始化数据库
 
 ```
 # 执行DDL脚本
@@ -31,7 +29,7 @@ orion-ops/sql/init-1-schema.sql
 orion-ops/sql/init-2-data.sql
 ```
 
-3. 构建后端代码
+### 构建后端代码
 
 ```
 # 修改配置文件 (mysql, redis)
@@ -44,9 +42,9 @@ cd orion-ops/orion-ops-api
 mvn -U clean install -DskipTests
 ```   
 
-4. 构建前端代码
+### 构建前端代码
 
-```
+```shell
 # 进入代码目录
 cd orion-ops/orion-ops-vue
 # 下载 yarn
@@ -113,9 +111,9 @@ server {
 ```
 复制 orion-ops/orion-ops-vue/dist/index.html 到 /usr/share/nginx/html
 复制 orion-ops/orion-ops-vue/dist 到 /usr/share/nginx/html 并且重命名为 ops
-复制 orion-ops/orion-ops-api/orion-ops-api/target/orion-ops-web-1.2.5.jar 到 /data/orion
+复制 orion-ops/orion-ops-api/orion-ops-api/target/orion-ops-web-1.2.6.jar 到 /data/orion
 # 启动后台服务
-nohup java -jar orion-ops-web-1.2.5.jar --spring.profiles.active=prod --generator-admin &
+nohup java -jar orion-ops-web-1.2.6.jar --spring.profiles.active=prod --generator-admin &
 # 启动 nginx
 service nginx start
 ```
@@ -136,7 +134,7 @@ service nginx start
 
 ### 启动参数
 
-> 启动项目时提供了一些可选的执行参数
+#### 启动项目时提供了一些可选的执行参数
 
 关闭IP过滤器   `--disable-ip-filter`  
 生成默认管理员账号 `--generator-admin`  账号: `orionadmin` 密码: `orionadmin`  
