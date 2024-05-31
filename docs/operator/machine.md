@@ -11,8 +11,8 @@
 配置已启动的机器监控, 具有可视化图形以及数据粒度和时间区间的选择  
 统计的指标有 `CPU监控` `内存监控` `网络带宽监控` `硬盘使用监控`
 
-[插件仓库](https://github.com/lijiahangmax/orion-ops-extension-plugins) [安装文档](https://lijiahangmax.github.io/orion-ops-extension-plugins/#/machine-monitor-agent/quickstart-download)  
-⚡ **如果自动安装失败可以参考这里** [常见问题](https://lijiahangmax.github.io/orion-ops-extension-plugins/#/machine-monitor-agent/faq)
+[插件仓库](https://github.com/lijiahangmax/orion-ops-extension-plugins) [安装文档](https://lijiahangmax.github.io/open-orion/orion-ops-extension-plugins/quickstart/download.html)  
+⚡ **如果自动安装失败可以参考这里** [常见问题](https://lijiahangmax.github.io/open-orion/orion-ops-extension-plugins/support/faq.html)
 
 * 安装: 批量安装本页机器的监控插件
 * 升级: 批量升级本页机器的监控插件

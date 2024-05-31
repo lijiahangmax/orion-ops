@@ -67,17 +67,17 @@
 
 ## 快速开始
 
-* [文档地址](https://lijiahangmax.github.io/orion-ops/#/)
-* [安装文档](https://lijiahangmax.github.io/orion-ops/#/quickstart/install)
-* [开发文档](https://lijiahangmax.github.io/orion-ops/#/advance/second-dev)
-* [操作手册](https://lijiahangmax.github.io/orion-ops/#/operator/machine)
-* [常见问题](https://lijiahangmax.github.io/orion-ops/#/quickstart/faq)
-* [通用模板](https://lijiahangmax.github.io/orion-ops/#/template/java-springboot-template)
+* [文档地址](https://lijiahangmax.github.io/open-orion/orion-ops)
+* [安装文档](https://lijiahangmax.github.io/open-orion/orion-ops/quickstart/docker.html)
+* [本地调试](https://lijiahangmax.github.io/open-orion/orion-ops/quickstart/dev.html)
+* [操作手册](https://lijiahangmax.github.io/open-orion/orion-ops/operator/machine.html)
+* [常见问题](https://lijiahangmax.github.io/open-orion/orion-ops/support/faq.html)
+* [通用模板](https://lijiahangmax.github.io/open-orion/orion-ops/template/java-springboot-template.html)
 
 ## 重构版 orion-visor
 
 `orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全!
-[github](https://github.com/lijiahangmax/orion-visor)  [gitee](https://gitee.com/lijiahangmax/orion-visor)
+[项目地址](https://lijiahangmax.github.io/open-orion/orion-visor)
 
 ## 技术栈
 
