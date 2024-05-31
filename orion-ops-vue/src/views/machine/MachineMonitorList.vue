@@ -31,7 +31,7 @@
         </div>
         <!-- 右侧 -->
         <div class="tools-fixed-right">
-          <a href="https://lijiahangmax.github.io/orion-ops-extension-plugins/#/machine-monitor-agent/quickstart-download" target="_blank">安装文档</a>
+          <a href="https://lijiahangmax.github.io/open-orion/orion-ops-extension-plugins/quickstart/download.html" target="_blank">安装文档</a>
           <a-popconfirm title="确定执行批量安装本页监控插件?"
                         okText="确定"
                         cancelText="取消"
