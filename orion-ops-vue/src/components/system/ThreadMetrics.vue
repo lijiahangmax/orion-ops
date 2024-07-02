@@ -97,7 +97,7 @@ export default {
 
 .metrics-value-wrapper {
   margin-right: 8px;
-  width: 48px;
+  width: 74px;
   display: inline-block;
 
   .metrics-value {
