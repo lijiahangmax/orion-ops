@@ -36,7 +36,7 @@ public class TerminalWatcherProcessor implements ITerminalWatcherProcessor, Runn
     @Override
     public void watch() {
         this.run = true;
-        Threads.start(this, SchedulerPools.TERMINAL_SCHEDULER);
+        Threads.start(this, SchedulerPools.TERMINAL_WATCHER_SCHEDULER);
     }
 
     @SneakyThrows

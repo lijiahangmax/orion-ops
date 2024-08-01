@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   orion-ops:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:1.2.6
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:1.2.7
     ports:
       - 1022:22
       - 1080:80
@@ -19,7 +19,7 @@ services:
       - orion-ops-db
       - orion-ops-redis
   orion-ops-db:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-mysql:1.2.6
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-mysql:1.2.7
     privileged: true
     environment:
       - MYSQL_DATABASE=orion-ops
@@ -33,7 +33,7 @@ services:
       - /data/orion-ops-space/docker-volumes/mysql/var-lib-mysql-files:/var/lib/mysql-files
       - /data/orion-ops-space/docker-volumes/mysql/etc-mysql:/etc/mysql
   orion-ops-redis:
-    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-redis:1.2.6
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-redis:1.2.7
     privileged: true
     ports:
       - 16379:6379
@@ -42,8 +42,8 @@ services:
     volumes:
       - /data/orion-ops-space/docker-volumes/orion-ops-redis/data:/data
     command: sh -c "redis-server /usr/local/redis.conf --requirepass $${REDIS_PASSWORD}"
-  orion-adminer:
-    image: adminer
+  orion-ops-adminer:
+    image: registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops-adminer:1.2.7
     restart: always
     ports:
       - 18080:8080
