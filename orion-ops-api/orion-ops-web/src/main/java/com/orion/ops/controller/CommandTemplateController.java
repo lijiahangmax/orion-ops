@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.event.EventType;
@@ -34,6 +35,7 @@ public class CommandTemplateController {
     @Resource
     private CommandTemplateService commandTemplateService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "新增命令模板")
     @EventLog(EventType.ADD_TEMPLATE)
@@ -43,6 +45,7 @@ public class CommandTemplateController {
         return commandTemplateService.addTemplate(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改命令模板")
     @EventLog(EventType.UPDATE_TEMPLATE)
@@ -65,6 +68,7 @@ public class CommandTemplateController {
         return commandTemplateService.templateDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除命令模板")
     @EventLog(EventType.DELETE_TEMPLATE)

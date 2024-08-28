@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.event.EventType;
@@ -35,6 +36,7 @@ public class MachineKeyController {
     @Resource
     private MachineKeyService machineKeyService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加机器密钥")
     @EventLog(EventType.ADD_MACHINE_KEY)
@@ -44,6 +46,7 @@ public class MachineKeyController {
         return machineKeyService.addSecretKey(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "更新机器密钥")
     @EventLog(EventType.UPDATE_MACHINE_KEY)
@@ -52,6 +55,7 @@ public class MachineKeyController {
         return machineKeyService.updateSecretKey(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/remove")
     @ApiOperation(value = "删除机器密钥")
     @EventLog(EventType.DELETE_MACHINE_KEY)
@@ -73,6 +77,7 @@ public class MachineKeyController {
         return machineKeyService.getKeyDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/bind")
     @ApiOperation(value = "绑定机器密钥")
     @EventLog(EventType.BIND_MACHINE_KEY)

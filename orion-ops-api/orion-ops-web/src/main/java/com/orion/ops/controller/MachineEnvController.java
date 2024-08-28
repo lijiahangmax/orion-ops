@@ -5,6 +5,7 @@ import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -42,6 +43,7 @@ public class MachineEnvController {
     @Resource
     private MachineEnvService machineEnvService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加环境变量")
     public Long add(@RequestBody MachineEnvRequest request) {
@@ -51,6 +53,7 @@ public class MachineEnvController {
         return machineEnvService.addEnv(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改环境变量")
     public Integer update(@RequestBody MachineEnvRequest request) {
@@ -59,6 +62,7 @@ public class MachineEnvController {
         return machineEnvService.updateEnv(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_MACHINE_ENV)
@@ -81,6 +85,7 @@ public class MachineEnvController {
         return machineEnvService.getEnvDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/sync")
     @ApiOperation(value = "同步环境变量")
     @EventLog(EventType.SYNC_MACHINE_ENV)
@@ -104,6 +109,7 @@ public class MachineEnvController {
         return viewType.toValue(env);
     }
 
+    @DemoDisableApi
     @PostMapping("/view-save")
     @ApiOperation(value = "保存环境变量视图")
     public Integer viewSave(@RequestBody MachineEnvRequest request) {

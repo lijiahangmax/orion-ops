@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.app.StageType;
@@ -36,6 +37,7 @@ public class ApplicationPipelineController {
     @Resource
     private ApplicationPipelineService applicationPipelineService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "新增应用流水线")
     @EventLog(EventType.ADD_PIPELINE)
@@ -44,6 +46,7 @@ public class ApplicationPipelineController {
         return applicationPipelineService.addPipeline(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改应用流水线")
     @EventLog(EventType.UPDATE_PIPELINE)
@@ -67,6 +70,7 @@ public class ApplicationPipelineController {
         return applicationPipelineService.getPipeline(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除应用流水线")
     @EventLog(EventType.DELETE_PIPELINE)

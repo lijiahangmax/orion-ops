@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Objects1;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -50,6 +51,7 @@ public class UserController {
         return userService.userDetail(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加用户")
     @RequireRole(RoleType.ADMINISTRATOR)
@@ -61,6 +63,7 @@ public class UserController {
         return userService.addUser(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改用户信息")
     @EventLog(EventType.UPDATE_USER)
@@ -73,6 +76,7 @@ public class UserController {
         return userService.updateUser(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update-avatar")
     @ApiOperation(value = "修改用户头像")
     public Integer updateAvatar(@RequestBody UserInfoRequest request) {
@@ -80,6 +84,7 @@ public class UserController {
         return userService.updateAvatar(avatar);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除用户")
     @RequireRole(RoleType.ADMINISTRATOR)
@@ -89,6 +94,7 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/update-status")
     @ApiOperation(value = "停用/启用用户")
     @RequireRole(RoleType.ADMINISTRATOR)

@@ -5,6 +5,7 @@ import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Exceptions;
 import com.orion.lang.utils.collect.Maps;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -42,6 +43,7 @@ public class ApplicationEnvController {
     @Resource
     private ApplicationEnvService applicationEnvService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加环境变量")
     public Long addAppEnv(@RequestBody ApplicationEnvRequest request) {
@@ -52,6 +54,7 @@ public class ApplicationEnvController {
         return applicationEnvService.addAppEnv(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除环境变量")
     @EventLog(EventType.DELETE_APP_ENV)
@@ -60,6 +63,7 @@ public class ApplicationEnvController {
         return applicationEnvService.deleteAppEnv(idList);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "更新环境变量")
     public Integer updateAppEnv(@RequestBody ApplicationEnvRequest request) {
@@ -82,6 +86,7 @@ public class ApplicationEnvController {
         return applicationEnvService.getAppEnvDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/sync")
     @ApiOperation(value = "同步环境变量到其他环境")
     @EventLog(EventType.SYNC_APP_ENV)
@@ -107,6 +112,7 @@ public class ApplicationEnvController {
         return viewType.toValue(env);
     }
 
+    @DemoDisableApi
     @PostMapping("/view-save")
     @ApiOperation(value = "保存环境变量视图")
     public Integer viewSave(@RequestBody ApplicationEnvRequest request) {

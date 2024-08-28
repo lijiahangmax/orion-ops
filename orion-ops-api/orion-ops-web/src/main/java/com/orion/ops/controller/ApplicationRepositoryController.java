@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.app.RepositoryAuthType;
@@ -40,6 +41,7 @@ public class ApplicationRepositoryController {
     @Resource
     private ApplicationRepositoryService applicationRepositoryService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加版本仓库")
     @EventLog(EventType.ADD_REPOSITORY)
@@ -53,6 +55,7 @@ public class ApplicationRepositoryController {
         return applicationRepositoryService.addRepository(request);
     }
 
+    @DemoDisableApi
     @ApiOperation(value = "更新版本仓库")
     @PostMapping("/update")
     @EventLog(EventType.UPDATE_REPOSITORY)
@@ -62,6 +65,7 @@ public class ApplicationRepositoryController {
         return applicationRepositoryService.updateRepository(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除版本仓库")
     @EventLog(EventType.DELETE_REPOSITORY)

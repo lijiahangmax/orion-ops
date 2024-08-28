@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.event.EventType;
@@ -47,6 +48,7 @@ public class WebhookConfigController {
         return webhookConfigService.getWebhookDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加 webhook")
     @EventLog(EventType.ADD_WEBHOOK)
@@ -55,6 +57,7 @@ public class WebhookConfigController {
         return webhookConfigService.addWebhook(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "更新 webhook")
     @EventLog(EventType.UPDATE_WEBHOOK)
@@ -64,6 +67,7 @@ public class WebhookConfigController {
         return webhookConfigService.updateWebhook(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除 webhook")
     @EventLog(EventType.DELETE_WEBHOOK)
