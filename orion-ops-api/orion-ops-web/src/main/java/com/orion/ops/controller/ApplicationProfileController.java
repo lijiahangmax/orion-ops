@@ -1,6 +1,7 @@
 package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RequireRole;
 import com.orion.ops.annotation.RestWrapper;
@@ -35,6 +36,7 @@ public class ApplicationProfileController {
     @Resource
     private ApplicationProfileService applicationProfileService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加应用环境")
     @RequireRole(RoleType.ADMINISTRATOR)
@@ -46,6 +48,7 @@ public class ApplicationProfileController {
         return applicationProfileService.addProfile(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "更新应用环境")
     @RequireRole(RoleType.ADMINISTRATOR)
@@ -58,6 +61,7 @@ public class ApplicationProfileController {
         return applicationProfileService.updateProfile(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除应用环境")
     @RequireRole(RoleType.ADMINISTRATOR)

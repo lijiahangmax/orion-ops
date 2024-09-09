@@ -58,7 +58,7 @@
 
 ## 演示环境
 
-* 🔗 演示地址: http://101.43.254.243:1080/#/
+* 🔗 演示地址: https://do.orionsec.cn/#/
 * 🔏 演示账号: orionadmin/orionadmin
 * ⭐ 体验后可以点一下 `star` 这对我很重要! [github](https://github.com/lijiahangmax/orion-ops) [gitee](https://gitee.com/lijiahangmax/orion-ops)
 * 🌈 如果本项目对你有帮助请帮忙推广一下 让更多的人知道此项目!
@@ -68,17 +68,17 @@
 
 ## 快速开始
 
-* [文档地址](https://lijiahangmax.github.io/open-orion/orion-ops)
-* [安装文档](https://lijiahangmax.github.io/open-orion/orion-ops/quickstart/docker.html)
-* [本地调试](https://lijiahangmax.github.io/open-orion/orion-ops/quickstart/dev.html)
-* [操作手册](https://lijiahangmax.github.io/open-orion/orion-ops/operator/machine.html)
-* [常见问题](https://lijiahangmax.github.io/open-orion/orion-ops/support/faq.html)
-* [通用模板](https://lijiahangmax.github.io/open-orion/orion-ops/template/java-springboot-template.html)
+* [文档地址](https://ops.orionsec.cn)
+* [安装文档](https://ops.orionsec.cn/quickstart/docker.html)
+* [本地调试](https://ops.orionsec.cn/quickstart/dev.html)
+* [操作手册](https://ops.orionsec.cn/operator/machine.html)
+* [常见问题](https://ops.orionsec.cn/support/faq.html)
+* [通用模板](https://ops.orionsec.cn/template/java-springboot-template.html)
 
 ## 重构版 orion-visor
 
 `orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全!
-[项目地址](https://lijiahangmax.github.io/open-orion/orion-visor)
+[项目地址](https://visor.orionsec.cn)
 
 ## 技术栈
 

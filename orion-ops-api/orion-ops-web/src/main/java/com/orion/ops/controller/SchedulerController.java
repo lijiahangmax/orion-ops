@@ -5,6 +5,7 @@ import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.time.cron.Cron;
 import com.orion.lang.utils.time.cron.CronSupport;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -55,6 +56,7 @@ public class SchedulerController {
         return next;
     }
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加调度任务")
     @EventLog(EventType.ADD_SCHEDULER_TASK)
@@ -66,6 +68,7 @@ public class SchedulerController {
         return schedulerTaskService.addTask(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改调度任务")
     @EventLog(EventType.UPDATE_SCHEDULER_TASK)
@@ -90,6 +93,7 @@ public class SchedulerController {
         return schedulerTaskService.getTaskList(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update-status")
     @ApiOperation(value = "更新调度任务状态")
     @EventLog(EventType.UPDATE_SCHEDULER_TASK_STATUS)
@@ -99,6 +103,7 @@ public class SchedulerController {
         return schedulerTaskService.updateTaskStatus(id, status);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除调度任务")
     @EventLog(EventType.DELETE_SCHEDULER_TASK)

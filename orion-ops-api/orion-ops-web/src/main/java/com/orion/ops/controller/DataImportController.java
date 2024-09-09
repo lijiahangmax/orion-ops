@@ -82,6 +82,7 @@ public class DataImportController {
         return IDataChecker.create(importType, workbook).doCheck();
     }
 
+    @DemoDisableApi
     @PostMapping("/import")
     @ApiOperation(value = "导入数据")
     @EventLog(EventType.DATA_IMPORT)

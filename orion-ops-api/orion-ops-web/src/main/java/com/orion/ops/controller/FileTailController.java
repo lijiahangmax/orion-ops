@@ -7,6 +7,7 @@ import com.orion.lang.utils.Strings;
 import com.orion.lang.utils.collect.Lists;
 import com.orion.lang.utils.io.Files1;
 import com.orion.lang.utils.io.Streams;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -58,6 +59,7 @@ public class FileTailController {
         return fileTailService.getTailToken(type, relId);
     }
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加日志文件")
     @EventLog(EventType.ADD_TAIL_FILE)
@@ -72,6 +74,7 @@ public class FileTailController {
         return fileTailService.insertTailFile(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改日志文件")
     @EventLog(EventType.UPDATE_TAIL_FILE)
@@ -112,6 +115,7 @@ public class FileTailController {
         return HttpWrapper.ok();
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除日志文件")
     @EventLog(EventType.DELETE_TAIL_FILE)

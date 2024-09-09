@@ -1,5 +1,6 @@
 package com.orion.ops.controller;
 
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.constant.ExportType;
 import com.orion.ops.constant.event.EventType;
@@ -28,6 +29,7 @@ import java.io.IOException;
 @RequestMapping("/orion/api/data-export")
 public class DataExportController {
 
+    @DemoDisableApi
     @PostMapping("/export")
     @ApiOperation(value = "导出数据")
     @EventLog(EventType.DATA_EXPORT)

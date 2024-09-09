@@ -11,7 +11,7 @@
     <name>orion-ops-api</name>
     <groupId>com.orion.ops</groupId>
     <artifactId>orion-ops-api</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.8</version>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <url>https://github.com/lijiahangmax/orion-ops</url>

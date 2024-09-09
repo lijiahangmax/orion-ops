@@ -42,6 +42,7 @@ public class SystemEnvController {
     @Resource
     private SystemEnvService systemEnvService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加环境变量")
     @EventLog(EventType.ADD_SYSTEM_ENV)

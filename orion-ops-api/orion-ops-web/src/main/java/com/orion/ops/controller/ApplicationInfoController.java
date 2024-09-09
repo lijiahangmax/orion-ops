@@ -3,6 +3,7 @@ package com.orion.ops.controller;
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.define.wrapper.HttpWrapper;
 import com.orion.lang.utils.Exceptions;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.Const;
@@ -47,6 +48,7 @@ public class ApplicationInfoController {
     @Resource
     private ApplicationMachineService applicationMachineService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加应用")
     @EventLog(EventType.ADD_APP)
@@ -55,6 +57,7 @@ public class ApplicationInfoController {
         return applicationService.insertApp(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "更新应用")
     @EventLog(EventType.UPDATE_APP)
@@ -71,6 +74,7 @@ public class ApplicationInfoController {
         return applicationService.updateAppSort(id, Const.INCREMENT.equals(adjust));
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除应用")
     @EventLog(EventType.DELETE_APP)
@@ -122,6 +126,7 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
+    @DemoDisableApi
     @PostMapping("/copy")
     @ApiOperation(value = "复制应用")
     @EventLog(EventType.COPY_APP)
@@ -131,6 +136,7 @@ public class ApplicationInfoController {
         return HttpWrapper.ok();
     }
 
+    @DemoDisableApi
     @PostMapping("/delete-machine")
     @ApiOperation(value = "删除发布机器")
     public Integer deleteAppMachine(@RequestBody ApplicationInfoRequest request) {

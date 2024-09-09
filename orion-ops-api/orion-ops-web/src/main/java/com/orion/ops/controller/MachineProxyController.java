@@ -2,6 +2,7 @@ package com.orion.ops.controller;
 
 import com.orion.lang.define.wrapper.DataGrid;
 import com.orion.lang.utils.Strings;
+import com.orion.ops.annotation.DemoDisableApi;
 import com.orion.ops.annotation.EventLog;
 import com.orion.ops.annotation.RestWrapper;
 import com.orion.ops.constant.event.EventType;
@@ -36,6 +37,7 @@ public class MachineProxyController {
     @Resource
     private MachineProxyService machineProxyService;
 
+    @DemoDisableApi
     @PostMapping("/add")
     @ApiOperation(value = "添加机器代理")
     @EventLog(EventType.ADD_MACHINE_PROXY)
@@ -48,6 +50,7 @@ public class MachineProxyController {
         return machineProxyService.addProxy(request);
     }
 
+    @DemoDisableApi
     @PostMapping("/update")
     @ApiOperation(value = "修改机器代理")
     @EventLog(EventType.UPDATE_MACHINE_PROXY)
@@ -70,6 +73,7 @@ public class MachineProxyController {
         return machineProxyService.getProxyDetail(id);
     }
 
+    @DemoDisableApi
     @PostMapping("/delete")
     @ApiOperation(value = "删除机器代理")
     @EventLog(EventType.DELETE_MACHINE_PROXY)
