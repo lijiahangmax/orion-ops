@@ -1,4 +1,4 @@
-<div align="center"><img src="https://bjuimg.obs.cn-north-4.myhuaweicloud.com/images/2024/2/27/8c687ef1-5711-4a93-9db0-79c010af7902.png" alt="logo" width="32" /></div>
+<div align="center"><img src="https://bjuimg.obs.cn-north-4.myhuaweicloud.com/images/2024/9/11/b50ed730-e6c9-4a17-972b-10439d97e1a7.png" alt="logo" width="520" /></div>
 <p style="margin-top: 12px" align="center"><b>一站式自动化运维及自动化部署平台, 使用多环境的概念, 提供了机器管理、机器监控报警、Web终端、WebSftp、机器批量执行、机器批量上传、在线查看日志、定时调度任务、应用环境维护、应用构建及发布任务、操作流水线等功能,
 帮助企业实现一站式轻量化运维治理, 致力于企业级应用的智能运维。</b></p>
 <p align="center">
