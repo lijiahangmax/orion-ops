@@ -13,6 +13,9 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.orion.lang.constant.Const;
+import com.orion.lang.utils.ext.PropertiesExt;
+
+import java.io.File;
 
 /**
  * @author Jiahang Li
@@ -27,6 +30,12 @@ public class CodeGenerator {
      * 代码生成器
      */
     private static void runGenerator() {
+        // 获取配置文件
+        File file = new File("orion-ops-api/orion-ops-web/src/main/resources/application-dev.properties");
+        PropertiesExt ext = new PropertiesExt(file);
+        String url = ext.getValue("spring.datasource.url");
+        String username = ext.getValue("spring.datasource.username");
+        String password = ext.getValue("spring.datasource.password");
         // 全局配置
         GlobalConfig gbConfig = new GlobalConfig()
                 // 是否支持AR模式
@@ -71,11 +80,11 @@ public class CodeGenerator {
                 // 配置驱动
                 .setDriverName("com.mysql.cj.jdbc.Driver")
                 // 配置路径
-                .setUrl("jdbc:mysql://127.0.0.1:3306/orion-ops?characterEncoding=utf8")
+                .setUrl(url)
                 // 配置账号
-                .setUsername("root")
+                .setUsername(username)
                 // 配置密码
-                .setPassword("admin123")
+                .setPassword(password)
                 // 转换器
                 .setTypeConvert(new MySqlTypeConvert() {
                     @Override
@@ -112,7 +121,7 @@ public class CodeGenerator {
                 // 配置字段前缀
                 .setFieldPrefix("")
                 // 生成的表
-                .setInclude("webhook_config");
+                .setInclude("machine_group", "machine_group_rel");
 
         // 包名策略配置
         PackageConfig pkConfig = new PackageConfig()

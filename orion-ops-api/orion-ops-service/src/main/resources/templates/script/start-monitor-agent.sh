@@ -16,7 +16,7 @@ fi
 echo 'Agent starting...'
 
 # START
-nohup java -jar -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=56m -Xms128m -Xmx128m -Xmn32m -Xss256k -XX:SurvivorRatio=8 -XX:+UseConcMarkSweepGC ${agentJarPath} --machineId=${machineId} --spring.profiles.active=prod >/dev/null 2>&1 &
+nohup java -jar -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms128m -Xmx128m -Xmn32m -Xss256k -XX:SurvivorRatio=8 -XX:+UseG1GC ${agentJarPath} --machineId=${machineId} --spring.profiles.active=prod >/dev/null 2>&1 &
 
 # CHECK
 sleep 2
