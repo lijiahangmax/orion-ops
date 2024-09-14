@@ -77,7 +77,7 @@
 
 ## 重构版 orion-visor
 
-`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全!
+`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全! 目前该项目已荣获 `GVP` 
 [项目地址](https://visor.orionsec.cn)
 
 ## 技术栈
@@ -178,6 +178,10 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 [代码结构及开发规范](https://lijiahangmax.github.io/orion-ops/#/about/code-structure)  
 [贡献者名单](https://lijiahangmax.github.io/orion-ops/#/about/contributor)
+
+## 关于我
+
+本人专注于使用 Java 和 Vue 进行全栈开发, 并在系统自动化运维方面拥有丰富开发的经验。如果您在这些领域有需求或遇到痛点, 请随时联系我, 并备注“合作”。
 
 ## 联系我
 
