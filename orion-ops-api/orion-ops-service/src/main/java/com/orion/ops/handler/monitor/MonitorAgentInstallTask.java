@@ -38,7 +38,10 @@ import com.orion.ops.constant.system.SystemEnvAttr;
 import com.orion.ops.entity.domain.MachineInfoDO;
 import com.orion.ops.entity.domain.MachineMonitorDO;
 import com.orion.ops.entity.dto.user.UserDTO;
-import com.orion.ops.service.api.*;
+import com.orion.ops.service.api.MachineEnvService;
+import com.orion.ops.service.api.MachineInfoService;
+import com.orion.ops.service.api.MachineMonitorService;
+import com.orion.ops.service.api.WebSideMessageService;
 import com.orion.ops.utils.PathBuilders;
 import com.orion.spring.SpringHolder;
 import lombok.SneakyThrows;
@@ -63,8 +66,6 @@ public class MonitorAgentInstallTask implements Runnable {
     private static final MachineEnvService machineEnvService = SpringHolder.getBean(MachineEnvService.class);
 
     private static final MachineMonitorService machineMonitorService = SpringHolder.getBean(MachineMonitorService.class);
-
-    private static final MachineMonitorEndpointService machineMonitorEndpointService = SpringHolder.getBean(MachineMonitorEndpointService.class);
 
     private static final WebSideMessageService webSideMessageService = SpringHolder.getBean(WebSideMessageService.class);
 
@@ -171,7 +172,8 @@ public class MonitorAgentInstallTask implements Runnable {
         try {
             // 执行启动命令
             this.appendLog("开始执行启动脚本 path: {}", startScriptPath);
-            executor = session.getCommandExecutor("bash -l " + startScriptPath);
+            // executor = session.getCommandExecutor("bash -l " + startScriptPath);
+            executor = session.getCommandExecutor(startScriptPath);
             executor.getChannel().setPty(false);
             CommandExecutors.syncExecCommand(executor, logStream);
             int exitCode = executor.getExitCode();
@@ -235,7 +237,7 @@ public class MonitorAgentInstallTask implements Runnable {
         param.put("processName", MonitorConst.AGENT_FILE_NAME_PREFIX);
         param.put("machineId", machineId);
         param.put("agentJarPath", agentJarPath);
-        return Strings.format(MonitorConst.START_SCRIPT_VALUE, param);
+        return Strings.format(MonitorConst.START_SCRIPT_VALUE, param).replaceAll("\r\n", "\n");
     }
 
     /**
