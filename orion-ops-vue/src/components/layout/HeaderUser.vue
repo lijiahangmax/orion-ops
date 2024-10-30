@@ -30,7 +30,7 @@
         </a-menu-item>
         <a-menu-item key="logout">
           <a-icon type="export"/>
-          退出登陆
+          退出登录
         </a-menu-item>
       </a-menu>
     </template>

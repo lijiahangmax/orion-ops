@@ -60,7 +60,8 @@
 
 * 🔗 演示地址: [https://do.orionsec.cn/#/](https://do.orionsec.cn/#/)
 * 🔏 演示账号: orionadmin/orionadmin
-* ⭐ 体验后可以点一下 `star` 这对我很重要! [github](https://github.com/lijiahangmax/orion-ops) [gitee](https://gitee.com/lijiahangmax/orion-ops) [gitcode](https://gitcode.com/lijiahangmax/orion-ops/overview)
+* ⭐ 体验后可以点一下 `star`
+  这对我很重要! [github](https://github.com/lijiahangmax/orion-ops) [gitee](https://gitee.com/lijiahangmax/orion-ops) [gitcode](https://gitcode.com/lijiahangmax/orion-ops/overview)
 * 🌈 如果本项目对你有帮助请帮忙推广一下 让更多的人知道此项目!
 * 🎭 演示环境部分功能不可用, 完整功能请本地部署!
 * 📛 演示环境请不要随便删除数据!
@@ -77,7 +78,7 @@
 
 ## 重构版 orion-visor
 
-`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全! 目前该项目已荣获 `GVP` 
+`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全! 目前该项目已荣获 `GVP`
 [项目地址](https://visor.orionsec.cn)
 
 ## 技术栈
@@ -153,9 +154,9 @@
 ![流水线配置](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files694386343461173439.png "流水线配置")
 ![流水线任务](https://yxythpt.oss-cn-shenzhen.aliyuncs.com/2022-04-25/files6446052342050924823.png "流水线任务")
 
-### 登陆日志
+### 登录日志
 
-![登陆日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/4a548584-6cee-4b95-9811-5d2a670bfca8.jpg "登陆日志")
+![登录日志](http://bjucloud.oss-cn-qingdao.aliyuncs.com/album/2022/7/23/4a548584-6cee-4b95-9811-5d2a670bfca8.jpg "登录日志")
 
 ### 安全配置
 
@@ -187,7 +188,7 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 
 <img src="https://oos-sdqd.ctyunapi.cn/album/2022/9/22/018ac2ff-164a-4f7d-a8ae-030c5d899726.png" alt="联系方式" width="540px"/>   
 
-📧 微信添加备注: ops   
+📧 问题/加群微信备注: ops  
 📧 合作/功能定制备注: 合作
 
 ## 支持一下

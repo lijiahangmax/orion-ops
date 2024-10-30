@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.orion.ops.dao.MachineAlarmConfigDAO">
+<mapper namespace="cn.orionsec.ops.dao.MachineAlarmConfigDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.MachineAlarmConfigDO">
+    <resultMap id="BaseResultMap" type="cn.orionsec.ops.entity.domain.MachineAlarmConfigDO">
         <id column="id" property="id"/>
         <result column="machine_id" property="machineId"/>
         <result column="alarm_type" property="alarmType"/>

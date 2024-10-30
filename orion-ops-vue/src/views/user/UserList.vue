@@ -104,7 +104,7 @@
             <a-badge :status="record.status | formatEnableStatus('status')"
                      :text="record.status | formatEnableStatus('label')"/>
           </template>
-          <!-- 登陆时间 -->
+          <!-- 登录时间 -->
           <template #lastLoginTime="record">
           <span v-if="record.lastLoginTime">
             {{ record.lastLoginTime | formatDate }} ({{ record.lastLoginAgo }})

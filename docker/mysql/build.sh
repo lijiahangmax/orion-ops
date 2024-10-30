@@ -1,5 +1,5 @@
 #/bin/bash
-version=1.2.9
+version=1.3.0
 cp -r ../../sql ./sql
 docker build -t orion-ops-mysql:${version} .
 rm -rf ./sql

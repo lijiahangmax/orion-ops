@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.orion.ops.dao.ApplicationActionDAO">
+<mapper namespace="cn.orionsec.ops.dao.ApplicationActionDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationActionDO">
+    <resultMap id="BaseResultMap" type="cn.orionsec.ops.entity.domain.ApplicationActionDO">
         <id column="id" property="id"/>
         <result column="app_id" property="appId"/>
         <result column="profile_id" property="profileId"/>
@@ -16,7 +16,7 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
-    <resultMap id="ConfigResultMap" type="com.orion.ops.entity.dto.ApplicationActionConfigDTO">
+    <resultMap id="ConfigResultMap" type="cn.orionsec.ops.entity.dto.ApplicationActionConfigDTO">
         <result column="app_id" property="appId"/>
         <result column="build_stage_count" property="buildStageCount"/>
         <result column="release_stage_count" property="releaseStageCount"/>

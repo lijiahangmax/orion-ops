@@ -62,7 +62,7 @@ const $api = {
   ...$url,
 
   /**
-   * 登陆
+   * 登录
    */
   login: param => {
     return $http.$post('/auth/login', param, { auth: false })

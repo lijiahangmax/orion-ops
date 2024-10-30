@@ -1,9 +1,9 @@
 <template>
   <div class="login-history-container">
-    <h2 class="m0">登陆历史</h2>
+    <h2 class="m0">登录历史</h2>
     <a-divider class="title-divider"/>
     <span class="history-extra">当前帐号最近登录的30条历史记录</span>
-    <!-- 登陆线 -->
+    <!-- 登录线 -->
     <div class="login-history-wrapper">
       <a-spin :spinning="loading">
         <a-timeline>
@@ -14,15 +14,15 @@
                 <a-icon class="login-icon" type="desktop"/>
               </div>
             </template>
-            <!-- 登陆ip -->
+            <!-- 登录ip -->
             <span class="login-info login-ip">
               <span v-if="log.ip" class="mr8">{{ log.ip }}</span>
               <span>{{ log.ipLocation }}</span>
             </span>
-            <!-- 登陆时间 -->
+            <!-- 登录时间 -->
             <span class="login-info login-time">
               <span>{{ log.createTime | formatDate }} ({{ log.createTimeAgo }})</span>
-              <a-icon v-if="log.refreshLogin" class="login-mode" type="clock-circle" theme="twoTone" title="自动登陆"/>
+              <a-icon v-if="log.refreshLogin" class="login-mode" type="clock-circle" theme="twoTone" title="自动登录"/>
             </span>
             <!-- ua -->
             <span class="login-info login-ua">{{ log.userAgent }}</span>

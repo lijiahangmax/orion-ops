@@ -11,7 +11,7 @@ const $http = axios.create({
 
 // 默认配置项
 const defaultConfig = {
-  // 是否需要登陆
+  // 是否需要登录
   auth: true,
   // 超时时间
   timeout: 10000,
@@ -97,7 +97,7 @@ $http.interceptors.request.use(
     const loginToken = $storage.get($storage.keys.LOGIN_TOKEN)
     // 设置 Content-Type
     config.headers['Content-Type'] = config.contentType
-    // 登陆判断
+    // 登录判断
     if (config.auth && !loginToken) {
       throw new RequestError(700, '会话过期')
     }

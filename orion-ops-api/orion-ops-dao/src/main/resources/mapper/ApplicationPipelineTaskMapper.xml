@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.orion.ops.dao.ApplicationPipelineTaskDAO">
+<mapper namespace="cn.orionsec.ops.dao.ApplicationPipelineTaskDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationPipelineTaskDO">
+    <resultMap id="BaseResultMap" type="cn.orionsec.ops.entity.domain.ApplicationPipelineTaskDO">
         <id column="id" property="id"/>
         <result column="pipeline_id" property="pipelineId"/>
         <result column="pipeline_name" property="pipelineName"/>
@@ -31,7 +31,7 @@
     </resultMap>
 
     <!-- 统计映射结果 -->
-    <resultMap id="StatisticsResultMap" type="com.orion.ops.entity.dto.ApplicationPipelineTaskStatisticsDTO">
+    <resultMap id="StatisticsResultMap" type="cn.orionsec.ops.entity.dto.ApplicationPipelineTaskStatisticsDTO">
         <result column="exec_count" property="execCount"/>
         <result column="success_count" property="successCount"/>
         <result column="failure_count" property="failureCount"/>

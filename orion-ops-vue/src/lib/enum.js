@@ -1015,7 +1015,7 @@ export const EVENT_CLASSIFY = {
 export const EVENT_TYPE = {
   LOGIN: {
     value: 100010,
-    label: '登陆系统',
+    label: '登录系统',
     classify: 100
   },
   LOGOUT: {

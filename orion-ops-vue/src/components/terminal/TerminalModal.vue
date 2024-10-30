@@ -136,9 +136,12 @@ export default {
     },
     close() {
       this.visible = false
-      this.$refs.terminal.dispose()
       this.machineId = null
       this.status = TERMINAL_STATUS.NOT_CONNECT.value
+      try {
+        this.$refs.terminal.dispose();
+      } catch (e) {
+      }
       this.$emit('close', this.terminalId)
     },
     onchangeStatus(status) {

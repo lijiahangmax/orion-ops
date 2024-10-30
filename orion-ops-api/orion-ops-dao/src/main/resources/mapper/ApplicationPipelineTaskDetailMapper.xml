@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.orion.ops.dao.ApplicationPipelineTaskDetailDAO">
+<mapper namespace="cn.orionsec.ops.dao.ApplicationPipelineTaskDetailDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO">
+    <resultMap id="BaseResultMap" type="cn.orionsec.ops.entity.domain.ApplicationPipelineTaskDetailDO">
         <id column="id" property="id"/>
         <result column="pipeline_id" property="pipelineId"/>
         <result column="pipeline_detail_id" property="pipelineDetailId"/>
@@ -31,7 +31,7 @@
         id, task_id, rel_id, exec_status, exec_start_time, exec_end_time
     </sql>
 
-    <select id="selectStatusByTaskId" resultType="com.orion.ops.entity.domain.ApplicationPipelineTaskDetailDO">
+    <select id="selectStatusByTaskId" resultType="cn.orionsec.ops.entity.domain.ApplicationPipelineTaskDetailDO">
         SELECT
         <include refid="Status_Column_List"/>
         FROM application_pipeline_task_detail
