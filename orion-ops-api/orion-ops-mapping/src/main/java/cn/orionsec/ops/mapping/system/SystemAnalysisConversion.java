@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.system;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.dto.system.SystemSpaceAnalysisDTO;
 import cn.orionsec.ops.entity.vo.system.SystemAnalysisVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 系统统计分析 对象转换器

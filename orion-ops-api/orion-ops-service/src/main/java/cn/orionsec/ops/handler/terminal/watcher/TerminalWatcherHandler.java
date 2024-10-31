@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.handler.terminal.watcher;
 
+import cn.orionsec.kit.lang.define.wrapper.Tuple;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.terminal.TerminalClientOperate;
 import cn.orionsec.ops.constant.ws.WsCloseCode;
@@ -24,7 +25,6 @@ import cn.orionsec.ops.handler.terminal.IOperateHandler;
 import cn.orionsec.ops.handler.terminal.manager.TerminalSessionManager;
 import cn.orionsec.ops.service.api.PassportService;
 import cn.orionsec.ops.utils.WebSockets;
-import com.orion.lang.define.wrapper.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;

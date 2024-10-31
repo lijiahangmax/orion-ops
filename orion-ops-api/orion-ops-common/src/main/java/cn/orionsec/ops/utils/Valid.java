@@ -15,14 +15,14 @@
  */
 package cn.orionsec.ops.utils;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.utils.Arrays1;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Files1;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.utils.Arrays1;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Files1;
 
 import java.util.Collection;
 
@@ -33,7 +33,7 @@ import java.util.Collection;
  * @version 1.0.0
  * @since 2021/4/3 21:45
  */
-public class Valid extends com.orion.lang.utils.Valid {
+public class Valid extends cn.orionsec.kit.lang.utils.Valid {
 
     public static <T> T notNull(T object) {
         return notNull(object, MessageConst.ABSENT_PARAM);

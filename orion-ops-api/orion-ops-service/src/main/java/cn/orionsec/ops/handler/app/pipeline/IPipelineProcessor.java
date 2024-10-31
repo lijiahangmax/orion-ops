@@ -15,7 +15,7 @@
  */
 package cn.orionsec.ops.handler.app.pipeline;
 
-import com.orion.lang.able.Executable;
+import cn.orionsec.kit.lang.able.Executable;
 
 /**
  * 流水线处理器

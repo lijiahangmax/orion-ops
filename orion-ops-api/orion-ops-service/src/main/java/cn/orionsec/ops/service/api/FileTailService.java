@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.constant.tail.FileTailType;
 import cn.orionsec.ops.entity.request.file.FileTailRequest;
 import cn.orionsec.ops.entity.vo.tail.FileTailConfigVO;
 import cn.orionsec.ops.entity.vo.tail.FileTailVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

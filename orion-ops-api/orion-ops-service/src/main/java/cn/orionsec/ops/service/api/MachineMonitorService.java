@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.domain.MachineMonitorDO;
 import cn.orionsec.ops.entity.request.machine.MachineMonitorRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineMonitorVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

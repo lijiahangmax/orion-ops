@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.app.ApplicationProfileRequest;
 import cn.orionsec.ops.entity.vo.app.ApplicationProfileFastVO;
 import cn.orionsec.ops.entity.vo.app.ApplicationProfileVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

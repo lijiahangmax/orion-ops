@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.constant.env;
 
+import cn.orionsec.kit.lang.define.collect.MutableLinkedHashMap;
 import cn.orionsec.ops.utils.AttrConverts;
-import com.orion.lang.define.collect.MutableLinkedHashMap;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;

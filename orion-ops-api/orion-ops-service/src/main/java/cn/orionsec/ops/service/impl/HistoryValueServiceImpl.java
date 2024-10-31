@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.constant.history.HistoryOperator;
 import cn.orionsec.ops.constant.history.HistoryValueType;
@@ -34,7 +35,6 @@ import cn.orionsec.ops.utils.Currents;
 import cn.orionsec.ops.utils.DataQuery;
 import cn.orionsec.ops.utils.Valid;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.define.wrapper.DataGrid;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.machine.MachineProxyRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineProxyVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

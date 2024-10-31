@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.constant.event;
 
-import com.orion.lang.define.StopWatch;
-import com.orion.lang.utils.io.FileReaders;
-import com.orion.lang.utils.io.FileWriters;
-import com.orion.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.define.StopWatch;
+import cn.orionsec.kit.lang.utils.io.FileReaders;
+import cn.orionsec.kit.lang.utils.io.FileWriters;
+import cn.orionsec.kit.lang.utils.io.Files1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,7 +54,7 @@ public class AddLicenseHeader {
     public static void main(String[] args) {
         StopWatch sw = StopWatch.begin();
         // 扫描文件
-        List<File> files = Files1.listFilesFilter(PATH, (file, name) -> file.isFile()
+        List<File> files = Files1.listFilesFilter(PATH, file -> file.isFile()
                 && file.getName().endsWith(".java")
                 && !file.getAbsolutePath().contains("node_modules"), true, false);
         sw.tag("list");

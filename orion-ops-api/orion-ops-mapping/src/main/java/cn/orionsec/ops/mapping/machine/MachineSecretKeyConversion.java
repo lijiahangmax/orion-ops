@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.MachineSecretKeyDO;
 import cn.orionsec.ops.entity.vo.machine.MachineSecretKeyVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器密钥 对象转换器

@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.constant.event.EventType;
 import cn.orionsec.ops.entity.request.user.EventLogRequest;
 import cn.orionsec.ops.entity.vo.user.UserEventLogVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 /**
  * 用户操作日志服务

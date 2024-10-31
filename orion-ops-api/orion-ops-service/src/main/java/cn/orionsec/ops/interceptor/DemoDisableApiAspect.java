@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.interceptor;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.utils.Exceptions;
 import cn.orionsec.ops.annotation.DemoDisableApi;
 import cn.orionsec.ops.constant.ResultCode;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

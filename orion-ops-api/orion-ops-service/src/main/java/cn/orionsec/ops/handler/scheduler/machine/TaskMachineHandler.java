@@ -15,6 +15,18 @@
  */
 package cn.orionsec.ops.handler.scheduler.machine;
 
+import cn.orionsec.kit.lang.constant.Letters;
+import cn.orionsec.kit.lang.exception.DisabledException;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.lang.utils.time.Dates;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.ssh.ExitCode;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.common.StainCode;
 import cn.orionsec.ops.constant.scheduler.SchedulerTaskMachineStatus;
@@ -24,18 +36,6 @@ import cn.orionsec.ops.entity.domain.SchedulerTaskMachineRecordDO;
 import cn.orionsec.ops.handler.tail.TailSessionHolder;
 import cn.orionsec.ops.service.api.MachineInfoService;
 import cn.orionsec.ops.utils.Utils;
-import com.orion.lang.constant.Letters;
-import com.orion.lang.exception.DisabledException;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.lang.utils.time.Dates;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.ExitCode;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -106,7 +106,7 @@ public class TaskMachineHandler implements ITaskMachineHandler {
             // 获取执行器
             this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(machineRecord.getExecCommand()));
             // 开始执行
-            CommandExecutors.syncExecCommand(executor, logOutputStream);
+            CommandExecutors.execCommand(executor, logOutputStream);
             this.exitCode = executor.getExitCode();
         } catch (Exception e) {
             ex = e;

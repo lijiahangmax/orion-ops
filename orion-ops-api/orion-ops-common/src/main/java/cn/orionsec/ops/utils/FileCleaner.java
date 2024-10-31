@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.utils;
 
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.time.Dates;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.system.SystemCleanType;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.time.Dates;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -94,7 +94,7 @@ public class FileCleaner {
             case REPO_FILE:
                 // 应用仓库
                 File repoPath = new File(SystemEnvAttr.REPO_PATH.getValue());
-                List<File> repoPaths = Files1.listFilesFilter(repoPath, (f, n) -> f.isDirectory() && !Const.EVENT.equals(n), false, true);
+                List<File> repoPaths = Files1.listFilesFilter(repoPath, f -> f.isDirectory() && !Const.EVENT.equals(f.getName()), false, true);
                 for (File repo : repoPaths) {
                     releasedBytes += deletePathFiles(thresholdTime, repo);
                 }
@@ -116,7 +116,7 @@ public class FileCleaner {
      * @return size
      */
     private static long deletePathFiles(long thresholdTime, File path) {
-        List<File> files = Files1.listFilesFilter(path, (p, n) -> checkLessThanThreshold(thresholdTime, p, n), true, true);
+        List<File> files = Files1.listFilesFilter(path, p -> checkLessThanThreshold(thresholdTime, p), true, true);
         long size = files.stream().mapToLong(File::length).sum();
         files.stream().filter(File::isFile).forEach(Files1::delete);
         files.stream().filter(File::isDirectory).forEach(Files1::delete);
@@ -129,10 +129,9 @@ public class FileCleaner {
      *
      * @param thresholdTime 阈值
      * @param file          文件
-     * @param s             文件名
      * @return 是否超过
      */
-    private static boolean checkLessThanThreshold(long thresholdTime, File file, String s) {
+    private static boolean checkLessThanThreshold(long thresholdTime, File file) {
         return file.lastModified() <= thresholdTime;
     }
 

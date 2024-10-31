@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.handler.importer.validator;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.constant.CnConst;
 import cn.orionsec.ops.entity.importer.ApplicationProfileImportDTO;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.utils.Strings;
 
 /**
  * 应用环境表 数据验证器

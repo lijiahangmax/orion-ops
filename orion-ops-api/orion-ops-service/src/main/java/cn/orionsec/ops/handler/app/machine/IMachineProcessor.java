@@ -15,7 +15,7 @@
  */
 package cn.orionsec.ops.handler.app.machine;
 
-import com.orion.lang.able.SafeCloseable;
+import cn.orionsec.kit.lang.able.SafeCloseable;
 
 /**
  * 机器执行器

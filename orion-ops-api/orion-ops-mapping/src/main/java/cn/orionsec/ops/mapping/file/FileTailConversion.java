@@ -15,12 +15,12 @@
  */
 package cn.orionsec.ops.mapping.file;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.time.Dates;
 import cn.orionsec.ops.entity.domain.FileTailListDO;
 import cn.orionsec.ops.entity.dto.file.FileTailDTO;
 import cn.orionsec.ops.entity.vo.tail.FileTailVO;
-import com.orion.lang.utils.convert.TypeStore;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.time.Dates;
 
 /**
  * 文件 tail 对象转换器

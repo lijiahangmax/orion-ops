@@ -15,15 +15,15 @@
  */
 package cn.orionsec.ops.config;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.exception.*;
+import cn.orionsec.kit.lang.exception.argument.CodeArgumentException;
+import cn.orionsec.kit.lang.exception.argument.HttpWrapperException;
+import cn.orionsec.kit.lang.exception.argument.InvalidArgumentException;
+import cn.orionsec.kit.lang.exception.argument.RpcWrapperException;
+import cn.orionsec.kit.lang.utils.Exceptions;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.interceptor.*;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.exception.*;
-import com.orion.lang.exception.argument.CodeArgumentException;
-import com.orion.lang.exception.argument.HttpWrapperException;
-import com.orion.lang.exception.argument.InvalidArgumentException;
-import com.orion.lang.exception.argument.RpcWrapperException;
-import com.orion.lang.utils.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.EncryptedDocumentException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -252,7 +252,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @ExceptionHandler(value = CodeArgumentException.class)
     public HttpWrapper<?> codeArgumentExceptionHandler(CodeArgumentException ex) {
-        return HttpWrapper.error(ex.getCode(), ex.getMessage());
+        return HttpWrapper.of(ex.getCode(), ex.getMessage());
     }
 
     @ExceptionHandler(value = HttpWrapperException.class)

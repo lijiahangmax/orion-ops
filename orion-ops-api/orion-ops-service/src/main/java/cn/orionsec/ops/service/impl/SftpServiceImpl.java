@@ -15,6 +15,19 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.lang.define.io.IgnoreOutputStream;
+import cn.orionsec.kit.lang.id.ObjectIds;
+import cn.orionsec.kit.lang.id.UUIds;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.collect.Lists;
+import cn.orionsec.kit.lang.utils.convert.Converts;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.sftp.SftpExecutor;
+import cn.orionsec.kit.net.host.sftp.SftpFile;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.KeyConst;
 import cn.orionsec.ops.constant.MessageConst;
@@ -44,19 +57,6 @@ import cn.orionsec.ops.service.api.SftpService;
 import cn.orionsec.ops.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.define.io.IgnoreOutputStream;
-import com.orion.lang.id.ObjectIds;
-import com.orion.lang.id.UUIds;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.collect.Lists;
-import com.orion.lang.utils.convert.Converts;
-import com.orion.lang.utils.io.Files1;
-import com.orion.net.base.file.sftp.SftpFile;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -127,7 +127,7 @@ public class SftpServiceImpl implements SftpService {
                 fileList = executor.listFilesFilter(path, f -> !f.getName().startsWith("."), false, true);
             } else {
                 // 查询隐藏文件
-                fileList = executor.ll(path);
+                fileList = executor.list(path);
             }
             // 返回
             FileListVO fileListVO = new FileListVO();
@@ -158,7 +158,7 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
-            executor.mkdirs(path);
+            executor.makeDirectories(path);
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -194,7 +194,7 @@ public class SftpServiceImpl implements SftpService {
         String target = Files1.getPath(request.getTarget());
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
-            executor.mv(source, target);
+            executor.move(source, target);
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -208,7 +208,7 @@ public class SftpServiceImpl implements SftpService {
         synchronized (executor) {
             paths.stream()
                     .map(Files1::getPath)
-                    .forEach(executor::rm);
+                    .forEach(executor::remove);
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -220,7 +220,7 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
-            executor.chmod(path, request.getPermission());
+            executor.changeMode(path, request.getPermission());
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -233,7 +233,7 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
-            executor.chown(path, request.getUid());
+            executor.changeOwner(path, request.getUid());
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -244,7 +244,7 @@ public class SftpServiceImpl implements SftpService {
         String path = Files1.getPath(request.getPath());
         SftpExecutor executor = sftpBasicExecutorHolder.getBasicExecutor(request.getSessionToken());
         synchronized (executor) {
-            executor.chgrp(path, request.getGid());
+            executor.changeGroup(path, request.getGid());
         }
         // 设置日志参数
         EventParamsHolder.addParams(request);
@@ -402,7 +402,7 @@ public class SftpServiceImpl implements SftpService {
         try (SessionStore session = machineInfoService.openSessionStore(machine);
              CommandExecutor executor = session.getCommandExecutor(Strings.replaceCRLF(command))) {
             // 执行命令
-            CommandExecutors.syncExecCommand(executor, new IgnoreOutputStream());
+            CommandExecutors.execCommand(executor, new IgnoreOutputStream());
         } catch (Exception e) {
             throw Exceptions.app(MessageConst.EXECUTE_SFTP_ZIP_COMMAND_ERROR, e);
         }

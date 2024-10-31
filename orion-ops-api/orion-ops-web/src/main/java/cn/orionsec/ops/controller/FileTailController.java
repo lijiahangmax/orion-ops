@@ -15,6 +15,14 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.utils.Charsets;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.collect.Lists;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.web.servlet.web.Servlets;
 import cn.orionsec.ops.annotation.DemoDisableApi;
 import cn.orionsec.ops.annotation.EventLog;
 import cn.orionsec.ops.annotation.RestWrapper;
@@ -28,14 +36,6 @@ import cn.orionsec.ops.entity.vo.tail.FileTailVO;
 import cn.orionsec.ops.service.api.FileTailService;
 import cn.orionsec.ops.utils.Utils;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.utils.Charsets;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.collect.Lists;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -160,7 +160,7 @@ public class FileTailController {
         if (fileName == null) {
             fileName = Utils.getRandomSuffix() + Const.DOT + Const.SUFFIX_LOG;
         }
-        Servlets.setDownloadHeader(response, fileName);
+        Servlets.setAttachmentHeader(response, fileName);
         // 读取文件
         try (InputStream in = file.getInputStream()) {
             byte[] bytes = Streams.toByteArray(in);

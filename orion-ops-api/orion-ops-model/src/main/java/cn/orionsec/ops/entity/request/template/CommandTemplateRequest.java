@@ -15,7 +15,7 @@
  */
 package cn.orionsec.ops.entity.request.template;
 
-import com.orion.lang.define.wrapper.PageRequest;
+import cn.orionsec.kit.lang.define.wrapper.PageRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

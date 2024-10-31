@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import cn.orionsec.ops.annotation.RestWrapper;
 import cn.orionsec.ops.constant.common.TreeMoveType;
 import cn.orionsec.ops.entity.request.machine.MachineGroupRelRequest;
@@ -23,7 +24,6 @@ import cn.orionsec.ops.entity.vo.machine.MachineGroupTreeVO;
 import cn.orionsec.ops.service.api.MachineGroupRelService;
 import cn.orionsec.ops.service.api.MachineGroupService;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

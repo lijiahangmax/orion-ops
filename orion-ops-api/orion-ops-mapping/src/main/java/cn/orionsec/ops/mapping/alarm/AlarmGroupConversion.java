@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.mapping.alarm;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.AlarmGroupDO;
 import cn.orionsec.ops.entity.domain.AlarmGroupUserDO;
 import cn.orionsec.ops.entity.vo.alarm.AlarmGroupUserVO;
 import cn.orionsec.ops.entity.vo.alarm.AlarmGroupVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 报警组 对象转换器

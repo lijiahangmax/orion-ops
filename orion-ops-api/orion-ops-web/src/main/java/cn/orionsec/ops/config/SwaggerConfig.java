@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.config;
 
+import cn.orionsec.kit.lang.utils.collect.Lists;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.PropertiesConst;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
-import com.orion.lang.utils.collect.Lists;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

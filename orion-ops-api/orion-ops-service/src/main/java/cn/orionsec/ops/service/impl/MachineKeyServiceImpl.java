@@ -15,6 +15,14 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.codec.Base64s;
+import cn.orionsec.kit.lang.utils.convert.Converts;
+import cn.orionsec.kit.lang.utils.io.FileWriters;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.net.host.SessionHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.constant.event.EventKeys;
@@ -28,14 +36,6 @@ import cn.orionsec.ops.service.api.MachineKeyService;
 import cn.orionsec.ops.utils.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.codec.Base64s;
-import com.orion.lang.utils.convert.Converts;
-import com.orion.lang.utils.io.FileWriters;
-import com.orion.lang.utils.io.Files1;
-import com.orion.net.remote.channel.SessionHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -195,12 +195,13 @@ public class MachineKeyServiceImpl implements MachineKeyService {
      */
     private void checkLoadKey(String path, String password) {
         try {
+            SessionHolder holder = new SessionHolder();
             if (Strings.isEmpty(password)) {
-                SessionHolder.HOLDER.addIdentity(path);
+                holder.addIdentity(path);
             } else {
-                SessionHolder.HOLDER.addIdentity(path, password);
+                holder.addIdentity(path, password);
             }
-            SessionHolder.HOLDER.removeAllIdentity();
+            holder.removeAllIdentity();
         } catch (Exception e) {
             throw Exceptions.app(MessageConst.ILLEGAL_MACHINE_SECRET_KEY, e);
         }

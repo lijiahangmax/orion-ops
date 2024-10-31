@@ -15,6 +15,8 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import cn.orionsec.ops.annotation.DemoDisableApi;
 import cn.orionsec.ops.annotation.EventLog;
 import cn.orionsec.ops.annotation.RestWrapper;
@@ -26,8 +28,6 @@ import cn.orionsec.ops.entity.request.machine.MachineInfoRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineInfoVO;
 import cn.orionsec.ops.service.api.MachineInfoService;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;

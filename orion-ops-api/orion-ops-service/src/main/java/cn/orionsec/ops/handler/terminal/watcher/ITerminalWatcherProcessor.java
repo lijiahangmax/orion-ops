@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.handler.terminal.watcher;
 
-import com.orion.lang.able.SafeCloseable;
-import com.orion.lang.able.Watchable;
+import cn.orionsec.kit.lang.able.SafeCloseable;
+import cn.orionsec.kit.lang.able.Watchable;
 import org.springframework.web.socket.WebSocketSession;
 
 /**

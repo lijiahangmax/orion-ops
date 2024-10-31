@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.machine.MachineEnvAttr;
 import cn.orionsec.ops.entity.domain.MachineEnvDO;
 import cn.orionsec.ops.entity.vo.machine.MachineEnvVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器环境变量 对象转换器

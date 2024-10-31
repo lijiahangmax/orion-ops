@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.constant;
 
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.time.Dates;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.time.Dates;
 
 /**
  * 导出常量

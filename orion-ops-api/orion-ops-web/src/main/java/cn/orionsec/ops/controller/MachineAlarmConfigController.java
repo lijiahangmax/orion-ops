@@ -15,6 +15,8 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import cn.orionsec.ops.annotation.EventLog;
 import cn.orionsec.ops.annotation.RestWrapper;
 import cn.orionsec.ops.constant.MessageConst;
@@ -27,8 +29,6 @@ import cn.orionsec.ops.service.api.MachineAlarmConfigService;
 import cn.orionsec.ops.service.api.MachineAlarmHistoryService;
 import cn.orionsec.ops.service.api.MachineAlarmService;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

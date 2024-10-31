@@ -25,6 +25,12 @@
             <artifactId>springfox-swagger2</artifactId>
         </dependency>
 
+        <!-- aspectj -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+
         <!-- mybatis plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -54,7 +60,7 @@
 
         <!-- orion-kit -->
         <dependency>
-            <groupId>io.github.lijiahangmax</groupId>
+            <groupId>cn.orionsec.kit</groupId>
             <artifactId>orion-all</artifactId>
         </dependency>
     </dependencies>

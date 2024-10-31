@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.app;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.ApplicationMachineDO;
 import cn.orionsec.ops.entity.vo.app.ApplicationMachineVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 应用机器 对象转换器

@@ -15,6 +15,16 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.id.UUIds;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Objects1;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.codec.Base64s;
+import cn.orionsec.kit.lang.utils.convert.Converts;
+import cn.orionsec.kit.lang.utils.crypto.Signatures;
+import cn.orionsec.kit.lang.utils.io.FileWriters;
 import cn.orionsec.ops.constant.CnConst;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.KeyConst;
@@ -33,16 +43,6 @@ import cn.orionsec.ops.service.api.UserService;
 import cn.orionsec.ops.utils.*;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.id.UUIds;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Objects1;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.codec.Base64s;
-import com.orion.lang.utils.convert.Converts;
-import com.orion.lang.utils.crypto.Signatures;
-import com.orion.lang.utils.io.FileWriters;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -236,9 +236,9 @@ public class UserServiceImpl implements UserService {
             AvatarPicHolder.deletePic(userInfo.getAvatarPic());
         }
         // 写入图片
-        String type = Base64s.img64Type(avatar);
+        String type = Base64s.getMimeTypeLast(avatar);
         String url = AvatarPicHolder.getPicPath(userId, type);
-        byte[] pic = Base64s.img64Decode(avatar);
+        byte[] pic = Base64s.mimeTypeDecode(avatar);
         String fullPicPath = AvatarPicHolder.touchPicFile(userId, type);
         FileWriters.writeFast(fullPicPath, pic);
         // 更新

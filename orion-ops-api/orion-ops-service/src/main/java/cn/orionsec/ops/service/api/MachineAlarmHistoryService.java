@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.machine.MachineAlarmHistoryRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineAlarmHistoryVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 /**
  * 机器报警历史服务

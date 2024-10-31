@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.annotation.IgnoreLog;
 import cn.orionsec.ops.annotation.RestWrapper;
 import cn.orionsec.ops.entity.request.message.WebSideMessageRequest;
@@ -22,7 +23,6 @@ import cn.orionsec.ops.entity.vo.message.WebSideMessagePollVO;
 import cn.orionsec.ops.entity.vo.message.WebSideMessageVO;
 import cn.orionsec.ops.service.api.WebSideMessageService;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.DataGrid;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

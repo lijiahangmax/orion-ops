@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.handler.terminal.screen;
 
+import cn.orionsec.kit.net.host.ssh.TerminalType;
 import cn.orionsec.ops.constant.Const;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.orion.net.remote.TerminalType;
 import lombok.Data;
 
 /**

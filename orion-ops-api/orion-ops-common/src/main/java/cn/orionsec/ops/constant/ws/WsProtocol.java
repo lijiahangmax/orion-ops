@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.constant.ws;
 
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.Valid;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.Valid;
 import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayOutputStream;

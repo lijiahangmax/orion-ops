@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.MachineProxyDO;
 import cn.orionsec.ops.entity.vo.machine.MachineProxyVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器代理 对象转换器

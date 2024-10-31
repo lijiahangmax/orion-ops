@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.expose;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import cn.orionsec.ops.annotation.RestWrapper;
 import cn.orionsec.ops.constant.machine.MachineAlarmType;
 import cn.orionsec.ops.entity.request.machine.MachineAlarmRequest;
@@ -22,7 +23,6 @@ import cn.orionsec.ops.entity.vo.machine.MachineAlarmConfigVO;
 import cn.orionsec.ops.service.api.MachineAlarmConfigService;
 import cn.orionsec.ops.service.api.MachineAlarmService;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;

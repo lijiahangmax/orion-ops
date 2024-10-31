@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.handler.exec;
 
-import com.orion.lang.able.Executable;
-import com.orion.lang.able.SafeCloseable;
+import cn.orionsec.kit.lang.able.Executable;
+import cn.orionsec.kit.lang.able.SafeCloseable;
 
 /**
  * 命令执行器

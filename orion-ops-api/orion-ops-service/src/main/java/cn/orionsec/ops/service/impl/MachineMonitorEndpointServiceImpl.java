@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.constant.ParamConst;
@@ -29,7 +30,6 @@ import cn.orionsec.ops.service.api.MachineMonitorService;
 import cn.orionsec.ops.utils.Valid;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.orion.lang.define.wrapper.HttpWrapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

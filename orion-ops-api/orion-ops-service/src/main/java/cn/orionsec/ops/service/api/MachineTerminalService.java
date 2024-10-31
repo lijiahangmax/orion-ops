@@ -15,13 +15,13 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.domain.MachineTerminalLogDO;
 import cn.orionsec.ops.entity.request.machine.MachineTerminalLogRequest;
 import cn.orionsec.ops.entity.request.machine.MachineTerminalRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineTerminalLogVO;
 import cn.orionsec.ops.entity.vo.machine.MachineTerminalVO;
 import cn.orionsec.ops.entity.vo.machine.TerminalAccessVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

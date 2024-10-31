@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.MachineGroupDO;
 import cn.orionsec.ops.entity.vo.machine.MachineGroupTreeVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器分组 对象转换器

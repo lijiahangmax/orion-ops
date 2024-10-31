@@ -15,7 +15,7 @@
  */
 package cn.orionsec.ops.handler.http;
 
-import com.orion.http.support.HttpMethod;
+import cn.orionsec.kit.http.support.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

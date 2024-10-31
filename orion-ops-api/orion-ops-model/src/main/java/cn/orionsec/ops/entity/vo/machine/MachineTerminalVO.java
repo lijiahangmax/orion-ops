@@ -40,7 +40,7 @@ public class MachineTerminalVO {
     private Long machineId;
 
     /**
-     * @see com.orion.net.remote.TerminalType
+     * @see cn.orionsec.kit.net.host.ssh.TerminalType
      */
     @ApiModelProperty(value = "终端类型")
     private String terminalType;

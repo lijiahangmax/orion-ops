@@ -15,6 +15,16 @@
  */
 package cn.orionsec.ops.handler.app.action;
 
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.collect.Maps;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.ssh.ExitCode;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.app.ActionType;
 import cn.orionsec.ops.constant.app.TransferMode;
@@ -24,16 +34,6 @@ import cn.orionsec.ops.constant.env.EnvConst;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
 import cn.orionsec.ops.service.api.MachineInfoService;
 import cn.orionsec.ops.utils.Utils;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.collect.Maps;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.ExitCode;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.spring.SpringHolder;
 import lombok.Getter;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class ScpTransferActionHandler extends AbstractActionHandler {
         // 打开executor
         this.executor = session.getCommandExecutor(Strings.replaceCRLF(scpCommand));
         // 执行命令
-        CommandExecutors.syncExecCommand(executor, appender);
+        CommandExecutors.execCommand(executor, appender);
         this.exitCode = executor.getExitCode();
         this.appendLog(Const.LF);
         if (!ExitCode.isSuccess(exitCode)) {

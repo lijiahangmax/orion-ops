@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.handler.importer.validator;
 
+import cn.orionsec.kit.lang.utils.Charsets;
 import cn.orionsec.ops.entity.importer.MachineTailFileImportDTO;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.utils.Charsets;
 
 /**
  * 文件tail 数据验证器

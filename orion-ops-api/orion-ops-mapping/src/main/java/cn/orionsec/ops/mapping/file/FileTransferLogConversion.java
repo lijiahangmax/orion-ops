@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.mapping.file;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
+import cn.orionsec.kit.lang.utils.io.Files1;
 import cn.orionsec.ops.entity.domain.FileTransferLogDO;
 import cn.orionsec.ops.entity.vo.sftp.FileTransferLogVO;
-import com.orion.lang.utils.convert.TypeStore;
-import com.orion.lang.utils.io.Files1;
 
 /**
  * 文件传输日志 对象转换器

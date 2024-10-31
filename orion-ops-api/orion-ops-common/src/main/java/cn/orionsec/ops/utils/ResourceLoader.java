@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.utils;
 
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.collect.Maps;
-import com.orion.lang.utils.io.Streams;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.collect.Maps;
+import cn.orionsec.kit.lang.utils.io.Streams;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

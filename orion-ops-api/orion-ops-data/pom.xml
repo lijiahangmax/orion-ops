@@ -15,7 +15,7 @@
     <dependencies>
         <!-- orion-kit -->
         <dependency>
-            <groupId>io.github.lijiahangmax</groupId>
+            <groupId>cn.orionsec.kit</groupId>
             <artifactId>orion-all</artifactId>
         </dependency>
 

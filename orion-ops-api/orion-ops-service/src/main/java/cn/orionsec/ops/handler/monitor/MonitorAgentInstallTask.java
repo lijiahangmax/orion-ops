@@ -15,6 +15,21 @@
  */
 package cn.orionsec.ops.handler.monitor;
 
+import cn.orionsec.kit.lang.constant.Letters;
+import cn.orionsec.kit.lang.utils.Arrays1;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.Threads;
+import cn.orionsec.kit.lang.utils.collect.Maps;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.lang.utils.time.Dates;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.sftp.SftpExecutor;
+import cn.orionsec.kit.net.host.ssh.ExitCode;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.event.EventKeys;
 import cn.orionsec.ops.constant.message.MessageType;
@@ -29,21 +44,6 @@ import cn.orionsec.ops.service.api.MachineInfoService;
 import cn.orionsec.ops.service.api.MachineMonitorService;
 import cn.orionsec.ops.service.api.WebSideMessageService;
 import cn.orionsec.ops.utils.PathBuilders;
-import com.orion.lang.constant.Letters;
-import com.orion.lang.utils.Arrays1;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.Threads;
-import com.orion.lang.utils.collect.Maps;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.lang.utils.time.Dates;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.ExitCode;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.spring.SpringHolder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -141,7 +141,7 @@ public class MonitorAgentInstallTask implements Runnable {
             String startScript = this.getStartScript(agentPath);
             this.appendLog("开始生成启动脚本 path: {}, command: \n{}", agentPath, startScript);
             executor.write(startScriptPath, Strings.bytes(startScript));
-            executor.chmod(startScriptPath, 777);
+            executor.changeMode(startScriptPath, 777);
             // 传输 agent 文件
             File localAgentFile = new File(SystemEnvAttr.MACHINE_MONITOR_AGENT_PATH.getValue());
             // 查询文件是否存在
@@ -175,7 +175,7 @@ public class MonitorAgentInstallTask implements Runnable {
             // executor = session.getCommandExecutor("bash -l " + startScriptPath);
             executor = session.getCommandExecutor(startScriptPath);
             executor.getChannel().setPty(false);
-            CommandExecutors.syncExecCommand(executor, logStream);
+            CommandExecutors.execCommand(executor, logStream);
             int exitCode = executor.getExitCode();
             if (!ExitCode.isSuccess(exitCode)) {
                 throw Exceptions.runtime("执行启动失败");

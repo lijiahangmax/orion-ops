@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.mapping.message;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
+import cn.orionsec.kit.lang.utils.time.Dates;
 import cn.orionsec.ops.entity.domain.WebSideMessageDO;
 import cn.orionsec.ops.entity.vo.message.WebSideMessageVO;
-import com.orion.lang.utils.convert.TypeStore;
-import com.orion.lang.utils.time.Dates;
 
 /**
  * 站内信 对象转换器

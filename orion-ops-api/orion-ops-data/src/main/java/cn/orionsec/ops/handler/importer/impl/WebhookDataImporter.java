@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.handler.importer.impl;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.dao.WebhookConfigDAO;
 import cn.orionsec.ops.entity.domain.WebhookConfigDO;
 import cn.orionsec.ops.entity.importer.DataImportDTO;
-import com.orion.spring.SpringHolder;
 
 /**
  * webhook 数据导入器

@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.handler.terminal;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.entity.dto.terminal.TerminalConnectDTO;
 import cn.orionsec.ops.entity.dto.terminal.TerminalSizeDTO;
-import com.orion.lang.utils.Strings;
 
 /**
  * 终端工具类

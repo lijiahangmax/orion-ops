@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.constant.app;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

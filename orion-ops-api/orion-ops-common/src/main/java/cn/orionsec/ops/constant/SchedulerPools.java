@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.constant;
 
-import com.orion.lang.define.thread.ExecutorBuilder;
-import com.orion.lang.utils.Systems;
-import com.orion.lang.utils.Threads;
+import cn.orionsec.kit.lang.define.thread.ExecutorBuilder;
+import cn.orionsec.kit.lang.utils.Systems;
+import cn.orionsec.kit.lang.utils.Threads;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -37,48 +37,48 @@ public class SchedulerPools {
      * terminal 调度线程池
      */
     public static final ThreadPoolExecutor TERMINAL_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("terminal-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("terminal-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_60)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * terminal watcher 调度线程池
      */
     public static final ThreadPoolExecutor TERMINAL_WATCHER_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("terminal-watcher-thread-")
-            .setCorePoolSize(0)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("terminal-watcher-thread-")
+            .corePoolSize(0)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 命令执行 调度线程池
      */
     public static final ThreadPoolExecutor EXEC_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("exec-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("exec-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * tail 调度线程池
      */
     public static final ThreadPoolExecutor TAIL_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("tail-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("tail-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_60)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
 
@@ -86,12 +86,12 @@ public class SchedulerPools {
      * sftp 传输进度线程池
      */
     public static final ThreadPoolExecutor SFTP_TRANSFER_RATE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("sftp-transfer-rate-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("sftp-transfer-rate-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
 
@@ -99,144 +99,144 @@ public class SchedulerPools {
      * sftp 上传线程池
      */
     public static final ThreadPoolExecutor SFTP_UPLOAD_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("sftp-upload-thread-")
-            .setCorePoolSize(6)
-            .setMaxPoolSize(6)
-            .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("sftp-upload-thread-")
+            .corePoolSize(6)
+            .maxPoolSize(6)
+            .keepAliveTime(Const.MS_S_60)
+            .workQueue(new LinkedBlockingQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * sftp 下载线程池
      */
     public static final ThreadPoolExecutor SFTP_DOWNLOAD_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("sftp-download-thread-")
-            .setCorePoolSize(6)
-            .setMaxPoolSize(6)
-            .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("sftp-download-thread-")
+            .corePoolSize(6)
+            .maxPoolSize(6)
+            .keepAliveTime(Const.MS_S_60)
+            .workQueue(new LinkedBlockingQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * sftp 打包线程池
      */
     public static final ThreadPoolExecutor SFTP_PACKAGE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("sftp-package-thread-")
-            .setCorePoolSize(4)
-            .setMaxPoolSize(4)
-            .setKeepAliveTime(Const.MS_S_60)
-            .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("sftp-package-thread-")
+            .corePoolSize(4)
+            .maxPoolSize(4)
+            .keepAliveTime(Const.MS_S_60)
+            .workQueue(new LinkedBlockingQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 应用构建线程池
      */
     public static final ThreadPoolExecutor APP_BUILD_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("app-build-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("app-build-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 应用发布 主线程操作线程池
      */
     public static final ThreadPoolExecutor RELEASE_MAIN_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("release-main-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("release-main-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 应用发布 机器操作线程池
      */
     public static final ThreadPoolExecutor RELEASE_MACHINE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("release-machine-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("release-machine-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 调度任务 主进程操作线程池
      */
     public static final ThreadPoolExecutor SCHEDULER_TASK_MAIN_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("scheduler-task-main-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("scheduler-task-main-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 调度任务 机器操作线程池
      */
     public static final ThreadPoolExecutor SCHEDULER_TASK_MACHINE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("scheduler-task-machine-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("scheduler-task-machine-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 应用流水线 线程池
      */
     public static final ThreadPoolExecutor PIPELINE_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("pipeline-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("pipeline-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 异步导入 线程池
      */
     public static final ThreadPoolExecutor ASYNC_IMPORT_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("async-import-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(4)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("async-import-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(4)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new LinkedBlockingQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 插件安装 线程池
      */
     public static final ThreadPoolExecutor AGENT_INSTALL_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("agent-install-thread-")
-            .setCorePoolSize(4)
-            .setMaxPoolSize(4)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new LinkedBlockingQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("agent-install-thread-")
+            .corePoolSize(4)
+            .maxPoolSize(4)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new LinkedBlockingQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
     /**
      * 机器报警 线程池
      */
     public static final ThreadPoolExecutor MACHINE_ALARM_SCHEDULER = ExecutorBuilder.create()
-            .setNamedThreadFactory("machine-alarm-thread-")
-            .setCorePoolSize(1)
-            .setMaxPoolSize(Integer.MAX_VALUE)
-            .setKeepAliveTime(Const.MS_S_30)
-            .setWorkQueue(new SynchronousQueue<>())
-            .setAllowCoreThreadTimeout(true)
+            .namedThreadFactory("machine-alarm-thread-")
+            .corePoolSize(1)
+            .maxPoolSize(Integer.MAX_VALUE)
+            .keepAliveTime(Const.MS_S_30)
+            .workQueue(new SynchronousQueue<>())
+            .allowCoreThreadTimeout(true)
             .build();
 
 

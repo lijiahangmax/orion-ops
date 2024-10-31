@@ -15,12 +15,12 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.scheduler.SchedulerTaskRecordRequest;
 import cn.orionsec.ops.entity.vo.scheduler.SchedulerTaskMachineRecordStatusVO;
 import cn.orionsec.ops.entity.vo.scheduler.SchedulerTaskMachineRecordVO;
 import cn.orionsec.ops.entity.vo.scheduler.SchedulerTaskRecordStatusVO;
 import cn.orionsec.ops.entity.vo.scheduler.SchedulerTaskRecordVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 

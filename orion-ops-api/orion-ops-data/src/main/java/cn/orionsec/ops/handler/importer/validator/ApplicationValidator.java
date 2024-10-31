@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.handler.importer.validator;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.entity.importer.ApplicationImportDTO;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.utils.Strings;
 
 /**
  * 应用表 数据验证器

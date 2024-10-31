@@ -15,6 +15,11 @@
  */
 package cn.orionsec.ops.handler.tail.impl;
 
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.SchedulerPools;
 import cn.orionsec.ops.constant.ws.WsCloseCode;
@@ -23,11 +28,6 @@ import cn.orionsec.ops.handler.tail.TailFileHint;
 import cn.orionsec.ops.service.api.MachineInfoService;
 import cn.orionsec.ops.utils.WebSockets;
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Streams;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
-import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -87,12 +87,11 @@ public class ExecTailFileHandler implements ITailHandler {
         }
         // 打开 command
         this.executor = sessionStore.getCommandExecutor(Strings.replaceCRLF(hint.getCommand()));
-        executor.inherit();
-        executor.scheduler(SchedulerPools.TAIL_SCHEDULER);
+        executor.merge();
         executor.callback(this::callback);
         executor.streamHandler(this::handler);
         executor.connect();
-        executor.exec();
+        SchedulerPools.TAIL_SCHEDULER.execute(executor);
         log.info("tail EXEC_TAIL 监听文件开始 token: {}", token);
     }
 

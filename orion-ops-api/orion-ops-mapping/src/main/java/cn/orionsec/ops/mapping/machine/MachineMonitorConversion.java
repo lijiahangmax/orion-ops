@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.constant.monitor.MonitorConst;
 import cn.orionsec.ops.entity.domain.MachineMonitorDO;
 import cn.orionsec.ops.entity.dto.MachineMonitorDTO;
 import cn.orionsec.ops.entity.vo.machine.MachineMonitorVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器监控 对象转换器

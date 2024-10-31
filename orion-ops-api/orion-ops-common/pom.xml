@@ -22,8 +22,14 @@
 
         <!-- orion-kit -->
         <dependency>
-            <groupId>io.github.lijiahangmax</groupId>
+            <groupId>cn.orionsec.kit</groupId>
             <artifactId>orion-all</artifactId>
+        </dependency>
+
+        <!-- web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 

@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.handler.importer.impl;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.dao.ApplicationProfileDAO;
 import cn.orionsec.ops.entity.domain.ApplicationProfileDO;
 import cn.orionsec.ops.entity.importer.DataImportDTO;
 import cn.orionsec.ops.service.api.ApplicationProfileService;
-import com.orion.spring.SpringHolder;
 
 /**
  * 应用环境 数据导入器

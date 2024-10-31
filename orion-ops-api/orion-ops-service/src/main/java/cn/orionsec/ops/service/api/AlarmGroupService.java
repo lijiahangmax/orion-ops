@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.alarm.AlarmGroupRequest;
 import cn.orionsec.ops.entity.vo.alarm.AlarmGroupVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 /**
  * 报警组服务

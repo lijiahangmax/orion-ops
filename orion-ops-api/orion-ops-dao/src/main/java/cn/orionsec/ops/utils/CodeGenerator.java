@@ -15,6 +15,8 @@
  */
 package cn.orionsec.ops.utils;
 
+import cn.orionsec.kit.lang.constant.Const;
+import cn.orionsec.kit.lang.utils.ext.PropertiesExt;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -27,8 +29,6 @@ import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.orion.lang.constant.Const;
-import com.orion.lang.utils.ext.PropertiesExt;
 
 import java.io.File;
 

@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.MachineInfoDO;
 import cn.orionsec.ops.entity.request.machine.MachineInfoRequest;
 import cn.orionsec.ops.entity.vo.machine.MachineInfoVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 机器信息 对象转换器

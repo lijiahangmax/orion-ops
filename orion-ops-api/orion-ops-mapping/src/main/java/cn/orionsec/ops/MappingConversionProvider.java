@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops;
 
-import com.orion.lang.support.Attempt;
-import com.orion.lang.utils.reflect.PackageScanner;
+import cn.orionsec.kit.lang.support.Attempt;
+import cn.orionsec.kit.lang.utils.reflect.PackageScanner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;

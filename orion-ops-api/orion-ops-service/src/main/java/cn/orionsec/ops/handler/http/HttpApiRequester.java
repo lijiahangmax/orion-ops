@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.handler.http;
 
+import cn.orionsec.kit.http.ok.OkResponse;
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
 import com.alibaba.fastjson.TypeReference;
-import com.orion.http.ok.OkResponse;
-import com.orion.lang.define.wrapper.HttpWrapper;
 
 /**
  * http api 请求器基类

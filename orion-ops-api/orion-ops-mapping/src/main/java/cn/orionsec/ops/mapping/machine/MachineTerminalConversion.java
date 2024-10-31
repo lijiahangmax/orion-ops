@@ -15,14 +15,14 @@
  */
 package cn.orionsec.ops.mapping.machine;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
+import cn.orionsec.kit.lang.utils.time.Dates;
 import cn.orionsec.ops.entity.config.TerminalConnectConfig;
 import cn.orionsec.ops.entity.domain.MachineTerminalDO;
 import cn.orionsec.ops.entity.domain.MachineTerminalLogDO;
 import cn.orionsec.ops.entity.vo.machine.MachineTerminalLogVO;
 import cn.orionsec.ops.entity.vo.machine.MachineTerminalManagerVO;
 import cn.orionsec.ops.entity.vo.machine.MachineTerminalVO;
-import com.orion.lang.utils.convert.TypeStore;
-import com.orion.lang.utils.time.Dates;
 
 import java.util.Optional;
 

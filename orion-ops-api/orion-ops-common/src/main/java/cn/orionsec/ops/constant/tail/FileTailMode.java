@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.constant.tail;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
-import com.orion.lang.utils.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

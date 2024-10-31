@@ -39,7 +39,7 @@ public class TerminalConnectConfig {
     private Integer cols;
 
     /**
-     * @see com.orion.net.remote.TerminalType
+     * @see cn.orionsec.kit.net.host.ssh.TerminalType
      */
     @ApiModelProperty(value = "终端类型")
     private String terminalType;

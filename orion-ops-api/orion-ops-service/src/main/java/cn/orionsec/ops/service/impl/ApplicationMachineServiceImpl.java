@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.dao.ApplicationMachineDAO;
@@ -27,7 +28,6 @@ import cn.orionsec.ops.service.api.ApplicationMachineService;
 import cn.orionsec.ops.utils.DataQuery;
 import cn.orionsec.ops.utils.Valid;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.spring.SpringHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

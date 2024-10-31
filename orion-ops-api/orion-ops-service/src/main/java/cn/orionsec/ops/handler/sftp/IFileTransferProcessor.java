@@ -15,6 +15,10 @@
  */
 package cn.orionsec.ops.handler.sftp;
 
+import cn.orionsec.kit.lang.able.Executable;
+import cn.orionsec.kit.lang.able.Stoppable;
+import cn.orionsec.kit.lang.function.select.Branches;
+import cn.orionsec.kit.lang.function.select.Selector;
 import cn.orionsec.ops.constant.sftp.SftpTransferType;
 import cn.orionsec.ops.entity.domain.FileTransferLogDO;
 import cn.orionsec.ops.handler.sftp.hint.FilePackageHint;
@@ -22,10 +26,6 @@ import cn.orionsec.ops.handler.sftp.hint.FileTransferHint;
 import cn.orionsec.ops.handler.sftp.impl.DownloadFileProcessor;
 import cn.orionsec.ops.handler.sftp.impl.PackageFileProcessor;
 import cn.orionsec.ops.handler.sftp.impl.UploadFileProcessor;
-import com.orion.lang.able.Executable;
-import com.orion.lang.able.Stoppable;
-import com.orion.lang.function.select.Branches;
-import com.orion.lang.function.select.Selector;
 
 /**
  * sftp 传输接口

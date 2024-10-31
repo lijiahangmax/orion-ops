@@ -15,12 +15,12 @@
  */
 package cn.orionsec.ops.mapping.upload;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.MachineInfoDO;
 import cn.orionsec.ops.entity.dto.sftp.SftpUploadInfoDTO;
 import cn.orionsec.ops.entity.request.upload.BatchUploadRequest;
 import cn.orionsec.ops.entity.vo.upload.BatchUploadCheckFileVO;
 import cn.orionsec.ops.entity.vo.upload.BatchUploadCheckMachineVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 文件批量上传 对象转换器

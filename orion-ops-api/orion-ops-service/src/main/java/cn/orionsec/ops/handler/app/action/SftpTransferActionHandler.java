@@ -15,6 +15,12 @@
  */
 package cn.orionsec.ops.handler.app.action;
 
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.collect.Maps;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.net.host.sftp.SftpExecutor;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.app.ActionType;
 import cn.orionsec.ops.constant.app.TransferMode;
@@ -22,12 +28,6 @@ import cn.orionsec.ops.constant.common.StainCode;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
 import cn.orionsec.ops.service.api.MachineEnvService;
 import cn.orionsec.ops.utils.Utils;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.collect.Maps;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.net.remote.channel.sftp.SftpExecutor;
-import com.orion.spring.SpringHolder;
 
 import java.io.File;
 import java.util.List;
@@ -103,7 +103,7 @@ public class SftpTransferActionHandler extends AbstractActionHandler {
                         .append(Utils.getStainKeyWords(remoteFile, StainCode.GLOSS_BLUE))
                         .append(Const.LF);
                 this.appendLog(createDirLog.toString());
-                executor.mkdirs(remoteFile);
+                executor.makeDirectories(remoteFile);
                 continue;
             }
             // 文件则传输

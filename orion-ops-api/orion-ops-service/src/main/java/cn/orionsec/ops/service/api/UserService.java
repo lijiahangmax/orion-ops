@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.user.UserInfoRequest;
 import cn.orionsec.ops.entity.vo.user.UserInfoVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 /**
  * 用户服务

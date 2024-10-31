@@ -18,7 +18,7 @@ package cn.orionsec.ops.constant.event;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.orion.lang.utils.collect.Maps;
+import cn.orionsec.kit.lang.utils.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;

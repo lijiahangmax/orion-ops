@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.handler.importer.validator;
 
+import cn.orionsec.kit.lang.utils.Strings;
 import cn.orionsec.ops.constant.machine.ProxyType;
 import cn.orionsec.ops.entity.importer.MachineProxyImportDTO;
 import cn.orionsec.ops.utils.Valid;
 import cn.orionsec.ops.utils.ValueMix;
-import com.orion.lang.utils.Strings;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

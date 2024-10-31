@@ -15,6 +15,11 @@
  */
 package cn.orionsec.ops.handler.exporter;
 
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.FileWriters;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.office.excel.writer.exporting.ExcelExport;
+import cn.orionsec.kit.web.servlet.web.Servlets;
 import cn.orionsec.ops.constant.ExportType;
 import cn.orionsec.ops.constant.event.EventKeys;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
@@ -22,11 +27,6 @@ import cn.orionsec.ops.entity.request.data.DataExportRequest;
 import cn.orionsec.ops.utils.Currents;
 import cn.orionsec.ops.utils.EventParamsHolder;
 import cn.orionsec.ops.utils.PathBuilders;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.FileWriters;
-import com.orion.lang.utils.io.Files1;
-import com.orion.office.excel.writer.exporting.ExcelExport;
-import com.orion.web.servlet.web.Servlets;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -93,7 +93,7 @@ public abstract class AbstractDataExporter<T> implements IDataExporter {
      */
     protected void writeWorkbook() throws IOException {
         // 设置 http 响应头
-        Servlets.setDownloadHeader(response, exportType.getNameSupplier().get());
+        Servlets.setAttachmentHeader(response, exportType.getNameSupplier().get());
         // 写入 workbook 到 byte
         ByteArrayOutputStream store = new ByteArrayOutputStream();
         String password = request.getProtectPassword();

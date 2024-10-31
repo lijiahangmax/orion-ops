@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.mapping.app;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.ApplicationInfoDO;
 import cn.orionsec.ops.entity.vo.app.ApplicationDetailVO;
 import cn.orionsec.ops.entity.vo.app.ApplicationInfoVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * 应用信息 对象转换器

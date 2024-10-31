@@ -15,6 +15,14 @@
  */
 package cn.orionsec.ops.handler.terminal;
 
+import cn.orionsec.kit.lang.constant.Letters;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.lang.utils.time.Dates;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.ssh.shell.ShellExecutor;
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.SchedulerPools;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
@@ -34,14 +42,6 @@ import cn.orionsec.ops.utils.PathBuilders;
 import cn.orionsec.ops.utils.Utils;
 import cn.orionsec.ops.utils.WebSockets;
 import com.alibaba.fastjson.JSON;
-import com.orion.lang.constant.Letters;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Files1;
-import com.orion.lang.utils.io.Streams;
-import com.orion.lang.utils.time.Dates;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.ssh.ShellExecutor;
-import com.orion.spring.SpringHolder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -109,12 +109,11 @@ public class TerminalOperateHandler implements IOperateHandler {
     @Override
     public void connect() {
         executor.connect();
-        executor.scheduler(SchedulerPools.TERMINAL_SCHEDULER);
         executor.streamHandler(this::streamHandler);
         // 连接成功后初始化日志信息
         this.initLog();
         // 开始监听输出
-        executor.exec();
+        SchedulerPools.TERMINAL_SCHEDULER.execute(executor);
         watcher.watch();
     }
 
@@ -227,7 +226,7 @@ public class TerminalOperateHandler implements IOperateHandler {
             Streams.close(executor);
             Streams.close(sessionStore);
         } catch (Exception e) {
-            log.error("terminal 断开连接 失败 token: {}, {}", token, e);
+            log.error("terminal 断开连接 失败 token: {}", token, e);
         }
     }
 

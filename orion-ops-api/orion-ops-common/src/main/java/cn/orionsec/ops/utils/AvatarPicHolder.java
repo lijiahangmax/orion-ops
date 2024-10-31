@@ -15,12 +15,12 @@
  */
 package cn.orionsec.ops.utils;
 
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.codec.Base64s;
+import cn.orionsec.kit.lang.utils.io.FileReaders;
+import cn.orionsec.kit.lang.utils.io.Files1;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.system.SystemEnvAttr;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.codec.Base64s;
-import com.orion.lang.utils.io.FileReaders;
-import com.orion.lang.utils.io.Files1;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -105,7 +105,7 @@ public class AvatarPicHolder {
         if (!Files1.isFile(path)) {
             return null;
         }
-        return Base64s.img64Encode(FileReaders.readAllBytes(path), Files1.getSuffix(path));
+        return Base64s.imgEncode(FileReaders.readAllBytes(path), Files1.getSuffix(path));
     }
 
 }

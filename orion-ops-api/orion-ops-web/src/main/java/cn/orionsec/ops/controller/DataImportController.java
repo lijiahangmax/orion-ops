@@ -15,6 +15,11 @@
  */
 package cn.orionsec.ops.controller;
 
+import cn.orionsec.kit.lang.define.wrapper.HttpWrapper;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.office.excel.Excels;
+import cn.orionsec.kit.web.servlet.web.Servlets;
 import cn.orionsec.ops.OrionApplication;
 import cn.orionsec.ops.annotation.*;
 import cn.orionsec.ops.constant.ImportType;
@@ -29,11 +34,6 @@ import cn.orionsec.ops.handler.importer.impl.IDataImporter;
 import cn.orionsec.ops.service.api.DataImportService;
 import cn.orionsec.ops.utils.EventParamsHolder;
 import cn.orionsec.ops.utils.Valid;
-import com.orion.lang.define.wrapper.HttpWrapper;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Streams;
-import com.orion.office.excel.Excels;
-import com.orion.web.servlet.web.Servlets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -70,7 +70,7 @@ public class DataImportController {
     public void getTemplate(Integer type, HttpServletResponse response) throws IOException {
         ImportType importType = Valid.notNull(ImportType.of(type));
         String templateName = importType.getTemplateName();
-        Servlets.setDownloadHeader(response, templateName);
+        Servlets.setAttachmentHeader(response, templateName);
         // 读取文件
         InputStream in = OrionApplication.class.getResourceAsStream(importType.getTemplatePath());
         ServletOutputStream out = response.getOutputStream();

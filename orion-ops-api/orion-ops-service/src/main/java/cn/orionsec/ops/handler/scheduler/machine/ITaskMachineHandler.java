@@ -15,8 +15,8 @@
  */
 package cn.orionsec.ops.handler.scheduler.machine;
 
+import cn.orionsec.kit.lang.able.SafeCloseable;
 import cn.orionsec.ops.constant.scheduler.SchedulerTaskMachineStatus;
-import com.orion.lang.able.SafeCloseable;
 
 /**
  * 机器处理器

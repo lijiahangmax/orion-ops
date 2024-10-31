@@ -48,7 +48,7 @@ public class MachineTerminalDO implements Serializable {
     private Long machineId;
 
     /**
-     * @see com.orion.net.remote.TerminalType#XTERM
+     * @see cn.orionsec.kit.net.host.ssh.TerminalType#XTERM
      */
     @ApiModelProperty(value = "终端类型")
     @TableField("terminal_type")

@@ -15,7 +15,7 @@
  */
 package cn.orionsec.ops.constant;
 
-import com.orion.lang.utils.collect.Lists;
+import cn.orionsec.kit.lang.utils.collect.Lists;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2021/3/30 10:07
  */
-public class Const extends com.orion.lang.constant.Const {
+public class Const implements cn.orionsec.kit.lang.constant.Const {
 
     private Const() {
     }
@@ -176,6 +176,18 @@ public class Const extends com.orion.lang.constant.Const {
     public static final String LF_2 = "\n\n";
 
     public static final String LF_3 = "\n\n\n";
+
+    public static final Integer ENABLE = 1;
+
+    public static final Integer DISABLE = 2;
+
+    public static final Integer NOT_DELETED = 1;
+
+    public static final Integer IS_DELETED = 2;
+
+    public static final Integer INCREMENT = 1;
+
+    public static final Integer DECREMENT = 2;
 
     /**
      * 不安全的文件夹

@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.handler.importer.impl;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.dao.CommandTemplateDAO;
 import cn.orionsec.ops.entity.domain.CommandTemplateDO;
 import cn.orionsec.ops.entity.importer.DataImportDTO;
-import com.orion.spring.SpringHolder;
 
 /**
  * 命令模板 数据导入器

@@ -15,14 +15,14 @@
  */
 package cn.orionsec.ops.mapping.sftp;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
+import cn.orionsec.kit.lang.utils.io.FileType;
+import cn.orionsec.kit.lang.utils.io.Files1;
+import cn.orionsec.kit.net.host.sftp.SftpFile;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.entity.dto.sftp.SftpUploadInfoDTO;
 import cn.orionsec.ops.entity.request.sftp.FileUploadRequest;
 import cn.orionsec.ops.entity.vo.sftp.FileDetailVO;
-import com.orion.lang.utils.convert.TypeStore;
-import com.orion.lang.utils.io.FileType;
-import com.orion.lang.utils.io.Files1;
-import com.orion.net.base.file.sftp.SftpFile;
 
 import java.util.Optional;
 

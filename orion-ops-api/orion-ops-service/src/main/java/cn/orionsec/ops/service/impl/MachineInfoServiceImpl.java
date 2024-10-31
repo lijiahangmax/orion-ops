@@ -15,6 +15,22 @@
  */
 package cn.orionsec.ops.service.impl;
 
+import cn.orionsec.kit.ext.process.Processes;
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
+import cn.orionsec.kit.lang.exception.AuthenticationException;
+import cn.orionsec.kit.lang.exception.ConnectionRuntimeException;
+import cn.orionsec.kit.lang.utils.Booleans;
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.Valid;
+import cn.orionsec.kit.lang.utils.collect.Lists;
+import cn.orionsec.kit.lang.utils.convert.Converts;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.lang.utils.net.IPs;
+import cn.orionsec.kit.net.host.SessionHolder;
+import cn.orionsec.kit.net.host.SessionStore;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
 import cn.orionsec.ops.constant.CnConst;
 import cn.orionsec.ops.constant.Const;
 import cn.orionsec.ops.constant.MessageConst;
@@ -40,22 +56,6 @@ import cn.orionsec.ops.utils.EventParamsHolder;
 import cn.orionsec.ops.utils.Utils;
 import cn.orionsec.ops.utils.ValueMix;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.orion.ext.process.Processes;
-import com.orion.lang.define.wrapper.DataGrid;
-import com.orion.lang.exception.AuthenticationException;
-import com.orion.lang.exception.ConnectionRuntimeException;
-import com.orion.lang.utils.Booleans;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.Valid;
-import com.orion.lang.utils.collect.Lists;
-import com.orion.lang.utils.convert.Converts;
-import com.orion.lang.utils.io.Streams;
-import com.orion.lang.utils.net.IPs;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.channel.SessionHolder;
-import com.orion.net.remote.channel.SessionStore;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -486,9 +486,9 @@ public class MachineInfoServiceImpl implements MachineInfoService {
                 if (ProxyType.HTTP.equals(proxyType)) {
                     session.httpProxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS4.equals(proxyType)) {
-                    session.sock4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.socks4Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 } else if (ProxyType.SOCKS5.equals(proxyType)) {
-                    session.sock5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
+                    session.socks5Proxy(proxy.getProxyHost(), proxy.getProxyPort(), proxy.getProxyUsername(), proxyPassword);
                 }
             }
             // 连接
@@ -496,7 +496,7 @@ public class MachineInfoServiceImpl implements MachineInfoService {
             log.info("远程机器建立连接-成功 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort());
             return session;
         } catch (Exception e) {
-            log.error("远程机器建立连接-失败 {}@{}:{} {}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort(), e);
+            log.error("远程机器建立连接-失败 {}@{}:{}", machine.getUsername(), machine.getMachineHost(), machine.getSshPort(), e);
             throw e;
         }
     }

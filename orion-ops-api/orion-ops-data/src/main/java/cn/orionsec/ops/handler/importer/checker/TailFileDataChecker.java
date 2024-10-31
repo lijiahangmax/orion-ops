@@ -15,6 +15,7 @@
  */
 package cn.orionsec.ops.handler.importer.checker;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.constant.ImportType;
 import cn.orionsec.ops.constant.MessageConst;
 import cn.orionsec.ops.dao.FileTailListDAO;
@@ -23,7 +24,6 @@ import cn.orionsec.ops.entity.domain.FileTailListDO;
 import cn.orionsec.ops.entity.domain.MachineInfoDO;
 import cn.orionsec.ops.entity.importer.MachineTailFileImportDTO;
 import cn.orionsec.ops.entity.vo.data.DataImportCheckVO;
-import com.orion.spring.SpringHolder;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;

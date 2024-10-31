@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.entity.request.webhook.WebhookConfigRequest;
 import cn.orionsec.ops.entity.vo.webhook.WebhookConfigVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 /**
  * webhook 配置服务

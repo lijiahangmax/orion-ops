@@ -15,15 +15,15 @@
  */
 package cn.orionsec.ops.handler.app.action;
 
+import cn.orionsec.kit.lang.utils.Exceptions;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.io.Streams;
+import cn.orionsec.kit.net.host.ssh.ExitCode;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutor;
+import cn.orionsec.kit.net.host.ssh.command.CommandExecutors;
 import cn.orionsec.ops.constant.app.ActionType;
 import cn.orionsec.ops.constant.common.StainCode;
 import cn.orionsec.ops.utils.Utils;
-import com.orion.lang.utils.Exceptions;
-import com.orion.lang.utils.Strings;
-import com.orion.lang.utils.io.Streams;
-import com.orion.net.remote.CommandExecutors;
-import com.orion.net.remote.ExitCode;
-import com.orion.net.remote.channel.ssh.CommandExecutor;
 import lombok.Getter;
 
 /**
@@ -52,7 +52,7 @@ public class CommandActionHandler extends AbstractActionHandler {
         // 打开executor
         this.executor = store.getSessionStore().getCommandExecutor(Strings.replaceCRLF(action.getActionCommand()));
         // 执行命令
-        CommandExecutors.syncExecCommand(executor, appender);
+        CommandExecutors.execCommand(executor, appender);
         this.exitCode = executor.getExitCode();
         if (!ExitCode.isSuccess(exitCode)) {
             throw Exceptions.execute("*** 命令执行失败 exitCode: " + exitCode);

@@ -15,9 +15,9 @@
  */
 package cn.orionsec.ops.mapping.webhook;
 
+import cn.orionsec.kit.lang.utils.convert.TypeStore;
 import cn.orionsec.ops.entity.domain.WebhookConfigDO;
 import cn.orionsec.ops.entity.vo.webhook.WebhookConfigVO;
-import com.orion.lang.utils.convert.TypeStore;
 
 /**
  * webhook 配置 对象转换器

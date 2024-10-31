@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.service.api;
 
+import cn.orionsec.kit.lang.define.wrapper.DataGrid;
 import cn.orionsec.ops.constant.message.MessageType;
 import cn.orionsec.ops.entity.request.message.WebSideMessageRequest;
 import cn.orionsec.ops.entity.vo.message.WebSideMessagePollVO;
 import cn.orionsec.ops.entity.vo.message.WebSideMessageVO;
-import com.orion.lang.define.wrapper.DataGrid;
 
 import java.util.List;
 import java.util.Map;

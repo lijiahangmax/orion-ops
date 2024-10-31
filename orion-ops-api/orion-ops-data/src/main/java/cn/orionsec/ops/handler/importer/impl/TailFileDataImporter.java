@@ -15,10 +15,10 @@
  */
 package cn.orionsec.ops.handler.importer.impl;
 
+import cn.orionsec.kit.spring.SpringHolder;
 import cn.orionsec.ops.dao.FileTailListDAO;
 import cn.orionsec.ops.entity.domain.FileTailListDO;
 import cn.orionsec.ops.entity.importer.DataImportDTO;
-import com.orion.spring.SpringHolder;
 
 /**
  * 日志文件 数据导入器

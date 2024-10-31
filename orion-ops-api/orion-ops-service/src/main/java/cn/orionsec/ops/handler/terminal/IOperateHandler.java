@@ -15,11 +15,11 @@
  */
 package cn.orionsec.ops.handler.terminal;
 
+import cn.orionsec.kit.lang.able.SafeCloseable;
 import cn.orionsec.ops.constant.terminal.TerminalClientOperate;
 import cn.orionsec.ops.entity.config.TerminalConnectConfig;
 import cn.orionsec.ops.handler.terminal.manager.TerminalManagementHandler;
 import cn.orionsec.ops.handler.terminal.watcher.ITerminalWatcherProcessor;
-import com.orion.lang.able.SafeCloseable;
 
 /**
  * 操作处理器
