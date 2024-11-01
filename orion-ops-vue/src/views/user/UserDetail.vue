@@ -9,8 +9,8 @@
       <a-tab-pane :key="2" tab="操作日志">
         <EventLogList/>
       </a-tab-pane>
-      <!-- 登陆历史 -->
-      <a-tab-pane :key="3" tab="登陆历史">
+      <!-- 登录历史 -->
+      <a-tab-pane :key="3" tab="登录历史">
         <LoginHistory/>
       </a-tab-pane>
     </a-tabs>
@@ -42,7 +42,7 @@ export default {
           document.title = '操作日志'
           break
         case 3:
-          document.title = '登陆历史'
+          document.title = '登录历史'
           break
         default:
           break

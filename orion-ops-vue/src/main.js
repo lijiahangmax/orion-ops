@@ -23,7 +23,7 @@ $message.config({
 })
 
 router.beforeEach((to, from, next) => {
-  // 校验登陆
+  // 校验登录
   if (to.meta.requireAuth !== false && !$storage.get($storage.keys.LOGIN_TOKEN)) {
     router.push({ path: '/login' })
     return

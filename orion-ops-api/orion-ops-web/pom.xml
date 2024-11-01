@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.orion.ops</groupId>
+        <groupId>cn.orionsec.ops</groupId>
         <artifactId>orion-ops-api</artifactId>
-        <version>1.2.9</version>
+        <version>1.3.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -15,30 +15,36 @@
     <dependencies>
         <!-- service -->
         <dependency>
-            <groupId>com.orion.ops</groupId>
+            <groupId>cn.orionsec.ops</groupId>
             <artifactId>orion-ops-service</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- data -->
         <dependency>
-            <groupId>com.orion.ops</groupId>
+            <groupId>cn.orionsec.ops</groupId>
             <artifactId>orion-ops-data</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- mapping -->
         <dependency>
-            <groupId>com.orion.ops</groupId>
+            <groupId>cn.orionsec.ops</groupId>
             <artifactId>orion-ops-mapping</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- runner -->
         <dependency>
-            <groupId>com.orion.ops</groupId>
+            <groupId>cn.orionsec.ops</groupId>
             <artifactId>orion-ops-runner</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- aspectj -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
         </dependency>
 
         <!-- swagger -->
@@ -99,7 +105,7 @@
             <!--                <groupId>org.springframework.boot</groupId>-->
             <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
             <!--                <configuration>-->
-            <!--                    <mainClass>com.orion.ops.OrionApplication</mainClass>-->
+            <!--                    <mainClass>cn.orionsec.ops.OrionApplication</mainClass>-->
             <!--                    <layout>ZIP</layout>-->
             <!--                    &lt;!&ndash; 注释后和依赖包一起打包 取消注释则不打包依赖 &ndash;&gt;-->
             <!--                    <includes>-->

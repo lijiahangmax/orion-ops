@@ -9,9 +9,9 @@
     </parent>
 
     <name>orion-ops-api</name>
-    <groupId>com.orion.ops</groupId>
+    <groupId>cn.orionsec.ops</groupId>
     <artifactId>orion-ops-api</artifactId>
-    <version>1.2.9</version>
+    <version>1.3.0</version>
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
     <url>https://github.com/lijiahangmax/orion-ops</url>
@@ -38,8 +38,9 @@
         <druid.version>1.1.20</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <knife4j.version>2.0.5</knife4j.version>
-        <orion.all.version>1.0.5</orion.all.version>
+        <orion.all.version>2.0.0</orion.all.version>
         <dingding.service.version>2.0.0</dingding.service.version>
+        <aspectj.version>1.9.7</aspectj.version>
     </properties>
 
     <dependencyManagement>
@@ -130,6 +131,13 @@
                 <version>${jedis.version}</version>
             </dependency>
 
+            <!-- aspectj -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
             <!-- swagger -->
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -163,13 +171,13 @@
 
             <!-- orion -->
             <dependency>
-                <groupId>io.github.lijiahangmax</groupId>
+                <groupId>cn.orionsec.kit</groupId>
                 <artifactId>orion-all</artifactId>
                 <version>${orion.all.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>orion-log</artifactId>
-                        <groupId>io.github.lijiahangmax</groupId>
+                        <groupId>cn.orionsec.kit</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>

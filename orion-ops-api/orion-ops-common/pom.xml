@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>com.orion.ops</groupId>
+        <groupId>cn.orionsec.ops</groupId>
         <artifactId>orion-ops-api</artifactId>
-        <version>1.2.9</version>
+        <version>1.3.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -22,8 +22,14 @@
 
         <!-- orion-kit -->
         <dependency>
-            <groupId>io.github.lijiahangmax</groupId>
+            <groupId>cn.orionsec.kit</groupId>
             <artifactId>orion-all</artifactId>
+        </dependency>
+
+        <!-- web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 

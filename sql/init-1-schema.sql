@@ -705,7 +705,7 @@ CREATE TABLE `machine_secret_key`
     `create_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) COMMENT '创建时间',
     `update_time`     datetime(4) NULL DEFAULT CURRENT_TIMESTAMP (4) ON UPDATE CURRENT_TIMESTAMP (4) COMMENT '修改时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登陆密钥' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '机器ssh登录密钥' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for machine_terminal
@@ -887,7 +887,7 @@ CREATE TABLE `user_info`
     `role_type`          int(0) NULL DEFAULT NULL COMMENT '角色类型 10超级管理员 20开发 30运维',
     `user_status`        tinyint(0) NULL DEFAULT 1 COMMENT '用户状态 1启用 2禁用',
     `lock_status`        tinyint(0) NULL DEFAULT 1 COMMENT '锁定状态 1正常 2锁定',
-    `failed_login_count` int(0) NULL DEFAULT 0 COMMENT '登陆失败次数',
+    `failed_login_count` int(0) NULL DEFAULT 0 COMMENT '登录失败次数',
     `avatar_pic`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '头像路径',
     `contact_phone`      varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系手机',
     `contact_email`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系邮箱',

@@ -104,7 +104,7 @@
                               v-model="action.command"
                               :autoSize="{minRows: 1}"
                               :maxLength="1024"
-                              placeholder="目标机器和宿主机需要建立 ssh 免密登陆"/>
+                              placeholder="目标机器和宿主机需要建立 ssh 免密登录"/>
                   <!-- scp 传输命令描述 -->
                   <a-popover placement="top">
                     <template slot="content">
