@@ -5,6 +5,7 @@ services:
     ports:
       - 1022:22
       - 1080:80
+      - 9119:9119
     environment:
       - MYSQL_HOST=orion-ops-db
       - MYSQL_USER=orion
