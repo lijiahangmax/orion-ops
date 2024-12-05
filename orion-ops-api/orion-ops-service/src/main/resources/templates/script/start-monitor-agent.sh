@@ -1,4 +1,4 @@
-#!/bin/bs
+#!/bin/sh
 AGENT_PROCESS=${processName}
 STARTED=$(ps -ef | grep $AGENT_PROCESS | grep '.jar' | grep -v grep | wc -l)
 PIDS=$(ps -ef | grep $AGENT_PROCESS | grep '.jar' | grep -v grep | awk '{print $2}')
