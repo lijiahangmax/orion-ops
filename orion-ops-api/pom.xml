@@ -38,7 +38,7 @@
         <druid.version>1.1.20</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <knife4j.version>2.0.5</knife4j.version>
-        <orion.all.version>2.0.0</orion.all.version>
+        <orion.kit.version>2.0.1</orion.kit.version>
         <dingding.service.version>2.0.0</dingding.service.version>
         <aspectj.version>1.9.7</aspectj.version>
     </properties>
@@ -173,7 +173,7 @@
             <dependency>
                 <groupId>cn.orionsec.kit</groupId>
                 <artifactId>orion-all</artifactId>
-                <version>${orion.all.version}</version>
+                <version>${orion.kit.version}</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>orion-log</artifactId>
