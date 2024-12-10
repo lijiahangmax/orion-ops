@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 AGENT_PROCESS=${processName}
 STARTED=$(ps -ef | grep $AGENT_PROCESS | grep '.jar' | grep -v grep | wc -l)
 PIDS=$(ps -ef | grep $AGENT_PROCESS | grep '.jar' | grep -v grep | awk '{print $2}')
@@ -16,7 +16,7 @@ fi
 echo 'Agent starting...'
 
 # START
-nohup java -jar -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms128m -Xmx128m -Xmn32m -Xss256k -XX:SurvivorRatio=8 -XX:+UseG1GC ${agentJarPath} --machineId=${machineId} --spring.profiles.active=prod >/dev/null 2>&1 &
+nohup java -jar -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms128m -Xmx128m -Xmn32m -Xss512k -XX:SurvivorRatio=8 -XX:+UseG1GC ${agentJarPath} --machineId=${machineId} --spring.profiles.active=prod >/dev/null 2>&1 &
 
 # CHECK
 sleep 2
