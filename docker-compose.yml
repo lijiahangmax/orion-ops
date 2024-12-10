@@ -15,7 +15,7 @@ services:
       - SECRET_KEY=orion_ops
       - DEMO_MODE=false
     volumes:
-      - /data/orion-ops-space/docker-volumes/root:/root
+      - /data/orion-ops-space/docker-volumes/root-orion:/root/orion
     depends_on:
       - orion-ops-db
       - orion-ops-redis
