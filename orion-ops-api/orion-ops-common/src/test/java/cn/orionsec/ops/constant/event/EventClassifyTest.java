@@ -1,5 +1,11 @@
 /*
- * Copyright (c) 2021 - present Jiahang Li (ops.orionsec.cn ljh1553488six@139.com).
+ * Copyright (c) 2021 - present Jiahang Li All rights reserved.
+ *
+ *   https://ops.orionsec.cn
+ *
+ * Members:
+ *   Jiahang Li - ljh1553488six@139.com - author
+
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
