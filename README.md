@@ -78,8 +78,7 @@
 
 ## 重构版 orion-visor
 
-`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全! 目前该项目已荣获 `GVP`
-[项目地址](https://visor.orionsec.cn)
+`orion-visor` 是一款高颜值、现代化的自动化运维&轻量堡垒机平台。目前该项目已荣获 `GVP` [项目地址](https://visor.dromara.org)
 
 ## 技术栈
 
