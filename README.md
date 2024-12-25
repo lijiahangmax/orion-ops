@@ -37,6 +37,11 @@
        href="https://github.com/lijiahangmax/orion-ops">
       <img src="https://img.shields.io/github/forks/lijiahangmax/orion-ops" alt="star" />
     </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://gitcode.com/lijiahangmax/orion-ops">
+      <img src="https://gitcode.com/lijiahangmax/orion-ops/star/badge.svg" alt="star"/>
+    </a>
 </p>
 
 ------------------------------
