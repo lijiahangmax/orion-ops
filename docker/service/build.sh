@@ -7,4 +7,5 @@ docker build --no-cache -t orion-ops:${version} .
 rm -rf ./dist
 rm -rf ./orion-ops-web.jar
 rm -rf ./machine-monitor-agent-latest.jar
-docker tag orion-ops:${version} registry.cn-hangzhou.aliyuncs.com/lijiahangmax/orion-ops:${version}
+docker tag orion-ops:${version} registry.cn-hangzhou.aliyuncs.com/orionsec/orion-ops:${version}
+docker tag orion-ops:${version} registry.cn-hangzhou.aliyuncs.com/orionsec/orion-ops:latest
