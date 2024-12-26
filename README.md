@@ -37,6 +37,11 @@
        href="https://github.com/lijiahangmax/orion-ops">
       <img src="https://img.shields.io/github/forks/lijiahangmax/orion-ops" alt="star" />
     </a>
+    <a target="_blank"
+       style="text-decoration: none !important;"
+       href="https://gitcode.com/lijiahangmax/orion-ops">
+      <img src="https://gitcode.com/lijiahangmax/orion-ops/star/badge.svg" alt="star"/>
+    </a>
 </p>
 
 ------------------------------
@@ -78,8 +83,7 @@
 
 ## 重构版 orion-visor
 
-`orion-visor` 为 `orion-ops` 的重构版本, 优化了交互逻辑以及UI风格、操作更友好、系统更快速&安全! 目前该项目已荣获 `GVP`
-[项目地址](https://visor.orionsec.cn)
+`orion-visor` 是一款高颜值、现代化的自动化运维&轻量堡垒机平台。目前该项目已荣获 `GVP` [项目地址](https://visor.dromara.org)
 
 ## 技术栈
 
