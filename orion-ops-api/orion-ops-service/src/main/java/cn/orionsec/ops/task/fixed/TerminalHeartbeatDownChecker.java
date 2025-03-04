@@ -51,7 +51,7 @@ public class TerminalHeartbeatDownChecker {
             try {
                 v.heartbeatDownClose();
             } catch (Exception e) {
-                log.error("terminal 心跳检查断连失败 token: {} {}", k, e);
+                log.error("terminal 心跳检查断连失败 token: {}", k, e);
             }
         });
     }
