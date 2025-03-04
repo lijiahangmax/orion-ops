@@ -2,6 +2,7 @@ version: '3.3'
 services:
   orion-ops:
     image: registry.cn-hangzhou.aliyuncs.com/orionsec/orion-ops:latest
+    privileged: true
     ports:
       - 1022:22
       - 1080:80
@@ -15,6 +16,7 @@ services:
       - SECRET_KEY=orion_ops
       - DEMO_MODE=false
     volumes:
+      - /root/orion-ops:/root/orion-ops
       - /data/orion-ops-space/docker-volumes/root-orion:/root/orion
     depends_on:
       - orion-ops-db
