@@ -21,6 +21,8 @@
 package cn.orionsec.ops.utils;
 
 import cn.orionsec.kit.lang.constant.Const;
+import cn.orionsec.kit.lang.utils.Strings;
+import cn.orionsec.kit.lang.utils.Systems;
 import cn.orionsec.kit.lang.utils.ext.PropertiesExt;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -36,11 +38,17 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
+ * 代码生成器
+ *
  * @author Jiahang Li
  */
 public class CodeGenerator {
+
+    private static final Pattern ENV_VAR_PATTERN = Pattern.compile("\\$\\{([^:]+):([^}]+)\\}");
 
     public static void main(String[] args) {
         runGenerator();
@@ -53,9 +61,9 @@ public class CodeGenerator {
         // 获取配置文件
         File file = new File("orion-ops-api/orion-ops-web/src/main/resources/application-dev.properties");
         PropertiesExt ext = new PropertiesExt(file);
-        String url = ext.getValue("spring.datasource.url");
-        String username = ext.getValue("spring.datasource.username");
-        String password = ext.getValue("spring.datasource.password");
+        String url = resolveConfigValue(ext.getValue("spring.datasource.url"));
+        String username = resolveConfigValue(ext.getValue("spring.datasource.username"));
+        String password = resolveConfigValue(ext.getValue("spring.datasource.password"));
         // 全局配置
         GlobalConfig gbConfig = new GlobalConfig()
                 // 是否支持AR模式
@@ -174,4 +182,32 @@ public class CodeGenerator {
         // 执行
         ag.execute();
     }
+
+    /**
+     * 解析实际的配置
+     *
+     * @param value value
+     * @return value
+     */
+    private static String resolveConfigValue(String value) {
+        if (Strings.isBlank(value)) {
+            return value;
+        }
+        Matcher matcher = ENV_VAR_PATTERN.matcher(value);
+        StringBuffer resultString = new StringBuffer();
+        while (matcher.find()) {
+            // 环境变量名
+            String envVar = matcher.group(1);
+            // 默认值
+            String defaultValue = matcher.group(2);
+            // 获取环境变量的值
+            String envValue = Systems.getEnv(envVar, defaultValue);
+            // 替换占位符
+            matcher.appendReplacement(resultString, Matcher.quoteReplacement(envValue));
+        }
+        // 处理结尾的剩余部分
+        matcher.appendTail(resultString);
+        return resultString.toString();
+    }
+
 }
