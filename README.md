@@ -205,3 +205,7 @@ orion-ops 作为开源项目, 欢迎任何人提出建议以及贡献代码。�
 ## License
 
 使用 [Apache-2.0](https://github.com/lijiahangmax/orion-ops/blob/main/LICENSE) 开源许可证。前后端代码完全开源, 根据自己的需求打造出独一无二的智能运维平台。
+
+## GitCode 最有影响力的开源项目 G-Star
+
+![GSTAR](https://bjuimg.obs.cn-north-4.myhuaweicloud.com/images/2025/5/29/83e106c6-5aea-4ad3-ad0c-32ddf27a6fe3.jpg "GSTAR")
