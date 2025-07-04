@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 docker compose down
 # demo 启动
 if [ "$1" == "demo" ]; then

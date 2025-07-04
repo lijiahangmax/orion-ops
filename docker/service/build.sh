@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 set -e
 version=1.3.1
 mv ../../orion-ops-api/orion-ops-web/target/orion-ops-web.jar ./
