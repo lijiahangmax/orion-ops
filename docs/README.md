@@ -62,7 +62,7 @@
 * 高扩展性: 前后端代码规范统一, 代码健壮质量高, 写法优雅, 易读好拓展
 * 免费开源: 前后端代码完全开源, 方便二次开发
 
-⭐ 体验后可以点一下 `star` 这对我很重要!  ！！
+⭐ 体验后可以点一下 `star` 这对我很重要!  
 🌈 如果本项目对你有帮助请帮忙推广一下 让更多的人知道此项目!
 [github](https://github.com/lijiahangmax/orion-ops)  [gitee](https://gitee.com/lijiahangmax/orion-ops)
 
@@ -82,11 +82,10 @@
 
 ## 技术栈
 
-* SpringBoot 2.4.4
-* MybatisPlus 3.4.0
-* Mysql 8.0
-* Redis 5.0.5
-* Vue 2.6.11
+* SpringBoot 2.4+
+* Mysql 8+
+* Redis 5+
+* Vue 2.6+
 * Ant Design 1.7.8
 
 ## 功能预览
