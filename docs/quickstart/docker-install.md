@@ -24,6 +24,8 @@ Dashboard 修改)
 git clone https://github.com/lijiahangmax/orion-ops
 # gitee
 git clone https://gitee.com/lijiahangmax/orion-ops
+# gitcode
+git clone https://gitcode.com/lijiahangmax/orion-ops
 ```
 
 ### 修改配置
